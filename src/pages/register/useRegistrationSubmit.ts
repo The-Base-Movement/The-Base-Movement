@@ -99,6 +99,17 @@ export function useRegistrationSubmit() {
       })
 
       if (dbError) throw dbError
+
+      // Automatically store session keys so the user's dashboard can fetch the profile
+      localStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('userRegNo', regNo)
+      localStorage.setItem('userName', formData.fullName)
+      localStorage.setItem('userPlatform', platform)
+      if (finalAvatarUrl) {
+        localStorage.setItem('userAvatar', finalAvatarUrl)
+      }
+      window.dispatchEvent(new Event('storage'))
+
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (error) {

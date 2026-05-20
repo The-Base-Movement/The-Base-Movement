@@ -12,6 +12,7 @@ export interface Member {
   type: 'Standard' | 'Premium'
   avatarUrl?: string
   gender?: string
+  ageRange?: string
   chapter?: string
   country?: string
   profession?: string

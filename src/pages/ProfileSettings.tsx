@@ -104,9 +104,12 @@ export default function ProfileSettings() {
           countryCode: '+233',
           region: profile.region || '',
           constituency: profile.constituency || '',
-          profession: 'Member',
+          profession: profile.profession || 'Member',
           bio: '',
-          gender: profile.gender || 'Male / 26 - 40',
+          gender:
+            profile.gender && profile.ageRange
+              ? `${profile.gender} / ${profile.ageRange}`
+              : 'Male / 26 - 40',
           joinedDate: profile.joined,
           status: profile.status === 'Active' ? 'Active Member' : profile.status,
           chapter: profile.chapter || 'TBM Ghana Chapter',

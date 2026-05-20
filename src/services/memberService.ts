@@ -141,6 +141,7 @@ class MemberService {
       profession: data.profession || 'Patriot',
       city: data.city || undefined,
       residentialAddress: data.residential_address || undefined,
+      ageRange: data.age_range || undefined,
     }
   }
 
@@ -168,6 +169,7 @@ class MemberService {
       chapter: data.chapter || undefined,
       country: data.country || 'Ghana',
       profession: data.profession || 'Patriot',
+      ageRange: data.age_range || undefined,
     }
   }
 
@@ -237,7 +239,18 @@ class MemberService {
     if (profile.region) updateData.region = profile.region
     if (profile.constituency) updateData.constituency = profile.constituency
     if (profile.avatarUrl !== undefined) updateData.avatar_url = profile.avatarUrl
-    if (profile.gender) updateData.gender = profile.gender
+
+    // The gender field from ProfileSettings actually comes in as "Gender / Age Range"
+    if (profile.gender) {
+      if (profile.gender.includes(' / ')) {
+        const [g, a] = profile.gender.split(' / ')
+        updateData.gender = g
+        updateData.age_range = a
+      } else {
+        updateData.gender = profile.gender
+      }
+    }
+
     if (profile.chapter) updateData.chapter = profile.chapter
     if (profile.profession) updateData.profession = profile.profession
     if (profile.city) updateData.city = profile.city
