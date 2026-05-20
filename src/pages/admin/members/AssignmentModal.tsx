@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { type Member } from '@/services/adminService'
 import { type Chapter } from '@/types/admin'
 
@@ -23,7 +24,7 @@ export function AssignmentModal({
   isSubmitting,
 }: AssignmentModalProps) {
   if (!isOpen) return null
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -228,6 +229,7 @@ export function AssignmentModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

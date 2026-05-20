@@ -1,3 +1,5 @@
+import { createPortal } from 'react-dom'
+
 const fieldStyle: React.CSSProperties = {
   width: '100%',
   height: 42,
@@ -91,7 +93,7 @@ export function PollCreateEditModal({
   onHideCandidateDropdown,
   onCreatePoll,
 }: PollCreateEditModalProps) {
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -547,11 +549,7 @@ export function PollCreateEditModal({
             background: 'hsl(var(--container-low))',
           }}
         >
-          <button
-            onClick={onBack}
-            className="btn btn-outline"
-            style={{ flex: 1, height: 42 }}
-          >
+          <button onClick={onBack} className="btn btn-outline" style={{ flex: 1, height: 42 }}>
             Back
           </button>
           <button
@@ -573,6 +571,7 @@ export function PollCreateEditModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

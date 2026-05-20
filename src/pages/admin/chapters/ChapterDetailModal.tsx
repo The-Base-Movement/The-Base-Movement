@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import type { Country, Region } from '@/services/adminService'
 import { getCountryFlag } from '@/lib/utils'
 
@@ -64,7 +65,7 @@ export function ChapterDetailModal({
   onClose,
   onSubmit,
 }: ChapterDetailModalProps) {
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -367,6 +368,7 @@ export function ChapterDetailModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

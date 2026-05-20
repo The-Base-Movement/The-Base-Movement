@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { type Member } from '@/services/adminService'
 
 interface DeleteModalProps {
@@ -18,7 +19,7 @@ export function DeleteModal({
   onClose,
 }: DeleteModalProps) {
   if (!isOpen) return null
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -305,6 +306,7 @@ export function DeleteModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

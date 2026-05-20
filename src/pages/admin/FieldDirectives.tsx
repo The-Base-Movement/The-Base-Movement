@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { FieldDirective, FieldReport } from '@/types/admin'
@@ -696,195 +697,199 @@ export default function FieldDirectives() {
       </div>
 
       {/* Issue Directive Modal */}
-      {isCreating && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-          }}
-          onClick={() => setIsCreating(false)}
-        >
+      {isCreating &&
+        createPortal(
           <div
             style={{
-              background: '#fff',
-              borderRadius: 6,
-              width: '100%',
-              maxWidth: 600,
-              maxHeight: '90vh',
-              overflowY: 'auto',
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.45)',
+              zIndex: 100,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px',
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => setIsCreating(false)}
           >
-            <div style={{ padding: '24px 28px', borderBottom: '1px solid hsl(var(--border))' }}>
-              <div
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 18,
-                  color: 'hsl(var(--on-surface))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  marginBottom: 4,
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 20, color: 'hsl(var(--destructive))' }}
-                >
-                  flag
-                </span>
-                Issue new directive
-              </div>
-              <p
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                Deploy tactical field objectives to the movement's national network.
-              </p>
-            </div>
-            <div
-              style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <div>
-                  <label style={labelSt}>Directive title</label>
-                  <input
-                    aria-label="e.g. Regional Flyer Blitz"
-                    name="name-89795e"
-                    id="input-89795e"
-                    style={inputSt}
-                    placeholder="e.g. Regional Flyer Blitz"
-                    value={newDirective.title}
-                    onChange={(e) => setNewDirective({ ...newDirective, title: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label style={labelSt}>Target level</label>
-                  <select
-                    name="name-6d5146"
-                    id="select-6d5146"
-                    style={{ ...inputSt, appearance: 'none' }}
-                    value={newDirective.target_type}
-                    onChange={(e) =>
-                      setNewDirective({
-                        ...newDirective,
-                        target_type: e.target.value as FieldDirective['target_type'],
-                      })
-                    }
-                  >
-                    <option>Regional</option>
-                    <option>Chapter</option>
-                    <option>Global</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label style={labelSt}>Objective description</label>
-                <textarea
-                  aria-label="Describe the tactical goal for field agents…"
-                  name="name-f70a7b"
-                  id="textarea-f70a7b"
-                  style={{
-                    ...inputSt,
-                    height: 100,
-                    padding: '10px 12px',
-                    resize: 'none',
-                    lineHeight: 1.6,
-                  }}
-                  placeholder="Describe the tactical goal for field agents…"
-                  value={newDirective.description}
-                  onChange={(e) =>
-                    setNewDirective({ ...newDirective, description: e.target.value })
-                  }
-                />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-                <div>
-                  <label style={labelSt}>Priority</label>
-                  <select
-                    name="name-11a2e2"
-                    id="select-11a2e2"
-                    style={{ ...inputSt, appearance: 'none' }}
-                    value={newDirective.priority}
-                    onChange={(e) =>
-                      setNewDirective({
-                        ...newDirective,
-                        priority: e.target.value as FieldDirective['priority'],
-                      })
-                    }
-                  >
-                    <option>Normal</option>
-                    <option>High</option>
-                    <option>Urgent</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={labelSt}>Points</label>
-                  <input
-                    name="name-19b789"
-                    id="input-19b789"
-                    style={inputSt}
-                    type="number"
-                    value={newDirective.points_awarded}
-                    onChange={(e) =>
-                      setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })
-                    }
-                  />
-                </div>
-                <div>
-                  <label style={labelSt}>Deadline</label>
-                  <input
-                    name="name-8604e3"
-                    id="input-8604e3"
-                    style={inputSt}
-                    type="date"
-                    value={newDirective.deadline}
-                    onChange={(e) => setNewDirective({ ...newDirective, deadline: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
             <div
               style={{
-                padding: '20px 28px',
-                borderTop: '1px solid hsl(var(--border))',
-                display: 'flex',
-                gap: 12,
+                background: '#fff',
+                borderRadius: 6,
+                width: '100%',
+                maxWidth: 600,
+                maxHeight: '90vh',
+                overflowY: 'auto',
               }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <button
-                className="btn btn-outline"
-                style={{ flex: 1 }}
-                onClick={() => setIsCreating(false)}
-                disabled={isSubmitting}
+              <div style={{ padding: '24px 28px', borderBottom: '1px solid hsl(var(--border))' }}>
+                <div
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 18,
+                    color: 'hsl(var(--on-surface))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    marginBottom: 4,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 20, color: 'hsl(var(--destructive))' }}
+                  >
+                    flag
+                  </span>
+                  Issue new directive
+                </div>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  Deploy tactical field objectives to the movement's national network.
+                </p>
+              </div>
+              <div
+                style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}
               >
-                Cancel
-              </button>
-              <button
-                className="btn btn-dest"
-                style={{ flex: 1 }}
-                onClick={handleIssueDirective}
-                disabled={isSubmitting}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div>
+                    <label style={labelSt}>Directive title</label>
+                    <input
+                      aria-label="e.g. Regional Flyer Blitz"
+                      name="name-89795e"
+                      id="input-89795e"
+                      style={inputSt}
+                      placeholder="e.g. Regional Flyer Blitz"
+                      value={newDirective.title}
+                      onChange={(e) => setNewDirective({ ...newDirective, title: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelSt}>Target level</label>
+                    <select
+                      name="name-6d5146"
+                      id="select-6d5146"
+                      style={{ ...inputSt, appearance: 'none' }}
+                      value={newDirective.target_type}
+                      onChange={(e) =>
+                        setNewDirective({
+                          ...newDirective,
+                          target_type: e.target.value as FieldDirective['target_type'],
+                        })
+                      }
+                    >
+                      <option>Regional</option>
+                      <option>Chapter</option>
+                      <option>Global</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label style={labelSt}>Objective description</label>
+                  <textarea
+                    aria-label="Describe the tactical goal for field agents…"
+                    name="name-f70a7b"
+                    id="textarea-f70a7b"
+                    style={{
+                      ...inputSt,
+                      height: 100,
+                      padding: '10px 12px',
+                      resize: 'none',
+                      lineHeight: 1.6,
+                    }}
+                    placeholder="Describe the tactical goal for field agents…"
+                    value={newDirective.description}
+                    onChange={(e) =>
+                      setNewDirective({ ...newDirective, description: e.target.value })
+                    }
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                  <div>
+                    <label style={labelSt}>Priority</label>
+                    <select
+                      name="name-11a2e2"
+                      id="select-11a2e2"
+                      style={{ ...inputSt, appearance: 'none' }}
+                      value={newDirective.priority}
+                      onChange={(e) =>
+                        setNewDirective({
+                          ...newDirective,
+                          priority: e.target.value as FieldDirective['priority'],
+                        })
+                      }
+                    >
+                      <option>Normal</option>
+                      <option>High</option>
+                      <option>Urgent</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelSt}>Points</label>
+                    <input
+                      name="name-19b789"
+                      id="input-19b789"
+                      style={inputSt}
+                      type="number"
+                      value={newDirective.points_awarded}
+                      onChange={(e) =>
+                        setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label style={labelSt}>Deadline</label>
+                    <input
+                      name="name-8604e3"
+                      id="input-8604e3"
+                      style={inputSt}
+                      type="date"
+                      value={newDirective.deadline}
+                      onChange={(e) =>
+                        setNewDirective({ ...newDirective, deadline: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{
+                  padding: '20px 28px',
+                  borderTop: '1px solid hsl(var(--border))',
+                  display: 'flex',
+                  gap: 12,
+                }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                  send
-                </span>
-                {isSubmitting ? 'Deploying…' : 'Deploy directive'}
-              </button>
+                <button
+                  className="btn btn-outline"
+                  style={{ flex: 1 }}
+                  onClick={() => setIsCreating(false)}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-dest"
+                  style={{ flex: 1 }}
+                  onClick={handleIssueDirective}
+                  disabled={isSubmitting}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                    send
+                  </span>
+                  {isSubmitting ? 'Deploying…' : 'Deploy directive'}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

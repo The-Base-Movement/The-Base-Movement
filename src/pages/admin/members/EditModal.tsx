@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { type Member } from '@/services/adminService'
 
 interface EditModalProps {
@@ -20,7 +21,7 @@ export function EditModal({
   isSaving,
 }: EditModalProps) {
   if (!isOpen || !member) return null
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -218,6 +219,7 @@ export function EditModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { createPortal } from 'react-dom'
 import {
   type Member,
   type AuditLogEntry,
@@ -68,7 +69,7 @@ export function MemberDetailPanel({
     { id: 'card' as const, label: 'ID Card', count: 0 },
   ]
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -534,6 +535,7 @@ export function MemberDetailPanel({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

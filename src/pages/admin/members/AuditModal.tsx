@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { type AuditLogEntry } from '@/services/adminService'
 
 interface AuditModalProps {
@@ -9,7 +10,7 @@ interface AuditModalProps {
 
 export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProps) {
   if (!isOpen) return null
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -244,6 +245,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

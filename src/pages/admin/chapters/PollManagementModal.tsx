@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import type { Chapter } from '@/services/adminService'
 
 interface PollSummary {
@@ -35,7 +36,7 @@ export function PollManagementModal({
   onClosePollEarly,
   onDeletePoll,
 }: PollManagementModalProps) {
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -72,9 +73,7 @@ export function PollManagementModal({
             borderTop: '4px solid hsl(var(--primary))',
           }}
         >
-          <div
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span
                 className="material-symbols-outlined"
@@ -317,6 +316,7 @@ export function PollManagementModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

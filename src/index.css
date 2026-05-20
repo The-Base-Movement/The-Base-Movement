@@ -528,7 +528,7 @@
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 .media-card .media-overlay {

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useChapters } from '@/context/ChaptersContext'
 import { usePerformance } from '@/context/PerformanceContext'
@@ -789,67 +790,69 @@ export default function MembersList() {
       />
 
       {/* Registration overlay */}
-      {isAdding && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 16,
-            background: 'rgba(15,19,16,.6)',
-            backdropFilter: 'blur(4px)',
-          }}
-        >
-          <RegistrationForm
-            onClose={() => setIsAdding(false)}
-            onSuccess={() => {
-              setIsAdding(false)
-              toast.success('Identity successfully registered in the database.')
+      {isAdding &&
+        createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 100,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 16,
+              background: 'rgba(15,19,16,.6)',
+              backdropFilter: 'blur(4px)',
             }}
-            onSubmitData={handleSubmitRegistration}
-          />
-          {isSubmittingRegistration && (
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                zIndex: 110,
-                background: 'rgba(255,255,255,.7)',
-                backdropFilter: 'blur(2px)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
+          >
+            <RegistrationForm
+              onClose={() => setIsAdding(false)}
+              onSuccess={() => {
+                setIsAdding(false)
+                toast.success('Identity successfully registered in the database.')
               }}
-            >
+              onSubmitData={handleSubmitRegistration}
+            />
+            {isSubmittingRegistration && (
               <div
                 style={{
-                  width: 40,
-                  height: 40,
-                  border: '3px solid rgba(0,107,63,.2)',
-                  borderTopColor: 'hsl(var(--primary))',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                  marginBottom: 12,
-                }}
-              />
-              <p
-                style={{
-                  margin: 0,
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 12.5,
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 110,
+                  background: 'rgba(255,255,255,.7)',
+                  backdropFilter: 'blur(2px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                Finalizing registration…
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    border: '3px solid rgba(0,107,63,.2)',
+                    borderTopColor: 'hsl(var(--primary))',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    marginBottom: 12,
+                  }}
+                />
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 12.5,
+                  }}
+                >
+                  Finalizing registration…
+                </p>
+              </div>
+            )}
+          </div>,
+          document.body
+        )}
 
       {/* Member detail panel */}
       {selectedMember && (
