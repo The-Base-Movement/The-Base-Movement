@@ -91,6 +91,7 @@ export default function AdminBlogs() {
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [menuAnchor, setMenuAnchor] = useState<{ top: number; right: number } | null>(null)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
   const [showMobileFilter, setShowMobileFilter] = useState(false)
   const [showMediaPanel, setShowMediaPanel] = useState(true)
@@ -126,15 +127,7 @@ export default function AdminBlogs() {
   const [activeMediaFolder, setActiveMediaFolder] = useState('blog-images')
   const [isMediaLoading, setIsMediaLoading] = useState(false)
 
-  const mediaFolders = [
-    { id: 'blog-images', label: 'Blog Posts' },
-    { id: 'editor-content', label: 'Editor Media' },
-    { id: 'branding', label: 'Branding Assets' },
-    { id: 'author-images', label: 'Authors' },
-    { id: 'product-images', label: 'Product Images' },
-    { id: 'logos-favicons', label: 'Logos & Favicons' },
-    { id: 'public-assets', label: 'Public Assets' },
-  ]
+  const [mediaFolders, setMediaFolders] = useState<{ id: string; label: string }[]>([])
 
   useEffect(() => {
     const initUser = async () => {
@@ -196,6 +189,9 @@ export default function AdminBlogs() {
   useEffect(() => {
     fetchMedia()
   }, [fetchMedia])
+  useEffect(() => {
+    contentService.getMediaFolders().then(setMediaFolders)
+  }, [])
   useEffect(() => {
     fetchAuthors()
     fetchPosts()
@@ -301,6 +297,20 @@ export default function AdminBlogs() {
 
   const handleDelete = (post: BlogPost) => {
     setPostToDelete(post)
+  }
+
+  const handlePublishPost = async (post: BlogPost) => {
+    try {
+      const success = await adminService.updateBlogPost(post.id, { status: 'Published' })
+      if (success) {
+        toast.success('Post published.')
+        fetchPosts()
+      } else {
+        toast.error('Failed to publish post.')
+      }
+    } catch {
+      toast.error('Failed to publish post.')
+    }
   }
 
   const handleConfirmedDelete = async () => {
@@ -1840,7 +1850,7 @@ export default function AdminBlogs() {
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               add
             </span>
-            Dispatch new article
+            Write article
           </button>
         </div>
       </div>
@@ -2142,7 +2152,17 @@ export default function AdminBlogs() {
                           }}
                           onClick={(e) => {
                             e.stopPropagation()
-                            setOpenMenuId(openMenuId === post.id ? null : post.id)
+                            if (openMenuId === post.id) {
+                              setOpenMenuId(null)
+                              setMenuAnchor(null)
+                            } else {
+                              const rect = e.currentTarget.getBoundingClientRect()
+                              setMenuAnchor({
+                                top: rect.bottom + 4,
+                                right: window.innerWidth - rect.right,
+                              })
+                              setOpenMenuId(post.id)
+                            }
                           }}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: 17 }}>
@@ -2150,17 +2170,23 @@ export default function AdminBlogs() {
                           </span>
                         </button>
                         {openMenuId === post.id && (
-                          <>
-                            <div
-                              style={{ position: 'fixed', inset: 0, zIndex: 40 }}
-                              onClick={() => setOpenMenuId(null)}
-                            />
+                          <div
+                            style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                            onClick={() => {
+                              setOpenMenuId(null)
+                              setMenuAnchor(null)
+                            }}
+                          />
+                        )}
+                        {openMenuId === post.id &&
+                          menuAnchor &&
+                          createPortal(
                             <div
                               style={{
-                                position: 'absolute',
-                                right: 0,
-                                top: 'calc(100% + 4px)',
-                                zIndex: 50,
+                                position: 'fixed',
+                                top: menuAnchor.top,
+                                right: menuAnchor.right,
+                                zIndex: 9999,
                                 background: '#fff',
                                 border: '1px solid hsl(var(--border))',
                                 borderRadius: 6,
@@ -2176,12 +2202,25 @@ export default function AdminBlogs() {
                                     label: 'Edit post',
                                     action: () => handleEditPost(post),
                                     dest: false,
+                                    hidden: false,
                                   },
                                   {
                                     icon: 'visibility',
                                     label: 'View post',
                                     action: () => handleViewPost(post),
                                     dest: false,
+                                    hidden: false,
+                                  },
+                                  {
+                                    icon: 'publish',
+                                    label: 'Publish post',
+                                    action: () => handlePublishPost(post),
+                                    dest: false,
+                                    hidden:
+                                      post.status === 'Published' ||
+                                      !['SUPER_ADMIN', 'FOUNDER', 'ORGANIZER'].includes(
+                                        currentUser?.role ?? ''
+                                      ),
                                   },
                                   null,
                                   {
@@ -2189,64 +2228,69 @@ export default function AdminBlogs() {
                                     label: 'Delete post',
                                     action: () => handleDelete(post),
                                     dest: true,
+                                    hidden: false,
                                   },
                                 ] as ({
                                   icon: string
                                   label: string
                                   action: () => void
                                   dest: boolean
+                                  hidden: boolean
                                 } | null)[]
-                              ).map((item, idx) =>
-                                item === null ? (
-                                  <div
-                                    key={idx}
-                                    style={{ height: 1, background: 'hsl(var(--border))' }}
-                                  />
-                                ) : (
-                                  <button
-                                    key={idx}
-                                    style={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: 8,
-                                      padding: '10px 14px',
-                                      fontFamily: "'Public Sans', sans-serif",
-                                      fontWeight: 700,
-                                      fontSize: 12,
-                                      color: item.dest
-                                        ? 'hsl(var(--destructive))'
-                                        : 'hsl(var(--on-surface))',
-                                      background: 'none',
-                                      border: 'none',
-                                      cursor: 'pointer',
-                                      width: '100%',
-                                      textAlign: 'left',
-                                    }}
-                                    onMouseEnter={(e) =>
-                                      (e.currentTarget.style.background =
-                                        'hsl(var(--container-low))')
-                                    }
-                                    onMouseLeave={(e) =>
-                                      (e.currentTarget.style.background = 'none')
-                                    }
-                                    onClick={() => {
-                                      setOpenMenuId(null)
-                                      item.action()
-                                    }}
-                                  >
-                                    <span
-                                      className="material-symbols-outlined"
-                                      style={{ fontSize: 15 }}
+                              )
+                                .filter((item) => item === null || !item.hidden)
+                                .map((item, idx) =>
+                                  item === null ? (
+                                    <div
+                                      key={idx}
+                                      style={{ height: 1, background: 'hsl(var(--border))' }}
+                                    />
+                                  ) : (
+                                    <button
+                                      key={idx}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 8,
+                                        padding: '10px 14px',
+                                        fontFamily: "'Public Sans', sans-serif",
+                                        fontWeight: 700,
+                                        fontSize: 12,
+                                        color: item.dest
+                                          ? 'hsl(var(--destructive))'
+                                          : 'hsl(var(--on-surface))',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        width: '100%',
+                                        textAlign: 'left',
+                                      }}
+                                      onMouseEnter={(e) =>
+                                        (e.currentTarget.style.background =
+                                          'hsl(var(--container-low))')
+                                      }
+                                      onMouseLeave={(e) =>
+                                        (e.currentTarget.style.background = 'none')
+                                      }
+                                      onClick={() => {
+                                        setOpenMenuId(null)
+                                        setMenuAnchor(null)
+                                        item.action()
+                                      }}
                                     >
-                                      {item.icon}
-                                    </span>
-                                    {item.label}
-                                  </button>
-                                )
-                              )}
-                            </div>
-                          </>
-                        )}
+                                      <span
+                                        className="material-symbols-outlined"
+                                        style={{ fontSize: 15 }}
+                                      >
+                                        {item.icon}
+                                      </span>
+                                      {item.label}
+                                    </button>
+                                  )
+                                )}
+                            </div>,
+                            document.body
+                          )}
                       </div>
                     </div>
 

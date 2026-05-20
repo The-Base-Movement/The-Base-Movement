@@ -694,6 +694,34 @@ class ContentService {
     return true
   }
 
+  async getMediaFolders(): Promise<{ id: string; label: string }[]> {
+    const { data, error } = await supabase.storage.from('media').list('', { limit: 100 })
+    if (error || !data) {
+      return [
+        { id: 'blog-images', label: 'Blog Posts' },
+        { id: 'editor-content', label: 'Editor Media' },
+        { id: 'branding', label: 'Branding Assets' },
+        { id: 'author-images', label: 'Authors' },
+        { id: 'product-images', label: 'Product Images' },
+        { id: 'logos-favicons', label: 'Logos & Favicons' },
+        { id: 'public-assets', label: 'Public Assets' },
+      ]
+    }
+    const labelMap: Record<string, string> = {
+      'blog-images': 'Blog Posts',
+      'editor-content': 'Editor Media',
+      branding: 'Branding Assets',
+      'author-images': 'Authors',
+      'product-images': 'Product Images',
+      'logos-favicons': 'Logos & Favicons',
+      'public-assets': 'Public Assets',
+      'party-officials': 'Party Officials',
+    }
+    return data
+      .filter((item) => item.name && !item.name.startsWith('.'))
+      .map((item) => ({ id: item.name, label: labelMap[item.name] ?? item.name }))
+  }
+
   // --- Media Kit Operations ---
 
   async getMediaKitAssets(): Promise<MediaKitAsset[]> {
