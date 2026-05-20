@@ -1,4 +1,4 @@
-import type { Chapter, Country, Region } from '@/services/adminService'
+import type { Country, Region } from '@/services/adminService'
 import { getCountryFlag } from '@/lib/utils'
 
 const fieldStyle: React.CSSProperties = {
@@ -128,9 +128,7 @@ export function ChapterDetailModal({
         </div>
 
         <form onSubmit={onSubmit}>
-          <div
-            style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 16 }}
-          >
+          <div style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div
               className="chapters-modal-grid"
               style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}

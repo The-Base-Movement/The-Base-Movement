@@ -17,7 +17,6 @@ import type { Member } from '@/types/admin'
 import { contentService } from '@/services/contentService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
-import { getCountryFlag } from '@/lib/utils'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { supabase } from '@/lib/supabase'
 import { ChaptersGrid } from './chapters/ChaptersGrid'
@@ -171,29 +170,6 @@ const getChapterRegion = (c: { region?: string | null; city_or_region: string })
   if (city.includes('bolgatanga')) return 'Upper East'
 
   return null
-}
-
-const fieldStyle: React.CSSProperties = {
-  width: '100%',
-  height: 42,
-  border: '1px solid hsl(var(--border))',
-  borderRadius: 4,
-  padding: '0 12px',
-  fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
-  fontSize: 13,
-  outline: 'none',
-  background: '#fff',
-  color: 'hsl(var(--on-surface))',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 10,
-  fontWeight: 800,
-  color: 'hsl(var(--on-surface-muted))',
-  fontFamily: "'Public Sans', sans-serif",
-  marginBottom: 6,
 }
 
 export default function ChaptersManagement() {
@@ -1150,7 +1126,6 @@ export default function ChaptersManagement() {
         </div>
       </div>
 
-
       <ChaptersGrid
         currentChapters={currentChapters}
         filteredChapters={filteredChapters}
@@ -1165,7 +1140,10 @@ export default function ChaptersManagement() {
         onSearchChange={setSearch}
         onStatusFilterChange={setStatusFilter}
         onNetworkFilterChange={setNetworkFilter}
-        onRegionFilterChange={(val) => { setRegionFilter(val); setCurrentPage(1) }}
+        onRegionFilterChange={(val) => {
+          setRegionFilter(val)
+          setCurrentPage(1)
+        }}
         onPageChange={setCurrentPage}
         onOpenAddModal={openAddModal}
         onOpenEditModal={openEditModal}
