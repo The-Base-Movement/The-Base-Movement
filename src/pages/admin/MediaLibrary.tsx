@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { flushSync } from 'react-dom'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
@@ -26,10 +25,22 @@ export default function MediaLibrary() {
   ]
 
   const loadFiles = useCallback(async () => {
-    // flushSync forces React to commit the loading state to the DOM before the
-    // async fetch begins — otherwise React 18 batching can collapse setIsLoading(true)
-    // and setIsLoading(false) into a single render that the browser never paints.
-    flushSync(() => setIsLoading(true))
+    setIsLoading(true)
+    try {
+      const mediaFiles = await contentService.getMediaFiles(activeFolder)
+      setFiles(mediaFiles)
+    } catch {
+      toast.error('Failed to load media files')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [activeFolder])
+
+  const handleRefreshClick = useCallback(async () => {
+    setIsLoading(true)
+    // Yield to the macrotask queue so the browser paints the loading state
+    // before the fetch begins — needed for near-instant local-folder reads.
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
     try {
       const mediaFiles = await contentService.getMediaFiles(activeFolder)
       setFiles(mediaFiles)
@@ -133,7 +144,11 @@ export default function MediaLibrary() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button className="btn btn-outline btn-sm" onClick={loadFiles} disabled={isLoading}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={handleRefreshClick}
+            disabled={isLoading}
+          >
             <span
               className="material-symbols-outlined"
               style={{
