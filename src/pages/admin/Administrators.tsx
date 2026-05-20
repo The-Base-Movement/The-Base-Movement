@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
@@ -1048,668 +1049,561 @@ export default function Administrators() {
 
       {/* ── Provision Credentials Modal ── */}
       <AnimatePresence>
-        {showProvision && (
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 20,
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowProvision(false)}
+        {showProvision &&
+          createPortal(
+            <div
               style={{
-                position: 'absolute',
+                position: 'fixed',
                 inset: 0,
-                background: 'rgba(0,0,0,0.45)',
-                backdropFilter: 'blur(4px)',
+                zIndex: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 20,
               }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: 520,
-                background: '#fff',
-                borderRadius: 4,
-                overflow: 'hidden',
-                border: '1px solid hsl(var(--border))',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
-              }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <div
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowProvision(false)}
                 style={{
-                  padding: '20px 24px',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  background: 'hsl(var(--container-low))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.45)',
+                  backdropFilter: 'blur(4px)',
                 }}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: 520,
+                  background: '#fff',
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: '1px solid hsl(var(--border))',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                }}
+                onClick={(e) => e.stopPropagation()}
               >
-                <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 900,
-                      fontSize: 14,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    Provision Credentials
-                  </h3>
-                  <p
-                    style={{
-                      margin: '4px 0 0',
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontWeight: 700,
-                    }}
-                  >
-                    Appoint a member to an administrative role
-                  </p>
-                </div>
-                <button
-                  aria-label="Close"
-                  onClick={() => setShowProvision(false)}
+                <div
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: 'hsl(var(--on-surface-muted))',
+                    padding: '20px 24px',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--container-low))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                    close
-                  </span>
-                </button>
-              </div>
-
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 18 }}>
-                {/* Member search */}
-                <div>
-                  <label style={labelSt}>Search member</label>
-                  {selectedMember ? (
-                    <div
+                  <div>
+                    <h3
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '10px 14px',
-                        border: '1px solid hsl(var(--primary))',
-                        borderRadius: 4,
-                        background: 'hsl(var(--container-low))',
+                        margin: 0,
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 900,
+                        fontSize: 14,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
                       }}
                     >
-                      <div>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
-                            fontSize: 13,
-                            color: 'hsl(var(--on-surface))',
+                      Provision Credentials
+                    </h3>
+                    <p
+                      style={{
+                        margin: '4px 0 0',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontWeight: 700,
+                      }}
+                    >
+                      Appoint a member to an administrative role
+                    </p>
+                  </div>
+                  <button
+                    aria-label="Close"
+                    onClick={() => setShowProvision(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                      close
+                    </span>
+                  </button>
+                </div>
+
+                <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  {/* Member search */}
+                  <div>
+                    <label style={labelSt}>Search member</label>
+                    {selectedMember ? (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '10px 14px',
+                          border: '1px solid hsl(var(--primary))',
+                          borderRadius: 4,
+                          background: 'hsl(var(--container-low))',
+                        }}
+                      >
+                        <div>
+                          <p
+                            style={{
+                              margin: 0,
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 800,
+                              fontSize: 13,
+                              color: 'hsl(var(--on-surface))',
+                            }}
+                          >
+                            {selectedMember.name}
+                          </p>
+                          <p
+                            style={{
+                              margin: '2px 0 0',
+                              fontFamily: 'monospace',
+                              fontSize: 10,
+                              color: 'hsl(var(--on-surface-muted))',
+                            }}
+                          >
+                            {selectedMember.id}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setSelectedMember(null)
+                            setMemberQuery('')
                           }}
-                        >
-                          {selectedMember.name}
-                        </p>
-                        <p
                           style={{
-                            margin: '2px 0 0',
-                            fontFamily: 'monospace',
-                            fontSize: 10,
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
                             color: 'hsl(var(--on-surface-muted))',
                           }}
                         >
-                          {selectedMember.id}
-                        </p>
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                            close
+                          </span>
+                        </button>
                       </div>
-                      <button
-                        onClick={() => {
-                          setSelectedMember(null)
-                          setMemberQuery('')
-                        }}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                          close
-                        </span>
-                      </button>
-                    </div>
-                  ) : (
-                    <div style={{ position: 'relative' }}>
-                      <span
-                        className="material-symbols-outlined"
-                        style={{
-                          position: 'absolute',
-                          left: 10,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          fontSize: 16,
-                          color: 'hsl(var(--on-surface-muted))',
-                          pointerEvents: 'none',
-                        }}
-                      >
-                        search
-                      </span>
-                      <input
-                        aria-label="Search member by name"
-                        type="text"
-                        placeholder="Type a member name…"
-                        value={memberQuery}
-                        onChange={(e) => setMemberQuery(e.target.value)}
-                        style={{ ...inputSt, paddingLeft: 34 }}
-                        autoFocus
-                      />
-                      {(memberResults.length > 0 || isMemberSearching) && (
-                        <div
+                    ) : (
+                      <div style={{ position: 'relative' }}>
+                        <span
+                          className="material-symbols-outlined"
                           style={{
                             position: 'absolute',
-                            top: 'calc(100% + 4px)',
-                            left: 0,
-                            right: 0,
-                            background: '#fff',
-                            border: '1px solid hsl(var(--border))',
-                            borderRadius: 4,
-                            zIndex: 10,
-                            boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
-                            maxHeight: 220,
-                            overflowY: 'auto',
+                            left: 10,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            fontSize: 16,
+                            color: 'hsl(var(--on-surface-muted))',
+                            pointerEvents: 'none',
                           }}
                         >
-                          {isMemberSearching ? (
-                            <div
-                              style={{
-                                padding: '12px 16px',
-                                fontSize: 12,
-                                fontWeight: 700,
-                                color: 'hsl(var(--on-surface-muted))',
-                              }}
-                            >
-                              Searching…
-                            </div>
-                          ) : (
-                            memberResults.map((m) => (
-                              <button
-                                key={m.id}
-                                onClick={() => {
-                                  setSelectedMember(m)
-                                  setMemberQuery('')
-                                  setMemberResults([])
-                                }}
+                          search
+                        </span>
+                        <input
+                          aria-label="Search member by name"
+                          type="text"
+                          placeholder="Type a member name…"
+                          value={memberQuery}
+                          onChange={(e) => setMemberQuery(e.target.value)}
+                          style={{ ...inputSt, paddingLeft: 34 }}
+                          autoFocus
+                        />
+                        {(memberResults.length > 0 || isMemberSearching) && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: 'calc(100% + 4px)',
+                              left: 0,
+                              right: 0,
+                              background: '#fff',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: 4,
+                              zIndex: 10,
+                              boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
+                              maxHeight: 220,
+                              overflowY: 'auto',
+                            }}
+                          >
+                            {isMemberSearching ? (
+                              <div
                                 style={{
-                                  display: 'block',
-                                  width: '100%',
-                                  textAlign: 'left',
-                                  padding: '10px 14px',
-                                  background: 'none',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  borderBottom: '1px solid hsl(var(--border))',
+                                  padding: '12px 16px',
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  color: 'hsl(var(--on-surface-muted))',
                                 }}
-                                onMouseEnter={(e) =>
-                                  (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                                }
-                                onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                               >
-                                <p
-                                  style={{
-                                    margin: 0,
-                                    fontFamily: "'Public Sans', sans-serif",
-                                    fontWeight: 800,
-                                    fontSize: 12.5,
-                                    color: 'hsl(var(--on-surface))',
+                                Searching…
+                              </div>
+                            ) : (
+                              memberResults.map((m) => (
+                                <button
+                                  key={m.id}
+                                  onClick={() => {
+                                    setSelectedMember(m)
+                                    setMemberQuery('')
+                                    setMemberResults([])
                                   }}
-                                >
-                                  {m.name}
-                                </p>
-                                <p
                                   style={{
-                                    margin: '2px 0 0',
-                                    fontFamily: 'monospace',
-                                    fontSize: 10,
-                                    color: 'hsl(var(--on-surface-muted))',
+                                    display: 'block',
+                                    width: '100%',
+                                    textAlign: 'left',
+                                    padding: '10px 14px',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    borderBottom: '1px solid hsl(var(--border))',
                                   }}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                                  }
+                                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                                 >
-                                  {m.constituency || m.country || m.region}
-                                </p>
-                              </button>
-                            ))
-                          )}
-                        </div>
-                      )}
+                                  <p
+                                    style={{
+                                      margin: 0,
+                                      fontFamily: "'Public Sans', sans-serif",
+                                      fontWeight: 800,
+                                      fontSize: 12.5,
+                                      color: 'hsl(var(--on-surface))',
+                                    }}
+                                  >
+                                    {m.name}
+                                  </p>
+                                  <p
+                                    style={{
+                                      margin: '2px 0 0',
+                                      fontFamily: 'monospace',
+                                      fontSize: 10,
+                                      color: 'hsl(var(--on-surface-muted))',
+                                    }}
+                                  >
+                                    {m.constituency || m.country || m.region}
+                                  </p>
+                                </button>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Role */}
+                  <div>
+                    <label htmlFor="provision-role" style={labelSt}>
+                      Role
+                    </label>
+                    <select
+                      id="provision-role"
+                      value={provisionRole}
+                      onChange={(e) => setProvisionRole(e.target.value as AdminRole)}
+                      style={selectSt}
+                    >
+                      {ALL_ROLES.map((r) => (
+                        <option key={r.value} value={r.value}>
+                          {r.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Region — only for regional roles */}
+                  {REGIONAL_ROLES.includes(provisionRole) && (
+                    <div>
+                      <label htmlFor="provision-region" style={labelSt}>
+                        Assigned region
+                      </label>
+                      <select
+                        id="provision-region"
+                        value={provisionRegion}
+                        onChange={(e) => setProvisionRegion(e.target.value)}
+                        style={selectSt}
+                      >
+                        <option value="">— Select region —</option>
+                        {regions.map((r) => (
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   )}
                 </div>
 
-                {/* Role */}
-                <div>
-                  <label htmlFor="provision-role" style={labelSt}>
-                    Role
-                  </label>
-                  <select
-                    id="provision-role"
-                    value={provisionRole}
-                    onChange={(e) => setProvisionRole(e.target.value as AdminRole)}
-                    style={selectSt}
+                <div
+                  style={{
+                    padding: '16px 24px',
+                    borderTop: '1px solid hsl(var(--border))',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: 10,
+                    background: 'hsl(var(--container-low))',
+                  }}
+                >
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setShowProvision(false)}
+                    style={{ minWidth: 80 }}
                   >
-                    {ALL_ROLES.map((r) => (
-                      <option key={r.value} value={r.value}>
-                        {r.label}
-                      </option>
-                    ))}
-                  </select>
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    style={{ minWidth: 140 }}
+                    disabled={!selectedMember || isProvisioning}
+                    onClick={handleProvision}
+                  >
+                    {isProvisioning ? 'Provisioning…' : 'Provision'}
+                  </button>
                 </div>
-
-                {/* Region — only for regional roles */}
-                {REGIONAL_ROLES.includes(provisionRole) && (
-                  <div>
-                    <label htmlFor="provision-region" style={labelSt}>
-                      Assigned region
-                    </label>
-                    <select
-                      id="provision-region"
-                      value={provisionRegion}
-                      onChange={(e) => setProvisionRegion(e.target.value)}
-                      style={selectSt}
-                    >
-                      <option value="">— Select region —</option>
-                      {regions.map((r) => (
-                        <option key={r} value={r}>
-                          {r}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-
-              <div
-                style={{
-                  padding: '16px 24px',
-                  borderTop: '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: 10,
-                  background: 'hsl(var(--container-low))',
-                }}
-              >
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={() => setShowProvision(false)}
-                  style={{ minWidth: 80 }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-primary btn-sm"
-                  style={{ minWidth: 140 }}
-                  disabled={!selectedMember || isProvisioning}
-                  onClick={handleProvision}
-                >
-                  {isProvisioning ? 'Provisioning…' : 'Provision'}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
+              </motion.div>
+            </div>,
+            document.body
+          )}
       </AnimatePresence>
 
       {/* ── Edit Permissions Modal ── */}
       <AnimatePresence>
-        {editTarget && (
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 20,
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setEditTarget(null)}
+        {editTarget &&
+          createPortal(
+            <div
               style={{
-                position: 'absolute',
+                position: 'fixed',
                 inset: 0,
-                background: 'rgba(0,0,0,0.45)',
-                backdropFilter: 'blur(4px)',
+                zIndex: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 20,
               }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: 480,
-                background: '#fff',
-                borderRadius: 4,
-                overflow: 'hidden',
-                border: '1px solid hsl(var(--border))',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
-              }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <div
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setEditTarget(null)}
                 style={{
-                  padding: '20px 24px',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  background: 'hsl(var(--container-low))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.45)',
+                  backdropFilter: 'blur(4px)',
                 }}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: 480,
+                  background: '#fff',
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: '1px solid hsl(var(--border))',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                }}
+                onClick={(e) => e.stopPropagation()}
               >
-                <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 900,
-                      fontSize: 14,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    Edit Permissions
-                  </h3>
-                  <p
-                    style={{
-                      margin: '4px 0 0',
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontWeight: 700,
-                    }}
-                  >
-                    {editTarget.name}
-                  </p>
-                </div>
-                <button
-                  aria-label="Close"
-                  onClick={() => setEditTarget(null)}
+                <div
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: 'hsl(var(--on-surface-muted))',
+                    padding: '20px 24px',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--container-low))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                    close
-                  </span>
-                </button>
-              </div>
-
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 18 }}>
-                <div>
-                  <label htmlFor="edit-role" style={labelSt}>
-                    Role
-                  </label>
-                  <select
-                    id="edit-role"
-                    value={editRole}
-                    onChange={(e) => setEditRole(e.target.value as AdminRole)}
-                    style={selectSt}
+                  <div>
+                    <h3
+                      style={{
+                        margin: 0,
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 900,
+                        fontSize: 14,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      Edit Permissions
+                    </h3>
+                    <p
+                      style={{
+                        margin: '4px 0 0',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {editTarget.name}
+                    </p>
+                  </div>
+                  <button
+                    aria-label="Close"
+                    onClick={() => setEditTarget(null)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
                   >
-                    {ALL_ROLES.map((r) => (
-                      <option key={r.value} value={r.value}>
-                        {r.label}
-                      </option>
-                    ))}
-                  </select>
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                      close
+                    </span>
+                  </button>
                 </div>
 
-                {REGIONAL_ROLES.includes(editRole) && (
+                <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 18 }}>
                   <div>
-                    <label htmlFor="edit-region" style={labelSt}>
-                      Assigned region
+                    <label htmlFor="edit-role" style={labelSt}>
+                      Role
                     </label>
                     <select
-                      id="edit-region"
-                      value={editRegion}
-                      onChange={(e) => setEditRegion(e.target.value)}
+                      id="edit-role"
+                      value={editRole}
+                      onChange={(e) => setEditRole(e.target.value as AdminRole)}
                       style={selectSt}
                     >
-                      <option value="">— None —</option>
-                      {regions.map((r) => (
-                        <option key={r} value={r}>
-                          {r}
+                      {ALL_ROLES.map((r) => (
+                        <option key={r.value} value={r.value}>
+                          {r.label}
                         </option>
                       ))}
                     </select>
                   </div>
-                )}
 
-                <p
+                  {REGIONAL_ROLES.includes(editRole) && (
+                    <div>
+                      <label htmlFor="edit-region" style={labelSt}>
+                        Assigned region
+                      </label>
+                      <select
+                        id="edit-region"
+                        value={editRegion}
+                        onChange={(e) => setEditRegion(e.target.value)}
+                        style={selectSt}
+                      >
+                        <option value="">— None —</option>
+                        {regions.map((r) => (
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  <p
+                    style={{
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 700,
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Permissions will be reset to the defaults for the selected role.
+                  </p>
+                </div>
+
+                <div
                   style={{
-                    margin: 0,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 11,
-                    color: 'hsl(var(--on-surface-muted))',
+                    padding: '16px 24px',
+                    borderTop: '1px solid hsl(var(--border))',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: 10,
+                    background: 'hsl(var(--container-low))',
                   }}
                 >
-                  Permissions will be reset to the defaults for the selected role.
-                </p>
-              </div>
-
-              <div
-                style={{
-                  padding: '16px 24px',
-                  borderTop: '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: 10,
-                  background: 'hsl(var(--container-low))',
-                }}
-              >
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={() => setEditTarget(null)}
-                  style={{ minWidth: 80 }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-primary btn-sm"
-                  style={{ minWidth: 120 }}
-                  disabled={isEditing}
-                  onClick={handleEditSubmit}
-                >
-                  {isEditing ? 'Saving…' : 'Save changes'}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setEditTarget(null)}
+                    style={{ minWidth: 80 }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    style={{ minWidth: 120 }}
+                    disabled={isEditing}
+                    onClick={handleEditSubmit}
+                  >
+                    {isEditing ? 'Saving…' : 'Save changes'}
+                  </button>
+                </div>
+              </motion.div>
+            </div>,
+            document.body
+          )}
       </AnimatePresence>
 
       {/* ── Revoke Confirm Modal ── */}
       <AnimatePresence>
-        {revokeTarget && (
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 20,
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setRevokeTarget(null)}
+        {revokeTarget &&
+          createPortal(
+            <div
               style={{
-                position: 'absolute',
+                position: 'fixed',
                 inset: 0,
-                background: 'rgba(0,0,0,0.45)',
-                backdropFilter: 'blur(4px)',
-              }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: 420,
-                background: '#fff',
-                borderRadius: 4,
-                overflow: 'hidden',
-                border: '1px solid hsl(var(--border))',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div
-                style={{
-                  padding: '20px 24px',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  background: 'hsl(var(--container-low))',
-                }}
-              >
-                <h3
-                  style={{
-                    margin: 0,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
-                    fontSize: 14,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: 'hsl(var(--destructive))',
-                  }}
-                >
-                  Revoke Access
-                </h3>
-              </div>
-              <div style={{ padding: 24 }}>
-                <p
-                  style={{
-                    margin: 0,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 13,
-                    color: 'hsl(var(--on-surface))',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Remove administrative credentials from <strong>{revokeTarget.name}</strong>? They
-                  will lose all platform access immediately.
-                </p>
-              </div>
-              <div
-                style={{
-                  padding: '16px 24px',
-                  borderTop: '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: 10,
-                  background: 'hsl(var(--container-low))',
-                }}
-              >
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={() => setRevokeTarget(null)}
-                  style={{ minWidth: 80 }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-dest btn-sm"
-                  style={{ minWidth: 120 }}
-                  disabled={isRevoking}
-                  onClick={handleRevoke}
-                >
-                  {isRevoking ? 'Revoking…' : 'Revoke access'}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Audit Logs Modal ── */}
-      <AnimatePresence>
-        {isLogsModalOpen && (
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 20,
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsLogsModalOpen(false)}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'rgba(0,0,0,0.4)',
-                backdropFilter: 'blur(4px)',
-              }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: 600,
-                background: '#fff',
-                borderRadius: 4,
-                overflow: 'hidden',
-                border: '1px solid hsl(var(--border))',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                zIndex: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 20,
               }}
             >
-              <div
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setRevokeTarget(null)}
                 style={{
-                  padding: '20px 24px',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: 'hsl(var(--container-low))',
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.45)',
+                  backdropFilter: 'blur(4px)',
                 }}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: 420,
+                  background: '#fff',
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: '1px solid hsl(var(--border))',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                }}
+                onClick={(e) => e.stopPropagation()}
               >
-                <div>
+                <div
+                  style={{
+                    padding: '20px 24px',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--container-low))',
+                  }}
+                >
                   <h3
                     style={{
                       margin: 0,
@@ -1718,187 +1612,302 @@ export default function Administrators() {
                       fontSize: 14,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
+                      color: 'hsl(var(--destructive))',
                     }}
                   >
-                    Administrative Audit Vault
+                    Revoke Access
                   </h3>
+                </div>
+                <div style={{ padding: 24 }}>
                   <p
                     style={{
-                      margin: '4px 0 0',
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 700,
+                      fontSize: 13,
+                      color: 'hsl(var(--on-surface))',
+                      lineHeight: 1.6,
                     }}
                   >
-                    Activity logs for {activeAdminName}
+                    Remove administrative credentials from <strong>{revokeTarget.name}</strong>?
+                    They will lose all platform access immediately.
                   </p>
                 </div>
-                <button
-                  aria-label="Close activity logs"
-                  onClick={() => setIsLogsModalOpen(false)}
+                <div
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: 'hsl(var(--on-surface-muted))',
+                    padding: '16px 24px',
+                    borderTop: '1px solid hsl(var(--border))',
                     display: 'flex',
-                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    gap: 10,
+                    background: 'hsl(var(--container-low))',
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                    close
-                  </span>
-                </button>
-              </div>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setRevokeTarget(null)}
+                    style={{ minWidth: 80 }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-dest btn-sm"
+                    style={{ minWidth: 120 }}
+                    disabled={isRevoking}
+                    onClick={handleRevoke}
+                  >
+                    {isRevoking ? 'Revoking…' : 'Revoke access'}
+                  </button>
+                </div>
+              </motion.div>
+            </div>,
+            document.body
+          )}
+      </AnimatePresence>
 
-              <div style={{ padding: 24, maxHeight: 400, overflowY: 'auto' }}>
-                {isLogsLoading ? (
-                  <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                    <div
+      {/* ── Audit Logs Modal ── */}
+      <AnimatePresence>
+        {isLogsModalOpen &&
+          createPortal(
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 20,
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsLogsModalOpen(false)}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.4)',
+                  backdropFilter: 'blur(4px)',
+                }}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: 600,
+                  background: '#fff',
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  border: '1px solid hsl(var(--border))',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '20px 24px',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'hsl(var(--container-low))',
+                  }}
+                >
+                  <div>
+                    <h3
                       style={{
-                        width: 32,
-                        height: 32,
-                        border: '3px solid hsl(var(--border))',
-                        borderTopColor: 'hsl(var(--primary))',
-                        borderRadius: '50%',
-                        margin: '0 auto 16px',
+                        margin: 0,
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 900,
+                        fontSize: 14,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
                       }}
-                      className="animate-spin"
-                    />
+                    >
+                      Administrative Audit Vault
+                    </h3>
                     <p
                       style={{
-                        fontSize: 12,
-                        fontWeight: 700,
+                        margin: '4px 0 0',
+                        fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
+                        fontWeight: 700,
                       }}
                     >
-                      Decrypting audit stream...
+                      Activity logs for {activeAdminName}
                     </p>
                   </div>
-                ) : selectedAdminLogs.length === 0 ? (
-                  <div style={{ padding: '60px 0', textAlign: 'center' }}>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: 48, color: 'hsl(var(--border))', marginBottom: 16 }}
-                    >
-                      history
+                  <button
+                    aria-label="Close activity logs"
+                    onClick={() => setIsLogsModalOpen(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'hsl(var(--on-surface-muted))',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                      close
                     </span>
-                    <p
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      No recorded activity in the current epoch.
-                    </p>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {selectedAdminLogs.map((log) => (
+                  </button>
+                </div>
+
+                <div style={{ padding: 24, maxHeight: 400, overflowY: 'auto' }}>
+                  {isLogsLoading ? (
+                    <div style={{ padding: '40px 0', textAlign: 'center' }}>
                       <div
-                        key={log.id}
                         style={{
-                          padding: 16,
-                          background: 'hsl(var(--container-low))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: 4,
+                          width: 32,
+                          height: 32,
+                          border: '3px solid hsl(var(--border))',
+                          borderTopColor: 'hsl(var(--primary))',
+                          borderRadius: '50%',
+                          margin: '0 auto 16px',
+                        }}
+                        className="animate-spin"
+                      />
+                      <p
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
+                        Decrypting audit stream...
+                      </p>
+                    </div>
+                  ) : selectedAdminLogs.length === 0 ? (
+                    <div style={{ padding: '60px 0', textAlign: 'center' }}>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 48, color: 'hsl(var(--border))', marginBottom: 16 }}
+                      >
+                        history
+                      </span>
+                      <p
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        No recorded activity in the current epoch.
+                      </p>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {selectedAdminLogs.map((log) => (
                         <div
+                          key={log.id}
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginBottom: 8,
+                            padding: 16,
+                            background: 'hsl(var(--container-low))',
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: 4,
                           }}
-                        >
-                          <span
-                            style={{
-                              fontSize: 10,
-                              fontWeight: 900,
-                              color: 'hsl(var(--primary))',
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.05em',
-                            }}
-                          >
-                            {log.action}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: 10,
-                              color: 'hsl(var(--on-surface-muted))',
-                              fontWeight: 700,
-                            }}
-                          >
-                            {new Date(log.timestamp).toLocaleString()}
-                          </span>
-                        </div>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontSize: 12,
-                            fontWeight: 700,
-                            color: 'hsl(var(--on-surface))',
-                          }}
-                        >
-                          Resource:{' '}
-                          <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
-                            {log.resource}
-                          </span>
-                        </p>
-                        <div
-                          style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}
                         >
                           <div
                             style={{
-                              width: 6,
-                              height: 6,
-                              borderRadius: '50%',
-                              background:
-                                log.status === 'Success'
-                                  ? 'hsl(var(--primary))'
-                                  : 'hsl(var(--destructive))',
-                            }}
-                          />
-                          <span
-                            style={{
-                              fontSize: 10,
-                              fontWeight: 800,
-                              color:
-                                log.status === 'Success'
-                                  ? 'hsl(var(--primary))'
-                                  : 'hsl(var(--destructive))',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginBottom: 8,
                             }}
                           >
-                            {log.status}
-                          </span>
+                            <span
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 900,
+                                color: 'hsl(var(--primary))',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                              }}
+                            >
+                              {log.action}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: 10,
+                                color: 'hsl(var(--on-surface-muted))',
+                                fontWeight: 700,
+                              }}
+                            >
+                              {new Date(log.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              color: 'hsl(var(--on-surface))',
+                            }}
+                          >
+                            Resource:{' '}
+                            <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
+                              {log.resource}
+                            </span>
+                          </p>
+                          <div
+                            style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}
+                          >
+                            <div
+                              style={{
+                                width: 6,
+                                height: 6,
+                                borderRadius: '50%',
+                                background:
+                                  log.status === 'Success'
+                                    ? 'hsl(var(--primary))'
+                                    : 'hsl(var(--destructive))',
+                              }}
+                            />
+                            <span
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 800,
+                                color:
+                                  log.status === 'Success'
+                                    ? 'hsl(var(--primary))'
+                                    : 'hsl(var(--destructive))',
+                              }}
+                            >
+                              {log.status}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              <div
-                style={{
-                  padding: '16px 24px',
-                  borderTop: '1px solid hsl(var(--border))',
-                  textAlign: 'right',
-                  background: 'hsl(var(--container-low))',
-                }}
-              >
-                <button
-                  onClick={() => setIsLogsModalOpen(false)}
-                  className="btn btn-sm btn-outline"
-                  style={{ minWidth: 100 }}
+                <div
+                  style={{
+                    padding: '16px 24px',
+                    borderTop: '1px solid hsl(var(--border))',
+                    textAlign: 'right',
+                    background: 'hsl(var(--container-low))',
+                  }}
                 >
-                  Close Vault
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
+                  <button
+                    onClick={() => setIsLogsModalOpen(false)}
+                    className="btn btn-sm btn-outline"
+                    style={{ minWidth: 100 }}
+                  >
+                    Close Vault
+                  </button>
+                </div>
+              </motion.div>
+            </div>,
+            document.body
+          )}
       </AnimatePresence>
     </div>
   )
