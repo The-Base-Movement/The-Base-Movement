@@ -141,15 +141,15 @@ export function TiersModal({
                   key={t.id}
                   style={{
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '10px 12px',
+                    flexDirection: 'column',
                     background: 'hsl(var(--container-low))',
                     borderRadius: 4,
                     border: '1px solid hsl(var(--border))',
+                    overflow: 'hidden',
                   }}
                 >
-                  <div>
+                  {/* Title section */}
+                  <div style={{ padding: '10px 12px' }}>
                     <div style={{ fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
                       {t.title}{' '}
                       <span
@@ -168,9 +168,17 @@ export function TiersModal({
                       Order: {t.order_index}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 6 }}>
+                  {/* Footer actions */}
+                  <div style={{ display: 'flex', borderTop: '1px solid hsl(var(--border))' }}>
                     <button
                       className="btn btn-sm btn-outline"
+                      style={{
+                        flex: 1,
+                        borderRadius: 0,
+                        border: 'none',
+                        borderRight: '1px solid hsl(var(--border))',
+                        justifyContent: 'center',
+                      }}
                       onClick={() => {
                         setTierFormData(t)
                         setEditingTierId(t.id)
@@ -181,8 +189,11 @@ export function TiersModal({
                     <button
                       className="btn btn-sm btn-outline"
                       style={{
+                        flex: 1,
+                        borderRadius: 0,
+                        border: 'none',
+                        justifyContent: 'center',
                         color: 'hsl(var(--destructive))',
-                        borderColor: 'hsl(var(--destructive))',
                       }}
                       onClick={() => handleDeleteTier(t.id)}
                     >
