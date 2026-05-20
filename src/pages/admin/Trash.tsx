@@ -578,6 +578,7 @@ export default function TrashPage() {
             onToggle={toggleSelect}
             allSelected={allSelected}
             onToggleAll={toggleSelectAll}
+            loadTrash={loadTrash}
           />
         </main>
       </div>
@@ -592,11 +593,12 @@ export default function TrashPage() {
           setSearchQuery={setSearchQuery}
           formatDaysRemaining={formatDaysRemaining}
           handleRestore={handleRestore}
-          setDeleteModal={setDeleteModal}
+          openDelete={openDelete}
           selectedIds={selectedIds}
           onToggle={toggleSelect}
           allSelected={allSelected}
           onToggleAll={toggleSelectAll}
+          loadTrash={loadTrash}
         />
       </div>
 
@@ -618,6 +620,7 @@ function TrashContent({
   onToggle,
   allSelected,
   onToggleAll,
+  loadTrash,
 }: {
   isLoading: boolean
   filteredItems: (BlogPost | InventoryItem | MediaAsset | Author | Member)[]
@@ -631,6 +634,7 @@ function TrashContent({
   onToggle: (id: string) => void
   allSelected: boolean
   onToggleAll: () => void
+  loadTrash: () => Promise<void>
 }) {
   if (isLoading) {
     return (

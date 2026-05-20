@@ -11,6 +11,8 @@ interface FormState {
   profession: string
   bio: string
   gender: string
+  joinedDate: string
+  status: string
   chapter: string
   country: string
   city: string
