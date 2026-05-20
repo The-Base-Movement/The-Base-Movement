@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { toast } from 'sonner'
-import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { auditService } from '@/services/auditService'
 import type { AuditLogEntry, AdminRole, AdminPermission } from '@/types/admin'
 import type { Member } from '@/types/admin'
@@ -13,6 +12,10 @@ import { ProvisionModal } from './administrators/ProvisionModal'
 import { EditPermissionsModal } from './administrators/EditPermissionsModal'
 import { RevokeConfirmModal } from './administrators/RevokeConfirmModal'
 import { AuditLogsModal } from './administrators/AuditLogsModal'
+import { AdminsHeader } from './administrators/AdminsHeader'
+import { AdminsKPIs } from './administrators/AdminsKPIs'
+import { AdminsSearchBar } from './administrators/AdminsSearchBar'
+import { AdminsSecurityNote } from './administrators/AdminsSecurityNote'
 
 const REGIONAL_ROLES: AdminRole[] = ['REGIONAL_DIRECTOR', 'CONSTITUENCY_LEAD']
 
@@ -67,8 +70,6 @@ const formatRole = (role: string) =>
     .split('_')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ')
-
-const isHighPrivilege = (role: string) => role === 'SUPER_ADMIN' || role === 'FOUNDER'
 
 export default function Administrators() {
   const [admins, setAdmins] = useState<AdminUser[]>([])
@@ -244,126 +245,11 @@ export default function Administrators() {
 
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Page header */}
-      <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
-        <div>
-          <div className="crumbs">Security · Personnel</div>
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-              shield
-            </span>
-            Administrators
-          </h2>
-          <div style={{ marginTop: 10, marginBottom: 4 }}>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
-          </div>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: 12.5,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 6,
-              marginBottom: 0,
-            }}
-          >
-            Authorized personnel with leadership credentials and platform oversight.
-          </p>
-        </div>
-        <div className="actions">
-          <button className="btn btn-primary" onClick={() => setShowProvision(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              person_add
-            </span>
-            Provision Credentials
-          </button>
-        </div>
-      </div>
+      <AdminsHeader onProvision={() => setShowProvision(true)} />
 
-      {/* KPI strip */}
-      <div className="kpis" style={{ marginBottom: 0 }}>
-        <TacticalKPI
-          label="Total Admins"
-          value={admins.length}
-          variant="black"
-          description="Authorized platform overseers"
-          delta="▲ Stable"
-        />
-        <TacticalKPI
-          label="Super Admins"
-          value={admins.filter((a) => isHighPrivilege(a.role)).length}
-          variant="red"
-          description="Tier-1 security clearance"
-          delta="High Risk"
-        />
-        <TacticalKPI
-          label="Regional Leads"
-          value={admins.filter((a) => a.role === 'REGIONAL_DIRECTOR').length}
-          variant="gold"
-          description="Zonal operations command"
-          delta="Coordinated"
-        />
-        <TacticalKPI
-          label="Security Status"
-          value="Online"
-          variant="green"
-          description="Encrypted administrative link"
-          trend={{ direction: 'up', value: 'Active' }}
-        />
-      </div>
+      <AdminsKPIs admins={admins} />
 
-      {/* Search */}
-      <div className="panel">
-        <div style={{ padding: '14px 20px' }}>
-          <div style={{ position: 'relative', maxWidth: 400 }}>
-            <label htmlFor="input-2deddd" style={{ display: 'none' }}>
-              Filter by name, ID or role…
-            </label>
-            <span
-              className="material-symbols-outlined"
-              style={{
-                position: 'absolute',
-                left: 10,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: 16,
-                color: 'hsl(var(--on-surface-muted))',
-                pointerEvents: 'none',
-              }}
-            >
-              search
-            </span>
-            <input
-              aria-label="Filter by name, ID or role…"
-              name="searchTerm"
-              id="input-2deddd"
-              type="text"
-              placeholder="Filter by name, ID or role…"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: '100%',
-                height: 38,
-                paddingLeft: 34,
-                paddingRight: 12,
-                border: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-                outline: 'none',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: 12,
-                borderRadius: 4,
-                boxSizing: 'border-box',
-                color: 'hsl(var(--on-surface))',
-              }}
-            />
-          </div>
-        </div>
-      </div>
+      <AdminsSearchBar searchTerm={searchTerm} onChange={setSearchTerm} />
 
       {/* Desktop table */}
       <AdministratorsTable
@@ -385,59 +271,7 @@ export default function Administrators() {
         setRevokeTarget={setRevokeTarget}
       />
 
-      {/* Security advisory */}
-      <div
-        className="panel"
-        style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: 20 }}
-      >
-        <div
-          style={{
-            width: 44,
-            height: 44,
-            background: 'hsl(var(--container-low))',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 4,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
-          >
-            verified_user
-          </span>
-        </div>
-        <div>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
-              fontSize: 13,
-              color: 'hsl(var(--on-surface))',
-              margin: '0 0 4px',
-            }}
-          >
-            Security protocol
-          </p>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: 12,
-              color: 'hsl(var(--on-surface-muted))',
-              lineHeight: 1.65,
-              margin: 0,
-            }}
-          >
-            Administrative access is governed by movement encryption standards. All actions within
-            the command center are logged in the audit vault for transparency and security.
-            Unauthorized access attempts will be intercepted.
-          </p>
-        </div>
-      </div>
+      <AdminsSecurityNote />
 
       {/* Dropdown backdrop */}
       {openMenuId && (
