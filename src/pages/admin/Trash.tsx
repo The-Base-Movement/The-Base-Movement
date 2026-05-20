@@ -4,7 +4,7 @@ import { logisticsService } from '@/services/logisticsService'
 import { adminService, type Member } from '@/services/adminService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
+import { useDeleteModal, type DeleteOptions } from '@/hooks/useDeleteModal'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 
 type TrashTab = 'blogs' | 'products' | 'media' | 'authors' | 'members'
@@ -29,12 +29,7 @@ export default function TrashPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isBulkRestoring, setIsBulkRestoring] = useState(false)
 
-  const [deleteModal, setDeleteModal] = useState<{
-    isOpen: boolean
-    type: TrashTab | null
-    id: string | null
-    name: string | null
-  }>({ isOpen: false, type: null, id: null, name: null })
+  const { openDelete, modal: deleteModal } = useDeleteModal()
 
   const loadTrash = useCallback(async () => {
     setIsLoading(true)
@@ -106,32 +101,6 @@ export default function TrashPage() {
     setSelectedIds(new Set())
     toast.success(`${successCount} of ${selectedIds.size} items restored.`)
     loadTrash()
-  }
-
-  const handlePermanentDelete = async () => {
-    if (!deleteModal.id || !deleteModal.type) return
-    try {
-      let success = false
-      if (deleteModal.type === 'blogs')
-        success = await contentService.permanentlyDeleteBlogPost(deleteModal.id)
-      if (deleteModal.type === 'products')
-        success = await logisticsService.permanentlyDeleteInventoryItem(deleteModal.id)
-      if (deleteModal.type === 'media')
-        success = await contentService.permanentlyDeleteMediaFile(deleteModal.id)
-      if (deleteModal.type === 'authors')
-        success = await contentService.permanentlyDeleteAuthor(deleteModal.id)
-      if (deleteModal.type === 'members')
-        success = await adminService.permanentlyDeleteMember(deleteModal.id)
-      if (success) {
-        toast.success('Deleted permanently.')
-        setDeleteModal({ isOpen: false, type: null, id: null, name: null })
-        loadTrash()
-      } else {
-        toast.error('Delete failed. Try again.')
-      }
-    } catch {
-      toast.error('Delete failed. Try again.')
-    }
   }
 
   const formatDaysRemaining = (deletedAt: string) => {
@@ -604,7 +573,7 @@ export default function TrashPage() {
             setSearchQuery={setSearchQuery}
             formatDaysRemaining={formatDaysRemaining}
             handleRestore={handleRestore}
-            setDeleteModal={setDeleteModal}
+            openDelete={openDelete}
             selectedIds={selectedIds}
             onToggle={toggleSelect}
             allSelected={allSelected}
@@ -631,15 +600,7 @@ export default function TrashPage() {
         />
       </div>
 
-      <DeleteConfirmationModal
-        isOpen={deleteModal.isOpen}
-        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
-        onConfirm={handlePermanentDelete}
-        title="Delete forever?"
-        description="This item will be permanently deleted and cannot be recovered."
-        itemName={deleteModal.name || ''}
-        isPermanent={true}
-      />
+      {deleteModal}
     </div>
   )
 }
@@ -652,7 +613,7 @@ function TrashContent({
   setSearchQuery,
   formatDaysRemaining,
   handleRestore,
-  setDeleteModal,
+  openDelete,
   selectedIds,
   onToggle,
   allSelected,
@@ -665,7 +626,7 @@ function TrashContent({
   setSearchQuery: (q: string) => void
   formatDaysRemaining: (d: string) => number
   handleRestore: (type: TrashTab, id: string) => void
-  setDeleteModal: (m: { isOpen: boolean; type: TrashTab; id: string; name: string }) => void
+  openDelete: (opts: DeleteOptions) => void
   selectedIds: Set<string>
   onToggle: (id: string) => void
   allSelected: boolean
@@ -814,7 +775,17 @@ function TrashContent({
               daysLeft={formatDaysRemaining(post.deletedAt || new Date().toISOString())}
               onRestore={() => handleRestore('blogs', post.id)}
               onDelete={() =>
-                setDeleteModal({ isOpen: true, type: 'blogs', id: post.id, name: post.title })
+                openDelete({
+                  itemName: post.title,
+                  isPermanent: true,
+                  title: 'Delete forever?',
+                  description: 'This post will be permanently deleted and cannot be recovered.',
+                  onConfirm: async () => {
+                    const ok = await contentService.permanentlyDeleteBlogPost(post.id)
+                    if (ok) loadTrash()
+                    return ok
+                  },
+                })
               }
               icon="article"
               accent="red"
@@ -833,11 +804,16 @@ function TrashContent({
               daysLeft={formatDaysRemaining(product.deletedAt || new Date().toISOString())}
               onRestore={() => handleRestore('products', product.id)}
               onDelete={() =>
-                setDeleteModal({
-                  isOpen: true,
-                  type: 'products',
-                  id: product.id,
-                  name: product.name,
+                openDelete({
+                  itemName: product.name,
+                  isPermanent: true,
+                  title: 'Delete forever?',
+                  description: 'This product will be permanently deleted and cannot be recovered.',
+                  onConfirm: async () => {
+                    const ok = await logisticsService.permanentlyDeleteInventoryItem(product.id)
+                    if (ok) loadTrash()
+                    return ok
+                  },
                 })
               }
               icon="inventory_2"
@@ -858,7 +834,18 @@ function TrashContent({
               daysLeft={formatDaysRemaining(item.deleted_at || new Date().toISOString())}
               onRestore={() => handleRestore('media', item.url)}
               onDelete={() =>
-                setDeleteModal({ isOpen: true, type: 'media', id: item.url, name: item.filename })
+                openDelete({
+                  itemName: item.filename,
+                  isPermanent: true,
+                  title: 'Delete forever?',
+                  description:
+                    'This media file will be permanently deleted and cannot be recovered.',
+                  onConfirm: async () => {
+                    const ok = await contentService.permanentlyDeleteMediaFile(item.url)
+                    if (ok) loadTrash()
+                    return ok
+                  },
+                })
               }
               accent="green"
               isSelected={selectedIds.has(item.id)}
@@ -877,7 +864,17 @@ function TrashContent({
               daysLeft={formatDaysRemaining(author.deletedAt || new Date().toISOString())}
               onRestore={() => handleRestore('authors', author.id)}
               onDelete={() =>
-                setDeleteModal({ isOpen: true, type: 'authors', id: author.id, name: author.name })
+                openDelete({
+                  itemName: author.name,
+                  isPermanent: true,
+                  title: 'Delete forever?',
+                  description: 'This author will be permanently deleted and cannot be recovered.',
+                  onConfirm: async () => {
+                    const ok = await contentService.permanentlyDeleteAuthor(author.id)
+                    if (ok) loadTrash()
+                    return ok
+                  },
+                })
               }
               icon="history_edu"
               accent="red"
@@ -897,7 +894,17 @@ function TrashContent({
               daysLeft={formatDaysRemaining(member.deletedAt || new Date().toISOString())}
               onRestore={() => handleRestore('members', member.id)}
               onDelete={() =>
-                setDeleteModal({ isOpen: true, type: 'members', id: member.id, name: member.name })
+                openDelete({
+                  itemName: member.name,
+                  isPermanent: true,
+                  title: 'Delete forever?',
+                  description: 'This member will be permanently deleted and cannot be recovered.',
+                  onConfirm: async () => {
+                    const ok = await adminService.permanentlyDeleteMember(member.id)
+                    if (ok) loadTrash()
+                    return ok
+                  },
+                })
               }
               icon="person_remove"
               accent="red"

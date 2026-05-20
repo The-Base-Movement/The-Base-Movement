@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
+import { useDeleteModal } from '@/hooks/useDeleteModal'
 
 const inputSt: React.CSSProperties = {
   width: '100%',
@@ -68,8 +68,7 @@ export default function RoadmapManagement() {
   const [isLoading, setIsLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null)
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const { openDelete, modal: deleteModal } = useDeleteModal()
 
   const [formData, setFormData] = useState({
     title: '',
@@ -149,22 +148,20 @@ export default function RoadmapManagement() {
     }
   }
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    setIsDeleting(true)
-    try {
-      const success = await adminService.deleteMilestone(deleteTarget.id, deleteTarget.title)
-      if (success) {
-        toast.success('Milestone removed from roadmap.')
-        setDeleteTarget(null)
-        fetchData()
-      } else toast.error('Failed to remove milestone.')
-    } catch (err) {
-      console.error('[ROADMAP] Delete failed:', err)
-      toast.error('An error occurred during removal.')
-    } finally {
-      setIsDeleting(false)
-    }
+  const handleDelete = (milestone: Milestone) => {
+    openDelete({
+      itemName: milestone.title,
+      title: 'Remove milestone',
+      description: 'This milestone will be permanently removed from the roadmap.',
+      isPermanent: true,
+      successMessage: 'Milestone removed from roadmap.',
+      errorMessage: 'Failed to remove milestone.',
+      onConfirm: async () => {
+        const success = await adminService.deleteMilestone(milestone.id, milestone.title)
+        if (success) fetchData()
+        return success
+      },
+    })
   }
 
   const filteredMilestones = milestones.filter(
@@ -537,9 +534,7 @@ export default function RoadmapManagement() {
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}
-                          onClick={() =>
-                            setDeleteTarget({ id: milestone.id, title: milestone.title })
-                          }
+                          onClick={() => handleDelete(milestone)}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                             delete
@@ -812,16 +807,7 @@ export default function RoadmapManagement() {
           document.body
         )}
 
-      <DeleteConfirmationModal
-        isOpen={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDelete}
-        title="Remove milestone"
-        description="This milestone will be permanently removed from the roadmap."
-        itemName={deleteTarget?.title ?? ''}
-        isLoading={isDeleting}
-        isPermanent
-      />
+      {deleteModal}
     </div>
   )
 }

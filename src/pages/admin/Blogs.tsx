@@ -1,94 +1,133 @@
-import { useState, useEffect, useCallback } from 'react'
+/**
+ * admin/Blogs.tsx
+ * ─────────────────────────────────────────────────────────────────
+ * Orchestrator for the Editorial Command admin page.
+ * Owns all state, data-fetching, and event handlers.
+ * Delegates all rendering to sub-components in ./blogs/.
+ *
+ * Views:
+ *  list  — BlogsHeader + BlogsKPIs + BlogsFilters + BlogsGrid + MobileFilterSheet
+ *  edit  — BlogEditorView (3-pane editor)
+ *  view  — BlogViewPage (read-only preview)
+ */
+
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { BlogPost, AdminUser, Author } from '@/types/admin'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
 import { toast } from 'sonner'
 
-// Sub-components
-import { BlogList } from './blogs/BlogList'
-import { BlogEditor } from './blogs/BlogEditor'
-import { BlogViewer } from './blogs/BlogViewer'
+import { BlogsHeader } from './blogs/BlogsHeader'
+import { BlogsKPIs } from './blogs/BlogsKPIs'
+import { BlogsFilters } from './blogs/BlogsFilters'
+import { BlogsGrid } from './blogs/BlogsGrid'
+import { MobileFilterSheet } from './blogs/MobileFilterSheet'
+import { BlogEditorView } from './blogs/BlogEditorView'
+import { BlogViewPage } from './blogs/BlogViewPage'
+
+type FormData = Omit<BlogPost, 'id'>
+
+const EMPTY_FORM: FormData = {
+  title: '',
+  slug: '',
+  excerpt: '',
+  content: '',
+  authorId: 'USR-001',
+  category: 'Movement',
+  imageUrl: '',
+  readTime: '5 min read',
+  isFeatured: false,
+  publishedAt: new Date().toISOString(),
+  status: 'Draft',
+  tags: [],
+  seoTitle: '',
+  metaDescription: '',
+  authorName: '',
+  authorRole: '',
+  authorImage: '',
+  authorBio: '',
+}
 
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [authors, setAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(adminService.getCurrentUser())
+  const editorRef = useRef<{ getContent: () => string } | null>(null)
 
+  /* ── View routing — persisted across page refreshes via sessionStorage ── */
   const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(
     () => (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
   )
-  const { openDelete, modal: deleteModal } = useDeleteModal()
-
   const [editingPost, setEditPost] = useState<BlogPost | null>(() => {
     const saved = sessionStorage.getItem('blogs_editingPost')
     return saved ? JSON.parse(saved) : null
   })
-
   const [viewPost, setViewPost] = useState<BlogPost | null>(() => {
     const saved = sessionStorage.getItem('blogs_viewPost')
     return saved ? JSON.parse(saved) : null
   })
-
-  const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>(() => {
+  const [formData, setFormData] = useState<FormData>(() => {
     const saved = sessionStorage.getItem('blogs_formData')
-    if (saved) return JSON.parse(saved)
-    return {
-      title: '',
-      slug: '',
-      excerpt: '',
-      content: '',
-      authorId: 'USR-001',
-      category: 'Movement',
-      imageUrl: '',
-      readTime: '5 min read',
-      isFeatured: false,
-      publishedAt: new Date().toISOString(),
-      status: 'Draft',
-      tags: [],
-      seoTitle: '',
-      metaDescription: '',
-      authorName: '',
-      authorRole: '',
-      authorImage: '',
-      authorBio: '',
-    }
+    return saved ? JSON.parse(saved) : EMPTY_FORM
   })
 
-  useEffect(() => {
-    const initUser = async () => {
-      const user = await adminService.initialize()
-      setCurrentUser(user)
-    }
-    if (!currentUser) initUser()
-  }, [currentUser])
+  /* ── List view state ────────────────────────────────────────── */
+  const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [menuAnchor, setMenuAnchor] = useState<{ top: number; right: number } | null>(null)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
+  const [showMobileFilter, setShowMobileFilter] = useState(false)
 
+  /* ── Editor state ───────────────────────────────────────────── */
+  const [showMediaPanel, setShowMediaPanel] = useState(true)
+  const [showIntelPanel, setShowIntelPanel] = useState(true)
+  const [mediaFiles, setMediaFiles] = useState<string[]>([])
+  const [activeMediaFolder, setActiveMediaFolder] = useState('blog-images')
+  const [isMediaLoading, setIsMediaLoading] = useState(false)
+  const [mediaFolders, setMediaFolders] = useState<{ id: string; label: string }[]>([])
+  const [mediaSearch, setMediaSearch] = useState('')
+
+  const { openDelete, modal: deleteModal } = useDeleteModal()
+
+  /* ── Session-storage sync ───────────────────────────────────── */
   useEffect(() => {
     sessionStorage.setItem('blogs_currentView', currentView)
   }, [currentView])
-
   useEffect(() => {
     if (editingPost) sessionStorage.setItem('blogs_editingPost', JSON.stringify(editingPost))
     else sessionStorage.removeItem('blogs_editingPost')
   }, [editingPost])
-
   useEffect(() => {
     if (viewPost) sessionStorage.setItem('blogs_viewPost', JSON.stringify(viewPost))
     else sessionStorage.removeItem('blogs_viewPost')
   }, [viewPost])
-
   useEffect(() => {
     sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
   }, [formData])
+
+  /* ── Data fetching ──────────────────────────────────────────── */
+  const fetchMedia = useCallback(async () => {
+    setIsMediaLoading(true)
+    try {
+      const files = await contentService.getMediaFiles(activeMediaFolder)
+      setMediaFiles(files)
+    } catch (err) {
+      console.error('[MEDIA] Failed to fetch library:', err)
+    } finally {
+      setIsMediaLoading(false)
+    }
+  }, [activeMediaFolder])
 
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
     try {
       const data = await adminService.getBlogPosts()
       setPosts(data)
-    } catch (error) {
-      console.error('[SYSTEM] Failed to fetch posts:', error)
+    } catch {
       toast.error('Could not retrieve blog intelligence from vault.')
     } finally {
       setIsLoading(false)
@@ -105,10 +144,30 @@ export default function AdminBlogs() {
   }, [])
 
   useEffect(() => {
+    const initUser = async () => {
+      const user = await adminService.initialize()
+      setCurrentUser(user)
+    }
+    if (!currentUser) initUser()
+  }, [currentUser])
+
+  useEffect(() => {
+    fetchMedia()
+  }, [fetchMedia])
+  useEffect(() => {
+    contentService.getMediaFolders().then(setMediaFolders)
+  }, [])
+  useEffect(() => {
     fetchAuthors()
     fetchPosts()
   }, [fetchAuthors, fetchPosts])
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth <= 640)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
 
+  /* ── Handlers ───────────────────────────────────────────────── */
   const handleEditPost = (post?: BlogPost) => {
     if (post) {
       setEditPost(post)
@@ -134,26 +193,7 @@ export default function AdminBlogs() {
       })
     } else {
       setEditPost(null)
-      setFormData({
-        title: '',
-        slug: '',
-        excerpt: '',
-        content: '',
-        authorId: 'USR-001',
-        category: 'Movement',
-        imageUrl: '',
-        readTime: '5 min read',
-        isFeatured: false,
-        publishedAt: new Date().toISOString(),
-        status: 'Draft',
-        tags: [],
-        seoTitle: '',
-        metaDescription: '',
-        authorName: '',
-        authorRole: '',
-        authorImage: '',
-        authorBio: '',
-      })
+      setFormData({ ...EMPTY_FORM, publishedAt: new Date().toISOString() })
     }
     setCurrentView('edit')
   }
@@ -163,9 +203,10 @@ export default function AdminBlogs() {
     setCurrentView('view')
   }
 
-  const handleSubmit = async (editorContent: string) => {
+  const handleSubmit = async () => {
     setIsLoading(true)
     try {
+      const editorContent = editorRef.current ? editorRef.current.getContent() : formData.content
       const postData = { ...formData, content: editorContent }
       let success = false
       if (editingPost) {
@@ -228,7 +269,6 @@ export default function AdminBlogs() {
       })
       if (success) {
         toast.success('Post published.')
-        fetchPosts()
       } else {
         setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: post.status } : p)))
         toast.error('Failed to publish post.')
@@ -245,7 +285,6 @@ export default function AdminBlogs() {
       const success = await adminService.updateBlogPost(post.id, { status: 'Draft' })
       if (success) {
         toast.success('Post unpublished.')
-        fetchPosts()
       } else {
         setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: post.status } : p)))
         toast.error('Failed to unpublish post.')
@@ -256,47 +295,144 @@ export default function AdminBlogs() {
     }
   }
 
+  const handleUpload = async (file: File) => {
+    const url = await contentService.uploadImage(file, activeMediaFolder)
+    if (url) {
+      toast.success(`Uploaded to ${activeMediaFolder}`)
+      fetchMedia()
+    }
+  }
+
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.category.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter
+    const matchesStatus = statusFilter === 'all' || post.status === statusFilter
+    return matchesSearch && matchesCategory && matchesStatus
+  })
+
+  /* ── View routing ───────────────────────────────────────────── */
+  if (currentView === 'edit') {
+    return (
+      <BlogEditorView
+        editingPost={editingPost}
+        formData={formData}
+        setFormData={setFormData}
+        authors={authors}
+        isLoading={isLoading}
+        showMediaPanel={showMediaPanel}
+        setShowMediaPanel={setShowMediaPanel}
+        showIntelPanel={showIntelPanel}
+        setShowIntelPanel={setShowIntelPanel}
+        editorRef={editorRef}
+        mediaFiles={mediaFiles}
+        mediaFolders={mediaFolders}
+        activeMediaFolder={activeMediaFolder}
+        setActiveMediaFolder={setActiveMediaFolder}
+        mediaSearch={mediaSearch}
+        setMediaSearch={setMediaSearch}
+        isMediaLoading={isMediaLoading}
+        onRefreshMedia={fetchMedia}
+        onUpload={handleUpload}
+        onBack={() => setCurrentView('list')}
+        onSubmit={handleSubmit}
+      />
+    )
+  }
+
+  if (currentView === 'view' && viewPost) {
+    return (
+      <BlogViewPage
+        viewPost={viewPost}
+        currentUser={currentUser}
+        onBack={() => setCurrentView('list')}
+        onEdit={handleEditPost}
+        onDelete={handleDelete}
+      />
+    )
+  }
+
+  /* ── List view ──────────────────────────────────────────────── */
   return (
-    <>
-      {currentView === 'list' && (
-        <BlogList
+    <div className="main">
+      <BlogsHeader onWrite={() => handleEditPost()} />
+      <BlogsKPIs posts={posts} />
+
+      <div className="sidebar-main">
+        <BlogsFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+        />
+        <BlogsGrid
+          filteredPosts={filteredPosts}
           posts={posts}
           isLoading={isLoading}
+          openMenuId={openMenuId}
+          setOpenMenuId={setOpenMenuId}
+          menuAnchor={menuAnchor}
+          setMenuAnchor={setMenuAnchor}
           currentUser={currentUser}
-          onWritePost={() => handleEditPost()}
-          onEditPost={(post) => handleEditPost(post)}
-          onViewPost={handleViewPost}
-          onPublishPost={handlePublishPost}
-          onUnpublishPost={handleUnpublishPost}
-          onDeletePost={handleDelete}
-        />
-      )}
-
-      {currentView === 'edit' && (
-        <BlogEditor
-          editingPost={editingPost}
-          formData={formData}
-          setFormData={setFormData}
-          authors={authors}
-          onBack={() => setCurrentView('list')}
-          onSave={handleSubmit}
-          isLoading={isLoading}
-        />
-      )}
-
-      {currentView === 'view' && viewPost && (
-        <BlogViewer
-          viewPost={viewPost}
-          onBack={() => setCurrentView('list')}
-          onEdit={(post) => handleEditPost(post)}
-          onDelete={(post) => {
-            setCurrentView('list')
-            handleDelete(post)
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          onEdit={handleEditPost}
+          onView={handleViewPost}
+          onPublish={handlePublishPost}
+          onUnpublish={handleUnpublishPost}
+          onDelete={handleDelete}
+          onClearFilters={() => {
+            setSearchQuery('')
+            setCategoryFilter('all')
+            setStatusFilter('all')
           }}
         />
+      </div>
+
+      <MobileFilterSheet
+        isMobile={isMobile}
+        show={showMobileFilter}
+        onClose={() => setShowMobileFilter(false)}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        categoryFilter={categoryFilter}
+        setCategoryFilter={setCategoryFilter}
+      />
+
+      {isMobile && (
+        <button
+          onClick={() => setShowMobileFilter(true)}
+          style={{
+            position: 'fixed',
+            bottom: 88,
+            left: 16,
+            zIndex: 50,
+            width: 46,
+            height: 46,
+            borderRadius: '50%',
+            background: 'hsl(var(--on-surface))',
+            color: '#fff',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.28)',
+            cursor: 'pointer',
+          }}
+          aria-label="Open filters"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+            filter_list
+          </span>
+        </button>
       )}
 
       {deleteModal}
-    </>
+    </div>
   )
 }

@@ -1,20 +1,31 @@
-import type { BlogPost } from '@/types/admin'
+/**
+ * blogs/BlogViewPage.tsx
+ * ─────────────────────────────────────────────────────────────────
+ * Read-only article preview for the Blogs admin page.
+ * Shown when currentView === 'view'. Displays the full post content
+ * alongside a metadata sidebar (status, category, read time, SEO fields).
+ *
+ * Props:
+ *  viewPost   — the post being previewed
+ *  currentUser — used to conditionally show delete (destructive) action
+ *  onBack     — navigates back to list view
+ *  onEdit     — opens this post in the editor
+ *  onDelete   — triggers delete confirmation for this post
+ */
+
+import type { BlogPost, AdminUser } from '@/types/admin'
+import { statusPill } from './statusPill'
 import { metaSt } from './styles'
 
-interface BlogViewerProps {
+interface BlogViewPageProps {
   viewPost: BlogPost
+  currentUser: AdminUser | null
   onBack: () => void
   onEdit: (post: BlogPost) => void
   onDelete: (post: BlogPost) => void
 }
 
-function statusPill(status: string) {
-  if (status === 'Published') return <span className="pill pill-ok">{status}</span>
-  if (status === 'Pending Verification') return <span className="pill pill-warn">Pending</span>
-  return <span className="pill pill-mute">{status}</span>
-}
-
-export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerProps) {
+export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPageProps) {
   const metaRowSt: React.CSSProperties = {
     display: 'flex',
     justifyContent: 'space-between',
@@ -36,6 +47,7 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
       {/* Header */}
       <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
+          {/* Breadcrumb */}
           <div className="crumbs">
             <button
               onClick={onBack}
@@ -86,9 +98,11 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
         </div>
       </div>
 
+      {/* main-sidebar layout */}
       <div className="main-sidebar" style={{ alignItems: 'start' }}>
-        {/* Article content */}
+        {/* Article content panel */}
         <div className="panel" style={{ overflow: 'hidden' }}>
+          {/* Cover image */}
           {viewPost.imageUrl && (
             <div style={{ height: 300, overflow: 'hidden' }}>
               <img
@@ -100,8 +114,9 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
               />
             </div>
           )}
+
           <div style={{ padding: '32px 40px' }}>
-            {/* Category + date */}
+            {/* Category + date + read time */}
             <div
               style={{
                 display: 'flex',
@@ -147,7 +162,7 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
               {viewPost.title}
             </h1>
 
-            {/* Excerpt */}
+            {/* Excerpt (pull quote style) */}
             {viewPost.excerpt && (
               <div
                 style={{
@@ -230,7 +245,7 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
               </div>
             )}
 
-            {/* Body content */}
+            {/* Body HTML from TinyMCE */}
             <div
               className="prose prose-on-surface max-w-none prose-p:text-on-surface/70 prose-p:leading-relaxed prose-p:text-[16px] prose-headings:text-on-surface prose-headings:font-black prose-headings:tracking-tight"
               dangerouslySetInnerHTML={{ __html: viewPost.content }}
@@ -258,17 +273,11 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Right sidebar */}
         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 14,
-            position: 'sticky',
-            top: 80,
-          }}
+          style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 80 }}
         >
-          {/* Post intelligence */}
+          {/* Post Intelligence metadata */}
           <div className="panel">
             <div className="ph">
               <span
@@ -328,7 +337,7 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
             </div>
           </div>
 
-          {/* SEO */}
+          {/* SEO data — only shown if fields are set */}
           {(viewPost.metaDescription || viewPost.seoTitle) && (
             <div className="panel">
               <div className="ph">
@@ -353,16 +362,21 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
                 </span>
               </div>
               <div
-                style={{
-                  padding: '14px 18px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 10,
-                }}
+                style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}
               >
                 {viewPost.seoTitle && (
                   <div>
-                    <div style={metaLabelSt}>SEO Title</div>
+                    <div
+                      style={{
+                        ...metaSt,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        display: 'block',
+                        marginBottom: 4,
+                      }}
+                    >
+                      SEO Title
+                    </div>
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
@@ -378,7 +392,17 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
                 )}
                 {viewPost.metaDescription && (
                   <div>
-                    <div style={metaLabelSt}>Meta Description</div>
+                    <div
+                      style={{
+                        ...metaSt,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        display: 'block',
+                        marginBottom: 4,
+                      }}
+                    >
+                      Meta Description
+                    </div>
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
@@ -411,7 +435,10 @@ export function BlogViewer({ viewPost, onBack, onEdit, onDelete }: BlogViewerPro
             <button
               className="btn btn-dest btn-sm"
               style={{ justifyContent: 'center' }}
-              onClick={() => onDelete(viewPost)}
+              onClick={() => {
+                onBack()
+                onDelete(viewPost)
+              }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 delete

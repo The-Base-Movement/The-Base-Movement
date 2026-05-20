@@ -1022,7 +1022,46 @@ class AdminService {
   // --- Blog Operations ---
 
   async getBlogPosts(): Promise<BlogPost[]> {
-    return contentService.getBlogPosts()
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*, authors(name, role, image_url, bio)')
+      .is('deleted_at', null)
+      .order('published_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch blog posts:', error)
+      return []
+    }
+
+    return (data || []).map((p: Record<string, unknown>) => {
+      const a = p.authors as {
+        name?: string
+        role?: string
+        image_url?: string
+        bio?: string
+      } | null
+      return {
+        id: p.id as string,
+        title: p.title as string,
+        slug: p.slug as string,
+        excerpt: p.excerpt as string,
+        content: p.content as string,
+        authorId: p.author_id as string,
+        authorName: a?.name || (p.author_name as string) || 'Admin',
+        authorRole: a?.role || (p.author_role as string | undefined),
+        authorImage: a?.image_url || (p.author_image as string | undefined),
+        authorBio: a?.bio || (p.author_bio as string | undefined),
+        category: p.category as string,
+        imageUrl: p.image_url as string | undefined,
+        readTime: p.read_time as string,
+        isFeatured: p.is_featured as boolean,
+        publishedAt: p.published_at as string,
+        status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Draft',
+        tags: (p.tags as string[]) || [],
+        seoTitle: p.seo_title as string | undefined,
+        metaDescription: p.meta_description as string | undefined,
+      }
+    })
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {

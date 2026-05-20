@@ -7,10 +7,12 @@ import {
   type Chapter,
   type Poll,
 } from '@/services/adminService'
+import { contentService } from '@/services/contentService'
 import { usePerformance } from '@/context/PerformanceContext'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
 import { cn } from '@/lib/utils'
+import { HomeOfficers } from '@/components/HomeOfficers'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -271,7 +273,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    adminService
+    contentService
       .getBlogPosts()
       .then((data) => setLatestPosts(data.slice(0, 3)))
       .catch(() => {})
@@ -770,6 +772,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Officers ───────────────────────────────────────────── */}
+      <HomeOfficers />
 
       {/* ── Chapters near you ─────────────────────────────────── */}
       <section

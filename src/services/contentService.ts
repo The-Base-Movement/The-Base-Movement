@@ -20,6 +20,7 @@ class ContentService {
       .from('blog_posts')
       .select('*, authors(name, role, image_url, bio)')
       .is('deleted_at', null)
+      .eq('status', 'Published')
       .order('published_at', { ascending: false })
 
     if (error) {
