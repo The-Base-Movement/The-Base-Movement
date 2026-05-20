@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import { tacticalService } from '@/services/tacticalService'
 import { toast } from 'sonner'
 
 import type { AuditLogEntry, RegionalStat, PendingVerification, Broadcast } from '@/types/admin'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+
+// Subcomponents
+import { VerificationsQueue } from './dashboard/VerificationsQueue'
+import { QuickBroadcastComposer } from './dashboard/QuickBroadcastComposer'
+import { AdminActivityLog } from './dashboard/AdminActivityLog'
 
 // KPI Component matching the handoff stats.html spec
 function KPI({
@@ -133,6 +137,16 @@ export default function AdminDashboard() {
       toast.error('Strategic communication layer encountered an error.')
     } finally {
       setIsSending(false)
+    }
+  }
+
+  const handleVerifyMember = async (id: string, approve: boolean) => {
+    const success = await adminService.verifyMember(id, approve)
+    if (success) {
+      setPendingVerifications((prev) => prev.filter((m) => m.id !== id))
+      toast.success(approve ? 'Member application approved.' : 'Member application rejected.')
+    } else {
+      toast.error('Failed to process member verification.')
     }
   }
 
@@ -282,448 +296,26 @@ export default function AdminDashboard() {
       </div>
 
       <div className="twocol">
-        {/* Verification queue */}
-        <div className="panel">
-          <div className="ph">
-            <div>
-              <h3>ID verification queue</h3>
-              <div className="meta">
-                {pendingVerifications.length} pending · sorted by oldest first
-              </div>
-            </div>
-            <button
-              className="btn btn-outline btn-sm"
-              onClick={() => navigate('/admin/verification')}
-            >
-              View all
-            </button>
-          </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Member</th>
-                  <th>Reg. no.</th>
-                  <th>Region</th>
-                  <th>Submitted</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {pendingVerifications.slice(0, 5).map((member) => (
-                  <tr key={member.id}>
-                    <td>
-                      <div className="who">
-                        <div
-                          style={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: '50%',
-                            background: 'hsl(var(--container-low))',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 10,
-                            fontWeight: 800,
-                            color: 'hsl(var(--on-surface-muted))',
-                            fontFamily: "'Public Sans', sans-serif",
-                            flexShrink: 0,
-                          }}
-                        >
-                          {member.name[0]}
-                        </div>
-                        <div>
-                          <b>{member.name}</b>
-                          <span>{member.phone}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="reg">{member.id.slice(0, 8).toUpperCase()}</span>
-                    </td>
-                    <td>{member.chapter || member.region}</td>
-                    <td>{new Date(member.submitted).toLocaleDateString()}</td>
-                    <td>
-                      <span
-                        className={cn(
-                          'pill',
-                          member.status === 'Processing' || member.status === 'In Review'
-                            ? 'pill-warn'
-                            : 'pill-ok'
-                        )}
-                      >
-                        {member.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="row-actions">
-                        <button
-                          className="ico ok"
-                          onClick={() => navigate(`/admin/verification?id=${member.id}`)}
-                        >
-                          <span className="material-symbols-outlined">check</span>
-                        </button>
-                        <button
-                          className="ico no"
-                          onClick={async () => {
-                            await adminService.verifyMember(member.id, false)
-                            setPendingVerifications((prev) =>
-                              prev.filter((m) => m.id !== member.id)
-                            )
-                          }}
-                        >
-                          <span className="material-symbols-outlined">close</span>
-                        </button>
-                        <button
-                          className="ico"
-                          onClick={() => navigate(`/admin/verification?id=${member.id}`)}
-                        >
-                          <span className="material-symbols-outlined">visibility</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {pendingVerifications.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      style={{
-                        textAlign: 'center',
-                        padding: '32px 0',
-                        color: 'hsl(var(--on-surface-muted))',
-                        fontSize: 11,
-                        fontWeight: 700,
-                        fontStyle: 'italic',
-                        fontFamily: "'Public Sans', sans-serif",
-                      }}
-                    >
-                      All verifications complete. Operational baseline maintained.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <VerificationsQueue
+          pendingVerifications={pendingVerifications}
+          onVerify={handleVerifyMember}
+          navigate={navigate}
+        />
 
-        {/* Right column: composer + log */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          {/* Broadcast composer */}
-          <div className="panel compose">
-            <div className="ph">
-              <h3>New broadcast</h3>
-              <span className="pill pill-mute">Mission Control</span>
-            </div>
+          <QuickBroadcastComposer
+            broadcast={broadcast}
+            setBroadcast={setBroadcast}
+            isSending={isSending}
+            regions={regions}
+            constituencies={constituencies}
+            diasporaChapters={diasporaChapters}
+            selectedRegionId={selectedRegionId}
+            setSelectedRegionId={setSelectedRegionId}
+            handleSendBroadcast={handleSendBroadcast}
+          />
 
-            <div className="field">
-              <label htmlFor="input-b97fc0" className="lbl">
-                Headline
-              </label>
-              <input
-                name="name-b97fc0"
-                id="input-b97fc0"
-                className="title"
-                value={broadcast.title}
-                onChange={(e) => setBroadcast({ ...broadcast, title: e.target.value })}
-                placeholder="Mobilization directive..."
-              />
-            </div>
-
-            <div className="field">
-              <label htmlFor="textarea-daf71f" className="lbl">
-                Message
-              </label>
-              <textarea
-                name="name-daf71f"
-                id="textarea-daf71f"
-                value={broadcast.content}
-                onChange={(e) => setBroadcast({ ...broadcast, content: e.target.value })}
-                placeholder="Tactical update content..."
-                style={{ minHeight: '80px' }}
-              />
-            </div>
-
-            <div className="field">
-              <label htmlFor="select-50d2d6" className="lbl">
-                Target Audience
-              </label>
-              <div
-                style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}
-              >
-                <select
-                  name="name-50d2d6"
-                  id="select-50d2d6"
-                  className="reg"
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid var(--border)',
-                    fontSize: '11px',
-                    padding: '4px 8px',
-                    color: 'hsl(var(--on-surface))',
-                    width: '100%',
-                  }}
-                  value={broadcast.target_type}
-                  onChange={(e) => {
-                    const type = e.target.value as Broadcast['target_type']
-                    setBroadcast({ ...broadcast, target_type: type, target_value: 'ALL' })
-                    setSelectedRegionId(null)
-                  }}
-                >
-                  <option value="ALL">National (All Members)</option>
-                  <option value="REGION">Regional Targeting</option>
-                  <option value="CONSTITUENCY">Constituency Targeting</option>
-                  <option value="DIASPORA">Diaspora Chapters</option>
-                </select>
-
-                {broadcast.target_type === 'REGION' && (
-                  <>
-                    <label htmlFor="select-e1e9ef" style={{ display: 'none' }}>
-                      Target Region
-                    </label>
-                    <select
-                      name="name-e1e9ef"
-                      id="select-e1e9ef"
-                      className="reg"
-                      value={broadcast.target_value}
-                      onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                      style={{
-                        background: 'transparent',
-                        border: '1px solid var(--border)',
-                        fontSize: '11px',
-                        padding: '4px 8px',
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                    >
-                      <option value="ALL">Select Region...</option>
-                      {regions.map((r) => (
-                        <option key={r.id} value={r.name}>
-                          {r.name}
-                        </option>
-                      ))}
-                    </select>
-                  </>
-                )}
-
-                {broadcast.target_type === 'CONSTITUENCY' && (
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <label htmlFor="select-dac9b9" style={{ display: 'none' }}>
-                      Filter Region
-                    </label>
-                    <select
-                      name="selectedRegionId || ''"
-                      id="select-dac9b9"
-                      className="reg"
-                      value={selectedRegionId || ''}
-                      onChange={(e) => {
-                        const id = parseInt(e.target.value)
-                        setSelectedRegionId(id)
-                        setBroadcast({ ...broadcast, target_value: 'ALL' })
-                      }}
-                      style={{
-                        background: 'transparent',
-                        border: '1px solid var(--border)',
-                        fontSize: '11px',
-                        padding: '4px 8px',
-                        color: 'hsl(var(--on-surface))',
-                        flex: 1,
-                      }}
-                    >
-                      <option value="">Filter by Region...</option>
-                      {regions.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    <label htmlFor="select-81066f" style={{ display: 'none' }}>
-                      Target Constituency
-                    </label>
-                    <select
-                      name="name-81066f"
-                      id="select-81066f"
-                      className="reg"
-                      value={broadcast.target_value}
-                      onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                      style={{
-                        background: 'transparent',
-                        border: '1px solid var(--border)',
-                        fontSize: '11px',
-                        padding: '4px 8px',
-                        color: 'hsl(var(--on-surface))',
-                        flex: 2,
-                      }}
-                      disabled={!selectedRegionId}
-                    >
-                      <option value="ALL">Select Constituency...</option>
-                      {constituencies
-                        .filter((c) => !selectedRegionId || c.region_id === selectedRegionId)
-                        .map((c) => (
-                          <option key={c.id} value={c.name}>
-                            {c.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                )}
-
-                {broadcast.target_type === 'DIASPORA' && (
-                  <>
-                    <label htmlFor="select-ab1a39" style={{ display: 'none' }}>
-                      Target Diaspora Chapter
-                    </label>
-                    <select
-                      name="name-ab1a39"
-                      id="select-ab1a39"
-                      className="reg"
-                      value={broadcast.target_value}
-                      onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                      style={{
-                        background: 'transparent',
-                        border: '1px solid var(--border)',
-                        fontSize: '11px',
-                        padding: '4px 8px',
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                    >
-                      <option value="ALL">All Diaspora Chapters</option>
-                      {diasporaChapters.map((c) => (
-                        <option key={c.id} value={c.name}>
-                          {c.name} ({c.country})
-                        </option>
-                      ))}
-                    </select>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="toolbar">
-              <div className="left">
-                <label htmlFor="select-b728c8" style={{ display: 'none' }}>
-                  Broadcast Priority
-                </label>
-                <select
-                  name="name-b728c8"
-                  id="select-b728c8"
-                  className="reg"
-                  value={broadcast.priority}
-                  onChange={(e) =>
-                    setBroadcast({
-                      ...broadcast,
-                      priority: e.target.value as Broadcast['priority'],
-                    })
-                  }
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    fontSize: '10px',
-                    color: 'hsl(var(--on-surface-muted))',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <option value="Normal">Normal</option>
-                  <option value="High">High</option>
-                  <option value="Urgent">URGENT</option>
-                </select>
-                <div
-                  style={{
-                    width: '1px',
-                    height: '12px',
-                    background: 'hsl(var(--border))',
-                    margin: '0 8px',
-                  }}
-                />
-                <label htmlFor="select-0f0d2a" style={{ display: 'none' }}>
-                  Communication Channel
-                </label>
-                <select
-                  name="name-0f0d2a"
-                  id="select-0f0d2a"
-                  className="reg"
-                  value={broadcast.channel}
-                  onChange={(e) =>
-                    setBroadcast({ ...broadcast, channel: e.target.value as Broadcast['channel'] })
-                  }
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    fontSize: '10px',
-                    color: 'hsl(var(--on-surface-muted))',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <option value="In-app">In-App</option>
-                  <option value="SMS">SMS</option>
-                  <option value="Push">Push</option>
-                  <option value="Email">Email</option>
-                </select>
-              </div>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <button
-                  className="btn btn-dest btn-sm"
-                  disabled={isSending}
-                  onClick={handleSendBroadcast}
-                >
-                  {isSending ? 'Sending...' : 'Deploy Broadcast →'}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Activity Log */}
-          <div className="panel">
-            <div className="ph">
-              <h3>Recent admin activity</h3>
-              <span className="meta">Last 24h</span>
-            </div>
-            <div className="log">
-              {auditLogs.slice(0, 4).map((log) => (
-                <div key={log.id} className="log-row">
-                  <span className="stamp">
-                    {new Date(log.timestamp).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
-                  <div className="body">
-                    <p>
-                      <b>{log.adminName.split(' ')[0]}</b>{' '}
-                      {log.action.toLowerCase().replace('_', ' ')}
-                    </p>
-                    <span>{log.resource}</span>
-                  </div>
-                  <span
-                    className={cn(
-                      'tag',
-                      log.action.includes('CREATE')
-                        ? 'create'
-                        : log.action.includes('DELETE')
-                          ? 'delete'
-                          : 'edit'
-                    )}
-                  >
-                    {log.action.split('_')[0]}
-                  </span>
-                </div>
-              ))}
-              {auditLogs.length === 0 && (
-                <div
-                  style={{
-                    padding: '32px 0',
-                    textAlign: 'center',
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontSize: 12,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  No recent mobilization telemetry.
-                </div>
-              )}
-            </div>
-          </div>
+          <AdminActivityLog auditLogs={auditLogs} />
         </div>
       </div>
     </div>

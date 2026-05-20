@@ -4,6 +4,11 @@ import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 
+// Modular imports
+import { MediaKPIs } from './medialibrary/MediaKPIs'
+import { StorageUsagePanel } from './medialibrary/StorageUsagePanel'
+import { NewCategoryModal } from './medialibrary/NewCategoryModal'
+
 export default function MediaLibrary() {
   const [files, setFiles] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -241,90 +246,7 @@ export default function MediaLibrary() {
       </div>
 
       {/* KPIs */}
-      <div className="kpis" style={{ marginBottom: 8 }}>
-        {[
-          {
-            label: 'Total assets',
-            value: String(files.length),
-            sub: 'In current vault',
-            bar: 'hsl(var(--on-surface))',
-          },
-          {
-            label: 'Active folder',
-            value: activeFolder,
-            sub: 'Context segment',
-            bar: 'hsl(var(--primary))',
-          },
-          {
-            label: 'Storage usage',
-            value: '12%',
-            sub: 'Of 5.0 GB limit',
-            bar: 'hsl(var(--accent))',
-          },
-          {
-            label: 'Sync status',
-            value: 'Online',
-            sub: 'Supabase connected',
-            bar: 'hsl(var(--primary))',
-          },
-        ].map((kpi) => (
-          <div
-            key={kpi.label}
-            className="panel"
-            style={{ padding: '14px 18px 14px 22px', position: 'relative', overflow: 'hidden' }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: 3,
-                background: kpi.bar,
-              }}
-            />
-            <p
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
-                fontSize: 10,
-                color: 'hsl(var(--on-surface-muted))',
-                textTransform: 'uppercase',
-                letterSpacing: '0.07em',
-                margin: '0 0 6px',
-              }}
-            >
-              {kpi.label}
-            </p>
-            <p
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
-                fontSize: 'var(--kpi-num-size)',
-                color: 'hsl(var(--on-surface))',
-                margin: '0 0 4px',
-                lineHeight: 1.1,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {kpi.value}
-            </p>
-            <p
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: 11,
-                color: 'hsl(var(--on-surface-muted))',
-                margin: 0,
-              }}
-            >
-              {kpi.sub}
-            </p>
-          </div>
-        ))}
-      </div>
+      <MediaKPIs filesCount={files.length} activeFolder={activeFolder} />
 
       {/* Mobile folder selector */}
       <div className="mobile-only" style={{ marginBottom: 8 }}>
@@ -667,125 +589,7 @@ export default function MediaLibrary() {
         </div>
 
         {/* Storage panel */}
-        <div
-          style={{
-            background: 'hsl(var(--on-surface))',
-            borderRadius: 6,
-            padding: '24px 28px',
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 24,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 6,
-                background: 'rgba(0,107,63,0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 24, color: 'hsl(var(--primary))' }}
-              >
-                storage
-              </span>
-            </div>
-            <div>
-              <h4
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 14,
-                  color: '#fff',
-                  marginBottom: 2,
-                }}
-              >
-                Cloud storage intelligence
-              </h4>
-              <p
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontSize: 12,
-                  color: 'rgba(255,255,255,0.5)',
-                }}
-              >
-                Real-time usage monitoring for Supabase storage buckets.
-              </p>
-            </div>
-          </div>
-          <div style={{ flex: 1, minWidth: 220, maxWidth: 400 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 11,
-                  color: 'rgba(255,255,255,0.4)',
-                }}
-              >
-                Capacity utilization
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 11,
-                  color: 'hsl(var(--primary))',
-                }}
-              >
-                12%
-              </span>
-            </div>
-            <div
-              style={{
-                height: 6,
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: 99,
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  height: '100%',
-                  width: '12%',
-                  background: 'hsl(var(--primary))',
-                  borderRadius: 99,
-                }}
-              />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
-              <span
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
-                  fontSize: 10,
-                  color: 'rgba(255,255,255,0.25)',
-                }}
-              >
-                0.6 GB consumed
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
-                  fontSize: 10,
-                  color: 'rgba(255,255,255,0.25)',
-                }}
-              >
-                5.0 GB limit
-              </span>
-            </div>
-          </div>
-        </div>
+        <StorageUsagePanel />
       </div>
 
       <DeleteConfirmationModal
@@ -801,172 +605,15 @@ export default function MediaLibrary() {
 
       {/* New Category Modal */}
       {isAddFolderOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15,19,16,0.4)',
-            backdropFilter: 'blur(8px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-          }}
-        >
-          <div
-            className="panel"
-            style={{
-              width: '100%',
-              maxWidth: 420,
-              padding: '24px 28px',
-              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
-              background: '#fff',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 8,
-              position: 'relative',
-              animation: 'fadeIn 0.2s ease-out',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 16,
-                  color: 'hsl(var(--on-surface))',
-                  margin: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--primary))' }}>
-                  create_new_folder
-                </span>
-                Create new category
-              </h3>
-              <button
-                onClick={() => setIsAddFolderOpen(false)}
-                className="ico"
-                style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4 }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                  close
-                </span>
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateFolder} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div>
-                <label
-                  htmlFor="folder-label"
-                  style={{
-                    display: 'block',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 11,
-                    color: 'hsl(var(--on-surface-muted))',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: 6,
-                  }}
-                >
-                  Category Display Name
-                </label>
-                <input
-                  id="folder-label"
-                  type="text"
-                  placeholder="e.g. Campaign Posters"
-                  value={newFolderLabel}
-                  onChange={(e) => handleLabelChange(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    height: 38,
-                    padding: '0 12px',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 4,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
-                    fontSize: 13,
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    background: 'hsl(var(--container-low))',
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="folder-name"
-                  style={{
-                    display: 'block',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 11,
-                    color: 'hsl(var(--on-surface-muted))',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: 6,
-                  }}
-                >
-                  System Folder Path (Slug)
-                </label>
-                <input
-                  id="folder-name"
-                  type="text"
-                  placeholder="e.g. campaign-posters"
-                  value={newFolderName}
-                  onChange={(e) => setNewFolderName(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-                  required
-                  style={{
-                    width: '100%',
-                    height: 38,
-                    padding: '0 12px',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 4,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
-                    fontSize: 13,
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    background: 'hsl(var(--container-low))',
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
-                <button
-                  type="button"
-                  onClick={() => setIsAddFolderOpen(false)}
-                  className="btn btn-outline btn-sm"
-                  disabled={isSavingFolder}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-sm"
-                  disabled={isSavingFolder}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                  }}
-                >
-                  {isSavingFolder && (
-                    <span className="material-symbols-outlined" style={{ fontSize: 14, animation: 'spin 1s linear infinite' }}>
-                      sync
-                    </span>
-                  )}
-                  {isSavingFolder ? 'Creating…' : 'Create Category'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <NewCategoryModal
+          newFolderLabel={newFolderLabel}
+          newFolderName={newFolderName}
+          isSavingFolder={isSavingFolder}
+          handleCreateFolder={handleCreateFolder}
+          handleLabelChange={handleLabelChange}
+          setNewFolderName={setNewFolderName}
+          onClose={() => setIsAddFolderOpen(false)}
+        />
       )}
     </div>
   )

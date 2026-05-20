@@ -29,10 +29,12 @@
       "Bash(sed -n '1974,1986p' src/pages/admin/GroundGameCommand.tsx)",
       "Bash(sed -n '995,1045p' src/pages/admin/authors/index.tsx)",
       "Bash(sed -n '1228,1245p' src/pages/admin/authors/index.tsx)",
-      "Bash(awk 'NR>=140 && NR<=160')"
+      "Bash(awk 'NR>=140 && NR<=160')",
+      "Bash(ls src/pages/admin/administrators/)",
+      "Bash(ls src/pages/admin/members/)",
+      "Bash(ls src/pages/admin/chapters/)",
+      "Bash(dir \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\admin\" /b)"
     ],
-    "additionalDirectories": [
-      "c:\\MAMP\\htdocs\\The-Base\\.husky"
-    ]
+    "additionalDirectories": ["c:\\MAMP\\htdocs\\The-Base\\.husky"]
   }
 }
