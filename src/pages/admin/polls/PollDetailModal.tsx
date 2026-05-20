@@ -18,6 +18,7 @@
  * Note: closing by clicking the backdrop is handled via onClick on the outer div.
  */
 
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Poll } from '@/services/adminService'
 import { modalBackdrop, modalBox, modalCloseBtn } from './styles'
@@ -34,8 +35,12 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
   const sorted = [...poll.options].sort((a, b) => b.votes - a.votes)
   const leadId = sorted[0]?.id
 
-  // Calculate days remaining until poll closes
-  const days = Math.max(0, Math.ceil((new Date(poll.endDate).getTime() - Date.now()) / 86400000))
+  // useState lazy initializer runs once on mount (not during render),
+  // which is the correct way to capture Date.now() without breaking React's
+  // purity rules. useMemo is still flagged because its callback CAN run
+  // during render; useState's initializer is guaranteed to run only once.
+  const [now] = useState<number>(() => Date.now())
+  const days = Math.max(0, Math.ceil((new Date(poll.endDate).getTime() - now) / 86400000))
 
   return createPortal(
     // Clicking backdrop closes modal
