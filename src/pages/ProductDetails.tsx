@@ -13,6 +13,8 @@ import { ImageGallery } from './product-details/components/ImageGallery'
 import { ProductInfo } from './product-details/components/ProductInfo'
 import { Reviews } from './product-details/components/Reviews'
 import { RelatedProducts } from './product-details/components/RelatedProducts'
+import { TechnicalDetails } from './product-details/components/TechnicalDetails'
+import { SizeGuideModal } from './product-details/components/SizeGuideModal'
 
 export default function ProductDetails() {
   const { slug } = useParams()
@@ -29,10 +31,12 @@ export default function ProductDetails() {
   const [showSizeGuide, setShowSizeGuide] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const { isInWishlist, addToWishlist, removeFromWishlist, addToCart, wishlist, cart } = useStore()
-  const [availability, setAvailability] = useState<{ available: boolean; message: string } | null>(null)
+  const [availability, setAvailability] = useState<{ available: boolean; message: string } | null>(
+    null
+  )
   const [checkingAvailability, setCheckingAvailability] = useState(false)
   const [selectedRegion, setSelectedRegion] = useState('Greater Accra')
-  
+
   const wishlistCount = wishlist.length
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0)
 
@@ -52,7 +56,8 @@ export default function ProductDetails() {
             if (data.sizes && data.sizes.length > 0) setSelectedSize(data.sizes[0])
             if (data.colors && data.colors.length > 0) setSelectedColor(data.colors[0])
             if (data.image) setActiveImage(data.image)
-            else if (data.gallery_images && data.gallery_images.length > 0) setActiveImage(data.gallery_images[0].url)
+            else if (data.gallery_images && data.gallery_images.length > 0)
+              setActiveImage(data.gallery_images[0].url)
           }
         }
       } catch (err) {
@@ -62,21 +67,23 @@ export default function ProductDetails() {
       }
     }
     fetchProduct()
-    return () => { isMounted = false }
+    return () => {
+      isMounted = false
+    }
   }, [slug])
 
   const handleAddToCart = () => {
     if (!product) return
-    
+
     addToCart({
       ...product,
       quantity,
       selectedSize,
       selectedColor,
       image: product.image || undefined,
-      customText: customizationText || undefined
+      customText: customizationText || undefined,
     })
-    
+
     toast.success(`${product.name} added to your bag`)
   }
 
@@ -116,13 +123,12 @@ export default function ProductDetails() {
   if (!product) {
     return (
       <div className="bg-off-white min-h-screen">
-        <SEO 
-          title="Product Not Found"
-          noindex
-        />
+        <SEO title="Product Not Found" noindex />
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 text-center">
           <h2 className="text-2xl font-bold text-stone-900 mb-4">Product not found</h2>
-          <Link to="/store" className="text-brand-green font-bold hover:underline">Back to store</Link>
+          <Link to="/store" className="text-brand-green font-bold hover:underline">
+            Back to store
+          </Link>
         </div>
       </div>
     )
@@ -132,27 +138,30 @@ export default function ProductDetails() {
   const isWishlisted = product ? isInWishlist(product.id) : false
 
   const productSchema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": product.name,
-    "image": product.image,
-    "description": product.description,
-    "brand": {
-      "@type": "Brand",
-      "name": "The Base Movement"
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.image,
+    description: product.description,
+    brand: {
+      '@type': 'Brand',
+      name: 'The Base Movement',
     },
-    "offers": {
-      "@type": "Offer",
-      "url": `https://thebasemovement.com/store/product/${product.slug}`,
-      "priceCurrency": "GHS",
-      "price": product.price.replace(/[^0-9.]/g, ''),
-      "availability": product.status === 'In Stock' ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
-    }
+    offers: {
+      '@type': 'Offer',
+      url: `https://thebasemovement.com/store/product/${product.slug}`,
+      priceCurrency: 'GHS',
+      price: product.price.replace(/[^0-9.]/g, ''),
+      availability:
+        product.status === 'In Stock'
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+    },
   }
 
   return (
     <div className="bg-off-white min-h-screen">
-      <SEO 
+      <SEO
         title={product.name}
         description={product.description}
         ogImage={product.image || undefined}
@@ -165,7 +174,9 @@ export default function ProductDetails() {
             to={storeUrl}
             className="flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors text-xs font-bold font-meta shrink-0"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_back</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              arrow_back
+            </span>
             Back to Store
           </Link>
           <div className="flex items-center gap-3">
@@ -173,8 +184,15 @@ export default function ProductDetails() {
               to={isDashboard ? '/dashboard/store/wishlist' : '/store/wishlist'}
               className="relative group flex items-center gap-2 px-3 py-2 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
             >
-              <span className="material-symbols-outlined text-stone-500 group-hover:text-brand-red transition-all" style={{ fontSize: 16 }}>favorite</span>
-              <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-red hidden sm:inline">Wishlist</span>
+              <span
+                className="material-symbols-outlined text-stone-500 group-hover:text-brand-red transition-all"
+                style={{ fontSize: 16 }}
+              >
+                favorite
+              </span>
+              <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-red hidden sm:inline">
+                Wishlist
+              </span>
               {wishlistCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                   {wishlistCount}
@@ -185,8 +203,15 @@ export default function ProductDetails() {
               to={isDashboard ? '/dashboard/store/cart' : '/store/cart'}
               className="relative group flex items-center gap-2 px-3 py-2 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
             >
-              <span className="material-symbols-outlined text-stone-500 group-hover:text-brand-green transition-all" style={{ fontSize: 16 }}>shopping_bag</span>
-              <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-green hidden sm:inline">Bag</span>
+              <span
+                className="material-symbols-outlined text-stone-500 group-hover:text-brand-green transition-all"
+                style={{ fontSize: 16 }}
+              >
+                shopping_bag
+              </span>
+              <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-green hidden sm:inline">
+                Bag
+              </span>
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                   {cartCount}
@@ -198,7 +223,7 @@ export default function ProductDetails() {
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
           {/* Image Gallery */}
-          <ImageGallery 
+          <ImageGallery
             product={product}
             activeImage={activeImage}
             setActiveImage={setActiveImage}
@@ -206,7 +231,7 @@ export default function ProductDetails() {
           />
 
           {/* Product Info */}
-          <ProductInfo 
+          <ProductInfo
             product={product}
             isComingSoon={isComingSoon}
             isWishlisted={isWishlisted}
@@ -237,111 +262,20 @@ export default function ProductDetails() {
 
         {/* Specifications & Details */}
         {product.specifications && Object.keys(product.specifications).length > 0 && (
-          <section className="mt-16 md:mt-24 grid md:grid-cols-2 gap-8 md:gap-16 items-start">
-            <div className="space-y-8">
-              <h2 className="font-h2 text-h3 text-stone-900">Technical details</h2>
-              <div className="grid gap-4">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="flex justify-between py-4 border-b border-stone-100">
-                    <span className="text-micro font-bold text-stone-400 tracking-tight">{key}</span>
-                    <span className="text-xs font-bold text-stone-900">{value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="bg-[var(--brand-black)] p-12 text-white relative overflow-hidden">
-              <h3 className="font-h3 text-lg tracking-tight mb-6 relative z-10">Movement quality standard</h3>
-              <p className="text-xs text-stone-400 leading-relaxed mb-8 relative z-10">
-                Every item in the movement catalog undergoes strict quality control. We ensure that all materials are ethically sourced and designed to withstand the rigors of field mobilization.
-              </p>
-              <ul className="space-y-4 relative z-10">
-                <li className="flex items-center gap-3 text-micro font-bold tracking-tight">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Durable field-ready fabric
-                </li>
-                <li className="flex items-center gap-3 text-micro font-bold tracking-tight">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Authentic movement branding
-                </li>
-                <li className="flex items-center gap-3 text-micro font-bold tracking-tight">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Supporting local production
-                </li>
-              </ul>
-              <span className="material-symbols-outlined absolute -bottom-10 -right-10 -rotate-12 text-white/5" style={{ fontSize: 192 }}>shopping_bag</span>
-            </div>
-          </section>
+          <TechnicalDetails specifications={product.specifications} />
         )}
 
         {/* Recommended Products */}
         <RelatedProducts />
 
         {/* Size Guide Modal */}
-        {showSizeGuide && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-            <div 
-              className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-300" 
-              onClick={() => setShowSizeGuide(false)}
-            />
-            <div className="relative bg-white w-full max-w-lg shadow-2xl rounded-none overflow-hidden animate-in zoom-in-95 duration-300">
-              <div className="bg-brand-green p-6 text-white flex justify-between items-center">
-                <div>
-                  <h3 className="font-h3 text-lg tracking-tight">Apparel size guide</h3>
-                  <p className="text-micro opacity-80 tracking-tight">All measurements in inches</p>
-                </div>
-                <button 
-                  onClick={() => setShowSizeGuide(false)}
-                  className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors"
-                >
-                  <span className="material-symbols-outlined">close</span>
-                </button>
-              </div>
-              
-              <div className="p-8">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b-2 border-stone-100">
-                        <th className="py-4 text-micro font-bold text-stone-400 tracking-tight">Size</th>
-                        <th className="py-4 text-micro font-bold text-stone-400 tracking-tight text-center">Chest</th>
-                        <th className="py-4 text-micro font-bold text-stone-400 tracking-tight text-center">Length</th>
-                        <th className="py-4 text-micro font-bold text-stone-400 tracking-tight text-center">Sleeve</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-50">
-                      {[
-                        { size: 'S', chest: '36-38', length: '28', sleeve: '8.5' },
-                        { size: 'M', chest: '38-40', length: '29', sleeve: '9' },
-                        { size: 'L', chest: '42-44', length: '30', sleeve: '9.5' },
-                        { size: 'XL', chest: '46-48', length: '31', sleeve: '10' },
-                        { size: 'XXL', chest: '50-52', length: '32', sleeve: '10.5' }
-                      ].map((row) => (
-                        <tr key={row.size} className="hover:bg-stone-50 transition-colors">
-                          <td className="py-4 font-bold text-stone-900 text-sm">{row.size}</td>
-                          <td className="py-4 text-stone-600 text-sm text-center">{row.chest}</td>
-                          <td className="py-4 text-stone-600 text-sm text-center">{row.length}</td>
-                          <td className="py-4 text-stone-600 text-sm text-center">{row.sleeve}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="mt-8 text-sm text-stone-400 leading-relaxed italic">
-                  * Please note that these are approximate measurements. For a more relaxed fit, we recommend ordering one size up.
-                </p>
-                <button
-                  onClick={() => setShowSizeGuide(false)}
-                  className="w-full mt-8 bg-stone-900 hover:bg-stone-800 text-white text-micro font-bold tracking-tight rounded-none h-12 border-none cursor-pointer transition-colors"
-                >
-                  Close guide
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {showSizeGuide && <SizeGuideModal onClose={() => setShowSizeGuide(false)} />}
 
         {/* Share Modal */}
         {product && (
-          <ShareModal 
-            isOpen={isShareModalOpen} 
-            onClose={() => setIsShareModalOpen(false)} 
+          <ShareModal
+            isOpen={isShareModalOpen}
+            onClose={() => setIsShareModalOpen(false)}
             title={`Check out the ${product.name} at The Base Movement Store!`}
             url={typeof window !== 'undefined' ? window.location.href : ''}
           />

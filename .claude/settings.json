@@ -33,7 +33,9 @@
       "Bash(ls src/pages/admin/administrators/)",
       "Bash(ls src/pages/admin/members/)",
       "Bash(ls src/pages/admin/chapters/)",
-      "Bash(dir \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\admin\" /b)"
+      "Bash(dir \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\admin\" /b)",
+      "Bash(ls \"c:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\\" -Name | Where-Object { \\(Get-Item \"c:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\$_\"\\).PSIsContainer })",
+      "Read(//c/MAMP/htdocs/The-Base/src/**)"
     ],
     "additionalDirectories": ["c:\\MAMP\\htdocs\\The-Base\\.husky"]
   }

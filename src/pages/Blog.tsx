@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { useLocation } from 'react-router-dom'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
 import { toast } from 'sonner'
+import { DashboardPageHeader } from './blog/DashboardPageHeader'
+import { CategoryFilterBar } from './blog/CategoryFilterBar'
+import { DashboardFeaturedPost } from './blog/DashboardFeaturedPost'
+import { DashboardSidebar } from './blog/DashboardSidebar'
+import { Pagination } from './blog/Pagination'
+import { PublicHero } from './blog/PublicHero'
+import { PublicFeaturedPost } from './blog/PublicFeaturedPost'
+import { PublicSidebar } from './blog/PublicSidebar'
+import { PublicCTA } from './blog/PublicCTA'
 
 export default function Blog() {
   const { settings } = useBranding()
@@ -79,84 +87,14 @@ export default function Blog() {
   if (isDashboard) {
     return (
       <div className="main">
-        {/* Page title */}
-        <div style={{ marginBottom: 20 }}>
-          <div
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: 10,
-              color: 'hsl(var(--on-surface-muted))',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              marginBottom: 6,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: 'hsl(var(--primary))',
-                display: 'inline-block',
-                animation: 'pulse 1.4s infinite',
-              }}
-            />
-            Movement articles
-          </div>
-          <h2
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
-              fontSize: 20,
-              color: 'hsl(var(--on-surface))',
-              margin: 0,
-            }}
-          >
-            Updates &amp; Blog
-          </h2>
-        </div>
+        <DashboardPageHeader />
 
-        {/* Category filter — scrollable strip on mobile, wrap on desktop */}
-        <div
-          style={{
-            marginBottom: 24,
-            marginLeft: -16,
-            marginRight: -16,
-            paddingLeft: 16,
-            paddingRight: 16,
-            overflowX: 'auto',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              gap: 8,
-              flexWrap: 'nowrap',
-              width: 'max-content',
-              paddingBottom: 4,
-            }}
-          >
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleCategoryChange(cat)}
-                className={
-                  activeCategory === cat ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
-                }
-                style={{ justifyContent: 'center', flexShrink: 0 }}
-              >
-                {cat}
-                <span style={{ marginLeft: 6, fontWeight: 700, opacity: 0.6, fontSize: 10 }}>
-                  {cat === 'All' ? posts.length : posts.filter((p) => p.category === cat).length}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <CategoryFilterBar
+          categories={categories}
+          activeCategory={activeCategory}
+          posts={posts}
+          onCategoryChange={handleCategoryChange}
+        />
 
         {loading ? (
           <div
@@ -219,118 +157,8 @@ export default function Blog() {
           </div>
         ) : (
           <div className="main-sidebar" style={{ alignItems: 'start' }}>
-            {/* Posts column */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {featured && (
-                <div className="panel" style={{ overflow: 'hidden' }}>
-                  {featured.imageUrl && (
-                    <div style={{ height: 200, overflow: 'hidden' }}>
-                      <img
-                        src={featured.imageUrl}
-                        alt={featured.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        decoding="async"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-                  <div style={{ padding: 20 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      {featured.category && (
-                        <span className="pill pill-ok" style={{ fontSize: 9 }}>
-                          {featured.category}
-                        </span>
-                      )}
-                      <span
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
-                          fontSize: 10,
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        {featured.publishedAt
-                          ? new Date(featured.publishedAt).toLocaleDateString('en-GB', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })
-                          : ''}
-                      </span>
-                    </div>
-                    <Link to={`${baseUrl}/${featured.slug}`} style={{ textDecoration: 'none' }}>
-                      <h2
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
-                          fontSize: 18,
-                          color: 'hsl(var(--on-surface))',
-                          margin: '0 0 8px',
-                          lineHeight: 1.3,
-                          letterSpacing: '-0.01em',
-                        }}
-                      >
-                        {featured.title}
-                      </h2>
-                    </Link>
-                    <p
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 12.5,
-                        color: 'hsl(var(--on-surface-muted))',
-                        lineHeight: 1.55,
-                        margin: '0 0 14px',
-                      }}
-                    >
-                      {featured.excerpt}
-                    </p>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap',
-                        gap: 8,
-                        paddingTop: 12,
-                        borderTop: '1px solid hsl(var(--border))',
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
-                          fontSize: 11,
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        {featured.authorName?.toUpperCase() === 'ADMIN'
-                          ? 'The Base Editorial'
-                          : featured.authorName}{' '}
-                        · {featured.readTime}
-                      </span>
-                      <Link
-                        to={`${baseUrl}/${featured.slug}`}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
-                          fontSize: 11,
-                          color: 'hsl(var(--primary))',
-                          textDecoration: 'none',
-                        }}
-                      >
-                        Read article
-                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                          arrow_forward
-                        </span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {featured && <DashboardFeaturedPost post={featured} baseUrl={baseUrl} />}
 
               {rest.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
@@ -340,172 +168,32 @@ export default function Blog() {
                 </div>
               )}
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 4,
-                    paddingTop: 8,
-                  }}
-                >
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="btn btn-outline btn-sm"
-                    style={{ justifyContent: 'center', opacity: currentPage === 1 ? 0.4 : 1 }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                      chevron_left
-                    </span>
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={
-                        currentPage === page ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
-                      }
-                      style={{ minWidth: 34, justifyContent: 'center' }}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="btn btn-outline btn-sm"
-                    style={{
-                      justifyContent: 'center',
-                      opacity: currentPage === totalPages ? 0.4 : 1,
-                    }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                      chevron_right
-                    </span>
-                  </button>
-                </div>
-              )}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
 
-            {/* Sidebar */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* Categories */}
-              <div className="panel">
-                <div className="ph">
-                  <span>Categories</span>
-                </div>
-                <div style={{ padding: '0 16px 12px' }}>
-                  {categories.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => handleCategoryChange(cat)}
-                      style={{
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '10px 12px',
-                        borderRadius: 4,
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 12,
-                        marginBottom: 2,
-                        background: activeCategory === cat ? 'rgba(0,107,63,0.07)' : 'none',
-                        color:
-                          activeCategory === cat ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
-                      }}
-                    >
-                      <span>{cat === 'All' ? 'All Articles' : cat}</span>
-                      <span style={{ fontWeight: 800, fontSize: 10, opacity: 0.5 }}>
-                        {cat === 'All'
-                          ? posts.length
-                          : posts.filter((p) => p.category === cat).length}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Newsletter */}
-              <div
-                style={{
-                  background: '#181d19',
-                  borderRadius: 6,
-                  padding: 20,
-                  borderLeft: '4px solid hsl(var(--accent))',
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 14,
-                    color: '#fff',
-                    marginBottom: 6,
-                  }}
-                >
-                  The Base Weekly
-                </div>
-                <p
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 12,
-                    color: 'rgba(255,255,255,0.5)',
-                    lineHeight: 1.6,
-                    margin: '0 0 14px',
-                  }}
-                >
-                  Get policy briefs and movement news delivered to your inbox weekly.
-                </p>
-                <input
-                  aria-label="Email address"
-                  name="name-0af8a4"
-                  id="input-0af8a4"
-                  type="email"
-                  placeholder="Email address"
-                  value={sidebarEmail}
-                  onChange={(e) => setSidebarEmail(e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: 38,
-                    padding: '0 12px',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 4,
-                    color: '#fff',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 12,
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    marginBottom: 8,
-                  }}
-                />
-                <button
-                  className="btn btn-primary"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                  disabled={sidebarSubmitting}
-                  onClick={() =>
-                    handleNewsletter(sidebarEmail, setSidebarEmail, setSidebarSubmitting)
-                  }
-                >
-                  {sidebarSubmitting ? 'Subscribing…' : 'Subscribe'}
-                </button>
-              </div>
-            </div>
+            <DashboardSidebar
+              categories={categories}
+              activeCategory={activeCategory}
+              posts={posts}
+              onCategoryChange={handleCategoryChange}
+              sidebarEmail={sidebarEmail}
+              onSidebarEmailChange={setSidebarEmail}
+              sidebarSubmitting={sidebarSubmitting}
+              onSidebarSubscribe={() =>
+                handleNewsletter(sidebarEmail, setSidebarEmail, setSidebarSubmitting)
+              }
+            />
           </div>
         )}
       </div>
     )
   }
 
-  // ── Public layout (unchanged) ─────────────────────────────────────────────
+  // ── Public layout ─────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-stone-50/50 font-meta pb-20">
       <SEO
@@ -513,28 +201,7 @@ export default function Blog() {
         description="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement."
         canonical="/blog"
       />
-      <header className="bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
-          <Breadcrumbs />
-          <div className="mt-6">
-            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-              <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 40 }}>
-                newspaper
-              </span>
-              Updates & Articles
-            </h1>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
-            <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
-              Perspectives from within the movement on governance, youth empowerment, diaspora
-              engagement and the future of Ghana.
-            </p>
-          </div>
-        </div>
-      </header>
+      <PublicHero />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
         {loading ? (
@@ -558,75 +225,7 @@ export default function Blog() {
         ) : (
           <>
             {featured && (
-              <section className="mb-16">
-                <p className="font-meta text-xs text-warm-gold tracking-tight mb-6">Featured</p>
-                <div className="grid md:grid-cols-2 gap-0 bg-white border border-slate-200 shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
-                  <div className="h-64 md:h-auto overflow-hidden bg-stone-100">
-                    {featured.imageUrl ? (
-                      <img
-                        src={featured.imageUrl}
-                        alt={featured.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        decoding="async"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
-                        <img
-                          src={settings.logo_url}
-                          alt="The Base"
-                          className="w-16 h-16 opacity-20 mb-4 grayscale"
-                        />
-                        <span className="text-micro font-bold text-white/20 tracking-tight">
-                          The Base Editorial
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6 md:p-10 flex flex-col justify-center">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="px-2.5 py-1 rounded-sm text-micro font-bold tracking-tight border bg-stone-50 text-stone-500 border-stone-100">
-                        {featured.category}
-                      </span>
-                      <span className="mx-2 text-stone-300 opacity-50">|</span>
-                      <span className="text-xs text-slate-400 font-meta font-medium">
-                        {featured.publishedAt
-                          ? new Date(featured.publishedAt).toLocaleDateString('en-GB', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })
-                          : ''}
-                      </span>
-                    </div>
-                    <Link to={`${baseUrl}/${featured.slug}`}>
-                      <h2 className="text-xl md:text-2xl font-bold text-charcoal-dark tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
-                        {featured.title}
-                      </h2>
-                    </Link>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-6">
-                      {featured.excerpt}
-                    </p>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="text-micro font-medium text-stone-400 tracking-tight">
-                        {featured.authorName?.toUpperCase() === 'ADMIN'
-                          ? 'The Base Editorial'
-                          : featured.authorName}{' '}
-                        <span className="mx-2 opacity-50">|</span> {featured.readTime}
-                      </div>
-                      <Link
-                        to={`${baseUrl}/${featured.slug}`}
-                        className="flex items-center gap-2 text-brand-green font-bold text-xs hover:underline"
-                      >
-                        Read article{' '}
-                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                          arrow_forward
-                        </span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </section>
+              <PublicFeaturedPost post={featured} baseUrl={baseUrl} logoUrl={settings.logo_url} />
             )}
 
             <section>
@@ -645,86 +244,25 @@ export default function Blog() {
                     </>
                   )}
                 </div>
-                <aside className="lg:w-1/3 space-y-12 lg:sticky lg:top-8 lg:self-start">
-                  <div>
-                    <h2 className="text-stone-900 font-bold tracking-tight mb-6">Categories</h2>
-                    <div className="bg-white border border-slate-200 p-8 space-y-2">
-                      {categories.map((cat) => (
-                        <button
-                          key={cat}
-                          onClick={() => setActiveCategory(cat)}
-                          className={`w-full flex items-center justify-between p-3 text-xs font-bold tracking-tight transition-all group ${activeCategory === cat ? 'bg-brand-green/10 text-brand-green' : 'text-slate-600 hover:bg-slate-50 hover:text-brand-green'}`}
-                        >
-                          {cat === 'All' ? 'All Articles' : cat}
-                          <span
-                            className={`text-micro font-meta transition-colors ${activeCategory === cat ? 'text-brand-green' : 'text-slate-300 group-hover:text-brand-green'}`}
-                          >
-                            {cat === 'All'
-                              ? posts.length
-                              : posts.filter((p) => p.category === cat).length}{' '}
-                            Posts
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
-                    <h4 className="font-meta font-bold text-lg tracking-tight mb-4">
-                      The Base Weekly
-                    </h4>
-                    <p className="text-xs text-slate-400 leading-relaxed mb-6">
-                      Get the movement's policy briefs and news delivered directly to your inbox
-                      every week.
-                    </p>
-                    <div className="space-y-3">
-                      <input
-                        aria-label="Email Address"
-                        name="name-b70be6"
-                        id="input-b70be6"
-                        type="email"
-                        placeholder="Email Address"
-                        value={publicEmail}
-                        onChange={(e) => setPublicEmail(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm"
-                      />
-                      <button
-                        className="w-full h-12 bg-primary text-white font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity"
-                        disabled={publicSubmitting}
-                        onClick={() =>
-                          handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)
-                        }
-                      >
-                        {publicSubmitting ? 'Subscribing…' : 'Subscribe'}
-                      </button>
-                    </div>
-                  </div>
-                </aside>
+
+                <PublicSidebar
+                  categories={categories}
+                  activeCategory={activeCategory}
+                  posts={posts}
+                  onCategoryChange={setActiveCategory}
+                  publicEmail={publicEmail}
+                  onPublicEmailChange={setPublicEmail}
+                  publicSubmitting={publicSubmitting}
+                  onPublicSubscribe={() =>
+                    handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)
+                  }
+                />
               </div>
             </section>
           </>
         )}
 
-        <section className="mt-20 py-12 px-6 md:py-16 md:px-12 bg-charcoal-dark text-white text-center border-l-4 border-brand-green">
-          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">
-            Join the conversation
-          </p>
-          <h2 className="font-meta font-bold text-3xl tracking-tight mb-4">
-            Become a member. Shape the narrative.
-          </h2>
-          <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
-            Registered members get early access to analysis, policy briefs and updates directly from
-            our research desk.
-          </p>
-          <Link
-            to="/register"
-            className="h-14 px-10 inline-flex items-center gap-2 bg-accent text-white font-bold text-sm hover:opacity-90 transition-opacity"
-          >
-            Join The Base{' '}
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-              arrow_forward
-            </span>
-          </Link>
-        </section>
+        <PublicCTA />
       </div>
     </div>
   )

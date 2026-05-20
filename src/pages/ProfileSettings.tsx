@@ -8,6 +8,8 @@ import { VerificationStatusPanel } from './settings/VerificationStatusPanel'
 import { VoterRegistrationPanel } from './settings/VoterRegistrationPanel'
 import { PersonalInfoForm } from './settings/PersonalInfoForm'
 import { PerformancePrefsPanel } from './settings/PerformancePrefsPanel'
+import { ProfileSettingsHeader } from './settings/ProfileSettingsHeader'
+import { DangerZonePanel } from './settings/DangerZonePanel'
 
 interface FormState {
   fullName: string
@@ -230,44 +232,7 @@ export default function ProfileSettings() {
 
   return (
     <div className="profile-page">
-      {/* Page header */}
-      <div style={{ marginBottom: 24 }}>
-        <div
-          style={{
-            fontSize: 10,
-            color: 'hsl(var(--on-surface-muted))',
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
-            letterSpacing: '.05em',
-            textTransform: 'uppercase',
-          }}
-        >
-          Account · Settings
-        </div>
-        <h2
-          style={{
-            margin: '4px 0 0',
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 900,
-            fontSize: 26,
-            letterSpacing: '-.02em',
-            color: 'hsl(var(--on-surface))',
-          }}
-        >
-          Profile Settings
-        </h2>
-        <p
-          style={{
-            color: 'hsl(var(--on-surface-muted))',
-            fontSize: 12.5,
-            marginTop: 4,
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
-          }}
-        >
-          Manage your identity, download your card and update your details.
-        </p>
-      </div>
+      <ProfileSettingsHeader />
 
       <div className="profile-cols">
         {/* ── Left column ───────────────────── */}
@@ -329,63 +294,7 @@ export default function ProfileSettings() {
             )}
           </div>
 
-          {/* Danger zone */}
-          <div
-            style={{
-              marginTop: 8,
-              padding: '20px 22px',
-              border: '2px dashed hsl(var(--destructive) / 25%)',
-              borderRadius: 6,
-              background: 'hsl(var(--destructive) / 3%)',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 16,
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    color: 'hsl(var(--destructive))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 12,
-                    marginBottom: 6,
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                    warning
-                  </span>
-                  Danger zone
-                </div>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 12,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    maxWidth: 420,
-                    lineHeight: 1.55,
-                  }}
-                >
-                  Deactivating your account will permanently delete all your contribution history
-                  and movement records. This action cannot be undone.
-                </p>
-              </div>
-              <button type="button" className="btn btn-dest btn-sm">
-                Deactivate membership
-              </button>
-            </div>
-          </div>
+          <DangerZonePanel />
         </form>
       </div>
     </div>
