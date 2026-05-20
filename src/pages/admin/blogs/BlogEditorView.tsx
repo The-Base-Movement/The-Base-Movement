@@ -31,7 +31,7 @@ interface BlogEditorViewProps {
   setShowMediaPanel: React.Dispatch<React.SetStateAction<boolean>>
   showIntelPanel: boolean
   setShowIntelPanel: React.Dispatch<React.SetStateAction<boolean>>
-  editorRef: React.MutableRefObject<{ getContent: () => string } | null>
+  editorRef: React.RefObject<{ getContent: () => string } | null>
   mediaFiles: string[]
   mediaFolders: { id: string; label: string }[]
   activeMediaFolder: string
@@ -186,7 +186,7 @@ export function BlogEditorView({
             setMediaSearch={setMediaSearch}
             isMediaLoading={isMediaLoading}
             onRefresh={onRefreshMedia}
-            selectedImageUrl={formData.imageUrl}
+            selectedImageUrl={formData.imageUrl ?? ''}
             onSetCover={(url) => setFormData({ ...formData, imageUrl: url })}
             onInsert={handleInsert}
             onUpload={onUpload}
