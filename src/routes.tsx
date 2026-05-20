@@ -33,6 +33,8 @@ const VerifyID = lazy(() => import('./pages/VerifyID'))
 const Press = lazy(() => import('./pages/Press'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const RegistrationFormPreview = lazy(() => import('./pages/RegistrationFormPreview'))
+const PreviewOfficer = lazy(() => import('./pages/PreviewOfficer'))
+const Officers = lazy(() => import('./pages/Officers'))
 
 // Dashboard components
 const ChapterHub = lazy(() => import('./pages/ChapterHub'))
@@ -58,6 +60,7 @@ const AdminLeadershipHub = lazy(() => import('./pages/admin/LeadershipHub'))
 const AdminDonations = lazy(() => import('./pages/admin/DonationVerification'))
 const AdminSpendingLedger = lazy(() => import('./pages/admin/SpendingLedger'))
 const AdminAdministrators = lazy(() => import('./pages/admin/Administrators'))
+const AdminPartyOfficials = lazy(() => import('./pages/admin/PartyOfficials'))
 const AdminBroadcasts = lazy(() => import('./pages/admin/Broadcasts'))
 const AdminNewBroadcast = lazy(() => import('./pages/admin/NewBroadcast'))
 const AdminOrders = lazy(() => import('./pages/admin/Orders'))
@@ -175,6 +178,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/broadcasts', element: <AdminBroadcasts /> },
       { path: '/admin/broadcasts/new', element: <AdminNewBroadcast /> },
       { path: '/admin/administrators', element: <AdminAdministrators /> },
+      { path: '/admin/party-officials', element: <AdminPartyOfficials /> },
       { path: '/admin/orders', element: <AdminOrders /> },
       { path: '/admin/roadmap', element: <AdminRoadmap /> },
       { path: '/admin/trash', element: <AdminTrash /> },
@@ -205,6 +209,8 @@ export const routes: RouteObject[] = [
       { path: '/press', element: <Press /> },
       { path: '/verify/:id', element: <VerifyID /> },
       { path: '/admin-login', element: <AdminLogin /> },
+      { path: '/preview-officer', element: <PreviewOfficer /> },
+      { path: '/officers', element: <Officers /> },
       { path: '*', element: <NotFound /> },
     ],
   },

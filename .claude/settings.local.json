@@ -20,9 +20,14 @@
       "Bash(git rm *)",
       "Bash(Remove-Item -Recurse -Force graphify-out, tsconfig.test.tsbuildinfo, .vite-react-ssg-temp, scratch, prerender-debug.log, stats.html -ErrorAction SilentlyContinue)",
       "Bash(Write-Output \"done\")",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(New-Item -ItemType Directory -Path \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\admin\\\\blogs\" -Force)",
+      "Bash(Out-Null)",
+      "mcp__ide__getDiagnostics"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase"]
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }

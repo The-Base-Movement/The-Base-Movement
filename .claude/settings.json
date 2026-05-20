@@ -1,5 +1,38 @@
 {
   "permissions": {
-    "allow": ["Bash(git commit -m ' *)", "Bash(node -e ' *)"]
+    "allow": [
+      "Bash(git commit -m ' *)",
+      "Bash(node -e ' *)",
+      "PowerShell(npx supabase projects list 2>&1)",
+      "Bash(grep -v \"\\\\.tsx:[0-9]*:import\\\\|\\\\.tsx:[0-9]*:  //\\\\|\\\\.tsx:[0-9]*: //\\\\|\\\\.tsx:[0-9]*://\\\\|\\\\.tsx:[0-9]*:    //\")",
+      "Bash(grep -v \"^$\\\\|^panel$\\\\|^ph$\\\\|^btn$\\\\|^btn-primary$\\\\|^btn-outline$\\\\|^btn-dest$\\\\|^btn-sm$\\\\|^pill$\\\\|^pill-ok$\\\\|^pill-warn$\\\\|^pill-mute$\\\\|^pill-err$\\\\|^main$\\\\|^kpis$\\\\|^top$\\\\|^table$\\\\|^desktop-only$\\\\|^mobile-only$\\\\|^sidebar-main$\\\\|^main-sidebar$\\\\|^compose$\\\\|^toolbar$\\\\|^media-card$\\\\|^media-overlay$\\\\|^war-room-main-grid$\\\\|^twocol$\\\\|^chapters-\\\\|^settings-\\\\|^verify-field\\\\|^vault-body\\\\|^btn-option\\\\|^row-actions$\\\\|^ico$\\\\|^pagination\\\\|^custom-\\\\|^animate-pulse$\\\\|^animate-spin$\\\\|^prose\\\\|^meta$\\\\|^actions$\\\\|^card$\\\\|^num$\\\\|^label$\\\\|^tag$\")",
+      "Bash(grep -E \"animate-in|fade-in|slide-in|duration-[0-9]|gap-[0-9]|px-[0-9]|py-[0-9]|pt-[0-9]|pb-[0-9]|pl-[0-9]|pr-[0-9]|p-[0-9]|m-[0-9]|mt-[0-9]|mb-[0-9]|text-\\(xs|sm|lg|xl|2xl\\)|font-\\(bold|black|semibold|medium\\)|bg-[a-z]|rounded\\(-|$\\)|items-center|justify-\\(between|center|end|start\\)|space-y|overflow-\\(hidden|x-auto|auto\\)|flex-col|flex-row|flex-wrap|flex-[0-9]|w-full|w-[0-9]|h-[0-9]|xl:|lg:|md:|sm:|hover:\")",
+      "Bash(git -C \"c:/MAMP/htdocs/The-Base/.claude/worktrees/agent-a2010a5da941a2392\" status --short)",
+      "Bash(npx lint-staged *)",
+      "Bash(xxd)",
+      "Bash(bash -c \"cd '/c/MAMP/htdocs/The-Base' && bash .husky/pre-commit\")",
+      "Bash(printf '#!/bin/sh\\\\nnpx lint-staged\\\\n' > c:/MAMP/htdocs/The-Base/.husky/pre-commit)",
+      "Bash(grep -E \"animate-in|fade-in|slide-in|duration-[0-9]|gap-[0-9]|px-[0-9]|py-[0-9]|pt-[0-9]|pb-[0-9]|text-\\(xs|sm|lg|xl|2xl|3xl\\)|font-\\(bold|black|semibold|medium\\)|bg-[a-z]|rounded\\(-|$\\)|items-center|justify-\\(between|center|end|start\\)|space-y|overflow-\\(hidden|x-auto|auto\\)|flex-col|flex-row|flex-wrap|w-full|w-[0-9]|h-[0-9]|grid-cols|gap-[0-9]|p-[0-9]|m-[0-9]|animate-\")",
+      "Bash(python3)",
+      "Bash(python3 c:/MAMP/htdocs/The-Base/rewrite_chapters.py)",
+      "Bash(python3 rewrite_chapters.py)",
+      "Bash(sed -n '15,25p' c:/MAMP/htdocs/The-Base/src/pages/admin/Chapters.tsx)",
+      "Bash(sed -n '173,195p' c:/MAMP/htdocs/The-Base/src/pages/admin/Chapters.tsx)",
+      "Bash(npx eslint *)",
+      "Bash(sed -n '1038,1058p' src/pages/admin/Administrators.tsx)",
+      "Bash(sed -n '1372,1385p' src/pages/admin/Administrators.tsx)",
+      "Bash(sed -n '1547,1560p' src/pages/admin/Administrators.tsx)",
+      "Bash(sed -n '1657,1670p' src/pages/admin/Administrators.tsx)",
+      "Bash(sed -n '1092,1104p' src/pages/admin/DonationVerification.tsx)",
+      "Bash(sed -n '695,707p' src/pages/admin/FieldDirectives.tsx)",
+      "Bash(sed -n '1644,1656p' src/pages/admin/GroundGameCommand.tsx)",
+      "Bash(sed -n '1974,1986p' src/pages/admin/GroundGameCommand.tsx)",
+      "Bash(sed -n '995,1045p' src/pages/admin/authors/index.tsx)",
+      "Bash(sed -n '1228,1245p' src/pages/admin/authors/index.tsx)",
+      "Bash(awk 'NR>=140 && NR<=160')"
+    ],
+    "additionalDirectories": [
+      "c:\\MAMP\\htdocs\\The-Base\\.husky"
+    ]
   }
 }
