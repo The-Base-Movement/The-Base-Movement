@@ -300,15 +300,22 @@ export default function AdminBlogs() {
   }
 
   const handlePublishPost = async (post: BlogPost) => {
+    setPosts((prev) =>
+      prev.map((p) => (p.id === post.id ? { ...p, status: 'Published' as const } : p))
+    )
     try {
-      const success = await adminService.updateBlogPost(post.id, { status: 'Published' })
+      const success = await adminService.updateBlogPost(post.id, {
+        status: 'Published',
+        publishedAt: new Date().toISOString(),
+      })
       if (success) {
         toast.success('Post published.')
-        fetchPosts()
       } else {
+        setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: post.status } : p)))
         toast.error('Failed to publish post.')
       }
     } catch {
+      setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: post.status } : p)))
       toast.error('Failed to publish post.')
     }
   }
@@ -1980,6 +1987,36 @@ export default function AdminBlogs() {
 
         {/* Articles grid */}
         <div style={{ minWidth: 0 }}>
+          {/* Status filter tabs */}
+          <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+            {[
+              { value: 'all', label: `All (${posts.length})` },
+              {
+                value: 'Published',
+                label: `Published (${posts.filter((p) => p.status === 'Published').length})`,
+              },
+              {
+                value: 'Pending Verification',
+                label: `Pending (${posts.filter((p) => p.status === 'Pending Verification').length})`,
+              },
+              {
+                value: 'Draft',
+                label: `Drafts (${posts.filter((p) => p.status === 'Draft').length})`,
+              },
+            ].map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setStatusFilter(tab.value)}
+                className={
+                  statusFilter === tab.value ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
+                }
+                style={{ fontSize: 11 }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
           <div
             style={{
               display: 'grid',
@@ -2102,7 +2139,23 @@ export default function AdminBlogs() {
                       </span>
                     </div>
                     <div style={{ position: 'absolute', top: 10, right: 10 }}>
-                      {statusPill(post.status)}
+                      <span
+                        className="pill"
+                        style={{
+                          backdropFilter: 'blur(4px)',
+                          fontWeight: 800,
+                          fontSize: 9,
+                          background:
+                            post.status === 'Published'
+                              ? 'rgba(34,197,94,0.9)'
+                              : post.status === 'Pending Verification'
+                                ? 'rgba(234,179,8,0.9)'
+                                : 'rgba(30,30,30,0.75)',
+                          color: '#fff',
+                        }}
+                      >
+                        {post.status === 'Pending Verification' ? 'Pending' : post.status}
+                      </span>
                     </div>
                   </div>
 

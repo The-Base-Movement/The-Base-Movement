@@ -50,7 +50,7 @@ class ContentService {
         readTime: p.read_time as string,
         isFeatured: p.is_featured as boolean,
         publishedAt: p.published_at as string,
-        status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
+        status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Draft',
         tags: (p.tags as string[]) || [],
         seoTitle: p.seo_title as string | undefined,
         metaDescription: p.meta_description as string | undefined,
