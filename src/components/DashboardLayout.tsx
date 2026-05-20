@@ -209,23 +209,30 @@ export default function DashboardLayout() {
         <div
           className={`py-[24px] flex items-center border-b border-white/[0.08] mb-3 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-[22px] gap-[10px]'}`}
         >
-          <div className="w-10 h-10 bg-background flex items-center justify-center rounded-sm shadow-2xl p-1.5 shrink-0">
+          <Link
+            to="/"
+            className="w-10 h-10 bg-background flex items-center justify-center rounded-sm shadow-2xl p-1.5 shrink-0"
+          >
             <img
               src={settings.logo_url}
               alt="The Base Logo"
               className="w-full h-full object-contain"
               decoding="async"
             />
-          </div>
+          </Link>
           {!isSidebarCollapsed && (
-            <div className="overflow-hidden whitespace-nowrap">
+            <Link
+              to="/"
+              className="overflow-hidden whitespace-nowrap"
+              style={{ textDecoration: 'none' }}
+            >
               <h1 className="text-[16px] font-extrabold text-white leading-none mb-0 tracking-tight">
                 The Base
               </h1>
               <p className="text-[9px] text-accent font-bold tracking-[0.04em] uppercase mt-1 mb-0">
                 Member portal
               </p>
-            </div>
+            </Link>
           )}
         </div>
 

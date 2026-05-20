@@ -137,6 +137,7 @@ export default function Dashboard() {
           Welcome back
         </span>
         <h2
+          className="dash-welcome-name"
           style={{
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 800,
@@ -160,15 +161,7 @@ export default function Dashboard() {
       />
 
       {/* Hero row: membership card + quick actions */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1.2fr 1fr',
-          gap: 20,
-          marginBottom: 20,
-          alignItems: 'start',
-        }}
-      >
+      <div className="dash-hero">
         {member && (
           <MembershipCard
             userName={member.full_name}
@@ -187,7 +180,7 @@ export default function Dashboard() {
       </div>
 
       {/* Lower row: feed + journey */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20 }}>
+      <div className="dash-lower">
         <div className="panel feed" style={{ padding: 24 }}>
           <h3
             style={{
@@ -238,6 +231,25 @@ export default function Dashboard() {
           __html: `
         .main { min-width: 0; padding-bottom: 40px; }
         .feed h3 { font-family: 'Public Sans', sans-serif; }
+
+        .dash-hero {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 20px;
+          margin-bottom: 20px;
+          align-items: start;
+        }
+        .dash-lower {
+          display: grid;
+          grid-template-columns: 1.4fr 1fr;
+          gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+          .dash-welcome-name { font-size: 22px !important; }
+          .dash-hero { grid-template-columns: 1fr; }
+          .dash-lower { grid-template-columns: 1fr; }
+        }
       `,
         }}
       />

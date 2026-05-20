@@ -8,6 +8,9 @@ interface ChaptersSectionProps {
 }
 
 function ChapterCard({ chapter }: { chapter: Chapter }) {
+  const leader = chapter.leadership?.[0]
+  const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
+  const leaderInitial = leaderName.charAt(0).toUpperCase()
   const isFeatured = chapter.status === 'Active' && chapter.member_count > 500
   return (
     <div
@@ -142,11 +145,27 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
+              overflow: 'hidden',
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#fff' }}>
-              person
-            </span>
+            {leader?.imageUrl ? (
+              <img
+                src={leader.imageUrl}
+                alt={leaderName}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                onError={(e) => {
+                  const el = e.currentTarget
+                  el.style.display = 'none'
+                  const parent = el.parentElement
+                  if (parent)
+                    parent.innerHTML = `<span style="color:#fff;font-size:12px;font-weight:700">${leaderInitial}</span>`
+                }}
+              />
+            ) : (
+              <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#fff' }}>
+                person
+              </span>
+            )}
           </div>
           <div>
             <div
@@ -156,7 +175,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
                 fontWeight: 800,
               }}
             >
-              {chapter.leader_name}
+              {leaderName}
             </div>
             <span
               style={{

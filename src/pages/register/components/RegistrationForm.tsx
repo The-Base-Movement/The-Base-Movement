@@ -399,18 +399,30 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
                     Set password
                   </span>
-                  <input
-                    name="name-7e320f"
-                    id="input-7e320f"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    minLength={8}
-                    value={formData.password}
-                    onChange={(e) => onInputChange('password', e.target.value)}
-                    autoComplete="new-password"
-                    className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                    placeholder="•••••••••••"
-                  />
+                  <div className="relative">
+                    <input
+                      name="name-7e320f"
+                      id="input-7e320f"
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      minLength={8}
+                      value={formData.password}
+                      onChange={(e) => onInputChange('password', e.target.value)}
+                      autoComplete="new-password"
+                      className="w-full h-[46px] bg-transparent border border-border px-4 pr-11 text-sm font-medium focus:border-primary transition-colors outline-none"
+                      placeholder="•••••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={onPasswordToggle}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-muted hover:text-on-surface transition-colors"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                        {showPassword ? 'visibility_off' : 'visibility'}
+                      </span>
+                    </button>
+                  </div>
                   <div className="flex gap-1 mt-1.5">
                     <div
                       className={cn(

@@ -12,7 +12,14 @@ function statusColor(status: string): string {
   return 'hsl(var(--destructive))'
 }
 
-function Tile({ color, label, value, delta, icon, isStatus }: {
+function Tile({
+  color,
+  label,
+  value,
+  delta,
+  icon,
+  isStatus,
+}: {
   color: 'red' | 'gold' | 'ink' | 'green' | 'black'
   label: string
   value: string | number
@@ -23,7 +30,10 @@ function Tile({ color, label, value, delta, icon, isStatus }: {
   return (
     <div className={`tile ${color}`}>
       <div className="tile-header">
-        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: '16px', color: 'hsl(var(--on-surface-muted))' }}
+        >
           {icon || 'analytics'}
         </span>
       </div>
@@ -32,7 +42,7 @@ function Tile({ color, label, value, delta, icon, isStatus }: {
         className="val display"
         style={{
           fontSize: valSize(value),
-          color: isStatus ? statusColor(String(value)) : 'hsl(var(--on-surface))'
+          color: isStatus ? statusColor(String(value)) : 'hsl(var(--on-surface))',
         }}
       >
         {value}
@@ -46,7 +56,7 @@ export function StatCards({
   memberStatus,
   memberSince,
   contributionYTD,
-  rank
+  rank,
 }: {
   memberStatus: string
   memberSince: string
@@ -85,9 +95,12 @@ export function StatCards({
         icon="military_tech"
       />
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .stats4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
         @media (max-width: 1024px) { .stats4 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 400px) { .stats4 { grid-template-columns: 1fr 1fr; gap: 10px; } }
 
         .tile {
           background: #fff;
@@ -137,7 +150,9 @@ export function StatCards({
           color: hsl(var(--on-surface-muted));
           font-family: 'Public Sans', sans-serif;
         }
-      ` }} />
+      `,
+        }}
+      />
     </div>
   )
 }
