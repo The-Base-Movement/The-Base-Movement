@@ -16,7 +16,7 @@ export function OfficerCardSlider({ children }: OfficerCardSliderProps) {
         modules={[Navigation, Autoplay, Pagination]}
         navigation
         pagination={{ clickable: true }}
-        autoplay={{ delay: 2000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+        autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
         loop={true}
         spaceBetween={24}
         breakpoints={{
