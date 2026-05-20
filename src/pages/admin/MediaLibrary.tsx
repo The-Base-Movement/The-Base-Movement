@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { flushSync } from 'react-dom'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
@@ -25,12 +26,14 @@ export default function MediaLibrary() {
   ]
 
   const loadFiles = useCallback(async () => {
-    setIsLoading(true)
+    // flushSync forces React to commit the loading state to the DOM before the
+    // async fetch begins — otherwise React 18 batching can collapse setIsLoading(true)
+    // and setIsLoading(false) into a single render that the browser never paints.
+    flushSync(() => setIsLoading(true))
     try {
-      // Load files through the centralized service which handles local-only,
-      // cloud-only, and hybrid folders automatically.
       const mediaFiles = await contentService.getMediaFiles(activeFolder)
       setFiles(mediaFiles)
+      toast.success('Vault refreshed')
     } catch {
       toast.error('Failed to load media files')
     } finally {
