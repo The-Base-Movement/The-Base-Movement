@@ -38,9 +38,12 @@ export interface User {
   chapter: string
   profession: string
   education_level: string
-  emergency_contact_name: string
+  emergency_name: string
   emergency_relationship: string
-  emergency_number: string
+  emergency_phone: string
+  national_id?: string
+  children_count?: number
+  referred_by?: string
   joined_at: string
   status: string
   city?: string

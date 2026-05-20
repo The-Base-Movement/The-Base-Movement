@@ -16,43 +16,112 @@ interface ParsedRecord {
   isValid: boolean
 }
 
-const REQUIRED_FIELDS = ['full_name', 'phone_number', 'gender', 'age_range']
+const REQUIRED_FIELDS: (keyof User)[] = ['full_name', 'phone_number', 'gender', 'age_range']
 
-// Standardized mapping dictionary
 const HEADER_MAP: Record<string, keyof User> = {
+  // Name
   fullname: 'full_name',
   name: 'full_name',
   full_name: 'full_name',
+  // Phone
   phone: 'phone_number',
   phonenumber: 'phone_number',
   contactnumber: 'phone_number',
   phone_number: 'phone_number',
+  // Gender
   gender: 'gender',
   sex: 'gender',
+  // Age
   age: 'age_range',
   agerange: 'age_range',
   age_range: 'age_range',
+  // Region / Constituency (Ghana)
   region: 'region',
   constituency: 'constituency',
-  residentialaddress: 'residential_address',
-  address: 'residential_address',
-  residential_address: 'residential_address',
+  // Chapter
+  chapter: 'chapter',
+  // Profession
   profession: 'profession',
+  occupation: 'profession',
+  job: 'profession',
+  // Email
   email: 'email',
   emailaddress: 'email',
   email_address: 'email',
-  chapter: 'chapter',
+  // Education
   education: 'education_level',
   educationlevel: 'education_level',
   education_level: 'education_level',
-  emergencyname: 'emergency_contact_name',
-  emergencycontact: 'emergency_contact_name',
-  emergencycontactname: 'emergency_contact_name',
+  // Emergency contact
+  emergencyname: 'emergency_name',
+  emergencycontact: 'emergency_name',
+  emergencycontactname: 'emergency_name',
+  emergency_name: 'emergency_name',
   emergencyrelationship: 'emergency_relationship',
-  emergencyphone: 'emergency_number',
-  emergencynumber: 'emergency_number',
-  emergency_number: 'emergency_number',
+  emergency_relationship: 'emergency_relationship',
+  emergencyphone: 'emergency_phone',
+  emergencynumber: 'emergency_phone',
+  emergency_phone: 'emergency_phone',
+  // Address
+  residentialaddress: 'residential_address',
+  address: 'residential_address',
+  residential_address: 'residential_address',
+  city: 'city',
+  // National ID
+  nationalid: 'national_id',
+  national_id: 'national_id',
+  idnumber: 'national_id',
+  // Children
+  children: 'children_count',
+  childrencount: 'children_count',
+  children_count: 'children_count',
+  // Referral
+  referredby: 'referred_by',
+  referred_by: 'referred_by',
+  referral: 'referred_by',
 }
+
+const CSV_TEMPLATE_HEADERS = [
+  'Full Name',
+  'Phone Number',
+  'Gender',
+  'Age Range',
+  'Region',
+  'Constituency',
+  'Chapter',
+  'Profession',
+  'Email',
+  'Education Level',
+  'Emergency Contact Name',
+  'Emergency Relationship',
+  'Emergency Phone',
+  'National ID',
+  'Residential Address',
+  'City',
+  'Children Count',
+  'Referred By',
+]
+
+const CSV_SAMPLE_ROW = [
+  'John Doe',
+  '+233240000000',
+  'Male',
+  '26-40',
+  'Greater Accra',
+  'Ayawaso West',
+  'Legon Patriots',
+  'Engineer',
+  'johndoe@example.com',
+  "Bachelor's Degree",
+  'Mary Doe',
+  'Spouse',
+  '+233241111111',
+  'GHA-1234567890',
+  'East Legon',
+  'Accra',
+  '2',
+  '',
+]
 
 const normalizeHeader = (h: string) => h.toLowerCase().replace(/[\s_-]/g, '')
 
@@ -75,18 +144,14 @@ function parseCSV(text: string): string[][] {
     } else if (char === ',' && !inQuotes) {
       row.push('')
     } else if ((char === '\r' || char === '\n') && !inQuotes) {
-      if (char === '\r' && nextChar === '\n') {
-        i++
-      }
+      if (char === '\r' && nextChar === '\n') i++
       lines.push(row)
       row = ['']
     } else {
       row[row.length - 1] += char
     }
   }
-  if (row.length > 1 || row[0] !== '') {
-    lines.push(row)
-  }
+  if (row.length > 1 || row[0] !== '') lines.push(row)
   return lines.filter((r) => r.some((cell) => cell.trim() !== ''))
 }
 
@@ -99,55 +164,22 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDownloadTemplate = () => {
-    const headers = [
-      'Full Name',
-      'Phone Number',
-      'Gender',
-      'Age Range',
-      'Region',
-      'Constituency',
-      'Residential Address',
-      'Profession',
-      'Email',
-      'Chapter',
-      'Education Level',
-      'Emergency Contact Name',
-      'Emergency Relationship',
-      'Emergency Number',
-    ]
-    const sampleRow = [
-      'John Doe',
-      '+233240000000',
-      'Male',
-      '26-40',
-      'Greater Accra',
-      'Ayawaso West',
-      'East Legon',
-      'Engineer',
-      'johndoe@example.com',
-      'Legon Patriots',
-      "Bachelor's Degree",
-      'Mary Doe',
-      'Spouse',
-      '+233241111111',
-    ]
-    const csvContent = [headers.join(','), sampleRow.join(',')].join('\n')
+    const csvContent = [CSV_TEMPLATE_HEADERS.join(','), CSV_SAMPLE_ROW.join(',')].join('\n')
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.setAttribute('href', url)
-    link.setAttribute('download', 'physical_registration_template.csv')
+    link.setAttribute('download', 'ghana_registration_import_template.csv')
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    toast.success('CSV Template downloaded successfully.')
+    toast.success('Template downloaded.')
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
     setFileName(file.name)
     setIsParsing(true)
 
@@ -158,7 +190,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
         const rows = parseCSV(text)
 
         if (rows.length < 2) {
-          toast.error('The uploaded CSV file is empty or missing data rows.')
+          toast.error('CSV is empty or missing data rows.')
           setIsParsing(false)
           return
         }
@@ -173,58 +205,49 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
 
           headers.forEach((header, colIndex) => {
             const field = HEADER_MAP[header]
-            if (field) {
-              const val = row[colIndex]?.trim()
-              if (val) {
-                recordData[field] = val as never
-              }
-            }
-          })
+            if (!field) return
+            const val = row[colIndex]?.trim()
+            if (!val) return
 
-          // Validate required fields
-          REQUIRED_FIELDS.forEach((field) => {
-            if (!recordData[field as keyof User]) {
-              const humanName = field.replace('_', ' ')
-              errors.push(`Missing required field: ${humanName}`)
-            }
-          })
-
-          // Validate Gender specifically
-          if (recordData.gender) {
-            const normalizedGender = recordData.gender.toLowerCase()
-            if (normalizedGender === 'm' || normalizedGender === 'male') {
-              recordData.gender = 'Male'
-            } else if (normalizedGender === 'f' || normalizedGender === 'female') {
-              recordData.gender = 'Female'
+            if (field === 'children_count') {
+              const n = parseInt(val, 10)
+              recordData.children_count = isNaN(n) ? 0 : n
             } else {
-              errors.push(`Invalid gender value: ${recordData.gender}. Must be Male or Female.`)
+              recordData[field] = val as never
             }
+          })
+
+          REQUIRED_FIELDS.forEach((field) => {
+            if (!recordData[field]) {
+              errors.push(`Missing: ${String(field).replace(/_/g, ' ')}`)
+            }
+          })
+
+          if (recordData.gender) {
+            const g = recordData.gender.toLowerCase()
+            if (g === 'm' || g === 'male') recordData.gender = 'Male'
+            else if (g === 'f' || g === 'female') recordData.gender = 'Female'
+            else errors.push(`Invalid gender: "${recordData.gender}". Use Male or Female.`)
           }
 
-          return {
-            rowNumber,
-            data: recordData,
-            errors,
-            isValid: errors.length === 0,
-          }
+          return { rowNumber, data: recordData, errors, isValid: errors.length === 0 }
         })
 
         setParsedRecords(records)
       } catch (err) {
         console.error('[CSV IMPORT] Parse error:', err)
-        toast.error('Failed to parse the CSV file. Please make sure it is valid CSV.')
+        toast.error('Failed to parse CSV. Check the file format.')
       } finally {
         setIsParsing(false)
       }
     }
-
     reader.readAsText(file)
   }
 
   const handleImportSubmit = async () => {
     const validRecords = parsedRecords.filter((r) => r.isValid)
     if (validRecords.length === 0) {
-      toast.error('There are no valid records to import.')
+      toast.error('No valid records to import.')
       return
     }
 
@@ -236,8 +259,8 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
       const usersToInsert: User[] = validRecords.map((record, index) => {
         const platform = record.data.region ? 'GHANA' : 'DIASPORA'
         const baseNum = Math.floor(1000 + Math.random() * 9000)
-        const uniqueSuffix = String((baseNum + index) % 10000).padStart(4, '0')
-        const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${uniqueSuffix}`
+        const suffix = String((baseNum + index) % 10000).padStart(4, '0')
+        const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${suffix}`
 
         return {
           id: crypto.randomUUID(),
@@ -247,48 +270,45 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           age_range: record.data.age_range!,
           registration_number: regNo,
           platform,
-          country: record.data.country || (platform === 'GHANA' ? 'Ghana' : 'Unknown'),
+          country: platform === 'GHANA' ? 'Ghana' : record.data.country || 'Unknown',
           region: record.data.region || '',
           constituency: record.data.constituency || '',
-          residential_address: record.data.residential_address || '',
+          chapter: record.data.chapter || '',
           profession: record.data.profession || 'Patriot',
           email: record.data.email || null,
-          chapter: record.data.chapter || '',
-          education_level: record.data.education_level || 'None',
-          emergency_contact_name: record.data.emergency_contact_name || '',
+          education_level: record.data.education_level || '',
+          emergency_name: record.data.emergency_name || '',
           emergency_relationship: record.data.emergency_relationship || '',
-          emergency_number: record.data.emergency_number || '',
+          emergency_phone: record.data.emergency_phone || '',
+          national_id: record.data.national_id || '',
+          residential_address: record.data.residential_address || '',
+          city: record.data.city || '',
+          children_count: record.data.children_count ?? 0,
+          referred_by: record.data.referred_by || '',
+          avatar_url: null,
           joined_at: new Date().toISOString(),
           status: 'Active',
           registration_source: 'physical_form',
-          avatar_url: null,
         }
       })
 
-      // Insert in chunks of 50 to avoid Supabase or connection timeouts
       const chunkSize = 50
       const totalChunks = Math.ceil(usersToInsert.length / chunkSize)
 
       for (let i = 0; i < usersToInsert.length; i += chunkSize) {
         const chunk = usersToInsert.slice(i, i + chunkSize)
-        const currentChunkNumber = Math.floor(i / chunkSize) + 1
-
+        const chunkNum = Math.floor(i / chunkSize) + 1
         const { data: success, error } = await adminService.bulkRegisterMembers(chunk)
-        if (!success || error) {
-          throw error || new Error('Bulk registration failed.')
-        }
-
-        setImportProgress(Math.round((currentChunkNumber / totalChunks) * 100))
+        if (!success || error) throw error || new Error('Bulk registration failed.')
+        setImportProgress(Math.round((chunkNum / totalChunks) * 100))
       }
 
-      toast.success(`Successfully imported ${usersToInsert.length} members from physical forms.`)
+      toast.success(`Successfully imported ${usersToInsert.length} members.`)
       onSuccess()
       onClose()
     } catch (err: unknown) {
       console.error('[CSV IMPORT] Import error:', err)
-      toast.error(
-        err instanceof Error ? err.message : 'Failed to complete importing members into database.'
-      )
+      toast.error(err instanceof Error ? err.message : 'Failed to import members.')
     } finally {
       setIsImporting(false)
     }
@@ -306,31 +326,43 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 16,
+        padding: '12px',
         background: 'rgba(15,19,16,.6)',
         backdropFilter: 'blur(4px)',
       }}
+      onClick={isImporting ? undefined : onClose}
     >
       <div
         className="panel"
         style={{
-          maxWidth: '850px',
+          maxWidth: 860,
           width: '100%',
-          maxHeight: '90vh',
+          maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',
-          margin: '0 auto',
           background: '#fff',
+          margin: '0 auto',
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="ph" style={{ padding: '24px 32px', background: 'hsl(var(--on-surface))' }}>
+        <div className="ph" style={{ padding: '20px 24px', background: 'hsl(var(--on-surface))' }}>
           <div>
-            <h2 style={{ color: '#fff', fontSize: '24px', margin: 0 }}>
-              Import registered members (CSV)
+            <h2
+              style={{
+                color: '#fff',
+                fontSize: 20,
+                margin: 0,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 800,
+              }}
+            >
+              Import Physical Registration Forms
             </h2>
-            <div className="meta" style={{ color: 'hsl(var(--accent))', marginTop: '4px' }}>
-              Import physical registration forms in batch mode
+            <div
+              style={{ color: 'hsl(var(--accent))', marginTop: 3, fontSize: 12, fontWeight: 700 }}
+            >
+              Ghana Network · CSV batch import
             </div>
           </div>
           <button
@@ -347,367 +379,459 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           </button>
         </div>
 
-        {/* Body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '32px' }}>
-            {/* Sidebar Guidelines */}
-            <div style={{ fontSize: '13px', color: 'hsl(var(--on-surface-muted))' }}>
-              <h4
-                style={{ fontWeight: 800, color: 'hsl(var(--on-surface))', margin: '0 0 12px 0' }}
-              >
-                Instructions
-              </h4>
-              <p style={{ margin: '0 0 16px 0', lineHeight: 1.5 }}>
-                Upload a CSV file containing records gathered from physical registration forms.
-              </p>
-              <h5 style={{ fontWeight: 800, color: 'hsl(var(--on-surface))', margin: '0 0 6px 0' }}>
-                Required Fields:
-              </h5>
-              <ul style={{ margin: '0 0 20px 0', paddingLeft: '20px', lineHeight: 1.6 }}>
-                <li>Full Name</li>
-                <li>Phone Number</li>
-                <li>Gender (Male/Female)</li>
-                <li>Age Range</li>
-              </ul>
+        {/* Body — scrollable */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+          {/* Instructions banner — always visible, top of body */}
+          <div
+            style={{
+              background: 'hsl(var(--container-low))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 6,
+              padding: '16px 20px',
+              marginBottom: 24,
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 12,
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div
+                  style={{
+                    fontWeight: 800,
+                    fontSize: 13,
+                    marginBottom: 8,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  How to use
+                </div>
+                <ol
+                  style={{
+                    margin: 0,
+                    paddingLeft: 18,
+                    fontSize: 12,
+                    lineHeight: 1.7,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  <li>Download the template and fill in member data (one row per member).</li>
+                  <li>
+                    Required:{' '}
+                    <strong style={{ color: 'hsl(var(--on-surface))' }}>
+                      Full Name, Phone, Gender, Age Range
+                    </strong>
+                    .
+                  </li>
+                  <li>
+                    For Ghana members, add{' '}
+                    <strong style={{ color: 'hsl(var(--on-surface))' }}>
+                      Region &amp; Constituency
+                    </strong>{' '}
+                    — leave blank for Diaspora.
+                  </li>
+                  <li>Upload the filled CSV. Invalid rows are skipped; valid ones are imported.</li>
+                </ol>
+              </div>
               <button
                 className="btn btn-outline"
-                style={{
-                  width: '100%',
-                  justifyContent: 'center',
-                  fontSize: '11px',
-                  padding: '10px',
-                }}
                 onClick={handleDownloadTemplate}
+                style={{ fontSize: 11, padding: '10px 16px', whiteSpace: 'nowrap' }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                   download
                 </span>
                 Download Template
               </button>
             </div>
 
-            {/* Upload Area & Verification */}
-            <div>
-              {!fileName ? (
-                <div
-                  style={{
-                    border: '2px dashed hsl(var(--border))',
-                    borderRadius: '8px',
-                    padding: '48px 32px',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    background: 'hsl(var(--container-low))',
-                  }}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <input
-                    type="file"
-                    accept=".csv"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    style={{ display: 'none' }}
-                  />
+            {/* Field reference — collapsible on mobile via scroll */}
+            <div
+              style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid hsl(var(--border))' }}
+            >
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 800,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginBottom: 6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                }}
+              >
+                All supported columns
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 10px' }}>
+                {CSV_TEMPLATE_HEADERS.map((h) => (
                   <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: '48px', color: 'hsl(var(--primary))', marginBottom: '16px' }}
-                  >
-                    cloud_upload
-                  </span>
-                  <h4 style={{ margin: '0 0 8px 0', fontWeight: 800 }}>Drag & drop or browse</h4>
-                  <p style={{ margin: 0, fontSize: '12px', color: 'hsl(var(--on-surface-muted))' }}>
-                    Select a .csv file exported from your registration logs
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {/* File Info */}
-                  <div
+                    key={h}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '16px',
-                      borderRadius: '8px',
-                      background: 'hsl(var(--container-low))',
+                      fontSize: 11,
+                      background: '#fff',
                       border: '1px solid hsl(var(--border))',
+                      borderRadius: 3,
+                      padding: '2px 8px',
+                      fontWeight: 700,
+                      color: REQUIRED_FIELDS.some(
+                        (f) => String(f).replace(/_/g, ' ').toLowerCase() === h.toLowerCase()
+                      )
+                        ? 'hsl(var(--primary))'
+                        : 'hsl(var(--on-surface-muted))',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span
-                        className="material-symbols-outlined"
-                        style={{ color: 'hsl(var(--primary))', fontSize: '28px' }}
-                      >
-                        description
-                      </span>
-                      <div>
-                        <div style={{ fontWeight: 800, fontSize: '13px' }}>{fileName}</div>
+                    {h}
+                  </span>
+                ))}
+              </div>
+              <div
+                style={{
+                  fontSize: 10.5,
+                  color: 'hsl(var(--primary))',
+                  marginTop: 6,
+                  fontWeight: 700,
+                }}
+              >
+                Green = required
+              </div>
+            </div>
+          </div>
+
+          {/* Upload area or parsed results */}
+          {!fileName ? (
+            <div
+              style={{
+                border: '2px dashed hsl(var(--border))',
+                borderRadius: 8,
+                padding: 'clamp(32px, 6vw, 64px) 32px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                background: 'hsl(var(--container-low))',
+              }}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                type="file"
+                accept=".csv"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+              />
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: 48,
+                  color: 'hsl(var(--primary))',
+                  display: 'block',
+                  marginBottom: 12,
+                }}
+              >
+                cloud_upload
+              </span>
+              <h4 style={{ margin: '0 0 6px 0', fontWeight: 800, fontSize: 15 }}>
+                Tap to browse or drag &amp; drop
+              </h4>
+              <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                Accepts .csv files only
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* File info row */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 12,
+                  padding: 16,
+                  borderRadius: 8,
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ color: 'hsl(var(--primary))', fontSize: 28 }}
+                  >
+                    description
+                  </span>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: 13 }}>{fileName}</div>
+                    <div
+                      style={{
+                        fontSize: 11.5,
+                        color: 'hsl(var(--on-surface-muted))',
+                        marginTop: 2,
+                      }}
+                    >
+                      {isParsing ? 'Parsing…' : `${parsedRecords.length} rows detected`}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  className="btn btn-outline"
+                  style={{ padding: '6px 12px', fontSize: 11, height: 'auto' }}
+                  onClick={() => {
+                    setFileName(null)
+                    setParsedRecords([])
+                  }}
+                  disabled={isImporting}
+                >
+                  Change File
+                </button>
+              </div>
+
+              {/* Summary stats */}
+              {!isParsing && parsedRecords.length > 0 && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div
+                    style={{
+                      padding: 16,
+                      borderRadius: 6,
+                      background: 'rgba(0,107,63,0.05)',
+                      border: '1px solid rgba(0,107,63,0.15)',
+                    }}
+                  >
+                    <div style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--primary))' }}>
+                      VALID RECORDS
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 28,
+                        fontWeight: 800,
+                        marginTop: 4,
+                        color: 'hsl(var(--primary))',
+                      }}
+                    >
+                      {validCount}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      padding: 16,
+                      borderRadius: 6,
+                      background:
+                        invalidCount > 0 ? 'rgba(235,94,85,0.05)' : 'hsl(var(--container-low))',
+                      border:
+                        invalidCount > 0
+                          ? '1px solid rgba(235,94,85,0.15)'
+                          : '1px solid hsl(var(--border))',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 800,
+                        color:
+                          invalidCount > 0
+                            ? 'hsl(var(--destructive))'
+                            : 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      ERRORS DETECTED
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 28,
+                        fontWeight: 800,
+                        marginTop: 4,
+                        color:
+                          invalidCount > 0 ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {invalidCount}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Error details */}
+              {invalidCount > 0 && (
+                <div className="panel" style={{ maxHeight: 180, overflowY: 'auto', padding: 16 }}>
+                  <h5
+                    style={{
+                      fontWeight: 800,
+                      color: 'hsl(var(--destructive))',
+                      margin: '0 0 10px 0',
+                      fontSize: 12,
+                    }}
+                  >
+                    Rows with errors — will be skipped
+                  </h5>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {parsedRecords
+                      .filter((r) => !r.isValid)
+                      .map((record) => (
                         <div
+                          key={record.rowNumber}
                           style={{
-                            fontSize: '11.5px',
-                            color: 'hsl(var(--on-surface-muted))',
-                            marginTop: '2px',
+                            display: 'flex',
+                            alignItems: 'start',
+                            gap: 8,
+                            fontSize: 12,
+                            borderBottom: '1px solid hsl(var(--border))',
+                            paddingBottom: 8,
                           }}
                         >
-                          {parsedRecords.length} rows detected
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      className="btn btn-outline"
-                      style={{ padding: '6px 12px', fontSize: '11px', height: 'auto' }}
-                      onClick={() => {
-                        setFileName(null)
-                        setParsedRecords([])
-                      }}
-                      disabled={isImporting}
-                    >
-                      Change File
-                    </button>
-                  </div>
-
-                  {/* Summary Stats */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div
-                      style={{
-                        padding: '16px',
-                        borderRadius: '6px',
-                        background: 'rgba(0,107,63,0.04)',
-                        border: '1px solid rgba(0,107,63,0.15)',
-                      }}
-                    >
-                      <div
-                        style={{ fontSize: '11px', fontWeight: 800, color: 'hsl(var(--primary))' }}
-                      >
-                        VALID RECORDS
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '28px',
-                          fontWeight: 800,
-                          marginTop: '4px',
-                          color: 'hsl(var(--primary))',
-                        }}
-                      >
-                        {validCount}
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        padding: '16px',
-                        borderRadius: '6px',
-                        background:
-                          invalidCount > 0 ? 'rgba(235,94,85,0.04)' : 'hsl(var(--container-low))',
-                        border:
-                          invalidCount > 0
-                            ? '1px solid rgba(235,94,85,0.15)'
-                            : '1px solid hsl(var(--border))',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 800,
-                          color:
-                            invalidCount > 0
-                              ? 'hsl(var(--destructive))'
-                              : 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        ERRORS DETECTED
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '28px',
-                          fontWeight: 800,
-                          marginTop: '4px',
-                          color:
-                            invalidCount > 0 ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))',
-                        }}
-                      >
-                        {invalidCount}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Validation Details */}
-                  {invalidCount > 0 && (
-                    <div
-                      className="panel"
-                      style={{ maxHeight: '200px', overflowY: 'auto', padding: '16px' }}
-                    >
-                      <h5
-                        style={{
-                          fontWeight: 800,
-                          color: 'hsl(var(--destructive))',
-                          margin: '0 0 12px 0',
-                          fontSize: '12px',
-                        }}
-                      >
-                        Rows with Validation Errors (Will be skipped)
-                      </h5>
-                      <div className="space-y-3">
-                        {parsedRecords
-                          .filter((r) => !r.isValid)
-                          .map((record) => (
+                          <strong style={{ minWidth: 56, color: 'hsl(var(--on-surface))' }}>
+                            Row {record.rowNumber}:
+                          </strong>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 700, color: '#334155' }}>
+                              {record.data.full_name || 'Unnamed'}
+                            </div>
                             <div
-                              key={record.rowNumber}
                               style={{
-                                display: 'flex',
-                                alignItems: 'start',
-                                gap: '8px',
-                                fontSize: '12px',
-                                borderBottom: '1px solid hsl(var(--border))',
-                                paddingBottom: '8px',
+                                color: 'hsl(var(--destructive))',
+                                fontSize: 11,
+                                marginTop: 2,
                               }}
                             >
-                              <strong style={{ minWidth: '60px', color: 'hsl(var(--on-surface))' }}>
-                                Row {record.rowNumber}:
-                              </strong>
-                              <div style={{ flex: 1 }}>
-                                <div style={{ fontWeight: 700, color: '#334155' }}>
-                                  {record.data.full_name || 'Unnamed Patriot'}
-                                </div>
-                                <div
-                                  style={{
-                                    color: 'hsl(var(--destructive))',
-                                    fontSize: '11px',
-                                    marginTop: '2px',
-                                  }}
-                                >
-                                  {record.errors.join(', ')}
-                                </div>
-                              </div>
+                              {record.errors.join(' · ')}
                             </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Valid Records Preview */}
-                  {validCount > 0 && (
-                    <div
-                      className="panel"
-                      style={{ maxHeight: '200px', overflowY: 'auto', padding: '16px' }}
-                    >
-                      <h5
-                        style={{
-                          fontWeight: 800,
-                          color: 'hsl(var(--primary))',
-                          margin: '0 0 12px 0',
-                          fontSize: '12px',
-                        }}
-                      >
-                        Valid Records Preview ({validCount})
-                      </h5>
-                      <table
-                        style={{
-                          width: '100%',
-                          fontSize: '12px',
-                          textAlign: 'left',
-                          borderCollapse: 'collapse',
-                        }}
-                      >
-                        <thead>
-                          <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                            <th style={{ padding: '6px 0', fontWeight: 800 }}>Name</th>
-                            <th style={{ padding: '6px 0', fontWeight: 800 }}>Phone</th>
-                            <th style={{ padding: '6px 0', fontWeight: 800 }}>Gender</th>
-                            <th style={{ padding: '6px 0', fontWeight: 800 }}>Location</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {parsedRecords
-                            .filter((r) => r.isValid)
-                            .slice(0, 10)
-                            .map((record, index) => (
-                              <tr
-                                key={index}
-                                style={{ borderBottom: '1px dotted hsl(var(--border))' }}
-                              >
-                                <td style={{ padding: '8px 0', fontWeight: 700 }}>
-                                  {record.data.full_name}
-                                </td>
-                                <td
-                                  style={{
-                                    padding: '8px 0',
-                                    color: 'hsl(var(--on-surface-muted))',
-                                  }}
-                                >
-                                  {record.data.phone_number}
-                                </td>
-                                <td
-                                  style={{
-                                    padding: '8px 0',
-                                    color: 'hsl(var(--on-surface-muted))',
-                                  }}
-                                >
-                                  {record.data.gender}
-                                </td>
-                                <td
-                                  style={{
-                                    padding: '8px 0',
-                                    color: 'hsl(var(--on-surface-muted))',
-                                  }}
-                                >
-                                  {record.data.region
-                                    ? `${record.data.region} (${record.data.constituency})`
-                                    : 'Diaspora'}
-                                </td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                      {validCount > 10 && (
-                        <div
-                          style={{
-                            fontSize: '11px',
-                            color: 'hsl(var(--on-surface-muted))',
-                            textAlign: 'center',
-                            marginTop: '12px',
-                            fontStyle: 'italic',
-                          }}
-                        >
-                          Showing first 10 of {validCount} valid records.
+                          </div>
                         </div>
-                      )}
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Valid preview */}
+              {validCount > 0 && (
+                <div className="panel" style={{ padding: 16, overflowX: 'auto' }}>
+                  <h5
+                    style={{
+                      fontWeight: 800,
+                      color: 'hsl(var(--primary))',
+                      margin: '0 0 10px 0',
+                      fontSize: 12,
+                    }}
+                  >
+                    Valid Records Preview ({validCount})
+                  </h5>
+                  <table
+                    style={{
+                      width: '100%',
+                      fontSize: 12,
+                      textAlign: 'left',
+                      borderCollapse: 'collapse',
+                      minWidth: 480,
+                    }}
+                  >
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                        {['Name', 'Phone', 'Gender', 'Age', 'Region / Constituency'].map((h) => (
+                          <th key={h} style={{ padding: '6px 8px 6px 0', fontWeight: 800 }}>
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {parsedRecords
+                        .filter((r) => r.isValid)
+                        .slice(0, 10)
+                        .map((record, index) => (
+                          <tr key={index} style={{ borderBottom: '1px dotted hsl(var(--border))' }}>
+                            <td style={{ padding: '8px 8px 8px 0', fontWeight: 700 }}>
+                              {record.data.full_name}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px 8px 8px 0',
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
+                              {record.data.phone_number}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px 8px 8px 0',
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
+                              {record.data.gender}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px 8px 8px 0',
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
+                              {record.data.age_range}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px 8px 8px 0',
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
+                              {record.data.region
+                                ? `${record.data.region} · ${record.data.constituency || '—'}`
+                                : 'Diaspora'}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                  {validCount > 10 && (
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        textAlign: 'center',
+                        marginTop: 10,
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Showing first 10 of {validCount} valid records.
                     </div>
                   )}
                 </div>
               )}
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Footer Actions */}
+        {/* Footer */}
         <div
           style={{
-            padding: '24px 32px',
+            padding: '16px 24px',
             borderTop: '1px solid hsl(var(--border))',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 12,
             background: 'hsl(var(--container-low))',
           }}
         >
           {isImporting ? (
-            <div style={{ flex: 1, marginRight: '24px' }}>
+            <div style={{ flex: 1, minWidth: 180 }}>
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  fontSize: '11.5px',
+                  fontSize: 11.5,
                   fontWeight: 800,
-                  marginBottom: '6px',
+                  marginBottom: 6,
                 }}
               >
-                <span>Importing records into database…</span>
+                <span>Importing records…</span>
                 <span>{importProgress}%</span>
               </div>
               <div
                 style={{
-                  height: '4px',
+                  height: 4,
                   background: 'hsl(var(--border))',
-                  borderRadius: '2px',
+                  borderRadius: 2,
                   overflow: 'hidden',
                 }}
               >
@@ -722,10 +846,10 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               </div>
             </div>
           ) : (
-            <div style={{ flex: 1 }} />
+            <div />
           )}
 
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: 10 }}>
             <button
               className="btn btn-outline"
               onClick={onClose}
@@ -738,10 +862,10 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               disabled={isParsing || isImporting || validCount === 0}
               onClick={handleImportSubmit}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                 save
               </span>
-              Admit {validCount} Members
+              Admit {validCount} {validCount === 1 ? 'Member' : 'Members'}
             </button>
           </div>
         </div>
