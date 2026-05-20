@@ -69,11 +69,23 @@ class ChapterService {
       return []
     }
 
-    // Fetch countries and live member counts in parallel
-    const [{ data: countriesData }, { data: memberRows }] = await Promise.all([
-      supabase.from('countries').select('name, flag_url'),
-      supabase.from('users').select('chapter').not('chapter', 'is', null),
-    ])
+    // Collect leader_ids to fetch their real avatars
+    const leaderIds = (data || []).map((c) => c.leader_id).filter(Boolean) as string[]
+
+    // Fetch countries, live member counts, and leader avatars in parallel
+    const [{ data: countriesData }, { data: memberRows }, { data: leaderAvatarRows }] =
+      await Promise.all([
+        supabase.from('countries').select('name, flag_url'),
+        supabase.from('users').select('chapter').not('chapter', 'is', null),
+        leaderIds.length > 0
+          ? supabase.from('users').select('id, avatar_url').in('id', leaderIds)
+          : Promise.resolve({ data: [] }),
+      ])
+
+    const leaderAvatarMap: Record<string, string> = {}
+    ;(leaderAvatarRows || []).forEach((u: { id: string; avatar_url: string | null }) => {
+      if (u.id && u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
+    })
 
     const countryFlagsMap = (countriesData || []).reduce((acc: Record<string, string>, curr) => {
       if (curr.name && curr.flag_url) acc[curr.name.toLowerCase()] = curr.flag_url
@@ -114,7 +126,8 @@ class ChapterService {
               id: l.id,
               name: l.name,
               role: l.role,
-              imageUrl: l.image_url || undefined,
+              // Prefer the member's real avatar (looked up via chapter.leader_id) over seed placeholder
+              imageUrl: (c.leader_id && leaderAvatarMap[c.leader_id]) || l.image_url || undefined,
             })
           ) || [],
         activities: (c.activities as unknown as ChapterActivityRow[])?.map(
