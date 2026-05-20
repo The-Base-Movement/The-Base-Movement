@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { toast } from 'sonner'
+import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 
 const inputSt: React.CSSProperties = {
   width: '100%',
@@ -79,6 +80,8 @@ export default function PollsManagement() {
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false)
   const [viewPoll, setViewPoll] = useState<Poll | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; question: string } | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const fetchData = useCallback(async () => {
     setIsLoading(true)
@@ -137,12 +140,14 @@ export default function PollsManagement() {
     }
   }
 
-  const handleDeletePoll = async (id: string, question: string) => {
-    if (!window.confirm(`Are you sure you want to delete the poll: "${question}"?`)) return
+  const handleDeletePoll = async () => {
+    if (!deleteTarget) return
+    setIsDeleting(true)
     try {
-      const success = await adminService.deletePoll(id)
+      const success = await adminService.deletePoll(deleteTarget.id)
       if (success) {
         toast.success('Poll deleted successfully.')
+        setDeleteTarget(null)
         fetchData()
       } else {
         toast.error('Failed to delete poll.')
@@ -150,6 +155,8 @@ export default function PollsManagement() {
     } catch (err) {
       console.error('[POLLS] Delete operation failed:', err)
       toast.error('An error occurred while deleting the poll.')
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -596,7 +603,7 @@ export default function PollsManagement() {
                         <button
                           className="btn btn-dest btn-sm"
                           style={{ width: 34, padding: 0, justifyContent: 'center' }}
-                          onClick={() => handleDeletePoll(poll.id, poll.question)}
+                          onClick={() => setDeleteTarget({ id: poll.id, question: poll.question })}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                             delete
@@ -856,7 +863,7 @@ export default function PollsManagement() {
                 <button
                   className="btn btn-dest"
                   style={{ width: 44, padding: 0, justifyContent: 'center' }}
-                  onClick={() => handleDeletePoll(poll.id, poll.question)}
+                  onClick={() => setDeleteTarget({ id: poll.id, question: poll.question })}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                     delete
@@ -1693,7 +1700,7 @@ export default function PollsManagement() {
                     style={{ justifyContent: 'center' }}
                     onClick={() => {
                       setViewPoll(null)
-                      handleDeletePoll(viewPoll.id, viewPoll.question)
+                      setDeleteTarget({ id: viewPoll.id, question: viewPoll.question })
                     }}
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
@@ -1806,6 +1813,17 @@ export default function PollsManagement() {
           </div>,
           document.body
         )}
+
+      <DeleteConfirmationModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeletePoll}
+        title="Delete poll"
+        description="This poll and all its responses will be permanently deleted."
+        itemName={deleteTarget?.question ?? ''}
+        isLoading={isDeleting}
+        isPermanent
+      />
     </div>
   )
 }
