@@ -40,11 +40,21 @@ export default function StrategicPriorities() {
     return () => window.removeEventListener('resize', fn)
   }, [])
 
-  async function fetchCampaigns() {
+   async function fetchCampaigns() {
     setLoading(true)
     try {
       const data = await adminService.getDonationCampaigns()
-      setCampaigns(data)
+      const processed = data.map((campaign) => {
+        if (
+          campaign.status === 'Active' &&
+          campaign.raisedAmount >= campaign.targetAmount &&
+          campaign.targetAmount > 0
+        ) {
+          return { ...campaign, status: 'Closed' as const }
+        }
+        return campaign
+      })
+      setCampaigns(processed)
     } catch (err) {
       console.error('[STRATEGIC PRIORITIES] Synchronization failed:', err)
       toast.error('Failed to synchronize strategic priorities.')
@@ -83,7 +93,14 @@ export default function StrategicPriorities() {
     if (!editingCampaign) return
     setIsSubmitting(true)
     try {
-      const success = await adminService.updateDonationCampaign(editingCampaign.id, formData)
+      const updatedFormData = { ...formData }
+      if (
+        editingCampaign.raisedAmount >= Number(formData.targetAmount) &&
+        Number(formData.targetAmount) > 0
+      ) {
+        updatedFormData.status = 'Closed'
+      }
+      const success = await adminService.updateDonationCampaign(editingCampaign.id, updatedFormData)
       if (success) {
         toast.success('Strategic priority updated.')
         setEditingCampaign(null)
