@@ -706,7 +706,7 @@
 /* ── Mobile breakpoints ───────────────────────────────────────── */
 @media (max-width: 768px) {
   .main {
-    padding: 14px 14px 60px;
+    padding: 10px 10px 60px;
   }
   .top {
     flex-direction: column;
