@@ -1,3 +1,23 @@
+/**
+ * RallyCommand.tsx
+ * ─────────────────────────────────────────────────────────────────
+ * Main orchestrator for the Rally Command admin page.
+ *
+ * Responsibilities:
+ *  - Fetches all field actions from the database via adminService
+ *  - Fetches attendance records when a field action is selected
+ *  - Handles manual attendance verification
+ *  - Passes data down to focused sub-components (rally/ folder)
+ *
+ * Sub-components (src/pages/admin/rally/):
+ *  RallyHeader        — Page title, breadcrumb line, and header action buttons
+ *  RallyKPIs          — Top stats strip (field actions, live now, attendance, verified rate)
+ *  ActionList         — Sidebar scrollable list of field actions
+ *  OperationalMetrics — 3-column metric cards (verified, velocity, target achievement)
+ *  AttendanceTable    — Full attendance manifest table with manual verify CTA
+ *  GeofenceViewer     — Dark geo-fence visualization panel with pulse animation
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import type { FieldAction, RallyAttendance } from '@/types/admin'
@@ -18,6 +38,12 @@ export default function RallyCommand() {
   const [verifying, setVerifying] = useState<string | null>(null)
 
   // ── Data fetching ──────────────────────────────────────────────
+
+  /**
+   * Loads all field actions from the DB.
+   * Auto-selects the first action if none is currently selected.
+   * Source: adminService.getFieldActions() → public.field_actions
+   */
   const fetchActions = useCallback(async () => {
     setLoading(true)
     try {
@@ -32,6 +58,11 @@ export default function RallyCommand() {
     }
   }, [selectedAction])
 
+  /**
+   * Loads attendance records for a specific field action.
+   * Re-runs whenever the selected action changes.
+   * Source: adminService.getFieldActionAttendance(id) → public.rally_attendance
+   */
   const fetchAttendance = useCallback(async (actionId: string) => {
     try {
       const data = await adminService.getFieldActionAttendance(actionId)
@@ -42,18 +73,28 @@ export default function RallyCommand() {
     }
   }, [])
 
+  // Runs once on mount — loads all field actions
   useEffect(() => { fetchActions() }, [fetchActions])
+
+  // Re-fetches attendance whenever the selected action changes
   useEffect(() => {
     if (selectedAction) fetchAttendance(selectedAction.id)
   }, [selectedAction, fetchAttendance])
 
   // ── Handlers ───────────────────────────────────────────────────
+
+  /**
+   * Manually verifies a single attendance record by ID.
+   * Awards loyalty points to the member upon success.
+   * Source: adminService.verifyRallyAttendance(id) → updates public.rally_attendance.is_verified
+   */
   const handleVerify = async (id: string) => {
     setVerifying(id)
     try {
       const success = await adminService.verifyRallyAttendance(id)
       if (success) {
         toast.success('Attendance verified. Points awarded.')
+        // Optimistically update local state to avoid a full re-fetch
         setAttendance((prev) => prev.map((a) => (a.id === id ? { ...a, is_verified: true } : a)))
       }
     } catch (error) {
@@ -65,6 +106,7 @@ export default function RallyCommand() {
   }
 
   // ── Loading state ──────────────────────────────────────────────
+
   if (loading) {
     return (
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
@@ -77,28 +119,38 @@ export default function RallyCommand() {
   }
 
   // ── Render ─────────────────────────────────────────────────────
+
   return (
     <div className="main">
+      {/* Page title, accent line, description, and header CTA buttons */}
       <RallyHeader />
 
+      {/* Top-level KPI strip: total actions, live count, attendance, verify rate */}
       <RallyKPIs actions={actions} attendance={attendance} />
 
       <div className="sidebar-main" style={{ alignItems: 'start' }}>
+        {/* Left sidebar: scrollable list of all field actions, highlights selected */}
         <ActionList actions={actions} selectedAction={selectedAction} onSelect={setSelectedAction} />
 
         <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
           {selectedAction ? (
             <>
+              {/* 3-col metric cards: verified strength, check-in velocity, target % */}
               <OperationalMetrics selectedAction={selectedAction} attendance={attendance} />
+
+              {/* Full attendance table with search, status badges, and manual verify button */}
               <AttendanceTable
                 attendance={attendance}
                 selectedAction={selectedAction}
                 verifying={verifying}
                 onVerify={handleVerify}
               />
+
+              {/* Dark geo-fence panel showing location name, radius, and pulse animation */}
               <GeofenceViewer selectedAction={selectedAction} />
             </>
           ) : (
+            /* Empty state — shown when no field action has been selected yet */
             <div className="panel" style={{ height: 600, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, borderStyle: 'dashed' }}>
               <span className="material-symbols-outlined" style={{ fontSize: 64, color: 'hsl(var(--on-surface-muted))', opacity: 0.1 }}>priority_high</span>
               <div style={{ textAlign: 'center', maxWidth: 320 }}>
