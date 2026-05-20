@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { adminService } from '@/services/adminService'
 import type { DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
@@ -14,6 +15,8 @@ export default function StrategicPriorities() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
   const [showMobileFilter, setShowMobileFilter] = useState(false)
+  const [priorityToDelete, setPriorityToDelete] = useState<DonationCampaign | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Form State
   const [formData, setFormData] = useState<Omit<DonationCampaign, 'id' | 'raisedAmount'>>({
@@ -91,16 +94,15 @@ export default function StrategicPriorities() {
     }
   }
 
-  const handleDelete = async (id: string, title: string) => {
-    if (
-      !confirm(
-        `Are you sure you want to decommission the "${title}" priority? This action is immutable.`
-      )
-    )
-      return
+  const handleDelete = (campaign: DonationCampaign) => {
+    setPriorityToDelete(campaign)
+  }
 
+  const handleConfirmedDelete = async () => {
+    if (!priorityToDelete) return
+    setIsDeleting(true)
     try {
-      const success = await adminService.deleteDonationCampaign(id, title)
+      const success = await adminService.deleteDonationCampaign(priorityToDelete.id, priorityToDelete.title)
       if (success) {
         toast.success('Priority decommissioned.')
         fetchCampaigns()
@@ -110,6 +112,9 @@ export default function StrategicPriorities() {
     } catch (err) {
       console.error('[STRATEGIC PRIORITIES] Decommissioning failed:', err)
       toast.error('Operational error during decommissioning.')
+    } finally {
+      setIsDeleting(false)
+      setPriorityToDelete(null)
     }
   }
 
@@ -409,7 +414,7 @@ export default function StrategicPriorities() {
             </div>
           </div>
 
-          <div className="panel" style={{ background: 'hsl(var(--on-surface))', color: '#fff' }}>
+          <div className="panel" style={{ background: 'hsl(var(--on-surface))', color: '#fff', padding: 24 }}>
             <h4
               style={{
                 fontFamily: "'Public Sans', sans-serif",
@@ -716,7 +721,7 @@ export default function StrategicPriorities() {
                           <button
                             className="btn btn-dest btn-sm"
                             style={{ width: 34, padding: 0, justifyContent: 'center' }}
-                            onClick={() => handleDelete(campaign.id, campaign.title)}
+                            onClick={() => handleDelete(campaign)}
                           >
                             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                               delete
@@ -1364,10 +1369,20 @@ export default function StrategicPriorities() {
                   </button>
                 </div>
               </form>
-            </div>
           </div>,
           document.body
         )}
+
+      <DeleteConfirmationModal
+        isOpen={!!priorityToDelete}
+        onClose={() => setPriorityToDelete(null)}
+        onConfirm={handleConfirmedDelete}
+        title="Decommission Strategic Priority"
+        description="Are you sure you want to decommission this strategic priority? This action is immutable."
+        itemName={priorityToDelete?.title || ''}
+        isLoading={isDeleting}
+        isPermanent={true}
+      />
     </div>
   )
 }
