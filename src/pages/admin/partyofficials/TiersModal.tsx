@@ -136,72 +136,80 @@ export function TiersModal({
           <div style={{ marginBottom: 24 }}>
             <h4 style={{ fontSize: 13, fontWeight: 800, marginBottom: 12 }}>Existing Tiers</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {tiers.map((t) => (
-                <div
-                  key={t.id}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    background: 'hsl(var(--container-low))',
-                    borderRadius: 4,
-                    border: '1px solid hsl(var(--border))',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {/* Title section */}
-                  <div style={{ padding: '10px 12px' }}>
-                    <div style={{ fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
-                      {t.title}{' '}
-                      <span
+              {[...tiers]
+                .sort((a, b) => a.order_index - b.order_index)
+                .map((t) => (
+                  <div
+                    key={t.id}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      background: 'hsl(var(--container-low))',
+                      borderRadius: 4,
+                      border: '1px solid hsl(var(--border))',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {/* Title section */}
+                    <div style={{ padding: '10px 12px' }}>
+                      <div
+                        style={{ fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}
+                      >
+                        {t.title}{' '}
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: 'hsl(var(--on-surface-muted))',
+                            fontWeight: 600,
+                          }}
+                        >
+                          ({t.name})
+                        </span>
+                      </div>
+                      <div
                         style={{
-                          fontSize: 10,
+                          fontSize: 11,
                           color: 'hsl(var(--on-surface-muted))',
-                          fontWeight: 600,
+                          marginTop: 2,
                         }}
                       >
-                        ({t.name})
-                      </span>
+                        Order: {t.order_index}
+                      </div>
                     </div>
-                    <div
-                      style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}
-                    >
-                      Order: {t.order_index}
+                    {/* Footer actions */}
+                    <div style={{ display: 'flex', borderTop: '1px solid hsl(var(--border))' }}>
+                      <button
+                        className="btn btn-sm btn-outline"
+                        style={{
+                          flex: 1,
+                          borderRadius: 0,
+                          border: 'none',
+                          borderRight: '1px solid hsl(var(--border))',
+                          justifyContent: 'center',
+                        }}
+                        onClick={() => {
+                          setTierFormData(t)
+                          setEditingTierId(t.id)
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline"
+                        style={{
+                          flex: 1,
+                          borderRadius: 0,
+                          border: 'none',
+                          justifyContent: 'center',
+                          color: 'hsl(var(--destructive))',
+                        }}
+                        onClick={() => handleDeleteTier(t.id)}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
-                  {/* Footer actions */}
-                  <div style={{ display: 'flex', borderTop: '1px solid hsl(var(--border))' }}>
-                    <button
-                      className="btn btn-sm btn-outline"
-                      style={{
-                        flex: 1,
-                        borderRadius: 0,
-                        border: 'none',
-                        borderRight: '1px solid hsl(var(--border))',
-                        justifyContent: 'center',
-                      }}
-                      onClick={() => {
-                        setTierFormData(t)
-                        setEditingTierId(t.id)
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline"
-                      style={{
-                        flex: 1,
-                        borderRadius: 0,
-                        border: 'none',
-                        justifyContent: 'center',
-                        color: 'hsl(var(--destructive))',
-                      }}
-                      onClick={() => handleDeleteTier(t.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
@@ -220,7 +228,7 @@ export function TiersModal({
             onSubmit={handleSubmit}
             style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
               <div>
                 <label
                   htmlFor="tier-name"

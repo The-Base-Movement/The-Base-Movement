@@ -719,8 +719,13 @@
 
 /* ── Mobile breakpoints ───────────────────────────────────────── */
 @media (max-width: 768px) {
+  .admin-content-area {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 12px !important;
+  }
   .main {
-    padding: 10px 10px 40px;
+    padding: 10px 14px 40px;
   }
   .top {
     flex-direction: column;

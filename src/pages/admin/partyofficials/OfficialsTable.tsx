@@ -59,6 +59,8 @@ function TierBadge({ official, tiers }: { official: PartyOfficial; tiers: PartyT
         border: '1px solid hsla(var(--primary), 0.2)',
         borderRadius: 3,
         padding: '2px 7px',
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
       }}
     >
       {tiers.find((t) => t.name === official.tier)?.title || official.tier}
@@ -171,21 +173,27 @@ export function OfficialsTable({
                   gap: 10,
                 }}
               >
-                {/* Top row: avatar + name + tier */}
+                {/* Top row: avatar + name/role/tier */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <Avatar url={official.avatar_url} name={official.name} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div
-                      style={{
-                        fontWeight: 800,
-                        fontSize: 13,
-                        color: 'hsl(var(--on-surface))',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, overflow: 'hidden' }}
                     >
-                      {official.name}
+                      <span
+                        style={{
+                          fontWeight: 800,
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface))',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          minWidth: 0,
+                        }}
+                      >
+                        {official.name}
+                      </span>
+                      <TierBadge official={official} tiers={tiers} />
                     </div>
                     <div
                       style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}
@@ -194,7 +202,6 @@ export function OfficialsTable({
                       {official.region ? ` · ${official.region}` : ''}
                     </div>
                   </div>
-                  <TierBadge official={official} tiers={tiers} />
                 </div>
 
                 {/* Actions */}

@@ -2,6 +2,67 @@ import { cn } from '@/lib/utils'
 import type { PendingVerification } from '@/types/admin'
 import type { NavigateFunction } from 'react-router-dom'
 
+const AVATAR_PALETTE = [
+  { bg: '#e8f5ee', color: '#006B3F' },
+  { bg: '#fef3d0', color: '#a87d10' },
+  { bg: '#fde8eb', color: '#CE1126' },
+  { bg: '#e8eef8', color: '#1a5ba8' },
+  { bg: '#f0e8f8', color: '#7b3fa0' },
+]
+
+function getAvatarStyle(name: string) {
+  const sum = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  return AVATAR_PALETTE[sum % AVATAR_PALETTE.length]
+}
+
+function MemberAvatar({ name, photoUrl }: { name: string; photoUrl: string | null }) {
+  const { bg, color } = getAvatarStyle(name)
+  const initials = name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+
+  return (
+    <div
+      style={{
+        width: 32,
+        height: 32,
+        borderRadius: '50%',
+        background: photoUrl ? 'hsl(var(--container-low))' : bg,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 10,
+        fontWeight: 800,
+        color,
+        fontFamily: "'Public Sans', sans-serif",
+        flexShrink: 0,
+        overflow: 'hidden',
+      }}
+    >
+      {photoUrl ? (
+        <img
+          src={photoUrl}
+          alt={name}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(e) => {
+            const el = e.currentTarget
+            el.style.display = 'none'
+            if (el.parentElement) {
+              el.parentElement.style.background = bg
+              el.parentElement.textContent = initials
+            }
+          }}
+        />
+      ) : (
+        initials
+      )}
+    </div>
+  )
+}
+
 interface VerificationsQueueProps {
   pendingVerifications: PendingVerification[]
   onVerify: (id: string, approve: boolean) => Promise<void>
@@ -41,24 +102,7 @@ export function VerificationsQueue({
               <tr key={member.id}>
                 <td>
                   <div className="who">
-                    <div
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: '50%',
-                        background: 'hsl(var(--container-low))',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 10,
-                        fontWeight: 800,
-                        color: 'hsl(var(--on-surface-muted))',
-                        fontFamily: "'Public Sans', sans-serif",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {member.name[0]}
-                    </div>
+                    <MemberAvatar name={member.name} photoUrl={member.photoUrl} />
                     <div>
                       <b>{member.name}</b>
                       <span>{member.phone}</span>
