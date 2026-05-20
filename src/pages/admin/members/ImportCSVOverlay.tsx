@@ -380,7 +380,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
         </div>
 
         {/* Body — scrollable */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+        <div className="csv-body" style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
           {/* Instructions banner — always visible, top of body */}
           <div
             style={{
@@ -590,7 +590,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
 
               {/* Summary stats */}
               {!isParsing && parsedRecords.length > 0 && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div className="csv-stats-grid" style={{ display: 'grid', gap: 12 }}>
                   <div
                     style={{
                       padding: 16,
@@ -802,6 +802,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
 
         {/* Footer */}
         <div
+          className="csv-footer"
           style={{
             padding: '16px 24px',
             borderTop: '1px solid hsl(var(--border))',
@@ -849,7 +850,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
             <div />
           )}
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="csv-footer-btns" style={{ display: 'flex', gap: 10 }}>
             <button
               className="btn btn-outline"
               onClick={onClose}
@@ -870,6 +871,17 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           </div>
         </div>
       </div>
+
+      <style>{`
+        .csv-stats-grid { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 600px) {
+          .csv-body { padding: 16px !important; }
+          .csv-stats-grid { grid-template-columns: 1fr; }
+          .csv-footer { padding: 14px 16px !important; flex-direction: column; align-items: stretch !important; }
+          .csv-footer-btns { flex-direction: column; }
+          .csv-footer-btns .btn { width: 100%; justify-content: center; }
+        }
+      `}</style>
     </div>,
     document.body
   )
