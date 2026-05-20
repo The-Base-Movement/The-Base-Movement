@@ -21,6 +21,7 @@ export default function MediaLibrary() {
     { id: 'logos-favicons', label: 'Logos & Favicons', icon: 'image' },
     { id: 'public-assets', label: 'Public Assets', icon: 'image' },
     { id: 'editor-content', label: 'Editor Media', icon: 'description' },
+    { id: 'party-officials', label: 'Party Officials', icon: 'badge' },
   ]
 
   const loadFiles = useCallback(async () => {
@@ -129,8 +130,17 @@ export default function MediaLibrary() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button className="btn btn-outline btn-sm" onClick={loadFiles}>
-            Refresh vault
+          <button className="btn btn-outline btn-sm" onClick={loadFiles} disabled={isLoading}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                fontSize: 14,
+                ...(isLoading ? { animation: 'spin 1s linear infinite' } : {}),
+              }}
+            >
+              {isLoading ? 'sync' : 'refresh'}
+            </span>
+            {isLoading ? 'Refreshing…' : 'Refresh vault'}
           </button>
           <input
             type="file"
