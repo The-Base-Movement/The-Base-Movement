@@ -335,6 +335,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
         },
         {
+          to: '/admin/party-officials',
+          icon: 'badge',
+          label: 'Party Officials',
+          permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        },
+        {
           to: '/admin/roadmap',
           icon: 'route',
           label: 'Mission roadmap',
@@ -436,8 +442,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               isSidebarOpen ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'
             )}
           >
-            <Link
-              to="/"
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-3 px-3 py-2.5 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-lg transition-all group border border-white/5"
             >
               <span
@@ -449,7 +457,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               <span className="text-[11px] font-extrabold uppercase tracking-[0.06em]">
                 View Site
               </span>
-            </Link>
+            </a>
           </div>
 
           <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto scrollbar-hide">
