@@ -1,0 +1,255 @@
+import { PAGE_SIZE, type Station } from './utils'
+
+interface PollingStationsTableProps {
+  loading: boolean
+  stations: Station[]
+  page: number
+  setPage: React.Dispatch<React.SetStateAction<number>>
+  totalCount: number
+  totalPages: number
+}
+
+export function PollingStationsTable({
+  loading,
+  stations,
+  page,
+  setPage,
+  totalCount,
+  totalPages,
+}: PollingStationsTableProps) {
+  return (
+    <>
+      {/* Table */}
+      <div style={{ overflowX: 'auto' }}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                background: 'hsl(var(--container-low))',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
+            >
+              {['Code', 'Station name', 'Community', 'Constituency', 'Region', 'Members'].map(
+                (h) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: '8px 16px',
+                      textAlign: 'left',
+                      fontWeight: 800,
+                      fontSize: 9.5,
+                      letterSpacing: '.06em',
+                      textTransform: 'uppercase',
+                      color: 'hsl(var(--on-surface-muted))',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {h}
+                  </th>
+                )
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={6} style={{ padding: '40px 16px', textAlign: 'center' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 10,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 28,
+                        height: 28,
+                        border: '2px solid hsl(var(--border))',
+                        borderTopColor: 'hsl(var(--primary))',
+                        borderRadius: '50%',
+                        animation: 'spin 0.7s linear infinite',
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontFamily: "'Public Sans'",
+                        fontWeight: 700,
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                        letterSpacing: '.05em',
+                      }}
+                    >
+                      Loading stations…
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            ) : stations.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  style={{
+                    padding: '48px 16px',
+                    textAlign: 'center',
+                    fontFamily: "'Public Sans'",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  No polling stations match the current filters.
+                </td>
+              </tr>
+            ) : (
+              stations.map((s, i) => (
+                <tr
+                  key={s.code}
+                  style={{
+                    borderBottom: i < stations.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                    background: i % 2 === 0 ? '#fff' : 'hsl(var(--container-low))',
+                  }}
+                >
+                  <td style={{ padding: '9px 16px', whiteSpace: 'nowrap' }}>
+                    <span
+                      style={{
+                        fontFamily: 'monospace',
+                        fontWeight: 700,
+                        fontSize: 12,
+                        letterSpacing: '.02em',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {s.code}
+                    </span>
+                  </td>
+                  <td
+                    style={{
+                      padding: '9px 16px',
+                      fontWeight: 800,
+                      fontSize: 12.5,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {s.name}
+                  </td>
+                  <td
+                    style={{
+                      padding: '9px 16px',
+                      fontWeight: 700,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    {s.community}
+                  </td>
+                  <td
+                    style={{
+                      padding: '9px 16px',
+                      fontWeight: 700,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {s.constituency}
+                  </td>
+                  <td
+                    style={{
+                      padding: '9px 16px',
+                      fontWeight: 700,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {s.region}
+                  </td>
+                  <td style={{ padding: '9px 16px' }}>
+                    {s.member_count > 0 ? (
+                      <span className="pill pill-ok" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {s.member_count} registered
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 700,
+                          fontSize: 12,
+                        }}
+                      >
+                        —
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '12px 18px',
+            borderTop: '1px solid hsl(var(--border))',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
+          <span style={{ fontWeight: 700, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))' }}>
+            Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} of{' '}
+            {totalCount.toLocaleString()} stations
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              className="btn btn-outline btn-sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              style={{ opacity: page <= 1 ? 0.4 : 1 }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                chevron_left
+              </span>
+              Previous
+            </button>
+            <span
+              style={{
+                fontWeight: 800,
+                fontSize: 12,
+                color: 'hsl(var(--on-surface))',
+                minWidth: 80,
+                textAlign: 'center',
+              }}
+            >
+              Page {page} of {totalPages}
+            </span>
+            <button
+              className="btn btn-outline btn-sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              style={{ opacity: page >= totalPages ? 0.4 : 1 }}
+            >
+              Next
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                chevron_right
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
