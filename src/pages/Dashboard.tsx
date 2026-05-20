@@ -160,70 +160,78 @@ export default function Dashboard() {
         rank={rankInfo}
       />
 
-      {/* Hero row: membership card + quick actions */}
-      <div className="dash-hero">
-        {member && (
-          <MembershipCard
-            userName={member.full_name}
-            userRegNo={member.registration_number}
-            region={member.region}
-            constituency={member.constituency}
-            chapter={member.chapter}
-            joinedDate={member.joined_date}
-            status={member.status}
-            avatarUrl={member.avatar_url}
-            gender={member.gender}
-            country="Ghana"
-          />
-        )}
-        <QuickActions />
-      </div>
+      <div className="dash-content">
+        {/* Hero row: membership card + quick actions */}
+        <div className="dash-hero">
+          <div className="dash-card-membership">
+            {member && (
+              <MembershipCard
+                userName={member.full_name}
+                userRegNo={member.registration_number}
+                region={member.region}
+                constituency={member.constituency}
+                chapter={member.chapter}
+                joinedDate={member.joined_date}
+                status={member.status}
+                avatarUrl={member.avatar_url}
+                gender={member.gender}
+                country="Ghana"
+              />
+            )}
+          </div>
+          <div className="dash-card-actions">
+            <QuickActions />
+          </div>
+        </div>
 
-      {/* Lower row: feed + journey */}
-      <div className="dash-lower">
-        <div className="panel feed" style={{ padding: 24 }}>
-          <h3
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 14,
-              fontWeight: 800,
-              letterSpacing: '-0.01em',
-              color: 'hsl(var(--on-surface))',
-              marginBottom: 20,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            Live contribution feed
-            <span
+        {/* Lower row: feed + journey */}
+        <div className="dash-lower">
+          <div className="dash-card-feed panel feed" style={{ padding: 24 }}>
+            <h3
               style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontSize: 14,
+                fontWeight: 800,
+                letterSpacing: '-0.01em',
+                color: 'hsl(var(--on-surface))',
+                marginBottom: 20,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
-                fontSize: 10,
-                fontWeight: 800,
-                color: 'hsl(var(--destructive))',
-                textTransform: 'uppercase',
-                letterSpacing: '.06em',
+                justifyContent: 'space-between',
               }}
             >
-              <i
-                className="animate-pulse"
+              Live contribution feed
+              <span
                 style={{
-                  width: 6,
-                  height: 6,
-                  background: 'hsl(var(--destructive))',
-                  borderRadius: '50%',
-                  display: 'inline-block',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  color: 'hsl(var(--destructive))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.06em',
                 }}
-              />
-              Live
-            </span>
-          </h3>
-          <ActivityFeed />
+              >
+                <i
+                  className="animate-pulse"
+                  style={{
+                    width: 6,
+                    height: 6,
+                    background: 'hsl(var(--destructive))',
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                  }}
+                />
+                Live
+              </span>
+            </h3>
+            <ActivityFeed />
+          </div>
+          <div className="dash-card-journey">
+            <MovementJourney />
+          </div>
         </div>
-        <MovementJourney />
       </div>
 
       <style
@@ -247,8 +255,16 @@ export default function Dashboard() {
 
         @media (max-width: 768px) {
           .dash-welcome-name { font-size: 22px !important; }
-          .dash-hero { grid-template-columns: 1fr; }
-          .dash-lower { grid-template-columns: 1fr; }
+
+          /* Collapse both grid rows into a single ordered column */
+          .dash-content { display: flex; flex-direction: column; gap: 20px; }
+          .dash-hero    { display: contents; }
+          .dash-lower   { display: contents; }
+
+          .dash-card-membership { order: 1; }
+          .dash-card-journey    { order: 2; }
+          .dash-card-feed       { order: 3; }
+          .dash-card-actions    { order: 4; }
         }
       `,
         }}
