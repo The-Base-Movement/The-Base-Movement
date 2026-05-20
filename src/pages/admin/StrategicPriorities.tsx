@@ -756,8 +756,8 @@ export default function StrategicPriorities() {
                       <div
                         style={{
                           display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
+                          flexDirection: 'column',
+                          gap: 12,
                           paddingTop: 16,
                           borderTop: '1px solid hsl(var(--border))',
                         }}
@@ -781,7 +781,7 @@ export default function StrategicPriorities() {
                         <div style={{ display: 'flex', gap: 8 }}>
                           <button
                             className="btn btn-outline btn-sm"
-                            style={{ width: 34, padding: 0, justifyContent: 'center' }}
+                            style={{ flex: 1, height: 32, padding: 0, justifyContent: 'center' }}
                             onClick={() => {
                               setEditingCampaign(campaign)
                               setFormData({
@@ -794,13 +794,14 @@ export default function StrategicPriorities() {
                               })
                             }}
                           >
-                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 6 }}>
                               edit
                             </span>
+                            Edit Priority
                           </button>
                           <button
                             className="btn btn-dest btn-sm"
-                            style={{ width: 34, padding: 0, justifyContent: 'center' }}
+                            style={{ width: 34, height: 32, padding: 0, justifyContent: 'center' }}
                             onClick={() => handleDelete(campaign)}
                           >
                             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
