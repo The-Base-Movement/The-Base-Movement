@@ -3,6 +3,7 @@ interface MembersHeaderProps {
   membersCount: number
   onExport: () => void
   onAddMember: () => void
+  onImportCSV: () => void
 }
 
 export function MembersHeader({
@@ -10,6 +11,7 @@ export function MembersHeader({
   membersCount,
   onExport,
   onAddMember,
+  onImportCSV,
 }: MembersHeaderProps) {
   return (
     <div className="top">
@@ -38,6 +40,12 @@ export function MembersHeader({
             download
           </span>
           {isExporting ? 'Exporting…' : 'Export CSV'}
+        </button>
+        <button className="btn btn-outline" onClick={onImportCSV}>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            publish
+          </span>
+          Import CSV
         </button>
         <button className="btn btn-primary" onClick={onAddMember}>
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>

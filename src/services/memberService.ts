@@ -177,6 +177,21 @@ class MemberService {
     return { data: !error, error }
   }
 
+  async bulkRegisterMembers(
+    users: User[]
+  ): Promise<{ data: boolean; error: PostgrestError | null }> {
+    const batchSize = 50
+    for (let i = 0; i < users.length; i += batchSize) {
+      const batch = users.slice(i, i + batchSize)
+      const { error } = await supabase.from('users').insert(batch)
+      if (error) {
+        console.error('[DATABASE] Bulk member registration failed at batch:', i, error)
+        return { data: false, error }
+      }
+    }
+    return { data: true, error: null }
+  }
+
   async getGrowthStats(): Promise<{
     joined_last_hour: number
     joined_last_24h: number

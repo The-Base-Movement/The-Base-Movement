@@ -12,7 +12,7 @@ interface Stats {
 }
 
 interface StatsSectionProps {
-  statsGridRef: RefObject<HTMLDivElement>
+  statsGridRef: RefObject<HTMLDivElement | null>
   stats: Stats
 }
 

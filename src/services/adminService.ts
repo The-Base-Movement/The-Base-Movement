@@ -283,6 +283,18 @@ class AdminService {
     return result
   }
 
+  async bulkRegisterMembers(
+    users: User[]
+  ): Promise<{ data: boolean; error: PostgrestError | null }> {
+    const result = await memberService.bulkRegisterMembers(users)
+    if (!result.error) {
+      await this.logAction('MEMBER_BULK_REGISTER', 'SYSTEM/MEMBERS', 'Success', {
+        count: users.length,
+      })
+    }
+    return result
+  }
+
   async getMemberDonations(authId: string): Promise<MemberDonation[]> {
     const { data, error } = await supabase
       .from('donations')

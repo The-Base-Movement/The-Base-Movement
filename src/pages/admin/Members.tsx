@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { usePerformance } from '@/context/PerformanceContext'
 import { MemberDetailPanel } from './members/MemberDetailPanel'
 import { AuditModal } from './members/AuditModal'
@@ -10,12 +11,14 @@ import { MembersKPIs } from './members/MembersKPIs'
 import { MembersFilterBar } from './members/MembersFilterBar'
 import { MembersBulkBar } from './members/MembersBulkBar'
 import { RegistrationOverlay } from './members/RegistrationOverlay'
+import { ImportCSVOverlay } from './members/ImportCSVOverlay'
 import { useMembersData } from './members/useMembersData'
 import { useMemberDetail } from './members/useMemberDetail'
 import { useMembersActions } from './members/useMembersActions'
 
 export default function MembersList() {
   const { lowBandwidthMode } = usePerformance()
+  const [isImportingCSV, setIsImportingCSV] = useState(false)
 
   const {
     members,
@@ -102,6 +105,7 @@ export default function MembersList() {
         membersCount={members.length}
         onExport={handleExport}
         onAddMember={() => setIsAdding(true)}
+        onImportCSV={() => setIsImportingCSV(true)}
       />
 
       <MembersKPIs
@@ -153,6 +157,10 @@ export default function MembersList() {
           onClose={() => setIsAdding(false)}
           onSubmitData={handleSubmitRegistration}
         />
+      )}
+
+      {isImportingCSV && (
+        <ImportCSVOverlay onClose={() => setIsImportingCSV(false)} onSuccess={fetchMembers} />
       )}
 
       {selectedMember && (
