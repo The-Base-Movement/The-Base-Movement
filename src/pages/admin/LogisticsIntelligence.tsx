@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { adminService } from '@/services/adminService'
 import type { LogisticsAuditEntry } from '@/types/admin'
@@ -864,102 +865,104 @@ export default function LogisticsIntelligence() {
       </div>
 
       {/* Replenish Confirm Modal */}
-      {showReplenishConfirm && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 24,
-          }}
-          onClick={() => setShowReplenishConfirm(false)}
-        >
+      {showReplenishConfirm &&
+        createPortal(
           <div
             style={{
-              background: '#fff',
-              borderRadius: 6,
-              width: '100%',
-              maxWidth: 440,
-              padding: '40px 32px',
-              textAlign: 'center',
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.45)',
+              zIndex: 100,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 24,
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => setShowReplenishConfirm(false)}
           >
             <div
               style={{
-                width: 64,
-                height: 64,
-                borderRadius: '50%',
-                background: 'hsl(var(--container-low))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 20px',
+                background: '#fff',
+                borderRadius: 6,
+                width: '100%',
+                maxWidth: 440,
+                padding: '40px 32px',
+                textAlign: 'center',
               }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 32, color: 'hsl(var(--on-surface))' }}
+              <div
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: '50%',
+                  background: 'hsl(var(--container-low))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 20px',
+                }}
               >
-                add_box
-              </span>
-            </div>
-            <div
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
-                fontSize: 18,
-                color: 'hsl(var(--on-surface))',
-                marginBottom: 12,
-              }}
-            >
-              Confirm bulk replenishment?
-            </div>
-            <p
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontSize: 13,
-                color: 'hsl(var(--on-surface-muted))',
-                lineHeight: 1.6,
-                marginBottom: 28,
-              }}
-            >
-              This will initiate a movement-wide replenishment protocol for all low-stock assets.
-              Standard procurement workflows will be triggered.
-            </p>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button
-                className="btn btn-outline"
-                style={{ flex: 1 }}
-                onClick={() => setShowReplenishConfirm(false)}
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 32, color: 'hsl(var(--on-surface))' }}
+                >
+                  add_box
+                </span>
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 18,
+                  color: 'hsl(var(--on-surface))',
+                  marginBottom: 12,
+                }}
               >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                style={{ flex: 1 }}
-                onClick={handleReplenishAll}
-                disabled={isReplenishing}
+                Confirm bulk replenishment?
+              </div>
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface-muted))',
+                  lineHeight: 1.6,
+                  marginBottom: 28,
+                }}
               >
-                {isReplenishing ? (
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
-                  >
-                    refresh
-                  </span>
-                ) : (
-                  'Confirm protocol'
-                )}
-              </button>
+                This will initiate a movement-wide replenishment protocol for all low-stock assets.
+                Standard procurement workflows will be triggered.
+              </p>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  className="btn btn-outline"
+                  style={{ flex: 1 }}
+                  onClick={() => setShowReplenishConfirm(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary"
+                  style={{ flex: 1 }}
+                  onClick={handleReplenishAll}
+                  disabled={isReplenishing}
+                >
+                  {isReplenishing ? (
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
+                    >
+                      refresh
+                    </span>
+                  ) : (
+                    'Confirm protocol'
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import type { Factor } from '@supabase/supabase-js'
+import { createPortal } from 'react-dom'
 
 interface PasswordForm {
   currentPassword: string
@@ -209,160 +210,167 @@ export function SecuritySettingsTab({
       </div>
 
       {/* MFA setup modal */}
-      {showMfaDialog && (
-        <>
-          <div
-            onClick={() => setShowMfaDialog(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100 }}
-          />
-          <div
-            style={{
-              position: 'fixed',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%,-50%)',
-              background: '#fff',
-              borderRadius: 4,
-              padding: 28,
-              width: '90%',
-              maxWidth: 400,
-              zIndex: 101,
-              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-            }}
-          >
-            <h3
+      {showMfaDialog &&
+        createPortal(
+          <>
+            <div
+              onClick={() => setShowMfaDialog(false)}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100 }}
+            />
+            <div
               style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
-                fontSize: 16,
-                color: 'hsl(var(--on-surface))',
-                margin: '0 0 4px',
+                position: 'fixed',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%,-50%)',
+                background: '#fff',
+                borderRadius: 4,
+                padding: 28,
+                width: '90%',
+                maxWidth: 400,
+                zIndex: 101,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
               }}
             >
-              Configure MFA
-            </h3>
-            <p
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: 12,
-                color: 'hsl(var(--on-surface-muted))',
-                margin: '0 0 20px',
-              }}
-            >
-              Follow these steps to secure your administrative account.
-            </p>
-
-            {mfaStep === 'qr' && mfaEnrollData && (
-              <div
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}
+              <h3
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 16,
+                  color: 'hsl(var(--on-surface))',
+                  margin: '0 0 4px',
+                }}
               >
+                Configure MFA
+              </h3>
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 700,
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                  margin: '0 0 20px',
+                }}
+              >
+                Follow these steps to secure your administrative account.
+              </p>
+
+              {mfaStep === 'qr' && mfaEnrollData && (
                 <div
                   style={{
-                    padding: 16,
-                    background: 'hsl(var(--container-low))',
-                    borderRadius: 4,
-                    border: '1px solid hsl(var(--border))',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 16,
                   }}
                 >
-                  <img
-                    src={mfaEnrollData.qr}
-                    alt="MFA QR Code"
-                    style={{ width: 192, height: 192 }}
-                    decoding="async"
-                    loading="lazy"
-                  />
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <p
+                  <div
                     style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface))',
-                      margin: '0 0 4px',
+                      padding: 16,
+                      background: 'hsl(var(--container-low))',
+                      borderRadius: 4,
+                      border: '1px solid hsl(var(--border))',
                     }}
                   >
-                    Scan this QR Code
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      lineHeight: 1.6,
-                      margin: 0,
-                    }}
+                    <img
+                      src={mfaEnrollData.qr}
+                      alt="MFA QR Code"
+                      style={{ width: 192, height: 192 }}
+                      decoding="async"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 800,
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface))',
+                        margin: '0 0 4px',
+                      }}
+                    >
+                      Scan this QR Code
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        lineHeight: 1.6,
+                        margin: 0,
+                      }}
+                    >
+                      Use Google Authenticator, Authy, or any TOTP app.
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                    onClick={() => setMfaStep('verify')}
                   >
-                    Use Google Authenticator, Authy, or any TOTP app.
-                  </p>
+                    I've scanned it, proceed
+                  </button>
                 </div>
-                <button
-                  className="btn btn-primary"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                  onClick={() => setMfaStep('verify')}
-                >
-                  I've scanned it, proceed
-                </button>
-              </div>
-            )}
+              )}
 
-            {mfaStep === 'verify' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div>
-                  <label htmlFor="input-007f09" style={labelSt}>
-                    Verification code
-                  </label>
-                  <input
-                    name="mfaCode"
-                    id="input-007f09"
-                    value={mfaCode}
-                    onChange={(e) => setMfaCode(e.target.value)}
-                    placeholder="000 000"
-                    maxLength={6}
-                    style={{
-                      ...inputSt,
-                      textAlign: 'center',
-                      fontSize: 22,
-                      letterSpacing: '0.4em',
-                      height: 52,
-                      fontWeight: 800,
-                    }}
-                  />
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      textAlign: 'center',
-                      marginTop: 6,
-                    }}
+              {mfaStep === 'verify' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div>
+                    <label htmlFor="input-007f09" style={labelSt}>
+                      Verification code
+                    </label>
+                    <input
+                      name="mfaCode"
+                      id="input-007f09"
+                      value={mfaCode}
+                      onChange={(e) => setMfaCode(e.target.value)}
+                      placeholder="000 000"
+                      maxLength={6}
+                      style={{
+                        ...inputSt,
+                        textAlign: 'center',
+                        fontSize: 22,
+                        letterSpacing: '0.4em',
+                        height: 52,
+                        fontWeight: 800,
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        textAlign: 'center',
+                        marginTop: 6,
+                      }}
+                    >
+                      Enter the 6-digit code from your authenticator app.
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                    onClick={handleVerifyMfa}
+                    disabled={isSaving || mfaCode.length < 6}
                   >
-                    Enter the 6-digit code from your authenticator app.
-                  </p>
+                    {isSaving ? 'Verifying…' : 'Verify and Enable MFA'}
+                  </button>
+                  <button
+                    className="btn btn-outline"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                    onClick={() => setMfaStep('qr')}
+                  >
+                    Go back to QR code
+                  </button>
                 </div>
-                <button
-                  className="btn btn-primary"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                  onClick={handleVerifyMfa}
-                  disabled={isSaving || mfaCode.length < 6}
-                >
-                  {isSaving ? 'Verifying…' : 'Verify and Enable MFA'}
-                </button>
-                <button
-                  className="btn btn-outline"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                  onClick={() => setMfaStep('qr')}
-                >
-                  Go back to QR code
-                </button>
-              </div>
-            )}
-          </div>
-        </>
-      )}
+              )}
+            </div>
+          </>,
+          document.body
+        )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
@@ -2344,183 +2345,190 @@ export default function AdminBlogs() {
             </span>
           </button>
 
-          {showMobileFilter && (
-            <>
-              <div
-                style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 60 }}
-                onClick={() => setShowMobileFilter(false)}
-              />
-              <div
-                style={{
-                  position: 'fixed',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  zIndex: 70,
-                  background: '#fff',
-                  borderRadius: '14px 14px 0 0',
-                }}
-              >
+          {showMobileFilter &&
+            createPortal(
+              <>
                 <div
                   style={{
-                    padding: '16px 18px',
-                    borderBottom: '1px solid hsl(var(--border))',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                    position: 'fixed',
+                    inset: 0,
+                    background: 'rgba(0,0,0,0.45)',
+                    zIndex: 60,
+                  }}
+                  onClick={() => setShowMobileFilter(false)}
+                />
+                <div
+                  style={{
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 70,
+                    background: '#fff',
+                    borderRadius: '14px 14px 0 0',
                   }}
                 >
-                  <span
+                  <div
                     style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
-                      fontSize: 14,
-                      color: 'hsl(var(--on-surface))',
-                    }}
-                  >
-                    Intelligence filters
-                  </span>
-                  <button
-                    onClick={() => setShowMobileFilter(false)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: 'hsl(var(--on-surface-muted))',
+                      padding: '16px 18px',
+                      borderBottom: '1px solid hsl(var(--border))',
                       display: 'flex',
+                      justifyContent: 'space-between',
                       alignItems: 'center',
                     }}
                   >
-                    <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-                      close
-                    </span>
-                  </button>
-                </div>
-                <div
-                  style={{
-                    padding: '18px 18px 32px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 16,
-                    maxHeight: '70vh',
-                    overflowY: 'auto',
-                  }}
-                >
-                  <div>
-                    <label
-                      htmlFor="mob-search-blogs"
+                    <span
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 900,
-                        fontSize: 9,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.08em',
-                        color: 'hsl(var(--on-surface-muted))',
-                        display: 'block',
-                        marginBottom: 8,
+                        fontWeight: 800,
+                        fontSize: 14,
+                        color: 'hsl(var(--on-surface))',
                       }}
                     >
-                      Search
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <span
-                        className="material-symbols-outlined"
+                      Intelligence filters
+                    </span>
+                    <button
+                      onClick={() => setShowMobileFilter(false)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: 'hsl(var(--on-surface-muted))',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+                        close
+                      </span>
+                    </button>
+                  </div>
+                  <div
+                    style={{
+                      padding: '18px 18px 32px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 16,
+                      maxHeight: '70vh',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <div>
+                      <label
+                        htmlFor="mob-search-blogs"
                         style={{
-                          position: 'absolute',
-                          left: 10,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          fontSize: 15,
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 900,
+                          fontSize: 9,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.08em',
                           color: 'hsl(var(--on-surface-muted))',
-                          pointerEvents: 'none',
+                          display: 'block',
+                          marginBottom: 8,
                         }}
                       >
-                        search
-                      </span>
-                      <input
-                        id="mob-search-blogs"
-                        name="mobBlogSearch"
-                        placeholder="Keywords…"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        style={{ ...selectSt, paddingLeft: 34, height: 42 }}
-                      />
+                        Search
+                      </label>
+                      <div style={{ position: 'relative' }}>
+                        <span
+                          className="material-symbols-outlined"
+                          style={{
+                            position: 'absolute',
+                            left: 10,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            fontSize: 15,
+                            color: 'hsl(var(--on-surface-muted))',
+                            pointerEvents: 'none',
+                          }}
+                        >
+                          search
+                        </span>
+                        <input
+                          id="mob-search-blogs"
+                          name="mobBlogSearch"
+                          placeholder="Keywords…"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          style={{ ...selectSt, paddingLeft: 34, height: 42 }}
+                        />
+                      </div>
                     </div>
+                    <div>
+                      <label
+                        htmlFor="mob-status-blogs"
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 900,
+                          fontSize: 9,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.08em',
+                          color: 'hsl(var(--on-surface-muted))',
+                          display: 'block',
+                          marginBottom: 8,
+                        }}
+                      >
+                        Status
+                      </label>
+                      <select
+                        id="mob-status-blogs"
+                        name="mobStatusFilter"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        style={{ ...selectSt, height: 42 }}
+                      >
+                        <option value="all">All statuses</option>
+                        <option value="Published">Published</option>
+                        <option value="Pending Verification">Pending</option>
+                        <option value="Draft">Drafts</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="mob-cat-blogs"
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 900,
+                          fontSize: 9,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.08em',
+                          color: 'hsl(var(--on-surface-muted))',
+                          display: 'block',
+                          marginBottom: 8,
+                        }}
+                      >
+                        Category
+                      </label>
+                      <select
+                        id="mob-cat-blogs"
+                        name="mobCategoryFilter"
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        style={{ ...selectSt, height: 42 }}
+                      >
+                        <option value="all">All categories</option>
+                        {CATEGORIES.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <button
+                      className="btn btn-primary"
+                      style={{ width: '100%', height: 44, marginTop: 4 }}
+                      onClick={() => setShowMobileFilter(false)}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                        check
+                      </span>
+                      Apply filters
+                    </button>
                   </div>
-                  <div>
-                    <label
-                      htmlFor="mob-status-blogs"
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 900,
-                        fontSize: 9,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.08em',
-                        color: 'hsl(var(--on-surface-muted))',
-                        display: 'block',
-                        marginBottom: 8,
-                      }}
-                    >
-                      Status
-                    </label>
-                    <select
-                      id="mob-status-blogs"
-                      name="mobStatusFilter"
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                      style={{ ...selectSt, height: 42 }}
-                    >
-                      <option value="all">All statuses</option>
-                      <option value="Published">Published</option>
-                      <option value="Pending Verification">Pending</option>
-                      <option value="Draft">Drafts</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="mob-cat-blogs"
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 900,
-                        fontSize: 9,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.08em',
-                        color: 'hsl(var(--on-surface-muted))',
-                        display: 'block',
-                        marginBottom: 8,
-                      }}
-                    >
-                      Category
-                    </label>
-                    <select
-                      id="mob-cat-blogs"
-                      name="mobCategoryFilter"
-                      value={categoryFilter}
-                      onChange={(e) => setCategoryFilter(e.target.value)}
-                      style={{ ...selectSt, height: 42 }}
-                    >
-                      <option value="all">All categories</option>
-                      {CATEGORIES.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    className="btn btn-primary"
-                    style={{ width: '100%', height: 44, marginTop: 4 }}
-                    onClick={() => setShowMobileFilter(false)}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                      check
-                    </span>
-                    Apply filters
-                  </button>
                 </div>
-              </div>
-            </>
-          )}
+              </>,
+              document.body
+            )}
         </>
       )}
 

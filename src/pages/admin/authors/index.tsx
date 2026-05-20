@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { AuthorForm } from './AuthorForm'
 import { contentService } from '@/services/contentService'
@@ -1020,157 +1021,159 @@ export default function AdminAuthors() {
                 </span>
               </button>
 
-              {showMobileFilter && (
-                <>
-                  <div
-                    style={{
-                      position: 'fixed',
-                      inset: 0,
-                      background: 'rgba(0,0,0,0.45)',
-                      zIndex: 60,
-                    }}
-                    onClick={() => setShowMobileFilter(false)}
-                  />
-                  <div
-                    style={{
-                      position: 'fixed',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      zIndex: 70,
-                      background: '#fff',
-                      borderRadius: '14px 14px 0 0',
-                    }}
-                  >
+              {showMobileFilter &&
+                createPortal(
+                  <>
                     <div
                       style={{
-                        padding: '16px 18px',
-                        borderBottom: '1px solid hsl(var(--border))',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0,0,0,0.45)',
+                        zIndex: 60,
+                      }}
+                      onClick={() => setShowMobileFilter(false)}
+                    />
+                    <div
+                      style={{
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 70,
+                        background: '#fff',
+                        borderRadius: '14px 14px 0 0',
                       }}
                     >
-                      <span
+                      <div
                         style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
-                          fontSize: 14,
-                          color: 'hsl(var(--on-surface))',
-                        }}
-                      >
-                        Filter authors
-                      </span>
-                      <button
-                        onClick={() => setShowMobileFilter(false)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: 'hsl(var(--on-surface-muted))',
+                          padding: '16px 18px',
+                          borderBottom: '1px solid hsl(var(--border))',
                           display: 'flex',
+                          justifyContent: 'space-between',
                           alignItems: 'center',
                         }}
                       >
-                        <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-                          close
-                        </span>
-                      </button>
-                    </div>
-                    <div
-                      style={{
-                        padding: '18px 18px 32px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 16,
-                      }}
-                    >
-                      <div>
-                        <label
-                          htmlFor="mob-authors-search"
+                        <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 900,
-                            fontSize: 9,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.08em',
-                            color: 'hsl(var(--on-surface-muted))',
-                            display: 'block',
-                            marginBottom: 8,
+                            fontWeight: 800,
+                            fontSize: 14,
+                            color: 'hsl(var(--on-surface))',
                           }}
                         >
                           Filter authors
-                        </label>
-                        <div style={{ position: 'relative' }}>
-                          <span
-                            className="material-symbols-outlined"
-                            style={{
-                              position: 'absolute',
-                              left: 9,
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              fontSize: 15,
-                              color: 'hsl(var(--on-surface-muted))',
-                              pointerEvents: 'none',
-                            }}
-                          >
-                            search
-                          </span>
-                          <input
-                            id="mob-authors-search"
-                            name="mobAuthorsSearch"
-                            placeholder="Name or role…"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            style={{ ...inputSt, paddingLeft: 32, height: 42 }}
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="mob-authors-role"
+                        </span>
+                        <button
+                          onClick={() => setShowMobileFilter(false)}
                           style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 900,
-                            fontSize: 9,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.08em',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
                             color: 'hsl(var(--on-surface-muted))',
-                            display: 'block',
-                            marginBottom: 8,
+                            display: 'flex',
+                            alignItems: 'center',
                           }}
                         >
-                          Role classification
-                        </label>
-                        <select
-                          id="mob-authors-role"
-                          name="mobRoleFilter"
-                          value={roleFilter}
-                          onChange={(e) => setRoleFilter(e.target.value)}
-                          style={{ ...selectSt, height: 42 }}
-                        >
-                          <option value="all">All roles</option>
-                          {availableRoles.map((role) => (
-                            <option key={role} value={role}>
-                              {role}
-                            </option>
-                          ))}
-                        </select>
+                          <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+                            close
+                          </span>
+                        </button>
                       </div>
-                      <button
-                        className="btn btn-primary"
-                        style={{ width: '100%', height: 44, marginTop: 4 }}
-                        onClick={() => setShowMobileFilter(false)}
+                      <div
+                        style={{
+                          padding: '18px 18px 32px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 16,
+                        }}
                       >
-                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                          check
-                        </span>
-                        Apply filters
-                      </button>
+                        <div>
+                          <label
+                            htmlFor="mob-authors-search"
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 900,
+                              fontSize: 9,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.08em',
+                              color: 'hsl(var(--on-surface-muted))',
+                              display: 'block',
+                              marginBottom: 8,
+                            }}
+                          >
+                            Filter authors
+                          </label>
+                          <div style={{ position: 'relative' }}>
+                            <span
+                              className="material-symbols-outlined"
+                              style={{
+                                position: 'absolute',
+                                left: 9,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                fontSize: 15,
+                                color: 'hsl(var(--on-surface-muted))',
+                                pointerEvents: 'none',
+                              }}
+                            >
+                              search
+                            </span>
+                            <input
+                              id="mob-authors-search"
+                              name="mobAuthorsSearch"
+                              placeholder="Name or role…"
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              style={{ ...inputSt, paddingLeft: 32, height: 42 }}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="mob-authors-role"
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 900,
+                              fontSize: 9,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.08em',
+                              color: 'hsl(var(--on-surface-muted))',
+                              display: 'block',
+                              marginBottom: 8,
+                            }}
+                          >
+                            Role classification
+                          </label>
+                          <select
+                            id="mob-authors-role"
+                            name="mobRoleFilter"
+                            value={roleFilter}
+                            onChange={(e) => setRoleFilter(e.target.value)}
+                            style={{ ...selectSt, height: 42 }}
+                          >
+                            <option value="all">All roles</option>
+                            {availableRoles.map((role) => (
+                              <option key={role} value={role}>
+                                {role}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <button
+                          className="btn btn-primary"
+                          style={{ width: '100%', height: 44, marginTop: 4 }}
+                          onClick={() => setShowMobileFilter(false)}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                            check
+                          </span>
+                          Apply filters
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>,
+                  document.body
+                )}
             </>
           )}
         </>
@@ -1228,7 +1231,7 @@ function AuthorDetailModal({
     color: 'hsl(var(--on-surface-muted))',
   }
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -1508,6 +1511,7 @@ function AuthorDetailModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

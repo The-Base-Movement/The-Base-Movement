@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { InventoryItem } from '@/services/adminService'
 
 interface ProductFormDialogProps {
@@ -71,7 +72,7 @@ export function ProductFormDialog({
 
   if (!isModalOpen) return null
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -557,6 +558,7 @@ export function ProductFormDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

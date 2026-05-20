@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { adminService } from '@/services/adminService'
 import type { DonationCampaign } from '@/types/admin'
@@ -761,600 +762,612 @@ export default function StrategicPriorities() {
             </span>
           </button>
 
-          {showMobileFilter && (
-            <>
-              <div
-                style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 60 }}
-                onClick={() => setShowMobileFilter(false)}
-              />
-              <div
-                style={{
-                  position: 'fixed',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  zIndex: 70,
-                  background: '#fff',
-                  borderRadius: '14px 14px 0 0',
-                }}
-              >
+          {showMobileFilter &&
+            createPortal(
+              <>
                 <div
                   style={{
-                    padding: '16px 18px',
-                    borderBottom: '1px solid hsl(var(--border))',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                    position: 'fixed',
+                    inset: 0,
+                    background: 'rgba(0,0,0,0.45)',
+                    zIndex: 60,
+                  }}
+                  onClick={() => setShowMobileFilter(false)}
+                />
+                <div
+                  style={{
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 70,
+                    background: '#fff',
+                    borderRadius: '14px 14px 0 0',
                   }}
                 >
-                  <span
+                  <div
                     style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
-                      fontSize: 14,
-                      color: 'hsl(var(--on-surface))',
-                    }}
-                  >
-                    Tactical filters
-                  </span>
-                  <button
-                    onClick={() => setShowMobileFilter(false)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: 'hsl(var(--on-surface-muted))',
+                      padding: '16px 18px',
+                      borderBottom: '1px solid hsl(var(--border))',
                       display: 'flex',
+                      justifyContent: 'space-between',
                       alignItems: 'center',
                     }}
                   >
-                    <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-                      close
-                    </span>
-                  </button>
-                </div>
-                <div
-                  style={{
-                    padding: '18px 18px 32px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 20,
-                    maxHeight: '70vh',
-                    overflowY: 'auto',
-                  }}
-                >
-                  {/* Priority dropdown */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label
-                      htmlFor="select-mob-filter"
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 900,
-                        fontSize: 9,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      Filter by priority
-                    </label>
-                    <select
-                      id="select-mob-filter"
-                      name="mobileFilterSelect"
-                      style={{
-                        width: '100%',
-                        height: 42,
-                        padding: '0 12px',
-                        border: '1px solid hsl(var(--border))',
-                        background: 'hsl(var(--container-low))',
-                        borderRadius: 4,
-                        outline: 'none',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 13,
-                        boxSizing: 'border-box',
-                        color: 'hsl(var(--on-surface))',
-                        appearance: 'none',
-                      }}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    >
-                      <option value="">All priorities</option>
-                      {campaigns.map((c) => (
-                        <option key={c.id} value={c.title}>
-                          {c.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Intelligence summary — 2-column tiles */}
-                  <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 18 }}>
                     <span
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 900,
-                        fontSize: 9,
-                        color: 'hsl(var(--on-surface-muted))',
-                        display: 'block',
-                        marginBottom: 12,
+                        fontWeight: 800,
+                        fontSize: 14,
+                        color: 'hsl(var(--on-surface))',
                       }}
                     >
-                      Intelligence summary
+                      Tactical filters
                     </span>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                      <div
+                    <button
+                      onClick={() => setShowMobileFilter(false)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: 'hsl(var(--on-surface-muted))',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+                        close
+                      </span>
+                    </button>
+                  </div>
+                  <div
+                    style={{
+                      padding: '18px 18px 32px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 20,
+                      maxHeight: '70vh',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    {/* Priority dropdown */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <label
+                        htmlFor="select-mob-filter"
                         style={{
-                          padding: '14px 16px',
-                          background: 'hsl(var(--container-low))',
-                          borderRadius: 6,
-                          border: '1px solid hsl(var(--border))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 900,
+                          fontSize: 9,
+                          color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
-                        <span
-                          style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
-                            fontSize: 10,
-                            color: 'hsl(var(--on-surface-muted))',
-                            display: 'block',
-                            marginBottom: 6,
-                          }}
-                        >
-                          Total active
-                        </span>
-                        <span
-                          style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 900,
-                            fontSize: 26,
-                            color: 'hsl(var(--primary))',
-                            lineHeight: 1,
-                          }}
-                        >
-                          {campaigns.filter((c) => c.status === 'Active').length}
-                        </span>
-                      </div>
-                      <div
+                        Filter by priority
+                      </label>
+                      <select
+                        id="select-mob-filter"
+                        name="mobileFilterSelect"
                         style={{
-                          padding: '14px 16px',
-                          background: 'hsl(var(--container-low))',
-                          borderRadius: 6,
+                          width: '100%',
+                          height: 42,
+                          padding: '0 12px',
                           border: '1px solid hsl(var(--border))',
+                          background: 'hsl(var(--container-low))',
+                          borderRadius: 4,
+                          outline: 'none',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 700,
+                          fontSize: 13,
+                          boxSizing: 'border-box',
+                          color: 'hsl(var(--on-surface))',
+                          appearance: 'none',
+                        }}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      >
+                        <option value="">All priorities</option>
+                        {campaigns.map((c) => (
+                          <option key={c.id} value={c.title}>
+                            {c.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Intelligence summary — 2-column tiles */}
+                    <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 18 }}>
+                      <span
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 900,
+                          fontSize: 9,
+                          color: 'hsl(var(--on-surface-muted))',
+                          display: 'block',
+                          marginBottom: 12,
                         }}
                       >
-                        <span
+                        Intelligence summary
+                      </span>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                        <div
                           style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
-                            fontSize: 10,
-                            color: 'hsl(var(--on-surface-muted))',
-                            display: 'block',
-                            marginBottom: 6,
+                            padding: '14px 16px',
+                            background: 'hsl(var(--container-low))',
+                            borderRadius: 6,
+                            border: '1px solid hsl(var(--border))',
                           }}
                         >
-                          Success rate
-                        </span>
-                        <span
+                          <span
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 800,
+                              fontSize: 10,
+                              color: 'hsl(var(--on-surface-muted))',
+                              display: 'block',
+                              marginBottom: 6,
+                            }}
+                          >
+                            Total active
+                          </span>
+                          <span
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 900,
+                              fontSize: 26,
+                              color: 'hsl(var(--primary))',
+                              lineHeight: 1,
+                            }}
+                          >
+                            {campaigns.filter((c) => c.status === 'Active').length}
+                          </span>
+                        </div>
+                        <div
                           style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 900,
-                            fontSize: 26,
-                            color: 'hsl(var(--accent))',
-                            lineHeight: 1,
+                            padding: '14px 16px',
+                            background: 'hsl(var(--container-low))',
+                            borderRadius: 6,
+                            border: '1px solid hsl(var(--border))',
                           }}
                         >
-                          {campaigns.length > 0
-                            ? (
-                                (campaigns.filter((c) => c.raisedAmount / c.targetAmount >= 1)
-                                  .length /
-                                  campaigns.length) *
-                                100
-                              ).toFixed(0)
-                            : 0}
-                          %
-                        </span>
+                          <span
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 800,
+                              fontSize: 10,
+                              color: 'hsl(var(--on-surface-muted))',
+                              display: 'block',
+                              marginBottom: 6,
+                            }}
+                          >
+                            Success rate
+                          </span>
+                          <span
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 900,
+                              fontSize: 26,
+                              color: 'hsl(var(--accent))',
+                              lineHeight: 1,
+                            }}
+                          >
+                            {campaigns.length > 0
+                              ? (
+                                  (campaigns.filter((c) => c.raisedAmount / c.targetAmount >= 1)
+                                    .length /
+                                    campaigns.length) *
+                                  100
+                                ).toFixed(0)
+                              : 0}
+                            %
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <button
-                    className="btn btn-primary"
-                    style={{ width: '100%', height: 44 }}
-                    onClick={() => setShowMobileFilter(false)}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                      check
-                    </span>
-                    Apply filters
-                  </button>
+                    <button
+                      className="btn btn-primary"
+                      style={{ width: '100%', height: 44 }}
+                      onClick={() => setShowMobileFilter(false)}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                        check
+                      </span>
+                      Apply filters
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>,
+              document.body
+            )}
         </>
       )}
 
       {/* 📝 Create/Edit Modal */}
-      {(isCreating || editingCampaign) && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 20,
-          }}
-        >
+      {(isCreating || editingCampaign) &&
+        createPortal(
           <div
             style={{
-              position: 'absolute',
+              position: 'fixed',
               inset: 0,
-              background: 'rgba(0,0,0,0.6)',
-              backdropFilter: 'blur(4px)',
-            }}
-            onClick={() => {
-              setIsCreating(false)
-              setEditingCampaign(null)
-            }}
-          />
-          <div
-            className="panel"
-            style={{
-              position: 'relative',
-              width: '100%',
-              maxWidth: 560,
-              padding: 0,
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              zIndex: 1000,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 20,
             }}
           >
             <div
               style={{
-                padding: isMobile ? '16px 18px' : '24px 32px',
-                borderBottom: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(0,0,0,0.6)',
+                backdropFilter: 'blur(4px)',
+              }}
+              onClick={() => {
+                setIsCreating(false)
+                setEditingCampaign(null)
+              }}
+            />
+            <div
+              className="panel"
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: 560,
+                padding: 0,
+                overflow: 'hidden',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
               }}
             >
-              <div>
-                <h3
-                  style={{
-                    margin: 0,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
-                    fontSize: 18,
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                >
-                  {isCreating ? 'Deploy New Priority' : 'Adjust Strategic Protocol'}
-                </h3>
-                <p
-                  style={{
-                    margin: '4px 0 0',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 12,
-                    color: 'hsl(var(--on-surface-muted))',
-                  }}
-                >
-                  Defining critical resource allocation for the movement.
-                </p>
-              </div>
-              <button
-                aria-label="Close modal"
-                onClick={() => {
-                  setIsCreating(false)
-                  setEditingCampaign(null)
-                }}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-                  close
-                </span>
-              </button>
-            </div>
-
-            <form onSubmit={isCreating ? handleCreate : handleUpdate}>
               <div
                 style={{
-                  padding: isMobile ? 16 : 32,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 24,
-                  maxHeight: '60vh',
-                  overflowY: 'auto',
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <label
-                    htmlFor="input-afc280"
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    Priority title
-                  </label>
-                  <input
-                    aria-label="e.g. Ashanti Region Media Blitz"
-                    name="name-afc280"
-                    id="input-afc280"
-                    type="text"
-                    required
-                    placeholder="e.g. Ashanti Region Media Blitz"
-                    style={{
-                      width: '100%',
-                      height: 48,
-                      background: 'hsl(var(--container-low))',
-                      border: 'none',
-                      borderBottom: '2px solid hsl(var(--border))',
-                      padding: '0 16px',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
-                      fontSize: 14,
-                      outline: 'none',
-                      color: 'hsl(var(--on-surface))',
-                    }}
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <label
-                    htmlFor="textarea-e67af7"
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    Mission description
-                  </label>
-                  <textarea
-                    aria-label="Define the scope and impact of this priority"
-                    name="name-e67af7"
-                    id="textarea-e67af7"
-                    rows={3}
-                    required
-                    placeholder="Define the scope and impact of this priority..."
-                    style={{
-                      width: '100%',
-                      background: 'hsl(var(--container-low))',
-                      border: 'none',
-                      borderBottom: '2px solid hsl(var(--border))',
-                      padding: 16,
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 14,
-                      outline: 'none',
-                      color: 'hsl(var(--on-surface))',
-                      resize: 'none',
-                    }}
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  />
-                </div>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-                    gap: 20,
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label
-                      htmlFor="input-489f6e"
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 12,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      Target capital (₵)
-                    </label>
-                    <input
-                      name="name-489f6e"
-                      id="input-489f6e"
-                      type="number"
-                      required
-                      style={{
-                        width: '100%',
-                        height: 48,
-                        background: 'hsl(var(--container-low))',
-                        border: 'none',
-                        borderBottom: '2px solid hsl(var(--border))',
-                        padding: '0 16px',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
-                        fontSize: 14,
-                        outline: 'none',
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                      value={formData.targetAmount}
-                      onChange={(e) =>
-                        setFormData({ ...formData, targetAmount: Number(e.target.value) })
-                      }
-                    />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label
-                      htmlFor="input-94fab5"
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 12,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      Mission deadline
-                    </label>
-                    <input
-                      name="name-94fab5"
-                      id="input-94fab5"
-                      type="date"
-                      required
-                      style={{
-                        width: '100%',
-                        height: 48,
-                        background: 'hsl(var(--container-low))',
-                        border: 'none',
-                        borderBottom: '2px solid hsl(var(--border))',
-                        padding: '0 16px',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
-                        fontSize: 14,
-                        outline: 'none',
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                      value={formData.endDate}
-                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-                    gap: 20,
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label
-                      htmlFor="select-683ee2"
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 12,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      Status
-                    </label>
-                    <select
-                      name="name-683ee2"
-                      id="select-683ee2"
-                      style={{
-                        width: '100%',
-                        height: 48,
-                        background: 'hsl(var(--container-low))',
-                        border: 'none',
-                        borderBottom: '2px solid hsl(var(--border))',
-                        padding: '0 16px',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
-                        fontSize: 14,
-                        outline: 'none',
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                      value={formData.status}
-                      onChange={(e) =>
-                        setFormData({ ...formData, status: e.target.value as 'Active' | 'Closed' })
-                      }
-                    >
-                      <option value="Active">Active Mobilization</option>
-                      <option value="Closed">Mission Completed</option>
-                    </select>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label
-                      htmlFor="input-195764"
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
-                        fontSize: 12,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      Visual URL (optional)
-                    </label>
-                    <input
-                      aria-label="https://"
-                      name="name-195764"
-                      id="input-195764"
-                      type="url"
-                      placeholder="https://..."
-                      style={{
-                        width: '100%',
-                        height: 48,
-                        background: 'hsl(var(--container-low))',
-                        border: 'none',
-                        borderBottom: '2px solid hsl(var(--border))',
-                        padding: '0 16px',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
-                        fontSize: 14,
-                        outline: 'none',
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                      value={formData.imageUrl}
-                      onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  padding: isMobile ? 16 : 32,
-                  borderTop: '1px solid hsl(var(--border))',
+                  padding: isMobile ? '16px 18px' : '24px 32px',
+                  borderBottom: '1px solid hsl(var(--border))',
                   background: 'hsl(var(--container-low))',
                   display: 'flex',
-                  gap: 12,
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
                 }}
               >
+                <div>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 900,
+                      fontSize: 18,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {isCreating ? 'Deploy New Priority' : 'Adjust Strategic Protocol'}
+                  </h3>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 500,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Defining critical resource allocation for the movement.
+                  </p>
+                </div>
                 <button
-                  type="button"
-                  className="btn btn-outline"
-                  style={{ flex: 1, height: 48 }}
+                  aria-label="Close modal"
                   onClick={() => {
                     setIsCreating(false)
                     setEditingCampaign(null)
                   }}
-                  disabled={isSubmitting}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
                 >
-                  Abort Mission
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  style={{ flex: 1, height: 48 }}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <span
-                      className="material-symbols-outlined animate-spin"
-                      style={{ fontSize: 18 }}
-                    >
-                      sync
-                    </span>
-                  ) : (
-                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                      history
-                    </span>
-                  )}
-                  {isCreating ? 'Deploy Protocol' : 'Sync Adjustments'}
+                  <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
+                    close
+                  </span>
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+
+              <form onSubmit={isCreating ? handleCreate : handleUpdate}>
+                <div
+                  style={{
+                    padding: isMobile ? 16 : 32,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 24,
+                    maxHeight: '60vh',
+                    overflowY: 'auto',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label
+                      htmlFor="input-afc280"
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      Priority title
+                    </label>
+                    <input
+                      aria-label="e.g. Ashanti Region Media Blitz"
+                      name="name-afc280"
+                      id="input-afc280"
+                      type="text"
+                      required
+                      placeholder="e.g. Ashanti Region Media Blitz"
+                      style={{
+                        width: '100%',
+                        height: 48,
+                        background: 'hsl(var(--container-low))',
+                        border: 'none',
+                        borderBottom: '2px solid hsl(var(--border))',
+                        padding: '0 16px',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 800,
+                        fontSize: 14,
+                        outline: 'none',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label
+                      htmlFor="textarea-e67af7"
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      Mission description
+                    </label>
+                    <textarea
+                      aria-label="Define the scope and impact of this priority"
+                      name="name-e67af7"
+                      id="textarea-e67af7"
+                      rows={3}
+                      required
+                      placeholder="Define the scope and impact of this priority..."
+                      style={{
+                        width: '100%',
+                        background: 'hsl(var(--container-low))',
+                        border: 'none',
+                        borderBottom: '2px solid hsl(var(--border))',
+                        padding: 16,
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        outline: 'none',
+                        color: 'hsl(var(--on-surface))',
+                        resize: 'none',
+                      }}
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: 20,
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <label
+                        htmlFor="input-489f6e"
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        Target capital (₵)
+                      </label>
+                      <input
+                        name="name-489f6e"
+                        id="input-489f6e"
+                        type="number"
+                        required
+                        style={{
+                          width: '100%',
+                          height: 48,
+                          background: 'hsl(var(--container-low))',
+                          border: 'none',
+                          borderBottom: '2px solid hsl(var(--border))',
+                          padding: '0 16px',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 800,
+                          fontSize: 14,
+                          outline: 'none',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                        value={formData.targetAmount}
+                        onChange={(e) =>
+                          setFormData({ ...formData, targetAmount: Number(e.target.value) })
+                        }
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <label
+                        htmlFor="input-94fab5"
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        Mission deadline
+                      </label>
+                      <input
+                        name="name-94fab5"
+                        id="input-94fab5"
+                        type="date"
+                        required
+                        style={{
+                          width: '100%',
+                          height: 48,
+                          background: 'hsl(var(--container-low))',
+                          border: 'none',
+                          borderBottom: '2px solid hsl(var(--border))',
+                          padding: '0 16px',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 800,
+                          fontSize: 14,
+                          outline: 'none',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                        value={formData.endDate}
+                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: 20,
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <label
+                        htmlFor="select-683ee2"
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        Status
+                      </label>
+                      <select
+                        name="name-683ee2"
+                        id="select-683ee2"
+                        style={{
+                          width: '100%',
+                          height: 48,
+                          background: 'hsl(var(--container-low))',
+                          border: 'none',
+                          borderBottom: '2px solid hsl(var(--border))',
+                          padding: '0 16px',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 800,
+                          fontSize: 14,
+                          outline: 'none',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                        value={formData.status}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            status: e.target.value as 'Active' | 'Closed',
+                          })
+                        }
+                      >
+                        <option value="Active">Active Mobilization</option>
+                        <option value="Closed">Mission Completed</option>
+                      </select>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <label
+                        htmlFor="input-195764"
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        Visual URL (optional)
+                      </label>
+                      <input
+                        aria-label="https://"
+                        name="name-195764"
+                        id="input-195764"
+                        type="url"
+                        placeholder="https://..."
+                        style={{
+                          width: '100%',
+                          height: 48,
+                          background: 'hsl(var(--container-low))',
+                          border: 'none',
+                          borderBottom: '2px solid hsl(var(--border))',
+                          padding: '0 16px',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 800,
+                          fontSize: 14,
+                          outline: 'none',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                        value={formData.imageUrl}
+                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    padding: isMobile ? 16 : 32,
+                    borderTop: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--container-low))',
+                    display: 'flex',
+                    gap: 12,
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ flex: 1, height: 48 }}
+                    onClick={() => {
+                      setIsCreating(false)
+                      setEditingCampaign(null)
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    Abort Mission
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ flex: 1, height: 48 }}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <span
+                        className="material-symbols-outlined animate-spin"
+                        style={{ fontSize: 18 }}
+                      >
+                        sync
+                      </span>
+                    ) : (
+                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                        history
+                      </span>
+                    )}
+                    {isCreating ? 'Deploy Protocol' : 'Sync Adjustments'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

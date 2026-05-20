@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { toast } from 'sonner'
 
@@ -1033,363 +1034,372 @@ export default function PollsManagement() {
       </div>
 
       {/* ── Create Poll Modal ── */}
-      {showCreateModal && (
-        <div style={modalBackdrop}>
-          <div style={modalBox(720)}>
-            <div className="ph">
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 13.5,
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
+      {showCreateModal &&
+        createPortal(
+          <div style={modalBackdrop}>
+            <div style={modalBox(720)}>
+              <div className="ph">
                 <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
-                >
-                  add
-                </span>
-                Create Campaign
-              </span>
-              <button
-                aria-label="Close creation modal"
-                style={modalCloseBtn}
-                onClick={() => setShowCreateModal(false)}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                  close
-                </span>
-              </button>
-            </div>
-            <form onSubmit={handleCreatePoll}>
-              <div style={{ padding: 24 }}>
-                <div className="settings-form-grid">
-                  {/* Left: core details */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    <div>
-                      <label htmlFor="input-poll-question" style={labelSt}>
-                        Campaign question / topic
-                      </label>
-                      <input
-                        id="input-poll-question"
-                        aria-label="e.g. Should we increase regional chapter funding?"
-                        name="question"
-                        style={inputSt}
-                        required
-                        placeholder="e.g. Should we increase regional chapter funding?"
-                        value={newPoll.question}
-                        onChange={(e) => setNewPoll({ ...newPoll, question: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="select-target-base" style={labelSt}>
-                        Target Audience Base
-                      </label>
-                      <select
-                        name="targetBase"
-                        id="select-target-base"
-                        style={selectSt}
-                        value={newPoll.targetBase}
-                        onChange={(e) => {
-                          const val = e.target.value
-                          setNewPoll({
-                            ...newPoll,
-                            targetBase: val,
-                            region: val === 'GHANA' ? 'National' : 'International',
-                          })
-                        }}
-                      >
-                        <option value="GHANA">Ghana Local Base</option>
-                        <option value="DIASPORA">Diaspora Global Base</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="select-target-region" style={labelSt}>
-                        {newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}
-                      </label>
-                      <select
-                        name="targetRegion"
-                        id="select-target-region"
-                        style={selectSt}
-                        value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
-                        onChange={(e) => {
-                          if (newPoll.targetBase === 'GHANA')
-                            setNewPoll({ ...newPoll, region: e.target.value })
-                          else setNewPoll({ ...newPoll, country: e.target.value })
-                        }}
-                      >
-                        {newPoll.targetBase === 'GHANA' ? (
-                          <>
-                            <option value="National">All Regions (National)</option>
-                            {availableRegions.map((r) => (
-                              <option key={r.id} value={r.name}>
-                                {r.name}
-                              </option>
-                            ))}
-                          </>
-                        ) : (
-                          <>
-                            <option value="International">All Countries (Global)</option>
-                            {availableCountries.map((c) => (
-                              <option key={c.name} value={c.name}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </>
-                        )}
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="input-poll-end-date" style={labelSt}>
-                        Operational end date
-                      </label>
-                      <div style={{ position: 'relative' }}>
-                        <span
-                          className="material-symbols-outlined"
-                          style={{
-                            position: 'absolute',
-                            left: 10,
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            fontSize: 15,
-                            color: 'hsl(var(--on-surface-muted))',
-                            pointerEvents: 'none',
-                          }}
-                        >
-                          calendar_today
-                        </span>
-                        <input
-                          name="endDate"
-                          id="input-poll-end-date"
-                          type="date"
-                          style={{ ...inputSt, paddingLeft: 34 }}
-                          value={newPoll.endDate}
-                          onChange={(e) => setNewPoll({ ...newPoll, endDate: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: poll options */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <label style={{ ...labelSt, marginBottom: 0 }}>Engagement Options</label>
-                      <span
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
-                          fontSize: 11,
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        Min 2 Required
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 8,
-                        maxHeight: 260,
-                        overflowY: 'auto',
-                      }}
-                    >
-                      {newPoll.options.map((opt, idx) => (
-                        <div key={idx} style={{ display: 'flex', gap: 8 }}>
-                          <input
-                            name={`opt-${idx}`}
-                            id={`input-395525-${idx}`}
-                            style={inputSt}
-                            placeholder={`Option ${idx + 1}`}
-                            value={opt}
-                            onChange={(e) => {
-                              const updated = [...newPoll.options]
-                              updated[idx] = e.target.value
-                              setNewPoll({ ...newPoll, options: updated })
-                            }}
-                          />
-                          {newPoll.options.length > 2 && (
-                            <button
-                              type="button"
-                              style={{
-                                flexShrink: 0,
-                                width: 40,
-                                height: 40,
-                                border: '1px solid hsl(var(--border))',
-                                borderRadius: 4,
-                                background: 'hsl(var(--container-low))',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: 'hsl(var(--destructive))',
-                              }}
-                              onClick={() =>
-                                setNewPoll({
-                                  ...newPoll,
-                                  options: newPoll.options.filter((_, i) => i !== idx),
-                                })
-                              }
-                            >
-                              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                                delete
-                              </span>
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      style={{ justifyContent: 'center' }}
-                      onClick={() => setNewPoll({ ...newPoll, options: [...newPoll.options, ''] })}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                        add
-                      </span>
-                      Add Selection
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div style={{ padding: '0 24px 24px', display: 'flex', gap: 12 }}>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  style={{ flex: 1, justifyContent: 'center', height: 44 }}
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  Discard
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  style={{ flex: 1, justifyContent: 'center', height: 44 }}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Launching…' : 'Deploy Campaign'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ── Feedback Vault Modal ── */}
-      {isFeedbackModalOpen && (
-        <div style={modalBackdrop}>
-          <div style={modalBox(600)}>
-            <div className="ph">
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 13.5,
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
-                >
-                  forum
-                </span>
-                Movement Feedback Vault
-              </span>
-              <button
-                aria-label="Close feedback vault"
-                style={modalCloseBtn}
-                onClick={() => setIsFeedbackModalOpen(false)}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                  close
-                </span>
-              </button>
-            </div>
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[
-                {
-                  author: 'Ashanti Member',
-                  region: 'Ashanti',
-                  text: 'The new regional chapter meetings have significantly improved communication between constituency leads.',
-                },
-                {
-                  author: 'Greater Accra Lead',
-                  region: 'Greater Accra',
-                  text: 'Requesting more mobilization materials for the upcoming town hall sessions.',
-                },
-                {
-                  author: 'Western Member',
-                  region: 'Western',
-                  text: 'The digital strategy polls are a great way to stay engaged with the leadership.',
-                },
-              ].map((fb, idx) => (
-                <div
-                  key={idx}
                   style={{
-                    padding: 16,
-                    background: 'hsl(var(--container-low))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 4,
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: 8,
+                    alignItems: 'center',
+                    gap: 6,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 13.5,
+                    color: 'hsl(var(--on-surface))',
                   }}
                 >
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 12.5,
-                      color: 'hsl(var(--on-surface))',
-                      lineHeight: 1.7,
-                      fontStyle: 'italic',
-                      margin: 0,
-                    }}
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
                   >
-                    "{fb.text}"
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      margin: 0,
-                    }}
-                  >
-                    — {fb.author} from {fb.region} Region
-                  </p>
+                    add
+                  </span>
+                  Create Campaign
+                </span>
+                <button
+                  aria-label="Close creation modal"
+                  style={modalCloseBtn}
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    close
+                  </span>
+                </button>
+              </div>
+              <form onSubmit={handleCreatePoll}>
+                <div style={{ padding: 24 }}>
+                  <div className="settings-form-grid">
+                    {/* Left: core details */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                      <div>
+                        <label htmlFor="input-poll-question" style={labelSt}>
+                          Campaign question / topic
+                        </label>
+                        <input
+                          id="input-poll-question"
+                          aria-label="e.g. Should we increase regional chapter funding?"
+                          name="question"
+                          style={inputSt}
+                          required
+                          placeholder="e.g. Should we increase regional chapter funding?"
+                          value={newPoll.question}
+                          onChange={(e) => setNewPoll({ ...newPoll, question: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="select-target-base" style={labelSt}>
+                          Target Audience Base
+                        </label>
+                        <select
+                          name="targetBase"
+                          id="select-target-base"
+                          style={selectSt}
+                          value={newPoll.targetBase}
+                          onChange={(e) => {
+                            const val = e.target.value
+                            setNewPoll({
+                              ...newPoll,
+                              targetBase: val,
+                              region: val === 'GHANA' ? 'National' : 'International',
+                            })
+                          }}
+                        >
+                          <option value="GHANA">Ghana Local Base</option>
+                          <option value="DIASPORA">Diaspora Global Base</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="select-target-region" style={labelSt}>
+                          {newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}
+                        </label>
+                        <select
+                          name="targetRegion"
+                          id="select-target-region"
+                          style={selectSt}
+                          value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
+                          onChange={(e) => {
+                            if (newPoll.targetBase === 'GHANA')
+                              setNewPoll({ ...newPoll, region: e.target.value })
+                            else setNewPoll({ ...newPoll, country: e.target.value })
+                          }}
+                        >
+                          {newPoll.targetBase === 'GHANA' ? (
+                            <>
+                              <option value="National">All Regions (National)</option>
+                              {availableRegions.map((r) => (
+                                <option key={r.id} value={r.name}>
+                                  {r.name}
+                                </option>
+                              ))}
+                            </>
+                          ) : (
+                            <>
+                              <option value="International">All Countries (Global)</option>
+                              {availableCountries.map((c) => (
+                                <option key={c.name} value={c.name}>
+                                  {c.name}
+                                </option>
+                              ))}
+                            </>
+                          )}
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="input-poll-end-date" style={labelSt}>
+                          Operational end date
+                        </label>
+                        <div style={{ position: 'relative' }}>
+                          <span
+                            className="material-symbols-outlined"
+                            style={{
+                              position: 'absolute',
+                              left: 10,
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              fontSize: 15,
+                              color: 'hsl(var(--on-surface-muted))',
+                              pointerEvents: 'none',
+                            }}
+                          >
+                            calendar_today
+                          </span>
+                          <input
+                            name="endDate"
+                            id="input-poll-end-date"
+                            type="date"
+                            style={{ ...inputSt, paddingLeft: 34 }}
+                            value={newPoll.endDate}
+                            onChange={(e) => setNewPoll({ ...newPoll, endDate: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: poll options */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <label style={{ ...labelSt, marginBottom: 0 }}>Engagement Options</label>
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 700,
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          Min 2 Required
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 8,
+                          maxHeight: 260,
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {newPoll.options.map((opt, idx) => (
+                          <div key={idx} style={{ display: 'flex', gap: 8 }}>
+                            <input
+                              name={`opt-${idx}`}
+                              id={`input-395525-${idx}`}
+                              style={inputSt}
+                              placeholder={`Option ${idx + 1}`}
+                              value={opt}
+                              onChange={(e) => {
+                                const updated = [...newPoll.options]
+                                updated[idx] = e.target.value
+                                setNewPoll({ ...newPoll, options: updated })
+                              }}
+                            />
+                            {newPoll.options.length > 2 && (
+                              <button
+                                type="button"
+                                style={{
+                                  flexShrink: 0,
+                                  width: 40,
+                                  height: 40,
+                                  border: '1px solid hsl(var(--border))',
+                                  borderRadius: 4,
+                                  background: 'hsl(var(--container-low))',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: 'hsl(var(--destructive))',
+                                }}
+                                onClick={() =>
+                                  setNewPoll({
+                                    ...newPoll,
+                                    options: newPoll.options.filter((_, i) => i !== idx),
+                                  })
+                                }
+                              >
+                                <span
+                                  className="material-symbols-outlined"
+                                  style={{ fontSize: 16 }}
+                                >
+                                  delete
+                                </span>
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        style={{ justifyContent: 'center' }}
+                        onClick={() =>
+                          setNewPoll({ ...newPoll, options: [...newPoll.options, ''] })
+                        }
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                          add
+                        </span>
+                        Add Selection
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              ))}
+                <div style={{ padding: '0 24px 24px', display: 'flex', gap: 12 }}>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ flex: 1, justifyContent: 'center', height: 44 }}
+                    onClick={() => setShowCreateModal(false)}
+                  >
+                    Discard
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ flex: 1, justifyContent: 'center', height: 44 }}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Launching…' : 'Deploy Campaign'}
+                  </button>
+                </div>
+              </form>
             </div>
-            <div style={{ padding: '0 24px 24px' }}>
-              <button
-                className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center', height: 44 }}
-                onClick={() => setIsFeedbackModalOpen(false)}
-              >
-                Close Vault
-              </button>
+          </div>,
+          document.body
+        )}
+
+      {/* ── Feedback Vault Modal ── */}
+      {isFeedbackModalOpen &&
+        createPortal(
+          <div style={modalBackdrop}>
+            <div style={modalBox(600)}>
+              <div className="ph">
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 13.5,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
+                  >
+                    forum
+                  </span>
+                  Movement Feedback Vault
+                </span>
+                <button
+                  aria-label="Close feedback vault"
+                  style={modalCloseBtn}
+                  onClick={() => setIsFeedbackModalOpen(false)}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    close
+                  </span>
+                </button>
+              </div>
+              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {[
+                  {
+                    author: 'Ashanti Member',
+                    region: 'Ashanti',
+                    text: 'The new regional chapter meetings have significantly improved communication between constituency leads.',
+                  },
+                  {
+                    author: 'Greater Accra Lead',
+                    region: 'Greater Accra',
+                    text: 'Requesting more mobilization materials for the upcoming town hall sessions.',
+                  },
+                  {
+                    author: 'Western Member',
+                    region: 'Western',
+                    text: 'The digital strategy polls are a great way to stay engaged with the leadership.',
+                  },
+                ].map((fb, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: 16,
+                      background: 'hsl(var(--container-low))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 4,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 12.5,
+                        color: 'hsl(var(--on-surface))',
+                        lineHeight: 1.7,
+                        fontStyle: 'italic',
+                        margin: 0,
+                      }}
+                    >
+                      "{fb.text}"
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 800,
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        margin: 0,
+                      }}
+                    >
+                      — {fb.author} from {fb.region} Region
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ padding: '0 24px 24px' }}>
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'center', height: 44 }}
+                  onClick={() => setIsFeedbackModalOpen(false)}
+                >
+                  Close Vault
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* ── View Poll Modal ── */}
       {viewPoll &&
@@ -1400,7 +1410,7 @@ export default function PollsManagement() {
             0,
             Math.ceil((new Date(viewPoll.endDate).getTime() - Date.now()) / 86400000)
           )
-          return (
+          return createPortal(
             <div style={modalBackdrop} onClick={() => setViewPoll(null)}>
               <div style={modalBox(580)} onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
@@ -1700,99 +1710,102 @@ export default function PollsManagement() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div>,
+            document.body
           )
         })()}
 
       {/* ── Analytics Guide Modal ── */}
-      {isAnalyticsModalOpen && (
-        <div style={modalBackdrop}>
-          <div style={modalBox(480)}>
-            <div className="ph">
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 13.5,
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
+      {isAnalyticsModalOpen &&
+        createPortal(
+          <div style={modalBackdrop}>
+            <div style={modalBox(480)}>
+              <div className="ph">
                 <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 13.5,
+                    color: 'hsl(var(--on-surface))',
+                  }}
                 >
-                  bar_chart
-                </span>
-                Engagement Analytics Guide
-              </span>
-              <button
-                aria-label="Close analytics guide"
-                style={modalCloseBtn}
-                onClick={() => setIsAnalyticsModalOpen(false)}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                  close
-                </span>
-              </button>
-            </div>
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <p
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  color: 'hsl(var(--on-surface))',
-                  lineHeight: 1.7,
-                  margin: 0,
-                }}
-              >
-                Learn how to interpret movement engagement data to drive more effective mobilization
-                campaigns.
-              </p>
-              <ul
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 8,
-                  paddingLeft: 20,
-                  margin: 0,
-                }}
-              >
-                {[
-                  'Analyze regional participation rates to identify high-growth areas.',
-                  'Monitor sentiment scores to proactively address movement concerns.',
-                  'Use average response times to optimize survey length and timing.',
-                ].map((item, i) => (
-                  <li
-                    key={i}
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface))',
-                      lineHeight: 1.6,
-                    }}
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
                   >
-                    {item}
-                  </li>
-                ))}
-              </ul>
+                    bar_chart
+                  </span>
+                  Engagement Analytics Guide
+                </span>
+                <button
+                  aria-label="Close analytics guide"
+                  style={modalCloseBtn}
+                  onClick={() => setIsAnalyticsModalOpen(false)}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    close
+                  </span>
+                </button>
+              </div>
+              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface))',
+                    lineHeight: 1.7,
+                    margin: 0,
+                  }}
+                >
+                  Learn how to interpret movement engagement data to drive more effective
+                  mobilization campaigns.
+                </p>
+                <ul
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                    paddingLeft: 20,
+                    margin: 0,
+                  }}
+                >
+                  {[
+                    'Analyze regional participation rates to identify high-growth areas.',
+                    'Monitor sentiment scores to proactively address movement concerns.',
+                    'Use average response times to optimize survey length and timing.',
+                  ].map((item, i) => (
+                    <li
+                      key={i}
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface))',
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div style={{ padding: '0 24px 24px' }}>
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'center', height: 44 }}
+                  onClick={() => setIsAnalyticsModalOpen(false)}
+                >
+                  Got It
+                </button>
+              </div>
             </div>
-            <div style={{ padding: '0 24px 24px' }}>
-              <button
-                className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center', height: 44 }}
-                onClick={() => setIsAnalyticsModalOpen(false)}
-              >
-                Got It
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }
