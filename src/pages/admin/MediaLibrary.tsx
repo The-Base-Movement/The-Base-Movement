@@ -13,16 +13,12 @@ export default function MediaLibrary() {
   const [activeFolder, setActiveFolder] = useState('branding')
   const [assetToDelete, setAssetToDelete] = useState<string | null>(null)
 
-  const folders = [
-    { id: 'branding', label: 'Branding Assets', icon: 'image' },
-    { id: 'blog-images', label: 'Blog Posts', icon: 'image' },
-    { id: 'author-images', label: 'Authors', icon: 'image' },
-    { id: 'product-images', label: 'Product Images', icon: 'image' },
-    { id: 'logos-favicons', label: 'Logos & Favicons', icon: 'image' },
-    { id: 'public-assets', label: 'Public Assets', icon: 'image' },
-    { id: 'editor-content', label: 'Editor Media', icon: 'description' },
-    { id: 'party-officials', label: 'Party Officials', icon: 'badge' },
-  ]
+  // Dynamic Categories State
+  const [folders, setFolders] = useState<{ id: string; label: string; icon: string }[]>([])
+  const [isAddFolderOpen, setIsAddFolderOpen] = useState(false)
+  const [newFolderLabel, setNewFolderLabel] = useState('')
+  const [newFolderName, setNewFolderName] = useState('')
+  const [isSavingFolder, setIsSavingFolder] = useState(false)
 
   const loadFiles = useCallback(async () => {
     setIsLoading(true)
@@ -52,9 +48,62 @@ export default function MediaLibrary() {
     }
   }, [activeFolder])
 
+  const fetchFolders = useCallback(async () => {
+    try {
+      const fetched = await contentService.getMediaFolders()
+      setFolders(fetched.map((f) => ({ id: f.id, label: f.label, icon: 'image' })))
+    } catch (err) {
+      console.error('Failed to fetch media folders:', err)
+    }
+  }, [])
+
   useEffect(() => {
-    loadFiles()
-  }, [loadFiles])
+    fetchFolders()
+  }, [fetchFolders])
+
+  useEffect(() => {
+    if (activeFolder) {
+      loadFiles()
+    }
+  }, [activeFolder, loadFiles])
+
+  const handleLabelChange = (val: string) => {
+    setNewFolderLabel(val)
+    const slug = val
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+    setNewFolderName(slug)
+  }
+
+  const handleCreateFolder = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newFolderLabel || !newFolderName) {
+      toast.error('Please enter a folder name and label')
+      return
+    }
+
+    setIsSavingFolder(true)
+    try {
+      const success = await contentService.createMediaCategory(newFolderName, newFolderLabel)
+      if (success) {
+        toast.success('Category created successfully')
+        setIsAddFolderOpen(false)
+        setNewFolderLabel('')
+        setNewFolderName('')
+        await fetchFolders()
+        setActiveFolder(newFolderName)
+      } else {
+        toast.error('Failed to create category')
+      }
+    } catch {
+      toast.error('An error occurred while creating category')
+    } finally {
+      setIsSavingFolder(false)
+    }
+  }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -159,6 +208,16 @@ export default function MediaLibrary() {
               {isLoading ? 'sync' : 'refresh'}
             </span>
             {isLoading ? 'Refreshing…' : 'Refresh vault'}
+          </button>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => setIsAddFolderOpen(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              create_new_folder
+            </span>
+            New Category
           </button>
           <input
             type="file"
@@ -739,6 +798,176 @@ export default function MediaLibrary() {
         isLoading={isLoading}
         isPermanent={false}
       />
+
+      {/* New Category Modal */}
+      {isAddFolderOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15,19,16,0.4)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+          }}
+        >
+          <div
+            className="panel"
+            style={{
+              width: '100%',
+              maxWidth: 420,
+              padding: '24px 28px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+              background: '#fff',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 8,
+              position: 'relative',
+              animation: 'fadeIn 0.2s ease-out',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 16,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--primary))' }}>
+                  create_new_folder
+                </span>
+                Create new category
+              </h3>
+              <button
+                onClick={() => setIsAddFolderOpen(false)}
+                className="ico"
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  close
+                </span>
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateFolder} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label
+                  htmlFor="folder-label"
+                  style={{
+                    display: 'block',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: 6,
+                  }}
+                >
+                  Category Display Name
+                </label>
+                <input
+                  id="folder-label"
+                  type="text"
+                  placeholder="e.g. Campaign Posters"
+                  value={newFolderLabel}
+                  onChange={(e) => handleLabelChange(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    height: 38,
+                    padding: '0 12px',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 600,
+                    fontSize: 13,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    background: 'hsl(var(--container-low))',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="folder-name"
+                  style={{
+                    display: 'block',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: 6,
+                  }}
+                >
+                  System Folder Path (Slug)
+                </label>
+                <input
+                  id="folder-name"
+                  type="text"
+                  placeholder="e.g. campaign-posters"
+                  value={newFolderName}
+                  onChange={(e) => setNewFolderName(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+                  required
+                  style={{
+                    width: '100%',
+                    height: 38,
+                    padding: '0 12px',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 600,
+                    fontSize: 13,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    background: 'hsl(var(--container-low))',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setIsAddFolderOpen(false)}
+                  className="btn btn-outline btn-sm"
+                  disabled={isSavingFolder}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  disabled={isSavingFolder}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  {isSavingFolder && (
+                    <span className="material-symbols-outlined" style={{ fontSize: 14, animation: 'spin 1s linear infinite' }}>
+                      sync
+                    </span>
+                  )}
+                  {isSavingFolder ? 'Creating…' : 'Create Category'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

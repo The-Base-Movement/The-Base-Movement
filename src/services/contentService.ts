@@ -695,8 +695,13 @@ class ContentService {
   }
 
   async getMediaFolders(): Promise<{ id: string; label: string }[]> {
-    const { data, error } = await supabase.storage.from('media').list('', { limit: 100 })
-    if (error || !data) {
+    const { data, error } = await supabase
+      .from('media_categories')
+      .select('name, label')
+      .is('deleted_at', null)
+      .order('label', { ascending: true })
+
+    if (error || !data || data.length === 0) {
       return [
         { id: 'blog-images', label: 'Blog Posts' },
         { id: 'editor-content', label: 'Editor Media' },
@@ -705,21 +710,35 @@ class ContentService {
         { id: 'product-images', label: 'Product Images' },
         { id: 'logos-favicons', label: 'Logos & Favicons' },
         { id: 'public-assets', label: 'Public Assets' },
+        { id: 'party-officials', label: 'Party Officials' },
       ]
     }
-    const labelMap: Record<string, string> = {
-      'blog-images': 'Blog Posts',
-      'editor-content': 'Editor Media',
-      branding: 'Branding Assets',
-      'author-images': 'Authors',
-      'product-images': 'Product Images',
-      'logos-favicons': 'Logos & Favicons',
-      'public-assets': 'Public Assets',
-      'party-officials': 'Party Officials',
+
+    return data.map((item) => ({
+      id: item.name,
+      label: item.label,
+    }))
+  }
+
+  async createMediaCategory(name: string, label: string): Promise<boolean> {
+    const { error } = await supabase.from('media_categories').insert({
+      name,
+      label,
+    })
+
+    if (error) {
+      console.error('[DATABASE] Failed to create media category:', error)
+      return false
     }
-    return data
-      .filter((item) => item.name && !item.name.startsWith('.'))
-      .map((item) => ({ id: item.name, label: labelMap[item.name] ?? item.name }))
+
+    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    await adminService.logAction('Create Media Category', 'SYSTEM', 'Success', {
+      name,
+      label,
+      adminId,
+    })
+
+    return true
   }
 
   // --- Media Kit Operations ---
