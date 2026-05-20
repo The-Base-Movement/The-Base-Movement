@@ -1032,7 +1032,7 @@ export default function StrategicPriorities() {
               style={{
                 position: 'relative',
                 width: '100%',
-                maxWidth: 560,
+                maxWidth: 640,
                 padding: 0,
                 overflow: 'hidden',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
