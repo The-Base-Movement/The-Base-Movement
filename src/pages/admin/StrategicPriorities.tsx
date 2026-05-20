@@ -14,7 +14,7 @@ export default function StrategicPriorities() {
   const [editingCampaign, setEditingCampaign] = useState<DonationCampaign | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768)
   const [showMobileFilter, setShowMobileFilter] = useState(false)
   const { openDelete, modal } = useDeleteModal()
   const [imageUploadMode, setImageUploadMode] = useState<'url' | 'upload'>('upload')
@@ -35,7 +35,7 @@ export default function StrategicPriorities() {
   }, [])
 
   useEffect(() => {
-    const fn = () => setIsMobile(window.innerWidth <= 640)
+    const fn = () => setIsMobile(window.innerWidth <= 768)
     window.addEventListener('resize', fn)
     return () => window.removeEventListener('resize', fn)
   }, [])
@@ -826,19 +826,20 @@ export default function StrategicPriorities() {
             onClick={() => setShowMobileFilter(true)}
             style={{
               position: 'fixed',
-              bottom: 88,
-              left: 16,
+              top: '50%',
+              left: 0,
+              transform: 'translateY(-50%)',
               zIndex: 50,
-              width: 46,
-              height: 46,
-              borderRadius: '50%',
+              width: 38,
+              height: 48,
+              borderRadius: '0 8px 8px 0',
               background: 'hsl(var(--on-surface))',
               color: '#fff',
               border: 'none',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.28)',
+              boxShadow: '4px 0 16px rgba(0,0,0,0.18)',
               cursor: 'pointer',
             }}
             aria-label="Open filters"
