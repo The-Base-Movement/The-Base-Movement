@@ -287,7 +287,8 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           referred_by: record.data.referred_by || '',
           avatar_url: null,
           joined_at: new Date().toISOString(),
-          status: 'Active',
+          status: 'Pending',
+          verification_status: 'In Review',
           registration_source: 'physical_form',
         }
       })

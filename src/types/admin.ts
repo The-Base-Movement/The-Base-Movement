@@ -47,6 +47,7 @@ export interface User {
   referred_by?: string
   joined_at: string
   status: string
+  verification_status?: string
   city?: string
   registration_source?: string
 }
