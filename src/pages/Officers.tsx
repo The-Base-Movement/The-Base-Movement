@@ -93,7 +93,7 @@ export default function Officers() {
             Loading leadership roster...
           </div>
         ) : (
-          <div className="space-y-24">
+          <div className="space-y-32">
             {[...tiers]
               .sort((a, b) => a.order_index - b.order_index)
               .map((tier, idx) => {

@@ -12,6 +12,21 @@ interface OfficerCardSliderProps {
   count?: number
 }
 
+const HorizontalRail = () => (
+  <div
+    style={{
+      position: 'absolute',
+      top: 0,
+      left: '5%',
+      right: '5%',
+      height: 0,
+      borderTop: '2px dashed hsl(var(--on-surface-muted))',
+      opacity: 0.35,
+      pointerEvents: 'none',
+    }}
+  />
+)
+
 export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < 768
@@ -30,6 +45,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
     return (
       <div
         style={{
+          position: 'relative',
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'center',
@@ -37,8 +53,9 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
           padding: '0 20px',
         }}
       >
+        <HorizontalRail />
         {Children.map(children, (child) => (
-          <div style={{ display: 'flex', alignItems: 'stretch' }}>{child}</div>
+          <div style={{ display: 'flex', alignItems: 'flex-start' }}>{child}</div>
         ))}
       </div>
     )
@@ -46,6 +63,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
 
   return (
     <div style={{ paddingBottom: '60px', position: 'relative' }}>
+      <HorizontalRail />
       <Swiper
         modules={[Navigation, Autoplay, Pagination]}
         navigation
@@ -62,7 +80,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
       >
         {Children.map(children, (child) => (
           <SwiperSlide
-            style={{ width: 'auto', height: 'auto', display: 'flex', alignItems: 'stretch' }}
+            style={{ width: 'auto', height: 'auto', display: 'flex', alignItems: 'flex-start' }}
           >
             {child}
           </SwiperSlide>

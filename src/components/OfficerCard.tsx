@@ -104,7 +104,6 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
         style={{
           filter: 'drop-shadow(0px 12px 24px rgba(0,0,0,0.08))',
           width: '100%',
-          height: '100%',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -117,7 +116,6 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             WebkitMaskImage: 'radial-gradient(circle at 50% 0px, transparent 18px, black 19px)',
             maskImage: 'radial-gradient(circle at 50% 0px, transparent 18px, black 19px)',
             width: '100%',
-            height: '100%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -167,9 +165,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
           />
 
           {/* Role and Bio */}
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1, marginBottom: 24 }}
-          >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
