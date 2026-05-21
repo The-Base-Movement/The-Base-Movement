@@ -1,9 +1,13 @@
-import { agendaPillars } from './agendaData'
+import { type AgendaPillar } from './agendaData'
 
-export function AgendaPillarsContent() {
+interface AgendaPillarsContentProps {
+  pillars: AgendaPillar[]
+}
+
+export function AgendaPillarsContent({ pillars }: AgendaPillarsContentProps) {
   return (
     <>
-      {agendaPillars.map((pillar) => (
+      {pillars.map((pillar) => (
         <section
           key={pillar.id}
           id={pillar.id}
@@ -61,3 +65,4 @@ export function AgendaPillarsContent() {
     </>
   )
 }
+

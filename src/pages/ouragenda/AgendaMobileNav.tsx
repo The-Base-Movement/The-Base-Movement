@@ -1,14 +1,15 @@
-import { agendaPillars } from './agendaData'
+import { type AgendaPillar } from './agendaData'
 
 interface AgendaMobileNavProps {
   activeSection: string
+  pillars: AgendaPillar[]
 }
 
-export function AgendaMobileNav({ activeSection }: AgendaMobileNavProps) {
+export function AgendaMobileNav({ activeSection, pillars }: AgendaMobileNavProps) {
   return (
     <div className="lg:hidden -mx-4 px-4 overflow-x-auto pb-2 mb-2">
       <div className="flex gap-2 w-max">
-        {agendaPillars.map((pillar) => (
+        {pillars.map((pillar) => (
           <a
             key={pillar.id}
             href={`#${pillar.id}`}
@@ -30,3 +31,4 @@ export function AgendaMobileNav({ activeSection }: AgendaMobileNavProps) {
     </div>
   )
 }
+

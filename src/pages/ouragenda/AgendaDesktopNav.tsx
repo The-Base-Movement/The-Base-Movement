@@ -1,11 +1,12 @@
-import { agendaPillars } from './agendaData'
+import { type AgendaPillar } from './agendaData'
 import { useBranding } from '@/hooks/useBranding'
 
 interface AgendaDesktopNavProps {
   activeSection: string
+  pillars: AgendaPillar[]
 }
 
-export function AgendaDesktopNav({ activeSection }: AgendaDesktopNavProps) {
+export function AgendaDesktopNav({ activeSection, pillars }: AgendaDesktopNavProps) {
   const { settings } = useBranding()
 
   return (
@@ -13,7 +14,7 @@ export function AgendaDesktopNav({ activeSection }: AgendaDesktopNavProps) {
       <div className="sticky top-20 space-y-4 font-meta">
         <p className="text-micro font-bold text-stone-400 tracking-tight mb-6">Plan pillars</p>
         <nav aria-label="Agenda Pillars" className="flex flex-col space-y-2">
-          {agendaPillars.map((pillar) => (
+          {pillars.map((pillar) => (
             <a
               key={pillar.id}
               href={`#${pillar.id}`}
