@@ -13,7 +13,8 @@ export function PublicCTA() {
       </p>
       <Link
         to="/register"
-        className="h-14 px-10 inline-flex items-center gap-2 bg-accent text-white font-bold text-sm hover:opacity-90 transition-opacity"
+        className="h-14 px-10 inline-flex items-center gap-2 bg-accent text-white text-sm hover:opacity-90 transition-opacity"
+        style={{ borderRadius: 'var(--button-radius)', fontWeight: 'var(--button-font-weight)' }}
       >
         Join The Base{' '}
         <span className="material-symbols-outlined" style={{ fontSize: 20 }}>

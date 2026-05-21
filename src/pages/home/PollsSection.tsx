@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { type Poll } from '@/services/adminService'
+import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 
 interface PollsSectionProps {
   activePolls: Poll[]
@@ -192,43 +193,28 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                   >
                     Login to cast your vote
                   </span>
-                  <Link
-                    to="/polls"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      padding: '6px 14px',
-                      background: 'hsl(var(--primary))',
-                      color: '#fff',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
-                      fontSize: 11,
-                      borderRadius: 4,
-                      textDecoration: 'none',
-                    }}
-                  >
-                    Cast vote{' '}
-                    <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                      arrow_forward
-                    </span>
-                  </Link>
+                  <ButtonPrimary asChild size="sm">
+                    <Link to="/polls">
+                      Cast vote{' '}
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        arrow_forward
+                      </span>
+                    </Link>
+                  </ButtonPrimary>
                 </div>
               </div>
             )
           })}
         </div>
 
-        <Link
-          to="/polls"
-          className="md:hidden mt-8 flex items-center justify-center gap-2 w-full h-12 font-meta font-bold text-sm tracking-tight hover:opacity-90 transition-opacity"
-          style={{ background: 'hsl(var(--primary))', color: '#fff', borderRadius: 2 }}
-        >
-          View all polls
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            arrow_forward
-          </span>
-        </Link>
+        <ButtonPrimary asChild className="md:hidden mt-8 w-full">
+          <Link to="/polls">
+            View all polls
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              arrow_forward
+            </span>
+          </Link>
+        </ButtonPrimary>
       </div>
     </section>
   )

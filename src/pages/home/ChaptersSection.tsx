@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
 import { type Chapter } from '@/services/adminService'
+import { Button } from '@/components/buttons/ui/neon-button'
+import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 
 interface ChaptersSectionProps {
   chapters: Chapter[]
@@ -189,21 +191,13 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
               Branch chair
             </span>
           </div>
-          <span
-            style={{
-              marginLeft: 'auto',
-              padding: '5px 12px',
-              background: isFeatured ? 'hsl(var(--primary))' : 'transparent',
-              border: `1px solid ${isFeatured ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
-              borderRadius: 4,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
-              fontSize: 11,
-              color: isFeatured ? '#fff' : 'hsl(var(--on-surface))',
-            }}
+          <Button
+            variant={isFeatured ? 'primary' : 'outline'}
+            size="sm"
+            style={{ marginLeft: 'auto' }}
           >
             Join
-          </span>
+          </Button>
         </div>
       </div>
     </div>
@@ -295,16 +289,14 @@ export function ChaptersSection({ chapters }: ChaptersSectionProps) {
           </>
         )}
 
-        <Link
-          to="/chapters"
-          className="md:hidden mt-8 flex items-center justify-center gap-2 w-full h-12 font-meta font-bold text-sm tracking-tight hover:opacity-90 transition-opacity"
-          style={{ background: 'hsl(var(--primary))', color: '#fff', borderRadius: 2 }}
-        >
-          View all chapters
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            arrow_forward
-          </span>
-        </Link>
+        <ButtonPrimary asChild className="md:hidden mt-8 w-full">
+          <Link to="/chapters">
+            View all chapters
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              arrow_forward
+            </span>
+          </Link>
+        </ButtonPrimary>
       </div>
     </section>
   )

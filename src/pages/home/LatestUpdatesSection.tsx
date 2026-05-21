@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
 import { cn } from '@/lib/utils'
 import { type BlogPost } from '@/services/adminService'
+import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 
 interface LatestUpdatesSectionProps {
   latestPosts: BlogPost[]
@@ -150,16 +151,14 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
           </>
         )}
 
-        <Link
-          to="/blog"
-          className="md:hidden mt-10 flex items-center justify-center gap-2 w-full h-12 font-meta font-bold text-sm tracking-tight hover:opacity-90 transition-opacity"
-          style={{ background: 'hsl(var(--primary))', color: '#fff', borderRadius: 2 }}
-        >
-          View all news
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            arrow_forward
-          </span>
-        </Link>
+        <ButtonPrimary asChild className="md:hidden mt-10 w-full">
+          <Link to="/blog">
+            View all news
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              arrow_forward
+            </span>
+          </Link>
+        </ButtonPrimary>
       </div>
     </section>
   )

@@ -105,7 +105,11 @@ export default function BlogPost() {
           </p>
           <button
             onClick={() => navigate(baseUrl)}
-            className="h-14 px-10 bg-primary text-white font-bold border-none cursor-pointer flex items-center gap-2 hover:opacity-90 transition-opacity"
+            className="h-14 px-10 bg-primary text-white border-none cursor-pointer flex items-center gap-2 hover:opacity-90 transition-opacity"
+            style={{
+              borderRadius: 'var(--button-radius)',
+              fontWeight: 'var(--button-font-weight)',
+            }}
           >
             Return to insights
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
@@ -204,7 +208,13 @@ export default function BlogPost() {
                     </p>
                   </div>
                   <Link to="/register">
-                    <button className="bg-[var(--brand-green)] hover:opacity-90 text-white font-bold tracking-tight text-xs h-14 px-10 rounded-none border-none cursor-pointer transition-opacity">
+                    <button
+                      className="bg-[var(--brand-green)] hover:opacity-90 text-white tracking-tight text-xs h-14 px-10 border-none cursor-pointer transition-opacity"
+                      style={{
+                        borderRadius: 'var(--button-radius)',
+                        fontWeight: 'var(--button-font-weight)',
+                      }}
+                    >
                       Register as a member
                     </button>
                   </Link>

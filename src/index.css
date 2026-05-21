@@ -1415,10 +1415,10 @@
   justify-content: center;
   gap: 8px;
   font-family: 'Public Sans';
-  font-weight: var(--button-font-weight, 800);
+  font-weight: var(--button-font-weight, 800) !important;
   letter-spacing: -0.005em;
   border: 0;
-  border-radius: var(--button-radius, 4px);
+  border-radius: var(--button-radius, 4px) !important;
   padding: 0 16px;
   height: 38px;
   font-size: 12.5px;

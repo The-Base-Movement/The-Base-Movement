@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
+import { ButtonAccent } from '@/components/buttons/ButtonAccent'
 
 export function PlatformsSection() {
   return (
@@ -19,16 +21,14 @@ export function PlatformsSection() {
               Get involved in your district. Join your local branch, take part in community
               activity, and support practical action for jobs and development.
             </p>
-            <Link
-              to="/register?platform=GHANA"
-              className="inline-flex items-center gap-2 px-6 py-3 font-meta font-bold text-sm tracking-tight hover:opacity-90 transition-opacity w-full sm:w-auto justify-center sm:justify-start"
-              style={{ background: 'hsl(var(--primary))', color: '#fff', borderRadius: 2 }}
-            >
-              Join Base Ghana
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                arrow_forward
-              </span>
-            </Link>
+            <ButtonPrimary asChild className="w-full sm:w-auto">
+              <Link to="/register?platform=GHANA">
+                Join Base Ghana
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  arrow_forward
+                </span>
+              </Link>
+            </ButtonPrimary>
           </div>
 
           <div className="border-t-[4px] border-accent pt-8">
@@ -42,16 +42,14 @@ export function PlatformsSection() {
               Stay connected to home and support national development from abroad through your
               skills, networks, and commitment to Ghana's future.
             </p>
-            <Link
-              to="/register?platform=DIASPORA"
-              className="inline-flex items-center gap-2 px-6 py-3 font-meta font-bold text-sm tracking-tight hover:opacity-90 transition-opacity w-full sm:w-auto justify-center sm:justify-start"
-              style={{ background: 'hsl(var(--accent))', color: '#000', borderRadius: 2 }}
-            >
-              Join Base Diaspora
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                arrow_forward
-              </span>
-            </Link>
+            <ButtonAccent asChild className="w-full sm:w-auto">
+              <Link to="/register?platform=DIASPORA">
+                Join Base Diaspora
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  arrow_forward
+                </span>
+              </Link>
+            </ButtonAccent>
           </div>
         </div>
       </div>

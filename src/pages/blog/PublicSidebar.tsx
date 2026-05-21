@@ -60,7 +60,11 @@ export function PublicSidebar({
             className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm"
           />
           <button
-            className="w-full h-12 bg-primary text-white font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity"
+            className="w-full h-12 bg-primary text-white text-xs border-none cursor-pointer hover:opacity-90 transition-opacity"
+            style={{
+              borderRadius: 'var(--button-radius)',
+              fontWeight: 'var(--button-font-weight)',
+            }}
             disabled={publicSubmitting}
             onClick={onPublicSubscribe}
           >

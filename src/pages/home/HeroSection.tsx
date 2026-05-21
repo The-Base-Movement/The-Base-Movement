@@ -73,8 +73,13 @@ export function HeroSection({
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-center md:justify-start">
             <Link
               to="/register"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 font-meta font-bold text-sm tracking-tight hover:opacity-90 transition-opacity"
-              style={{ background: 'hsl(var(--accent))', color: '#000', borderRadius: 2 }}
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 font-meta text-sm tracking-tight hover:opacity-90 transition-opacity"
+              style={{
+                background: 'hsl(var(--accent))',
+                color: '#000',
+                borderRadius: 'var(--button-radius)',
+                fontWeight: 'var(--button-font-weight)',
+              }}
             >
               Join the Movement
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
@@ -83,8 +88,13 @@ export function HeroSection({
             </Link>
             <Link
               to="/our-agenda"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 font-meta font-bold text-sm tracking-tight hover:opacity-90 transition-opacity"
-              style={{ background: 'hsl(var(--primary))', color: '#fff', borderRadius: 2 }}
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 font-meta text-sm tracking-tight hover:opacity-90 transition-opacity"
+              style={{
+                background: 'hsl(var(--primary))',
+                color: '#fff',
+                borderRadius: 'var(--button-radius)',
+                fontWeight: 'var(--button-font-weight)',
+              }}
             >
               Learn More About Us
             </Link>

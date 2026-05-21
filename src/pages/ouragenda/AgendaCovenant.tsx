@@ -33,7 +33,8 @@ export function AgendaCovenant({ isLoggedIn }: AgendaCovenantProps) {
       {isLoggedIn ? (
         <Link
           to="/dashboard/members"
-          className="inline-flex items-center gap-2 h-14 px-10 bg-primary text-white font-bold border-none cursor-pointer hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 h-14 px-10 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity"
+          style={{ borderRadius: 'var(--button-radius)', fontWeight: 'var(--button-font-weight)' }}
         >
           View Members{' '}
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
@@ -43,7 +44,8 @@ export function AgendaCovenant({ isLoggedIn }: AgendaCovenantProps) {
       ) : (
         <Link
           to="/register"
-          className="inline-flex items-center gap-2 h-14 px-10 bg-primary text-white font-bold border-none cursor-pointer hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 h-14 px-10 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity"
+          style={{ borderRadius: 'var(--button-radius)', fontWeight: 'var(--button-font-weight)' }}
         >
           Join The Movement{' '}
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
