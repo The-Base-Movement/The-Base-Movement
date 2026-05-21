@@ -831,7 +831,7 @@ export default function RegistrationForm({
                       >
                         Contact number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <div style={{ display: 'flex', gap: '8px' }}>
+                      <div style={{ display: 'flex', gap: '8px', overflow: 'hidden' }}>
                         <select
                           name="name-9533b6"
                           id="select-9533b6"
@@ -840,6 +840,7 @@ export default function RegistrationForm({
                           className="reg"
                           style={{
                             width: '80px',
+                            flexShrink: 0,
                             padding: '14px 8px',
                             fontSize: '12px',
                             fontWeight: 800,
@@ -868,6 +869,8 @@ export default function RegistrationForm({
                           onChange={(e) => handleChange('contactNumber', e.target.value)}
                           style={{
                             flex: 1,
+                            minWidth: 0,
+                            boxSizing: 'border-box',
                             padding: '14px 18px',
                             fontSize: '14px',
                             background: 'hsl(var(--container-low))',
