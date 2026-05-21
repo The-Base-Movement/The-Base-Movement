@@ -5,18 +5,28 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
+const AUTOPLAY_MIN = 5
+
 interface OfficerCardSliderProps {
   children: ReactNode
+  count?: number
 }
 
-export function OfficerCardSlider({ children }: OfficerCardSliderProps) {
+export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const shouldAutoplay = isMobile || (count ?? Children.count(children)) >= AUTOPLAY_MIN
+
   return (
     <div style={{ paddingBottom: '60px', position: 'relative' }}>
       <Swiper
         modules={[Navigation, Autoplay, Pagination]}
         navigation
         pagination={{ clickable: true }}
-        autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+        autoplay={
+          shouldAutoplay
+            ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
+            : false
+        }
         loop={true}
         spaceBetween={24}
         breakpoints={{
