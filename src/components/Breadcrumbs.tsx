@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 // Human-readable label overrides for path segments
 const LABEL_OVERRIDES: Record<string, string> = {
-  blog: 'Insights',
+  blog: 'Updates',
   dashboard: 'Dashboard',
   admin: 'Admin',
   authors: 'Authors',
@@ -77,8 +77,8 @@ export function Breadcrumbs({ currentLabel, variant = 'light' }: BreadcrumbsProp
   const isDark = variant === 'dark'
 
   const navClass = isDark
-    ? 'flex items-center gap-2 mb-6 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/15 w-fit'
-    : 'flex items-center gap-2 mb-8 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-stone-200/50 w-fit'
+    ? 'flex items-center gap-2 mb-6 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/15 w-fit max-w-full overflow-hidden'
+    : 'flex items-center gap-2 mb-8 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-stone-200/50 w-fit max-w-full overflow-hidden'
 
   const mutedClass = isDark
     ? 'text-white/50 hover:text-white transition-colors flex items-center gap-1.5'
@@ -87,8 +87,8 @@ export function Breadcrumbs({ currentLabel, variant = 'light' }: BreadcrumbsProp
   const chevronClass = isDark ? 'text-white/30' : 'text-stone-300'
 
   const activeClass = isDark
-    ? 'text-xs font-semibold text-white font-meta max-w-[200px] truncate'
-    : 'text-xs font-semibold text-[var(--brand-green)] font-meta max-w-[200px] truncate'
+    ? 'text-xs font-semibold text-white font-meta max-w-[120px] sm:max-w-[200px] truncate'
+    : 'text-xs font-semibold text-[var(--brand-green)] font-meta max-w-[120px] sm:max-w-[200px] truncate'
 
   const inactiveLinkClass = isDark
     ? 'text-white/50 hover:text-white transition-colors text-xs font-semibold font-meta'
