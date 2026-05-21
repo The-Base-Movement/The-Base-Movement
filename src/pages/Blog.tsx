@@ -173,13 +173,12 @@ export default function Blog() {
                 (isMobile ? (
                   <div
                     style={{
-                      margin: '-12px -16px 0',
-                      padding: '12px 16px',
-                      minWidth: 0,
+                      margin: '0 -16px',
+                      padding: '0 16px',
                       overflow: 'hidden',
                     }}
                   >
-                    <Swiper slidesPerView={1.15} spaceBetween={12} style={{ overflow: 'visible' }}>
+                    <Swiper slidesPerView={1.15} spaceBetween={12}>
                       {rest.map((post) => (
                         <SwiperSlide
                           key={post.id}
@@ -269,17 +268,12 @@ export default function Blog() {
                       {isMobile ? (
                         <div
                           style={{
-                            margin: '-12px -16px 0',
-                            padding: '12px 16px',
-                            minWidth: 0,
+                            margin: '0 -16px',
+                            padding: '0 16px',
                             overflow: 'hidden',
                           }}
                         >
-                          <Swiper
-                            slidesPerView={1.15}
-                            spaceBetween={16}
-                            style={{ overflow: 'visible' }}
-                          >
+                          <Swiper slidesPerView={1.15} spaceBetween={16}>
                             {rest.map((post) => (
                               <SwiperSlide
                                 key={post.id}
