@@ -70,7 +70,16 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                       gap: 6,
                     }}
                   >
-                    {v}
+                    {k === 'Email' && v !== '—' ? (
+                      <a
+                        href={`mailto:${v}`}
+                        style={{ color: 'hsl(var(--primary))', textDecoration: 'none' }}
+                      >
+                        {v}
+                      </a>
+                    ) : (
+                      v
+                    )}
                     {(k === 'Email' || k === 'Mobile') && v !== '—' && (
                       <span
                         className="material-symbols-outlined"
