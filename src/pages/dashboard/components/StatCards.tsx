@@ -34,14 +34,20 @@ function Tile({
   return (
     <div className={`tile ${color}`}>
       <div className="tile-header">
+        <div className="label">{label}</div>
         <span
           className="material-symbols-outlined"
-          style={{ fontSize: '16px', color: 'hsl(var(--on-surface-muted))' }}
+          style={{
+            fontSize: '16px',
+            color:
+              isStatus && value === 'Verified'
+                ? 'hsl(var(--primary))'
+                : 'hsl(var(--on-surface-muted))',
+          }}
         >
           {icon || 'analytics'}
         </span>
       </div>
-      <div className="label">{label}</div>
       <div
         className="val display"
         style={{
@@ -51,7 +57,20 @@ function Tile({
       >
         {value}
       </div>
-      <div className="delta">{delta}</div>
+      <div className="delta">
+        {isStatus && (
+          <span
+            className="material-symbols-outlined"
+            style={{
+              fontSize: '13px',
+              color: value === 'Verified' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            verified
+          </span>
+        )}
+        <span>{delta}</span>
+      </div>
     </div>
   )
 }
@@ -74,7 +93,7 @@ const tileStyles = `
   .tile.ink   { --ac: hsl(var(--on-surface)); }
   .tile.black { --ac: hsl(var(--on-surface)); }
 
-  .tile-header { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+  .tile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 
   .tile .label {
     font-size: 10px;
@@ -83,7 +102,7 @@ const tileStyles = `
     letter-spacing: .06em;
     text-transform: uppercase;
     font-family: 'Public Sans', sans-serif;
-    margin: 0 0 6px;
+    margin: 0;
     white-space: nowrap;
   }
 
@@ -100,6 +119,9 @@ const tileStyles = `
     font-weight: 700;
     color: hsl(var(--on-surface-muted));
     font-family: 'Public Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 `
 
