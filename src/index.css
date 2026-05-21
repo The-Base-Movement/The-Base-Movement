@@ -438,13 +438,24 @@
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 2px;
+  width: 5px; /* Tiny width for vertical scrollbar */
+  height: 4px; /* Short height for horizontal scrollbar */
 }
 ::-webkit-scrollbar-track {
   background: #f1f5ee;
 }
-::-webkit-scrollbar-thumb {
+/* Vertical scrollbar thumb: top to bottom gradient */
+::-webkit-scrollbar-thumb:vertical {
+  background: linear-gradient(
+    to bottom,
+    hsl(var(--destructive)),
+    hsl(var(--accent)),
+    hsl(var(--primary))
+  );
+  border-radius: 4px;
+}
+/* Horizontal scrollbar thumb: left to right gradient */
+::-webkit-scrollbar-thumb:horizontal {
   background: linear-gradient(
     to right,
     hsl(var(--destructive)),
@@ -482,7 +493,7 @@
 
 .sidebar-scroll::-webkit-scrollbar-thumb {
   background: linear-gradient(
-    to right,
+    to bottom,
     hsl(var(--destructive)),
     hsl(var(--accent)),
     hsl(var(--primary))
