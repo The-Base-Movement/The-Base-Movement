@@ -10,9 +10,9 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   const refreshSettings = useCallback(async () => {
     try {
       const data = await adminService.getSiteSettings()
-      setSettings(prev => ({
+      setSettings((prev) => ({
         ...prev,
-        ...(data as Partial<BrandingSettings>)
+        ...(data as Partial<BrandingSettings>),
       }))
     } catch (err) {
       console.error('[BRANDING] Failed to fetch site settings:', err)
@@ -26,9 +26,9 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
       try {
         const data = await adminService.getSiteSettings()
         if (isMounted) {
-          setSettings(prev => ({
+          setSettings((prev) => ({
             ...prev,
-            ...(data as Partial<BrandingSettings>)
+            ...(data as Partial<BrandingSettings>),
           }))
         }
       } catch (err) {
@@ -38,7 +38,9 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
 
     initializeBranding()
 
-    const handleBrandingUpdate = () => { initializeBranding() }
+    const handleBrandingUpdate = () => {
+      initializeBranding()
+    }
     window.addEventListener('site_settings_updated', handleBrandingUpdate)
 
     return () => {
@@ -52,10 +54,10 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
       <Helmet>
         {/* Favicon */}
         <link rel="icon" type="image/png" sizes="32x32" href={settings.favicon_url} />
-        
+
         {/* Open Graph */}
         <meta property="og:image" content={settings.og_image_url} />
-        
+
         {/* Twitter */}
         <meta name="twitter:image" content={settings.twitter_card_url || settings.og_image_url} />
 
@@ -95,6 +97,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
               --button-radius: ${settings.button_border_radius || '0.125rem'};
               --button-font-weight: ${settings.button_font_weight || '700'};
               --primary-foreground: ${settings.button_primary_text_color || '0 0% 100%'};
+              --primary-hover: ${settings.button_primary_hover_bg_color || '156 100% 15%'};
               --accent-foreground: ${settings.button_gold_text_color || '0 0% 100%'};
               --accent-hover: ${settings.button_accent_hover_bg_color || '45 80% 35%'};
               
@@ -115,5 +118,3 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
     </BrandingContext.Provider>
   )
 }
-
-

@@ -1402,7 +1402,7 @@
   justify-content: center;
   gap: 8px;
   font-family: 'Public Sans';
-  font-weight: 800;
+  font-weight: var(--button-font-weight, 800);
   letter-spacing: -0.005em;
   border: 0;
   border-radius: var(--button-radius, 4px);
@@ -1435,6 +1435,7 @@
   color: hsl(var(--destructive-foreground, 0 0% 100%));
 }
 .btn-dest:hover {
+  background: hsl(var(--destructive-hover, 0 85% 35%));
   opacity: 0.9;
 }
 .btn-ghost {
@@ -1450,6 +1451,7 @@
   color: hsl(var(--primary-foreground, 0 0% 100%));
 }
 .btn-primary:hover {
+  background: hsl(var(--primary-hover, 156 100% 15%));
   opacity: 0.9;
 }
 .btn-accent {
@@ -1474,6 +1476,8 @@
   border: 1px solid hsl(var(--active-tab-bg, var(--primary)));
 }
 .btn-active-tab:hover {
+  background: hsl(var(--active-tab-hover, 156 100% 15%));
+  border-color: hsl(var(--active-tab-hover, 156 100% 15%));
   opacity: 0.9;
 }
 .btn-inactive-tab {
@@ -1482,6 +1486,7 @@
   border: 1px solid hsl(var(--border));
 }
 .btn-inactive-tab:hover {
+  background: hsl(var(--inactive-tab-hover, 0 0% 95%));
   border-color: hsl(var(--primary));
   color: hsl(var(--primary));
 }

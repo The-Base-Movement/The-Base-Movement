@@ -115,6 +115,11 @@ export default function AdminSettings() {
           button_border_radius: '0.125rem',
           button_font_weight: '700',
           button_neon_enabled: false,
+          button_primary_hover_bg_color: '156 100% 15%',
+          button_accent_hover_bg_color: '45 80% 35%',
+          button_destructive_hover_bg_color: '0 85% 35%',
+          button_active_tab_hover_bg_color: '156 100% 15%',
+          button_inactive_tab_hover_bg_color: '0 0% 95%',
           ...loaded,
         })
       } catch (err) {
@@ -336,6 +341,11 @@ export default function AdminSettings() {
         'button_active_tab_bg_color',
         'button_inactive_tab_bg_color',
         'button_inactive_tab_text_color',
+        'button_primary_hover_bg_color',
+        'button_accent_hover_bg_color',
+        'button_destructive_hover_bg_color',
+        'button_active_tab_hover_bg_color',
+        'button_inactive_tab_hover_bg_color',
       ]
       await Promise.all(
         settingsToUpdate
