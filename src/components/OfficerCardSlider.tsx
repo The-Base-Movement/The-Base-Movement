@@ -27,7 +27,8 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
             ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
             : false
         }
-        loop={true}
+        loop={shouldAutoplay}
+        centerInsufficientSlides={true}
         spaceBetween={24}
         breakpoints={{
           0: { slidesPerView: 1 },
