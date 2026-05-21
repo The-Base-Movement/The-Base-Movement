@@ -11,7 +11,7 @@ import type {
 
 function stripMarkdownEmail(value: string | null | undefined): string | null {
   if (!value) return value ?? null
-  const match = value.trim().match(/^\[([^\]]+)\]\(mailto:[^)]+\)$/)
+  const match = value.match(/\(mailto:([^)]+)\)/)
   return match ? match[1] : value
 }
 
