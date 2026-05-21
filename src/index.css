@@ -736,7 +736,26 @@
     flex-wrap: wrap;
   }
   .kpis {
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 10px;
+    padding-bottom: 6px;
+    margin-left: -14px;
+    margin-right: -14px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .kpis::-webkit-scrollbar {
+    display: none;
+  }
+  .kpis > * {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+    min-width: 0;
   }
   .twocol,
   .sidebar-main,

@@ -42,13 +42,13 @@ export function OfficerCardSlider({ children }: OfficerCardSliderProps) {
           color: hsl(var(--primary));
           background: #fff;
           border-radius: 50%;
-          width: 40px;
-          height: 40px;
+          width: 32px;
+          height: 32px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .officials-swiper .swiper-button-next::after,
         .officials-swiper .swiper-button-prev::after {
-          font-size: 16px;
+          font-size: 11px;
           font-weight: bold;
         }
         .officials-swiper .swiper-pagination {
