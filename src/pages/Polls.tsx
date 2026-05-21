@@ -76,46 +76,48 @@ export default function Polls() {
 
   const content = (
     <>
-      {/* Page title */}
-      <div style={{ marginBottom: 20 }}>
-        <div
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
-            fontSize: 10,
-            color: 'hsl(var(--on-surface-muted))',
-            textTransform: 'uppercase',
-            letterSpacing: '0.06em',
-            marginBottom: 6,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-          }}
-        >
-          <span
+      {/* Page title — dashboard only; public page has its own hero */}
+      {isDashboard && (
+        <div style={{ marginBottom: 20 }}>
+          <div
             style={{
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              background: 'hsl(var(--primary))',
-              display: 'inline-block',
-              animation: 'pulse 1.4s infinite',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 700,
+              fontSize: 10,
+              color: 'hsl(var(--on-surface-muted))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              marginBottom: 6,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
             }}
-          />
-          Member participation
+          >
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                background: 'hsl(var(--primary))',
+                display: 'inline-block',
+                animation: 'pulse 1.4s infinite',
+              }}
+            />
+            Member participation
+          </div>
+          <h2
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 800,
+              fontSize: 20,
+              color: 'hsl(var(--on-surface))',
+              margin: 0,
+            }}
+          >
+            Polls &amp; Feedback
+          </h2>
         </div>
-        <h2
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
-            fontSize: 20,
-            color: 'hsl(var(--on-surface))',
-            margin: 0,
-          }}
-        >
-          Polls &amp; Feedback
-        </h2>
-      </div>
+      )}
 
       {/* KPI row */}
       <PollKPIs
