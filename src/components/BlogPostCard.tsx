@@ -80,7 +80,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
         </p>
 
         {/* Author row */}
-        <div className="flex items-center flex-wrap gap-2 pt-[14px] border-t border-[var(--border,#e5e7eb)]">
+        <div className="flex items-center gap-2 pt-[14px] border-t border-[var(--border,#e5e7eb)]">
           {post.authorImage ? (
             <img
               src={post.authorImage}
@@ -92,10 +92,10 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
               {authorInitial}
             </div>
           )}
-          <span className="font-['Public_Sans',sans-serif] text-[11.5px] font-bold text-[var(--on-surface,#181d19)] truncate max-w-[120px]">
+          <span className="font-['Public_Sans',sans-serif] text-[11.5px] font-bold text-[var(--on-surface,#181d19)]">
             {displayName}
           </span>
-          <span className="ml-auto text-[10.5px] text-[var(--on-surface-muted,#6b7280)] font-bold font-['Public_Sans',sans-serif] shrink-0">
+          <span className="ml-auto text-[10.5px] text-[var(--on-surface-muted,#6b7280)] font-bold font-['Public_Sans',sans-serif]">
             {formattedDate}
           </span>
         </div>

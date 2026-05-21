@@ -15,8 +15,6 @@ import { PublicHero } from './blog/PublicHero'
 import { PublicFeaturedPost } from './blog/PublicFeaturedPost'
 import { PublicSidebar } from './blog/PublicSidebar'
 import { PublicCTA } from './blog/PublicCTA'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/css'
 
 export default function Blog() {
   const { settings } = useBranding()
@@ -30,13 +28,6 @@ export default function Blog() {
   const [sidebarSubmitting, setSidebarSubmitting] = useState(false)
   const [publicEmail, setPublicEmail] = useState('')
   const [publicSubmitting, setPublicSubmitting] = useState(false)
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
-
-  useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 768)
-    window.addEventListener('resize', handler)
-    return () => window.removeEventListener('resize', handler)
-  }, [])
 
   const handleNewsletter = async (
     email: string,
@@ -169,33 +160,13 @@ export default function Blog() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {featured && <DashboardFeaturedPost post={featured} baseUrl={baseUrl} />}
 
-              {rest.length > 0 &&
-                (isMobile ? (
-                  <div
-                    style={{
-                      margin: '0 -16px',
-                      padding: '0 16px',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <Swiper slidesPerView={1.15} spaceBetween={12}>
-                      {rest.map((post) => (
-                        <SwiperSlide
-                          key={post.id}
-                          style={{ height: 'auto', display: 'flex', flexDirection: 'column' }}
-                        >
-                          <BlogPostCard post={post} baseUrl={baseUrl} />
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
-                    {rest.map((post) => (
-                      <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
-                    ))}
-                  </div>
-                ))}
+              {rest.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+                  {rest.map((post) => (
+                    <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
+                  ))}
+                </div>
+              )}
 
               <Pagination
                 currentPage={currentPage}
@@ -265,32 +236,11 @@ export default function Blog() {
                       <h2 className="text-stone-900 font-bold tracking-tight mb-6">
                         Latest articles
                       </h2>
-                      {isMobile ? (
-                        <div
-                          style={{
-                            margin: '0 -16px',
-                            padding: '0 16px',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <Swiper slidesPerView={1.15} spaceBetween={16}>
-                            {rest.map((post) => (
-                              <SwiperSlide
-                                key={post.id}
-                                style={{ height: 'auto', display: 'flex', flexDirection: 'column' }}
-                              >
-                                <BlogPostCard post={post} baseUrl={baseUrl} />
-                              </SwiperSlide>
-                            ))}
-                          </Swiper>
-                        </div>
-                      ) : (
-                        <div className="grid sm:grid-cols-2 gap-8">
-                          {rest.map((post) => (
-                            <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
-                          ))}
-                        </div>
-                      )}
+                      <div className="grid sm:grid-cols-2 gap-8">
+                        {rest.map((post) => (
+                          <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
+                        ))}
+                      </div>
                     </>
                   )}
                 </div>

@@ -10,7 +10,7 @@ export function DashboardFeaturedPost({ post, baseUrl }: DashboardFeaturedPostPr
   return (
     <div className="panel" style={{ overflow: 'hidden' }}>
       {post.imageUrl && (
-        <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
+        <div style={{ height: 200, overflow: 'hidden' }}>
           <img
             src={post.imageUrl}
             alt={post.title}

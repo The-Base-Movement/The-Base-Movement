@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/pagination'
 import { cn } from '@/lib/utils'
 import { type BlogPost } from '@/services/adminService'
 
