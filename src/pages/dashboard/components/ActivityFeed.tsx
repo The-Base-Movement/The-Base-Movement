@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { formatDistanceToNow } from 'date-fns'
@@ -22,11 +23,11 @@ export function ActivityFeed() {
     async function initFeed() {
       const [donations, members] = await Promise.all([
         donationService.getPublicDonationFeed(10),
-        memberService.getMembers().then(ms => ms.slice(0, 10))
+        memberService.getMembers().then((ms) => ms.slice(0, 10)),
       ])
 
       const initial: Activity[] = [
-        ...donations.map(d => ({
+        ...donations.map((d) => ({
           name: d.fullName,
           action: 'just contributed to the',
           target: d.campaignTitle || 'General Fund',
@@ -34,9 +35,9 @@ export function ActivityFeed() {
           timestamp: new Date(d.date),
           loc: d.country || 'Ghana',
           amt: `₵${d.amount}`,
-          img: `https://i.pravatar.cc/80?u=${d.fullName}`
+          img: `https://i.pravatar.cc/80?u=${d.fullName}`,
         })),
-        ...members.map(m => ({
+        ...members.map((m) => ({
           name: m.name,
           action: 'registered as a member of',
           target: m.chapter || 'The Base',
@@ -44,11 +45,13 @@ export function ActivityFeed() {
           timestamp: m.joined ? new Date(m.joined) : new Date(),
           loc: m.region || m.country || 'Ghana',
           status: 'Verified',
-          img: m.avatarUrl || `https://i.pravatar.cc/80?u=${m.name}`
-        }))
+          img: m.avatarUrl || `https://i.pravatar.cc/80?u=${m.name}`,
+        })),
       ]
 
-      setActivities(initial.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 8))
+      setActivities(
+        initial.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10)
+      )
     }
 
     initFeed()
@@ -62,9 +65,9 @@ export function ActivityFeed() {
         timestamp: new Date(),
         loc: d.country || 'Global',
         amt: `₵${d.amount}`,
-        img: `https://i.pravatar.cc/80?u=${d.fullName}`
+        img: `https://i.pravatar.cc/80?u=${d.fullName}`,
       }
-      setActivities(prev => [newActivity, ...prev].slice(0, 8))
+      setActivities((prev) => [newActivity, ...prev].slice(0, 10))
     })
 
     // Subscribe to members
@@ -77,9 +80,9 @@ export function ActivityFeed() {
         timestamp: new Date(),
         loc: m.region || m.country || 'Movement HQ',
         status: 'Verified',
-        img: m.avatarUrl || `https://i.pravatar.cc/80?u=${m.name}`
+        img: m.avatarUrl || `https://i.pravatar.cc/80?u=${m.name}`,
       }
-      setActivities(prev => [newActivity, ...prev].slice(0, 8))
+      setActivities((prev) => [newActivity, ...prev].slice(0, 10))
     })
 
     return () => {
@@ -94,17 +97,23 @@ export function ActivityFeed() {
         {activities.length === 0 ? (
           <div className="py-10 text-center">
             <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-[.06em] font-meta">Synchronizing Feed...</p>
+            <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-[.06em] font-meta">
+              Synchronizing Feed...
+            </p>
           </div>
         ) : (
           activities.map((act, i) => (
-            <div key={`${act.timestamp.getTime()}-${i}`} className="feed-row animate-in fade-in slide-in-from-right-4 duration-500">
+            <div
+              key={`${act.timestamp.getTime()}-${i}`}
+              className="feed-row animate-in fade-in slide-in-from-right-4 duration-500"
+            >
               <div className="av">
                 <img src={act.img} alt={act.name} />
               </div>
               <div className="body">
                 <p>
-                  <b className="font-meta font-extrabold">{act.name}</b> {act.action} <b className="font-meta font-extrabold">{act.target}</b>.
+                  <b className="font-meta font-extrabold">{act.name}</b> {act.action}{' '}
+                  <b className="font-meta font-extrabold">{act.target}</b>.
                 </p>
                 <div className="meta">
                   {act.time} · {act.loc}
@@ -112,14 +121,55 @@ export function ActivityFeed() {
               </div>
               {act.amt && <div className="amt tnum">{act.amt}</div>}
               {act.status && (
-                <span className="material-symbols-outlined" style={{ fontSize: 17, color: 'hsl(var(--primary))', flexShrink: 0, alignSelf: 'center' }}>verified</span>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 17,
+                    color: 'hsl(var(--primary))',
+                    flexShrink: 0,
+                    alignSelf: 'center',
+                  }}
+                >
+                  verified
+                </span>
               )}
             </div>
           ))
         )}
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <Link
+        to="/dashboard/donate"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+          marginTop: 16,
+          padding: '9px 0',
+          borderRadius: 4,
+          border: '1px solid hsl(var(--border))',
+          fontFamily: "'Public Sans', sans-serif",
+          fontWeight: 800,
+          fontSize: 11,
+          color: 'hsl(var(--on-surface-muted))',
+          textDecoration: 'none',
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+          transition: 'background 0.15s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+      >
+        View all contributions
+        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+          arrow_forward
+        </span>
+      </Link>
+
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .feed-row { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .feed-row:last-child { border-bottom: 0; }
         .feed-row .av { width: 32px; height: 32px; border-radius: 50%; background: var(--container); flex-shrink: 0; overflow: hidden; }
@@ -133,7 +183,9 @@ export function ActivityFeed() {
         .pill { padding: 4px 10px; font-size: 9px; border-radius: 4px; }
         .pill-ok { background: rgba(0, 107, 63, 0.1); color: var(--primary); border: 1px solid rgba(0, 107, 63, 0.1); }
         .pill-mute { background: rgba(0, 0, 0, 0.05); color: var(--on-surface-muted); border: 1px solid rgba(0, 0, 0, 0.05); }
-      ` }} />
+      `,
+        }}
+      />
     </div>
   )
 }
