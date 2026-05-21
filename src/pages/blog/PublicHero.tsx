@@ -6,12 +6,23 @@ export function PublicHero() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
         <Breadcrumbs />
         <div className="mt-6">
-          <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-            <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 40 }}>
+          <div className="mb-6">
+            <span
+              className="material-symbols-outlined text-brand-green block mb-2 md:hidden"
+              style={{ fontSize: 32 }}
+            >
               newspaper
             </span>
-            Updates & Articles
-          </h1>
+            <h1 className="text-stone-900 text-3xl md:text-5xl font-meta font-bold tracking-tighter flex items-center gap-3">
+              <span
+                className="material-symbols-outlined text-brand-green hidden md:inline"
+                style={{ fontSize: 40 }}
+              >
+                newspaper
+              </span>
+              Updates & Articles
+            </h1>
+          </div>
           <div className="bl">
             <div />
             <div />
