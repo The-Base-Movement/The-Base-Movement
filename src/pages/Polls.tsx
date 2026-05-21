@@ -12,6 +12,7 @@ import SEO from '@/components/SEO'
 import { PollKPIs } from './polls/components/PollKPIs'
 import { ClosedPollsPanel } from './polls/components/ClosedPollsPanel'
 import { PollsSidebar } from './polls/components/PollsSidebar'
+import { SearchBar } from '@/components/SearchBar'
 
 export default function Polls() {
   const location = useLocation()
@@ -21,6 +22,7 @@ export default function Polls() {
   const [loading, setLoading] = useState(true)
   const [voting, setVoting] = useState<string | null>(null)
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
+  const [searchQuery, setSearchQuery] = useState('')
   const isClient = useIsClient()
   const isLoggedIn =
     isClient && typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true'
@@ -70,7 +72,12 @@ export default function Polls() {
     setVoting(null)
   }
 
-  const activePolls = polls.filter((p) => p.status === 'Active')
+  const q = searchQuery.trim().toLowerCase()
+  const activePolls = polls.filter(
+    (p) =>
+      p.status === 'Active' &&
+      (!q || p.question.toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q))
+  )
   const closedPolls = polls.filter((p) => p.status === 'Closed')
   const totalVotes = polls.reduce((acc, p) => acc + p.totalVotes, 0)
 
@@ -132,6 +139,13 @@ export default function Polls() {
       <div className="main-sidebar" style={{ alignItems: 'start' }}>
         {/* Main: active polls + closed polls on mobile */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search polls…"
+            variant={isDashboard ? 'dashboard' : 'public'}
+          />
+
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span
               className="material-symbols-outlined"
@@ -178,7 +192,7 @@ export default function Polls() {
                   marginBottom: 8,
                 }}
               >
-                how_to_vote
+                {searchQuery ? 'search_off' : 'how_to_vote'}
               </span>
               <p
                 style={{
@@ -189,7 +203,7 @@ export default function Polls() {
                   margin: 0,
                 }}
               >
-                No active polls at this time.
+                {searchQuery ? `No polls match "${searchQuery}"` : 'No active polls at this time.'}
               </p>
             </div>
           ) : (

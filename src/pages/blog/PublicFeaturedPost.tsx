@@ -32,7 +32,7 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
         </div>
         <div className="p-6 md:p-10 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-4">
-            <span className="px-2.5 py-1 rounded-sm text-micro font-bold tracking-tight border bg-stone-50 text-stone-500 border-stone-100">
+            <span className="px-2.5 py-1 rounded-sm text-xs font-bold tracking-tight border bg-stone-50 text-stone-500 border-stone-100">
               {post.category}
             </span>
             <span className="mx-2 text-stone-300 opacity-50">|</span>
@@ -53,7 +53,7 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
           </Link>
           <p className="text-slate-500 text-sm leading-relaxed mb-6">{post.excerpt}</p>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="text-micro font-medium text-stone-400 tracking-tight">
+            <div className="text-xs font-medium text-stone-500 tracking-tight">
               {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName}{' '}
               <span className="mx-2 opacity-50">|</span> {post.readTime}
             </div>

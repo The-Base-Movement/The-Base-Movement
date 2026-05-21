@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 
 // Modular subcomponents
+import { SearchBar } from '@/components/SearchBar'
 import { ChapterApplicationsTable } from './leadershiphub/ChapterApplicationsTable'
 import { AppointedLeadersTable } from './leadershiphub/AppointedLeadersTable'
 import { VisionStatementsList } from './leadershiphub/VisionStatementsList'
@@ -347,55 +348,27 @@ export default function LeadershipHub() {
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
-          gap: 16,
+          gap: 12,
           marginBottom: 24,
         }}
       >
-        <div style={{ flex: 1, minWidth: 240, position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 12,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 18,
-              color: 'hsl(var(--on-surface-muted))',
-              opacity: 0.4,
-            }}
-          >
-            search
-          </span>
-          <input
-            id="search-applications"
-            name="searchQuery"
-            aria-label="Search applications"
-            type="text"
-            placeholder="Search applications..."
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <SearchBar
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              height: 40,
-              paddingLeft: 40,
-              paddingRight: 16,
-              background: 'hsl(var(--container-low))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
-              fontSize: 13,
-              fontWeight: 700,
-              outline: 'none',
-            }}
+            onChange={setSearchQuery}
+            placeholder="Search applications…"
+            variant="dashboard"
           />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button className="btn btn-outline" style={{ height: 40, padding: '0 24px' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-              filter_list
-            </span>{' '}
-            Filter Status
-          </button>
-        </div>
+        <button
+          className="btn btn-outline"
+          style={{ height: 36, padding: '0 20px', flexShrink: 0 }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            filter_list
+          </span>
+          Filter Status
+        </button>
       </div>
 
       {/* Applications Table */}

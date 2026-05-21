@@ -81,18 +81,39 @@ export function PostSidebar({
     <aside className="lg:col-span-1 space-y-8 order-2 lg:order-1">
       <div className="sticky top-32 space-y-8">
         <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
-          <p className="text-micro font-bold text-stone-400 tracking-tight mb-0">Authored by</p>
+          <p className="text-xs font-bold text-stone-500 tracking-tight mb-0">Authored by</p>
           <div className="flex items-center gap-3">
-            <img
-              src={authorImage || '/founder.jpg'}
-              alt={authorName}
-              className="w-12 h-12 bg-charcoal-dark rounded-none object-cover"
-              decoding="async"
-              loading="lazy"
-            />
+            {authorImage ? (
+              <img
+                src={authorImage}
+                alt={authorName}
+                className="w-12 h-12 object-cover rounded-none"
+                decoding="async"
+                loading="lazy"
+              />
+            ) : (
+              <div
+                className="w-12 h-12 flex items-center justify-center rounded-none"
+                style={{
+                  background: 'rgba(0,107,63,0.08)',
+                  border: '1px solid rgba(0,107,63,0.12)',
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 16,
+                    color: 'var(--brand-green)',
+                  }}
+                >
+                  {(displayName || 'A').charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
             <div>
               <p className="text-sm font-bold text-stone-900 leading-none mb-0">{displayName}</p>
-              <p className="text-micro text-stone-500 tracking-tight mt-1.5 mb-0 font-medium">
+              <p className="text-xs text-stone-500 tracking-tight mt-1.5 mb-0 font-medium">
                 {displayRole}
               </p>
             </div>
@@ -103,7 +124,7 @@ export function PostSidebar({
         </div>
 
         <div className="space-y-4">
-          <p className="text-micro font-bold text-stone-400 tracking-tight">Share this insight</p>
+          <p className="text-xs font-bold text-stone-500 tracking-tight">Share this update</p>
           <div className="grid grid-cols-3 gap-2">
             {SHARE_BUTTONS.map(({ brandColor, key, icon }) => (
               <button
@@ -119,9 +140,7 @@ export function PostSidebar({
         </div>
 
         <div className="pt-8 border-t border-stone-100 space-y-6">
-          <p className="text-micro font-bold text-stone-400 tracking-tight mb-0">
-            Explore categories
-          </p>
+          <p className="text-xs font-bold text-stone-500 tracking-tight mb-0">Explore categories</p>
           <div className="space-y-2">
             {CATEGORIES.map((cat) => (
               <Link

@@ -1,3 +1,5 @@
+import { SearchBar } from '@/components/SearchBar'
+
 interface AppointedLeader {
   id: string
   chapter_name: string
@@ -77,43 +79,12 @@ export function AppointedLeadersTable({
             All leaders registered across chapters
           </p>
         </div>
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              opacity: 0.4,
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            id="leaders-search"
-            name="leadersSearch"
-            type="text"
-            placeholder="Search leaders…"
+        <div style={{ width: 220 }}>
+          <SearchBar
             value={leadersSearch}
-            onChange={(e) => setLeadersSearch(e.target.value)}
-            style={{
-              height: 36,
-              paddingLeft: 32,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
-              fontSize: 12,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
-              outline: 'none',
-              background: 'hsl(var(--container-low))',
-              width: 220,
-              boxSizing: 'border-box',
-            }}
+            onChange={setLeadersSearch}
+            placeholder="Search leaders…"
+            variant="dashboard"
           />
         </div>
       </div>

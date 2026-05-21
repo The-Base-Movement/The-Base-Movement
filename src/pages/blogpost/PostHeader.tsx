@@ -10,10 +10,10 @@ export function PostHeader({ category, publishedAt, readTime, title, excerpt }: 
   return (
     <header className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-micro font-bold tracking-tight">
+        <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-xs font-bold tracking-tight">
           {category}
         </span>
-        <div className="flex items-center gap-4 text-stone-400 text-micro font-bold tracking-tight">
+        <div className="flex items-center gap-4 text-stone-500 text-xs font-bold tracking-tight">
           <span className="flex items-center gap-1.5">
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
               calendar_today

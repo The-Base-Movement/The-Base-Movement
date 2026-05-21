@@ -42,7 +42,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           </div>
         )}
         {post.category && (
-          <span className="absolute bottom-[14px] left-[14px] px-[10px] py-1 bg-white font-bold text-[9.5px] text-[var(--primary)] tracking-[0.06em] uppercase rounded-[2px]">
+          <span className="absolute bottom-[14px] left-[14px] px-[10px] py-1 bg-white font-bold text-[11.5px] text-[var(--primary)] tracking-[0.05em] uppercase rounded-[2px]">
             {post.category}
           </span>
         )}
@@ -51,7 +51,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
       {/* Body */}
       <div className="p-[18px] flex flex-col flex-1">
         {/* Meta */}
-        <div className="flex items-center gap-2 mb-2 text-[10.5px] font-bold tracking-[0.04em] uppercase text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
+        <div className="flex items-center gap-2 mb-2 text-[12px] font-bold tracking-[0.04em] uppercase text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
           <span>{post.category || 'Movement'}</span>
           <span className="w-[3px] h-[3px] rounded-full bg-current opacity-60 shrink-0" />
           <span>{post.readTime}</span>
@@ -88,7 +88,10 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
               className="w-6 h-6 rounded-full object-cover shrink-0"
             />
           ) : (
-            <div className="w-6 h-6 rounded-full bg-[var(--primary)] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+            <div
+              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+              style={{ background: 'hsl(var(--primary))' }}
+            >
               {authorInitial}
             </div>
           )}

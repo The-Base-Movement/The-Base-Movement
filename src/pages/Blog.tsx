@@ -15,12 +15,14 @@ import { PublicHero } from './blog/PublicHero'
 import { PublicFeaturedPost } from './blog/PublicFeaturedPost'
 import { PublicSidebar } from './blog/PublicSidebar'
 import { PublicCTA } from './blog/PublicCTA'
+import { PublicSearchFilter } from './blog/PublicSearchFilter'
 
 export default function Blog() {
   const { settings } = useBranding()
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
   const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
@@ -70,8 +72,17 @@ export default function Blog() {
   const POSTS_PER_PAGE = 6
 
   const categories = ['All', ...Array.from(new Set(posts.map((p) => p.category).filter(Boolean)))]
-  const filtered =
-    activeCategory === 'All' ? posts : posts.filter((p) => p.category === activeCategory)
+
+  const filtered = posts.filter((p) => {
+    const matchCat = activeCategory === 'All' || p.category === activeCategory
+    const q = searchQuery.trim().toLowerCase()
+    const matchSearch =
+      !q ||
+      p.title.toLowerCase().includes(q) ||
+      (p.excerpt || '').toLowerCase().includes(q) ||
+      (p.authorName || '').toLowerCase().includes(q)
+    return matchCat && matchSearch
+  })
 
   const totalPages = Math.ceil(filtered.length / POSTS_PER_PAGE)
   const paginated = filtered.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE)
@@ -80,6 +91,11 @@ export default function Blog() {
 
   const handleCategoryChange = (cat: string) => {
     setActiveCategory(cat)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (q: string) => {
+    setSearchQuery(q)
     setCurrentPage(1)
   }
 
@@ -94,6 +110,8 @@ export default function Blog() {
           activeCategory={activeCategory}
           posts={posts}
           onCategoryChange={handleCategoryChange}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
         />
 
         {loading ? (
@@ -225,50 +243,15 @@ export default function Blog() {
             </div>
           ) : (
             <>
-              {/* Mobile/tablet category filter — sidebar is desktop-only */}
-              {categories.length > 1 && (
-                <div className="lg:hidden mb-6 -mx-4 px-4 overflow-x-auto">
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 8,
-                      flexWrap: 'nowrap',
-                      width: 'max-content',
-                      paddingBottom: 4,
-                    }}
-                  >
-                    {categories.map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => handleCategoryChange(cat)}
-                        style={{
-                          padding: '6px 14px',
-                          borderRadius: 4,
-                          border: '1px solid',
-                          fontSize: 11,
-                          fontWeight: 800,
-                          fontFamily: "'Public Sans', sans-serif",
-                          letterSpacing: '0.04em',
-                          cursor: 'pointer',
-                          whiteSpace: 'nowrap',
-                          background:
-                            activeCategory === cat ? 'hsl(var(--primary))' : 'transparent',
-                          color: activeCategory === cat ? '#fff' : 'hsl(var(--on-surface-muted))',
-                          borderColor:
-                            activeCategory === cat ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-                        }}
-                      >
-                        {cat === 'All' ? 'All' : cat}
-                        <span style={{ marginLeft: 5, opacity: 0.6, fontSize: 10 }}>
-                          {cat === 'All'
-                            ? posts.length
-                            : posts.filter((p) => p.category === cat).length}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Mobile/tablet search + filter — sidebar handles desktop */}
+              <PublicSearchFilter
+                categories={categories}
+                activeCategory={activeCategory}
+                posts={posts}
+                searchQuery={searchQuery}
+                onCategoryChange={handleCategoryChange}
+                onSearchChange={handleSearchChange}
+              />
 
               {featured && (
                 <PublicFeaturedPost post={featured} baseUrl={baseUrl} logoUrl={settings.logo_url} />

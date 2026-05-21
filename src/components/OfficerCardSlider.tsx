@@ -1,8 +1,7 @@
 import { Children, useState, useEffect, type ReactNode } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Autoplay, Pagination } from 'swiper/modules'
+import { Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
-import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
 const SLIDER_MIN = 5
@@ -65,8 +64,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
     <div style={{ paddingBottom: '60px', position: 'relative' }}>
       <HorizontalRail />
       <Swiper
-        modules={[Navigation, Autoplay, Pagination]}
-        navigation
+        modules={[Autoplay, Pagination]}
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
         loop={true}
@@ -79,9 +77,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         className="officials-swiper"
       >
         {Children.map(children, (child) => (
-          <SwiperSlide
-            style={{ width: 'auto', height: 'auto', display: 'flex', alignItems: 'flex-start' }}
-          >
+          <SwiperSlide style={{ width: 'auto', display: 'flex', alignItems: 'stretch' }}>
             {child}
           </SwiperSlide>
         ))}
@@ -92,29 +88,18 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         .officials-swiper {
           padding: 0 20px;
         }
-        .officials-swiper .swiper-button-next,
-        .officials-swiper .swiper-button-prev {
-          color: hsl(var(--primary));
-          background: #fff;
-          border-radius: 50%;
-          width: 32px;
-          height: 32px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .officials-swiper .swiper-button-next::after,
-        .officials-swiper .swiper-button-prev::after {
-          font-size: 11px;
-          font-weight: bold;
-        }
         .officials-swiper .swiper-pagination {
           bottom: 0;
         }
         .officials-swiper .swiper-pagination-bullet-active {
           background: hsl(var(--primary));
         }
+        .officials-swiper .swiper-slide {
+          height: auto;
+        }
         @media (max-width: 767px) {
           .officials-swiper {
-            padding: 0 48px;
+            padding: 0 20px;
           }
           .officials-swiper .swiper-slide {
             width: 100% !important;

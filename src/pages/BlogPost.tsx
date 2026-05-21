@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Pagination, Autoplay } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/pagination'
 import { CommentSection } from '@/components/CommentSection'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import SEO from '@/components/SEO'
@@ -79,9 +83,7 @@ export default function BlogPost() {
         >
           progress_activity
         </span>
-        <p className="text-micro font-bold tracking-tight text-stone-400">
-          Loading insight file...
-        </p>
+        <p className="text-micro font-bold tracking-tight text-stone-400">Loading update...</p>
       </div>
     )
   }
@@ -89,7 +91,7 @@ export default function BlogPost() {
   if (!post) {
     return (
       <>
-        <SEO title="Insight Not Found" noindex />
+        <SEO title="Update Not Found" noindex />
         <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6">
           <div className="w-16 h-16 bg-stone-100 flex items-center justify-center mb-8 rotate-3">
             <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 32 }}>
@@ -97,10 +99,10 @@ export default function BlogPost() {
             </span>
           </div>
           <h2 className="font-meta font-bold text-2xl tracking-tight text-charcoal-dark mb-4">
-            Insight not found
+            Update not found
           </h2>
           <p className="text-sm font-medium text-stone-500 max-w-xs mx-auto mb-10 leading-relaxed">
-            The coordinate you requested does not exist or has been archived within the movement's
+            The article you requested does not exist or has been archived within the movement's
             vault.
           </p>
           <button
@@ -111,7 +113,7 @@ export default function BlogPost() {
               fontWeight: 'var(--button-font-weight)',
             }}
           >
-            Return to insights
+            Return to updates
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               arrow_forward
             </span>
@@ -166,7 +168,7 @@ export default function BlogPost() {
 
           <PostHeroImage imageUrl={post.imageUrl} title={post.title} logoUrl={settings.logo_url} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-16">
             <PostSidebar
               authorImage={post.authorImage}
               authorName={post.authorName}
@@ -198,78 +200,196 @@ export default function BlogPost() {
 
               <CommentSection />
 
-              <div className="mt-24 p-10 bg-charcoal-dark text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-green)]/10 -mr-32 -mt-32 blur-3xl"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              {/* CTA — dark gradient matching page hero */}
+              <div
+                className="mt-24 relative overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, #181d19 0%, #0e1510 100%)' }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-40%',
+                    left: '-5%',
+                    width: '55%',
+                    height: '220%',
+                    background:
+                      'radial-gradient(ellipse at center, rgba(0,107,63,0.22) 0%, transparent 65%)',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: "url('/noise.png')",
+                    opacity: 0.04,
+                    pointerEvents: 'none',
+                  }}
+                />
+                <div
+                  className="relative z-10 flex flex-col md:flex-row items-center md:justify-between gap-6 md:gap-8"
+                  style={{ padding: '36px 32px' }}
+                >
                   <div className="text-center md:text-left">
-                    <h2 className="text-white tracking-tight mb-2">Build the Future Together</h2>
-                    <p className="text-stone-400 mb-0">
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 800,
+                        fontSize: 10,
+                        letterSpacing: '0.14em',
+                        textTransform: 'uppercase',
+                        color: 'hsl(var(--accent))',
+                        marginBottom: 10,
+                      }}
+                    >
+                      Join the Movement
+                    </p>
+                    <h2
+                      style={{
+                        color: '#fff',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 800,
+                        fontSize: 'clamp(1.3rem, 3vw, 1.9rem)',
+                        letterSpacing: '-0.02em',
+                        lineHeight: 1.1,
+                        margin: '0 0 10px',
+                      }}
+                    >
+                      Build the Future Together
+                    </h2>
+                    <p
+                      style={{
+                        color: 'rgba(255,255,255,0.5)',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 500,
+                        fontSize: 13,
+                        lineHeight: 1.65,
+                        margin: 0,
+                      }}
+                    >
                       Join "The Base" movement and be a part of Ghana's industrial revolution.
                     </p>
                   </div>
-                  <Link to="/register">
+                  <Link to="/register" style={{ flexShrink: 0 }}>
                     <button
-                      className="bg-[var(--brand-green)] hover:opacity-90 text-white tracking-tight text-xs h-14 px-10 border-none cursor-pointer transition-opacity"
                       style={{
-                        borderRadius: 'var(--button-radius)',
-                        fontWeight: 'var(--button-font-weight)',
+                        background: 'hsl(var(--primary))',
+                        color: '#fff',
+                        border: 'none',
+                        height: 46,
+                        padding: '0 28px',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 800,
+                        fontSize: 12,
+                        letterSpacing: '0.04em',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       Register as a member
                     </button>
                   </Link>
                 </div>
-                <div className="mt-10 flex h-1 w-full">
-                  <div className="flex-1 bg-[var(--brand-red)]"></div>
-                  <div className="flex-1 bg-[var(--brand-gold)]"></div>
-                  <div className="flex-1 bg-[var(--brand-green)]"></div>
+                <div style={{ display: 'flex', height: 4 }}>
+                  <div style={{ flex: 1, background: 'var(--brand-red)' }} />
+                  <div style={{ flex: 1, background: 'var(--brand-gold)' }} />
+                  <div style={{ flex: 1, background: 'var(--brand-green)' }} />
                 </div>
               </div>
 
-              <div className="mt-24">
-                <p className="text-micro font-bold text-warm-gold tracking-tight mb-10">
-                  Related insights
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {relatedPosts.map((related) => (
-                    <Link
-                      to={`${baseUrl}/${related.slug}`}
-                      key={related.id}
-                      className="block group"
-                    >
-                      <article className="group cursor-pointer">
-                        <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
-                          {related.imageUrl ? (
-                            <img
-                              src={related.imageUrl}
-                              alt={related.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                              decoding="async"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
-                              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
-                              <img
-                                src={settings.logo_url}
-                                alt="The Base"
-                                className="w-8 h-8 opacity-20 mb-2 grayscale"
-                              />
+              {relatedPosts.length > 0 && (
+                <div className="mt-16 md:mt-24">
+                  <p
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 800,
+                      fontSize: 11,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'hsl(var(--accent))',
+                      marginBottom: 20,
+                    }}
+                  >
+                    Related updates
+                  </p>
+                  <Swiper
+                    modules={[Pagination, Autoplay]}
+                    slidesPerView={1.12}
+                    spaceBetween={16}
+                    autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                    pagination={{ clickable: true }}
+                    style={
+                      {
+                        '--swiper-pagination-color': 'var(--brand-green)',
+                        '--swiper-pagination-bullet-inactive-color': '#d4d4d4',
+                        '--swiper-pagination-bullet-inactive-opacity': '1',
+                        paddingBottom: 36,
+                      } as React.CSSProperties
+                    }
+                    breakpoints={{
+                      640: { slidesPerView: 2.1, spaceBetween: 20 },
+                      1024: { slidesPerView: 3, spaceBetween: 24 },
+                    }}
+                  >
+                    {relatedPosts.map((related) => (
+                      <SwiperSlide key={related.id}>
+                        <Link to={`${baseUrl}/${related.slug}`} className="block group">
+                          <article className="cursor-pointer">
+                            <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-3 relative">
+                              {related.imageUrl ? (
+                                <img
+                                  src={related.imageUrl}
+                                  alt={related.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                  decoding="async"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
+                                  <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
+                                  <img
+                                    src={settings.logo_url}
+                                    alt="The Base"
+                                    className="w-8 h-8 opacity-20 mb-2 grayscale"
+                                  />
+                                </div>
+                              )}
+                              <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                             </div>
-                          )}
-                          <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-                        </div>
-                        <span className="text-micro font-bold text-[var(--brand-green)] tracking-tight mb-0">
-                          {related.category}
-                        </span>
-                        <h5 className="text-stone-900 mt-2 group-hover:text-[var(--brand-green)] transition-colors leading-tight mb-0">
-                          {related.title}
-                        </h5>
-                      </article>
-                    </Link>
-                  ))}
+                            <span
+                              style={{
+                                display: 'block',
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontWeight: 800,
+                                fontSize: 11,
+                                color: 'var(--brand-green)',
+                                letterSpacing: '0.04em',
+                                marginBottom: 6,
+                              }}
+                            >
+                              {related.category}
+                            </span>
+                            <h5
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontWeight: 800,
+                                fontSize: 14,
+                                color: '#1c1c1c',
+                                lineHeight: 1.35,
+                                margin: 0,
+                                letterSpacing: '-0.01em',
+                              }}
+                              className="group-hover:text-[var(--brand-green)] transition-colors"
+                            >
+                              {related.title}
+                            </h5>
+                          </article>
+                        </Link>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </article>

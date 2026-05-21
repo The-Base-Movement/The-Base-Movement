@@ -47,7 +47,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
 
   // Top tier gets a taller lanyard and wider card
   const lanyardHeight = tierIndex === 0 ? 80 : tierIndex === 1 ? 100 : 60
-  const cardWidth = tierIndex === 0 ? 300 : 260
+  const cardWidth = tierIndex === 0 ? 340 : 300
 
   return (
     <div
