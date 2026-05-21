@@ -36,7 +36,7 @@ export function PublicHero() {
         className="max-w-7xl mx-auto px-4 md:px-8"
         style={{ paddingTop: 40, paddingBottom: 40, position: 'relative', zIndex: 1 }}
       >
-        <Breadcrumbs />
+        <Breadcrumbs variant="dark" />
 
         <div style={{ maxWidth: 640 }}>
           <span
