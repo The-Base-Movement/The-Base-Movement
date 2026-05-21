@@ -122,85 +122,60 @@ export function MovementJourney() {
             <div
               key={i}
               className="step animate-in fade-in slide-in-from-bottom-4 duration-500"
-              style={{ animationDelay: `${i * 100}ms` }}
+              style={{
+                animationDelay: `${i * 100}ms`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+                padding: '10px 0',
+                borderBottom: i < steps.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+              }}
             >
-              <div className="side">
-                <div
-                  className={`dot ${step.type === 'c' ? 'complete' : step.type === 'd' ? 'active' : 'upcoming'}`}
-                >
-                  {step.type === 'd' && <div className="inner-dot" />}
-                </div>
-                {i < steps.length - 1 && <div className="line" />}
+              <div>
+                <b className="font-meta font-extrabold text-[13px] tracking-tight text-on-surface">
+                  {step.title}
+                </b>
+                <span className="text-[11px] text-on-surface-muted block mt-0.5">{step.date}</span>
               </div>
-              <div className="body pb-6">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <b className="font-meta font-extrabold text-[13px] tracking-tight text-on-surface">
-                      {step.title}
-                    </b>
-                    <span className="text-[11px] text-on-surface-muted block mt-0.5">
-                      {step.date}
-                    </span>
-                  </div>
-                  <span
-                    className="pill"
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
-                      fontSize: 9,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                      padding: '3px 8px',
-                      borderRadius: 4,
-                      border: '1px solid',
-                      background:
-                        step.status === 'Complete' || step.status === 'Verified'
-                          ? 'rgba(0,107,63,0.08)'
-                          : step.status === 'In progress'
-                            ? 'rgba(var(--accent-rgb),0.08)'
-                            : 'rgba(0,0,0,0.04)',
-                      color:
-                        step.status === 'Complete' || step.status === 'Verified'
-                          ? 'hsl(var(--primary))'
-                          : step.status === 'In progress'
-                            ? 'hsl(var(--accent))'
-                            : 'hsl(var(--on-surface-muted))',
-                      borderColor:
-                        step.status === 'Complete' || step.status === 'Verified'
-                          ? 'rgba(0,107,63,0.15)'
-                          : step.status === 'In progress'
-                            ? 'rgba(0,0,0,0.08)'
-                            : 'rgba(0,0,0,0.08)',
-                    }}
-                  >
-                    {step.status}
-                  </span>
-                </div>
-              </div>
+              <span
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 9,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  border: '1px solid',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  background:
+                    step.status === 'Complete' || step.status === 'Verified'
+                      ? 'rgba(0,107,63,0.08)'
+                      : step.status === 'In progress'
+                        ? 'rgba(var(--accent-rgb),0.08)'
+                        : 'rgba(0,0,0,0.04)',
+                  color:
+                    step.status === 'Complete' || step.status === 'Verified'
+                      ? 'hsl(var(--primary))'
+                      : step.status === 'In progress'
+                        ? 'hsl(var(--accent))'
+                        : 'hsl(var(--on-surface-muted))',
+                  borderColor:
+                    step.status === 'Complete' || step.status === 'Verified'
+                      ? 'rgba(0,107,63,0.15)'
+                      : 'rgba(0,0,0,0.08)',
+                }}
+              >
+                {step.status}
+              </span>
             </div>
           ))}
         </div>
       )}
 
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .steps-container { position: relative; }
-        .step { display: grid; grid-template-columns: 24px 1fr; gap: 12px; }
-        .step .side { display: flex; flex-direction: column; align-items: center; }
-        .step .dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--dot-color); background: #fff; z-index: 1; margin-top: 4px; position: relative; }
-        .step .dot.complete { border-color: var(--brand-gold); background: var(--brand-gold); }
-        .step .dot.active { border-color: var(--brand-green); background: #fff; }
-        .step .dot.active .inner-dot { position: absolute; inset: 2px; background: var(--brand-green); border-radius: 50%; }
-        .step .dot.upcoming { border-color: var(--border); background: #fff; }
-        
-        .step .line { width: 1px; flex: 1; background: var(--border); margin: 4px 0; }
-        
-        .step .body b { display: block; font-family: 'Public Sans', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: -0.01em; }
-        .pill { font-family: 'Public Sans', sans-serif; }
-      `,
-        }}
-      />
+      <style dangerouslySetInnerHTML={{ __html: `.steps-container { position: relative; }` }} />
     </div>
   )
 }
