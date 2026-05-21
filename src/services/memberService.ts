@@ -9,6 +9,12 @@ import type {
   User,
 } from '@/types/admin'
 
+function stripMarkdownEmail(value: string | null | undefined): string | null {
+  if (!value) return value ?? null
+  const match = value.match(/^\[([^\]]*)\]\(mailto:[^)]*\)$/)
+  return match ? match[1] : value
+}
+
 class MemberService {
   private static instance: MemberService
 
@@ -47,7 +53,7 @@ class MemberService {
         id: u.registration_number,
         authId: u.id,
         name: u.full_name,
-        email: u.email,
+        email: stripMarkdownEmail(u.email),
         phone: u.phone_number || 'N/A',
         region: u.region || '',
         constituency: u.constituency || '',
@@ -126,7 +132,7 @@ class MemberService {
       id: data.registration_number,
       authId: data.id,
       name: data.full_name,
-      email: data.email,
+      email: stripMarkdownEmail(data.email),
       phone: data.phone_number || 'N/A',
       region: data.region || 'Unknown',
       constituency: data.constituency || 'Unknown',
@@ -156,7 +162,7 @@ class MemberService {
       id: data.registration_number,
       authId: data.id,
       name: data.full_name,
-      email: data.email,
+      email: stripMarkdownEmail(data.email),
       phone: data.phone_number || 'N/A',
       region: data.region || 'Unknown',
       constituency: data.constituency || 'Unknown',
