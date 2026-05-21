@@ -2,6 +2,8 @@ import { createPortal } from 'react-dom'
 import RegistrationForm, { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import { toast } from 'sonner'
 
+const isMobileOverlay = () => window.innerWidth < 768
+
 interface RegistrationOverlayProps {
   isSubmitting: boolean
   onClose: () => void
@@ -20,11 +22,12 @@ export function RegistrationOverlay({
         inset: 0,
         zIndex: 100,
         display: 'flex',
-        alignItems: 'center',
+        alignItems: isMobileOverlay() ? 'flex-start' : 'center',
         justifyContent: 'center',
-        padding: 16,
+        padding: isMobileOverlay() ? '8px' : '16px',
         background: 'rgba(15,19,16,.6)',
         backdropFilter: 'blur(4px)',
+        overflowY: 'auto',
       }}
     >
       <RegistrationForm

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 
@@ -380,6 +380,13 @@ export default function RegistrationForm({
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
 
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
@@ -479,17 +486,26 @@ export default function RegistrationForm({
       style={{
         maxWidth: '1000px',
         width: '100%',
-        maxHeight: '90vh',
+        maxHeight: isMobile ? '95vh' : '90vh',
         display: 'flex',
         flexDirection: 'column',
         margin: '0 auto',
         background: '#fff',
+        borderRadius: isMobile ? 8 : undefined,
       }}
     >
       {/* Header */}
-      <div className="ph" style={{ padding: '24px 32px', background: 'hsl(var(--on-surface))' }}>
+      <div
+        className="ph"
+        style={{
+          padding: isMobile ? '14px 16px' : '24px 32px',
+          background: 'hsl(var(--on-surface))',
+        }}
+      >
         <div>
-          <h2 style={{ color: '#fff', fontSize: '24px', margin: 0 }}>Register new member</h2>
+          <h2 style={{ color: '#fff', fontSize: isMobile ? '18px' : '24px', margin: 0 }}>
+            Register new member
+          </h2>
           <div className="meta" style={{ color: 'hsl(var(--accent))', marginTop: '4px' }}>
             Admin override workflow
           </div>
@@ -504,10 +520,26 @@ export default function RegistrationForm({
       </div>
 
       {/* Body */}
-      <div id="registration-modal-content" style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '32px' }}>
-          {/* Progress Sidebar */}
-          <div style={{ position: 'sticky', top: 0, height: 'fit-content' }}>
+      <div
+        id="registration-modal-content"
+        style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '16px' : '32px' }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '300px 1fr',
+            gap: '32px',
+          }}
+        >
+          {/* Progress Sidebar — desktop only */}
+          <div
+            style={{
+              position: 'sticky',
+              top: 0,
+              height: 'fit-content',
+              display: isMobile ? 'none' : 'block',
+            }}
+          >
             <div
               style={{
                 fontSize: '10px',
@@ -583,7 +615,52 @@ export default function RegistrationForm({
           </div>
 
           {/* Form Content */}
-          <div className="panel" style={{ padding: '40px' }}>
+          <div className="panel" style={{ padding: isMobile ? '20px 16px' : '40px' }}>
+            {/* Mobile step progress bar */}
+            {isMobile && (
+              <div
+                style={{
+                  marginBottom: 20,
+                  paddingBottom: 16,
+                  borderBottom: '1px solid hsl(var(--border))',
+                }}
+              >
+                <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+                  {[1, 2, 3, 4].map((s) => (
+                    <div
+                      key={s}
+                      style={{
+                        flex: 1,
+                        height: 3,
+                        borderRadius: 99,
+                        background: formStep >= s ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                        transition: 'background .2s',
+                      }}
+                    />
+                  ))}
+                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 11,
+                    fontWeight: 800,
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                    letterSpacing: '.06em',
+                  }}
+                >
+                  Step {formStep} of 4 —{' '}
+                  {
+                    [
+                      'Primary Details',
+                      'Demographic Info',
+                      'Emergency & Profession',
+                      'Final Verification',
+                    ][formStep - 1]
+                  }
+                </p>
+              </div>
+            )}
             <form onSubmit={handleSubmit}>
               {formStep === 1 && (
                 <div className="space-y-8">
@@ -695,7 +772,13 @@ export default function RegistrationForm({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-6">
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: isMobile ? '20px' : '24px',
+                    }}
+                  >
                     {platform === 'DIASPORA' && (
                       <div className="space-y-2">
                         <label
@@ -878,7 +961,13 @@ export default function RegistrationForm({
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-8">
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: '32px',
+                    }}
+                  >
                     <div className="space-y-3">
                       <label
                         style={{
@@ -1030,7 +1119,13 @@ export default function RegistrationForm({
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-8">
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: '32px',
+                    }}
+                  >
                     {platform === 'GHANA' ? (
                       <>
                         <div className="space-y-2">
@@ -1207,7 +1302,13 @@ export default function RegistrationForm({
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-8">
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: '32px',
+                    }}
+                  >
                     <div className="space-y-2">
                       <label
                         style={{
@@ -1276,7 +1377,13 @@ export default function RegistrationForm({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-8">
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: '32px',
+                    }}
+                  >
                     <div className="space-y-2">
                       <label
                         style={{
