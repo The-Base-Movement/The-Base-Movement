@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { OfficerCard, type OfficerProfile } from '@/components/OfficerCard'
 import { OfficerCardSlider } from '@/components/OfficerCardSlider'
+import { SearchBar } from '@/components/SearchBar'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
 import { ScrollReveal } from '@/components/ScrollReveal'
@@ -13,6 +14,7 @@ export default function Officers() {
     { id: string; name: string; title: string; description: string; order_index: number }[]
   >([])
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     async function loadOfficials() {
@@ -88,6 +90,16 @@ export default function Officers() {
       </section>
 
       <section className="py-20 md:py-24 max-w-[1280px] mx-auto px-5 sm:px-8">
+        {!loading && (
+          <div style={{ maxWidth: 480, margin: '0 auto 48px' }}>
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search by name, role, or region…"
+              variant="public"
+            />
+          </div>
+        )}
         {loading ? (
           <div className="py-20 text-center text-muted-foreground font-meta font-bold">
             Loading leadership roster...
@@ -97,8 +109,16 @@ export default function Officers() {
             {[...tiers]
               .sort((a, b) => a.order_index - b.order_index)
               .map((tier, idx) => {
+                const q = searchQuery.trim().toLowerCase()
                 const tierOfficers = officers
                   .filter((o) => o.tier === tier.name)
+                  .filter(
+                    (o) =>
+                      !q ||
+                      o.name.toLowerCase().includes(q) ||
+                      o.role.toLowerCase().includes(q) ||
+                      (o.region || '').toLowerCase().includes(q)
+                  )
                   .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
                 if (tierOfficers.length === 0) return null
 
