@@ -9,8 +9,8 @@ import type {
   User,
 } from '@/types/admin'
 
-function stripMarkdownEmail(value: string | null | undefined): string | null {
-  if (!value) return value ?? null
+function stripMarkdownEmail(value: string | null | undefined): string {
+  if (!value) return ''
   const match = value.match(/\(mailto:([^)]+)\)/)
   return match ? match[1] : value
 }
@@ -416,7 +416,7 @@ class MemberService {
       id: u.registration_number,
       authId: u.id,
       name: u.full_name,
-      email: u.email,
+      email: stripMarkdownEmail(u.email),
       phone: 'N/A',
       region: u.region || '',
       constituency: u.constituency || '',
@@ -479,7 +479,7 @@ class MemberService {
       id: u.registration_number,
       authId: u.id,
       name: u.full_name,
-      email: u.email,
+      email: stripMarkdownEmail(u.email),
       phone: u.phone_number || 'N/A',
       region: u.region || '',
       constituency: u.constituency || '',
@@ -514,7 +514,7 @@ class MemberService {
           callback({
             id: u.registration_number,
             name: u.full_name,
-            email: u.email,
+            email: stripMarkdownEmail(u.email),
             phone: u.phone_number || 'N/A',
             region: u.region || 'Region pending',
             constituency: u.constituency || 'Constituency pending',
@@ -575,7 +575,7 @@ class MemberService {
       id: u.registration_number,
       authId: u.id,
       name: u.full_name,
-      email: u.email,
+      email: stripMarkdownEmail(u.email),
       phone: u.phone_number || 'N/A',
       region: u.region || '',
       constituency: u.constituency || '',
