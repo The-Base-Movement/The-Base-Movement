@@ -285,11 +285,12 @@ class AdminService {
 
   async bulkRegisterMembers(
     users: User[]
-  ): Promise<{ data: boolean; error: PostgrestError | null }> {
+  ): Promise<{ inserted: number; skipped: number; error: PostgrestError | null }> {
     const result = await memberService.bulkRegisterMembers(users)
     if (!result.error) {
       await this.logAction('MEMBER_BULK_REGISTER', 'SYSTEM/MEMBERS', 'Success', {
-        count: users.length,
+        inserted: result.inserted,
+        skipped: result.skipped,
       })
     }
     return result

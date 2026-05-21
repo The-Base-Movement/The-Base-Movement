@@ -244,10 +244,18 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
     reader.readAsText(file)
   }
 
+  const MAX_IMPORT_ROWS = 2000
+
   const handleImportSubmit = async () => {
     const validRecords = parsedRecords.filter((r) => r.isValid)
     if (validRecords.length === 0) {
       toast.error('No valid records to import.')
+      return
+    }
+    if (validRecords.length > MAX_IMPORT_ROWS) {
+      toast.error(
+        `Too many records. Maximum per import is ${MAX_IMPORT_ROWS.toLocaleString()}. This file has ${validRecords.length.toLocaleString()} valid rows — split it into smaller files.`
+      )
       return
     }
 
@@ -295,16 +303,22 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
 
       const chunkSize = 50
       const totalChunks = Math.ceil(usersToInsert.length / chunkSize)
+      let totalInserted = 0
+      let totalSkipped = 0
 
       for (let i = 0; i < usersToInsert.length; i += chunkSize) {
         const chunk = usersToInsert.slice(i, i + chunkSize)
         const chunkNum = Math.floor(i / chunkSize) + 1
-        const { data: success, error } = await adminService.bulkRegisterMembers(chunk)
-        if (!success || error) throw error || new Error('Bulk registration failed.')
+        const { inserted, skipped, error } = await adminService.bulkRegisterMembers(chunk)
+        if (error) throw error
+        totalInserted += inserted
+        totalSkipped += skipped
         setImportProgress(Math.round((chunkNum / totalChunks) * 100))
       }
 
-      toast.success(`Successfully imported ${usersToInsert.length} members.`)
+      const skipNote =
+        totalSkipped > 0 ? ` (${totalSkipped} skipped — phone number already registered)` : ''
+      toast.success(`${totalInserted} member${totalInserted !== 1 ? 's' : ''} imported.${skipNote}`)
       onSuccess()
       onClose()
     } catch (err: unknown) {
@@ -556,15 +570,27 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                   border: '1px solid hsl(var(--border))',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}
+                >
                   <span
                     className="material-symbols-outlined"
-                    style={{ color: 'hsl(var(--primary))', fontSize: 28 }}
+                    style={{ color: 'hsl(var(--primary))', fontSize: 28, flexShrink: 0 }}
                   >
                     description
                   </span>
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: 13 }}>{fileName}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontWeight: 800,
+                        fontSize: 13,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {fileName}
+                    </div>
                     <div
                       style={{
                         fontSize: 11.5,

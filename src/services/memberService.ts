@@ -181,17 +181,36 @@ class MemberService {
 
   async bulkRegisterMembers(
     users: User[]
-  ): Promise<{ data: boolean; error: PostgrestError | null }> {
+  ): Promise<{ inserted: number; skipped: number; error: PostgrestError | null }> {
     const batchSize = 50
+    let totalInserted = 0
+    let totalSkipped = 0
+
     for (let i = 0; i < users.length; i += batchSize) {
       const batch = users.slice(i, i + batchSize)
-      const { error } = await supabase.from('users').insert(batch)
-      if (error) {
-        console.error('[DATABASE] Bulk member registration failed at batch:', i, error)
-        return { data: false, error }
+
+      // Pre-check which phone numbers already exist so we can skip them gracefully
+      const phones = batch.map((u) => u.phone_number).filter(Boolean)
+      const { data: existing } = await supabase
+        .from('users')
+        .select('phone_number')
+        .in('phone_number', phones)
+
+      const existingPhones = new Set(existing?.map((u) => u.phone_number) ?? [])
+      const newRecords = batch.filter((u) => !existingPhones.has(u.phone_number))
+      totalSkipped += batch.length - newRecords.length
+
+      if (newRecords.length > 0) {
+        const { error } = await supabase.from('users').insert(newRecords)
+        if (error) {
+          console.error('[DATABASE] Bulk member registration failed at batch:', i, error)
+          return { inserted: totalInserted, skipped: totalSkipped, error }
+        }
+        totalInserted += newRecords.length
       }
     }
-    return { data: true, error: null }
+
+    return { inserted: totalInserted, skipped: totalSkipped, error: null }
   }
 
   async getGrowthStats(): Promise<{
