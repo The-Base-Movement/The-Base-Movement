@@ -171,10 +171,20 @@ export default function Blog() {
 
               {rest.length > 0 &&
                 (isMobile ? (
-                  <div style={{ margin: '0 -16px 8px', padding: '0 16px' }}>
-                    <Swiper slidesPerView={1.15} spaceBetween={12}>
+                  <div
+                    style={{
+                      margin: '-12px -16px 0',
+                      padding: '12px 16px',
+                      minWidth: 0,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Swiper slidesPerView={1.15} spaceBetween={12} style={{ overflow: 'visible' }}>
                       {rest.map((post) => (
-                        <SwiperSlide key={post.id} style={{ height: 'auto' }}>
+                        <SwiperSlide
+                          key={post.id}
+                          style={{ height: 'auto', display: 'flex', flexDirection: 'column' }}
+                        >
                           <BlogPostCard post={post} baseUrl={baseUrl} />
                         </SwiperSlide>
                       ))}
@@ -257,10 +267,24 @@ export default function Blog() {
                         Latest articles
                       </h2>
                       {isMobile ? (
-                        <div className="-mx-4 px-4 mb-8">
-                          <Swiper slidesPerView={1.15} spaceBetween={16}>
+                        <div
+                          style={{
+                            margin: '-12px -16px 0',
+                            padding: '12px 16px',
+                            minWidth: 0,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <Swiper
+                            slidesPerView={1.15}
+                            spaceBetween={16}
+                            style={{ overflow: 'visible' }}
+                          >
                             {rest.map((post) => (
-                              <SwiperSlide key={post.id} style={{ height: 'auto' }}>
+                              <SwiperSlide
+                                key={post.id}
+                                style={{ height: 'auto', display: 'flex', flexDirection: 'column' }}
+                              >
                                 <BlogPostCard post={post} baseUrl={baseUrl} />
                               </SwiperSlide>
                             ))}
