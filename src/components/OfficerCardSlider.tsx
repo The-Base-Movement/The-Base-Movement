@@ -1,11 +1,11 @@
-import { Children, type ReactNode } from 'react'
+import { Children, useState, useEffect, type ReactNode } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
-const AUTOPLAY_MIN = 5
+const SLIDER_MIN = 5
 
 interface OfficerCardSliderProps {
   children: ReactNode
@@ -13,8 +13,36 @@ interface OfficerCardSliderProps {
 }
 
 export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-  const shouldAutoplay = isMobile || (count ?? Children.count(children)) >= AUTOPLAY_MIN
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < 768
+  )
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
+  const childCount = count ?? Children.count(children)
+  const useSlider = isMobile || childCount >= SLIDER_MIN
+
+  if (!useSlider) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: 24,
+          padding: '0 20px',
+        }}
+      >
+        {Children.map(children, (child) => (
+          <div style={{ display: 'flex', alignItems: 'stretch' }}>{child}</div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div style={{ paddingBottom: '60px', position: 'relative' }}>
@@ -22,13 +50,8 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         modules={[Navigation, Autoplay, Pagination]}
         navigation
         pagination={{ clickable: true }}
-        autoplay={
-          shouldAutoplay
-            ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
-            : false
-        }
-        loop={shouldAutoplay}
-        centerInsufficientSlides={true}
+        autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+        loop={true}
         spaceBetween={24}
         breakpoints={{
           0: { slidesPerView: 1 },
