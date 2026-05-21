@@ -203,9 +203,15 @@ class MemberService {
       const existingPhones = new Set(phoneRes.data?.map((u) => u.phone_number) ?? [])
       const existingEmails = new Set(emailRes.data?.map((u) => u.email) ?? [])
 
-      const newRecords = batch.filter(
-        (u) => !existingPhones.has(u.phone_number) && !(u.email && existingEmails.has(u.email))
-      )
+      const seenPhones = new Set<string>()
+      const seenEmails = new Set<string>()
+      const newRecords = batch.filter((u) => {
+        if (existingPhones.has(u.phone_number) || seenPhones.has(u.phone_number)) return false
+        if (u.email && (existingEmails.has(u.email) || seenEmails.has(u.email))) return false
+        seenPhones.add(u.phone_number)
+        if (u.email) seenEmails.add(u.email)
+        return true
+      })
       totalSkipped += batch.length - newRecords.length
 
       if (newRecords.length > 0) {
