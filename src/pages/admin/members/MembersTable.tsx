@@ -294,7 +294,17 @@ export function MembersTable({
                         fontWeight: 700,
                       }}
                     >
-                      {member.email || '—'}
+                      {member.email ? (
+                        <a
+                          href={`mailto:${member.email}`}
+                          style={{ color: 'hsl(var(--primary))', textDecoration: 'none' }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {member.email}
+                        </a>
+                      ) : (
+                        '—'
+                      )}
                     </div>
                     <div
                       style={{
