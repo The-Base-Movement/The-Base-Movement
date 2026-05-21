@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { XIcon, LinkedInIcon, FacebookIcon, InstagramIcon } from '@/components/icons/SocialIcons'
 
-export type OfficerTier = 'executive' | 'regional' | 'base'
+export type OfficerTier = string
 
 export interface OfficerProfile {
   id: string
@@ -11,6 +11,7 @@ export interface OfficerProfile {
   bio?: string
   avatarUrl?: string
   tier: OfficerTier
+  order_index?: number
   socials?: {
     twitter?: string
     linkedin?: string
@@ -23,9 +24,11 @@ export interface OfficerProfile {
 export interface OfficerCardProps {
   officer: OfficerProfile
   onClick?: (officer: OfficerProfile) => void
+  /** 0-based position of this tier in the sorted tier list — drives color and card width */
+  tierIndex?: number
 }
 
-export function OfficerCard({ officer, onClick }: OfficerCardProps) {
+export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
   useEffect(() => {
@@ -34,17 +37,17 @@ export function OfficerCard({ officer, onClick }: OfficerCardProps) {
     return () => window.removeEventListener('resize', handler)
   }, [])
 
-  // Determine ring and separator color based on tier
+  // Color cycles by tier position: top tier = red, second = gold, rest = green
   const tierColor =
-    officer.tier === 'executive'
+    tierIndex === 0
       ? 'hsl(var(--destructive))'
-      : officer.tier === 'regional'
+      : tierIndex === 1
         ? 'hsl(var(--accent))'
         : 'hsl(var(--primary))'
 
-  // Lanyard line height based on staggering or just fixed
-  const lanyardHeight = officer.tier === 'executive' ? 80 : officer.tier === 'regional' ? 100 : 60
-  const cardWidth = officer.tier === 'executive' ? 300 : 260
+  // Top tier gets a taller lanyard and wider card
+  const lanyardHeight = tierIndex === 0 ? 80 : tierIndex === 1 ? 100 : 60
+  const cardWidth = tierIndex === 0 ? 300 : 260
 
   return (
     <div
