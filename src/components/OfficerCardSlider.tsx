@@ -23,7 +23,7 @@ export function OfficerCardSlider({ children }: OfficerCardSliderProps) {
           0: { slidesPerView: 1 },
           768: { slidesPerView: 'auto' },
         }}
-        style={{ padding: '0 20px', overflow: 'visible' }}
+        style={{ overflow: 'visible' }}
         className="officials-swiper"
       >
         {Children.map(children, (child) => (
@@ -37,6 +37,9 @@ export function OfficerCardSlider({ children }: OfficerCardSliderProps) {
       <style
         dangerouslySetInnerHTML={{
           __html: `
+        .officials-swiper {
+          padding: 0 20px;
+        }
         .officials-swiper .swiper-button-next,
         .officials-swiper .swiper-button-prev {
           color: hsl(var(--primary));
@@ -58,7 +61,14 @@ export function OfficerCardSlider({ children }: OfficerCardSliderProps) {
           background: hsl(var(--primary));
         }
         @media (max-width: 767px) {
-          .officials-swiper .swiper-slide { width: 100% !important; }
+          .officials-swiper {
+            padding: 0 48px;
+          }
+          .officials-swiper .swiper-slide {
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center;
+          }
         }
       `,
         }}
