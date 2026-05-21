@@ -189,15 +189,23 @@ class MemberService {
     for (let i = 0; i < users.length; i += batchSize) {
       const batch = users.slice(i, i + batchSize)
 
-      // Pre-check which phone numbers already exist so we can skip them gracefully
+      // Pre-check phone numbers and emails so duplicates are skipped, not errored
       const phones = batch.map((u) => u.phone_number).filter(Boolean)
-      const { data: existing } = await supabase
-        .from('users')
-        .select('phone_number')
-        .in('phone_number', phones)
+      const emails = batch.map((u) => u.email).filter(Boolean) as string[]
 
-      const existingPhones = new Set(existing?.map((u) => u.phone_number) ?? [])
-      const newRecords = batch.filter((u) => !existingPhones.has(u.phone_number))
+      const [phoneRes, emailRes] = await Promise.all([
+        supabase.from('users').select('phone_number').in('phone_number', phones),
+        emails.length > 0
+          ? supabase.from('users').select('email').in('email', emails)
+          : Promise.resolve({ data: [] }),
+      ])
+
+      const existingPhones = new Set(phoneRes.data?.map((u) => u.phone_number) ?? [])
+      const existingEmails = new Set(emailRes.data?.map((u) => u.email) ?? [])
+
+      const newRecords = batch.filter(
+        (u) => !existingPhones.has(u.phone_number) && !(u.email && existingEmails.has(u.email))
+      )
       totalSkipped += batch.length - newRecords.length
 
       if (newRecords.length > 0) {
