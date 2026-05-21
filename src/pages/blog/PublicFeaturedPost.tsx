@@ -12,7 +12,7 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
     <section className="mb-16">
       <p className="font-meta text-xs text-warm-gold tracking-tight mb-6">Featured</p>
       <div className="grid md:grid-cols-2 gap-0 bg-white border border-slate-200 shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
-        <div className="h-64 md:h-auto overflow-hidden bg-stone-100">
+        <div className="overflow-hidden bg-stone-100" style={{ aspectRatio: '16/9' }}>
           {post.imageUrl ? (
             <img
               src={post.imageUrl}

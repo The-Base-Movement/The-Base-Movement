@@ -22,7 +22,7 @@ export function PublicSidebar({
   onPublicSubscribe,
 }: PublicSidebarProps) {
   return (
-    <aside className="lg:w-1/3 space-y-12 lg:sticky lg:top-8 lg:self-start">
+    <aside className="hidden lg:block lg:w-1/3 space-y-12 lg:sticky lg:top-8 lg:self-start">
       <div>
         <h2 className="text-stone-900 font-bold tracking-tight mb-6">Categories</h2>
         <div className="bg-white border border-slate-200 p-8 space-y-2">

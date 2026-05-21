@@ -195,75 +195,192 @@ export default function Blog() {
 
   // ── Public layout ─────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-stone-50/50 font-meta pb-20">
-      <SEO
-        title="Updates & Articles"
-        description="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement."
-        canonical="/blog"
-      />
-      <PublicHero />
+    <>
+      <div className="min-h-screen bg-stone-50/50 font-meta">
+        <SEO
+          title="Updates & Articles"
+          description="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement."
+          canonical="/blog"
+        />
+        <PublicHero />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <span
-              className="material-symbols-outlined text-brand-green animate-spin"
-              style={{ fontSize: 32 }}
-            >
-              progress_activity
-            </span>
-            <p className="text-micro font-bold tracking-tight text-stone-400">
-              Loading articles...
-            </p>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="py-32 text-center">
-            <p className="text-sm font-bold text-stone-400 tracking-tight">
-              No articles published yet.
-            </p>
-          </div>
-        ) : (
-          <>
-            {featured && (
-              <PublicFeaturedPost post={featured} baseUrl={baseUrl} logoUrl={settings.logo_url} />
-            )}
-
-            <section>
-              <div className="flex flex-col lg:flex-row gap-12">
-                <div className="lg:w-2/3">
-                  {rest.length > 0 && (
-                    <>
-                      <h2 className="text-stone-900 font-bold tracking-tight mb-6">
-                        Latest articles
-                      </h2>
-                      <div className="grid sm:grid-cols-2 gap-8">
-                        {rest.map((post) => (
-                          <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
-                        ))}
-                      </div>
-                    </>
-                  )}
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10 md:mt-16 pb-16">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-32 gap-4">
+              <span
+                className="material-symbols-outlined text-brand-green animate-spin"
+                style={{ fontSize: 32 }}
+              >
+                progress_activity
+              </span>
+              <p className="text-micro font-bold tracking-tight text-stone-400">
+                Loading articles...
+              </p>
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="py-32 text-center">
+              <p className="text-sm font-bold text-stone-400 tracking-tight">
+                No articles published yet.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Mobile/tablet category filter — sidebar is desktop-only */}
+              {categories.length > 1 && (
+                <div className="lg:hidden mb-6 -mx-4 px-4 overflow-x-auto">
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 8,
+                      flexWrap: 'nowrap',
+                      width: 'max-content',
+                      paddingBottom: 4,
+                    }}
+                  >
+                    {categories.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => handleCategoryChange(cat)}
+                        style={{
+                          padding: '6px 14px',
+                          borderRadius: 4,
+                          border: '1px solid',
+                          fontSize: 11,
+                          fontWeight: 800,
+                          fontFamily: "'Public Sans', sans-serif",
+                          letterSpacing: '0.04em',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          background:
+                            activeCategory === cat ? 'hsl(var(--primary))' : 'transparent',
+                          color: activeCategory === cat ? '#fff' : 'hsl(var(--on-surface-muted))',
+                          borderColor:
+                            activeCategory === cat ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                        }}
+                      >
+                        {cat === 'All' ? 'All' : cat}
+                        <span style={{ marginLeft: 5, opacity: 0.6, fontSize: 10 }}>
+                          {cat === 'All'
+                            ? posts.length
+                            : posts.filter((p) => p.category === cat).length}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
+              )}
 
-                <PublicSidebar
-                  categories={categories}
-                  activeCategory={activeCategory}
-                  posts={posts}
-                  onCategoryChange={setActiveCategory}
-                  publicEmail={publicEmail}
-                  onPublicEmailChange={setPublicEmail}
-                  publicSubmitting={publicSubmitting}
-                  onPublicSubscribe={() =>
-                    handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)
-                  }
+              {featured && (
+                <PublicFeaturedPost post={featured} baseUrl={baseUrl} logoUrl={settings.logo_url} />
+              )}
+
+              <section>
+                <div className="flex flex-col lg:flex-row gap-12">
+                  <div className="lg:w-2/3">
+                    {rest.length > 0 && (
+                      <>
+                        <h2 className="text-stone-900 font-bold tracking-tight mb-5 text-base">
+                          Latest articles
+                        </h2>
+                        <div className="grid sm:grid-cols-2 gap-5 md:gap-8">
+                          {rest.map((post) => (
+                            <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <PublicSidebar
+                    categories={categories}
+                    activeCategory={activeCategory}
+                    posts={posts}
+                    onCategoryChange={setActiveCategory}
+                    publicEmail={publicEmail}
+                    onPublicEmailChange={setPublicEmail}
+                    publicSubmitting={publicSubmitting}
+                    onPublicSubscribe={() =>
+                      handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)
+                    }
+                  />
+                </div>
+              </section>
+
+              {/* Mobile newsletter — below articles, above CTA, desktop-only sidebar handles this */}
+              <div className="lg:hidden mt-10 bg-[#181d19] p-6 border-l-4 border-[hsl(var(--accent))] text-white">
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 14,
+                    color: '#fff',
+                    marginBottom: 4,
+                  }}
+                >
+                  The Base Weekly
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    color: 'rgba(255,255,255,0.5)',
+                    lineHeight: 1.6,
+                    margin: '0 0 12px',
+                  }}
+                >
+                  Policy briefs and movement news, delivered weekly.
+                </p>
+                <input
+                  aria-label="Email address"
+                  name="name-pub-mobile"
+                  id="input-pub-mobile"
+                  type="email"
+                  placeholder="Email address"
+                  value={publicEmail}
+                  onChange={(e) => setPublicEmail(e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: 40,
+                    padding: '0 12px',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 4,
+                    color: '#fff',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    marginBottom: 8,
+                  }}
                 />
+                <button
+                  onClick={() => handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)}
+                  disabled={publicSubmitting}
+                  style={{
+                    width: '100%',
+                    height: 40,
+                    background: 'hsl(var(--primary))',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 4,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 12,
+                    cursor: 'pointer',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {publicSubmitting ? 'Subscribing…' : 'Subscribe'}
+                </button>
               </div>
-            </section>
-          </>
-        )}
-
-        <PublicCTA />
+            </>
+          )}
+        </div>
       </div>
-    </div>
+
+      <PublicCTA />
+    </>
   )
 }
