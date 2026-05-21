@@ -128,9 +128,9 @@ export default function Polls() {
       />
 
       <div className="main-sidebar" style={{ alignItems: 'start' }}>
-        {/* Main: active polls */}
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        {/* Main: active polls + closed polls on mobile */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span
               className="material-symbols-outlined"
               style={{ fontSize: 16, color: 'hsl(var(--primary))' }}
@@ -191,24 +191,31 @@ export default function Polls() {
               </p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {activePolls.map((poll) => (
-                <OpinionPollCard
-                  key={poll.id}
-                  poll={poll}
-                  voting={voting}
-                  showResults={!!showResults[poll.id]}
-                  isLoggedIn={isLoggedIn}
-                  handleVote={handleVote}
-                  toggleResults={toggleResults}
-                  variant={isDashboard ? undefined : 'public'}
-                />
-              ))}
-            </div>
+            activePolls.map((poll) => (
+              <OpinionPollCard
+                key={poll.id}
+                poll={poll}
+                voting={voting}
+                showResults={!!showResults[poll.id]}
+                isLoggedIn={isLoggedIn}
+                handleVote={handleVote}
+                toggleResults={toggleResults}
+                variant={isDashboard ? undefined : 'public'}
+              />
+            ))
           )}
+
+          {/* Closed polls — shown inline on mobile below active polls */}
+          <div className="mobile-only">
+            <ClosedPollsPanel
+              closedPolls={closedPolls}
+              showResults={showResults}
+              toggleResults={toggleResults}
+            />
+          </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Sidebar — desktop only for widgets, closed polls included */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <PollsSidebar
             totalVotes={totalVotes}
@@ -216,12 +223,13 @@ export default function Polls() {
             isDashboard={isDashboard}
             bodyFont={bodyFont}
           />
-
-          <ClosedPollsPanel
-            closedPolls={closedPolls}
-            showResults={showResults}
-            toggleResults={toggleResults}
-          />
+          <div className="desktop-only">
+            <ClosedPollsPanel
+              closedPolls={closedPolls}
+              showResults={showResults}
+              toggleResults={toggleResults}
+            />
+          </div>
         </div>
       </div>
     </>
@@ -238,29 +246,93 @@ export default function Polls() {
         description="Your voice shapes movement strategy. Participate in active polls and see how other members think."
         canonical="/polls"
       />
-      <header className="bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
-          <Breadcrumbs />
-          <div className="mt-6">
-            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-              <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 40 }}>
-                how_to_vote
-              </span>
-              Polls & Feedback
+
+      {/* Hero — dark gradient matching blog hero */}
+      <header
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          background: 'linear-gradient(135deg, #181d19 0%, #0e1510 100%)',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '-40%',
+            left: '-5%',
+            width: '55%',
+            height: '220%',
+            background:
+              'radial-gradient(ellipse at center, rgba(0,107,63,0.22) 0%, transparent 65%)',
+            pointerEvents: 'none',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: "url('/noise.png')",
+            opacity: 0.04,
+            pointerEvents: 'none',
+          }}
+        />
+        <div
+          className="max-w-7xl mx-auto px-4 md:px-8"
+          style={{ paddingTop: 40, paddingBottom: 40, position: 'relative', zIndex: 1 }}
+        >
+          <Breadcrumbs variant="dark" />
+          <div style={{ maxWidth: 640 }}>
+            <span
+              style={{
+                display: 'block',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 800,
+                fontSize: 10,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'hsl(var(--accent))',
+                marginBottom: 14,
+              }}
+            >
+              Member Participation
+            </span>
+            <h1
+              style={{
+                color: '#fff',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 800,
+                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                letterSpacing: '-0.03em',
+                lineHeight: 1.05,
+                margin: '0 0 16px',
+              }}
+            >
+              Polls &amp; Feedback
             </h1>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
-            <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
+            <p
+              style={{
+                color: 'rgba(255,255,255,0.5)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 500,
+                fontSize: 14,
+                lineHeight: 1.7,
+                margin: 0,
+                maxWidth: 520,
+              }}
+            >
               Your voice shapes movement strategy. Participate in active polls and see how other
               members think.
             </p>
           </div>
         </div>
+        <div style={{ display: 'flex', height: 4 }}>
+          <div style={{ flex: 1, background: 'var(--brand-red)' }} />
+          <div style={{ flex: 1, background: 'var(--brand-gold)' }} />
+          <div style={{ flex: 1, background: 'var(--brand-green)' }} />
+        </div>
       </header>
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10">{content}</div>
+
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-10">{content}</div>
     </main>
   )
 }
