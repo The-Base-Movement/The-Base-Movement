@@ -12,7 +12,7 @@ This file tracks the active implementation steps and progress as we transition f
 ### 2. Gamification & Retention
 - [x] **Achievement Engine Verification**: Verified `check_for_achievements` trigger logic in database.
 - [x] **Point Redemption Logic**: Implemented "Store Credit" system in `Checkout.tsx` (100 pts = 1 GHS).
-- [x] **Leaderboard Rewards**: Defined "Patriot of the Week" incentive structure (Gold/Silver/Bronze tiers).
+- [x] **Leaderboard Rewards**: Defined "Member of the Week" incentive structure (Gold/Silver/Bronze tiers).
 
 ### 3. Editorial & Content Scaling
 - [x] **Author Onboarding**: Registered 16 regional authors (one for each region) in the database.

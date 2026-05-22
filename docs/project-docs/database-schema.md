@@ -1,8 +1,8 @@
 # The Base Movement - Database Schema Documentation (Status: Production Sync Complete)
 
-This document outlines the authoritative database schema for "The Base" platform. All primary tables identified below have been successfully provisioned in the Neon PostgreSQL production environment.
+This document outlines the authoritative database schema for "The Base" platform. All primary tables identified below have been successfully provisioned in the Supabase PostgreSQL production environment.
 
-## [DONE] 1. Users Table (Patriots)
+## [DONE] 1. Users Table (Members)
 Stores the core membership data for both Local (Ghana) and Diaspora members.
 
 | Field Name | Type | Description | Status |

@@ -36,7 +36,7 @@ export function AchievementsAndLeaderboard({ leaderboard, achievements, region }
         <div className="bg-on-surface/5 border-b border-border/10 p-4 flex items-center justify-between">
           <h3 className="text-xs font-bold tracking-tight text-primary flex items-center gap-2 m-0">
             <Trophy className="w-4 h-4" />
-            Regional Patriots - {region || 'National'}
+            Regional Members - {region || 'National'}
           </h3>
           <span className="text-micro font-bold text-on-surface/30 tracking-tight">Top 5 Members</span>
         </div>

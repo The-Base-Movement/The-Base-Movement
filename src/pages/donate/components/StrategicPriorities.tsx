@@ -1,4 +1,5 @@
 import type { DonationCampaign } from '@/types/admin'
+import { Button } from '@/components/buttons/ui/neon-button'
 
 interface StrategicPrioritiesProps {
   loading: boolean
@@ -12,7 +13,7 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
       <div style={{ marginBottom: 48 }}>
         <h2 style={{ 
           fontSize: 'clamp(26px, 5vw, 44px)', 
-          fontWeight: 900, 
+          fontWeight: 800, 
           color: 'hsl(var(--on-surface))', 
           fontFamily: "'Public Sans', sans-serif",
           letterSpacing: '-0.02em',
@@ -20,11 +21,9 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
           margin: 0
         }}>Strategic priorities</h2>
         <p style={{ 
-          fontSize: 10.5, 
-          fontWeight: 800, 
+          fontSize: 12, 
+          fontWeight: 400, 
           color: 'hsl(var(--on-surface-muted))', 
-          textTransform: 'uppercase', 
-          letterSpacing: '0.05em', 
           marginTop: 8,
           fontFamily: "'Public Sans', sans-serif"
         }}>Deploy capital to critical movement units.</p>
@@ -62,11 +61,10 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
                 <span style={{ 
                   background: 'hsl(var(--primary))', 
                   color: '#fff', 
-                  fontSize: 9.5, 
-                  fontWeight: 900, 
+                  fontSize: 10, 
+                  fontWeight: 700, 
                   padding: '6px 12px', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.05em',
+                  letterSpacing: '0.02em',
                   fontFamily: "'Public Sans', sans-serif"
                 }}>Live Mobilization</span>
               </div>
@@ -75,7 +73,7 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
             <div style={{ padding: 32, display: 'flex', flexDirection: 'column', flex: 1 }}>
               <h3 style={{ 
                 fontSize: 18, 
-                fontWeight: 900, 
+                fontWeight: 700, 
                 color: 'hsl(var(--on-surface))', 
                 marginBottom: 12, 
                 fontFamily: "'Public Sans', sans-serif",
@@ -86,7 +84,7 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
                 color: 'hsl(var(--on-surface-muted))', 
                 lineHeight: 1.6, 
                 marginBottom: 32,
-                fontWeight: 700,
+                fontWeight: 400,
                 fontFamily: "'Public Sans', sans-serif",
                 display: '-webkit-box',
                 WebkitLineClamp: 3,
@@ -98,11 +96,10 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
                 <div style={{ marginBottom: 24 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 8 }}>
                     <span style={{ 
-                      fontSize: 10, 
-                      fontWeight: 800, 
+                      fontSize: 11, 
+                      fontWeight: 500, 
                       color: 'hsl(var(--on-surface-muted))', 
-                      textTransform: 'uppercase', 
-                      letterSpacing: '0.05em',
+                      letterSpacing: '0.02em',
                       fontFamily: "'Public Sans', sans-serif"
                     }}>strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
                     <span style={{ 
@@ -124,25 +121,13 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
                   </div>
                 </div>
                 
-                <button 
+                <Button 
                   onClick={() => onSelectCampaign(c.id)}
-                  style={{
-                    width: '100%',
-                    height: 48,
-                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    padding: '0 24px',
-                    background: 'transparent',
-                    color: 'hsl(var(--on-surface))',
-                    border: '1px solid hsl(var(--border))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800, fontSize: 13,
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                    textTransform: 'lowercase'
-                  }}
+                  variant="primary"
+                  style={{ width: '100%' }}
                 >
-                  direct capital <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
-                </button>
+                  Direct capital <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+                </Button>
               </div>
             </div>
           </div>

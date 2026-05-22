@@ -11,7 +11,7 @@ This specification covers the implementation of the missing "Achievements & Regi
 ## Success Criteria
 - [ ] No "unused variable" warnings for `leaderboard` in `Dashboard.tsx`.
 - [ ] A new modular component `AchievementsAndLeaderboard.tsx` is created.
-- [ ] Regional leaderboard (top 5 patriots) is displayed.
+- [ ] Regional leaderboard (top 5 members) is displayed.
 - [ ] Unlocked achievements are displayed with icons/labels.
 - [ ] Visual style matches the existing "The Base" dashboard (clean, industrial, high-contrast).
 
@@ -38,7 +38,7 @@ This specification covers the implementation of the missing "Achievements & Regi
 
 ### Leaderboard Column
 - Card-based container.
-- Header: "Regional Patriots - [Region]".
+- Header: "Regional Members - [Region]".
 - List items:
   - Rank (styled number).
   - Name (bold).

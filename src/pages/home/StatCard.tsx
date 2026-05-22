@@ -37,13 +37,8 @@ export function StatCard({
       const obj = { val: 0 }
       gsap.to(obj, {
         val: value,
-        duration: 2.2,
+        duration: 1.8,
         ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cardRef.current,
-          start: 'top 85%',
-          once: true,
-        },
         onUpdate() {
           el.textContent = Math.round(obj.val).toLocaleString()
         },

@@ -177,7 +177,7 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
           <CheckCircle2 className="w-8 h-8" />
         </div>
         <h1 className="text-3xl font-bold text-on-surface tracking-tighter font-meta mb-2">Registration complete</h1>
-        <p className="text-muted-foreground/90 font-meta tracking-tight text-xs">Welcome to the movement, patriot.</p>
+        <p className="text-muted-foreground/90 font-meta tracking-tight text-xs">Welcome to the movement, member.</p>
       </div>
 
       <div className="space-y-8">

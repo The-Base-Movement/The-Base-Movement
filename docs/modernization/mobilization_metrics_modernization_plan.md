@@ -9,7 +9,7 @@ Refactor the `MobilizationMetrics.tsx` telemetry suite to incorporate the intrin
 
 ## 2. Metric KPI Cards
 - [x] **Objective**: Replace rigid grid layouts with fluid, container-aware cards.
-- [x] **Location**: The top row displaying active patriots, chapter density, and engagement rates.
+- [x] **Location**: The top row displaying active members, chapter density, and engagement rates.
 - [x] **Action**: Replace `grid grid-cols-2 lg:grid-cols-4` with `flex-columns`.
 - [x] **Logic**: This allows metrics to adapt based on the specific container width of the mobilization dashboard.
 

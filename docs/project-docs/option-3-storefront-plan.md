@@ -12,7 +12,7 @@ Objective: Complete the professional shopping experience for movement gear by im
 - [x] Create/Enhance `src/pages/ProductDetails.tsx`.
 - [x] Design features:
   - [x] **Dynamic Gallery**: Multi-image support with hover zoom.
-  - [x] **Patriot Rating**: Real review system with verified badges.
+  - [x] **Member Rating**: Real review system with verified badges.
   - [x] **Constituency Customization**: User-defined text inputs.
   - [x] **Live Fulfillment**: Regional availability checker.
 

@@ -30,7 +30,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
         {/* Poll head */}
         <div className="flex items-start justify-between mb-2">
           <span
-            className="flex items-center gap-[6px] text-[10px] font-bold tracking-[0.06em] uppercase font-['Public_Sans',sans-serif]"
+            className="flex items-center gap-[6px] text-[10px] font-semibold tracking-[0.06em] uppercase font-['Public_Sans',sans-serif]"
             style={{ color: accentColor }}
           >
             {isLive && (
@@ -42,12 +42,12 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
             {!isLive && <span className="w-[6px] h-[6px] rounded-full bg-current shrink-0 opacity-40" />}
             {isLive ? `Live · Closes in ${days} day${days !== 1 ? 's' : ''}` : `Closed · ${new Date(poll.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`}
           </span>
-          <span className="text-[10.5px] text-[var(--on-surface-muted,#6b7280)] font-bold font-['Public_Sans',sans-serif]">
+          <span className="text-[10.5px] text-[var(--on-surface-muted,#6b7280)] font-medium font-['Public_Sans',sans-serif]">
             {poll.totalVotes.toLocaleString()} votes
           </span>
         </div>
 
-        <h3 className="text-[15px] leading-[1.45] mb-[14px] text-[var(--on-surface,#181d19)]" style={{ fontFamily: bodyFont, fontWeight: variant === 'public' ? 600 : 700, letterSpacing: '-0.005em' }}>
+        <h3 className="text-[15px] leading-[1.45] mb-[14px] text-[var(--on-surface,#181d19)]" style={{ fontFamily: bodyFont, fontWeight: variant === 'public' ? 500 : 600, letterSpacing: '-0.005em' }}>
           {poll.question}
         </h3>
 
@@ -85,7 +85,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                         {isSelected && <span className="material-symbols-outlined" style={{ fontSize: 14, flexShrink: 0 }}>check_circle</span>}
                         {option.label}
                       </span>
-                      <span className="text-[12.5px] font-extrabold tabular-nums font-['Public_Sans',sans-serif] text-[var(--on-surface-muted,#6b7280)]">
+                      <span className="text-[12.5px] font-semibold tabular-nums font-['Public_Sans',sans-serif] text-[var(--on-surface-muted,#6b7280)]">
                         {percentage}%
                       </span>
                     </div>
@@ -107,7 +107,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                       {option.label}
                     </span>
                     {!isLoggedIn && (
-                      <span className="text-[9.5px] font-bold text-[var(--on-surface-muted,#6b7280)] uppercase tracking-[0.05em] mt-0.5 block">
+                      <span className="text-[9.5px] font-medium text-[var(--on-surface-muted,#6b7280)] tracking-[0.02em] mt-0.5 block">
                         Members only
                       </span>
                     )}
@@ -120,7 +120,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
 
         {/* Footer */}
         <div className="mt-[14px] pt-[14px] border-t border-[var(--border,#e5e7eb)] flex justify-between items-center">
-          <div className="flex items-center gap-3 text-[11px] font-bold text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
+          <div className="flex items-center gap-3 text-[11px] font-semibold text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
             <span className="flex items-center gap-1.5">
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>group</span>
               {poll.totalVotes.toLocaleString()} Votes
@@ -134,7 +134,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
             </button>
           </div>
           {poll.voted && (
-            <span className="text-[10.5px] font-bold text-[var(--primary)] flex items-center gap-1 font-['Public_Sans',sans-serif]">
+            <span className="text-[10.5px] font-semibold text-[var(--primary)] flex items-center gap-1 font-['Public_Sans',sans-serif]">
               <span className="material-symbols-outlined" style={{ fontSize: 14 }}>check_circle</span>
               Vote recorded
             </span>

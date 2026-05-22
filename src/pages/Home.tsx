@@ -134,23 +134,18 @@ export default function Home() {
       if (!statsGridRef.current) return
       gsap.fromTo(
         statsGridRef.current.children,
-        { opacity: 0, y: 40, scale: 0.96 },
+        { opacity: 0, y: 30, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.65,
-          ease: 'power3.out',
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: statsGridRef.current,
-            start: 'top 82%',
-            once: true,
-          },
+          duration: 0.6,
+          ease: 'power2.out',
+          stagger: 0.08,
         }
       )
     },
-    { scope: statsGridRef }
+    { scope: statsGridRef, dependencies: [stats] }
   )
 
   useGSAP(() => {

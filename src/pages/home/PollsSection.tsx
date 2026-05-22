@@ -82,7 +82,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
                       fontSize: 10,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
                       color: 'hsl(var(--destructive))',
@@ -110,7 +110,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                       fontFamily: "'Public Sans', sans-serif",
                       fontSize: 10.5,
                       color: 'hsl(var(--on-surface-muted))',
-                      fontWeight: 700,
+                      fontWeight: 500,
                     }}
                   >
                     {totalVotes.toLocaleString()} votes
@@ -119,7 +119,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                 <h3
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 600,
                     fontSize: 16,
                     lineHeight: 1.3,
                     letterSpacing: '-.01em',
@@ -161,13 +161,13 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                             justifyContent: 'space-between',
                             fontFamily: "'Public Sans', sans-serif",
                             fontSize: 12.5,
-                            fontWeight: 800,
+                            fontWeight: 500,
                             letterSpacing: '-.005em',
                             color: isLead ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
                           }}
                         >
                           <span>{opt.label}</span>
-                          <span style={{ fontVariantNumeric: 'tabular-nums' }}>{pct}%</span>
+                          <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{pct}%</span>
                         </div>
                       </div>
                     )
@@ -188,7 +188,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                       fontFamily: "'Public Sans', sans-serif",
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
-                      fontWeight: 700,
+                      fontWeight: 500,
                     }}
                   >
                     Login to cast your vote

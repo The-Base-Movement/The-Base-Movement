@@ -820,14 +820,12 @@ class AdminService {
       const [membersTotal, chaptersTotal, diasporaTotal, regionsTotal] = await Promise.all([
         supabase
           .from('users')
-          .select('*', { count: 'exact', head: true })
-          .in('status', ['Active', 'Approved']),
+          .select('*', { count: 'exact', head: true }),
         supabase.from('chapters').select('*', { count: 'exact', head: true }),
         supabase
           .from('users')
           .select('*', { count: 'exact', head: true })
-          .eq('platform', 'DIASPORA')
-          .in('status', ['Active', 'Approved']),
+          .eq('platform', 'DIASPORA'),
         supabase.from('ghana_regions').select('*', { count: 'exact', head: true }),
       ])
 

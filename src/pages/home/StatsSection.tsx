@@ -23,7 +23,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
       className="py-16 md:py-24 bg-[#fafaf6] border-y border-border/40"
     >
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
-        <div className="mb-5" data-fade>
+        <div className="mb-5">
           <h2
             id="stats-heading"
             className="font-meta font-extrabold text-xl tracking-tight text-on-surface"

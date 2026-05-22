@@ -25,7 +25,7 @@ This document outlines the strategic roadmap for the "The Base" platform's digit
   - Dynamic Product Detail Pages (PDP) with high-res galleries.
   - Inventory management interface for Store Managers.
   - Category filtering and search optimization.
-  - "Patriot Rating" system for product reviews.
+  - "Member Rating" system for product reviews.
 
 ---
 *Created on: 2026-05-03*

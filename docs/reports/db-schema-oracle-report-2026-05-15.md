@@ -29,7 +29,7 @@
 ### Identity & Auth
 
 #### `users` (8 rows)
-Primary member/patriot records. `id = auth.uid()`.
+Primary member records. `id = auth.uid()`.
 
 | Column | Type | Notes |
 |--------|------|-------|

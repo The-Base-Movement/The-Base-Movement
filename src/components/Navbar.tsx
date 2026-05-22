@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { authService } from '@/services/authService'
+import { Button } from '@/components/buttons/ui/neon-button'
 
 const NAV_LINKS = [
   { label: 'Home', publicPath: '/', dashPath: '/dashboard' },
@@ -131,7 +132,7 @@ export default function Navbar() {
               to={linkPath(link)}
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 600,
                 fontSize: 12,
                 letterSpacing: '.01em',
                 textDecoration: 'none',
@@ -337,45 +338,20 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link
-                to="/login"
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface))',
-                  textDecoration: 'none',
-                  padding: '8px 16px',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 4,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'hsl(var(--primary))'
-                  e.currentTarget.style.color = 'hsl(var(--primary))'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'hsl(var(--border))'
-                  e.currentTarget.style.color = 'hsl(var(--on-surface))'
-                }}
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
               >
-                Login
-              </Link>
-              <Link
-                to="/register"
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: 12,
-                  color: '#fff',
-                  textDecoration: 'none',
-                  padding: '8px 16px',
-                  background: 'hsl(var(--accent))',
-                  borderRadius: 4,
-                  border: 'none',
-                }}
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button
+                asChild
+                variant="accent"
+                size="sm"
               >
-                Register
-              </Link>
+                <Link to="/register">Register</Link>
+              </Button>
             </>
           )}
         </div>
@@ -421,7 +397,7 @@ export default function Navbar() {
                   borderRadius: 4,
                   textDecoration: 'none',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 600,
                   fontSize: 13,
                   background: linkActive(link) ? 'hsl(var(--primary) / 8%)' : 'none',
                   color: linkActive(link) ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
@@ -577,40 +553,22 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  style={{
-                    display: 'block',
-                    padding: '11px 14px',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 4,
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 13,
-                    color: 'hsl(var(--on-surface))',
-                  }}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="default"
+                  style={{ width: '100%' }}
                 >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  style={{
-                    display: 'block',
-                    padding: '11px 14px',
-                    background: 'hsl(var(--accent))',
-                    borderRadius: 4,
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 13,
-                    color: '#fff',
-                  }}
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="accent"
+                  size="default"
+                  style={{ width: '100%', marginTop: 8 }}
                 >
-                  Register
-                </Link>
+                  <Link to="/register">Register</Link>
+                </Button>
               </>
             )}
           </div>
