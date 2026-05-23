@@ -84,7 +84,7 @@ export default function Store() {
           >
             shopping_bag
           </span>
-          <p className="text-micro font-bold text-stone-400 m-0">Your bag is empty</p>
+          <p className="text-micro font-medium text-stone-400 m-0">Your bag is empty</p>
         </div>
       ) : (
         cart.map((item) => (
@@ -100,8 +100,8 @@ export default function Store() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <b className="font-meta text-[12px] font-extrabold block truncate">{item.name}</b>
-              <span className="text-[10.5px] text-on-surface-muted font-bold font-meta tracking-[0.04em] uppercase block">
+              <b className="font-meta text-[12px] font-semibold block truncate">{item.name}</b>
+              <span className="text-[10.5px] text-on-surface-muted font-medium font-meta tracking-[0.04em] uppercase block">
                 {item.selectedSize || 'One Size'} · {item.selectedColor || 'Stock'}
               </span>
               <div className="inline-flex items-center gap-0 border border-border rounded-[3px] mt-1.5 h-[22px]">
@@ -120,7 +120,7 @@ export default function Store() {
                     remove
                   </span>
                 </button>
-                <span className="px-2 font-meta font-extrabold text-[11px]">{item.quantity}</span>
+                <span className="px-2 font-meta font-semibold text-[11px]">{item.quantity}</span>
                 <button
                   className="w-[22px] h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
                   onClick={() =>
@@ -139,7 +139,7 @@ export default function Store() {
               </div>
             </div>
             <div className="text-right shrink-0">
-              <div className="font-meta font-extrabold text-[13px] mb-1">
+              <div className="font-meta font-semibold text-[13px] mb-1">
                 ₵{(parseFloat(item.price.replace(/[^0-9.]/g, '')) * item.quantity).toFixed(0)}
               </div>
               <button
@@ -159,18 +159,18 @@ export default function Store() {
 
   const CartSummary = () => (
     <div className="font-meta">
-      <div className="flex justify-between py-1 text-[12px] font-bold text-on-surface-muted">
-        Subtotal <b className="text-on-surface font-extrabold">₵{subtotal.toFixed(0)}</b>
+      <div className="flex justify-between py-1 text-[12px] font-medium text-on-surface-muted">
+        Subtotal <b className="text-on-surface font-semibold">₵{subtotal.toFixed(0)}</b>
       </div>
-      <div className="flex justify-between py-1 text-[12px] font-bold text-on-surface-muted">
-        Shipping <b className="text-on-surface font-extrabold">₵{shipping}</b>
+      <div className="flex justify-between py-1 text-[12px] font-medium text-on-surface-muted">
+        Shipping <b className="text-on-surface font-semibold">₵{shipping}</b>
       </div>
-      <div className="flex justify-between py-1 text-[12px] font-bold text-on-surface-muted">
-        Member discount <b className="text-primary font-extrabold">−₵{discount}</b>
+      <div className="flex justify-between py-1 text-[12px] font-medium text-on-surface-muted">
+        Member discount <b className="text-primary font-semibold">−₵{discount}</b>
       </div>
       <div className="flex justify-between pt-2.5 mt-1.5 border-t border-border">
-        <b className="text-lg font-extrabold tracking-tight">Total</b>
-        <span className="text-lg font-extrabold tracking-tight">₵{total.toFixed(0)}</span>
+        <b className="text-lg font-bold tracking-tight">Total</b>
+        <span className="text-lg font-bold tracking-tight">₵{total.toFixed(0)}</span>
       </div>
     </div>
   )
@@ -241,7 +241,7 @@ export default function Store() {
                   {['MoMo', 'Visa', 'Mastercard', 'PayPal'].map((m) => (
                     <span
                       key={m}
-                      className="text-[9px] font-extrabold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"
+                      className="text-[9px] font-semibold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"
                     >
                       {m}
                     </span>
@@ -312,7 +312,7 @@ export default function Store() {
                 {['MoMo', 'Visa', 'Mastercard', 'PayPal'].map((m) => (
                   <span
                     key={m}
-                    className="text-[9px] font-extrabold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"
+                    className="text-[9px] font-semibold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"
                   >
                     {m}
                   </span>
@@ -338,7 +338,7 @@ export default function Store() {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   fontSize: 13,
                   color: '#fff',
                 }}
@@ -348,7 +348,7 @@ export default function Store() {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 500,
                   fontSize: 12,
                   color: 'rgba(255,255,255,0.55)',
                 }}
@@ -365,10 +365,10 @@ export default function Store() {
             <div className="w-px h-8 bg-white/10 shrink-0" />
             <Link
               to="/store/checkout"
-              className="px-5 h-full flex items-center font-extrabold text-white text-sm shrink-0 hover:opacity-90 transition-opacity"
+              className="px-5 h-full flex items-center font-bold text-white text-sm shrink-0 hover:opacity-90 transition-opacity"
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: 13,
                 textDecoration: 'none',
               }}

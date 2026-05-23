@@ -273,7 +273,7 @@ export default function ChapterDetails() {
           <h2
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: 22,
               color: 'hsl(var(--on-surface))',
               marginBottom: 16,
