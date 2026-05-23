@@ -23,7 +23,7 @@ export function PerformancePrefsPanel({ lowBandwidthMode, onToggle }: Props) {
             <label
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 10.5,
                 color: 'hsl(var(--on-surface-muted))',
                 letterSpacing: '.06em',
@@ -40,7 +40,7 @@ export function PerformancePrefsPanel({ lowBandwidthMode, onToggle }: Props) {
                 fontSize: 11.5,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 maxWidth: 380,
                 lineHeight: 1.55,
               }}

@@ -222,7 +222,7 @@ export default function ProfileSettings() {
           style={{
             margin: 0,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -285,7 +285,7 @@ export default function ProfileSettings() {
                   gap: 6,
                   color: 'hsl(var(--primary))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 12,
                 }}
               >

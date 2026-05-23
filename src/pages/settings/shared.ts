@@ -1,6 +1,6 @@
 export const labelStyle: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 10.5,
   color: 'hsl(var(--on-surface-muted))',
   letterSpacing: '.06em',
@@ -16,7 +16,7 @@ export const inputStyle: React.CSSProperties = {
   border: '1px solid hsl(var(--border))',
   borderRadius: 4,
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12.5,
   background: '#fff',
   color: 'hsl(var(--on-surface))',

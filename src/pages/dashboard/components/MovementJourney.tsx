@@ -106,7 +106,7 @@ export function MovementJourney() {
 
   return (
     <div className="card card-pad road bg-white border border-border rounded-[4px] p-4 sm:p-6">
-      <h3 className="font-meta text-[14px] font-extrabold tracking-tight text-on-surface mb-[14px]">
+      <h3 className="font-meta text-[14px] font-semibold tracking-tight text-on-surface mb-[14px]">
         My movement journey
       </h3>
       {loading ? (
@@ -133,7 +133,7 @@ export function MovementJourney() {
               }}
             >
               <div>
-                <b className="font-meta font-extrabold text-[13px] tracking-tight text-on-surface">
+                <b className="font-meta font-semibold text-[13px] tracking-tight text-on-surface">
                   {step.title}
                 </b>
                 <span className="text-[11px] text-on-surface-muted block mt-0.5">{step.date}</span>
@@ -141,7 +141,7 @@ export function MovementJourney() {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 9,
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',

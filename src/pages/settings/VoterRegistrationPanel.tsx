@@ -69,7 +69,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
             fontSize: 11.5,
             color: 'hsl(var(--on-surface-muted))',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             lineHeight: 1.55,
           }}
         >
@@ -97,7 +97,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 12,
                 color: 'hsl(var(--primary))',
               }}
@@ -204,7 +204,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                         <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 11.5,
                             color: 'hsl(var(--on-surface))',
                           }}
@@ -214,7 +214,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                         <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 11,
                             color: 'hsl(var(--on-surface-muted))',
                           }}
@@ -249,7 +249,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11.5,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -260,7 +260,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
                     }}

@@ -97,7 +97,7 @@ const tileStyles = `
 
   .tile .label {
     font-size: 10px;
-    font-weight: 800;
+    font-weight: var(--font-weight-semibold, 600);
     color: hsl(var(--on-surface-muted));
     letter-spacing: .06em;
     text-transform: uppercase;
@@ -108,7 +108,7 @@ const tileStyles = `
 
   .tile .val {
     font-family: 'Public Sans', sans-serif;
-    font-weight: 800;
+    font-weight: var(--font-weight-semibold, 600);
     letter-spacing: -.02em;
     line-height: 1;
     margin: 0 0 6px;
@@ -116,7 +116,7 @@ const tileStyles = `
 
   .tile .delta {
     font-size: 10.5px;
-    font-weight: 700;
+    font-weight: var(--font-weight-medium, 500);
     color: hsl(var(--on-surface-muted));
     font-family: 'Public Sans', sans-serif;
     display: flex;

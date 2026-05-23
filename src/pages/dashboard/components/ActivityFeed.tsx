@@ -112,8 +112,8 @@ export function ActivityFeed() {
               </div>
               <div className="body">
                 <p>
-                  <b className="font-meta font-extrabold">{act.name}</b> {act.action}{' '}
-                  <b className="font-meta font-extrabold">{act.target}</b>.
+                  <b className="font-meta font-semibold">{act.name}</b> {act.action}{' '}
+                  <b className="font-meta font-semibold">{act.target}</b>.
                 </p>
                 <div className="meta">
                   {act.time} · {act.loc}
@@ -150,7 +150,7 @@ export function ActivityFeed() {
           borderRadius: 4,
           border: '1px solid hsl(var(--border))',
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 800,
+          fontWeight: 'var(--font-weight-semibold, 600)',
           fontSize: 11,
           color: 'hsl(var(--on-surface-muted))',
           textDecoration: 'none',
@@ -176,9 +176,9 @@ export function ActivityFeed() {
         .feed-row .av img { width: 100%; height: 100%; object-fit: cover; }
         .feed-row .body { flex: 1; min-width: 0; }
         .feed-row .body p { margin: 0; font-size: 12px; color: var(--on-surface); line-height: 1.4; }
-        .feed-row .body p b { font-family: 'Public Sans', sans-serif; font-weight: 800; }
-        .feed-row .body .meta { font-size: 10.5px; color: var(--on-surface-muted); margin-top: 3px; font-family: 'Public Sans', sans-serif; font-weight: 700; letter-spacing: .02em; }
-        .feed-row .amt { font-family: 'Public Sans', sans-serif; font-weight: 800; color: var(--primary); font-size: 14px; }
+        .feed-row .body p b { font-family: 'Public Sans', sans-serif; font-weight: var(--font-weight-semibold, 600); }
+        .feed-row .body .meta { font-size: 10.5px; color: var(--on-surface-muted); margin-top: 3px; font-family: 'Public Sans', sans-serif; font-weight: var(--font-weight-medium, 500); letter-spacing: .02em; }
+        .feed-row .amt { font-family: 'Public Sans', sans-serif; font-weight: var(--font-weight-semibold, 600); color: var(--primary); font-size: 14px; }
         
         .pill { padding: 4px 10px; font-size: 9px; border-radius: 4px; }
         .pill-ok { background: rgba(0, 107, 63, 0.1); color: var(--primary); border: 1px solid rgba(0, 107, 63, 0.1); }

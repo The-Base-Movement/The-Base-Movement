@@ -56,7 +56,7 @@ export function PersonalInfoForm({
               Registration Number{' '}
               <span
                 style={{
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   letterSpacing: 0,
                   textTransform: 'none',
                   color: 'hsl(var(--on-surface-muted))',

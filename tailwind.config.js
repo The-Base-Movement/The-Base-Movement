@@ -80,6 +80,17 @@ module.exports = {
         "meta": ["Public Sans"],
         "brand": ["Public Sans"],
       },
+      fontWeight: {
+        thin: "var(--font-weight-thin, 100)",
+        extralight: "var(--font-weight-extralight, 200)",
+        light: "var(--font-weight-light, 300)",
+        normal: "var(--font-weight-normal, 400)",
+        medium: "var(--font-weight-medium, 500)",
+        semibold: "var(--font-weight-semibold, 600)",
+        bold: "var(--font-weight-bold, 700)",
+        extrabold: "var(--font-weight-extrabold, 800)",
+        black: "var(--font-weight-black, 900)",
+      },
       fontSize: {
         "micro": ["var(--fs-micro)", {"lineHeight": "1.4", "fontWeight": "700"}],
         "tiny": ["var(--fs-tiny)", {"lineHeight": "1.4", "fontWeight": "700"}],

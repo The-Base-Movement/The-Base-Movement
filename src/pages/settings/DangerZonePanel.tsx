@@ -26,7 +26,7 @@ export function DangerZonePanel() {
               gap: 6,
               color: 'hsl(var(--destructive))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 12,
               marginBottom: 6,
             }}
@@ -42,7 +42,7 @@ export function DangerZonePanel() {
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               maxWidth: 420,
               lineHeight: 1.55,
             }}

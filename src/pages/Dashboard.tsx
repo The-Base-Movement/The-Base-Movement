@@ -140,7 +140,7 @@ export default function Dashboard() {
           className="dash-welcome-name"
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 28,
             color: 'hsl(var(--on-surface))',
             margin: '4px 0 0',
@@ -191,7 +191,7 @@ export default function Dashboard() {
               style={{
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 14,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 letterSpacing: '-0.01em',
                 color: 'hsl(var(--on-surface))',
                 marginBottom: 20,
@@ -207,7 +207,7 @@ export default function Dashboard() {
                   alignItems: 'center',
                   gap: 6,
                   fontSize: 10,
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--destructive))',
                   textTransform: 'uppercase',
                   letterSpacing: '.06em',
