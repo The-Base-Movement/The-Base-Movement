@@ -44,19 +44,30 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
             position: 'relative'
           }}>
             <div style={{ aspectRatio: '16/10', background: 'hsl(var(--container-low))', overflow: 'hidden', position: 'relative' }}>
-              {c.imageUrl ? (
-                <img 
-                  src={c.imageUrl} 
-                  alt={c.title} 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(0.3)' }} 
-                  decoding="async" 
-                  loading="lazy" 
-                />
-              ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))' }}>vital_signs</span>
-                </div>
-              )}
+              {(() => {
+                let imgUrl = c.imageUrl
+                if (c.title === '2026 Election Mobilization') {
+                  imgUrl = '/ghana_network_map.png'
+                } else if (c.title === 'Digital Infrastructure Fund') {
+                  imgUrl = '/digital_economy_illustration.png'
+                } else if (c.title === 'National Headquarters Renovation') {
+                  imgUrl = '/agro_processing_illustration.png'
+                }
+
+                return imgUrl ? (
+                  <img 
+                    src={imgUrl} 
+                    alt={c.title} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    decoding="async" 
+                    loading="lazy" 
+                  />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                     <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))' }}>vital_signs</span>
+                  </div>
+                )
+              })()}
               <div style={{ position: 'absolute', top: 16, right: 16 }}>
                 <span style={{ 
                   background: 'hsl(var(--primary))', 
