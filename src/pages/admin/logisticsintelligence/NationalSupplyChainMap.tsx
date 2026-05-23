@@ -1,8 +1,13 @@
+import { LogisticsMap } from '@/components/admin/LogisticsMap'
+
 interface NationalSupplyChainMapProps {
+  data: { region: string; fulfillment_rate: number }[]
   onEnterpriseView: () => void
 }
 
-export function NationalSupplyChainMap({ onEnterpriseView }: NationalSupplyChainMapProps) {
+export function NationalSupplyChainMap({ data, onEnterpriseView }: NationalSupplyChainMapProps) {
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
+
   return (
     <div
       style={{
@@ -61,34 +66,13 @@ export function NationalSupplyChainMap({ onEnterpriseView }: NationalSupplyChain
       </div>
       <div
         style={{
-          height: 180,
+          height: 500,
           background: 'rgba(0,0,0,0.4)',
           borderTop: '1px solid rgba(255,255,255,0.05)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 12,
+          position: 'relative',
         }}
       >
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 48, color: 'rgba(255,255,255,0.1)' }}
-        >
-          public
-        </span>
-        <p
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-medium, 500)',
-            fontSize: 10,
-            color: 'rgba(255,255,255,0.2)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-          }}
-        >
-          Waiting for regional hub synchronization…
-        </p>
+        <LogisticsMap data={data} token={mapboxToken} />
       </div>
     </div>
   )

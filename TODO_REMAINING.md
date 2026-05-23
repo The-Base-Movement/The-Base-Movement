@@ -1,0 +1,36 @@
+# 🚀 Remaining Tasks: National Production Deployment
+
+This list tracks the final engineering and integration requirements to transition from a stabilized build to a full national rollout.
+
+## 1. Enterprise Technical Integrations
+
+- [ ] **Live KYC Integration**: Replace `tacticalService` simulation with a production-ready Identity Provider (Smile Identity or Onfido).
+  - [ ] Implement biometric face-match for registration.
+  - [ ] Connect automated Ghana Card / Voter ID validation.
+- [ ] **GIS Logistics Layer**: Replace SVG placeholders with a dynamic map (Mapbox GL).
+  - [ ] Integrate live warehouse inventory markers.
+  - [ ] Plot real-time fulfillment transport routes across regions.
+- [ ] **ML Intelligence Microservice**: Connect Supabase data to a Python/FastAPI service for predictive analytics.
+  - [ ] Implement propentisy modeling for donors.
+  - [ ] Deploy sentiment-based mobilization forecasting.
+
+## 2. Mobilization & Communication
+
+- [ ] **SMS Gateway Integration**: Hook up Twilio or African's Talking for "Urgent" priority broadcasts.
+- [ ] **Push Notification Deployment**: Deploy Supabase Edge Functions for real-time mobile push notifications.
+- [ ] **Mailing List Synchronization**: Bridge registration data with a transactional mail provider (SendGrid/Mailchimp).
+
+## 3. Automation & Optimization
+
+- [ ] **Trash Vault Auto-Purge**: Deploy a 30-day cron job to permanently delete expired items from the trash.
+- [ ] **Low-Bandwidth Stress Test**: Validate asset delivery and state synchronization under simulated 3G/2G conditions.
+- [ ] **Offline Mode Hardening**: Extend Service Worker to support draft registration saving during signal loss.
+
+## 4. Final Deployment Readiness
+
+- [ ] **Production RLS Audit**: Conduct a final security review of all Row Level Security policies.
+- [ ] **Analytics & Tracking**: Implement privacy-respecting usage tracking (Plausible or Matomo) for national metrics.
+
+---
+
+**Status**: `STABILIZED` | **Integrations Remaining**: 4 Primary Modules

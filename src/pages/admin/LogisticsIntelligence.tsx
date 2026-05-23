@@ -422,6 +422,7 @@ export default function LogisticsIntelligence() {
 
       {/* National Map */}
       <NationalSupplyChainMap
+        data={velocity}
         onEnterpriseView={() => toast.success('Initializing enterprise visualization protocol…')}
       />
 
