@@ -36,7 +36,7 @@ export function BroadcastHistory({
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -46,7 +46,7 @@ export function BroadcastHistory({
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 2,
@@ -85,7 +85,7 @@ export function BroadcastHistory({
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               outline: 'none',
               background: '#fff',
@@ -121,7 +121,7 @@ export function BroadcastHistory({
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -151,7 +151,7 @@ export function BroadcastHistory({
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -188,7 +188,7 @@ export function BroadcastHistory({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 13,
                     color: 'hsl(var(--on-surface))',
                     marginBottom: 6,
@@ -223,7 +223,7 @@ export function BroadcastHistory({
                         alignItems: 'center',
                         gap: 5,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                       }}
@@ -239,7 +239,7 @@ export function BroadcastHistory({
                         alignItems: 'center',
                         gap: 5,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
                         color: 'hsl(var(--primary))',
                       }}
@@ -254,7 +254,7 @@ export function BroadcastHistory({
                         <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 11,
                             color: 'hsl(var(--on-surface-muted))',
                           }}

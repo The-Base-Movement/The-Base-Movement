@@ -11,7 +11,7 @@ interface OfficialsTableProps {
 const thSt: React.CSSProperties = {
   padding: '11px 20px',
   textAlign: 'left',
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   borderBottom: '1px solid hsl(var(--border))',
@@ -53,7 +53,7 @@ function TierBadge({ official, tiers }: { official: PartyOfficial; tiers: PartyT
       style={{
         textTransform: 'uppercase',
         fontSize: 10,
-        fontWeight: 800,
+        fontWeight: 'var(--font-weight-semibold, 600)',
         color: 'hsl(var(--primary))',
         background: 'hsla(var(--primary), 0.08)',
         border: '1px solid hsla(var(--primary), 0.2)',
@@ -106,7 +106,7 @@ export function OfficialsTable({
             ) : (
               officials.map((official) => (
                 <tr key={official.id}>
-                  <td style={{ ...tdSt, fontWeight: 700 }}>
+                  <td style={{ ...tdSt, fontWeight: 'var(--font-weight-medium, 500)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <Avatar url={official.avatar_url} name={official.name} />
                       {official.name}
@@ -182,7 +182,7 @@ export function OfficialsTable({
                     >
                       <span
                         style={{
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 13,
                           color: 'hsl(var(--on-surface))',
                           overflow: 'hidden',

@@ -59,7 +59,9 @@ export default function PollsManagement() {
 
   // ── Reference data ─────────────────────────────────────────────
   const [availableRegions, setAvailableRegions] = useState<{ id: string; name: string }[]>([])
-  const [availableCountries, setAvailableCountries] = useState<{ name: string; dialing_code: string; is_diaspora: boolean }[]>([])
+  const [availableCountries, setAvailableCountries] = useState<
+    { name: string; dialing_code: string; is_diaspora: boolean }[]
+  >([])
 
   // ── UI state ───────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('')
@@ -101,7 +103,9 @@ export default function PollsManagement() {
     }
   }, [])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   // ── Handlers ───────────────────────────────────────────────────
 
@@ -228,7 +232,9 @@ export default function PollsManagement() {
       {isFeedbackModalOpen && <FeedbackVaultModal onClose={() => setIsFeedbackModalOpen(false)} />}
 
       {/* Analytics guide portal modal */}
-      {isAnalyticsModalOpen && <AnalyticsGuideModal onClose={() => setIsAnalyticsModalOpen(false)} />}
+      {isAnalyticsModalOpen && (
+        <AnalyticsGuideModal onClose={() => setIsAnalyticsModalOpen(false)} />
+      )}
 
       {/* Global delete confirmation modal (from useDeleteModal hook) */}
       {deleteModal}

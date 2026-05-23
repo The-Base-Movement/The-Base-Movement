@@ -61,7 +61,7 @@ export function SpendingFormModal({
           <div>
             <h3
               style={{
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
@@ -110,7 +110,7 @@ export function SpendingFormModal({
               htmlFor="sl-description"
               style={{
                 fontSize: 10,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -148,7 +148,7 @@ export function SpendingFormModal({
                 htmlFor="sl-amount"
                 style={{
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -166,7 +166,7 @@ export function SpendingFormModal({
                     top: '50%',
                     transform: 'translateY(-50%)',
                     fontSize: 13,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                   }}
                 >
@@ -201,7 +201,7 @@ export function SpendingFormModal({
                 htmlFor="sl-category"
                 style={{
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -245,7 +245,7 @@ export function SpendingFormModal({
                 htmlFor="sl-chapter"
                 style={{
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -281,7 +281,7 @@ export function SpendingFormModal({
                 htmlFor="sl-date"
                 style={{
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',

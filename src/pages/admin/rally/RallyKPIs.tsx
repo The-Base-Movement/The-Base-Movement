@@ -27,9 +27,8 @@ interface RallyKPIsProps {
 export function RallyKPIs({ actions, attendance }: RallyKPIsProps) {
   // Derive verified attendance count and percentage
   const verifiedCount = attendance.filter((a) => a.is_verified).length
-  const verifiedRate = attendance.length > 0
-    ? Math.round((verifiedCount / attendance.length) * 100)
-    : 0
+  const verifiedRate =
+    attendance.length > 0 ? Math.round((verifiedCount / attendance.length) * 100) : 0
 
   return (
     <div className="kpis">

@@ -64,7 +64,7 @@ export function OfficialModal({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
                 color: '#fff',
                 margin: 0,
@@ -108,7 +108,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-name"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Name
                   </label>
@@ -124,7 +129,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-role"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Role
                   </label>
@@ -140,7 +150,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-tier"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Tier
                   </label>
@@ -165,7 +180,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-region"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Region (Optional)
                   </label>
@@ -184,7 +204,12 @@ export function OfficialModal({
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <label
                     htmlFor="official-bio"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Biography (Optional)
                   </label>
@@ -205,7 +230,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-avatar"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Avatar Image
                   </label>
@@ -253,7 +283,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-facebook"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Facebook URL (Optional)
                   </label>
@@ -268,7 +303,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-instagram"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Instagram URL (Optional)
                   </label>
@@ -283,7 +323,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-twitter"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Twitter URL (Optional)
                   </label>
@@ -298,7 +343,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-linkedin"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     LinkedIn URL (Optional)
                   </label>
@@ -313,7 +363,12 @@ export function OfficialModal({
                 <div>
                   <label
                     htmlFor="official-email"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      marginBottom: 6,
+                    }}
                   >
                     Email (Optional)
                   </label>

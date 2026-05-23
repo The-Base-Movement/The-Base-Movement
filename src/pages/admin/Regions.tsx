@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminService, type Region } from '@/services/adminService'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { inputSt, type ConMap } from './regions/utils'
@@ -192,7 +193,7 @@ export default function AdminRegions() {
           <h1
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 24,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -206,6 +207,7 @@ export default function AdminRegions() {
             </span>
             Regions &amp; Constituencies
           </h1>
+          <BrandLine />
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
@@ -295,7 +297,7 @@ export default function AdminRegions() {
             htmlFor="input-bff317"
             style={{
               fontSize: 11,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,
@@ -352,7 +354,7 @@ export default function AdminRegions() {
             htmlFor="input-5066bc"
             style={{
               fontSize: 11,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,
@@ -408,7 +410,7 @@ export default function AdminRegions() {
             htmlFor="input-fe8639"
             style={{
               fontSize: 11,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,
@@ -465,7 +467,7 @@ export default function AdminRegions() {
             htmlFor="input-1238ff"
             style={{
               fontSize: 11,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,

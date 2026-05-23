@@ -42,7 +42,7 @@ export function PollingStationsTable({
                     style={{
                       padding: '8px 16px',
                       textAlign: 'left',
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 9.5,
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
@@ -81,7 +81,7 @@ export function PollingStationsTable({
                     <span
                       style={{
                         fontFamily: "'Public Sans'",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
@@ -101,7 +101,7 @@ export function PollingStationsTable({
                     padding: '48px 16px',
                     textAlign: 'center',
                     fontFamily: "'Public Sans'",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -122,7 +122,7 @@ export function PollingStationsTable({
                     <span
                       style={{
                         fontFamily: 'monospace',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         letterSpacing: '.02em',
                         color: 'hsl(var(--on-surface))',
@@ -134,7 +134,7 @@ export function PollingStationsTable({
                   <td
                     style={{
                       padding: '9px 16px',
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 12.5,
                       color: 'hsl(var(--on-surface))',
                     }}
@@ -144,7 +144,7 @@ export function PollingStationsTable({
                   <td
                     style={{
                       padding: '9px 16px',
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -154,7 +154,7 @@ export function PollingStationsTable({
                   <td
                     style={{
                       padding: '9px 16px',
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface-muted))',
                       whiteSpace: 'nowrap',
@@ -165,7 +165,7 @@ export function PollingStationsTable({
                   <td
                     style={{
                       padding: '9px 16px',
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface-muted))',
                       whiteSpace: 'nowrap',
@@ -182,7 +182,7 @@ export function PollingStationsTable({
                       <span
                         style={{
                           color: 'hsl(var(--on-surface-muted))',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12,
                         }}
                       >
@@ -209,7 +209,13 @@ export function PollingStationsTable({
             fontFamily: "'Public Sans', sans-serif",
           }}
         >
-          <span style={{ fontWeight: 700, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))' }}>
+          <span
+            style={{
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 11.5,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
             Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} of{' '}
             {totalCount.toLocaleString()} stations
           </span>
@@ -227,7 +233,7 @@ export function PollingStationsTable({
             </button>
             <span
               style={{
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 12,
                 color: 'hsl(var(--on-surface))',
                 minWidth: 80,

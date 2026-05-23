@@ -13,21 +13,21 @@ export function AdminsKPIs({ admins }: AdminsKPIsProps) {
       <TacticalKPI
         label="Total Admins"
         value={admins.length}
-        variant="black"
+        variant="red"
         description="Authorized platform overseers"
         delta="▲ Stable"
       />
       <TacticalKPI
         label="Super Admins"
         value={admins.filter((a) => isHighPrivilege(a.role)).length}
-        variant="red"
+        variant="gold"
         description="Tier-1 security clearance"
         delta="High Risk"
       />
       <TacticalKPI
         label="Regional Leads"
         value={admins.filter((a) => a.role === 'REGIONAL_DIRECTOR').length}
-        variant="gold"
+        variant="black"
         description="Zonal operations command"
         delta="Coordinated"
       />

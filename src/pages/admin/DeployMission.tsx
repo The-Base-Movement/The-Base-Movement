@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Subcomponents
 import { DeployMissionForm } from './deploymission/DeployMissionForm'
@@ -104,11 +105,18 @@ export default function DeployMission() {
             </span>
             Deploy mobilization mission
           </h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
+          <p
+            style={{
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 12.5,
+              marginTop: 6,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            Launch and track strategic field directives and missions.
+          </p>
         </div>
         <div className="actions">
           <Link to="/admin/ground-game">

@@ -54,7 +54,7 @@ export function NewBroadcastForm({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13.5,
               color: '#fff',
             }}
@@ -66,7 +66,7 @@ export function NewBroadcastForm({
               fontSize: 11,
               color: 'rgba(255,255,255,.45)',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               marginTop: 2,
             }}
           >

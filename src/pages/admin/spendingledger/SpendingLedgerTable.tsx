@@ -156,7 +156,7 @@ export function SpendingLedgerTable({
                     <p
                       style={{
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         margin: 0,
                         overflow: 'hidden',
@@ -197,7 +197,7 @@ export function SpendingLedgerTable({
                     <p
                       style={{
                         fontSize: 13,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         color: 'hsl(var(--on-surface))',
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",

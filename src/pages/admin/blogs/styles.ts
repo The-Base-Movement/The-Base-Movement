@@ -17,7 +17,7 @@ export const selectSt: React.CSSProperties = {
   outline: 'none',
   cursor: 'pointer',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12,
   borderRadius: 4,
   color: 'hsl(var(--on-surface))',
@@ -27,7 +27,7 @@ export const selectSt: React.CSSProperties = {
 /** Form field label */
 export const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -37,7 +37,7 @@ export const labelSt: React.CSSProperties = {
 /** Small muted metadata text (dates, read-time, etc.) */
 export const metaSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
 }

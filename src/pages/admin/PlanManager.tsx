@@ -3,6 +3,7 @@ import { planService } from '@/services/planService'
 import { type AgendaPillar, type AgendaObjective } from '@/pages/ouragenda/agendaData'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function PlanManager() {
   const [pillars, setPillars] = useState<AgendaPillar[]>([])
@@ -103,7 +104,9 @@ export default function PlanManager() {
     }
 
     setIsSaving(true)
-    const toastId = toast.loading(editingPillar ? 'Syncing pillar details…' : 'Creating new pillar…')
+    const toastId = toast.loading(
+      editingPillar ? 'Syncing pillar details…' : 'Creating new pillar…'
+    )
 
     try {
       const payload: AgendaPillar = {
@@ -122,7 +125,10 @@ export default function PlanManager() {
 
       const success = await planService.savePlanPillar(payload, sortOrder)
       if (success) {
-        toast.success(editingPillar ? 'Plan pillar updated successfully' : 'Plan pillar created successfully', { id: toastId })
+        toast.success(
+          editingPillar ? 'Plan pillar updated successfully' : 'Plan pillar created successfully',
+          { id: toastId }
+        )
         setShowModal(false)
         fetchPillars()
       } else {
@@ -140,7 +146,8 @@ export default function PlanManager() {
     openDelete({
       itemName: pillar.title,
       title: 'Remove Plan Pillar',
-      description: 'This will permanently delete this pillar, including all objectives and text checklist points from the website.',
+      description:
+        'This will permanently delete this pillar, including all objectives and text checklist points from the website.',
       isPermanent: true,
       successMessage: 'Pillar deleted successfully.',
       errorMessage: 'Failed to delete pillar.',
@@ -189,7 +196,11 @@ export default function PlanManager() {
   }
 
   const handleResetToDefaults = async () => {
-    if (!confirm('Are you sure you want to seed the database with the default pillars from the code configuration? This will overwrite existing pillars with the same IDs.')) {
+    if (
+      !confirm(
+        'Are you sure you want to seed the database with the default pillars from the code configuration? This will overwrite existing pillars with the same IDs.'
+      )
+    ) {
       return
     }
 
@@ -206,7 +217,10 @@ export default function PlanManager() {
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Page Header */}
-      <div className="top" style={{ alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 0 }}>
+      <div
+        className="top"
+        style={{ alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 0 }}
+      >
         <div>
           <div className="crumbs">Content · Operational Blueprint</div>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
@@ -216,23 +230,20 @@ export default function PlanManager() {
             Mission Plan Manager
           </h2>
           <div style={{ marginTop: 10, marginBottom: 4 }}>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
+            <BrandLine />
           </div>
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 6,
               marginBottom: 0,
             }}
           >
-            Manage the strategic plan pillars, key summaries, specific objectives, and actionable checklist points.
+            Manage the strategic plan pillars, key summaries, specific objectives, and actionable
+            checklist points.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -254,21 +265,68 @@ export default function PlanManager() {
       {/* Main Panel Content */}
       <div className="panel" style={{ padding: 24 }}>
         {isLoading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 0', gap: 12 }}>
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))', borderTopColor: 'transparent' }} />
-            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '60px 0',
+              gap: 12,
+            }}
+          >
+            <div
+              className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"
+              style={{ borderColor: 'hsl(var(--primary))', borderTopColor: 'transparent' }}
+            />
+            <p
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               Loading plan pillars from command center…
             </p>
           </div>
         ) : pillars.length === 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 20px', gap: 16, textAlign: 'center' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', opacity: 0.5 }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '60px 20px',
+              gap: 16,
+              textAlign: 'center',
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', opacity: 0.5 }}
+            >
               folder_open
             </span>
             <div>
-              <h4 style={{ margin: 0, fontWeight: 800, fontSize: 15 }}>No plan pillars seeded in the database</h4>
-              <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, maxWidth: 380 }}>
-                The `plan_pillars` table is currently empty. Click the button below to automatically seed the database with the default six aims.
+              <h4
+                style={{ margin: 0, fontWeight: 'var(--font-weight-semibold, 600)', fontSize: 15 }}
+              >
+                No plan pillars seeded in the database
+              </h4>
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 12.5,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginTop: 6,
+                  maxWidth: 380,
+                }}
+              >
+                The `plan_pillars` table is currently empty. Click the button below to automatically
+                seed the database with the default six aims.
               </p>
             </div>
             <button className="btn btn-primary btn-sm" onClick={handleResetToDefaults}>
@@ -280,23 +338,96 @@ export default function PlanManager() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+            <p
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontSize: 10.5,
+                color: 'hsl(var(--on-surface-muted))',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                marginBottom: 6,
+              }}
+            >
               Pillars of the Movement ({pillars.length})
             </p>
             <div className="table-responsive">
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                    <th style={{ textAlign: 'left', padding: '12px 16px', fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Aim</th>
-                    <th style={{ textAlign: 'left', padding: '12px 16px', fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Pillar details</th>
-                    <th style={{ textAlign: 'left', padding: '12px 16px', fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Objectives</th>
-                    <th style={{ textAlign: 'center', padding: '12px 16px', fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', width: 100 }}>Order</th>
-                    <th style={{ textAlign: 'right', padding: '12px 16px', fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', width: 120 }}>Actions</th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: '12px 16px',
+                        fontSize: 11,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Aim
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: '12px 16px',
+                        fontSize: 11,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Pillar details
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: '12px 16px',
+                        fontSize: 11,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Objectives
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'center',
+                        padding: '12px 16px',
+                        fontSize: 11,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                        width: 100,
+                      }}
+                    >
+                      Order
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'right',
+                        padding: '12px 16px',
+                        fontSize: 11,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                        width: 120,
+                      }}
+                    >
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {pillars.map((pillar, idx) => (
-                    <tr key={pillar.id} style={{ borderBottom: '1px solid hsl(var(--border))', transition: 'background 0.15s' }}>
+                    <tr
+                      key={pillar.id}
+                      style={{
+                        borderBottom: '1px solid hsl(var(--border))',
+                        transition: 'background 0.15s',
+                      }}
+                    >
                       {/* Aim and Icon */}
                       <td style={{ padding: '16px', verticalAlign: 'top' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -318,10 +449,26 @@ export default function PlanManager() {
                             </span>
                           </div>
                           <div>
-                            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: pillar.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <span
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                fontSize: 10,
+                                color: pillar.color,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                              }}
+                            >
                               Aim {pillar.number}
                             </span>
-                            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
+                            <div
+                              style={{
+                                fontFamily: "'Courier New', monospace",
+                                fontSize: 10,
+                                color: 'hsl(var(--on-surface-muted))',
+                                marginTop: 2,
+                              }}
+                            >
                               #{pillar.id}
                             </div>
                           </div>
@@ -330,10 +477,24 @@ export default function PlanManager() {
 
                       {/* Pillar Title and Summary */}
                       <td style={{ padding: '16px', verticalAlign: 'top', maxWidth: 360 }}>
-                        <div style={{ fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
+                        <div
+                          style={{
+                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontSize: 13,
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
                           {pillar.title}
                         </div>
-                        <div style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, lineHeight: 1.4 }}>
+                        <div
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontSize: 11.5,
+                            color: 'hsl(var(--on-surface-muted))',
+                            marginTop: 6,
+                            lineHeight: 1.4,
+                          }}
+                        >
                           {pillar.summary}
                         </div>
                       </td>
@@ -342,7 +503,16 @@ export default function PlanManager() {
                       <td style={{ padding: '16px', verticalAlign: 'top' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                           {pillar.objectives.length === 0 ? (
-                            <span style={{ fontSize: 10.5, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', background: 'rgba(0,0,0,0.05)', padding: '2px 6px', borderRadius: 2 }}>
+                            <span
+                              style={{
+                                fontSize: 10.5,
+                                fontWeight: 'var(--font-weight-medium, 500)',
+                                color: 'hsl(var(--on-surface-muted))',
+                                background: 'rgba(0,0,0,0.05)',
+                                padding: '2px 6px',
+                                borderRadius: 2,
+                              }}
+                            >
                               No objectives defined
                             </span>
                           ) : (
@@ -351,7 +521,7 @@ export default function PlanManager() {
                                 key={i}
                                 style={{
                                   fontSize: 10.5,
-                                  fontWeight: 800,
+                                  fontWeight: 'var(--font-weight-semibold, 600)',
                                   color: 'hsl(var(--on-surface))',
                                   background: 'hsl(var(--container-low))',
                                   border: '1px solid hsl(var(--border))',
@@ -363,7 +533,13 @@ export default function PlanManager() {
                                 }}
                               >
                                 {obj.title}
-                                <span style={{ fontSize: 9, opacity: 0.5, fontWeight: 700 }}>
+                                <span
+                                  style={{
+                                    fontSize: 9,
+                                    opacity: 0.5,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
+                                  }}
+                                >
                                   ({obj.items.length})
                                 </span>
                               </span>
@@ -403,13 +579,19 @@ export default function PlanManager() {
                       {/* Action buttons */}
                       <td style={{ padding: '16px', verticalAlign: 'middle', textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                          <button className="btn btn-secondary btn-xs" onClick={() => handleOpenModal(pillar)}>
+                          <button
+                            className="btn btn-secondary btn-xs"
+                            onClick={() => handleOpenModal(pillar)}
+                          >
                             <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
                               edit
                             </span>
                             Edit
                           </button>
-                          <button className="btn btn-destructive btn-xs" onClick={() => handleDeletePillar(pillar)}>
+                          <button
+                            className="btn btn-destructive btn-xs"
+                            onClick={() => handleDeletePillar(pillar)}
+                          >
                             <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
                               delete
                             </span>
@@ -465,25 +647,56 @@ export default function PlanManager() {
               }}
             >
               <div>
-                <h4 style={{ margin: 0, fontWeight: 800, fontSize: 16 }}>
+                <h4
+                  style={{
+                    margin: 0,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 16,
+                  }}
+                >
                   {editingPillar ? 'Edit Strategic Pillar' : 'Create New Plan Pillar'}
                 </h4>
-                <p style={{ margin: '4px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
+                <p
+                  style={{
+                    margin: '4px 0 0',
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
                   Compose aims, objectives, and text checklist descriptions.
                 </p>
               </div>
-              <button className="ico" style={{ width: 32, height: 32 }} onClick={() => setShowModal(false)}>
+              <button
+                className="ico"
+                style={{ width: 32, height: 32 }}
+                onClick={() => setShowModal(false)}
+              >
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                   close
                 </span>
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: 24, margin: 0 }}>
+            <form
+              onSubmit={handleSubmit}
+              style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: 24, margin: 0 }}
+            >
               {/* Form Fields: Slug, Aim Number, Title */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
                 <div>
-                  <label htmlFor="pillar-slug" style={{ display: 'block', fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <label
+                    htmlFor="pillar-slug"
+                    style={{
+                      display: 'block',
+                      fontSize: 10.5,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: 6,
+                    }}
+                  >
                     Pillar Unique Slug
                   </label>
                   <input
@@ -492,7 +705,9 @@ export default function PlanManager() {
                     required
                     disabled={!!editingPillar}
                     value={formId}
-                    onChange={(e) => setFormId(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
+                    onChange={(e) =>
+                      setFormId(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))
+                    }
                     placeholder="e.g. education"
                     style={{
                       width: '100%',
@@ -508,7 +723,18 @@ export default function PlanManager() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="pillar-number" style={{ display: 'block', fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <label
+                    htmlFor="pillar-number"
+                    style={{
+                      display: 'block',
+                      fontSize: 10.5,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: 6,
+                    }}
+                  >
                     Aim Indicator Number
                   </label>
                   <input
@@ -532,7 +758,18 @@ export default function PlanManager() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="pillar-color" style={{ display: 'block', fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <label
+                    htmlFor="pillar-color"
+                    style={{
+                      display: 'block',
+                      fontSize: 10.5,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: 6,
+                    }}
+                  >
                     Accent Theme Color
                   </label>
                   <select
@@ -564,7 +801,18 @@ export default function PlanManager() {
               {/* Title, Icon */}
               <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: 16 }}>
                 <div>
-                  <label htmlFor="pillar-title" style={{ display: 'block', fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <label
+                    htmlFor="pillar-title"
+                    style={{
+                      display: 'block',
+                      fontSize: 10.5,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: 6,
+                    }}
+                  >
                     Pillar Headline Title
                   </label>
                   <input
@@ -587,7 +835,18 @@ export default function PlanManager() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="pillar-icon" style={{ display: 'block', fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <label
+                    htmlFor="pillar-icon"
+                    style={{
+                      display: 'block',
+                      fontSize: 10.5,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: 6,
+                    }}
+                  >
                     Material Icon
                   </label>
                   <input
@@ -614,7 +873,18 @@ export default function PlanManager() {
 
               {/* Summary description */}
               <div>
-                <label htmlFor="pillar-summary" style={{ display: 'block', fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                <label
+                  htmlFor="pillar-summary"
+                  style={{
+                    display: 'block',
+                    fontSize: 10.5,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: 6,
+                  }}
+                >
                   Aim Narrative Summary
                 </label>
                 <textarea
@@ -640,14 +910,40 @@ export default function PlanManager() {
 
               {/* Nested Objectives array editor */}
               <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 12,
+                  }}
+                >
                   <div>
-                    <h5 style={{ margin: 0, fontWeight: 800, fontSize: 13 }}>Actionable Objectives</h5>
-                    <p style={{ margin: '2px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-                      Break this aim down into core objectives with actionable text bullet checklist items.
+                    <h5
+                      style={{
+                        margin: 0,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontSize: 13,
+                      }}
+                    >
+                      Actionable Objectives
+                    </h5>
+                    <p
+                      style={{
+                        margin: '2px 0 0',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      Break this aim down into core objectives with actionable text bullet checklist
+                      items.
                     </p>
                   </div>
-                  <button type="button" className="btn btn-secondary btn-xs" onClick={handleAddObjective}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-xs"
+                    onClick={handleAddObjective}
+                  >
                     <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
                       add
                     </span>
@@ -657,15 +953,46 @@ export default function PlanManager() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {formObjectives.length === 0 ? (
-                    <div style={{ padding: '24px', border: '1px dashed hsl(var(--border))', borderRadius: 4, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                    <div
+                      style={{
+                        padding: '24px',
+                        border: '1px dashed hsl(var(--border))',
+                        borderRadius: 4,
+                        textAlign: 'center',
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontSize: 12,
+                      }}
+                    >
                       No objectives created yet. Click the "Add Objective" button to start building.
                     </div>
                   ) : (
                     formObjectives.map((obj, objIdx) => (
-                      <div key={objIdx} style={{ border: '1px solid hsl(var(--border))', borderRadius: 4, padding: 16, background: 'rgba(0,0,0,0.02)', position: 'relative' }}>
+                      <div
+                        key={objIdx}
+                        style={{
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: 4,
+                          padding: 16,
+                          background: 'rgba(0,0,0,0.02)',
+                          position: 'relative',
+                        }}
+                      >
                         {/* Header for objective block */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                          <span style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--primary))' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 12,
+                            marginBottom: 12,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              color: 'hsl(var(--primary))',
+                            }}
+                          >
                             Obj #{objIdx + 1}
                           </span>
                           <input
@@ -682,7 +1009,7 @@ export default function PlanManager() {
                               border: '1px solid hsl(var(--border))',
                               borderRadius: 4,
                               fontSize: 12,
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                               background: '#fff',
                               color: 'hsl(var(--on-surface))',
                             }}
@@ -700,12 +1027,37 @@ export default function PlanManager() {
                         </div>
 
                         {/* Checklist items nesting list */}
-                        <div style={{ paddingLeft: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <span style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>
+                        <div
+                          style={{
+                            paddingLeft: 12,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 8,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                color: 'hsl(var(--on-surface-muted))',
+                                textTransform: 'uppercase',
+                              }}
+                            >
                               Bullet Checklist Points
                             </span>
-                            <button type="button" className="btn btn-secondary btn-xs" style={{ padding: '2px 6px', fontSize: 9.5 }} onClick={() => handleAddChecklistItem(objIdx)}>
+                            <button
+                              type="button"
+                              className="btn btn-secondary btn-xs"
+                              style={{ padding: '2px 6px', fontSize: 9.5 }}
+                              onClick={() => handleAddChecklistItem(objIdx)}
+                            >
                               <span className="material-symbols-outlined" style={{ fontSize: 11 }}>
                                 add
                               </span>
@@ -714,8 +1066,14 @@ export default function PlanManager() {
                           </div>
 
                           {obj.items.map((item, itemIdx) => (
-                            <div key={itemIdx} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--accent))' }}>
+                            <div
+                              key={itemIdx}
+                              style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                            >
+                              <span
+                                className="material-symbols-outlined"
+                                style={{ fontSize: 14, color: 'hsl(var(--accent))' }}
+                              >
                                 circle
                               </span>
                               <input
@@ -723,7 +1081,9 @@ export default function PlanManager() {
                                 required
                                 aria-label={`Checklist Item ${itemIdx + 1} under Objective ${objIdx + 1}`}
                                 value={item}
-                                onChange={(e) => handleChecklistItemChange(objIdx, itemIdx, e.target.value)}
+                                onChange={(e) =>
+                                  handleChecklistItemChange(objIdx, itemIdx, e.target.value)
+                                }
                                 placeholder="Enter actionable detail summary sentence…"
                                 style={{
                                   flex: 1,
@@ -743,7 +1103,10 @@ export default function PlanManager() {
                                 onClick={() => handleRemoveChecklistItem(objIdx, itemIdx)}
                                 title="Remove Bullet Point"
                               >
-                                <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                                <span
+                                  className="material-symbols-outlined"
+                                  style={{ fontSize: 13 }}
+                                >
                                   close
                                 </span>
                               </button>
@@ -768,13 +1131,21 @@ export default function PlanManager() {
                   gap: 10,
                 }}
               >
-                <button type="button" className="btn btn-secondary btn-sm" disabled={isSaving} onClick={() => setShowModal(false)}>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  disabled={isSaving}
+                  onClick={() => setShowModal(false)}
+                >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary btn-sm" disabled={isSaving}>
                   {isSaving ? (
                     <>
-                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" style={{ borderTopColor: 'transparent' }} />
+                      <div
+                        className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0"
+                        style={{ borderTopColor: 'transparent' }}
+                      />
                       Saving changes…
                     </>
                   ) : (

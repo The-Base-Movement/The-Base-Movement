@@ -120,7 +120,7 @@ export function AppointFieldAgentModal({
           <label
             style={{
               fontFamily: "'Public Sans'",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 11,
               letterSpacing: '.05em',
               textTransform: 'uppercase',
@@ -330,7 +330,7 @@ export function AppointFieldAgentModal({
             htmlFor="ggc-modal-constituency"
             style={{
               fontFamily: "'Public Sans'",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 11,
               letterSpacing: '.05em',
               textTransform: 'uppercase',

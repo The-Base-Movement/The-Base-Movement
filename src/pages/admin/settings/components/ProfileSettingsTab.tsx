@@ -27,7 +27,7 @@ const inputSt: React.CSSProperties = {
   background: 'hsl(var(--container-low))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12,
   borderRadius: 4,
   color: 'hsl(var(--on-surface))',
@@ -36,7 +36,7 @@ const inputSt: React.CSSProperties = {
 
 const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -69,7 +69,13 @@ export function ProfileSettingsTab({
     <div className="panel">
       <div className="ph" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
         <span>Profile</span>
-        <span style={{ fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          style={{
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+          }}
+        >
           Manage your public and internal administrative identity.
         </span>
       </div>
@@ -124,7 +130,7 @@ export function ProfileSettingsTab({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 14,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -172,7 +178,7 @@ export function ProfileSettingsTab({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
@@ -183,7 +189,7 @@ export function ProfileSettingsTab({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 margin: '3px 0 0',

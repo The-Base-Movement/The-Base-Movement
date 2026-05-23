@@ -13,6 +13,7 @@ import type {
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular page-specific subcomponents (chunks)
 import { WarRoomMap } from './warroom/WarRoomMap'
@@ -312,11 +313,7 @@ export default function WarRoomCommand() {
               </span>
             </div>
             <div style={{ marginTop: 10, marginBottom: 4 }}>
-              <div className="bl">
-                <div />
-                <div />
-                <div />
-              </div>
+              <BrandLine />
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>

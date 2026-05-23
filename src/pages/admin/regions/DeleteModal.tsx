@@ -67,7 +67,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
                 color: '#fff',
                 margin: 0,
@@ -102,7 +102,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
             <p
               style={{
                 fontSize: 10,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface-muted))',
                 margin: '0 0 3px',
               }}
@@ -112,7 +112,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
             <p
               style={{
                 fontSize: 14,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",

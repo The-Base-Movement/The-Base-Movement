@@ -84,7 +84,7 @@ export function MediaLibrary({
             htmlFor="select-2bbe02"
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               margin: 0,
@@ -99,7 +99,7 @@ export function MediaLibrary({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 9,
               color: 'hsl(var(--on-surface-muted))',
               background: 'hsl(var(--border))',
@@ -187,7 +187,7 @@ export function MediaLibrary({
               background: 'hsl(var(--background))',
               outline: 'none',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface))',
               boxSizing: 'border-box',
@@ -327,7 +327,7 @@ export function MediaLibrary({
                   gap: 3,
                   fontSize: 9,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   width: '80%',
                   justifyContent: 'center',
                 }}
@@ -353,7 +353,7 @@ export function MediaLibrary({
                   gap: 3,
                   fontSize: 9,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   width: '80%',
                   justifyContent: 'center',
                 }}
@@ -385,7 +385,7 @@ export function MediaLibrary({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
               }}

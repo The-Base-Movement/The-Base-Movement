@@ -63,7 +63,7 @@ export function TrashContent({
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
             color: 'hsl(var(--on-surface-muted))',
             margin: 0,
@@ -100,7 +100,7 @@ export function TrashContent({
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 18,
               color: 'hsl(var(--on-surface))',
               margin: '0 0 6px',
@@ -153,7 +153,7 @@ export function TrashContent({
           htmlFor="select-all-trash"
           style={{
             fontSize: 12,
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             color: 'hsl(var(--on-surface-muted))',
             cursor: 'pointer',
             fontFamily: "'Public Sans', sans-serif",

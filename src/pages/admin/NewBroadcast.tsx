@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
 import type { Broadcast, Region } from '@/services/adminService'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular components
 import { NewBroadcastForm } from './newbroadcast/NewBroadcastForm'
@@ -109,11 +110,7 @@ export default function NewBroadcast() {
             </span>
             New broadcast
           </h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
         </div>
         <div className="actions">
           <Link to="/admin/broadcasts">

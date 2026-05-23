@@ -4,6 +4,7 @@ import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
 
 // Subcomponents
+import { BrandLine } from '@/components/ui/BrandLine'
 import { DonationsTable } from './donationverification/DonationsTable'
 import { DonationDetailSidebar } from './donationverification/DonationDetailSidebar'
 import { ReceiptViewerModal } from './donationverification/ReceiptViewerModal'
@@ -28,7 +29,7 @@ const fieldStyle: React.CSSProperties = {
   borderRadius: 4,
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12.5,
   outline: 'none',
   background: '#fff',
@@ -158,18 +159,14 @@ export default function FinancialAudit() {
         <div>
           <div className="crumbs">Money · Donations · Verification queue</div>
           <h2 style={{ margin: '4px 0 0' }}>Donations · verification queue</h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
           <p
             style={{
               color: 'hsl(var(--on-surface-muted))',
               fontSize: 12.5,
               marginTop: 2,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             Match MoMo transactions, confirm card receipts, and clear pending donations against the
@@ -245,7 +242,7 @@ export default function FinancialAudit() {
               <p
                 style={{
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -264,7 +261,7 @@ export default function FinancialAudit() {
             <p
               style={{
                 fontSize: 22,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
@@ -339,7 +336,7 @@ export default function FinancialAudit() {
                 border: 'none',
                 borderRight: '1px solid hsl(var(--border))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 11,
                 cursor: 'pointer',
               }}

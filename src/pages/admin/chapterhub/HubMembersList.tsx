@@ -81,7 +81,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                     padding: '11px 18px',
                     textAlign: 'left',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 9,
                     textTransform: 'uppercase',
                     color: 'hsl(var(--on-surface-muted))',
@@ -127,7 +127,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 11,
                           flexShrink: 0,
                           overflow: 'hidden',
@@ -152,7 +152,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                           style={{
                             margin: 0,
                             fontSize: 13,
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface))',
                             fontFamily: "'Public Sans', sans-serif",
                           }}
@@ -176,7 +176,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                     style={{
                       padding: '12px 18px',
                       fontSize: 11,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontFamily: 'monospace',
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -188,7 +188,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                       style={{
                         margin: 0,
                         fontSize: 12,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
                       }}

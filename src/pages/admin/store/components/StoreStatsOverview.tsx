@@ -89,7 +89,7 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
                     justifyContent: 'space-between',
                     marginBottom: 6,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                   }}
                 >

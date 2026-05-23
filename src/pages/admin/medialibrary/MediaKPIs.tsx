@@ -52,7 +52,7 @@ export function MediaKPIs({ filesCount, activeFolder }: MediaKPIsProps) {
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 10,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -65,7 +65,7 @@ export function MediaKPIs({ filesCount, activeFolder }: MediaKPIsProps) {
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 'var(--kpi-num-size)',
               color: 'hsl(var(--on-surface))',
               margin: '0 0 4px',
@@ -81,7 +81,7 @@ export function MediaKPIs({ filesCount, activeFolder }: MediaKPIsProps) {
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               margin: 0,

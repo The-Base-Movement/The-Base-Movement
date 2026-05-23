@@ -61,20 +61,59 @@ export function PollsKPIs({ stats }: PollsKPIsProps) {
           style={{ padding: '14px 18px 14px 22px', position: 'relative', overflow: 'hidden' }}
         >
           {/* Left color accent bar */}
-          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: 3,
+              background: kpi.bar,
+            }}
+          />
 
           {/* Label */}
-          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 6px' }}>
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontSize: 10,
+              color: 'hsl(var(--on-surface-muted))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.07em',
+              margin: '0 0 6px',
+            }}
+          >
             {kpi.label}
           </p>
 
           {/* Main value */}
-          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 'var(--kpi-num-size)', color: 'hsl(var(--on-surface))', margin: '0 0 4px', lineHeight: 1.1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontSize: 'var(--kpi-num-size)',
+              color: 'hsl(var(--on-surface))',
+              margin: '0 0 4px',
+              lineHeight: 1.1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {kpi.value}
           </p>
 
           {/* Sub-label */}
-          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+              margin: 0,
+            }}
+          >
             {kpi.sub}
           </p>
         </div>

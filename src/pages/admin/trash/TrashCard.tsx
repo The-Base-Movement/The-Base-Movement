@@ -105,7 +105,7 @@ export function TrashCard({
                 background: 'hsl(var(--on-surface))',
                 color: '#fff',
                 fontSize: 9,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 padding: '2px 7px',
               }}
             >
@@ -150,7 +150,7 @@ export function TrashCard({
                 <h4
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 14,
                     color: 'hsl(var(--on-surface))',
                     margin: 0,
@@ -179,7 +179,7 @@ export function TrashCard({
                 <div
                   style={{
                     fontSize: 20,
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: isExpiringSoon ? '#fff' : 'hsl(var(--on-surface))',
                     lineHeight: 1,
                   }}
@@ -189,7 +189,7 @@ export function TrashCard({
                 <div
                   style={{
                     fontSize: 8,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: isExpiringSoon
                       ? 'rgba(255,255,255,0.8)'
                       : 'hsl(var(--on-surface-muted))',
@@ -282,7 +282,7 @@ export function TrashCard({
                     background: 'hsl(var(--on-surface))',
                     color: '#fff',
                     fontSize: 9,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     padding: '2px 7px',
                   }}
                 >
@@ -304,7 +304,7 @@ export function TrashCard({
               <h4
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 14,
                   color: 'hsl(var(--on-surface))',
                   margin: 0,
@@ -331,7 +331,7 @@ export function TrashCard({
             <div
               style={{
                 fontSize: 18,
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: isExpiringSoon ? '#fff' : 'hsl(var(--on-surface))',
                 lineHeight: 1,
               }}
@@ -341,7 +341,7 @@ export function TrashCard({
             <div
               style={{
                 fontSize: 8,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: isExpiringSoon ? 'rgba(255,255,255,0.8)' : 'hsl(var(--on-surface-muted))',
                 marginTop: 2,
               }}

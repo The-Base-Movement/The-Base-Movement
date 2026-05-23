@@ -22,7 +22,7 @@ export function BroadcastPresets() {
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -32,7 +32,7 @@ export function BroadcastPresets() {
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 marginTop: 2,
@@ -77,7 +77,7 @@ export function BroadcastPresets() {
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 9,
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
@@ -90,7 +90,7 @@ export function BroadcastPresets() {
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 12,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -157,7 +157,7 @@ export function BroadcastPresets() {
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 18,
               color: '#fff',
               marginBottom: 10,

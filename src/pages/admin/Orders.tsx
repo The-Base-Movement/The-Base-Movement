@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { NEXT_STATUS } from './orders/utils'
@@ -144,11 +145,19 @@ export default function AdminOrders() {
             </span>
             Orders Manifest
           </h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
+          <p
+            style={{
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 12.5,
+              marginTop: 6,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            Manage official merchandise fulfillment, supply chain logistics, and movement resource
+            distribution.
+          </p>
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm" onClick={handleExport}>
@@ -178,6 +187,16 @@ export default function AdminOrders() {
           <div className="ph">
             <div>
               <h3>Fulfillment feed</h3>
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginTop: 4,
+                }}
+              >
+                Process and track merchandise orders and supply requests.
+              </p>
               <div className="meta">Real-time merchandise dispatch telemetry</div>
             </div>
             <OrdersFilters

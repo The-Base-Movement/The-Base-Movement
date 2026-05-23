@@ -1,3 +1,5 @@
+import { BrandLine } from '@/components/ui/BrandLine'
+
 interface AdminsHeaderProps {
   onProvision: () => void
 }
@@ -14,11 +16,7 @@ export function AdminsHeader({ onProvision }: AdminsHeaderProps) {
           Administrators
         </h2>
         <div style={{ marginTop: 10, marginBottom: 4 }}>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
         </div>
         <p
           style={{

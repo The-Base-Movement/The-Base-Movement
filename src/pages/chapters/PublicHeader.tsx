@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface PublicHeaderProps {
   totalChapters: number
@@ -13,11 +14,7 @@ export function PublicHeader({ totalChapters }: PublicHeaderProps) {
           <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6">
             Movement Chapters
           </h1>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
           <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
             Connect with your local community through our global network of {totalChapters}+
             regional hubs.

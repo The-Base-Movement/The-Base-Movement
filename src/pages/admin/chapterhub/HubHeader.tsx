@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface HubHeaderProps {
   chapter: Chapter
@@ -43,11 +44,12 @@ export function HubHeader({
             </span>
             {chapter.name}
           </h2>
+          <BrandLine />
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: 13,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 6,
               marginBottom: 0,
@@ -96,7 +98,7 @@ export function HubHeader({
             <p
               style={{
                 fontSize: 10,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 color: 'hsl(var(--on-surface-muted))',
@@ -108,7 +110,7 @@ export function HubHeader({
             <p
               style={{
                 fontSize: 26,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
@@ -139,7 +141,7 @@ export function HubHeader({
               border: 'none',
               cursor: 'pointer',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 11,
               textTransform: 'uppercase',
               letterSpacing: '0.06em',

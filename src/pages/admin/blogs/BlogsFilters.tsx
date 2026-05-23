@@ -37,7 +37,7 @@ export function BlogsFilters({
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
             display: 'flex',

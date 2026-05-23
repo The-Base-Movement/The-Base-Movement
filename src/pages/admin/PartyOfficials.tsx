@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import type { PartyOfficial, PartyTier } from './partyofficials/utils'
@@ -188,12 +189,34 @@ export default function PartyOfficials() {
       <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
           <div className="crumbs">Personnel · Leadership</div>
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+          <h2
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginTop: 6,
+              marginBottom: 0,
+            }}
+          >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
               badge
             </span>
             Party Officials
           </h2>
+          <BrandLine />
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontSize: 13,
+              color: 'hsl(var(--on-surface-muted))',
+              marginTop: 10,
+              marginBottom: 0,
+              maxWidth: 600,
+            }}
+          >
+            Manage movement leadership, regional representatives, and institutional authority
+            figures across all operational tiers.
+          </p>
         </div>
         <div className="actions" style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn-outline" onClick={() => setIsTiersModalOpen(true)}>

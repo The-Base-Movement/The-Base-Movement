@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface HeroSectionProps {
   heroBgUrl: string
@@ -59,11 +60,7 @@ export function HeroSection({
             Jobs for the youth!
           </h1>
           <div className="flex justify-center md:justify-start">
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
+            <BrandLine />
           </div>
           <p className="text-white/90 text-sm md:text-base font-body-md max-w-xl mt-4 mb-6 leading-relaxed">
             We are a grassroots movement committed to youth jobs, accountable leadership, and

@@ -5,6 +5,7 @@ import type { RegionalStat, Country, Region } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { ChaptersGrid } from './chapters/ChaptersGrid'
 import { PollManagementModal } from './chapters/PollManagementModal'
 import { PollCreateEditModal } from './chapters/PollCreateEditModal'
@@ -130,7 +131,7 @@ export default function ChaptersManagement() {
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface-muted))',
             }}
@@ -161,6 +162,18 @@ export default function ChaptersManagement() {
             </span>
             Chapters
           </h2>
+          <BrandLine />
+          <p
+            style={{
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 12.5,
+              marginTop: 6,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            Oversee and manage regional chapters and local mobilization units.
+          </p>
         </div>
         <div className="actions">
           <button
@@ -184,24 +197,32 @@ export default function ChaptersManagement() {
       </div>
 
       <div className="kpis">
-        <TacticalKPI label="Total chapters" value={chapters.length} description="Registered hubs" />
+        <TacticalKPI
+          label="Total chapters"
+          value={chapters.length}
+          description="Registered hubs"
+          variant="red"
+        />
         <TacticalKPI
           label="Total members"
           value={totalMembers}
           description="Across all chapters"
           trend={{ direction: 'up', value: '+12%' }}
+          variant="gold"
         />
         <TacticalKPI
           label="Active hubs"
           value={activeCount}
           description="Operational hubs"
           trend={{ direction: 'up', value: 'Live' }}
+          variant="black"
         />
         <TacticalKPI
           label="Pending review"
           value={pendingCount}
           description="Awaiting activation"
           trend={{ direction: 'neutral', value: 'Review' }}
+          variant="green"
         />
       </div>
 

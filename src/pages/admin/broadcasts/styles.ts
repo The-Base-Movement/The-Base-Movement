@@ -55,7 +55,7 @@ export const targetLabel = (type: string, value?: string) =>
 export const pillBase: React.CSSProperties = {
   padding: '2px 10px',
   fontSize: 9,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
   borderRadius: 4,

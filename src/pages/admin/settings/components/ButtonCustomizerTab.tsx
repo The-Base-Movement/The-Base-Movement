@@ -15,7 +15,7 @@ const inputSt: React.CSSProperties = {
   background: 'hsl(var(--container-low))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12,
   borderRadius: 4,
   color: 'hsl(var(--on-surface))',
@@ -24,7 +24,7 @@ const inputSt: React.CSSProperties = {
 
 const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -63,7 +63,7 @@ const ToggleRow = ({
       <p
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 800,
+          fontWeight: 'var(--font-weight-semibold, 600)',
           fontSize: 12,
           color: 'hsl(var(--on-surface))',
           margin: 0,
@@ -74,7 +74,7 @@ const ToggleRow = ({
       <p
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 700,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 11,
           color: 'hsl(var(--on-surface-muted))',
           margin: '2px 0 0',
@@ -158,7 +158,13 @@ export function ButtonCustomizerTab({
     <div className="panel">
       <div className="ph" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
         <span>Button Architecture</span>
-        <span style={{ fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          style={{
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+          }}
+        >
           Configure the movement's global interactive element parameters.
         </span>
       </div>
@@ -178,7 +184,7 @@ export function ButtonCustomizerTab({
               <span
                 style={{
                   fontFamily: 'monospace',
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--primary))',
                 }}
@@ -320,7 +326,7 @@ export function ButtonCustomizerTab({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 lineHeight: 1.6,
@@ -406,7 +412,7 @@ export function ButtonCustomizerTab({
               <p
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface))',
                   display: 'flex',
@@ -464,7 +470,7 @@ export function ButtonCustomizerTab({
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                       marginBottom: 6,

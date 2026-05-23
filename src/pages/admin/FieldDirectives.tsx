@@ -4,6 +4,7 @@ import { adminService } from '@/services/adminService'
 import type { FieldDirective, FieldReport } from '@/types/admin'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Subcomponents
 import { ActiveDirectivesList } from './fielddirectives/ActiveDirectivesList'
@@ -116,7 +117,7 @@ export default function FieldDirectives() {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
             textTransform: 'uppercase',
@@ -137,7 +138,7 @@ export default function FieldDirectives() {
           <h1
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 24,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -151,12 +152,13 @@ export default function FieldDirectives() {
             </span>
             Field directives
           </h1>
+          <BrandLine />
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontSize: 13,
+              fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
-              marginTop: 4,
+              marginTop: 6,
             }}
           >
             Platform-wide deployment of tactical objectives and field verification protocols.
@@ -189,24 +191,28 @@ export default function FieldDirectives() {
           value={activeDirectives.length}
           description="Active directives"
           trend={{ direction: 'neutral', value: 'Vault' }}
+          variant="red"
         />
         <TacticalKPI
           label="Awaiting Review"
           value={pendingReports.length}
           description="Pending reports"
           trend={{ direction: pendingReports.length > 0 ? 'down' : 'neutral', value: 'Queue' }}
+          variant="gold"
         />
         <TacticalKPI
           label="Verified Actions"
           value={verifiedReports.length}
           description="Successful missions"
           trend={{ direction: 'up', value: 'Elite' }}
+          variant="black"
         />
         <TacticalKPI
           label="Tactical Influence"
           value={totalPointsEarned.toLocaleString()}
           description="Points distributed"
           trend={{ direction: 'up', value: 'Pulse' }}
+          variant="green"
         />
       </div>
 

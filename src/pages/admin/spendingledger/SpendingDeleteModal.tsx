@@ -67,7 +67,7 @@ export function SpendingDeleteModal({
           </div>
           <h3
             style={{
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 15,
               color: 'hsl(var(--on-surface))',
               fontFamily: "'Public Sans', sans-serif",

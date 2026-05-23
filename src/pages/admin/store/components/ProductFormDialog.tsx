@@ -22,7 +22,7 @@ const inputSt: React.CSSProperties = {
   background: 'hsl(var(--container-low))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12,
   borderRadius: 4,
   color: 'hsl(var(--on-surface))',
@@ -31,7 +31,7 @@ const inputSt: React.CSSProperties = {
 
 const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -99,14 +99,14 @@ export function ProductFormDialog({
       >
         <div className="ph">
           <div>
-            <h3 style={{ fontSize: 18, fontWeight: 800 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 'var(--font-weight-semibold, 600)' }}>
               {selectedProduct?.id ? 'Edit inventory item' : 'New movement gear'}
             </h3>
             <p
               style={{
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 margin: '4px 0 0',
               }}
             >
@@ -311,7 +311,7 @@ export function ProductFormDialog({
                       <span
                         style={{
                           fontSize: 8,
-                          fontWeight: 900,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           color: 'hsl(var(--on-surface-muted))',
                           marginTop: 4,
                         }}
@@ -345,7 +345,7 @@ export function ProductFormDialog({
                       style={{
                         padding: '3px 10px',
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontFamily: "'Public Sans', sans-serif",
                         borderRadius: 4,
                         border: `1px solid ${active ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
@@ -388,7 +388,7 @@ export function ProductFormDialog({
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 4,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontFamily: "'Public Sans', sans-serif",
                       }}
                     >
@@ -458,7 +458,7 @@ export function ProductFormDialog({
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 4,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontFamily: "'Public Sans', sans-serif",
                       }}
                     >

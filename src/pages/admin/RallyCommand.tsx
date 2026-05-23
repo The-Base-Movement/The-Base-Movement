@@ -74,7 +74,9 @@ export default function RallyCommand() {
   }, [])
 
   // Runs once on mount — loads all field actions
-  useEffect(() => { fetchActions() }, [fetchActions])
+  useEffect(() => {
+    fetchActions()
+  }, [fetchActions])
 
   // Re-fetches attendance whenever the selected action changes
   useEffect(() => {
@@ -109,9 +111,32 @@ export default function RallyCommand() {
 
   if (loading) {
     return (
-      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
-        <span className="material-symbols-outlined animate-spin" style={{ fontSize: 48, color: 'hsl(var(--primary))' }}>sync</span>
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 16 }}>
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '80px 0',
+        }}
+      >
+        <span
+          className="material-symbols-outlined animate-spin"
+          style={{ fontSize: 48, color: 'hsl(var(--primary))' }}
+        >
+          sync
+        </span>
+        <p
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-semibold, 600)',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+            marginTop: 16,
+          }}
+        >
           Initializing mobilization command...
         </p>
       </div>
@@ -130,7 +155,11 @@ export default function RallyCommand() {
 
       <div className="sidebar-main" style={{ alignItems: 'start' }}>
         {/* Left sidebar: scrollable list of all field actions, highlights selected */}
-        <ActionList actions={actions} selectedAction={selectedAction} onSelect={setSelectedAction} />
+        <ActionList
+          actions={actions}
+          selectedAction={selectedAction}
+          onSelect={setSelectedAction}
+        />
 
         <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
           {selectedAction ? (
@@ -151,12 +180,45 @@ export default function RallyCommand() {
             </>
           ) : (
             /* Empty state — shown when no field action has been selected yet */
-            <div className="panel" style={{ height: 600, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, borderStyle: 'dashed' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 64, color: 'hsl(var(--on-surface-muted))', opacity: 0.1 }}>priority_high</span>
+            <div
+              className="panel"
+              style={{
+                height: 600,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 24,
+                borderStyle: 'dashed',
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 64, color: 'hsl(var(--on-surface-muted))', opacity: 0.1 }}
+              >
+                priority_high
+              </span>
               <div style={{ textAlign: 'center', maxWidth: 320 }}>
-                <p style={{ fontSize: 14, fontWeight: 900, margin: 0 }}>Deployment Pending</p>
-                <p style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', marginTop: 8, lineHeight: 1.6 }}>
-                  Select a field action from the operational log to view tactical metrics and member manifests.
+                <p
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    margin: 0,
+                  }}
+                >
+                  Deployment Pending
+                </p>
+                <p
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    marginTop: 8,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Select a field action from the operational log to view tactical metrics and member
+                  manifests.
                 </p>
               </div>
             </div>

@@ -14,6 +14,6 @@
 
 export function statusPill(status: string) {
   if (status === 'Active') return <span className="pill pill-ok">{status}</span>
-  if (status === 'Draft')  return <span className="pill pill-warn">{status}</span>
+  if (status === 'Draft') return <span className="pill pill-warn">{status}</span>
   return <span className="pill pill-mute">{status}</span>
 }

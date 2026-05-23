@@ -5,6 +5,7 @@ import { adminService, type Member } from '@/services/adminService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
+import { BrandLine } from '@/components/ui/BrandLine'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 import { TrashContent } from './trash/TrashContent'
 
@@ -180,16 +181,12 @@ export default function TrashPage() {
             Trash
           </h2>
           <div style={{ marginTop: 12 }}>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
+            <BrandLine />
           </div>
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 8,
@@ -264,7 +261,7 @@ export default function TrashPage() {
                 <p
                   style={{
                     fontSize: 10,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
@@ -283,7 +280,7 @@ export default function TrashPage() {
               <p
                 style={{
                   fontSize: 20,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface))',
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
@@ -321,7 +318,7 @@ export default function TrashPage() {
               <span
                 style={{
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   padding: '1px 6px',
                   borderRadius: 10,
                   background:
@@ -371,7 +368,7 @@ export default function TrashPage() {
               borderRadius: 4,
               outline: 'none',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               boxSizing: 'border-box',
               color: 'hsl(var(--on-surface))',
@@ -406,7 +403,7 @@ export default function TrashPage() {
             <span
               style={{
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -442,7 +439,7 @@ export default function TrashPage() {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 10,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -478,7 +475,7 @@ export default function TrashPage() {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 10,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -520,7 +517,7 @@ export default function TrashPage() {
                     borderRadius: 4,
                     outline: 'none',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     boxSizing: 'border-box',
                     color: 'hsl(var(--on-surface))',

@@ -535,7 +535,11 @@ export function PriorityModal({
                               >
                                 <span
                                   className="material-symbols-outlined"
-                                  style={{ color: '#fff', fontSize: 20, fontWeight: 900 }}
+                                  style={{
+                                    color: '#fff',
+                                    fontSize: 20,
+                                    fontWeight: 'var(--font-weight-semibold, 600)',
+                                  }}
                                 >
                                   check_circle
                                 </span>

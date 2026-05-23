@@ -34,7 +34,13 @@ export function RolesManagementTab() {
     <div className="panel">
       <div className="ph" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
         <span>Administrative Roles</span>
-        <span style={{ fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          style={{
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+          }}
+        >
           Summary of active permission tiers across the movement.
         </span>
       </div>
@@ -75,7 +81,7 @@ export function RolesManagementTab() {
               <p
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 13,
                   color: 'hsl(var(--on-surface))',
                   margin: 0,
@@ -88,7 +94,7 @@ export function RolesManagementTab() {
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 margin: '0 0 8px',
@@ -105,7 +111,7 @@ export function RolesManagementTab() {
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 20,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -126,7 +132,7 @@ export function RolesManagementTab() {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
             fontStyle: 'italic',

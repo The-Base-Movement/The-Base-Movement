@@ -34,10 +34,14 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
     borderBottom: '1px solid hsl(var(--border))',
     marginBottom: 0,
   }
-  const metaLabelSt: React.CSSProperties = { ...metaSt, fontSize: 11, fontWeight: 700 }
+  const metaLabelSt: React.CSSProperties = {
+    ...metaSt,
+    fontSize: 11,
+    fontWeight: 'var(--font-weight-medium, 500)',
+  }
   const metaValueSt: React.CSSProperties = {
     fontFamily: "'Public Sans', sans-serif",
-    fontWeight: 700,
+    fontWeight: 'var(--font-weight-medium, 500)',
     fontSize: 12,
     color: 'hsl(var(--on-surface))',
   }
@@ -57,7 +61,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                 cursor: 'pointer',
                 padding: 0,
                 fontFamily: 'inherit',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--primary))',
               }}
@@ -126,7 +130,10 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                 flexWrap: 'wrap',
               }}
             >
-              <span className="pill pill-ok" style={{ fontWeight: 700, fontSize: 11 }}>
+              <span
+                className="pill pill-ok"
+                style={{ fontWeight: 'var(--font-weight-medium, 500)', fontSize: 11 }}
+              >
                 {viewPost.category}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 5, ...metaSt }}>
@@ -151,7 +158,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
             <h1
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 30,
                 color: 'hsl(var(--on-surface))',
                 letterSpacing: '-0.02em',
@@ -167,7 +174,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 15,
                   color: 'hsl(var(--on-surface))',
                   lineHeight: 1.75,
@@ -220,7 +227,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                     <span
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 15,
                         color: '#fff',
                       }}
@@ -233,7 +240,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                     }}
@@ -247,7 +254,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
 
             {/* Body HTML from TinyMCE */}
             <div
-              className="prose prose-on-surface max-w-none prose-p:text-on-surface/70 prose-p:leading-relaxed prose-p:text-[16px] prose-headings:text-on-surface prose-headings:font-black prose-headings:tracking-tight"
+              className="prose prose-on-surface max-w-none prose-p:text-on-surface/70 prose-p:leading-relaxed prose-p:text-[16px] prose-headings:text-on-surface prose-headings:font-bold prose-headings:tracking-tight"
               dangerouslySetInnerHTML={{ __html: viewPost.content }}
             />
 
@@ -283,7 +290,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 13.5,
                   color: 'hsl(var(--on-surface))',
                   display: 'flex',
@@ -323,7 +330,10 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
               </div>
               {viewPost.isFeatured && (
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <span className="pill pill-ok" style={{ fontSize: 10, fontWeight: 800 }}>
+                  <span
+                    className="pill pill-ok"
+                    style={{ fontSize: 10, fontWeight: 'var(--font-weight-semibold, 600)' }}
+                  >
                     <span
                       className="material-symbols-outlined"
                       style={{ fontSize: 12, marginRight: 3 }}
@@ -344,7 +354,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 13.5,
                     color: 'hsl(var(--on-surface))',
                     display: 'flex',
@@ -370,7 +380,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                       style={{
                         ...metaSt,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         display: 'block',
                         marginBottom: 4,
                       }}
@@ -380,7 +390,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                         lineHeight: 1.5,
@@ -396,7 +406,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                       style={{
                         ...metaSt,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         display: 'block',
                         marginBottom: 4,
                       }}
@@ -406,7 +416,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11.5,
                         color: 'hsl(var(--on-surface-muted))',
                         lineHeight: 1.6,

@@ -1,4 +1,5 @@
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface SentimentHeaderProps {
   nationalScore: number
@@ -15,11 +16,7 @@ export function SentimentHeader({ nationalScore }: SentimentHeaderProps) {
           Sentiment intelligence
         </h2>
         <div style={{ marginTop: 12 }}>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
         </div>
         <p
           style={{

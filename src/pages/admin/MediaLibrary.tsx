@@ -3,6 +3,7 @@ import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationMo
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { MediaKPIs } from './medialibrary/MediaKPIs'
@@ -173,7 +174,7 @@ export default function MediaLibrary() {
           <h1
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 24,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -187,11 +188,13 @@ export default function MediaLibrary() {
             </span>
             Media library
           </h1>
+          <BrandLine />
           <p
             style={{
-              fontSize: 13,
+              fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
+              marginTop: 6,
             }}
           >
             Central repository for movement assets and deployment media.
@@ -265,7 +268,7 @@ export default function MediaLibrary() {
             borderRadius: 4,
             padding: '0 12px',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
             background: '#fff',
             color: 'hsl(var(--on-surface))',
@@ -322,7 +325,7 @@ export default function MediaLibrary() {
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               background: 'hsl(var(--container-low))',
               color: 'hsl(var(--on-surface))',
@@ -349,7 +352,7 @@ export default function MediaLibrary() {
                   background: active ? 'hsl(var(--primary))' : 'transparent',
                   color: active ? '#fff' : 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11.5,
                   cursor: 'pointer',
                   transition: 'all 0.15s',
@@ -418,7 +421,7 @@ export default function MediaLibrary() {
               <h3
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 16,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -560,7 +563,7 @@ export default function MediaLibrary() {
                     <p
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
                         color: 'hsl(var(--on-surface))',
                         overflow: 'hidden',

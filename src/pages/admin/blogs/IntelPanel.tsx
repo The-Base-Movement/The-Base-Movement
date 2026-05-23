@@ -73,7 +73,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -96,7 +96,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -106,7 +106,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 20,
                 color: 'hsl(var(--primary))',
               }}
@@ -149,7 +149,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 10,
                   color: chk.ok ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))',
                   opacity: chk.ok ? 1 : 0.5,
@@ -181,7 +181,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -198,7 +198,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
                 border: 'none',
                 outline: 'none',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface))',
                 flex: 1,
@@ -253,7 +253,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               outline: 'none',
               boxSizing: 'border-box',
@@ -288,7 +288,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               lineHeight: 1.6,
               outline: 'none',

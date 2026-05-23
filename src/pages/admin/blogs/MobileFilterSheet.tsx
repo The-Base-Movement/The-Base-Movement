@@ -32,7 +32,7 @@ interface MobileFilterSheetProps {
 /** Uppercase section label style used inside the sheet */
 const sheetLabelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 900,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 9,
   textTransform: 'uppercase',
   letterSpacing: '0.08em',
@@ -87,7 +87,7 @@ export function MobileFilterSheet({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 14,
               color: 'hsl(var(--on-surface))',
             }}

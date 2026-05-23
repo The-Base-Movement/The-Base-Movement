@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { PAGE_SIZE } from './memberverification/utils'
@@ -139,18 +140,14 @@ export default function MemberVerification() {
         <div>
           <div className="crumbs">Members · Verification</div>
           <h2 style={{ margin: '4px 0 0' }}>Member verification</h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
           <p
             style={{
               color: 'hsl(var(--on-surface-muted))',
               fontSize: 12.5,
               marginTop: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             Review and approve new member registrations for movement security.
@@ -180,7 +177,7 @@ export default function MemberVerification() {
                   style={{
                     fontSize: 9.5,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: '#a87d10',
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
@@ -193,7 +190,7 @@ export default function MemberVerification() {
                   style={{
                     fontSize: 13,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: 'hsl(var(--on-surface))',
                     lineHeight: 1.2,
                   }}
@@ -217,28 +214,28 @@ export default function MemberVerification() {
         <TacticalKPI
           label="Pending review"
           value={loading ? '—' : pendingCount}
-          variant="gold"
+          variant="red"
           description="Awaiting identity verification"
           trend={{ direction: 'neutral', value: 'Queue' }}
         />
         <TacticalKPI
           label="Flagged"
           value={loading ? '—' : flaggedCount}
-          variant="red"
+          variant="gold"
           description="Under security review"
           trend={flaggedCount > 0 ? { direction: 'down', value: 'Alert' } : undefined}
         />
         <TacticalKPI
           label="Approved"
           value={loading ? '—' : approvedCount}
-          variant="green"
+          variant="black"
           description="Verified movement members"
           trend={{ direction: 'up', value: 'Live' }}
         />
         <TacticalKPI
           label="Rejected"
           value={loading ? '—' : rejectedCount}
-          variant="black"
+          variant="green"
           description="Decommissioned applications"
         />
       </div>
@@ -301,7 +298,7 @@ export default function MemberVerification() {
                 margin: 0,
                 fontSize: 12,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
@@ -398,7 +395,7 @@ export default function MemberVerification() {
                   margin: 0,
                   fontSize: 11.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'rgba(255,255,255,.5)',
                 }}
               >

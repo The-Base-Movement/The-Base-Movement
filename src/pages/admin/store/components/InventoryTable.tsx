@@ -11,20 +11,35 @@ interface InventoryTableProps {
   handleSort: (key: keyof InventoryItem) => void
   sortConfig: { key: keyof InventoryItem; direction: 'asc' | 'desc' } | null
   handleOpenModal: (product?: InventoryItem) => void
-  setDeleteConfirm: (confirm: { id: string, name: string } | null) => void
+  setDeleteConfirm: (confirm: { id: string; name: string } | null) => void
   isDeleting: string | null
 }
 
 function statusPill(status: string) {
-  if (status === 'Critical')  return 'pill pill-err'
+  if (status === 'Critical') return 'pill pill-err'
   if (status === 'Low Stock') return 'pill pill-warn'
   if (status === 'Processing') return 'pill pill-mute'
   return 'pill pill-ok'
 }
 
-function SortIcon({ col, sortConfig }: { col: keyof InventoryItem; sortConfig: InventoryTableProps['sortConfig'] }) {
-  if (sortConfig?.key !== col) return <span className="material-symbols-outlined" style={{ fontSize: 13, opacity: 0.4 }}>unfold_more</span>
-  return <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{sortConfig.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>
+function SortIcon({
+  col,
+  sortConfig,
+}: {
+  col: keyof InventoryItem
+  sortConfig: InventoryTableProps['sortConfig']
+}) {
+  if (sortConfig?.key !== col)
+    return (
+      <span className="material-symbols-outlined" style={{ fontSize: 13, opacity: 0.4 }}>
+        unfold_more
+      </span>
+    )
+  return (
+    <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+      {sortConfig.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+    </span>
+  )
 }
 
 export function InventoryTable({
@@ -44,7 +59,7 @@ export function InventoryTable({
   const thStyle: React.CSSProperties = {
     padding: '10px 14px',
     fontSize: 9.5,
-    fontWeight: 800,
+    fontWeight: 'var(--font-weight-semibold, 600)',
     color: 'hsl(var(--on-surface-muted))',
     letterSpacing: '.06em',
     textTransform: 'uppercase',
@@ -60,14 +75,25 @@ export function InventoryTable({
       {/* Row 1: title */}
       <div className="ph">
         <h3>Inventory</h3>
-        <span className="meta">{sortedAndFilteredProducts.length} of {products.length} items</span>
+        <span className="meta">
+          {sortedAndFilteredProducts.length} of {products.length} items
+        </span>
       </div>
 
       {/* Row 2: filter controls — categories scroll + search */}
-      <div style={{ padding: '10px 14px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: 8, background: 'hsl(var(--container-low))' }}>
+      <div
+        style={{
+          padding: '10px 14px',
+          borderBottom: '1px solid hsl(var(--border))',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          background: 'hsl(var(--container-low))',
+        }}
+      >
         {/* Category pills — horizontally scrollable strip */}
         <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2 }}>
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
@@ -78,7 +104,7 @@ export function InventoryTable({
                 background: activeCategory === cat ? 'hsl(var(--primary))' : '#fff',
                 color: activeCategory === cat ? '#fff' : 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 10.5,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
@@ -91,12 +117,41 @@ export function InventoryTable({
         </div>
         {/* Search — full width */}
         <div style={{ position: 'relative' }}>
-          <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-          <input name="searchQuery" id="input-b1aa13"
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 9,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            name="searchQuery"
+            id="input-b1aa13"
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products…"
-            style={{ width: '100%', height: 34, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: '#fff', color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }}
+            style={{
+              width: '100%',
+              height: 34,
+              paddingLeft: 30,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 4,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12,
+              outline: 'none',
+              background: '#fff',
+              color: 'hsl(var(--on-surface))',
+              boxSizing: 'border-box',
+            }}
           />
         </div>
       </div>
@@ -113,7 +168,10 @@ export function InventoryTable({
                   Price <SortIcon col="price" sortConfig={sortConfig} />
                 </span>
               </th>
-              <th style={{ ...thStyle, cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('stock')}>
+              <th
+                style={{ ...thStyle, cursor: 'pointer', textAlign: 'center' }}
+                onClick={() => handleSort('stock')}
+              >
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                   In stock <SortIcon col="stock" sortConfig={sortConfig} />
                 </span>
@@ -127,34 +185,105 @@ export function InventoryTable({
             </tr>
           </thead>
           <tbody>
-            {sortedAndFilteredProducts.map(product => (
+            {sortedAndFilteredProducts.map((product) => (
               <tr
                 key={product.id}
                 style={{ borderBottom: '1px solid hsl(var(--border))' }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'hsl(var(--container-low))'}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}
+                onMouseEnter={(e) =>
+                  ((e.currentTarget as HTMLElement).style.background = 'hsl(var(--container-low))')
+                }
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = '')}
               >
                 <td style={{ padding: '12px 14px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', overflow: 'hidden', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>
-                      {product.image?.startsWith('http')
-                        ? <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
-                        : <span>{product.image}</span>
-                      }
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 4,
+                        border: '1px solid hsl(var(--border))',
+                        overflow: 'hidden',
+                        background: 'hsl(var(--container-low))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 20,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {product.image?.startsWith('http') ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          decoding="async"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span>{product.image}</span>
+                      )}
                     </div>
                     <div>
-                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--on-surface))' }}>{product.name}</div>
-                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>#ITM-{product.id.substring(0, 6)}</div>
+                      <div
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontSize: 12.5,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {product.name}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 10,
+                          color: 'hsl(var(--on-surface-muted))',
+                          marginTop: 2,
+                        }}
+                      >
+                        #ITM-{product.id.substring(0, 6)}
+                      </div>
                     </div>
                   </div>
                 </td>
-                <td style={{ padding: '12px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                <td
+                  style={{
+                    padding: '12px 14px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
                   {product.category}
                 </td>
-                <td style={{ padding: '12px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5 }}>
+                <td
+                  style={{
+                    padding: '12px 14px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 12.5,
+                  }}
+                >
                   {product.price}
                 </td>
-                <td style={{ padding: '12px 14px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: product.stock === 0 ? 'hsl(var(--destructive))' : product.stock < 50 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface))' }}>
+                <td
+                  style={{
+                    padding: '12px 14px',
+                    textAlign: 'center',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 12.5,
+                    color:
+                      product.stock === 0
+                        ? 'hsl(var(--destructive))'
+                        : product.stock < 50
+                          ? 'hsl(var(--accent))'
+                          : 'hsl(var(--on-surface))',
+                  }}
+                >
                   {product.stock.toLocaleString()}
                 </td>
                 <td style={{ padding: '12px 14px' }}>
@@ -167,7 +296,9 @@ export function InventoryTable({
                       style={{ background: 'hsl(var(--accent))', color: '#000', border: 'none' }}
                       onClick={() => handleOpenModal(product)}
                     >
-                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>edit</span>
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        edit
+                      </span>
                       Edit
                     </button>
                     <button
@@ -175,10 +306,18 @@ export function InventoryTable({
                       disabled={isDeleting === product.id}
                       onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                     >
-                      {isDeleting === product.id
-                        ? <span className="material-symbols-outlined" style={{ fontSize: 14, animation: 'spin 1s linear infinite' }}>refresh</span>
-                        : <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
-                      }
+                      {isDeleting === product.id ? (
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: 14, animation: 'spin 1s linear infinite' }}
+                        >
+                          refresh
+                        </span>
+                      ) : (
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                          delete
+                        </span>
+                      )}
                     </button>
                   </div>
                 </td>
@@ -190,36 +329,138 @@ export function InventoryTable({
 
       {/* Mobile cards */}
       <div className="mobile-only">
-        {sortedAndFilteredProducts.map(product => (
-          <div key={product.id} style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}>
+        {sortedAndFilteredProducts.map((product) => (
+          <div
+            key={product.id}
+            style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}
+          >
             {/* Row 1: image + name + status */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 48, height: 48, borderRadius: 4, border: '1px solid hsl(var(--border))', overflow: 'hidden', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
-                {product.image?.startsWith('http')
-                  ? <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
-                  : <span>{product.image}</span>
-                }
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 4,
+                  border: '1px solid hsl(var(--border))',
+                  overflow: 'hidden',
+                  background: 'hsl(var(--container-low))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 22,
+                  flexShrink: 0,
+                }}
+              >
+                {product.image?.startsWith('http') ? (
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    decoding="async"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span>{product.image}</span>
+                )}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 13.5,
+                    color: 'hsl(var(--on-surface))',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {product.name}
                 </p>
-                <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
+                <span
+                  style={{
+                    fontSize: 10.5,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
                   {product.category} · #ITM-{product.id.substring(0, 6)}
                 </span>
               </div>
-              <span className={statusPill(product.status)} style={{ flexShrink: 0 }}>{product.status}</span>
+              <span className={statusPill(product.status)} style={{ flexShrink: 0 }}>
+                {product.status}
+              </span>
             </div>
 
             {/* Row 2: price + stock */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
-              <div style={{ padding: '8px 12px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }}>
-                <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.05em', textTransform: 'uppercase', marginBottom: 3 }}>Price</div>
-                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13 }}>{product.price}</div>
+              <div
+                style={{
+                  padding: '8px 12px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 4,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 9.5,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    letterSpacing: '.05em',
+                    textTransform: 'uppercase',
+                    marginBottom: 3,
+                  }}
+                >
+                  Price
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 13,
+                  }}
+                >
+                  {product.price}
+                </div>
               </div>
-              <div style={{ padding: '8px 12px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }}>
-                <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.05em', textTransform: 'uppercase', marginBottom: 3 }}>In stock</div>
-                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: product.stock === 0 ? 'hsl(var(--destructive))' : product.stock < 50 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface))' }}>
+              <div
+                style={{
+                  padding: '8px 12px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 4,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 9.5,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    letterSpacing: '.05em',
+                    textTransform: 'uppercase',
+                    marginBottom: 3,
+                  }}
+                >
+                  In stock
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 13,
+                    color:
+                      product.stock === 0
+                        ? 'hsl(var(--destructive))'
+                        : product.stock < 50
+                          ? 'hsl(var(--accent))'
+                          : 'hsl(var(--on-surface))',
+                  }}
+                >
                   {product.stock.toLocaleString()}
                 </div>
               </div>
@@ -229,17 +470,27 @@ export function InventoryTable({
             <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
               <button
                 className="btn btn-sm"
-                style={{ flex: 1, justifyContent: 'center', background: 'hsl(var(--accent))', color: '#000', border: 'none' }}
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  background: 'hsl(var(--accent))',
+                  color: '#000',
+                  border: 'none',
+                }}
                 onClick={() => handleOpenModal(product)}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>edit</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  edit
+                </span>
                 Edit item
               </button>
               <button
                 className="btn btn-dest btn-sm"
                 onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  delete
+                </span>
               </button>
             </div>
           </div>
@@ -247,20 +498,67 @@ export function InventoryTable({
       </div>
 
       {/* Footer legend */}
-      <div style={{ padding: '10px 18px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+      <div
+        style={{
+          padding: '10px 18px',
+          borderTop: '1px solid hsl(var(--border))',
+          background: 'hsl(var(--container-low))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 8,
+        }}
+      >
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           {[
-            { label: 'Stable',    count: products.filter(p => p.status === 'Stable').length,    color: 'hsl(var(--primary))' },
-            { label: 'Low stock', count: products.filter(p => p.status === 'Low Stock').length,  color: 'hsl(var(--accent))' },
-            { label: 'Critical',  count: products.filter(p => p.status === 'Critical').length,  color: 'hsl(var(--destructive))' },
+            {
+              label: 'Stable',
+              count: products.filter((p) => p.status === 'Stable').length,
+              color: 'hsl(var(--primary))',
+            },
+            {
+              label: 'Low stock',
+              count: products.filter((p) => p.status === 'Low Stock').length,
+              color: 'hsl(var(--accent))',
+            },
+            {
+              label: 'Critical',
+              count: products.filter((p) => p.status === 'Critical').length,
+              color: 'hsl(var(--destructive))',
+            },
           ].map(({ label, count, color }) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>{label}: {count}</span>
+              <div
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: color,
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 10.5,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {label}: {count}
+              </span>
             </div>
           ))}
         </div>
-        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 10.5,
+            color: 'hsl(var(--on-surface-muted))',
+          }}
+        >
           Showing {sortedAndFilteredProducts.length} of {products.length} items
         </span>
       </div>

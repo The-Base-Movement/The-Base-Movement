@@ -17,7 +17,7 @@ const inputSt: React.CSSProperties = {
   background: 'hsl(var(--container-low))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12,
   borderRadius: 4,
   color: 'hsl(var(--on-surface))',
@@ -26,7 +26,7 @@ const inputSt: React.CSSProperties = {
 
 const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -35,7 +35,7 @@ const labelSt: React.CSSProperties = {
 
 const hintSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   fontStyle: 'italic',
@@ -126,7 +126,7 @@ export function MovementInfoTab({
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 12,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -212,7 +212,7 @@ export function MovementInfoTab({
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 12,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -238,7 +238,7 @@ export function MovementInfoTab({
                 <span
                   style={{
                     fontFamily: 'monospace',
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--primary))',
                   }}
@@ -272,7 +272,7 @@ export function MovementInfoTab({
                 <span
                   style={{
                     fontFamily: 'monospace',
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--primary))',
                   }}

@@ -1,3 +1,5 @@
+import { BrandLine } from '@/components/ui/BrandLine'
+
 export function FoundationSection() {
   return (
     <section
@@ -13,11 +15,7 @@ export function FoundationSection() {
           >
             Our Foundation
           </h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 md:gap-12" data-fade-stagger>

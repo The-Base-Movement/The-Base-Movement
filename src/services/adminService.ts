@@ -117,6 +117,7 @@ export type {
   Order,
   OrderStats,
   OrderItem,
+  Author,
   BlogPost,
   ResourceRequest,
   LogisticsAuditEntry,
@@ -1105,6 +1106,19 @@ class AdminService {
     return contentService.getAuthors()
   }
 
+  async getBlogStats(): Promise<{ publishedCount: number }> {
+    const count = await contentService.getPublishedPostCount()
+    return { publishedCount: count }
+  }
+
+  async deleteAuthor(id: string): Promise<boolean> {
+    const success = await contentService.deleteAuthor(id)
+    if (success) {
+      await this.logAction('AUTHOR_DELETE', `AUTHORS/${id}`, 'Warning')
+    }
+    return success
+  }
+
   // --- Press Operations ---
 
   async getPressReleases(): Promise<PressRelease[]> {
@@ -1186,6 +1200,103 @@ class AdminService {
       )
     }
     return success
+  }
+
+  async getStrategicPriorities(): Promise<DonationCampaign[]> {
+    const { data } = await supabase
+      .from('donation_campaigns')
+      .select('*')
+      .eq('status', 'Active')
+      .order('created_at', { ascending: true })
+
+    interface DBCampaign {
+      id: string
+      title: string
+      description: string
+      target_amount: number
+      raised_amount: number
+      end_date: string
+      status: 'Active' | 'Closed'
+      image_url: string
+    }
+
+    return (data || []).map((c: DBCampaign) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      targetAmount: Number(c.target_amount),
+      raisedAmount: Number(c.raised_amount),
+      endDate: c.end_date,
+      status: c.status,
+      imageUrl: c.image_url,
+    }))
+  }
+
+  async getVictories(): Promise<DonationCampaign[]> {
+    const { data, error } = await supabase
+      .from('donation_campaigns')
+      .select('*')
+      .neq('status', 'Active')
+      .order('end_date', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Victories fetch failed:', error)
+      return []
+    }
+
+    interface DBCampaign {
+      id: string
+      title: string
+      description: string
+      target_amount: number
+      raised_amount: number
+      end_date: string
+      status: 'Active' | 'Closed'
+      image_url: string
+    }
+
+    return (data || []).map((c: DBCampaign) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      targetAmount: Number(c.target_amount),
+      raisedAmount: Number(c.raised_amount),
+      endDate: c.end_date,
+      status: c.status,
+      imageUrl: c.image_url,
+    }))
+  }
+
+  async getGlobalMobilizationStats(): Promise<{ totalRaised: number; totalMembers: number }> {
+    const [donationStats, { count }] = await Promise.all([
+      donationService.getDonationStats(),
+      supabase.from('users').select('*', { count: 'exact', head: true }),
+    ])
+
+    return {
+      totalRaised: donationStats.approvedAmount,
+      totalMembers: count || 0,
+    }
+  }
+
+  async getPublicDonationHistory(): Promise<DonationDetail[]> {
+    return donationService.getPublicDonationFeed(50)
+  }
+
+  async getPersonalDonationHistory(userId: string): Promise<DonationDetail[]> {
+    // Note: This expects userId which is linked to member record, but donationService.getMemberDonations expects phone.
+    // For now, we'll try to find the phone from the user metadata if available, or just return empty.
+    const { data: user } = await supabase
+      .from('users')
+      .select('phone_number')
+      .eq('id', userId)
+      .single()
+    if (!user?.phone_number) return []
+    return donationService.getMemberDonations(user.phone_number)
+  }
+
+  async getMovementSpendingHistory(): Promise<MobilizationLedger[]> {
+    return donationService.getMobilizationLedger(50)
   }
 
   subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {

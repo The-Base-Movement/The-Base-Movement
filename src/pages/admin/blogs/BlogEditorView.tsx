@@ -111,7 +111,7 @@ export function BlogEditorView({
                   cursor: 'pointer',
                   padding: 0,
                   fontFamily: 'inherit',
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: 'hsl(var(--primary))',
                 }}
@@ -123,7 +123,7 @@ export function BlogEditorView({
             </div>
             {/* Post title + status pill */}
             <h2
-              className="!text-sm !font-black !m-0"
+              className="!text-sm !font-bold !m-0"
               style={{ display: 'flex', alignItems: 'center', gap: 8 }}
             >
               {formData.title || 'Untitled Dispatch'}
@@ -237,7 +237,7 @@ export function BlogEditorView({
                           justifyContent: 'center',
                           color: '#fff',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 15,
                           overflow: 'hidden',
                           flexShrink: 0,
@@ -278,7 +278,7 @@ export function BlogEditorView({
                           }}
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                             background: 'transparent',
@@ -297,7 +297,7 @@ export function BlogEditorView({
                         <div
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 11,
                             color: 'hsl(var(--on-surface-muted))',
                           }}
@@ -322,7 +322,7 @@ export function BlogEditorView({
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 4,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
                         outline: 'none',
                         cursor: 'pointer',
@@ -350,7 +350,7 @@ export function BlogEditorView({
                         width: '100%',
                         fontSize: 36,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         letterSpacing: '-0.02em',
                         lineHeight: 1.1,
                         outline: 'none',

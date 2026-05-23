@@ -34,7 +34,7 @@ export function StrategicPrioritiesKPIs({ campaigns, isMobile }: StrategicPriori
           label="Active priorities"
           value={campaigns.filter((c) => c.status === 'Active').length}
           description="Operational goals"
-          variant="black"
+          variant="red"
         />
       </div>
       <div style={isMobile ? { flex: '0 0 240px', scrollSnapAlign: 'start' } : undefined}>
@@ -42,7 +42,7 @@ export function StrategicPrioritiesKPIs({ campaigns, isMobile }: StrategicPriori
           label="Total Mobilized"
           value={`$${campaigns.reduce((acc, c) => acc + c.raisedAmount, 0).toLocaleString()}`}
           description="Gross resource intake"
-          variant="green"
+          variant="gold"
         />
       </div>
       <div style={isMobile ? { flex: '0 0 240px', scrollSnapAlign: 'start' } : undefined}>
@@ -58,7 +58,7 @@ export function StrategicPrioritiesKPIs({ campaigns, isMobile }: StrategicPriori
               : 0
           }%`}
           description="Mission completion"
-          variant="gold"
+          variant="black"
         />
       </div>
       <div style={isMobile ? { flex: '0 0 240px', scrollSnapAlign: 'start' } : undefined}>
@@ -66,7 +66,7 @@ export function StrategicPrioritiesKPIs({ campaigns, isMobile }: StrategicPriori
           label="Upcoming deadlines"
           value={campaigns.filter((c) => new Date(c.endDate) > new Date()).length}
           description="Time-sensitive goals"
-          variant="red"
+          variant="green"
         />
       </div>
     </div>

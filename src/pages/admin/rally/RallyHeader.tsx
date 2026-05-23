@@ -13,6 +13,8 @@
  * Wire them up to modals or navigation routes when implementing those features.
  */
 
+import { BrandLine } from '@/components/ui/BrandLine'
+
 export function RallyHeader() {
   return (
     <div className="top">
@@ -27,11 +29,7 @@ export function RallyHeader() {
 
         {/* Decorative triple-line accent (shared design system element) */}
         <div style={{ marginTop: 12 }}>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
         </div>
 
         {/* Page subtitle */}

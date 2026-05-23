@@ -34,7 +34,7 @@ export function OrderDetailPanel({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: '#fff',
               display: 'flex',
@@ -98,7 +98,7 @@ export function OrderDetailPanel({
             <p
               style={{
                 fontSize: 9.5,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
@@ -111,7 +111,7 @@ export function OrderDetailPanel({
             <p
               style={{
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -135,7 +135,7 @@ export function OrderDetailPanel({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <p
               style={{
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 14,
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
@@ -195,7 +195,7 @@ export function OrderDetailPanel({
             </p>
             <p
               style={{
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface))',
                 margin: '4px 0 0',
               }}
@@ -228,7 +228,7 @@ export function OrderDetailPanel({
             <span
               style={{
                 fontSize: 10,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -254,7 +254,7 @@ export function OrderDetailPanel({
                   <p
                     style={{
                       fontSize: 12,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
@@ -265,7 +265,7 @@ export function OrderDetailPanel({
                   <p
                     style={{
                       fontSize: 10,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -279,7 +279,7 @@ export function OrderDetailPanel({
                   <p
                     style={{
                       fontSize: 12,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
                     }}
@@ -289,7 +289,7 @@ export function OrderDetailPanel({
                   <p
                     style={{
                       fontSize: 10,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--primary))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -334,7 +334,7 @@ export function OrderDetailPanel({
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               <span style={{ color: 'hsl(var(--on-surface-muted))' }}>{label}</span>
@@ -353,7 +353,7 @@ export function OrderDetailPanel({
             <span
               style={{
                 fontSize: 10,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
@@ -365,7 +365,7 @@ export function OrderDetailPanel({
             <span
               style={{
                 fontSize: 17,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--primary))',
                 fontFamily: "'Public Sans', sans-serif",
               }}

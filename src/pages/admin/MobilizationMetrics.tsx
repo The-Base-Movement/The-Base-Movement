@@ -3,6 +3,7 @@ import { adminService } from '@/services/adminService'
 import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/admin'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { MetricsFilters } from './mobilizationmetrics/MetricsFilters'
@@ -144,12 +145,13 @@ export default function MobilizationMetrics() {
             </span>
             Mobilization metrics
           </h1>
+          <BrandLine />
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontSize: 13,
+              fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
-              marginTop: 4,
+              marginTop: 6,
             }}
           >
             Performance tracking and impact analytics for regional chapters.

@@ -46,18 +46,43 @@ interface CreatePollModalProps {
   onClose: () => void
 }
 
-export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availableCountries, isSubmitting, onSubmit, onClose }: CreatePollModalProps) {
+export function CreatePollModal({
+  newPoll,
+  setNewPoll,
+  availableRegions,
+  availableCountries,
+  isSubmitting,
+  onSubmit,
+  onClose,
+}: CreatePollModalProps) {
   return createPortal(
     <div style={modalBackdrop}>
       <div style={modalBox(720)}>
         {/* Modal header */}
         <div className="ph">
-          <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>add</span>
+          <span
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontSize: 13.5,
+              color: 'hsl(var(--on-surface))',
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
+            >
+              add
+            </span>
             Create Campaign
           </span>
           <button aria-label="Close creation modal" style={modalCloseBtn} onClick={onClose}>
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              close
+            </span>
           </button>
         </div>
 
@@ -68,7 +93,9 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {/* Question */}
                 <div>
-                  <label htmlFor="input-poll-question" style={labelSt}>Campaign question / topic</label>
+                  <label htmlFor="input-poll-question" style={labelSt}>
+                    Campaign question / topic
+                  </label>
                   <input
                     id="input-poll-question"
                     aria-label="e.g. Should we increase regional chapter funding?"
@@ -83,7 +110,9 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
 
                 {/* Target Base */}
                 <div>
-                  <label htmlFor="select-target-base" style={labelSt}>Target Audience Base</label>
+                  <label htmlFor="select-target-base" style={labelSt}>
+                    Target Audience Base
+                  </label>
                   <select
                     name="targetBase"
                     id="select-target-base"
@@ -91,7 +120,11 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
                     value={newPoll.targetBase}
                     onChange={(e) => {
                       const val = e.target.value
-                      setNewPoll({ ...newPoll, targetBase: val, region: val === 'GHANA' ? 'National' : 'International' })
+                      setNewPoll({
+                        ...newPoll,
+                        targetBase: val,
+                        region: val === 'GHANA' ? 'National' : 'International',
+                      })
                     }}
                   >
                     <option value="GHANA">Ghana Local Base</option>
@@ -110,19 +143,28 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
                     style={selectSt}
                     value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
                     onChange={(e) => {
-                      if (newPoll.targetBase === 'GHANA') setNewPoll({ ...newPoll, region: e.target.value })
+                      if (newPoll.targetBase === 'GHANA')
+                        setNewPoll({ ...newPoll, region: e.target.value })
                       else setNewPoll({ ...newPoll, country: e.target.value })
                     }}
                   >
                     {newPoll.targetBase === 'GHANA' ? (
                       <>
                         <option value="National">All Regions (National)</option>
-                        {availableRegions.map((r) => <option key={r.id} value={r.name}>{r.name}</option>)}
+                        {availableRegions.map((r) => (
+                          <option key={r.id} value={r.name}>
+                            {r.name}
+                          </option>
+                        ))}
                       </>
                     ) : (
                       <>
                         <option value="International">All Countries (Global)</option>
-                        {availableCountries.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                        {availableCountries.map((c) => (
+                          <option key={c.name} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
                       </>
                     )}
                   </select>
@@ -130,9 +172,22 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
 
                 {/* End date */}
                 <div>
-                  <label htmlFor="input-poll-end-date" style={labelSt}>Operational end date</label>
+                  <label htmlFor="input-poll-end-date" style={labelSt}>
+                    Operational end date
+                  </label>
                   <div style={{ position: 'relative' }}>
-                    <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        position: 'absolute',
+                        left: 10,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        fontSize: 15,
+                        color: 'hsl(var(--on-surface-muted))',
+                        pointerEvents: 'none',
+                      }}
+                    >
                       calendar_today
                     </span>
                     <input
@@ -149,15 +204,32 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
 
               {/* Right: poll options builder */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
                   <label style={{ ...labelSt, marginBottom: 0 }}>Engagement Options</label>
-                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                  <span
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
                     Min 2 Required
                   </span>
                 </div>
 
                 {/* Dynamic option inputs */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 260, overflowY: 'auto' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                    maxHeight: 260,
+                    overflowY: 'auto',
+                  }}
+                >
                   {newPoll.options.map((opt, idx) => (
                     <div key={idx} style={{ display: 'flex', gap: 8 }}>
                       <input
@@ -176,10 +248,29 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
                       {newPoll.options.length > 2 && (
                         <button
                           type="button"
-                          style={{ flexShrink: 0, width: 40, height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, background: 'hsl(var(--container-low))', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'hsl(var(--destructive))' }}
-                          onClick={() => setNewPoll({ ...newPoll, options: newPoll.options.filter((_, i) => i !== idx) })}
+                          style={{
+                            flexShrink: 0,
+                            width: 40,
+                            height: 40,
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: 4,
+                            background: 'hsl(var(--container-low))',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'hsl(var(--destructive))',
+                          }}
+                          onClick={() =>
+                            setNewPoll({
+                              ...newPoll,
+                              options: newPoll.options.filter((_, i) => i !== idx),
+                            })
+                          }
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                            delete
+                          </span>
                         </button>
                       )}
                     </div>
@@ -193,7 +284,9 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
                   style={{ justifyContent: 'center' }}
                   onClick={() => setNewPoll({ ...newPoll, options: [...newPoll.options, ''] })}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    add
+                  </span>
                   Add Selection
                 </button>
               </div>
@@ -202,10 +295,20 @@ export function CreatePollModal({ newPoll, setNewPoll, availableRegions, availab
 
           {/* Footer actions */}
           <div style={{ padding: '0 24px 24px', display: 'flex', gap: 12 }}>
-            <button type="button" className="btn btn-outline" style={{ flex: 1, justifyContent: 'center', height: 44 }} onClick={onClose}>
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ flex: 1, justifyContent: 'center', height: 44 }}
+              onClick={onClose}
+            >
               Discard
             </button>
-            <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', height: 44 }} disabled={isSubmitting}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ flex: 1, justifyContent: 'center', height: 44 }}
+              disabled={isSubmitting}
+            >
               {isSubmitting ? 'Launching…' : 'Deploy Campaign'}
             </button>
           </div>

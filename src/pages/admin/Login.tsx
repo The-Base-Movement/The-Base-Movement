@@ -108,7 +108,7 @@ export default function AdminLogin() {
                 <div
                   style={{
                     fontSize: 16,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontFamily: "'Public Sans', sans-serif",
                     color: '#fff',
                     lineHeight: 1.2,
@@ -152,7 +152,7 @@ export default function AdminLogin() {
               <div
                 style={{
                   fontSize: 14,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontFamily: "'Public Sans', sans-serif",
                   color: 'hsl(var(--on-surface))',
                   marginBottom: 4,

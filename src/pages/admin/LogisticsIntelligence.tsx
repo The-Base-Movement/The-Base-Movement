@@ -236,6 +236,7 @@ export default function LogisticsIntelligence() {
             direction: health >= 80 ? 'up' : 'down',
             value: health >= 80 ? 'Optimal' : 'Compromised',
           }}
+          variant="red"
         />
         <TacticalKPI
           label="Urgent alerts"
@@ -245,11 +246,13 @@ export default function LogisticsIntelligence() {
             direction: alerts.length > 0 ? 'down' : 'neutral',
             value: alerts.length > 0 ? 'Critical' : 'Stable',
           }}
+          variant="gold"
         />
         <TacticalKPI
           label="Avg dispatch"
           value={`${avgDispatch}h`}
           description="30-day aggregate"
+          variant="black"
         />
         <TacticalKPI
           label="Fulfillment rate"
@@ -259,6 +262,7 @@ export default function LogisticsIntelligence() {
             direction: Number(avgFulfillment) >= 80 ? 'up' : 'down',
             value: Number(avgFulfillment) >= 80 ? 'Elite' : 'Target',
           }}
+          variant="green"
         />
       </div>
 

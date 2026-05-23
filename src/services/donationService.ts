@@ -130,7 +130,7 @@ class DonationService {
     category: string
     timestamp: string
   }): Promise<boolean> {
-    const user = await authService.getUser()
+    const user = authService.getUser()
     const { error } = await supabase.from('mobilization_ledger').insert({
       chapter: entry.chapter,
       transaction_type: 'Expenditure',
@@ -208,7 +208,7 @@ class DonationService {
     status: 'Verified' | 'Rejected',
     notes: string = ''
   ): Promise<boolean> {
-    const user = await authService.getUser()
+    const user = authService.getUser()
     if (!user) return false
 
     const { error } = await supabase.rpc('verify_donation_record', {

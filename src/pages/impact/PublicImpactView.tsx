@@ -1,33 +1,26 @@
-import { Breadcrumbs } from '@/components/Breadcrumbs'
-import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
+import { BrandLine } from '@/components/ui/BrandLine'
 import type { DonationDetail } from '@/types/admin'
+import { ImpactActivityModal } from './ImpactActivityModal'
 
-interface Stats {
-  totalDonations: string
-  activeChapters: string
-  totalMembers: string
-  countriesReached: string
-  raised: number
-  goal: number
-  avgDonation: string
-  totalContributors: number
-}
-
-interface Region {
-  name: string
-  engagement: number
-}
-
-interface Props {
-  stats: Stats
+interface PublicImpactViewProps {
+  stats: {
+    totalDonations: string
+    activeChapters: string
+    totalMembers: string
+    countriesReached: string
+    raised: number
+    goal: number
+    avgDonation: string
+    totalContributors: number
+  }
   isLoading: boolean
-  regions: Region[]
+  regions: { name: string; engagement: number }[]
   activeFilter: 'day' | 'week' | 'month' | 'year' | 'custom'
   filteredActivity: DonationDetail[]
   allActivity: DonationDetail[]
   showFullActivity: boolean
-  onFilterChange: (f: 'day' | 'week' | 'month' | 'year') => void
+  onFilterChange: (filter: 'day' | 'week' | 'month' | 'year' | 'custom') => void
   onViewFullLog: () => void
   onCloseFullLog: () => void
 }
@@ -43,277 +36,118 @@ export function PublicImpactView({
   onFilterChange,
   onViewFullLog,
   onCloseFullLog,
-}: Props) {
-  return (
-    <main className="bg-stone-50/50 min-h-screen font-meta">
-      <SEO
-        title="Our Impact"
-        description="Live analytics reflecting our collective momentum across the nation."
-        canonical="/impact"
-      />
+}: PublicImpactViewProps) {
+  const displayActivity = filteredActivity.slice(0, 10)
 
+  return (
+    <main className="bg-slate-50 min-h-screen pb-24">
       {showFullActivity && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-charcoal-dark/60 backdrop-blur-sm"
-          onClick={onCloseFullLog}
-        >
-          <div
-            className="bg-white w-full max-w-2xl rounded-none shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <div>
-                <h2 className="text-charcoal-dark mb-0">Full Activity Log</h2>
-                <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">
-                  Verified movement contributions
-                </p>
-              </div>
-              <button
-                onClick={onCloseFullLog}
-                className="w-8 h-8 bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-brand-green transition-colors"
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                  close
-                </span>
-              </button>
-            </div>
-            <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4">
-              {allActivity.length > 0 ? (
-                allActivity.slice(0, 50).map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-4 border border-slate-50 hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex gap-4 items-center">
-                      <div className="w-10 h-10 bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs">
-                        {item.fullName[0]}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
-                        <p className="text-tiny font-bold text-slate-400 mb-0 tracking-tight">
-                          {item.country} • {new Date(item.date).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-brand-green">₵{item.amount}</p>
-                      <p className="text-micro font-semibold text-slate-300">Verified</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="py-20 text-center">
-                  <span
-                    className="material-symbols-outlined text-slate-100 block mx-auto mb-4"
-                    style={{ fontSize: 48 }}
-                  >
-                    monitoring
-                  </span>
-                  <p className="text-sm font-bold text-slate-400 tracking-tight">
-                    No activity recorded yet
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <ImpactActivityModal allActivity={allActivity} onClose={onCloseFullLog} />
       )}
 
-      <header className="bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
-          <Breadcrumbs />
-          <div className="mt-6">
-            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-              <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 40 }}>
-                monitoring
-              </span>
-              Our Collective Impact
+      <header className="bg-white border-b border-slate-100 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 md:py-24 relative z-10">
+          <div className="max-w-3xl">
+            <h1 className="text-slate-900 text-4xl md:text-6xl font-meta font-extrabold tracking-tighter mb-6 leading-[1.1]">
+              Transparency in Action.
+              <br />
+              <span className="text-brand-green">Real Impact, Real People.</span>
             </h1>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
-            <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
-              Live analytics reflecting our collective momentum across the nation.
+            <BrandLine />
+            <p className="text-slate-500 text-base md:text-xl font-medium leading-relaxed max-w-2xl mt-8">
+              Every cedi contributed and every hour volunteered builds a stronger foundation for
+              Ghana's future. Track our progress in real-time.
             </p>
           </div>
         </div>
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-green/5 skew-x-12 translate-x-24" />
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
-          {[
-            {
-              label: 'Donations received',
-              value: stats.totalDonations,
-              icon: 'volunteer_activism',
-              trend: '+12%',
-              color: '#006B3F',
-              status: 'No new donations yet today',
-            },
-            {
-              label: 'Chapters active',
-              value: stats.activeChapters,
-              icon: 'track_changes',
-              trend: '+2',
-              color: '#DAA520',
-              status: 'Verified',
-            },
-            {
-              label: 'Registered members',
-              value: stats.totalMembers,
-              icon: 'groups',
-              trend: '+15%',
-              color: '#22C55E',
-              status: 'National scale',
-            },
-            {
-              label: 'Countries reached',
-              value: stats.countriesReached,
-              icon: 'public',
-              trend: 'Global',
-              color: '#3B82F6',
-              status: 'Global',
-            },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="group hover:shadow-2xl transition-all duration-500 bg-white border border-stone-200 p-8 hover:-translate-y-1"
-            >
-              {isLoading ? (
-                <div className="animate-pulse space-y-4">
-                  <div className="w-12 h-12 bg-slate-100" />
-                  <div className="h-8 bg-slate-100 w-3/4" />
-                  <div className="h-4 bg-slate-100 w-1/2" />
-                </div>
-              ) : (
-                <>
-                  <div className="flex justify-between items-start mb-4">
-                    <p className="text-micro font-bold text-slate-400 tracking-tight mb-0">
-                      {stat.status}
-                    </p>
-                    <span
-                      className="material-symbols-outlined text-stone-300 group-hover:text-brand-green transition-colors"
-                      style={{ fontSize: 14 }}
-                    >
-                      open_in_new
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-end mb-4">
-                    <div
-                      className="w-12 h-12 flex items-center justify-center"
-                      style={{ backgroundColor: `${stat.color}15` }}
-                    >
-                      <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: 24, color: stat.color }}
-                      >
-                        {stat.icon}
-                      </span>
-                    </div>
-                    <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-1 flex items-center gap-1">
-                      {stat.trend}{' '}
-                      <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
-                        open_in_new
-                      </span>
-                    </span>
-                  </div>
-                  <h3 className="text-stone-900 font-bold tracking-tighter leading-tight mb-0">
-                    {stat.value}
-                  </h3>
-                  <p className="text-tiny font-bold text-stone-500 mt-1 mb-0 tracking-tight">
-                    {stat.label}
-                  </p>
-                </>
-              )}
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 -mt-8 relative z-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-brand-green p-8 text-white flex flex-col justify-between">
+            <span className="text-micro font-bold uppercase tracking-widest opacity-60">
+              Total Contributions
+            </span>
+            <div>
+              <h2 className="text-4xl md:text-5xl font-meta font-bold tracking-tighter mt-4 mb-2">
+                {isLoading ? '₵—' : stats.totalDonations}
+              </h2>
+              <div className="flex items-center gap-2 text-tiny font-bold text-white/60">
+                <span className="w-2 h-2 bg-white/40 rounded-full" />
+                Updated in real-time
+              </div>
             </div>
-          ))}
+          </div>
+          <div className="bg-charcoal-dark p-8 text-white flex flex-col justify-between">
+            <span className="text-micro font-bold uppercase tracking-widest opacity-60">
+              Active Patriots
+            </span>
+            <div>
+              <h2 className="text-4xl md:text-5xl font-meta font-bold tracking-tighter mt-4 mb-2">
+                {isLoading ? '—' : stats.totalMembers}
+              </h2>
+              <div className="flex items-center gap-2 text-tiny font-bold text-white/60">
+                <span className="w-2 h-2 bg-white/40 rounded-full" />
+                Verified members worldwide
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+          <div className="lg:col-span-2">
             <section className="bg-white border border-slate-100 p-8">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+              <div className="flex items-center justify-between mb-10">
                 <div>
-                  <h2 className="text-charcoal-dark flex items-center gap-2 mb-0">
-                    <span
-                      className="material-symbols-outlined text-brand-green"
-                      style={{ fontSize: 20 }}
-                    >
-                      monitoring
-                    </span>{' '}
-                    Campaign progress
-                  </h2>
-                  <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">
-                    National Organizing Fund
+                  <h3 className="text-slate-900 font-meta font-bold text-lg mb-1">
+                    Regional Engagement
+                  </h3>
+                  <p className="text-tiny font-bold text-slate-400 uppercase tracking-wider">
+                    Mobilization index by region
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-charcoal-dark mb-0">
-                    ₵{stats.raised.toLocaleString()}{' '}
-                    <span className="text-slate-300">/ {stats.goal.toLocaleString()}</span>
-                  </p>
-                  <p className="text-micro font-bold text-brand-green mt-1 mb-0 tracking-tight">
-                    {Math.round((stats.raised / stats.goal) * 100) >= 1
-                      ? `${Math.round((stats.raised / stats.goal) * 100)}% achieved`
-                      : 'Early momentum'}
-                  </p>
+                <div className="bg-slate-50 px-3 py-1 text-micro font-bold text-slate-500 rounded border border-slate-100">
+                  Top Performing
                 </div>
               </div>
-              <div className="h-3 bg-slate-100 overflow-hidden border border-slate-200/50 mb-8">
-                <div
-                  className="h-full bg-brand-green transition-all duration-1000"
-                  style={{ width: `${Math.min(100, (stats.raised / stats.goal) * 100)}%` }}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  { label: 'Average donation', value: stats.avgDonation },
-                  { label: 'Total contributors', value: stats.totalContributors.toLocaleString() },
-                  { label: 'Last update', value: 'Just now' },
-                ].map((s) => (
-                  <div key={s.label} className="p-4 bg-slate-50/50 border border-slate-100">
-                    <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">
-                      {s.label}
-                    </p>
-                    <p className="text-lg font-bold text-charcoal-dark mb-0">{s.value}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
 
-            <section className="bg-white border border-slate-100 p-8">
-              <h2 className="text-charcoal-dark mb-6 flex items-center gap-2">
-                <span className="material-symbols-outlined text-warm-gold" style={{ fontSize: 20 }}>
-                  location_on
-                </span>{' '}
-                Regional engagement
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {regions.map((region) => (
-                  <div key={region.name} className="p-4 border border-slate-100 bg-slate-50/30">
-                    <p className="text-micro font-bold text-charcoal-dark tracking-tight">
-                      {region.name}
-                    </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <div className="flex-1 h-1 bg-slate-100 overflow-hidden">
-                        <div
-                          className="h-full bg-brand-green transition-all duration-1000"
-                          style={{ width: `${region.engagement}%` }}
-                        />
+              <div className="space-y-8">
+                {isLoading
+                  ? Array(6)
+                      .fill(0)
+                      .map((_, i) => (
+                        <div key={i} className="space-y-3 animate-pulse">
+                          <div className="h-4 bg-slate-100 w-24 rounded" />
+                          <div className="h-2.5 bg-slate-100 w-full rounded-full" />
+                        </div>
+                      ))
+                  : regions.map((region) => (
+                      <div key={region.name} className="space-y-3">
+                        <div className="flex justify-between items-end">
+                          <span className="text-sm font-bold text-slate-700">{region.name}</span>
+                          <span className="text-tiny font-bold text-slate-400">
+                            {region.engagement > 0 ? `${region.engagement}% scale` : 'Mobilizing'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-brand-green transition-all duration-1000 ease-out"
+                              style={{ width: `${region.engagement}%` }}
+                            />
+                          </div>
+                          <span
+                            className={cn(
+                              'text-tiny font-bold',
+                              region.engagement > 0 ? 'text-brand-green' : 'text-slate-300'
+                            )}
+                          >
+                            {region.engagement}%
+                          </span>
+                        </div>
                       </div>
-                      <span
-                        className={cn(
-                          'text-tiny font-bold',
-                          region.engagement > 0 ? 'text-brand-green' : 'text-slate-300'
-                        )}
-                      >
-                        {region.engagement}%
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                    ))}
               </div>
             </section>
           </div>
@@ -324,13 +158,13 @@ export function PublicImpactView({
                 <h5 className="text-charcoal-dark font-bold text-sm mb-0">Recent activity</h5>
                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse ring-4 ring-red-500/10" />
               </div>
-              <div className="flex gap-2 bg-slate-100/80 p-1.5 border border-slate-200/50 mb-6">
+              <div className="flex gap-2 bg-slate-100/80 p-1.5 border border-slate-200/50 mb-6 overflow-x-auto">
                 {(['day', 'week', 'month', 'year'] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => onFilterChange(t)}
                     className={cn(
-                      'flex-1 h-8 text-micro font-bold capitalize transition-all',
+                      'flex-1 h-8 px-3 text-micro font-bold capitalize transition-all',
                       activeFilter === t
                         ? 'bg-white text-brand-green shadow-md'
                         : 'text-slate-400 hover:text-slate-600'
@@ -341,22 +175,36 @@ export function PublicImpactView({
                 ))}
               </div>
               <div className="space-y-4 overflow-y-auto h-[360px]">
-                {filteredActivity.length > 0 ? (
-                  filteredActivity.map((item, idx) => (
+                {isLoading ? (
+                  Array(5)
+                    .fill(0)
+                    .map((_, i) => (
+                      <div key={i} className="flex items-center justify-between p-3 animate-pulse">
+                        <div className="flex gap-3 items-center">
+                          <div className="w-8 h-8 bg-slate-100 rounded" />
+                          <div className="space-y-2">
+                            <div className="h-3 bg-slate-100 w-20 rounded" />
+                            <div className="h-2 bg-slate-100 w-16 rounded" />
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                ) : displayActivity.length > 0 ? (
+                  displayActivity.map((item, idx) => (
                     <div
                       key={idx}
                       className="flex items-center justify-between p-3 border border-slate-50 hover:bg-slate-50 transition-colors"
                     >
                       <div className="flex gap-3 items-center">
                         <div className="w-8 h-8 bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs">
-                          {item.fullName[0]}
+                          {(item.fullName || 'A')[0]}
                         </div>
                         <div>
                           <p className="text-xs font-bold text-charcoal-dark mb-0">
-                            {item.fullName}
+                            {item.fullName || 'Anonymous Patriot'}
                           </p>
                           <p className="text-tiny font-bold text-slate-400 mb-0">
-                            {item.country} · {new Date(item.date).toLocaleDateString()}
+                            {item.country || 'Ghana'} · {new Date(item.date).toLocaleDateString()}
                           </p>
                         </div>
                       </div>

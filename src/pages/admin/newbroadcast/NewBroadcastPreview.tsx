@@ -43,7 +43,7 @@ export function NewBroadcastPreview({ channel, targetType }: NewBroadcastPreview
         <b
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 12,
             display: 'block',
             marginBottom: 3,
@@ -58,7 +58,7 @@ export function NewBroadcastPreview({ channel, targetType }: NewBroadcastPreview
             color: 'hsl(var(--on-surface-muted))',
             lineHeight: 1.55,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
           }}
         >
           Sending to{' '}

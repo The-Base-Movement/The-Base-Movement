@@ -10,6 +10,7 @@
  */
 
 import { Link } from 'react-router-dom'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface BlogsHeaderProps {
   onWrite: () => void
@@ -36,11 +37,18 @@ export function BlogsHeader({ onWrite }: BlogsHeaderProps) {
         </h2>
 
         {/* Decorative triple-line accent */}
-        <div className="bl">
-          <div />
-          <div />
-          <div />
-        </div>
+        <BrandLine />
+        <p
+          style={{
+            color: 'hsl(var(--on-surface-muted))',
+            fontSize: 12.5,
+            marginTop: 6,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+          }}
+        >
+          Curate and publish movement news, updates, and public articles.
+        </p>
       </div>
 
       {/* Header actions */}

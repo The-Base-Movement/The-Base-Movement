@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { PAGE_SIZE, type Station } from './pollingstations/utils'
@@ -109,18 +110,14 @@ export default function PollingStations() {
         <div>
           <div className="crumbs">Admin · Constituency Operations · Polling stations</div>
           <h2>Polling stations</h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
           <p
             style={{
               color: 'hsl(var(--on-surface-muted))',
               fontSize: 12.5,
               marginTop: 2,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             20,361 EC-registered polling stations across Ghana
@@ -141,7 +138,7 @@ export default function PollingStations() {
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans'",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 marginTop: 2,
               }}
             >

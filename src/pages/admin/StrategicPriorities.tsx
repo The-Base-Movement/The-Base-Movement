@@ -4,6 +4,7 @@ import { contentService } from '@/services/contentService'
 import type { DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { PriorityCard } from './strategicpriorities/PriorityCard'
@@ -186,7 +187,7 @@ export default function StrategicPriorities() {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
             marginTop: 16,
@@ -208,7 +209,7 @@ export default function StrategicPriorities() {
               display: 'flex',
               alignItems: 'center',
               gap: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               letterSpacing: '-0.02em',
             }}
           >
@@ -218,11 +219,7 @@ export default function StrategicPriorities() {
             Strategic priorities
           </h2>
           <div style={{ marginTop: 12 }}>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
+            <BrandLine />
           </div>
           <p
             style={{
@@ -314,7 +311,7 @@ export default function StrategicPriorities() {
                   <h3
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 900,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 20,
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
@@ -325,7 +322,7 @@ export default function StrategicPriorities() {
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface-muted))',
                       marginTop: 8,

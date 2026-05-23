@@ -104,7 +104,7 @@ export function TiersModal({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
                 color: '#fff',
                 margin: 0,
@@ -134,7 +134,15 @@ export function TiersModal({
 
         <div style={{ padding: 24 }}>
           <div style={{ marginBottom: 24 }}>
-            <h4 style={{ fontSize: 13, fontWeight: 800, marginBottom: 12 }}>Existing Tiers</h4>
+            <h4
+              style={{
+                fontSize: 13,
+                fontWeight: 'var(--font-weight-semibold, 600)',
+                marginBottom: 12,
+              }}
+            >
+              Existing Tiers
+            </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[...tiers]
                 .sort((a, b) => a.order_index - b.order_index)
@@ -153,7 +161,11 @@ export function TiersModal({
                     {/* Title section */}
                     <div style={{ padding: '10px 12px' }}>
                       <div
-                        style={{ fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}
+                        style={{
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface))',
+                        }}
                       >
                         {t.title}{' '}
                         <span
@@ -216,7 +228,7 @@ export function TiersModal({
           <h4
             style={{
               fontSize: 13,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               marginBottom: 12,
               borderTop: '1px solid hsl(var(--border))',
               paddingTop: 20,
@@ -232,7 +244,12 @@ export function TiersModal({
               <div>
                 <label
                   htmlFor="tier-name"
-                  style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                  style={{
+                    display: 'block',
+                    fontSize: 11,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    marginBottom: 6,
+                  }}
                 >
                   Internal Name (e.g. executive)
                 </label>
@@ -254,7 +271,12 @@ export function TiersModal({
               <div>
                 <label
                   htmlFor="tier-title"
-                  style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                  style={{
+                    display: 'block',
+                    fontSize: 11,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    marginBottom: 6,
+                  }}
                 >
                   Display Title
                 </label>
@@ -271,7 +293,12 @@ export function TiersModal({
             <div>
               <label
                 htmlFor="tier-description"
-                style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  marginBottom: 6,
+                }}
               >
                 Description
               </label>
@@ -286,7 +313,12 @@ export function TiersModal({
             <div>
               <label
                 htmlFor="tier-order"
-                style={{ display: 'block', fontSize: 11, fontWeight: 800, marginBottom: 6 }}
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  marginBottom: 6,
+                }}
               >
                 Order Index (lower = higher up)
               </label>

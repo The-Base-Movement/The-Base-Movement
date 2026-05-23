@@ -71,7 +71,7 @@ export function DonationsTable({
             style={{
               marginTop: 12,
               fontSize: 12.5,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
             }}

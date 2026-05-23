@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface HubSelectorProps {
   chapters: Chapter[]
@@ -32,11 +33,12 @@ export function HubSelector({ chapters }: HubSelectorProps) {
             </span>
             Regional Hub Command
           </h2>
+          <BrandLine />
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: 13,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 6,
               marginBottom: 0,
@@ -85,7 +87,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
               borderRadius: 4,
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               outline: 'none',
               boxSizing: 'border-box',
             }}
@@ -147,7 +149,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: 0,
                       fontSize: 15,
-                      fontWeight: 900,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface))',
                       fontFamily: "'Public Sans', sans-serif",
                       overflow: 'hidden',
@@ -161,7 +163,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: 0,
                       fontSize: 11,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -177,7 +179,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: 0,
                       fontSize: 10,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -189,7 +191,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: '2px 0 0',
                       fontSize: 16,
-                      fontWeight: 900,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
@@ -201,7 +203,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: 0,
                       fontSize: 10,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -231,7 +233,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
               <span
                 style={{
                   fontSize: 11,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--primary))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
@@ -261,7 +263,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
               style={{
                 marginTop: 12,
                 fontSize: 14,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
@@ -288,7 +290,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
               fontSize: 11.5,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             Showing {(currentPage - 1) * itemsPerPage + 1}–

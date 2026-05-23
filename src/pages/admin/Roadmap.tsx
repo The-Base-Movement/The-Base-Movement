@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular imports
 import { RoadmapKPIs } from './roadmap/RoadmapKPIs'
@@ -124,7 +125,7 @@ export default function RoadmapManagement() {
           <h1
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 24,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -138,12 +139,13 @@ export default function RoadmapManagement() {
             </span>
             National strategic roadmap
           </h1>
+          <BrandLine />
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 13,
               color: 'hsl(var(--on-surface-muted))',
-              marginTop: 4,
+              marginTop: 6,
             }}
           >
             Manage movement objectives, mobilization phases, and strategic timelines.

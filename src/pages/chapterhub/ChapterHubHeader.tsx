@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface Props {
   chapter: Chapter
@@ -16,13 +17,7 @@ export function ChapterHubHeader({ chapter, slug }: Props) {
           </span>
           {chapter.name}
         </h2>
-        <div style={{ marginTop: 12 }}>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
-        </div>
+        <BrandLine />
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",

@@ -50,7 +50,7 @@ export function SpendingLedgerKPIs({ entries, loading }: SpendingLedgerKPIsProps
             <p
               style={{
                 fontSize: 10,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -69,7 +69,7 @@ export function SpendingLedgerKPIs({ entries, loading }: SpendingLedgerKPIsProps
           <p
             style={{
               fontSize: 22,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--on-surface))',
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",

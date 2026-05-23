@@ -5,6 +5,7 @@ import { authService } from '@/services/authService'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 import { ProfileSettingsTab } from './settings/components/ProfileSettingsTab'
 import { RolesManagementTab } from './settings/components/RolesManagementTab'
@@ -376,16 +377,12 @@ export default function AdminSettings() {
             System settings
           </h2>
           <div style={{ marginTop: 10, marginBottom: 4 }}>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
+            <BrandLine />
           </div>
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 6,
@@ -417,7 +414,7 @@ export default function AdminSettings() {
                   borderRadius: 4,
                   cursor: 'pointer',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 12,
                   whiteSpace: 'nowrap',
                   transition: 'all 0.15s',

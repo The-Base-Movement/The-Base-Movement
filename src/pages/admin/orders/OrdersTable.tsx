@@ -32,7 +32,7 @@ export function OrdersTable({
           <p
             style={{
               fontSize: 10,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               marginTop: 16,
               color: 'hsl(var(--border))',
               fontFamily: "'Public Sans', sans-serif",
@@ -52,7 +52,7 @@ export function OrdersTable({
           <p
             style={{
               fontSize: 10,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               marginTop: 16,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
@@ -101,7 +101,7 @@ export function OrdersTable({
                         <b
                           style={{
                             fontSize: 11,
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             color: 'hsl(var(--on-surface-muted))',
                           }}
                         >
@@ -109,7 +109,12 @@ export function OrdersTable({
                         </b>
                       </td>
                       <td>
-                        <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
+                        <b
+                          style={{
+                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
                           ₵
                           {Number(order.total_amount).toLocaleString(undefined, {
                             minimumFractionDigits: 2,
@@ -129,7 +134,7 @@ export function OrdersTable({
                       <td
                         style={{
                           fontSize: 10,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >

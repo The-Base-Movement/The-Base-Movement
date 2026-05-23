@@ -5,6 +5,7 @@ import type { ChapterApplication } from '@/services/adminService'
 import type { Member, Chapter } from '@/types/admin'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Modular subcomponents
 import { SearchBar } from '@/components/SearchBar'
@@ -270,17 +271,11 @@ export default function LeadershipHub() {
             </span>
             Leadership hub
           </h2>
-          <div style={{ marginTop: 12 }}>
-            <div className="bl">
-              <div />
-              <div />
-              <div />
-            </div>
-          </div>
+          <BrandLine />
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 8,
@@ -313,7 +308,7 @@ export default function LeadershipHub() {
         <TacticalKPI
           label="Growth Rate"
           value="+12%"
-          variant="green"
+          variant="red"
           description="Mobilization velocity"
           trend={{ direction: 'up', value: 'Live' }}
         />

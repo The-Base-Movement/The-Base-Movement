@@ -4,6 +4,7 @@ import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Subcomponents
 import { ConstituencyCoverageTable } from './groundgamecommand/ConstituencyCoverageTable'
@@ -331,7 +332,7 @@ export default function GroundGameCommand() {
           <p
             style={{
               fontSize: 11,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--primary))',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
@@ -352,18 +353,14 @@ export default function GroundGameCommand() {
         <div>
           <div className="crumbs">Command → Constituency Operations</div>
           <h2>Constituency Operations{selectedRegion !== 'ALL' ? ` · ${selectedRegion}` : ''}</h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
           <p
             style={{
               color: 'hsl(var(--on-surface-muted))',
               fontSize: 12.5,
               marginTop: 2,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             Field agents · routes · constituency coverage
@@ -394,7 +391,7 @@ export default function GroundGameCommand() {
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 6,
                 fontFamily: "'Public Sans'",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 12,
                 background: '#fff',
                 cursor: 'pointer',
@@ -464,7 +461,7 @@ export default function GroundGameCommand() {
         <TacticalKPI
           label="Mobilization"
           value={signupsToday > 0 ? signupsToday : '—'}
-          variant="green"
+          variant="black"
           description="Sign-ups secured today"
           delta={
             signupsToday > 0
@@ -475,7 +472,7 @@ export default function GroundGameCommand() {
         <TacticalKPI
           label="Intelligence"
           value={doorsKnocked > 0 ? `${routePct}%` : '—'}
-          variant="black"
+          variant="green"
           description="Route completion across active campaigns"
           delta={
             activeCampaigns.length > 0

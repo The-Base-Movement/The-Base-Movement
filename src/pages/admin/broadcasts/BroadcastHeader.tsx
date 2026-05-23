@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export function BroadcastHeader() {
   const navigate = useNavigate()
@@ -8,7 +9,7 @@ export function BroadcastHeader() {
         <h1
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 24,
             color: 'hsl(var(--on-surface))',
             display: 'flex',
@@ -22,12 +23,13 @@ export function BroadcastHeader() {
           </span>
           Communication hub
         </h1>
+        <BrandLine />
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
             fontSize: 13,
             color: 'hsl(var(--on-surface-muted))',
-            marginTop: 4,
+            marginTop: 6,
           }}
         >
           Platform-wide transmission and regional mobilization protocols.

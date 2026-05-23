@@ -23,6 +23,7 @@ export function BlogsKPIs({ posts }: BlogsKPIsProps) {
         label="Total articles"
         value={posts.length}
         description="Across all categories"
+        variant="red"
       />
 
       {/* Published */}
@@ -31,7 +32,7 @@ export function BlogsKPIs({ posts }: BlogsKPIsProps) {
         value={posts.filter((p) => p.status === 'Published').length}
         description="Live in public feed"
         trend={{ direction: 'up', value: 'Live' }}
-        variant="green"
+        variant="gold"
       />
 
       {/* Pending */}
@@ -40,7 +41,7 @@ export function BlogsKPIs({ posts }: BlogsKPIsProps) {
         value={posts.filter((p) => p.status === 'Pending Verification').length}
         description="Awaiting editorial clearance"
         trend={{ direction: 'neutral', value: 'Pending' }}
-        variant="gold"
+        variant="black"
       />
 
       {/* Drafts */}
@@ -48,6 +49,7 @@ export function BlogsKPIs({ posts }: BlogsKPIsProps) {
         label="Drafts"
         value={posts.filter((p) => p.status === 'Draft').length}
         description="Work in progress"
+        variant="green"
       />
     </div>
   )

@@ -61,7 +61,7 @@ export function RegionsList({
           borderRadius: 6,
           color: 'hsl(var(--on-surface-muted))',
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 700,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 13,
         }}
       >
@@ -120,7 +120,7 @@ export function RegionsList({
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
@@ -131,7 +131,7 @@ export function RegionsList({
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
                       margin: '2px 0 0',
@@ -259,7 +259,7 @@ export function RegionsList({
                     style={{
                       textAlign: 'center',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface-muted))',
                       padding: '16px 0',
@@ -293,7 +293,7 @@ export function RegionsList({
                         <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 12,
                             color: 'hsl(var(--on-surface))',
                             overflow: 'hidden',

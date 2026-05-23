@@ -145,7 +145,7 @@ export function BlogsGrid({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 14,
                 color: 'hsl(var(--on-surface))',
                 marginBottom: 6,
@@ -156,7 +156,7 @@ export function BlogsGrid({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
                 marginBottom: 20,
@@ -255,7 +255,7 @@ export function BlogsGrid({
                         background: 'rgba(255,255,255,0.92)',
                         backdropFilter: 'blur(4px)',
                         color: 'hsl(var(--on-surface))',
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                       }}
                     >
                       {post.category}
@@ -267,7 +267,7 @@ export function BlogsGrid({
                       className="pill"
                       style={{
                         backdropFilter: 'blur(4px)',
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 9,
                         background:
                           post.status === 'Published'
@@ -299,7 +299,7 @@ export function BlogsGrid({
                       style={
                         {
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 13,
                           color: 'hsl(var(--on-surface))',
                           lineHeight: 1.35,
@@ -394,7 +394,7 @@ export function BlogsGrid({
                                     gap: 8,
                                     padding: '10px 14px',
                                     fontFamily: "'Public Sans', sans-serif",
-                                    fontWeight: 700,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     fontSize: 12,
                                     color: item.dest
                                       ? 'hsl(var(--destructive))'
@@ -436,7 +436,7 @@ export function BlogsGrid({
                     style={
                       {
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         color: 'hsl(var(--on-surface-muted))',
                         lineHeight: 1.6,

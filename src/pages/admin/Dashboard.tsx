@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 
 import type { AuditLogEntry, RegionalStat, PendingVerification, Broadcast } from '@/types/admin'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Subcomponents
 import { VerificationsQueue } from './dashboard/VerificationsQueue'
@@ -207,11 +208,7 @@ export default function AdminDashboard() {
         <div>
           <div className="crumbs">Platform · Strategic oversight</div>
           <h2 style={{ margin: '4px 0 0' }}>Command center</h2>
-          <div className="bl">
-            <div />
-            <div />
-            <div />
-          </div>
+          <BrandLine />
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm" onClick={handleExport} disabled={isExporting}>

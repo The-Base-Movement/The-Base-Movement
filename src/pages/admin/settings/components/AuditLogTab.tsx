@@ -12,16 +12,24 @@ interface AuditLogTabProps {
 }
 
 const selSt: React.CSSProperties = {
-  height: 36, padding: '0 10px',
+  height: 36,
+  padding: '0 10px',
   border: '1px solid hsl(var(--border))',
-  background: '#fff', outline: 'none',
-  fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12,
-  borderRadius: 4, cursor: 'pointer',
+  background: '#fff',
+  outline: 'none',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  fontSize: 12,
+  borderRadius: 4,
+  cursor: 'pointer',
 }
 
 const thSt: React.CSSProperties = {
-  padding: '10px 16px', textAlign: 'left',
-  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+  padding: '10px 16px',
+  textAlign: 'left',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   background: 'hsl(var(--container-low))',
   borderBottom: '1px solid hsl(var(--border))',
@@ -39,40 +47,104 @@ function statusPill(status: string) {
 }
 
 export function AuditLogTab({
-  auditSearch, setAuditSearch, auditFilter, setAuditFilter,
-  auditResourceFilter, setAuditResourceFilter, filteredLogs, handleExportLogs
+  auditSearch,
+  setAuditSearch,
+  auditFilter,
+  setAuditFilter,
+  auditResourceFilter,
+  setAuditResourceFilter,
+  filteredLogs,
+  handleExportLogs,
 }: AuditLogTabProps) {
   return (
     <div className="panel">
       <div className="ph">
         <span>Audit log</span>
         <button className="btn btn-sm btn-outline" onClick={handleExportLogs}>
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>download</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+            download
+          </span>
           Export report
         </button>
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, padding: '12px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 10,
+          padding: '12px 20px',
+          borderBottom: '1px solid hsl(var(--border))',
+          background: 'hsl(var(--container-low))',
+        }}
+      >
         <div style={{ position: 'relative', flex: 1, minWidth: 180 }}>
-          <label htmlFor="input-7ba91a" style={{ display: 'none' }}>Search by action or resource…</label>
-          <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-          <input aria-label="Search by action or resource…" name="auditSearch" id="input-7ba91a"
+          <label htmlFor="input-7ba91a" style={{ display: 'none' }}>
+            Search by action or resource…
+          </label>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            aria-label="Search by action or resource…"
+            name="auditSearch"
+            id="input-7ba91a"
             placeholder="Search by action or resource…"
             value={auditSearch}
-            onChange={e => setAuditSearch(e.target.value)}
-            style={{ width: '100%', height: 36, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: '#fff', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, boxSizing: 'border-box' }}
+            onChange={(e) => setAuditSearch(e.target.value)}
+            style={{
+              width: '100%',
+              height: 36,
+              paddingLeft: 34,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              background: '#fff',
+              outline: 'none',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12,
+              borderRadius: 4,
+              boxSizing: 'border-box',
+            }}
           />
         </div>
-        <label htmlFor="select-194325" style={{ display: 'none' }}>Filter by Status</label>
-        <select name="auditFilter" id="select-194325" value={auditFilter} onChange={e => setAuditFilter(e.target.value)} style={selSt}>
+        <label htmlFor="select-194325" style={{ display: 'none' }}>
+          Filter by Status
+        </label>
+        <select
+          name="auditFilter"
+          id="select-194325"
+          value={auditFilter}
+          onChange={(e) => setAuditFilter(e.target.value)}
+          style={selSt}
+        >
           <option>All Status</option>
           <option>Success</option>
           <option>Warning</option>
           <option>Failure</option>
         </select>
-        <label htmlFor="select-265651" style={{ display: 'none' }}>Filter by Resource</label>
-        <select name="auditResourceFilter" id="select-265651" value={auditResourceFilter} onChange={e => setAuditResourceFilter(e.target.value)} style={selSt}>
+        <label htmlFor="select-265651" style={{ display: 'none' }}>
+          Filter by Resource
+        </label>
+        <select
+          name="auditResourceFilter"
+          id="select-265651"
+          value={auditResourceFilter}
+          onChange={(e) => setAuditResourceFilter(e.target.value)}
+          style={selSt}
+        >
           <option>All Resources</option>
           <option>MEMBERS</option>
           <option>CHAPTERS</option>
@@ -94,27 +166,71 @@ export function AuditLogTab({
             </tr>
           </thead>
           <tbody>
-            {filteredLogs.length > 0 ? filteredLogs.slice(0, 15).map(log => (
-              <tr key={log.id}
-                onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
-                onMouseLeave={e => (e.currentTarget.style.background = '')}
-              >
-                <td style={{ ...tdSt, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-                  {new Date(log.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
-                </td>
-                <td style={{ ...tdSt, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>
-                  {log.adminName.split(' ')[0]}
-                </td>
-                <td style={{ ...tdSt, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>
-                  {log.action.toLowerCase()}
-                </td>
-                <td style={{ ...tdSt, textAlign: 'right' }}>
-                  <span className={statusPill(log.status)}>{log.status}</span>
-                </td>
-              </tr>
-            )) : (
+            {filteredLogs.length > 0 ? (
+              filteredLogs.slice(0, 15).map((log) => (
+                <tr
+                  key={log.id}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                  }
+                  onMouseLeave={(e) => (e.currentTarget.style.background = '')}
+                >
+                  <td
+                    style={{
+                      ...tdSt,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    {new Date(log.timestamp).toLocaleString([], {
+                      dateStyle: 'short',
+                      timeStyle: 'short',
+                    })}
+                  </td>
+                  <td
+                    style={{
+                      ...tdSt,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {log.adminName.split(' ')[0]}
+                  </td>
+                  <td
+                    style={{
+                      ...tdSt,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    {log.action.toLowerCase()}
+                  </td>
+                  <td style={{ ...tdSt, textAlign: 'right' }}>
+                    <span className={statusPill(log.status)}>{log.status}</span>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan={4} style={{ padding: '40px 20px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>
+                <td
+                  colSpan={4}
+                  style={{
+                    padding: '40px 20px',
+                    textAlign: 'center',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontStyle: 'italic',
+                  }}
+                >
                   No activity logs recorded.
                 </td>
               </tr>
