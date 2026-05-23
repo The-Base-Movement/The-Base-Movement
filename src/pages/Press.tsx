@@ -77,7 +77,9 @@ export default function Press() {
                     >
                       progress_activity
                     </span>
-                    <p className="text-micro font-bold tracking-tight">Scanning dispatch desk...</p>
+                    <p className="text-micro font-medium tracking-tight">
+                      Scanning dispatch desk...
+                    </p>
                   </div>
                 ) : releases.length > 0 ? (
                   releases.map((pr) => (
@@ -86,7 +88,7 @@ export default function Press() {
                       className="bg-white p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all group"
                     >
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-micro font-bold tracking-tight rounded-sm">
+                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-micro font-semibold tracking-tight rounded-sm">
                           {pr.category}
                         </span>
                         <span className="text-tiny text-slate-400 font-medium tracking-tight">
@@ -105,7 +107,7 @@ export default function Press() {
                       </p>
                       <button
                         onClick={() => setSelectedRelease(pr)}
-                        className="flex items-center gap-2 text-brand-green font-bold text-xs bg-transparent border-none cursor-pointer hover:underline p-0"
+                        className="flex items-center gap-2 text-brand-green font-semibold text-xs bg-transparent border-none cursor-pointer hover:underline p-0"
                       >
                         View full release
                         <span
@@ -125,7 +127,7 @@ export default function Press() {
                     >
                       newspaper
                     </span>
-                    <p className="text-slate-400 text-sm font-bold tracking-tight">
+                    <p className="text-slate-400 text-sm font-medium tracking-tight">
                       No active dispatches found.
                     </p>
                   </div>
