@@ -145,7 +145,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: officer.tier === 'executive' ? 20 : 18,
               color: 'hsl(var(--on-surface))',
             }}

@@ -43,7 +43,7 @@ function InitialAvatar({ name }: { name: string }) {
         </span>
       ) : (
         <span
-          style={{ fontSize: 14, fontWeight: 800, color, fontFamily: "'Public Sans', sans-serif" }}
+          style={{ fontSize: 14, fontWeight: 700, color, fontFamily: "'Public Sans', sans-serif" }}
         >
           {initial}
         </span>
@@ -274,7 +274,7 @@ export function LiveContributionFeed() {
                   <p
                     style={{
                       fontSize: 14,
-                      fontWeight: 800,
+                      fontWeight: 700,
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",

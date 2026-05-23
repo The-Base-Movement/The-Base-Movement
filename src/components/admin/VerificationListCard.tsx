@@ -74,7 +74,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: 13,
                 color: isActive ? 'rgba(255,255,255,.6)' : 'hsl(var(--on-surface-muted))',
               }}
@@ -88,7 +88,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: 13.5,
               color: isActive ? '#fff' : 'hsl(var(--on-surface))',
               overflow: 'hidden',
@@ -166,7 +166,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
               borderRadius: 99,
               fontSize: 9.5,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 600,
               color: '#fff',
               textTransform: 'uppercase',
               letterSpacing: '.05em',
