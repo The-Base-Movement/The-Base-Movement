@@ -70,7 +70,7 @@ export function MembersKPIs({ chapterMembers, verifiedCount, myChapter }: Member
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 500,
               fontSize: 10,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -95,7 +95,7 @@ export function MembersKPIs({ chapterMembers, verifiedCount, myChapter }: Member
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 500,
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               display: 'flex',

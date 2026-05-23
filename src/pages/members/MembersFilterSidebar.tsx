@@ -20,7 +20,7 @@ const selectSt: React.CSSProperties = {
   outline: 'none',
   cursor: 'pointer',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 400,
   fontSize: 12,
   borderRadius: 4,
   color: 'hsl(var(--on-surface))',
@@ -52,7 +52,7 @@ export function MembersFilterSidebar({
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 600,
             fontSize: 13,
             color: 'hsl(var(--on-surface))',
             display: 'flex',
@@ -101,7 +101,7 @@ export function MembersFilterSidebar({
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 600,
               fontSize: 11,
               color: 'hsl(var(--on-surface))',
               display: 'flex',

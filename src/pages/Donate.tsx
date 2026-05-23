@@ -243,7 +243,7 @@ export default function Donate() {
           <h1
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: 26,
               color: 'hsl(var(--on-surface))',
               letterSpacing: '-0.02em',
@@ -257,7 +257,7 @@ export default function Donate() {
               fontSize: 13,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 400,
             }}
           >
             Your contributions fuel the growth and sustainability of the movement.
@@ -372,7 +372,7 @@ export default function Donate() {
                 maxWidth: 768,
                 marginTop: 24,
                 lineHeight: 1.6,
-                fontWeight: 700,
+                fontWeight: 400,
                 fontSize: 'clamp(14px, 2vw, 16px)',
                 fontFamily: "'Public Sans', sans-serif",
               }}

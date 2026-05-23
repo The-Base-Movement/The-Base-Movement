@@ -164,8 +164,8 @@ export default function Members() {
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 11,
+                    fontWeight: 500,
+                    fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
                 >
@@ -215,7 +215,7 @@ export default function Members() {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 600,
                       fontSize: 14,
                       color: 'hsl(var(--on-surface))',
                       marginBottom: 6,
@@ -226,7 +226,7 @@ export default function Members() {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 400,
                       fontSize: 12,
                       color: 'hsl(var(--on-surface-muted))',
                       marginBottom: 18,
@@ -252,7 +252,7 @@ export default function Members() {
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 400,
                     fontSize: 14,
                     color: 'hsl(var(--on-surface-muted))',
                     fontStyle: 'italic',
@@ -334,7 +334,7 @@ export default function Members() {
                       justifyContent: 'center',
                       color: '#fff',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: 20,
                     }}
                   >
@@ -379,7 +379,7 @@ export default function Members() {
                   <h2
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: 18,
                       color: 'hsl(var(--on-surface))',
                       margin: '0 0 3px',
@@ -429,7 +429,7 @@ export default function Members() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 500,
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
@@ -442,7 +442,7 @@ export default function Members() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 600,
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                         display: 'flex',
