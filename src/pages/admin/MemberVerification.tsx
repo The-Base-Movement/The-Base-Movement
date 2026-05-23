@@ -138,7 +138,6 @@ export default function MemberVerification() {
       {/* Top bar */}
       <div className="top">
         <div>
-          <div className="crumbs">Members · Verification</div>
           <h2 style={{ margin: '4px 0 0' }}>Member verification</h2>
           <BrandLine />
           <p

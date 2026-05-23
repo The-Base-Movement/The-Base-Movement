@@ -19,9 +19,6 @@ export function PollsHeader({ onCreateClick }: PollsHeaderProps) {
   return (
     <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
       <div>
-        {/* Breadcrumb trail */}
-        <div className="crumbs">Engagement · Campaigns</div>
-
         {/* Page title with leading icon */}
         <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>

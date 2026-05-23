@@ -9,7 +9,6 @@
  *  onWrite — opens the editor to create a new post
  */
 
-import { Link } from 'react-router-dom'
 import { BrandLine } from '@/components/ui/BrandLine'
 
 interface BlogsHeaderProps {
@@ -20,14 +19,6 @@ export function BlogsHeader({ onWrite }: BlogsHeaderProps) {
   return (
     <div className="top">
       <div>
-        {/* Breadcrumb trail */}
-        <div className="crumbs">
-          <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>
-            Admin
-          </Link>
-          {' · '} Blog intelligence
-        </div>
-
         {/* Page title with leading icon */}
         <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 22 }}>

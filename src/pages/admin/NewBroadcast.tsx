@@ -90,17 +90,6 @@ export default function NewBroadcast() {
       {/* Top bar */}
       <div className="top" style={{ marginBottom: 20 }}>
         <div>
-          <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>
-              Admin
-            </Link>
-            {' · '}
-            <Link to="/admin/broadcasts" style={{ color: 'hsl(var(--primary))' }}>
-              Communication hub
-            </Link>
-            {' · '}
-            New broadcast
-          </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span
               className="material-symbols-outlined"

@@ -108,7 +108,6 @@ export default function PollingStations() {
       {/* Header */}
       <div className="top">
         <div>
-          <div className="crumbs">Admin · Constituency Operations · Polling stations</div>
           <h2>Polling stations</h2>
           <BrandLine />
           <p

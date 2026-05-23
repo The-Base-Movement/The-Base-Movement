@@ -222,7 +222,6 @@ export default function PlanManager() {
         style={{ alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 0 }}
       >
         <div>
-          <div className="crumbs">Content · Operational Blueprint</div>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
               route

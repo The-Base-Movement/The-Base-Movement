@@ -8,7 +8,6 @@ export function AdminsHeader({ onProvision }: AdminsHeaderProps) {
   return (
     <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
       <div>
-        <div className="crumbs">Security · Personnel</div>
         <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
             shield

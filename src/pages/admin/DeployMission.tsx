@@ -85,17 +85,6 @@ export default function DeployMission() {
       {/* Top bar */}
       <div className="top" style={{ marginBottom: 20 }}>
         <div>
-          <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>
-              Admin
-            </Link>
-            {' · '}
-            <Link to="/admin/ground-game" style={{ color: 'hsl(var(--primary))' }}>
-              Constituency Operations
-            </Link>
-            {' · '}
-            Deploy mission
-          </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span
               className="material-symbols-outlined"

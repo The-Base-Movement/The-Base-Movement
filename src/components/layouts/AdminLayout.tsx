@@ -7,6 +7,7 @@ import { donationService } from '@/services/donationService'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { CountryBadge } from '@/components/CountryBadge'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } from '@/types/admin'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
@@ -1431,6 +1432,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           }}
         >
           <div className="max-w-7xl mx-auto w-full">
+            <Breadcrumbs />
             {children || <Outlet />}
 
             {/* Movement Slogan Footer */}

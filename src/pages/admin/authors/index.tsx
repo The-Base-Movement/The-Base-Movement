@@ -135,7 +135,6 @@ export default function AdminAuthors() {
     <div className="main">
       <div className="top" style={{ marginBottom: 20 }}>
         <div>
-          <div className="crumbs">Personnel · Leadership</div>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
               badge

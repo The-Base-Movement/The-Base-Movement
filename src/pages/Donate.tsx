@@ -232,7 +232,15 @@ export default function PublicDonate() {
               loading={loading}
               publicHistory={publicHistory}
               personalHistory={personalHistory}
-              spendingHistory={spendingHistory}
+              spendingHistory={spendingHistory.map((s) => ({
+                id: s.id,
+                chapter: s.chapter,
+                type: s.transaction_type,
+                amount: s.amount.toString(),
+                description: s.description,
+                category: s.category,
+                date: s.timestamp,
+              }))}
               onDownload={handleDownload}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
             />

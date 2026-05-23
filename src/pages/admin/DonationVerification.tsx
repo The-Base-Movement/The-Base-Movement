@@ -157,7 +157,6 @@ export default function FinancialAudit() {
       {/* Top bar */}
       <div className="top" style={{ marginBottom: 18 }}>
         <div>
-          <div className="crumbs">Money · Donations · Verification queue</div>
           <h2 style={{ margin: '4px 0 0' }}>Donations · verification queue</h2>
           <BrandLine />
           <p

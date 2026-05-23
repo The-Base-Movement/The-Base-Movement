@@ -351,7 +351,6 @@ export default function GroundGameCommand() {
       {/* Header */}
       <div className="top">
         <div>
-          <div className="crumbs">Command → Constituency Operations</div>
           <h2>Constituency Operations{selectedRegion !== 'ALL' ? ` · ${selectedRegion}` : ''}</h2>
           <BrandLine />
           <p

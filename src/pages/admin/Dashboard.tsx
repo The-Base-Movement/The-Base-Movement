@@ -206,7 +206,6 @@ export default function AdminDashboard() {
     <div className="main">
       <div className="top">
         <div>
-          <div className="crumbs">Platform · Strategic oversight</div>
           <h2 style={{ margin: '4px 0 0' }}>Command center</h2>
           <BrandLine />
         </div>

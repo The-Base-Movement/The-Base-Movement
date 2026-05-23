@@ -369,7 +369,6 @@ export default function AdminSettings() {
       {/* Page header */}
       <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
-          <div className="crumbs">System · Configuration</div>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
               settings

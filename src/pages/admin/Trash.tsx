@@ -171,10 +171,9 @@ export default function TrashPage() {
 
   return (
     <div className="main">
-      <div className="top" style={{ marginBottom: 18 }}>
+      <div className="top" style={{ marginBottom: 20 }}>
         <div>
-          <div className="crumbs">Platform · Trash</div>
-          <h2 style={{ margin: '4px 0 0', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
               delete
             </span>

@@ -1296,7 +1296,16 @@ class AdminService {
   }
 
   async getMovementSpendingHistory(): Promise<MobilizationLedger[]> {
-    return donationService.getMobilizationLedger(50)
+    const data = await donationService.getMobilizationLedger(50)
+    return data.map((d) => ({
+      id: d.id,
+      chapter: d.chapter,
+      transaction_type: d.type,
+      amount: Number(d.amount),
+      description: d.description,
+      timestamp: d.date,
+      category: d.category as MobilizationLedger['category'],
+    }))
   }
 
   subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {

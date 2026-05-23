@@ -101,27 +101,6 @@ export function BlogEditorView({
             arrow_back
           </button>
           <div>
-            {/* Breadcrumb */}
-            <div className="crumbs" style={{ marginBottom: 2 }}>
-              <button
-                onClick={onBack}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  fontFamily: 'inherit',
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 11,
-                  color: 'hsl(var(--primary))',
-                }}
-              >
-                Editorial
-              </button>
-              {' · '}
-              {editingPost ? 'Refining intelligence' : 'Drafting dispatch'}
-            </div>
-            {/* Post title + status pill */}
             <h2
               className="!text-sm !font-bold !m-0"
               style={{ display: 'flex', alignItems: 'center', gap: 8 }}

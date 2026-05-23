@@ -16,7 +16,6 @@ export function MembersHeader({
   return (
     <div className="top">
       <div>
-        <div className="crumbs">Members · Directory</div>
         <h2 style={{ margin: '4px 0 0' }}>Member directory</h2>
         <p
           style={{

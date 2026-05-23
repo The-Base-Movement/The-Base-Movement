@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { RegionalStat, Country, Region } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
@@ -147,12 +146,6 @@ export default function ChaptersManagement() {
     <div className="main">
       <div className="top" style={{ marginBottom: 20 }}>
         <div>
-          <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>
-              Admin
-            </Link>
-            {' · '}Chapters
-          </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span
               className="material-symbols-outlined"

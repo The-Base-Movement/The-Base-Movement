@@ -27,17 +27,6 @@ export function HubHeader({
     <>
       <div className="top">
         <div>
-          <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>
-              Admin
-            </Link>
-            {' · '}
-            <Link to="/admin/chapters" style={{ color: 'hsl(var(--primary))' }}>
-              Chapters
-            </Link>
-            {' · '}
-            {chapter.name}
-          </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
               account_balance

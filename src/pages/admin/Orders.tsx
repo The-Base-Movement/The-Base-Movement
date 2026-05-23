@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -127,15 +126,6 @@ export default function AdminOrders() {
       {/* Page Header - Industrial Standard */}
       <div className="top" style={{ marginBottom: 20 }}>
         <div>
-          <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>
-              Admin
-            </Link>
-            {' · '}
-            Store Management
-            {' · '}
-            Orders
-          </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span
               className="material-symbols-outlined"

@@ -188,7 +188,6 @@ export default function PartyOfficials() {
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
-          <div className="crumbs">Personnel · Leadership</div>
           <h2
             style={{
               display: 'flex',

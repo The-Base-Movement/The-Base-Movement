@@ -225,7 +225,6 @@ export default function AdminStore() {
       {/* Top bar */}
       <div className="top">
         <div>
-          <div className="crumbs">Store · Logistics</div>
           <h2 style={{ margin: '4px 0 0' }}>Logistics and supply</h2>
           <BrandLine />
           <p

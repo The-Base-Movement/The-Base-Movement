@@ -51,26 +51,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
       {/* Header */}
       <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
-          {/* Breadcrumb */}
-          <div className="crumbs">
-            <button
-              onClick={onBack}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: 0,
-                fontFamily: 'inherit',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 11,
-                color: 'hsl(var(--primary))',
-              }}
-            >
-              Editorial
-            </button>
-            {' · '} Intelligence review
-          </div>
-          <h2
+          <h1
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -84,7 +65,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
               visibility
             </span>
             {viewPost.title}
-          </h2>
+          </h1>
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm" onClick={onBack}>

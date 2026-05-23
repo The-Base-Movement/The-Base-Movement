@@ -26,7 +26,6 @@ export function HubSelector({ chapters }: HubSelectorProps) {
     <div className="main">
       <div className="top">
         <div>
-          <div className="crumbs">Admin · Chapters</div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
               shield
