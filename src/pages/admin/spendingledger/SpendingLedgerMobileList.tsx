@@ -95,7 +95,7 @@ export function SpendingLedgerMobileList({
                   <span
                     style={{
                       fontSize: 10,
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       padding: '2px 7px',
                       borderRadius: 3,
                       background: 'hsl(var(--container-low))',

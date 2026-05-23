@@ -202,7 +202,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: isLead ? 800 : 700,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 12.5,
                           color: 'hsl(var(--on-surface))',
                         }}

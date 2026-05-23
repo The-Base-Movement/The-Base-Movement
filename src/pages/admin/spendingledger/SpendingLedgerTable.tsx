@@ -61,7 +61,7 @@ export function SpendingLedgerTable({
               borderRadius: 4,
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               outline: 'none',
               boxSizing: 'border-box',
             }}
@@ -91,7 +91,7 @@ export function SpendingLedgerTable({
                   style={{
                     padding: '10px 16px',
                     fontSize: 10,
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
@@ -171,7 +171,7 @@ export function SpendingLedgerTable({
                     <span
                       style={{
                         fontSize: 11,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         padding: '3px 8px',
                         borderRadius: 3,
                         background: 'hsl(var(--container-low))',
@@ -185,7 +185,7 @@ export function SpendingLedgerTable({
                     <p
                       style={{
                         fontSize: 12,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         margin: 0,
                       }}

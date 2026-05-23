@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 interface HubHeaderProps {
   chapter: Chapter
@@ -25,38 +25,19 @@ export function HubHeader({
 }: HubHeaderProps) {
   return (
     <>
-      <div className="top">
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-              account_balance
-            </span>
-            {chapter.name}
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12.5,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 6,
-              marginBottom: 0,
-            }}
-          >
-            {chapter.leader_name || 'No leader assigned'} — {chapter.city_or_region},{' '}
-            {chapter.country}
-          </p>
-        </div>
-        <div className="actions">
+      <AdminPageHeader
+        title={chapter.name}
+        icon="account_balance"
+        description={`${chapter.leader_name || 'No leader assigned'} — ${chapter.city_or_region}, ${chapter.country}`}
+        actions={
           <Link to="/admin/chapters" className="btn btn-outline btn-sm">
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               arrow_back
             </span>
             All chapters
           </Link>
-        </div>
-      </div>
+        }
+      />
 
       <div className="kpis">
         {[

@@ -135,7 +135,7 @@ export function SpendingFormModal({
                 borderRadius: 4,
                 fontSize: 13,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 boxSizing: 'border-box',
                 outline: 'none',
               }}
@@ -189,7 +189,7 @@ export function SpendingFormModal({
                     borderRadius: 4,
                     fontSize: 13,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     boxSizing: 'border-box',
                     outline: 'none',
                   }}
@@ -224,7 +224,7 @@ export function SpendingFormModal({
                   borderRadius: 4,
                   fontSize: 13,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   background: '#fff',
                   color: 'hsl(var(--on-surface))',
                   boxSizing: 'border-box',
@@ -270,7 +270,7 @@ export function SpendingFormModal({
                   borderRadius: 4,
                   fontSize: 13,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   boxSizing: 'border-box',
                   outline: 'none',
                 }}
@@ -305,7 +305,7 @@ export function SpendingFormModal({
                   borderRadius: 4,
                   fontSize: 13,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   boxSizing: 'border-box',
                   outline: 'none',
                 }}

@@ -139,7 +139,7 @@ export default function MemberVerification() {
         title="Member verification"
         description="Review and approve new member registrations for movement security."
         actions={
-          <div className="actions">
+          <>
             {pendingCount > 0 && (
               <div
                 style={{
@@ -192,7 +192,7 @@ export default function MemberVerification() {
               </span>
               Add member
             </button>
-          </div>
+          </>
         }
       />
 

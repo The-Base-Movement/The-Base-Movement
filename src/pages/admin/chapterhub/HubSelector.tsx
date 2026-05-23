@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 interface HubSelectorProps {
   chapters: Chapter[]
@@ -24,29 +24,11 @@ export function HubSelector({ chapters }: HubSelectorProps) {
 
   return (
     <div className="main">
-      <div className="top">
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-              shield
-            </span>
-            Regional Hub Command
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12.5,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 6,
-              marginBottom: 0,
-            }}
-          >
-            Select a regional chapter to view its operational telemetry and personnel.
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Regional Hub Command"
+        icon="shield"
+        description="Select a regional chapter to view its operational telemetry and personnel."
+      />
 
       {/* Search */}
       <div className="panel" style={{ marginBottom: 20 }}>

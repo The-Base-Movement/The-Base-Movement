@@ -30,6 +30,7 @@ export default function TrashPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isBulkRestoring, setIsBulkRestoring] = useState(false)
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false)
 
   const { openDelete, modal: deleteModal } = useDeleteModal()
 
@@ -91,7 +92,10 @@ export default function TrashPage() {
       try {
         if (activeTab === 'blogs') success = await contentService.restoreBlogPost(id)
         if (activeTab === 'products') success = await logisticsService.restoreInventoryItem(id)
-        if (activeTab === 'media') success = await contentService.restoreMediaFile(id)
+        if (activeTab === 'media') {
+          const item = media.find((m) => m.id === id)
+          if (item) success = await contentService.restoreMediaFile(item.url)
+        }
         if (activeTab === 'authors') success = await contentService.restoreAuthor(id)
         if (activeTab === 'members') success = await adminService.restoreMember(id)
       } catch {
@@ -103,6 +107,43 @@ export default function TrashPage() {
     setSelectedIds(new Set())
     toast.success(`${successCount} of ${selectedIds.size} items restored.`)
     loadTrash()
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return
+
+    openDelete({
+      itemName: `${selectedIds.size} selected item${selectedIds.size > 1 ? 's' : ''}`,
+      isPermanent: true,
+      title: 'Delete forever?',
+      description: 'The selected items will be permanently deleted and cannot be recovered.',
+      onConfirm: async () => {
+        setIsBulkDeleting(true)
+        let successCount = 0
+        for (const id of Array.from(selectedIds)) {
+          let success = false
+          try {
+            if (activeTab === 'blogs') success = await contentService.permanentlyDeleteBlogPost(id)
+            if (activeTab === 'products')
+              success = await logisticsService.permanentlyDeleteInventoryItem(id)
+            if (activeTab === 'media') {
+              const item = media.find((m) => m.id === id)
+              if (item) success = await contentService.permanentlyDeleteMediaFile(item.url)
+            }
+            if (activeTab === 'authors') success = await contentService.permanentlyDeleteAuthor(id)
+            if (activeTab === 'members') success = await adminService.permanentlyDeleteMember(id)
+          } catch {
+            /* continue */
+          }
+          if (success) successCount++
+        }
+        setIsBulkDeleting(false)
+        setSelectedIds(new Set())
+        toast.success(`${successCount} of ${selectedIds.size} items deleted forever.`)
+        loadTrash()
+        return true
+      },
+    })
   }
 
   const formatDaysRemaining = (deletedAt: string) => {
@@ -396,8 +437,18 @@ export default function TrashPage() {
               Clear
             </button>
             <button
+              onClick={handleBulkDelete}
+              disabled={isBulkDeleting || isBulkRestoring}
+              className="btn btn-dest btn-sm"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                delete_forever
+              </span>
+              {isBulkDeleting ? 'Deleting…' : `Delete forever`}
+            </button>
+            <button
               onClick={handleBulkRestore}
-              disabled={isBulkRestoring}
+              disabled={isBulkRestoring || isBulkDeleting}
               className="btn btn-primary btn-sm"
             >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>

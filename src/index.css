@@ -603,6 +603,12 @@
   display: flex;
   gap: 8px;
 }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
 /* KPI strip */
 .kpis {

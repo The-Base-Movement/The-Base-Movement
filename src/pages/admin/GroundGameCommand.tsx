@@ -352,7 +352,7 @@ export default function GroundGameCommand() {
         title={`Constituency Operations${selectedRegion !== 'ALL' ? ` · ${selectedRegion}` : ''}`}
         description="Field agents · routes · constituency coverage"
         actions={
-          <div className="actions">
+          <>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <span
                 className="material-symbols-outlined"
@@ -421,7 +421,7 @@ export default function GroundGameCommand() {
               </span>
               Assign turf
             </button>
-          </div>
+          </>
         }
       />
 

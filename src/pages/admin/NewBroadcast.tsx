@@ -91,7 +91,7 @@ export default function NewBroadcast() {
         title="New broadcast"
         icon="campaign"
         actions={
-          <div className="actions">
+          <>
             <button
               className="btn btn-outline btn-sm"
               onClick={() => navigate('/admin/broadcasts')}
@@ -101,7 +101,7 @@ export default function NewBroadcast() {
               </span>
               Abort
             </button>
-          </div>
+          </>
         }
       />
 

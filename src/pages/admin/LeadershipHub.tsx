@@ -267,7 +267,7 @@ export default function LeadershipHub() {
         icon="stars"
         description="Vetting and authorization for movement chapter leadership and regional operations."
         actions={
-          <div className="actions">
+          <>
             <button
               className="btn btn-outline"
               onClick={handleGenerateReport}
@@ -284,7 +284,7 @@ export default function LeadershipHub() {
               </span>
               Direct Appoint
             </button>
-          </div>
+          </>
         }
       />
 

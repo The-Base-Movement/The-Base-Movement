@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Sub-components
 import { AuthorForm } from './AuthorForm'
@@ -133,29 +133,11 @@ export default function AdminAuthors() {
 
   return (
     <div className="main">
-      <div className="top" style={{ marginBottom: 20 }}>
-        <div>
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-              badge
-            </span>
-            Editorial Author Management
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 6,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Manage verified editorial personnel, field correspondents, and digital mobilization
-            authors.
-          </p>
-        </div>
-        <div className="actions">
+      <AdminPageHeader
+        title="Editorial Author Management"
+        icon="badge"
+        description="Manage verified editorial personnel, field correspondents, and digital mobilization authors."
+        actions={
           <button
             className="btn btn-primary btn-sm"
             onClick={() => setFormView({ mode: 'create' })}
@@ -165,8 +147,8 @@ export default function AdminAuthors() {
             </span>
             Appoint personnel
           </button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="kpis">
         {[

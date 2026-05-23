@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import type { Entry, FormState } from './spendingledger/types'
@@ -125,30 +126,11 @@ export default function SpendingLedger() {
 
   return (
     <div className="main">
-      <div style={{ marginBottom: 24 }}>
-        <h1
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-semibold, 600)',
-            fontSize: 26,
-            color: 'hsl(var(--on-surface))',
-            letterSpacing: '-0.02em',
-            marginBottom: 4,
-          }}
-        >
-          Expenses
-        </h1>
-        <p
-          style={{
-            fontSize: 13,
-            color: 'hsl(var(--on-surface-muted))',
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 600,
-          }}
-        >
-          Record and manage how donated funds have been used.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Movement spending ledger"
+        icon="account_balance_wallet"
+        description="Record and manage strategic fund allocations and regional mobilization expenditures."
+      />
 
       {/* KPIs */}
       <SpendingLedgerKPIs entries={entries} loading={loading} />
