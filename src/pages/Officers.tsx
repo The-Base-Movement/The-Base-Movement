@@ -5,9 +5,11 @@ import { OfficerCardSlider } from '@/components/OfficerCardSlider'
 import { SearchBar } from '@/components/SearchBar'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
+import { usePerformance } from '@/context/PerformanceContext'
 import { ScrollReveal } from '@/components/ScrollReveal'
 
 export default function Officers() {
+  const { lowBandwidthMode } = usePerformance()
   const { settings } = useBranding()
   const [officers, setOfficers] = useState<OfficerProfile[]>([])
   const [tiers, setTiers] = useState<
@@ -65,15 +67,17 @@ export default function Officers() {
       />
 
       <section className="bg-on-surface text-white py-20 md:py-32 relative overflow-hidden">
-        <div
-          className="absolute inset-0 z-0 opacity-20 pointer-events-none"
-          style={{
-            backgroundImage: `url('${settings.hero_bg_url || '/hero-bg.png'}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'grayscale(100%) contrast(1.2)',
-          }}
-        />
+        {!lowBandwidthMode && (
+          <div
+            className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+            style={{
+              backgroundImage: `url('${settings.hero_bg_url || '/hero-bg.png'}')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'grayscale(100%) contrast(1.2)',
+            }}
+          />
+        )}
         <div className="max-w-[1280px] mx-auto px-5 sm:px-8 relative z-10 text-center">
           <ScrollReveal direction="down" duration={1000}>
             <h1 className="font-meta font-extrabold text-4xl md:text-6xl mb-6 tracking-tight">

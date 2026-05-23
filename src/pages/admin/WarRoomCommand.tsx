@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
+import { usePerformance } from '@/context/PerformanceContext'
 import type {
   RapidResponseDirective,
   CrisisIncident,
@@ -78,9 +79,18 @@ export default function WarRoomCommand() {
   const [loading, setLoading] = useState(true)
   const [reportData, setReportData] = useState<string | null>(null)
   const [reportLoading, setReportLoading] = useState(false)
+  const { lowBandwidthMode } = usePerformance()
 
   useEffect(() => {
     fetchWarRoomIntelligence()
+
+    if (lowBandwidthMode) {
+      // In Low-Bandwidth mode, only poll every 2 minutes and no real-time subscription
+      const intervalId = setInterval(() => {
+        fetchWarRoomIntelligence(true)
+      }, 120000)
+      return () => clearInterval(intervalId)
+    }
 
     // Establish live connection for realtime War Room updates
     const channel = supabase
@@ -122,7 +132,7 @@ export default function WarRoomCommand() {
       supabase.removeChannel(channel)
       clearInterval(intervalId)
     }
-  }, [])
+  }, [lowBandwidthMode])
 
   const handleUpdateIncidentStatus = async (
     id: string,

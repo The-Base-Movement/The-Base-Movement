@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { formatDistanceToNow } from 'date-fns'
+import { usePerformance } from '@/context/PerformanceContext'
 
 interface Activity {
   name: string
@@ -17,6 +18,7 @@ interface Activity {
 }
 
 export function ActivityFeed() {
+  const { lowBandwidthMode } = usePerformance()
   const [activities, setActivities] = useState<Activity[]>([])
 
   useEffect(() => {
@@ -56,6 +58,8 @@ export function ActivityFeed() {
 
     initFeed()
 
+    if (lowBandwidthMode) return
+
     const donationSub = donationService.subscribeToPublicDonations((d) => {
       const newActivity: Activity = {
         name: d.fullName,
@@ -86,10 +90,10 @@ export function ActivityFeed() {
     })
 
     return () => {
-      donationSub.unsubscribe()
-      memberSub.unsubscribe()
+      if (donationSub) donationSub.unsubscribe()
+      if (memberSub) memberSub.unsubscribe()
     }
-  }, [])
+  }, [lowBandwidthMode])
 
   return (
     <div className="flex flex-col">

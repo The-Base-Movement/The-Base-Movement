@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { usePerformance } from '@/context/PerformanceContext'
 
 // Sub-components
 import { AuthorForm } from './AuthorForm'
@@ -43,6 +44,7 @@ const selectSt = {
 }
 
 export default function AdminAuthors() {
+  const { lowBandwidthMode } = usePerformance()
   const [authors, setAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -506,13 +508,25 @@ export default function AdminAuthors() {
                               background: 'hsl(var(--container-low))',
                             }}
                           >
-                            <img
-                              src={author.imageUrl || '/author-placeholder.svg'}
-                              crossOrigin="anonymous"
-                              loading="lazy"
-                              alt={author.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
+                            {!lowBandwidthMode ? (
+                              <img
+                                src={author.imageUrl || '/author-placeholder.svg'}
+                                crossOrigin="anonymous"
+                                loading="lazy"
+                                alt={author.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <span
+                                style={{
+                                  fontSize: 12,
+                                  fontWeight: 'bold',
+                                  color: 'hsl(var(--on-surface-muted))',
+                                }}
+                              >
+                                {author.name[0]}
+                              </span>
+                            )}
                           </div>
                           <div>
                             <b
@@ -756,13 +770,25 @@ export default function AdminAuthors() {
                           background: 'hsl(var(--container-low))',
                         }}
                       >
-                        <img
-                          src={author.imageUrl || '/author-placeholder.svg'}
-                          crossOrigin="anonymous"
-                          loading="lazy"
-                          alt={author.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
+                        {!lowBandwidthMode ? (
+                          <img
+                            src={author.imageUrl || '/author-placeholder.svg'}
+                            crossOrigin="anonymous"
+                            loading="lazy"
+                            alt={author.name}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 'bold',
+                              color: 'hsl(var(--on-surface-muted))',
+                            }}
+                          >
+                            {author.name[0]}
+                          </span>
+                        )}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <b

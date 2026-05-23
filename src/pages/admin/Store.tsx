@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { usePerformance } from '@/context/PerformanceContext'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import {
   adminService,
@@ -22,6 +23,7 @@ export default function AdminStore() {
   const [requests, setRequests] = useState<ResourceRequest[]>([])
   const [auditLogs, setAuditLogs] = useState<LogisticsAuditEntry[]>([])
   const [activeTab, setActiveTab] = useState<'inventory' | 'requests' | 'audit'>('inventory')
+  const { lowBandwidthMode } = usePerformance()
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
@@ -85,6 +87,8 @@ export default function AdminStore() {
   useEffect(() => {
     fetchData()
 
+    if (lowBandwidthMode) return
+
     // Subscribe to live inventory updates
     const inventorySub = supabase
       .channel('inventory-changes')
@@ -105,7 +109,7 @@ export default function AdminStore() {
       inventorySub.unsubscribe()
       requestsSub.unsubscribe()
     }
-  }, [])
+  }, [lowBandwidthMode])
 
   const handleOpenModal = (product?: InventoryItem) => {
     setSelectedProduct(

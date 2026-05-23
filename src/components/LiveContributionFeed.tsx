@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { adminService } from '@/services/adminService'
+import { usePerformance } from '@/context/PerformanceContext'
 import type { DonationDetail } from '@/types/admin'
 
 function maskName(fullName: string): string {
@@ -53,6 +54,7 @@ function InitialAvatar({ name }: { name: string }) {
 }
 
 export function LiveContributionFeed() {
+  const { lowBandwidthMode } = usePerformance()
   const [donations, setDonations] = useState<DonationDetail[]>([])
   const [loading, setLoading] = useState(true)
   const feedRef = useRef<HTMLDivElement>(null)
@@ -71,6 +73,9 @@ export function LiveContributionFeed() {
     }
 
     fetchRecentDonations()
+
+    // Disable real-time in Low-Bandwidth mode to save data/battery
+    if (lowBandwidthMode) return
 
     // Subscribe to real-time updates via central service
     const subscription = adminService.subscribeToPublicDonations((newDonation) => {
@@ -91,7 +96,7 @@ export function LiveContributionFeed() {
         subscription.unsubscribe()
       }
     }
-  }, [])
+  }, [lowBandwidthMode])
 
   if (loading) {
     return (
@@ -221,10 +226,10 @@ export function LiveContributionFeed() {
           {donations.map((donation) => (
             <motion.div
               key={donation.id}
-              initial={{ opacity: 0, x: -20, height: 0 }}
+              initial={!lowBandwidthMode ? { opacity: 0, x: -20, height: 0 } : {}}
               animate={{ opacity: 1, x: 0, height: 'auto' }}
-              exit={{ opacity: 0, x: 20, height: 0 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
+              exit={!lowBandwidthMode ? { opacity: 0, x: 20, height: 0 } : {}}
+              transition={!lowBandwidthMode ? { duration: 0.4, ease: 'easeOut' } : { duration: 0 }}
             >
               <div
                 style={{

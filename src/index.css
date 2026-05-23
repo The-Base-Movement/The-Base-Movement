@@ -1798,3 +1798,31 @@
     transform: rotate(360deg);
   }
 }
+
+/* 📡 Low-Bandwidth Mode Aggressive Optimization */
+.low-bandwidth * {
+  transition: none !important;
+  animation: none !important;
+}
+
+.low-bandwidth .animate-pulse,
+.low-bandwidth .animate-bounce,
+.low-bandwidth .animate-spin {
+  animation: none !important;
+}
+
+/* Re-enable essential spin for loaders if strictly necessary, or leave off for max perf */
+.low-bandwidth .spinner {
+  animation: spin 0.8s linear infinite !important;
+}
+
+.low-bandwidth [data-fade],
+.low-bandwidth [data-fade-stagger] > * {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.low-bandwidth img {
+  image-rendering: -webkit-optimize-contrast;
+}

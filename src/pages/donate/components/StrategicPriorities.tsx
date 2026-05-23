@@ -1,5 +1,6 @@
 import type { DonationCampaign } from '@/types/admin'
 import { Button } from '@/components/buttons/ui/neon-button'
+import { usePerformance } from '@/context/PerformanceContext'
 
 interface StrategicPrioritiesProps {
   loading: boolean
@@ -12,6 +13,7 @@ export function StrategicPriorities({
   campaigns,
   onSelectCampaign,
 }: StrategicPrioritiesProps) {
+  const { lowBandwidthMode } = usePerformance()
   return (
     <section style={{ marginTop: 80 }}>
       <div style={{ marginBottom: 48 }}>
@@ -74,7 +76,7 @@ export function StrategicPriorities({
                     position: 'relative',
                   }}
                 >
-                  {c.imageUrl ? (
+                  {c.imageUrl && !lowBandwidthMode ? (
                     <img
                       src={c.imageUrl}
                       alt={c.title}
