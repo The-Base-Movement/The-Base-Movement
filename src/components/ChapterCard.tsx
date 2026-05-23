@@ -67,7 +67,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
           <h4
             style={{
               color: headerTextColor,
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: 14,
               letterSpacing: '-0.005em',
               lineHeight: 1.2,
@@ -114,7 +114,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
             padding: '2px 8px',
             border: `1px solid ${isActive && !isFeatured ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)'}`,
             borderRadius: 2,
-            fontWeight: 800,
+            fontWeight: 600,
             fontSize: 9,
             letterSpacing: '0.05em',
             textTransform: 'uppercase',
@@ -146,7 +146,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
             <div key={l}>
               <div
                 style={{
-                  fontWeight: 800,
+                  fontWeight: 700,
                   fontSize: 18,
                   letterSpacing: '-0.015em',
                   color: 'hsl(var(--on-surface))',
@@ -218,7 +218,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
           <div style={{ minWidth: 0, flex: 1 }}>
             <div
               style={{
-                fontWeight: 800,
+                fontWeight: 600,
                 fontSize: 11.5,
                 color: 'hsl(var(--on-surface))',
                 overflow: 'hidden',
@@ -245,7 +245,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
                 padding: '6px 12px',
                 borderRadius: 4,
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 600,
                 background: 'hsla(var(--primary), 0.08)',
                 color: 'hsl(var(--primary))',
                 border: '1px solid hsla(var(--primary), 0.25)',
@@ -262,7 +262,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 4,
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 600,
                 color: 'hsl(var(--on-surface))',
                 textDecoration: 'none',
                 display: 'inline-block',

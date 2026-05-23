@@ -244,7 +244,7 @@ export default function DashboardLayout() {
               className="flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-[4px] transition-all group border border-white/5"
             >
               <span className="material-symbols-outlined text-[18px] text-accent">arrow_back</span>
-              <span className="text-[11px] font-extrabold uppercase tracking-[0.06em]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.06em]">
                 Back to Site
               </span>
             </Link>
@@ -292,7 +292,7 @@ export default function DashboardLayout() {
                 {group.items.map((item) => (
                   <Link
                     key={item.to}
-                    className={`flex items-center transition-all font-meta text-[12px] font-bold tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
+                    className={`flex items-center transition-all font-meta text-[12px] font-semibold tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                     to={item.to}
                   >
                     <span
@@ -326,7 +326,7 @@ export default function DashboardLayout() {
                 justifyContent: 'center',
                 gap: 8,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: 12,
                 letterSpacing: '0.02em',
                 boxShadow: '0 4px 16px rgba(0,107,63,0.25)',
@@ -450,7 +450,7 @@ export default function DashboardLayout() {
                   color: 'hsl(var(--on-surface))',
                   borderRadius: 4,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   fontSize: 12,
                   textDecoration: 'none',
                   flexShrink: 0,
@@ -562,7 +562,7 @@ export default function DashboardLayout() {
                         <span
                           style={{
                             fontFamily: "'Public Sans',sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 600,
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                           }}
@@ -641,7 +641,7 @@ export default function DashboardLayout() {
                                 <div
                                   style={{
                                     fontFamily: "'Public Sans',sans-serif",
-                                    fontWeight: 800,
+                                    fontWeight: 600,
                                     fontSize: 12,
                                     color: 'hsl(var(--on-surface))',
                                     marginBottom: 2,
@@ -730,7 +730,7 @@ export default function DashboardLayout() {
                           justifyContent: 'center',
                           color: '#fff',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 700,
                           fontSize: 11,
                         }}
                       >
@@ -793,7 +793,7 @@ export default function DashboardLayout() {
                         <div
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 700,
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                             textTransform: 'capitalize',

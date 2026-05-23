@@ -51,7 +51,7 @@ export default function Footer() {
 
   const linkStyle: React.CSSProperties = {
     fontFamily: "'Public Sans', sans-serif",
-    fontWeight: 700,
+    fontWeight: 500,
     fontSize: 12.5,
     color: 'hsl(var(--on-surface-muted))',
     textDecoration: 'none',
@@ -96,7 +96,7 @@ export default function Footer() {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
+                    fontWeight: 700,
                     fontSize: 22,
                     letterSpacing: '-.02em',
                     color: 'hsl(var(--on-surface))',
@@ -108,7 +108,7 @@ export default function Footer() {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 600,
                     fontSize: 11,
                     color: 'hsl(var(--primary))',
                     letterSpacing: '.01em',
@@ -123,7 +123,7 @@ export default function Footer() {
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 400,
                 fontSize: 13,
                 color: 'hsl(var(--on-surface-muted))',
                 lineHeight: 1.65,
@@ -188,7 +188,7 @@ export default function Footer() {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 600,
                     fontSize: 11,
                     color: 'hsl(var(--primary))',
                     letterSpacing: '.06em',
@@ -228,7 +228,7 @@ export default function Footer() {
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 700,
                 fontSize: 17,
                 letterSpacing: '-.01em',
                 marginBottom: 10,
@@ -240,7 +240,7 @@ export default function Footer() {
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 400,
                 fontSize: 12,
                 color: 'rgba(255,255,255,0.5)',
                 lineHeight: 1.6,
@@ -264,7 +264,7 @@ export default function Footer() {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 600,
                     fontSize: 12,
                     color: 'hsl(var(--primary))',
                   }}
@@ -292,7 +292,7 @@ export default function Footer() {
                     border: '1px solid rgba(255,255,255,0.12)',
                     borderRadius: 'var(--button-radius)',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 500,
                     fontSize: 12,
                     color: '#fff',
                     outline: 'none',
@@ -329,7 +329,7 @@ export default function Footer() {
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 400,
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               margin: 0,
