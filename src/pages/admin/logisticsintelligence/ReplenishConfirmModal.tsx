@@ -62,7 +62,7 @@ export function ReplenishConfirmModal({
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 18,
             color: 'hsl(var(--on-surface))',
             marginBottom: 12,

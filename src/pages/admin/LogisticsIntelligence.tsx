@@ -150,7 +150,7 @@ export default function LogisticsIntelligence() {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
             textTransform: 'uppercase',
@@ -171,7 +171,7 @@ export default function LogisticsIntelligence() {
           <h1
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 24,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -283,7 +283,7 @@ export default function LogisticsIntelligence() {
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 13,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -293,7 +293,7 @@ export default function LogisticsIntelligence() {
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                   marginTop: 2,
@@ -330,7 +330,7 @@ export default function LogisticsIntelligence() {
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -354,7 +354,7 @@ export default function LogisticsIntelligence() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                         overflow: 'hidden',
@@ -367,7 +367,7 @@ export default function LogisticsIntelligence() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
                         marginTop: 2,
@@ -380,7 +380,7 @@ export default function LogisticsIntelligence() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12,
                         color: 'hsl(var(--destructive))',
                       }}
@@ -388,7 +388,7 @@ export default function LogisticsIntelligence() {
                       {item.stock_quantity}{' '}
                       <span
                         style={{
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           fontSize: 10,
                           color: 'hsl(var(--on-surface-muted))',
                         }}
@@ -399,7 +399,7 @@ export default function LogisticsIntelligence() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
                         marginTop: 2,

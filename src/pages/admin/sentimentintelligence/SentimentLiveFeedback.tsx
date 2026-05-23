@@ -23,7 +23,7 @@ export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) 
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -34,7 +34,7 @@ export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) 
               style={{
                 margin: '4px 0 0',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 9,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -55,7 +55,7 @@ export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) 
               <p
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -88,7 +88,8 @@ export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) 
                       background: getSentimentColor(item.sentiment_score).bg,
                       color: getSentimentColor(item.sentiment_score).color,
                       fontSize: 9,
-                      fontWeight: 900,
+                      fontWeight:
+                        'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                     }}
                   >
                     {item.category}
@@ -96,7 +97,7 @@ export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) 
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -108,7 +109,7 @@ export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) 
                   style={{
                     margin: 0,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     fontSize: 13,
                     color: 'hsl(var(--on-surface))',
                     lineHeight: 1.6,
@@ -130,7 +131,7 @@ export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) 
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                     }}

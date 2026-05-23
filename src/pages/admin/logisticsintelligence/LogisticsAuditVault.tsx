@@ -8,7 +8,7 @@ interface LogisticsAuditVaultProps {
 const pillBase: React.CSSProperties = {
   padding: '2px 10px',
   fontSize: 9,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
   borderRadius: 4,
@@ -46,7 +46,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
               display: 'flex',
@@ -65,7 +65,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 2,
@@ -101,7 +101,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
                     padding: '48px 24px',
                     textAlign: 'center',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -115,7 +115,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
                   <td
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -130,7 +130,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
                   <td
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface))',
                     }}
@@ -154,7 +154,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
                         justifyContent: 'flex-end',
                         gap: 6,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                       }}

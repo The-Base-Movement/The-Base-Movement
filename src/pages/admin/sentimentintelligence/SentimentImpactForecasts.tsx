@@ -20,7 +20,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 11,
               color: 'hsl(var(--on-surface))',
             }}
@@ -31,7 +31,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
             style={{
               margin: '4px 0 0',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 9,
               color: 'hsl(var(--on-surface-muted))',
             }}
@@ -63,7 +63,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -85,7 +85,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
                   style={{
                     margin: 0,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 14,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -96,7 +96,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 900,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 9,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -107,7 +107,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
                     style={{
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 900,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 16,
                       color: 'hsl(var(--destructive))',
                     }}
@@ -151,7 +151,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     display: 'flex',
@@ -167,7 +167,7 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                   }}

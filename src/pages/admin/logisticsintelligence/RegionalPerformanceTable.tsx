@@ -27,7 +27,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -37,7 +37,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 2,
@@ -73,7 +73,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
                     padding: '48px 24px',
                     textAlign: 'center',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -87,7 +87,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
                   <td
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface))',
                     }}
@@ -97,7 +97,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
                   <td
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -111,7 +111,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
                         alignItems: 'center',
                         gap: 5,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -128,7 +128,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
                   <td
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -165,7 +165,7 @@ export function RegionalPerformanceTable({ velocity }: RegionalPerformanceTableP
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 11,
                           color: 'hsl(var(--primary))',
                           width: 34,

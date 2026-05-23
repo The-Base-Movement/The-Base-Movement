@@ -24,7 +24,7 @@ export function SentimentHeader({ nationalScore }: SentimentHeaderProps) {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 13,
             color: 'hsl(var(--on-surface-muted))',
             marginTop: 8,
@@ -49,7 +49,7 @@ export function SentimentHeader({ nationalScore }: SentimentHeaderProps) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
                 display: 'block',
@@ -60,7 +60,7 @@ export function SentimentHeader({ nationalScore }: SentimentHeaderProps) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 18,
                 color: nationalScore >= 0 ? 'hsl(var(--primary))' : 'hsl(var(--destructive))',
               }}

@@ -68,7 +68,7 @@ export default function SentimentIntelligence() {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
             marginTop: 16,

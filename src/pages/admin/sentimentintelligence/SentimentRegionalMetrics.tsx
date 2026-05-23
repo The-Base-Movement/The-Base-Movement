@@ -26,7 +26,13 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
           borderBottom: '1px solid rgba(255,255,255,0.1)',
         }}
       >
-        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11 }}>
+        <span
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-semibold, 600)',
+            fontSize: 11,
+          }}
+        >
           Regional metrics
         </span>
         <span
@@ -42,7 +48,7 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'rgba(255,255,255,0.4)',
               }}
@@ -65,7 +71,7 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 12,
                 }}
               >
@@ -77,7 +83,7 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
                     display: 'flex',
                     gap: 8,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                   }}
                 >
@@ -93,7 +99,8 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
                     background: getSentimentColor(t.avg_sentiment).bg,
                     color: getSentimentColor(t.avg_sentiment).color,
                     fontSize: 9,
-                    fontWeight: 900,
+                    fontWeight:
+                      'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                     minWidth: 70,
                     textAlign: 'center',
                   }}

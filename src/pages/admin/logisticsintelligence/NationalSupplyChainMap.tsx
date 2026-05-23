@@ -26,7 +26,7 @@ export function NationalSupplyChainMap({ onEnterpriseView }: NationalSupplyChain
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 17,
               color: '#fff',
               marginBottom: 6,
@@ -80,7 +80,7 @@ export function NationalSupplyChainMap({ onEnterpriseView }: NationalSupplyChain
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 10,
             color: 'rgba(255,255,255,0.2)',
             textTransform: 'uppercase',
