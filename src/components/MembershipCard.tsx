@@ -20,9 +20,20 @@ interface MembershipCardProps {
 }
 
 const MembershipCardInner: React.FC<MembershipCardProps> = ({
-  userName, avatarUrl, userRegNo, onPhotoClick, initials,
-  gender, joinedDate, status, country, region, constituency, chapter, city,
-  isForDownload = false
+  userName,
+  avatarUrl,
+  userRegNo,
+  onPhotoClick,
+  initials,
+  gender,
+  joinedDate,
+  status,
+  country,
+  region,
+  constituency,
+  chapter,
+  city,
+  isForDownload = false,
 }) => {
   const { settings } = useBranding()
 
@@ -42,7 +53,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     position: 'relative',
     width: '100%',
     fontFamily: "'Public Sans', sans-serif",
-    minWidth: isForDownload ? 520 : 'auto', 
+    minWidth: isForDownload ? 520 : 'auto',
   }
 
   const headStyle: React.CSSProperties = {
@@ -68,7 +79,8 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     width: '120px',
     height: '155px',
     padding: '2px',
-    background: 'linear-gradient(to bottom, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)))',
+    background:
+      'linear-gradient(to bottom, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)))',
     borderRadius: 4,
     flexShrink: 0,
     position: 'relative',
@@ -82,7 +94,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   }
 
   const nameStyle: React.CSSProperties = {
-    fontWeight: 800,
+    fontWeight: 700,
     fontSize: '18px',
     lineHeight: '28px',
     letterSpacing: '-.015em',
@@ -91,7 +103,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
   }
 
   const dlStyle: React.CSSProperties = {
@@ -113,7 +125,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   const ddStyle: React.CSSProperties = {
     margin: 0,
     fontSize: '11px',
-    fontWeight: 800,
+    fontWeight: 600,
     color: 'hsl(var(--on-surface))',
     letterSpacing: '-.005em',
     whiteSpace: 'nowrap',
@@ -151,15 +163,52 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
       {/* Header */}
       <div style={headStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, background: '#fff', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 3 }}>
-            <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              background: '#fff',
+              borderRadius: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 3,
+            }}
+          >
+            <img
+              src={settings.logo_url}
+              alt="Logo"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
           </div>
           <div>
-            <h4 style={{ margin: 0, color: '#fff', fontSize: 11, fontWeight: 800, lineHeight: 1 }}>The Base Movement</h4>
-            <p style={{ margin: 0, color: 'rgba(255,255,255,.8)', fontSize: 8, fontWeight: 500, marginTop: 2 }}>Ghana First, jobs for the youth!</p>
+            <h4 style={{ margin: 0, color: '#fff', fontSize: 11, fontWeight: 700, lineHeight: 1 }}>
+              The Base Movement
+            </h4>
+            <p
+              style={{
+                margin: 0,
+                color: 'rgba(255,255,255,.8)',
+                fontSize: 8,
+                fontWeight: 500,
+                marginTop: 2,
+              }}
+            >
+              Ghana First, jobs for the youth!
+            </p>
           </div>
         </div>
-        <div style={{ padding: '4px 10px', background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', color: '#fff', fontSize: 9, fontWeight: 800, letterSpacing: '-.005em' }}>
+        <div
+          style={{
+            padding: '4px 10px',
+            background: 'rgba(255,255,255,.1)',
+            border: '1px solid rgba(255,255,255,.2)',
+            color: '#fff',
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '-.005em',
+          }}
+        >
           {country && country !== 'Ghana' ? 'DIASPORA MEMBER' : 'GHANA MEMBER'}
         </div>
       </div>
@@ -167,38 +216,64 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
       {/* Body */}
       <div style={bodyStyle}>
         <div style={photoStyle}>
-          <div 
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              padding: '2px', 
-              background: 'rgba(255,255,255,0.9)', 
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              padding: '2px',
+              background: 'rgba(255,255,255,0.9)',
               borderRadius: 3,
               cursor: onPhotoClick ? 'pointer' : 'default',
               overflow: 'hidden',
-              position: 'relative'
+              position: 'relative',
             }}
             onClick={onPhotoClick}
           >
             {avatarUrl ? (
-              <div 
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
                   backgroundImage: `url(${avatarUrl})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center top',
-                  borderRadius: 2 
-                }} 
+                  borderRadius: 2,
+                }}
               />
             ) : (
-              <div style={{ width: '100%', height: '100%', background: 'hsl(var(--primary))', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 800 }}>
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: 'hsl(var(--primary))',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 24,
+                  fontWeight: 700,
+                }}
+              >
                 {initials || 'M'}
               </div>
             )}
             {onPhotoClick && !isForDownload && (
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }} className="photo-hover">
-                <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 20 }}>photo_camera</span>
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: 0,
+                  transition: 'opacity 0.2s',
+                }}
+                className="photo-hover"
+              >
+                <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 20 }}>
+                  photo_camera
+                </span>
               </div>
             )}
           </div>
@@ -206,16 +281,18 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
 
         <div style={infoStyle}>
           <div style={nameStyle}>{userName || 'Member Name'}</div>
-          <div style={{ height: 2, width: 36, background: 'hsl(var(--primary))', marginBottom: 8 }} />
-          
+          <div
+            style={{ height: 2, width: 36, background: 'hsl(var(--primary))', marginBottom: 8 }}
+          />
+
           <dl style={dlStyle}>
             <dt style={dtStyle}>Reg. no.</dt>
             <dd style={{ ...ddStyle, color: 'hsl(var(--primary))' }}>{userRegNo || 'GH-XXXXXX'}</dd>
-            
+
             <dt style={dtStyle}>Gender</dt>
             <dd style={ddStyle}>{gender || 'Not Specified'}</dd>
-            
-            {(!country || country === 'Ghana') ? (
+
+            {!country || country === 'Ghana' ? (
               <>
                 <dt style={dtStyle}>Region</dt>
                 <dd style={ddStyle}>{region || 'Not Specified'}</dd>
@@ -234,13 +311,13 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
                 )}
               </>
             )}
-            
+
             <dt style={dtStyle}>Chapter</dt>
             <dd style={ddStyle}>{chapter || 'Not Specified'}</dd>
-            
+
             <dt style={dtStyle}>Joined</dt>
             <dd style={ddStyle}>{joinedDate || '30 Mar 2025'}</dd>
-            
+
             <dt style={dtStyle}>Status</dt>
             <dd style={{ ...ddStyle, color: 'hsl(var(--primary))' }}>● {status || 'Verified'}</dd>
           </dl>
@@ -254,23 +331,52 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
               level="H"
             />
           </div>
-          <span style={{ fontSize: 8, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Verify ID</span>
+          <span
+            style={{
+              fontSize: 8,
+              fontWeight: 700,
+              color: 'hsl(var(--on-surface-muted))',
+              textTransform: 'uppercase',
+            }}
+          >
+            Verify ID
+          </span>
         </div>
 
         {/* Watermark */}
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.04, pointerEvents: 'none', zIndex: 0 }}>
-          <img src={settings.logo_url} alt="" style={{ width: '80%', maxWidth: 280, objectFit: 'contain', filter: 'grayscale(1)' }} />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: 0.04,
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        >
+          <img
+            src={settings.logo_url}
+            alt=""
+            style={{ width: '80%', maxWidth: 280, objectFit: 'contain', filter: 'grayscale(1)' }}
+          />
         </div>
       </div>
 
       {/* Footer */}
       <div style={footStyle}>
-        {typeof window !== 'undefined' ? window.location.host : 'thebasemovement.com'}/verify/{userRegNo || 'GH-XXXXXX'}
+        {typeof window !== 'undefined' ? window.location.host : 'thebasemovement.com'}/verify/
+        {userRegNo || 'GH-XXXXXX'}
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .photo-hover:hover { opacity: 1 !important; }
-      `}} />
+      `,
+        }}
+      />
     </div>
   )
 }
@@ -300,16 +406,29 @@ const MembershipCard: React.FC<MembershipCardProps> = (props) => {
   }
 
   return (
-    <div ref={containerRef} style={{ width: '100%', maxWidth: 520, height: (520 / 1.6) * scale, position: 'relative', overflow: 'hidden', borderRadius: 8, margin: '0 auto' }}>
-      <div style={{
-        width: 520,
-        height: 520 / 1.6,
-        transform: `scale(${scale})`,
-        transformOrigin: 'top left',
-        position: 'absolute',
-        top: 0,
-        left: 0
-      }}>
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        maxWidth: 520,
+        height: (520 / 1.6) * scale,
+        position: 'relative',
+        overflow: 'hidden',
+        borderRadius: 8,
+        margin: '0 auto',
+      }}
+    >
+      <div
+        style={{
+          width: 520,
+          height: 520 / 1.6,
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
+      >
         <MembershipCardInner {...props} />
       </div>
     </div>

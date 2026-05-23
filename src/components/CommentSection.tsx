@@ -70,7 +70,7 @@ function CommentAvatar({ avatar, initials }: { avatar?: string; initials?: strin
         <span
           style={{
             fontSize: 12,
-            fontWeight: 800,
+            fontWeight: 700,
             color: 'var(--brand-green)',
             fontFamily: "'Public Sans', sans-serif",
           }}
@@ -208,7 +208,7 @@ export function CommentSection() {
         <h2
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 700,
             fontSize: 18,
             color: '#1c1c1c',
             margin: 0,
@@ -282,7 +282,7 @@ export function CommentSection() {
                 height: 38,
                 padding: '0 24px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: 11,
                 letterSpacing: '0.04em',
                 cursor: newComment.trim() ? 'pointer' : 'default',
@@ -321,7 +321,7 @@ export function CommentSection() {
                     <span
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 600,
                         fontSize: 13,
                         color: '#1c1c1c',
                         letterSpacing: '-0.01em',
@@ -452,7 +452,7 @@ export function CommentSection() {
                       height: 34,
                       padding: '0 20px',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: 11,
                       letterSpacing: '0.04em',
                       cursor: replyText.trim() ? 'pointer' : 'default',
