@@ -101,7 +101,7 @@ export function StatCard({
         <span
           style={{
             fontSize: '9.5px',
-            fontWeight: 700,
+            fontWeight: 600,
             color: '#6f7a71',
             letterSpacing: '.08em',
             textTransform: 'uppercase',
@@ -142,7 +142,7 @@ export function StatCard({
       <div
         style={{
           fontSize: '12px',
-          fontWeight: 700,
+          fontWeight: 500,
           color: '#181d19',
           letterSpacing: '-.005em',
           lineHeight: 1.4,
@@ -168,7 +168,7 @@ export function StatCard({
             alignItems: 'center',
             gap: '5px',
             fontSize: '10.5px',
-            fontWeight: 700,
+            fontWeight: 600,
             color: accent,
             letterSpacing: '-.005em',
             fontFamily: "'Public Sans', sans-serif",

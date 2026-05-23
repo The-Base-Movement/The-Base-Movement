@@ -30,7 +30,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
           >
             Movement at a glance
           </h2>
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[.06em] mt-1.5 block">
+          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[.06em] mt-1.5 block">
             Updated · Q2 2026
           </span>
         </div>
