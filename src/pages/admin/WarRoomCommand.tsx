@@ -48,7 +48,7 @@ function LiveClock() {
   return (
     <span
       style={{
-        fontWeight: 800,
+        fontWeight: 'var(--font-weight-semibold, 600)',
         fontSize: 13,
         fontVariantNumeric: 'tabular-nums',
         letterSpacing: '.04em',
@@ -230,7 +230,7 @@ export default function WarRoomCommand() {
           <p
             style={{
               fontSize: 11,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--destructive))',
               fontFamily: "'Public Sans', sans-serif",
             }}
@@ -260,7 +260,7 @@ export default function WarRoomCommand() {
             <div
               style={{
                 fontSize: 10,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 marginBottom: 4,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
@@ -272,7 +272,7 @@ export default function WarRoomCommand() {
               <h2
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 22,
                   letterSpacing: '-0.015em',
                   lineHeight: 1.2,
@@ -287,7 +287,8 @@ export default function WarRoomCommand() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  fontWeight: 800,
+                  fontWeight:
+                    'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                   fontSize: 10.5,
                   padding: '4px 10px',
                   borderRadius: 99,

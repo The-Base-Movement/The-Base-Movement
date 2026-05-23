@@ -25,7 +25,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -35,7 +35,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 marginTop: 2,
@@ -82,7 +82,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -92,7 +92,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                     color: 'hsl(var(--accent))',
                   }}
@@ -103,7 +103,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
               <p
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                   lineHeight: 1.5,
@@ -131,7 +131,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 10,
               color: 'rgba(255,255,255,0.4)',
             }}
@@ -162,7 +162,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     fontSize: 10,
                     color: 'rgba(255,255,255,0.6)',
                   }}
@@ -172,7 +172,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12,
                     color: '#fff',
                   }}
@@ -209,7 +209,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 11,
                 color: 'rgba(255,255,255,0.3)',
                 lineHeight: 1.6,

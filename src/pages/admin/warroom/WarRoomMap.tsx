@@ -51,7 +51,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
       >
         <h3
           style={{
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 12.5,
             color: 'white',
             margin: 0,
@@ -60,7 +60,13 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
         >
           Ghana · live ground game
         </h3>
-        <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.4)' }}>
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 'var(--font-weight-normal, 400)',
+            color: 'rgba(255,255,255,.4)',
+          }}
+        >
           {regionalStats.length} regions tracked
         </span>
       </div>
@@ -119,7 +125,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
             textAnchor="middle"
             fontFamily="Public Sans"
             fontSize="12"
-            fontWeight="800"
+            fontWeight="var(--font-weight-semibold, 600)"
             fill="rgba(255,255,255,.08)"
           >
             Ghana
@@ -186,7 +192,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
                         top: -10,
                         color: 'white',
                         fontSize: 8,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         whiteSpace: 'nowrap',
                         padding: '2px 6px',
                         borderRadius: 2,
@@ -214,7 +220,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
             gap: 14,
             padding: '10px 12px',
             fontSize: 9.5,
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             borderRadius: 4,
             border: '1px solid rgba(255,255,255,0.1)',
             color: 'rgba(255,255,255,.7)',
@@ -280,7 +286,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
             <div
               style={{
                 fontSize: 10,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'rgba(255,255,255,0.4)',
                 marginBottom: 4,
               }}
@@ -290,14 +296,20 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
             <div
               style={{
                 fontSize: 16,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'white',
                 marginBottom: 8,
                 lineHeight: 1,
               }}
             >
               {hoveredRegion.memberCount.toLocaleString()}{' '}
-              <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'rgba(255,255,255,0.4)',
+                }}
+              >
                 patriots
               </span>
             </div>
@@ -311,21 +323,39 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
               }}
             >
               <div>
-                <div style={{ fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>
+                <div
+                  style={{
+                    fontSize: 8,
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    color: 'rgba(255,255,255,0.3)',
+                  }}
+                >
                   Chapters
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 800, color: 'white' }}>
+                <div
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    color: 'white',
+                  }}
+                >
                   {hoveredRegion.chapters}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>
+                <div
+                  style={{
+                    fontSize: 8,
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    color: 'rgba(255,255,255,0.3)',
+                  }}
+                >
                   Pulse
                 </div>
                 <div
                   style={{
                     fontSize: 11,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color:
                       hoveredRegion.performance === 'High'
                         ? 'hsl(var(--primary))'

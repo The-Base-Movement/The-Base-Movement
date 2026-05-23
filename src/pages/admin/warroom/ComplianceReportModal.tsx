@@ -45,7 +45,7 @@ export function ComplianceReportModal({ reportData, onClose }: ComplianceReportM
           <div>
             <h3
               style={{
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 18,
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
@@ -57,7 +57,7 @@ export function ComplianceReportModal({ reportData, onClose }: ComplianceReportM
             <p
               style={{
                 fontSize: 12,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 color: 'hsl(var(--on-surface-muted))',
                 margin: 0,
               }}

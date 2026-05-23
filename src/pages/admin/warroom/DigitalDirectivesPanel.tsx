@@ -33,7 +33,7 @@ export function DigitalDirectivesPanel({
       >
         <h3
           style={{
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 12.5,
             color: 'hsl(var(--on-surface))',
             margin: 0,
@@ -61,7 +61,7 @@ export function DigitalDirectivesPanel({
             <p
               style={{
                 fontSize: 10.5,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -88,13 +88,19 @@ export function DigitalDirectivesPanel({
                   justifyContent: 'space-between',
                 }}
               >
-                <span style={{ fontSize: 10.5, fontWeight: 800, color: '#60a5fa' }}>
+                <span
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    color: '#60a5fa',
+                  }}
+                >
                   {nar.target_platform}
                 </span>
                 <span
                   style={{
                     fontSize: 8,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     padding: '2px 8px',
                     borderRadius: 99,
                     background:
@@ -128,7 +134,7 @@ export function DigitalDirectivesPanel({
                 <p
                   style={{
                     fontSize: 10,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: 'hsl(var(--on-surface-muted))',
                     margin: 0,
                   }}

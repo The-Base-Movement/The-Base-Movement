@@ -1,7 +1,7 @@
 export const pillBase: React.CSSProperties = {
   padding: '2px 10px',
   fontSize: 9,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   borderRadius: 4,
   fontFamily: "'Public Sans', sans-serif",
 }

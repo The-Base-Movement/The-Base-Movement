@@ -44,7 +44,7 @@ export function TacticalGuidelinesSidebar({
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13.5,
               color: '#fff',
               margin: 0,
@@ -112,7 +112,7 @@ export function TacticalGuidelinesSidebar({
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12,
                     display: 'block',
                     marginBottom: 3,
@@ -127,7 +127,7 @@ export function TacticalGuidelinesSidebar({
                     color: 'rgba(255,255,255,.55)',
                     lineHeight: 1.55,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                   }}
                 >
                   {body}
@@ -156,7 +156,7 @@ export function TacticalGuidelinesSidebar({
             <b
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 12,
                 display: 'block',
                 marginBottom: 4,
@@ -171,7 +171,7 @@ export function TacticalGuidelinesSidebar({
                 color: 'hsl(var(--on-surface-muted))',
                 lineHeight: 1.55,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
               }}
             >
               Verify all tactical parameters with regional chapter leadership before initiating.
@@ -233,7 +233,9 @@ export function TacticalGuidelinesSidebar({
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: done ? 800 : 700,
+                  fontWeight: done
+                    ? 'var(--font-weight-semibold, 600)'
+                    : 'var(--font-weight-normal, 400)',
                   color: done ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))',
                 }}
               >

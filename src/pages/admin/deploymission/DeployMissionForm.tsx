@@ -8,7 +8,7 @@ const fieldStyle = {
   borderRadius: 4,
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
   background: '#fff',
@@ -18,7 +18,7 @@ const fieldStyle = {
 const labelStyle = {
   display: 'block',
   fontSize: 9.5,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   color: 'hsl(var(--on-surface-muted))',
   letterSpacing: '.06em',
   textTransform: 'uppercase' as const,

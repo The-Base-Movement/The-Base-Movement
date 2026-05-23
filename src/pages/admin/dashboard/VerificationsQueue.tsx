@@ -35,7 +35,7 @@ function MemberAvatar({ name, photoUrl }: { name: string; photoUrl: string | nul
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: 10,
-        fontWeight: 800,
+        fontWeight: 'var(--font-weight-semibold, 600)',
         color,
         fontFamily: "'Public Sans', sans-serif",
         flexShrink: 0,
@@ -156,7 +156,7 @@ export function VerificationsQueue({
                     padding: '32px 0',
                     color: 'hsl(var(--on-surface-muted))',
                     fontSize: 11,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontStyle: 'italic',
                     fontFamily: "'Public Sans', sans-serif",
                   }}

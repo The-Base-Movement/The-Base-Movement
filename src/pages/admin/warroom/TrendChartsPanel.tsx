@@ -34,7 +34,7 @@ export function TrendChartsPanel({ growthTrends }: TrendChartsPanelProps) {
         >
           <h3
             style={{
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 12.5,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -43,7 +43,13 @@ export function TrendChartsPanel({ growthTrends }: TrendChartsPanelProps) {
           >
             Sign-ups · 24 h
           </h3>
-          <span style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
             Hourly · Gmt
           </span>
         </div>
@@ -129,7 +135,7 @@ export function TrendChartsPanel({ growthTrends }: TrendChartsPanelProps) {
         >
           <h3
             style={{
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 12.5,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -138,7 +144,13 @@ export function TrendChartsPanel({ growthTrends }: TrendChartsPanelProps) {
           >
             Donations · 24 h (₵)
           </h3>
-          <span style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
             Momo + card
           </span>
         </div>

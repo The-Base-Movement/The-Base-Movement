@@ -23,7 +23,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -33,7 +33,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 2,
@@ -70,7 +70,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
                     padding: '48px 24px',
                     textAlign: 'center',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -91,7 +91,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12,
                         ...rankStyle(index),
                       }}
@@ -103,7 +103,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                         marginBottom: 2,
@@ -114,7 +114,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
                       }}
@@ -150,7 +150,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
                     style={{
                       textAlign: 'right',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                     }}
@@ -171,7 +171,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
               padding: '48px 24px',
               textAlign: 'center',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
             }}

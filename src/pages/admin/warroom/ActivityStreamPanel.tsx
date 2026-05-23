@@ -64,7 +64,7 @@ export function ActivityStreamPanel({
           style={{
             padding: '10px 16px',
             fontSize: 11,
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             border: 'none',
             borderBottom: `2px solid ${activeTab === 'activity' ? 'hsl(var(--primary))' : 'transparent'}`,
             background: activeTab === 'activity' ? 'hsl(var(--container-low))' : 'transparent',
@@ -81,7 +81,7 @@ export function ActivityStreamPanel({
           style={{
             padding: '10px 16px',
             fontSize: 11,
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             border: 'none',
             borderBottom: `2px solid ${activeTab === 'intelligence' ? 'hsl(var(--primary))' : 'transparent'}`,
             background: activeTab === 'intelligence' ? 'hsl(var(--container-low))' : 'transparent',
@@ -119,7 +119,7 @@ export function ActivityStreamPanel({
             <p
               style={{
                 fontSize: 10.5,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
@@ -167,14 +167,19 @@ export function ActivityStreamPanel({
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
-                        <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
+                        <b
+                          style={{
+                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
                           {dir.title}
                         </b>
                       </p>
                       <span
                         style={{
                           fontSize: 9.5,
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
@@ -223,14 +228,19 @@ export function ActivityStreamPanel({
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
-                        <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
+                        <b
+                          style={{
+                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
                           {b.title}
                         </b>
                       </p>
                       <span
                         style={{
                           fontSize: 9.5,
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
@@ -288,7 +298,12 @@ export function ActivityStreamPanel({
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
-                        <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
+                        <b
+                          style={{
+                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
                           {inc.region}
                         </b>{' '}
                         — {inc.incident_type.replace(/_/g, ' ').toLowerCase()}
@@ -304,7 +319,7 @@ export function ActivityStreamPanel({
                         <span
                           style={{
                             fontSize: 9.5,
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             color:
                               inc.status === 'RESOLVED'
                                 ? 'hsl(var(--primary))'
@@ -370,7 +385,12 @@ export function ActivityStreamPanel({
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
-                        <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
+                        <b
+                          style={{
+                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
                           {nar.target_platform}
                         </b>{' '}
                         — digital directive
@@ -378,7 +398,7 @@ export function ActivityStreamPanel({
                       <span
                         style={{
                           fontSize: 9.5,
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           textTransform: 'uppercase',
                           letterSpacing: '.04em',
                           color:

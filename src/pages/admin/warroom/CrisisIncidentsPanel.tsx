@@ -40,7 +40,7 @@ export function CrisisIncidentsPanel({
       >
         <h3
           style={{
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 12.5,
             color: 'hsl(var(--on-surface))',
             margin: 0,
@@ -58,7 +58,13 @@ export function CrisisIncidentsPanel({
           </span>{' '}
           Crisis incidents
         </h3>
-        <span style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 'var(--font-weight-semibold, 600)',
+            color: 'hsl(var(--on-surface-muted))',
+          }}
+        >
           {incidents.filter((i) => i.status === 'INVESTIGATING').length} active
         </span>
       </div>
@@ -79,7 +85,7 @@ export function CrisisIncidentsPanel({
             <p
               style={{
                 fontSize: 10.5,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -113,7 +119,7 @@ export function CrisisIncidentsPanel({
                     style={{
                       padding: '2px 8px',
                       fontSize: 8,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       borderRadius: 99,
                       background:
                         inc.severity === 'DEFCON1' || inc.severity === 'SEVERE'
@@ -131,7 +137,7 @@ export function CrisisIncidentsPanel({
                   <span
                     style={{
                       fontSize: 10.5,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
@@ -141,7 +147,7 @@ export function CrisisIncidentsPanel({
                 <span
                   style={{
                     fontSize: 10,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     flexShrink: 0,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -158,7 +164,7 @@ export function CrisisIncidentsPanel({
               <p
                 style={{
                   fontSize: 12,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface))',
                   margin: 0,
                 }}
@@ -187,7 +193,7 @@ export function CrisisIncidentsPanel({
                 <span
                   style={{
                     fontSize: 9,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     padding: '2px 8px',
                     borderRadius: 99,
                     background:

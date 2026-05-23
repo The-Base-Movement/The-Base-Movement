@@ -28,7 +28,7 @@ export function RegionalPaceTable({ regionalStats }: RegionalPaceTableProps) {
       >
         <h3
           style={{
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 12.5,
             color: 'hsl(var(--on-surface))',
             margin: 0,
@@ -37,7 +37,13 @@ export function RegionalPaceTable({ regionalStats }: RegionalPaceTableProps) {
         >
           Regions · pace to goal
         </h3>
-        <span style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 'var(--font-weight-normal, 400)',
+            color: 'hsl(var(--on-surface-muted))',
+          }}
+        >
           Ytd
         </span>
       </div>
@@ -55,7 +61,7 @@ export function RegionalPaceTable({ regionalStats }: RegionalPaceTableProps) {
                   textAlign: 'left',
                   padding: '6px 16px',
                   fontSize: 10,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
@@ -66,7 +72,7 @@ export function RegionalPaceTable({ regionalStats }: RegionalPaceTableProps) {
                   textAlign: 'right',
                   padding: '6px 16px',
                   fontSize: 10,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
@@ -76,7 +82,7 @@ export function RegionalPaceTable({ regionalStats }: RegionalPaceTableProps) {
                 style={{
                   padding: '6px 16px',
                   fontSize: 10,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
@@ -103,7 +109,7 @@ export function RegionalPaceTable({ regionalStats }: RegionalPaceTableProps) {
                   <td
                     style={{
                       padding: '6px 16px',
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
@@ -113,7 +119,7 @@ export function RegionalPaceTable({ regionalStats }: RegionalPaceTableProps) {
                     style={{
                       padding: '6px 16px',
                       textAlign: 'right',
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontVariantNumeric: 'tabular-nums',
                       color: 'hsl(var(--on-surface))',
                     }}
