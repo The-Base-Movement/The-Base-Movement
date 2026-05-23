@@ -41,12 +41,12 @@ describe('ErrorBoundary', () => {
         <Bomb shouldThrow={true} />
       </ErrorBoundary>
     )
-    await user.click(screen.getByRole('button', { name: /try again/i }))
     rerender(
       <ErrorBoundary>
         <Bomb shouldThrow={false} />
       </ErrorBoundary>
     )
+    await user.click(screen.getByRole('button', { name: /try again/i }))
     expect(screen.getByText('All good')).toBeInTheDocument()
   })
 })

@@ -7,7 +7,7 @@ export function StoreBreadcrumb() {
         Home
       </Link>
       <span className="opacity-40">·</span>
-      <span className="text-on-surface">Supplies</span>
+      <span className="text-on-surface">Store</span>
       <span className="opacity-40">·</span>
       <span className="text-on-surface/40">All products</span>
     </div>

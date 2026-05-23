@@ -29,7 +29,7 @@ const FOOTER_COLS = [
     links: [
       { label: 'Join', to: '/register' },
       { label: 'Donate', to: '/donate' },
-      { label: 'Supplies', to: '/store' },
+      { label: 'Store', to: '/store' },
     ],
   },
 ]

@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: 'The Plan', publicPath: '/our-agenda', dashPath: '/dashboard/agenda' },
   { label: 'Leadership', publicPath: '/officers', dashPath: '/officers' },
   { label: 'Chapters', publicPath: '/chapters', dashPath: '/dashboard/chapters' },
-  { label: 'Supplies', publicPath: '/store', dashPath: '/dashboard/store' },
+  { label: 'Store', publicPath: '/store', dashPath: '/dashboard/store' },
   { label: 'Donate', publicPath: '/donate', dashPath: '/dashboard/donate' },
   { label: 'Contact', publicPath: '/contact', dashPath: '/dashboard/contact' },
 ]

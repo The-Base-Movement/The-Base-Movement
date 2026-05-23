@@ -154,7 +154,7 @@ export default function DashboardLayout() {
     if (path === '/dashboard/agenda') return 'The Plan'
     if (path === '/dashboard/impact') return 'Impact'
     if (path === '/dashboard/polls') return 'Feedback'
-    if (path === '/dashboard/store') return 'Supplies'
+    if (path === '/dashboard/store') return 'Store'
     if (path === '/dashboard/donate') return 'Donations'
     if (path === '/dashboard/members') return 'Verified'
     if (path === '/dashboard/chapters') return 'Chapters'
@@ -272,7 +272,7 @@ export default function DashboardLayout() {
               label: 'Mobilization',
               items: [
                 { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
-                { to: '/dashboard/store', icon: 'storefront', label: 'Supplies' },
+                { to: '/dashboard/store', icon: 'storefront', label: 'Store' },
                 { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback Hub' },
                 { to: '/dashboard/members', icon: 'groups', label: 'Verified Members' },
               ],

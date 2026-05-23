@@ -35,7 +35,7 @@ export default function Store() {
 
   const handleShare = (product: Product) => {
     setShareData({
-      title: `Check out the ${product.name} at The Base Movement Supplies!`,
+      title: `Check out the ${product.name} at The Base Movement Store!`,
       url:
         (typeof window !== 'undefined' ? window.location.origin : '') +
         '/store/product/' +
@@ -178,7 +178,7 @@ export default function Store() {
   return (
     <div className="min-h-screen bg-white" style={{ paddingBottom: cartCount > 0 ? 64 : 0 }}>
       <SEO
-        title="Movement Supplies"
+        title="Movement Store"
         description="Wear the colors. Fund the cause. 100% of proceeds support youth jobs programs."
         canonical="/store"
       />
@@ -190,7 +190,7 @@ export default function Store() {
           <section>
             <div className="mb-6">
               <h1 className="text-stone-900 text-[26px] md:text-[32px] font-meta font-extrabold tracking-tighter mb-1">
-                Movement supplies
+                Movement Store
               </h1>
               <p className="text-on-surface-muted text-sm m-0 font-medium">
                 Wear the colors. Fund the cause. 100% of proceeds support youth jobs programs.
