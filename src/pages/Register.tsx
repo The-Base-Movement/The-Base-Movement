@@ -28,7 +28,9 @@ export default function Register() {
   const [usedScan, setUsedScan] = useState(false)
   const [isScanningId, setIsScanningId] = useState(false)
   const [isScanningForm, setIsScanningForm] = useState(false)
+  const [isVerifyingKyc, setIsVerifyingKyc] = useState(false)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [selfieUrl, setSelfieUrl] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -97,20 +99,58 @@ export default function Register() {
         }
         reader.readAsDataURL(file)
       })
+
+      // Standard OCR fallback for quick ID extraction
       const { data, error } = await supabase.functions.invoke('ocr-verify', {
         body: { imageBase64: base64 },
       })
       if (error) throw error
       if (data?.success && data?.data) {
-        toast.success('Identity Verified successfully.')
         setFormData((prev) => ({ ...prev, idNumber: data.data.idNumber || prev.idNumber }))
-      } else {
-        throw new Error(data?.error || 'Could not read ID card')
+        toast.success('Ghana Card identified.')
       }
     } catch {
-      toast.error('Verification failed. Please enter details manually.')
+      console.warn('[REGISTER] OCR identification skipped.')
     } finally {
       setIsScanningId(false)
+    }
+  }
+
+  const handleSelfieCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return
+    const file = e.target.files[0]
+    const reader = new FileReader()
+    reader.onload = () => setSelfieUrl(reader.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  const runKycProtocol = async () => {
+    if (!photoUrl || !selfieUrl) {
+      toast.error('Both ID photo and selfie are required for biometric verification.')
+      return
+    }
+
+    setIsVerifyingKyc(true)
+    try {
+      const { tacticalService } = await import('@/services/tacticalService')
+      const result = await tacticalService.verifyMemberID(
+        formData.idNumber,
+        'GHANA_CARD',
+        selfieUrl,
+        photoUrl
+      )
+
+      if (!result.flagged) {
+        toast.success(`Biometric Verification Success (${result.confidence * 100}%)`)
+        setFormStep(4)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else {
+        toast.error(`Verification Flagged: ${result.matches.join(', ')}`)
+      }
+    } catch {
+      toast.error('KYC Protocol failure. Please retry or contact support.')
+    } finally {
+      setIsVerifyingKyc(false)
     }
   }
 
@@ -147,14 +187,17 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formStep < 4) {
+    if (formStep < 3) {
       setFormStep((prev) => prev + 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else if (formStep === 3) {
+      await runKycProtocol()
     } else {
       await submitRegistration({
         platform,
         formData,
         photoUrl,
+        selfieUrl,
         croppedAreaPixels,
         usedScan,
         refParam,
@@ -168,6 +211,7 @@ export default function Register() {
         <SuccessStep
           formData={formData}
           photoUrl={photoUrl}
+          selfieUrl={selfieUrl}
           regNumber={regNumber}
           onEdit={() => setSubmitted(false)}
         />
@@ -232,17 +276,19 @@ export default function Register() {
           platform={platform}
           formStep={formStep}
           formData={formData}
-          isLoading={isLoading}
+          isLoading={isLoading || isVerifyingKyc}
           isScanningId={isScanningId}
           showPassword={showPassword}
           agreed={agreed}
           photoUrl={photoUrl}
+          selfieUrl={selfieUrl}
           crop={crop}
           zoom={zoom}
           onCropChange={setCrop}
           onCropComplete={onCropComplete}
           onZoomChange={setZoom}
           onClearPhoto={() => setPhotoUrl(null)}
+          onSelfieCapture={handleSelfieCapture}
           dbCountries={dbCountries}
           dbRegions={dbRegions}
           dbConstituencies={dbConstituencies}

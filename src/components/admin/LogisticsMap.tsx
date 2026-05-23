@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import Map, { Marker, NavigationControl, ScaleControl } from 'react-map-gl'
+import Map, { Marker, NavigationControl, ScaleControl } from 'react-map-gl/mapbox'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { cn } from '@/lib/utils'
 
@@ -29,7 +29,7 @@ interface LogisticsMapProps {
 }
 
 export function LogisticsMap({ data, token }: LogisticsMapProps) {
-  const [viewState, setViewState] = useState({
+  const [viewState] = useState({
     longitude: -1.0232,
     latitude: 7.9465,
     zoom: 6,
@@ -74,8 +74,7 @@ export function LogisticsMap({ data, token }: LogisticsMapProps) {
   return (
     <div className="relative w-full h-full overflow-hidden">
       <Map
-        {...viewState}
-        onMove={(evt) => setViewState(evt.viewState)}
+        initialViewState={viewState}
         style={{ width: '100%', height: '100%' }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken={token}
@@ -84,7 +83,7 @@ export function LogisticsMap({ data, token }: LogisticsMapProps) {
         <ScaleControl />
 
         {markers.map((m, i) => (
-          <Marker key={i} longitude={m!.lng} latitude={m!.lat} anchor="bottom">
+          <Marker key={i} longitude={m!.lng} latitude={m!.lat}>
             <div className="group relative flex flex-col items-center">
               {/* Tooltip */}
               <div className="absolute bottom-full mb-2 hidden group-hover:block z-50">

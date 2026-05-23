@@ -10,6 +10,7 @@ interface SubmitConfig {
   platform: string
   formData: RegistrationFormData
   photoUrl: string | null
+  selfieUrl: string | null
   croppedAreaPixels: Area | null
   usedScan: boolean
   refParam: string | null
@@ -21,7 +22,8 @@ export function useRegistrationSubmit() {
   const [submitted, setSubmitted] = useState(false)
 
   const submitRegistration = async (config: SubmitConfig) => {
-    const { platform, formData, photoUrl, croppedAreaPixels, usedScan, refParam } = config
+    const { platform, formData, photoUrl, selfieUrl, croppedAreaPixels, usedScan, refParam } =
+      config
     setIsLoading(true)
     try {
       const yearStr = new Date().getFullYear().toString().slice(-2)
@@ -51,9 +53,16 @@ export function useRegistrationSubmit() {
       }
 
       let finalAvatarUrl = null
-      if (photoUrl && croppedAreaPixels && authData.user) {
+      const avatarSource = selfieUrl || photoUrl
+      if (avatarSource && authData.user) {
         try {
-          const croppedBlob = await getCroppedImg(photoUrl, croppedAreaPixels)
+          // If we have croppedAreaPixels, it was from the ID card cropper.
+          // If we have a selfieUrl, we might not have cropped it yet.
+          // For now, let's use the cropped version if available, or just the blob.
+          const croppedBlob = croppedAreaPixels
+            ? await getCroppedImg(avatarSource, croppedAreaPixels)
+            : await (await fetch(avatarSource)).blob()
+
           if (croppedBlob) {
             const fileName = adminService.generateAvatarPath(regNo)
             const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)

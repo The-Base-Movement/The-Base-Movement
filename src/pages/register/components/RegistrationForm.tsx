@@ -12,6 +12,7 @@ interface RegistrationFormProps {
   showPassword: boolean
   agreed: boolean
   photoUrl: string | null
+  selfieUrl?: string | null
   crop: { x: number; y: number }
   zoom: number
   dbCountries: string[]
@@ -20,6 +21,7 @@ interface RegistrationFormProps {
   dbChapters: string[]
   onPlatformChange: (p: string) => void
   onIdScan: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onSelfieCapture?: (e: React.ChangeEvent<HTMLInputElement>) => void
   onInputChange: <K extends keyof RegistrationFormData>(
     field: K,
     value: RegistrationFormData[K]
@@ -44,6 +46,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
     showPassword,
     agreed,
     photoUrl,
+    selfieUrl,
     crop,
     zoom,
     dbCountries,
@@ -52,6 +55,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
     dbChapters,
     onPlatformChange,
     onIdScan,
+    onSelfieCapture,
     onInputChange,
     onPasswordToggle,
     onAgreedChange,
@@ -464,84 +468,131 @@ export function RegistrationForm(props: RegistrationFormProps) {
             )}
 
             {formStep === 3 && (
-              <div className="space-y-4 animate-in fade-in duration-500">
-                {!photoUrl ? (
-                  <div className="p-10 border-2 border-dashed border-border/60 rounded-sm bg-container-low text-center relative hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      aria-label="Upload Ghana Card photo"
-                      onChange={onIdScan}
-                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                    />
-                    <span
-                      className="material-symbols-outlined text-primary mx-auto mb-3 group-hover:scale-110 transition-transform block"
-                      style={{ fontSize: 40 }}
-                    >
-                      upload
-                    </span>
-                    <b className="text-[13px] block font-extrabold">Upload photo of Ghana Card</b>
-                    <span className="text-[11px] text-on-surface-muted">
-                      JPG or PNG, up to 8 MB
-                    </span>
-                  </div>
-                ) : (
-                  <div className="relative h-[240px] w-full bg-black rounded-sm overflow-hidden border border-border">
-                    <Cropper
-                      image={photoUrl}
-                      crop={crop}
-                      zoom={zoom}
-                      aspect={3 / 4} // Portrait aspect ratio
-                      onCropChange={onCropChange}
-                      onCropComplete={onCropComplete}
-                      onZoomChange={onZoomChange}
-                    />
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/80 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm z-20">
-                      <span className="text-[10px] font-bold text-white uppercase tracking-wider">
-                        Zoom
-                      </span>
+              <div className="space-y-6 animate-in fade-in duration-500">
+                {/* 1. Ghana Card Upload */}
+                <div className="space-y-2">
+                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                    1. Ghana Card Photo
+                  </span>
+                  {!photoUrl ? (
+                    <div className="p-8 border-2 border-dashed border-border/60 rounded-sm bg-container-low text-center relative hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
                       <input
-                        name="zoom"
-                        id="input-d87bc1"
-                        type="range"
-                        min={1}
-                        max={3}
-                        step={0.1}
-                        value={zoom}
-                        onChange={(e) => onZoomChange(Number(e.target.value))}
-                        className="w-24 accent-primary"
+                        type="file"
+                        accept="image/*"
+                        aria-label="Upload Ghana Card photo"
+                        onChange={onIdScan}
+                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      />
+                      <span
+                        className="material-symbols-outlined text-primary mx-auto mb-2 group-hover:scale-110 transition-transform block"
+                        style={{ fontSize: 32 }}
+                      >
+                        credit_card
+                      </span>
+                      <b className="text-[12px] block font-extrabold text-on-surface">
+                        Click to upload card photo
+                      </b>
+                    </div>
+                  ) : (
+                    <div className="relative h-[180px] w-full bg-black rounded-sm overflow-hidden border border-border">
+                      <Cropper
+                        image={photoUrl}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={3 / 2}
+                        onCropChange={onCropChange}
+                        onCropComplete={onCropComplete}
+                        onZoomChange={onZoomChange}
                       />
                       <button
                         type="button"
                         onClick={onClearPhoto}
-                        className="ml-2 p-1.5 hover:bg-white/10 rounded-full text-white/60 hover:text-white transition-colors"
+                        className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full text-white transition-colors z-20"
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                           close
                         </span>
                       </button>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+
+                {/* 2. Selfie Upload */}
+                <div className="space-y-2">
+                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                    2. Biometric Selfie
+                  </span>
+                  {!selfieUrl ? (
+                    <div className="p-8 border-2 border-dashed border-border/60 rounded-sm bg-container-low text-center relative hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="user"
+                        aria-label="Take a selfie"
+                        onChange={onSelfieCapture}
+                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      />
+                      <span
+                        className="material-symbols-outlined text-primary mx-auto mb-2 group-hover:scale-110 transition-transform block"
+                        style={{ fontSize: 32 }}
+                      >
+                        account_circle
+                      </span>
+                      <b className="text-[12px] block font-extrabold text-on-surface">
+                        Capture biometric selfie
+                      </b>
+                    </div>
+                  ) : (
+                    <div className="relative h-[180px] w-full bg-container-low rounded-sm border border-border flex items-center justify-center overflow-hidden">
+                      <img
+                        src={selfieUrl}
+                        alt="Biometric selfie"
+                        className="h-full w-auto object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onSelfieCapture &&
+                          onSelfieCapture({
+                            target: { files: null },
+                          } as unknown as React.ChangeEvent<HTMLInputElement>)
+                        }
+                        className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full text-white transition-colors z-20"
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                          close
+                        </span>
+                      </button>
+                    </div>
+                  )}
+                </div>
 
                 <div className="verify-checks">
                   <div className="check-row">
                     <span
                       className="material-symbols-outlined"
-                      style={{ fontSize: 16, marginRight: 8, color: 'hsl(var(--primary))' }}
+                      style={{
+                        fontSize: 16,
+                        marginRight: 8,
+                        color: photoUrl ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                      }}
                     >
-                      check_circle
+                      {photoUrl ? 'check_circle' : 'circle'}
                     </span>
-                    <span>Photo is clear and unobstructed</span>
+                    <span>Ghana Card image uploaded</span>
                   </div>
                   <div className="check-row">
                     <span
                       className="material-symbols-outlined"
-                      style={{ fontSize: 16, marginRight: 8, color: 'hsl(var(--primary))' }}
+                      style={{
+                        fontSize: 16,
+                        marginRight: 8,
+                        color: selfieUrl ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                      }}
                     >
-                      check_circle
+                      {selfieUrl ? 'check_circle' : 'circle'}
                     </span>
-                    <span>Name matches your registration</span>
+                    <span>Biometric selfie captured</span>
                   </div>
                   {isScanningId && (
                     <div className="check-row pending">
@@ -551,13 +602,25 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       >
                         progress_activity
                       </span>
-                      <span>AI Analysis running — checking document…</span>
+                      <span>Identifying Ghana Card details…</span>
+                    </div>
+                  )}
+                  {isLoading && (
+                    <div className="check-row pending">
+                      <span
+                        className="material-symbols-outlined animate-spin"
+                        style={{ fontSize: 16, marginRight: 8, color: 'hsl(var(--accent))' }}
+                      >
+                        progress_activity
+                      </span>
+                      <span>Running high-fidelity NIA biometric check…</span>
                     </div>
                   )}
                 </div>
 
                 <div className="auth-foot-note">
-                  Reviewed manually within 24h · Your card photo is encrypted at rest.
+                  Biometric data is compared against the National ID database for instant
+                  authorization.
                 </div>
               </div>
             )}
