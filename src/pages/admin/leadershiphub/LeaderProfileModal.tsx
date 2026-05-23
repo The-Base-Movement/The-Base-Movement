@@ -63,7 +63,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 14,
               color: '#fff',
             }}
@@ -99,7 +99,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 22,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -123,7 +123,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 900,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 17,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -134,7 +134,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                 style={{
                   margin: '3px 0 0',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -199,7 +199,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                       style={{
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 900,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 9,
                         textTransform: 'uppercase',
                         color: 'hsl(var(--on-surface-muted))',
@@ -212,7 +212,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                       style={{
                         margin: '2px 0 0',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         fontSize: 13,
                         color: 'hsl(var(--on-surface))',
                       }}

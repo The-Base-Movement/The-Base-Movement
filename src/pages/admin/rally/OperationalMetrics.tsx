@@ -33,21 +33,45 @@ interface MetricCardProps {
 /** Reusable metric card: top label + icon, large value, small sub-label */
 function MetricCard({ label, icon, value, sub }: MetricCardProps) {
   return (
-    <div className="panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div
+      className="panel"
+      style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}
+    >
       {/* Label and icon row */}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-semibold, 600)',
+            fontSize: 9,
+            color: 'hsl(var(--on-surface-muted))',
+          }}
+        >
           {label}
         </span>
-        <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+        >
           {icon}
         </span>
       </div>
 
       {/* Main numeric value + sub-label */}
       <div>
-        <p style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>{value}</p>
-        <p style={{ fontSize: 9, fontWeight: 900, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>{sub}</p>
+        <p style={{ fontSize: 32, fontWeight: 'var(--font-weight-semibold, 600)', margin: 0 }}>
+          {value}
+        </p>
+        <p
+          style={{
+            fontSize: 9,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: 'hsl(var(--on-surface-muted))',
+            marginTop: 4,
+          }}
+        >
+          {sub}
+        </p>
       </div>
     </div>
   )
@@ -58,7 +82,9 @@ export function OperationalMetrics({ selectedAction, attendance }: OperationalMe
   const verifiedCount = attendance.filter((a) => a.is_verified).length
 
   // Percentage of the target_attendance goal that has been reached
-  const targetAchievement = Math.round((attendance.length / (selectedAction.target_attendance || 1)) * 100)
+  const targetAchievement = Math.round(
+    (attendance.length / (selectedAction.target_attendance || 1)) * 100
+  )
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>

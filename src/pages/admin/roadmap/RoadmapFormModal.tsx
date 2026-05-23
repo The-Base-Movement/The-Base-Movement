@@ -82,7 +82,7 @@ export function RoadmapFormModal({
               alignItems: 'center',
               gap: 8,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 15,
               color: 'hsl(var(--on-surface))',
             }}

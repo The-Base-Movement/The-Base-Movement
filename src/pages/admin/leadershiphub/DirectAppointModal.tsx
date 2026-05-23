@@ -77,7 +77,7 @@ export function DirectAppointModal({
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 15,
               color: '#fff',
               margin: 0,
@@ -91,7 +91,7 @@ export function DirectAppointModal({
               fontSize: 12,
               color: 'rgba(255,255,255,0.55)',
               margin: '3px 0 0',
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-normal, 400)',
             }}
           >
             Select a verified member and assign them to a chapter role.
@@ -127,7 +127,7 @@ export function DirectAppointModal({
                   htmlFor="appoint-member-search"
                   style={{
                     fontSize: 11,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
@@ -153,7 +153,7 @@ export function DirectAppointModal({
                     borderRadius: 4,
                     fontSize: 13,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     boxSizing: 'border-box',
                     outline: 'none',
                     marginBottom: 8,
@@ -208,7 +208,7 @@ export function DirectAppointModal({
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 12,
                             flexShrink: 0,
                             color: 'hsl(var(--on-surface))',
@@ -238,7 +238,7 @@ export function DirectAppointModal({
                             style={{
                               margin: 0,
                               fontSize: 13,
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                               color: 'hsl(var(--on-surface))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}
@@ -249,7 +249,7 @@ export function DirectAppointModal({
                             style={{
                               margin: 0,
                               fontSize: 10,
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-normal, 400)',
                               color: 'hsl(var(--on-surface-muted))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}
@@ -261,7 +261,7 @@ export function DirectAppointModal({
                             style={{
                               margin: 0,
                               fontSize: 10,
-                              fontWeight: 600,
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--on-surface-muted))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}
@@ -309,7 +309,7 @@ export function DirectAppointModal({
                     htmlFor="appoint-chapter-select"
                     style={{
                       fontSize: 11,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -330,7 +330,7 @@ export function DirectAppointModal({
                         borderRadius: 4,
                         fontSize: 12,
                         color: 'hsl(var(--destructive))',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                       }}
                     >
                       No chapters found
@@ -349,7 +349,7 @@ export function DirectAppointModal({
                         borderRadius: 4,
                         fontSize: 13,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         background: '#fff',
                         color: 'hsl(var(--on-surface))',
                         boxSizing: 'border-box',
@@ -368,7 +368,7 @@ export function DirectAppointModal({
                     htmlFor="appoint-role-select"
                     style={{
                       fontSize: 11,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -391,7 +391,7 @@ export function DirectAppointModal({
                       borderRadius: 4,
                       fontSize: 13,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       background: '#fff',
                       color: 'hsl(var(--on-surface))',
                       boxSizing: 'border-box',
@@ -428,7 +428,7 @@ export function DirectAppointModal({
                     style={{
                       margin: 0,
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}

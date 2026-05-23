@@ -80,7 +80,7 @@ export function CardTab({ member, cardRef, onPrint, onDownload }: CardTabProps) 
           style={{
             marginTop: 10,
             fontSize: 11,
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             color: 'hsl(var(--on-surface-muted))',
             display: 'flex',
             alignItems: 'center',

@@ -58,7 +58,7 @@ export function AppointedLeadersTable({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 900,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 10,
               textTransform: 'uppercase',
               color: 'hsl(var(--on-surface))',
@@ -70,7 +70,7 @@ export function AppointedLeadersTable({
             style={{
               margin: '4px 0 0',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 9,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -104,7 +104,7 @@ export function AppointedLeadersTable({
                     padding: '11px 24px',
                     textAlign: 'left',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 9,
                     textTransform: 'uppercase',
                     color: 'hsl(var(--on-surface-muted))',
@@ -150,7 +150,7 @@ export function AppointedLeadersTable({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 12,
                           flexShrink: 0,
                           overflow: 'hidden',
@@ -176,7 +176,7 @@ export function AppointedLeadersTable({
                           style={{
                             margin: 0,
                             fontSize: 13,
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             color: 'hsl(var(--on-surface))',
                             fontFamily: "'Public Sans', sans-serif",
                           }}
@@ -188,7 +188,7 @@ export function AppointedLeadersTable({
                             style={{
                               margin: '2px 0 0',
                               fontSize: 10,
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-normal, 400)',
                               color: 'hsl(var(--on-surface-muted))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}
@@ -203,7 +203,7 @@ export function AppointedLeadersTable({
                     style={{
                       padding: '14px 24px',
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
@@ -214,7 +214,7 @@ export function AppointedLeadersTable({
                     style={{
                       padding: '14px 24px',
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}

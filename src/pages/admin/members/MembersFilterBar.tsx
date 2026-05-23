@@ -60,7 +60,7 @@ export function MembersFilterBar({
               borderRadius: 4,
               padding: '0 12px 0 36px',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12.5,
               outline: 'none',
               background: 'hsl(var(--surface))',
@@ -92,7 +92,7 @@ export function MembersFilterBar({
                 cursor: 'pointer',
                 fontSize: 11.5,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 transition: 'all .15s',
                 background: sourceFilter === opt.value ? 'hsl(var(--on-surface))' : 'transparent',
                 borderColor:

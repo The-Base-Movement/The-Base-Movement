@@ -24,7 +24,7 @@ export function VisionStatementsList({ filteredApps }: VisionStatementsListProps
             style={{
               display: 'block',
               fontSize: 10,
-              fontWeight: 900,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               textTransform: 'uppercase',
               color: 'hsl(var(--on-surface-muted))',
               marginBottom: 16,
@@ -42,7 +42,7 @@ export function VisionStatementsList({ filteredApps }: VisionStatementsListProps
               color: 'hsl(var(--on-surface))',
               fontSize: 14,
               lineHeight: 1.6,
-              fontWeight: 500,
+              fontWeight: 'var(--font-weight-normal, 400)',
             }}
           >
             "{app.vision_statement}"
@@ -59,7 +59,7 @@ export function VisionStatementsList({ filteredApps }: VisionStatementsListProps
               style={{
                 display: 'block',
                 fontSize: 9,
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 textTransform: 'uppercase',
                 color: 'hsl(var(--on-surface-muted))',
                 marginBottom: 8,
@@ -74,7 +74,7 @@ export function VisionStatementsList({ filteredApps }: VisionStatementsListProps
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
                 lineHeight: 1.5,
-                fontWeight: 500,
+                fontWeight: 'var(--font-weight-normal, 400)',
               }}
             >
               {app.experience_summary}

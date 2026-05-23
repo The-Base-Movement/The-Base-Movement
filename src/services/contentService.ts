@@ -296,19 +296,8 @@ class ContentService {
       return this.getMediaFilesFromStorage(path)
     }
 
-    // 3. If no DB results, fallback to storage direct list
-    if (!data || data.length === 0) {
-      const storageFiles = await this.getMediaFilesFromStorage(path)
-      // Special case: append local public assets if needed
-      if (path === 'public-assets') {
-        const localPublic = await this.getLocalAssets('public-assets')
-        return [...storageFiles, ...localPublic]
-      }
-      return storageFiles
-    }
-
-    // 4. Normalize URLs (ensure full public URL if relative)
-    const normalizedUrls = data.map((item) => {
+    // 3. Normalize URLs (ensure full public URL if relative)
+    const normalizedUrls = (data || []).map((item) => {
       if (item.url.startsWith('http')) return item.url
       // If relative, it's likely /folder/filename.ext or folder/filename.ext
       const cleanPath = item.url.startsWith('/') ? item.url.substring(1) : item.url
@@ -318,10 +307,20 @@ class ContentService {
       return publicUrl
     })
 
-    // 5. Append local public assets if needed
+    // 4. Merge local-only assets with dynamic uploads
+    if (path === 'priorities') {
+      const localPriorities = await this.getLocalAssets('priorities')
+      return [...normalizedUrls, ...localPriorities]
+    }
+
     if (path === 'public-assets') {
       const localPublic = await this.getLocalAssets('public-assets')
       return [...normalizedUrls, ...localPublic]
+    }
+
+    // 5. If no DB results, fallback to storage direct list
+    if (!data || data.length === 0) {
+      return this.getMediaFilesFromStorage(path)
     }
 
     return normalizedUrls
@@ -428,6 +427,12 @@ class ContentService {
         return [...(mediaManifest.branding || []), ...(mediaManifest.publicAssets || [])]
       case 'public-assets':
         return mediaManifest.publicAssets || []
+      case 'priorities':
+        return [
+          '/priorities/agro_processing_illustration.png',
+          '/priorities/digital_economy_illustration.png',
+          '/priorities/ghana_network_map.png',
+        ]
       default:
         return []
     }
@@ -712,13 +717,20 @@ class ContentService {
         { id: 'logos-favicons', label: 'Logos & Favicons' },
         { id: 'public-assets', label: 'Public Assets' },
         { id: 'party-officials', label: 'Party Officials' },
+        { id: 'priorities', label: 'Strategic Priorities' },
       ]
     }
 
-    return data.map((item) => ({
+    const foldersList = data.map((item) => ({
       id: item.name,
       label: item.label,
     }))
+
+    if (!foldersList.some((f) => f.id === 'priorities')) {
+      foldersList.push({ id: 'priorities', label: 'Strategic Priorities' })
+    }
+
+    return foldersList
   }
 
   async createMediaCategory(name: string, label: string): Promise<boolean> {

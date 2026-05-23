@@ -27,7 +27,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans'",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               marginTop: 2,
             }}
           >
@@ -41,7 +41,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
             padding: '24px 18px',
             textAlign: 'center',
             fontFamily: "'Public Sans'",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -72,7 +72,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: "'Public Sans'",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11,
                   flexShrink: 0,
                   color: 'hsl(var(--accent))',
@@ -89,7 +89,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
                 <b
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12.5,
                     display: 'block',
                     whiteSpace: 'nowrap',
@@ -102,7 +102,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
                 <span
                   style={{
                     fontFamily: 'monospace',
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     background: 'hsl(var(--container-low))',
                     padding: '1px 6px',
@@ -118,7 +118,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans'",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       marginLeft: 6,
                     }}
                   >

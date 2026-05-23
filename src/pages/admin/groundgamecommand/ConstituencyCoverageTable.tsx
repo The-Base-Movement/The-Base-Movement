@@ -21,7 +21,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans'",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               marginTop: 2,
             }}
           >
@@ -40,7 +40,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
             padding: '32px 18px',
             textAlign: 'center',
             fontFamily: "'Public Sans'",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -71,7 +71,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
                     style={{
                       padding: '8px 16px',
                       textAlign: 'left',
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 9.5,
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
@@ -105,7 +105,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
                     <td
                       style={{
                         padding: '10px 16px',
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12.5,
                         whiteSpace: 'nowrap',
                       }}
@@ -117,7 +117,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
                         padding: '10px 16px',
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         whiteSpace: 'nowrap',
                       }}
                     >
@@ -126,7 +126,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
                     <td
                       style={{
                         padding: '10px 16px',
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 13,
                         fontVariantNumeric: 'tabular-nums',
                       }}
@@ -136,7 +136,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
                     <td
                       style={{
                         padding: '10px 16px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         fontSize: 12,
                         fontVariantNumeric: 'tabular-nums',
                       }}
@@ -146,7 +146,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
                     <td
                       style={{
                         padding: '10px 16px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         fontSize: 12,
                         fontVariantNumeric: 'tabular-nums',
                         color:
@@ -179,7 +179,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
                         <span
                           style={{
                             fontSize: 10.5,
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             color: coverageColor,
                             minWidth: 30,
                             textAlign: 'right',

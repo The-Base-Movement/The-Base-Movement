@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { DonationCampaign } from '@/types/admin'
 
 interface PriorityCardProps {
@@ -7,6 +8,8 @@ interface PriorityCardProps {
 }
 
 export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) {
+  const [imageError, setImageError] = useState(false)
+
   return (
     <div
       className="panel"
@@ -28,11 +31,12 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
       >
         {campaign.imageUrl ? (
           <img
-            src={campaign.imageUrl}
+            src={imageError ? '/branding/logo.png' : campaign.imageUrl}
             alt={campaign.title}
+            onError={() => setImageError(true)}
             crossOrigin="anonymous"
             loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', background: '#fff' }}
           />
         ) : (
           <div
@@ -64,7 +68,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                 campaign.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
               color: '#fff',
               fontSize: 9,
-              fontWeight: 900,
+              fontWeight: 'var(--font-weight-semibold, 600)',
             }}
           >
             {campaign.status}
@@ -85,7 +89,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 16,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -97,7 +101,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               margin: 0,
@@ -124,7 +128,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -134,7 +138,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 900,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 14,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -164,7 +168,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 10,
               }}
             >
@@ -192,7 +196,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                 alignItems: 'center',
                 gap: 6,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}

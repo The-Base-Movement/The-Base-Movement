@@ -30,7 +30,7 @@ export function ChapterApplicationsTable({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 900,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 10,
               textTransform: 'uppercase',
               color: 'hsl(var(--on-surface))',
@@ -42,7 +42,7 @@ export function ChapterApplicationsTable({
             style={{
               margin: '4px 0 0',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 9,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -76,7 +76,7 @@ export function ChapterApplicationsTable({
                   padding: '14px 32px',
                   textAlign: 'left',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 900,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 9,
                   textTransform: 'uppercase',
                   color: 'hsl(var(--on-surface-muted))',
@@ -89,7 +89,7 @@ export function ChapterApplicationsTable({
                   padding: '14px 32px',
                   textAlign: 'left',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 900,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 9,
                   textTransform: 'uppercase',
                   color: 'hsl(var(--on-surface-muted))',
@@ -102,7 +102,7 @@ export function ChapterApplicationsTable({
                   padding: '14px 32px',
                   textAlign: 'left',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 900,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 9,
                   textTransform: 'uppercase',
                   color: 'hsl(var(--on-surface-muted))',
@@ -115,7 +115,7 @@ export function ChapterApplicationsTable({
                   padding: '14px 32px',
                   textAlign: 'left',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 900,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 9,
                   textTransform: 'uppercase',
                   color: 'hsl(var(--on-surface-muted))',
@@ -128,7 +128,7 @@ export function ChapterApplicationsTable({
                   padding: '14px 32px',
                   textAlign: 'right',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 900,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 9,
                   textTransform: 'uppercase',
                   color: 'hsl(var(--on-surface-muted))',
@@ -167,7 +167,7 @@ export function ChapterApplicationsTable({
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface-muted))',
                       marginTop: 16,
@@ -191,7 +191,7 @@ export function ChapterApplicationsTable({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 900,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 12,
                         }}
                       >
@@ -201,14 +201,20 @@ export function ChapterApplicationsTable({
                           .join('')}
                       </div>
                       <div>
-                        <p style={{ margin: 0, fontSize: 13, fontWeight: 800 }}>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 13,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
+                          }}
+                        >
                           {app.applicant_name}
                         </p>
                         <p
                           style={{
                             margin: '2px 0 0',
                             fontSize: 9,
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             color: 'hsl(var(--on-surface-muted))',
                             textTransform: 'uppercase',
                           }}
@@ -226,19 +232,29 @@ export function ChapterApplicationsTable({
                       >
                         verified_user
                       </span>
-                      <span style={{ fontSize: 13, fontWeight: 800 }}>
+                      <span
+                        style={{ fontSize: 13, fontWeight: 'var(--font-weight-semibold, 600)' }}
+                      >
                         {app.proposed_chapter_name}
                       </span>
                     </div>
                   </td>
                   <td style={{ padding: '16px 32px' }}>
                     <div>
-                      <p style={{ margin: 0, fontSize: 12, fontWeight: 800 }}>{app.region}</p>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 12,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                        }}
+                      >
+                        {app.region}
+                      </p>
                       <p
                         style={{
                           margin: '2px 0 0',
                           fontSize: 10,
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
@@ -263,7 +279,7 @@ export function ChapterApplicationsTable({
                               ? 'hsl(var(--accent))'
                               : 'hsl(var(--destructive))',
                         fontSize: 9,
-                        fontWeight: 900,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         textTransform: 'uppercase',
                       }}
                     >
@@ -290,7 +306,7 @@ export function ChapterApplicationsTable({
                       <span
                         style={{
                           fontSize: 9,
-                          fontWeight: 900,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           textTransform: 'uppercase',
                           color: 'hsl(var(--on-surface-muted))',
                           opacity: 0.4,

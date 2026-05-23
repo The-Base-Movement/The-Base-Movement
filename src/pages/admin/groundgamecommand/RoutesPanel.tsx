@@ -39,7 +39,13 @@ export function RoutesPanel({ campaigns, activeCampaigns, fieldLogs }: RoutesPan
                   marginBottom: 8,
                 }}
               >
-                <b style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 12.5 }}>
+                <b
+                  style={{
+                    fontFamily: "'Public Sans'",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 12.5,
+                  }}
+                >
                   {c.title}
                 </b>
                 <span
@@ -62,20 +68,32 @@ export function RoutesPanel({ campaigns, activeCampaigns, fieldLogs }: RoutesPan
                   fontSize: 10.5,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans'",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   letterSpacing: '.03em',
                   flexWrap: 'wrap',
                 }}
               >
                 <span>
-                  <b style={{ color: 'hsl(var(--on-surface))', fontWeight: 800 }}>
+                  <b
+                    style={{
+                      color: 'hsl(var(--on-surface))',
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                    }}
+                  >
                     {c.target_constituency}
                   </b>{' '}
                   · lead
                 </span>
                 <span>
-                  <b style={{ color: 'hsl(var(--on-surface))', fontWeight: 800 }}>{knocked}</b> /{' '}
-                  {c.goal_contacts} doors
+                  <b
+                    style={{
+                      color: 'hsl(var(--on-surface))',
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                    }}
+                  >
+                    {knocked}
+                  </b>{' '}
+                  / {c.goal_contacts} doors
                 </span>
                 <span>{c.status.toLowerCase()}</span>
               </div>

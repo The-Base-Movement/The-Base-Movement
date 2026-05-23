@@ -70,7 +70,7 @@ export function AuditVaultModal({
                   style={{
                     fontSize: 10.5,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: 'rgba(255,255,255,.5)',
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
@@ -91,7 +91,7 @@ export function AuditVaultModal({
                 style={{
                   margin: '0 0 4px',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 28,
                   color: '#fff',
                   letterSpacing: '-.02em',
@@ -103,7 +103,7 @@ export function AuditVaultModal({
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11.5,
                   color: 'rgba(255,255,255,.45)',
                 }}
@@ -147,7 +147,7 @@ export function AuditVaultModal({
                 style={{
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.07em',
                   textTransform: 'uppercase',
@@ -180,7 +180,7 @@ export function AuditVaultModal({
                     <dt
                       style={{
                         fontSize: 9.5,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         color: 'hsl(var(--on-surface-muted))',
                         letterSpacing: '.06em',
                         textTransform: 'uppercase',
@@ -195,7 +195,7 @@ export function AuditVaultModal({
                         margin: 0,
                         fontSize: 12.5,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       {v || '—'}
@@ -210,7 +210,7 @@ export function AuditVaultModal({
                 style={{
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.07em',
                   textTransform: 'uppercase',
@@ -248,7 +248,7 @@ export function AuditVaultModal({
                       style={{
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12.5,
                       }}
                     >
@@ -259,7 +259,7 @@ export function AuditVaultModal({
                         fontSize: 10.5,
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       {viewingVaultRecord.submitted}
@@ -271,7 +271,7 @@ export function AuditVaultModal({
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     System generated entry upon form completion.
@@ -298,7 +298,7 @@ export function AuditVaultModal({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 12.5,
                           color: 'hsl(var(--primary))',
                         }}
@@ -310,7 +310,7 @@ export function AuditVaultModal({
                           fontSize: 10.5,
                           color: 'hsl(var(--on-surface-muted))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                         }}
                       >
                         Just now
@@ -322,7 +322,7 @@ export function AuditVaultModal({
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       Administrator: National HQ
@@ -350,7 +350,7 @@ export function AuditVaultModal({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 12.5,
                           color: 'hsl(var(--destructive))',
                         }}
@@ -362,7 +362,7 @@ export function AuditVaultModal({
                           fontSize: 10.5,
                           color: 'hsl(var(--on-surface-muted))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                         }}
                       >
                         Just now
@@ -374,7 +374,7 @@ export function AuditVaultModal({
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       Administrator: National HQ
@@ -392,7 +392,7 @@ export function AuditVaultModal({
                 style={{
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.07em',
                   textTransform: 'uppercase',
@@ -442,7 +442,7 @@ export function AuditVaultModal({
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       No biometric data
@@ -464,7 +464,7 @@ export function AuditVaultModal({
                   margin: '0 0 4px',
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.06em',
                   textTransform: 'uppercase',
@@ -479,7 +479,7 @@ export function AuditVaultModal({
                   fontSize: 11.5,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   lineHeight: 1.6,
                   fontStyle: 'italic',
                 }}

@@ -96,7 +96,7 @@ export function DonationsTable({
                           textAlign: i === 5 ? 'right' : 'left',
                           padding: '10px 14px',
                           fontSize: 9.5,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           color: 'hsl(var(--on-surface-muted))',
                           letterSpacing: '.06em',
                           textTransform: 'uppercase',
@@ -179,7 +179,7 @@ export function DonationsTable({
                               alignItems: 'center',
                               justifyContent: 'center',
                               color: 'hsl(var(--primary))',
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                               fontSize: 11,
                               flexShrink: 0,
                               fontFamily: "'Public Sans', sans-serif",
@@ -191,7 +191,7 @@ export function DonationsTable({
                             <div
                               style={{
                                 fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 800,
+                                fontWeight: 'var(--font-weight-semibold, 600)',
                                 fontSize: 12,
                                 lineHeight: 1,
                               }}
@@ -203,7 +203,7 @@ export function DonationsTable({
                                 fontSize: 10,
                                 color: 'hsl(var(--on-surface-muted))',
                                 fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 700,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 marginTop: 2,
                                 fontVariantNumeric: 'tabular-nums',
                               }}
@@ -229,7 +229,7 @@ export function DonationsTable({
                             background: mb.bg,
                             color: mb.color,
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 9.5,
                             letterSpacing: '.04em',
                             textTransform: 'uppercase',
@@ -243,7 +243,7 @@ export function DonationsTable({
                           padding: '12px 14px',
                           borderBottom: '1px solid hsl(var(--border))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontVariantNumeric: 'tabular-nums',
                           fontSize: 11.5,
                         }}
@@ -269,7 +269,7 @@ export function DonationsTable({
                           padding: '12px 14px',
                           borderBottom: '1px solid hsl(var(--border))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 13.5,
                           fontVariantNumeric: 'tabular-nums',
                           textAlign: 'right',

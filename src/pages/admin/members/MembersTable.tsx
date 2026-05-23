@@ -4,7 +4,7 @@ import MemberListCard from '@/components/admin/MemberListCard'
 const thStyle: React.CSSProperties = {
   padding: '10px 16px',
   fontSize: 11,
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
   color: 'hsl(var(--on-surface-muted))',
   fontFamily: "'Public Sans', sans-serif",
   textAlign: 'left',
@@ -173,7 +173,7 @@ export function MembersTable({
                     style={{
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 13,
                     }}
                   >
@@ -185,7 +185,7 @@ export function MembersTable({
                       fontSize: 11.5,
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     {searchTerm
@@ -248,7 +248,7 @@ export function MembersTable({
                           <span
                             style={{
                               fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                               fontSize: 13,
                               color: 'hsl(var(--on-surface-muted))',
                             }}
@@ -266,7 +266,7 @@ export function MembersTable({
                           style={{
                             margin: 0,
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 13,
                           }}
                         >
@@ -277,7 +277,7 @@ export function MembersTable({
                             fontSize: 10.5,
                             color: 'hsl(var(--on-surface-muted))',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             fontVariantNumeric: 'tabular-nums',
                           }}
                         >
@@ -291,7 +291,7 @@ export function MembersTable({
                       style={{
                         fontSize: 12,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       {member.email || '—'}
@@ -301,7 +301,7 @@ export function MembersTable({
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         marginTop: 2,
                       }}
                     >
@@ -313,7 +313,7 @@ export function MembersTable({
                       style={{
                         fontSize: 12,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                       }}
                     >
                       {member.region || '—'}
@@ -323,7 +323,7 @@ export function MembersTable({
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         marginTop: 2,
                       }}
                     >
@@ -457,7 +457,7 @@ export function MembersTable({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
               }}
             >
@@ -494,7 +494,7 @@ export function MembersTable({
           style={{
             fontSize: 11.5,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             color: 'hsl(var(--on-surface-muted))',
           }}
         >
@@ -514,7 +514,7 @@ export function MembersTable({
             style={{
               fontSize: 11,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
             }}
           >

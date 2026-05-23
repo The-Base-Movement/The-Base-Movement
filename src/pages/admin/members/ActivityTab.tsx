@@ -104,7 +104,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                           <b
                             style={{
                               fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                             }}
                           >
                             {log.action}
@@ -115,7 +115,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                             fontSize: 10.5,
                             color: 'hsl(var(--on-surface-muted))',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             letterSpacing: '.04em',
                             textTransform: 'uppercase',
                           }}
@@ -189,7 +189,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                           fontSize: 10.5,
                           color: 'hsl(var(--on-surface-muted))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           letterSpacing: '.04em',
                           textTransform: 'uppercase',
                         }}
@@ -219,7 +219,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 30,
                   letterSpacing: '-.02em',
                   fontVariantNumeric: 'tabular-nums',
@@ -284,7 +284,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                   fontSize: 10.5,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                 }}
               >
                 No contributions recorded yet.
@@ -330,7 +330,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                   <dt
                     style={{
                       fontSize: 9.5,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface-muted))',
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
@@ -345,7 +345,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                       margin: 0,
                       fontSize: 12.5,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     {v}
@@ -415,7 +415,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     flex: 1,
                   }}
                 >
@@ -426,7 +426,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                     fontSize: 10.5,
                     color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                   }}
                 >
                   {c.detail}
@@ -457,7 +457,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11.5,
                   }}
                 >
@@ -468,7 +468,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                   }}
                 >
                   {member.joined || 'On join'}

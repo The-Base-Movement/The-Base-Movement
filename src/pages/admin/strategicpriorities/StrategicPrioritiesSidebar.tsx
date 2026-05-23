@@ -21,7 +21,7 @@ export function StrategicPrioritiesSidebar({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
             }}
@@ -35,7 +35,7 @@ export function StrategicPrioritiesSidebar({
               htmlFor="input-09c328"
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -72,7 +72,7 @@ export function StrategicPrioritiesSidebar({
                   borderRadius: 4,
                   outline: 'none',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 12,
                   boxSizing: 'border-box',
                   color: 'hsl(var(--on-surface))',
@@ -95,7 +95,7 @@ export function StrategicPrioritiesSidebar({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -116,7 +116,7 @@ export function StrategicPrioritiesSidebar({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -126,7 +126,7 @@ export function StrategicPrioritiesSidebar({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12,
                     color: 'hsl(var(--primary))',
                   }}
@@ -147,7 +147,7 @@ export function StrategicPrioritiesSidebar({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -157,7 +157,7 @@ export function StrategicPrioritiesSidebar({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12,
                     color: 'hsl(var(--accent))',
                   }}
@@ -184,7 +184,7 @@ export function StrategicPrioritiesSidebar({
         <h4
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 11,
             color: 'rgba(255,255,255,0.4)',
             margin: '0 0 12px',
@@ -195,7 +195,7 @@ export function StrategicPrioritiesSidebar({
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 12,
             color: 'rgba(255,255,255,0.6)',
             lineHeight: 1.6,

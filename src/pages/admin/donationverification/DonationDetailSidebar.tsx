@@ -112,7 +112,7 @@ export function DonationDetailSidebar({
               alignItems: 'center',
               justifyContent: 'center',
               color: 'hsl(var(--primary))',
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 16,
               flexShrink: 0,
               border: '2px solid hsl(var(--accent))',
@@ -125,7 +125,7 @@ export function DonationDetailSidebar({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
               }}
             >
@@ -136,7 +136,7 @@ export function DonationDetailSidebar({
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontVariantNumeric: 'tabular-nums',
                 marginTop: 2,
               }}
@@ -164,7 +164,7 @@ export function DonationDetailSidebar({
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 38,
             letterSpacing: '-.025em',
             fontVariantNumeric: 'tabular-nums',
@@ -203,7 +203,7 @@ export function DonationDetailSidebar({
               background: mb.bg,
               color: mb.color,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 9.5,
               letterSpacing: '.04em',
               textTransform: 'uppercase',
@@ -225,7 +225,7 @@ export function DonationDetailSidebar({
         <div
           style={{
             fontSize: 9.5,
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             color: 'hsl(var(--on-surface-muted))',
             letterSpacing: '.06em',
             textTransform: 'uppercase',
@@ -245,7 +245,7 @@ export function DonationDetailSidebar({
               padding: '6px 0',
               fontSize: 12,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
             }}
           >
             <div
@@ -313,7 +313,7 @@ export function DonationDetailSidebar({
             <dt
               style={{
                 fontSize: 9.5,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 color: 'hsl(var(--on-surface-muted))',
                 letterSpacing: '.06em',
                 textTransform: 'uppercase',
@@ -326,7 +326,7 @@ export function DonationDetailSidebar({
               style={{
                 margin: '1px 0 6px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 12,
                 fontVariantNumeric: 'tabular-nums',
               }}
@@ -347,7 +347,7 @@ export function DonationDetailSidebar({
               alignItems: 'center',
               gap: 6,
               fontSize: 11.5,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--primary))',
               background: 'none',
               border: 'none',
@@ -371,7 +371,7 @@ export function DonationDetailSidebar({
           style={{
             display: 'block',
             fontSize: 9.5,
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             color: 'hsl(var(--on-surface-muted))',
             letterSpacing: '.06em',
             textTransform: 'uppercase',
@@ -394,7 +394,7 @@ export function DonationDetailSidebar({
             padding: '8px 10px',
             fontSize: 11.5,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             border: '1px solid hsl(var(--border))',
             borderRadius: 4,
             resize: 'vertical',

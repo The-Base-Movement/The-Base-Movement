@@ -23,11 +23,12 @@
       "Bash(git commit *)",
       "Bash(New-Item -ItemType Directory -Path \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\admin\\\\blogs\" -Force)",
       "Bash(Out-Null)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(findstr \"Blog\\\\|CategoryFilter\\\\|PublicSearch\")",
+      "Bash(findstr \"Polls\\\\|SearchBar\\\\|CategoryFilter\\\\|PublicSearch\")",
+      "Bash(findstr \"Leadership\\\\|Appointed\\\\|SearchBar\")"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "supabase"
-  ]
+  "enabledMcpjsonServers": ["supabase"]
 }

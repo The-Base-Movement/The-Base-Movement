@@ -24,7 +24,7 @@ export function LeaderboardPanel({
               padding: '24px 18px',
               textAlign: 'center',
               fontFamily: "'Public Sans'",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
             }}
@@ -50,7 +50,7 @@ export function LeaderboardPanel({
                 <div
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 18,
                     color: i === 0 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface-muted))',
                     width: 24,
@@ -69,7 +69,7 @@ export function LeaderboardPanel({
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontFamily: "'Public Sans'",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                     flexShrink: 0,
                   }}
@@ -85,7 +85,7 @@ export function LeaderboardPanel({
                   <b
                     style={{
                       fontFamily: "'Public Sans'",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 12.5,
                       display: 'block',
                       whiteSpace: 'nowrap',
@@ -100,7 +100,7 @@ export function LeaderboardPanel({
                       fontSize: 10.5,
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans'",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     Field agent
@@ -128,7 +128,7 @@ export function LeaderboardPanel({
                 <div
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontVariantNumeric: 'tabular-nums',
                     textAlign: 'right',
                   }}

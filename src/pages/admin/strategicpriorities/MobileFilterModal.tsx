@@ -52,7 +52,7 @@ export function MobileFilterModal({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 14,
               color: 'hsl(var(--on-surface))',
             }}
@@ -91,7 +91,7 @@ export function MobileFilterModal({
               htmlFor="select-mob-filter"
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 9,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -110,7 +110,7 @@ export function MobileFilterModal({
                 borderRadius: 4,
                 outline: 'none',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 13,
                 boxSizing: 'border-box',
                 color: 'hsl(var(--on-surface))',
@@ -133,7 +133,7 @@ export function MobileFilterModal({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 9,
                 color: 'hsl(var(--on-surface-muted))',
                 display: 'block',
@@ -154,7 +154,7 @@ export function MobileFilterModal({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     display: 'block',
@@ -166,7 +166,7 @@ export function MobileFilterModal({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 26,
                     color: 'hsl(var(--primary))',
                     lineHeight: 1,
@@ -186,7 +186,7 @@ export function MobileFilterModal({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     display: 'block',
@@ -198,7 +198,7 @@ export function MobileFilterModal({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 26,
                     color: 'hsl(var(--accent))',
                     lineHeight: 1,

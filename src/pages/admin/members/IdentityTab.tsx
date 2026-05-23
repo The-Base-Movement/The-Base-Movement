@@ -49,7 +49,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                   <dt
                     style={{
                       fontSize: 9.5,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--on-surface-muted))',
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
@@ -64,7 +64,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                       margin: 0,
                       fontSize: 12.5,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 6,
@@ -161,7 +161,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     flex: 1,
                   }}
                 >
@@ -172,7 +172,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                     fontSize: 10.5,
                     color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                   }}
                 >
                   {c.detail}

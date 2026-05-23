@@ -24,7 +24,7 @@ export function MembersHeader({
             fontSize: 12.5,
             marginTop: 4,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
           }}
         >
           Movement registration database, identity verification, and regional deployment oversight.

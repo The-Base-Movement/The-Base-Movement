@@ -86,7 +86,7 @@ export function DeleteModal({
                 style={{
                   fontSize: 11,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   color: 'hsl(var(--destructive))',
                   marginBottom: 4,
                 }}
@@ -97,7 +97,7 @@ export function DeleteModal({
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 20,
                   color: '#fff',
                   letterSpacing: '-.01em',
@@ -158,7 +158,7 @@ export function DeleteModal({
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 11,
                           color: 'hsl(var(--on-surface-muted))',
                         }}
@@ -176,7 +176,7 @@ export function DeleteModal({
                       style={{
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12.5,
                         color: 'hsl(var(--on-surface))',
                         whiteSpace: 'nowrap',
@@ -190,7 +190,7 @@ export function DeleteModal({
                       style={{
                         fontSize: 10.5,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         color: 'hsl(var(--on-surface-muted))',
                         fontVariantNumeric: 'tabular-nums',
                       }}
@@ -211,7 +211,7 @@ export function DeleteModal({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -248,7 +248,7 @@ export function DeleteModal({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 12,
                 color: 'hsl(var(--on-surface))',
                 lineHeight: 1.6,

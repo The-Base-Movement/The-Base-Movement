@@ -40,7 +40,11 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 name="Chapters"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
+                tick={{
+                  fontSize: 10,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fill: 'rgba(0,0,0,0.3)',
+                }}
                 label={{
                   value: 'Chapter density',
                   position: 'bottom',
@@ -55,7 +59,11 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 name="Members"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
+                tick={{
+                  fontSize: 10,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fill: 'rgba(0,0,0,0.3)',
+                }}
                 label={{
                   value: 'Mobilization strength',
                   angle: -90,
@@ -72,9 +80,9 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                   border: '1px solid rgba(255,255,255,.1)',
                   borderRadius: 4,
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                 }}
-                itemStyle={{ fontSize: 10, fontWeight: 700 }}
+                itemStyle={{ fontSize: 10, fontWeight: 'var(--font-weight-medium, 500)' }}
               />
               <Scatter name="Regions" data={regionalStats} fill="#006b3f">
                 {regionalStats.map((entry, i) => (
@@ -101,7 +109,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 <span
                   style={{
                     fontSize: 12,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontFamily: "'Public Sans', sans-serif",
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -111,7 +119,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 <span
                   style={{
                     fontSize: 11,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     fontFamily: "'Public Sans', sans-serif",
                     color: 'hsl(var(--on-surface-muted))',
                   }}

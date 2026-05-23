@@ -32,7 +32,11 @@ export function QuickActionsPanel({
         <button
           onClick={onBroadcast}
           className="btn"
-          style={{ background: 'hsl(var(--accent))', color: '#000', fontWeight: 800 }}
+          style={{
+            background: 'hsl(var(--accent))',
+            color: '#000',
+            fontWeight: 'var(--font-weight-semibold, 600)',
+          }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
             campaign
@@ -57,7 +61,7 @@ export function QuickActionsPanel({
           <div
             style={{
               fontSize: 9.5,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--on-surface-muted))',
               letterSpacing: '.06em',
               textTransform: 'uppercase',
@@ -81,7 +85,7 @@ export function QuickActionsPanel({
               <b
                 style={{
                   fontFamily: "'Public Sans'",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11.5,
                   color: 'hsl(var(--destructive))',
                   display: 'block',

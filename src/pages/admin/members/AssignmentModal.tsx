@@ -80,7 +80,7 @@ export function AssignmentModal({
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 18,
                   color: '#fff',
                 }}
@@ -91,7 +91,7 @@ export function AssignmentModal({
                 style={{
                   margin: '2px 0 0',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11.5,
                   color: 'rgba(255,255,255,.5)',
                 }}
@@ -108,7 +108,7 @@ export function AssignmentModal({
               style={{
                 display: 'block',
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
                 marginBottom: 6,
@@ -128,7 +128,7 @@ export function AssignmentModal({
                 borderRadius: 4,
                 padding: '0 12px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 13,
                 background: '#fff',
                 color: 'hsl(var(--on-surface))',
@@ -149,7 +149,7 @@ export function AssignmentModal({
               style={{
                 display: 'block',
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
                 marginBottom: 6,
@@ -169,7 +169,7 @@ export function AssignmentModal({
                 borderRadius: 4,
                 padding: '0 12px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 13,
                 background: '#fff',
                 color: 'hsl(var(--on-surface))',
@@ -197,7 +197,7 @@ export function AssignmentModal({
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 lineHeight: 1.6,
                 fontStyle: 'italic',
               }}

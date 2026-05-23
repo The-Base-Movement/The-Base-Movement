@@ -113,7 +113,7 @@ export function IdentityReviewPanel({
                   fontSize: 9.5,
                   color: 'hsl(var(--accent))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   letterSpacing: '.08em',
                   textTransform: 'uppercase',
                 }}
@@ -124,7 +124,7 @@ export function IdentityReviewPanel({
                 style={{
                   margin: '5px 0 6px',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 20,
                   color: '#fff',
                   letterSpacing: '-.01em',
@@ -162,7 +162,7 @@ export function IdentityReviewPanel({
                 <dt
                   style={{
                     fontSize: 9.5,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     color: 'hsl(var(--on-surface-muted))',
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
@@ -177,7 +177,7 @@ export function IdentityReviewPanel({
                     margin: 0,
                     fontSize: 12.5,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     color: 'hsl(var(--on-surface))',
                   }}
                 >
@@ -199,7 +199,7 @@ export function IdentityReviewPanel({
               <div
                 style={{
                   fontSize: 9.5,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.06em',
                   textTransform: 'uppercase',
@@ -219,7 +219,7 @@ export function IdentityReviewPanel({
                     <dt
                       style={{
                         fontSize: 9.5,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         color: 'hsl(var(--on-surface-muted))',
                         letterSpacing: '.06em',
                         textTransform: 'uppercase',
@@ -234,7 +234,7 @@ export function IdentityReviewPanel({
                         margin: 0,
                         fontSize: 12,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       {v || '—'}
@@ -299,7 +299,7 @@ export function IdentityReviewPanel({
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 12,
                   color: done ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))',
                 }}
@@ -322,7 +322,7 @@ export function IdentityReviewPanel({
                 borderRadius: 99,
                 fontSize: 10,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 background: aiResult.flagged ? 'rgba(206,17,38,.1)' : 'rgba(0,107,63,.1)',
                 color: aiResult.flagged ? 'hsl(var(--destructive))' : 'hsl(var(--primary))',
                 border: `1px solid ${aiResult.flagged ? 'rgba(206,17,38,.2)' : 'rgba(0,107,63,.2)'}`,
@@ -342,7 +342,7 @@ export function IdentityReviewPanel({
                 justifyContent: 'center',
                 background: 'hsl(var(--accent))',
                 color: '#000',
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 height: 40,
               }}
             >
@@ -372,7 +372,7 @@ export function IdentityReviewPanel({
                   fontSize: 11.5,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                 }}
               >
                 Analyzing identity…
@@ -398,7 +398,7 @@ export function IdentityReviewPanel({
                       borderRadius: 99,
                       fontSize: 10.5,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       color: 'hsl(var(--on-surface-muted))',
                     }}
                   >
@@ -412,7 +412,7 @@ export function IdentityReviewPanel({
                   fontSize: 10.5,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontStyle: 'italic',
                 }}
               >
@@ -472,7 +472,7 @@ export function IdentityReviewPanel({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 12.5,
               color: 'hsl(var(--primary))',
             }}
@@ -503,7 +503,7 @@ export function IdentityReviewPanel({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 12.5,
               color: 'hsl(var(--destructive))',
             }}

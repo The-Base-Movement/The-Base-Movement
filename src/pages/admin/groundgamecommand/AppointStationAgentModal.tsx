@@ -56,7 +56,14 @@ export function AppointStationAgentModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ padding: '20px 24px 16px', borderBottom: '1px solid hsl(var(--border))' }}>
-          <h3 style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 16, margin: 0 }}>
+          <h3
+            style={{
+              fontFamily: "'Public Sans'",
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontSize: 16,
+              margin: 0,
+            }}
+          >
             Appoint polling station agent
           </h3>
         </div>
@@ -72,7 +79,7 @@ export function AppointStationAgentModal({
             <b
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 14,
                 display: 'block',
                 marginBottom: 4,
@@ -83,7 +90,7 @@ export function AppointStationAgentModal({
             <span
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -101,7 +108,7 @@ export function AppointStationAgentModal({
               <span
                 style={{
                   fontFamily: 'monospace',
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
                   letterSpacing: '.04em',
                   background: '#fff',
@@ -116,7 +123,7 @@ export function AppointStationAgentModal({
           <p
             style={{
               fontFamily: "'Public Sans'",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               marginBottom: 20,

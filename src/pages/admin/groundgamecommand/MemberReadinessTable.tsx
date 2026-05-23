@@ -50,7 +50,7 @@ export function MemberReadinessTable({
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans'",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               marginTop: 2,
             }}
           >
@@ -98,7 +98,7 @@ export function MemberReadinessTable({
             <div
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 22,
                 letterSpacing: '-.02em',
                 lineHeight: 1,
@@ -109,7 +109,7 @@ export function MemberReadinessTable({
             <div
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10.5,
                 color: 'hsl(var(--on-surface-muted))',
                 marginTop: 4,
@@ -163,7 +163,7 @@ export function MemberReadinessTable({
               borderRadius: 6,
               fontFamily: "'Public Sans'",
               fontSize: 12,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               boxSizing: 'border-box',
               outline: 'none',
             }}
@@ -178,7 +178,7 @@ export function MemberReadinessTable({
               borderRadius: 99,
               border: '1px solid hsl(var(--border))',
               fontFamily: "'Public Sans'",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 10.5,
               cursor: 'pointer',
               letterSpacing: '.04em',
@@ -223,7 +223,7 @@ export function MemberReadinessTable({
                   style={{
                     padding: '9px 18px',
                     textAlign: 'left',
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 10,
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
@@ -244,7 +244,7 @@ export function MemberReadinessTable({
                   style={{
                     padding: '32px 18px',
                     textAlign: 'center',
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -265,7 +265,13 @@ export function MemberReadinessTable({
                         i < filteredVoterRegs.length - 1 ? '1px solid hsl(var(--border))' : 'none',
                     }}
                   >
-                    <td style={{ padding: '11px 18px', fontWeight: 800, fontSize: 12.5 }}>
+                    <td
+                      style={{
+                        padding: '11px 18px',
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontSize: 12.5,
+                      }}
+                    >
                       {r.member_name}
                     </td>
                     <td
@@ -273,17 +279,29 @@ export function MemberReadinessTable({
                         padding: '11px 18px',
                         fontSize: 11.5,
                         color: 'hsl(var(--on-surface-muted))',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       {r.registration_number || '—'}
                     </td>
-                    <td style={{ padding: '11px 18px', fontSize: 11.5, fontWeight: 700 }}>
+                    <td
+                      style={{
+                        padding: '11px 18px',
+                        fontSize: 11.5,
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                      }}
+                    >
                       {r.chapter || (
                         <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
                       )}
                     </td>
-                    <td style={{ padding: '11px 18px', fontSize: 11.5, fontWeight: 700 }}>
+                    <td
+                      style={{
+                        padding: '11px 18px',
+                        fontSize: 11.5,
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                      }}
+                    >
                       {r.constituency || (
                         <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
                       )}
@@ -293,7 +311,7 @@ export function MemberReadinessTable({
                         <span
                           style={{
                             fontFamily: 'monospace',
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 12,
                             background: 'hsl(var(--container-low))',
                             padding: '3px 8px',
@@ -308,7 +326,7 @@ export function MemberReadinessTable({
                           style={{
                             color: 'hsl(var(--on-surface-muted))',
                             fontSize: 11.5,
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                           }}
                         >
                           Not submitted
@@ -366,7 +384,7 @@ export function MemberReadinessTable({
             padding: '12px 18px',
             borderTop: '1px solid hsl(var(--border))',
             fontFamily: "'Public Sans'",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
           }}

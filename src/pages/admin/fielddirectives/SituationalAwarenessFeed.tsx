@@ -3,7 +3,7 @@ import type { FieldReport } from '@/types/admin'
 const pillBase: React.CSSProperties = {
   padding: '2px 10px',
   fontSize: 9,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-medium, 500)',
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
   borderRadius: 4,
@@ -52,7 +52,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -62,7 +62,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 2,
@@ -98,7 +98,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -169,7 +169,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 9,
                           color: 'rgba(255,255,255,0.8)',
                           textTransform: 'uppercase',
@@ -212,7 +212,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                       <div
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 12,
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -222,7 +222,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                       <div
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           fontSize: 10,
                           color: 'hsl(var(--on-surface-muted))',
                           marginTop: 2,

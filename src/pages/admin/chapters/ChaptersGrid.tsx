@@ -9,7 +9,7 @@ const fieldStyle: React.CSSProperties = {
   borderRadius: 4,
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
   background: '#fff',
@@ -287,7 +287,7 @@ export function ChaptersGrid({
                       <div
                         style={{
                           fontSize: 10,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           color:
                             chapter.status === 'Active'
                               ? 'rgba(0,0,0,0.6)'
@@ -302,7 +302,7 @@ export function ChaptersGrid({
                         style={{
                           margin: 0,
                           fontSize: 13,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontFamily: "'Public Sans', sans-serif",
                           color: chapter.status === 'Active' ? '#000' : 'hsl(var(--on-surface))',
                           lineHeight: 1.25,
@@ -336,7 +336,7 @@ export function ChaptersGrid({
                         flexShrink: 0,
                         background: chapter.status === 'Active' ? '#000' : undefined,
                         color: chapter.status === 'Active' ? '#fff' : undefined,
-                        fontWeight: 900,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 9,
                       }}
                     >
@@ -355,7 +355,7 @@ export function ChaptersGrid({
                       <div
                         style={{
                           fontSize: 10,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           color: 'hsl(var(--on-surface-muted))',
                           fontFamily: "'Public Sans', sans-serif",
                           marginBottom: 3,
@@ -366,7 +366,7 @@ export function ChaptersGrid({
                       <b
                         style={{
                           fontSize: 12,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontFamily: "'Public Sans', sans-serif",
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -378,7 +378,7 @@ export function ChaptersGrid({
                       <div
                         style={{
                           fontSize: 10,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           color: 'hsl(var(--on-surface-muted))',
                           fontFamily: "'Public Sans', sans-serif",
                           marginBottom: 3,
@@ -389,7 +389,7 @@ export function ChaptersGrid({
                       <b
                         style={{
                           fontSize: 12,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontFamily: "'Public Sans', sans-serif",
                           color: 'hsl(var(--on-surface))',
                           display: 'flex',
@@ -510,7 +510,7 @@ export function ChaptersGrid({
             <span
               style={{
                 fontSize: 12,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontFamily: "'Public Sans', sans-serif",
                 color: 'hsl(var(--primary))',
               }}
@@ -538,7 +538,7 @@ export function ChaptersGrid({
               fontSize: 11.5,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
             }}
           >
             Showing {(currentPage - 1) * itemsPerPage + 1}–

@@ -172,7 +172,7 @@ export function MemberDetailPanel({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 24,
                     color: '#fff',
                   }}
@@ -191,7 +191,7 @@ export function MemberDetailPanel({
                   fontSize: 9.5,
                   color: 'hsl(var(--accent))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   letterSpacing: '.08em',
                   textTransform: 'uppercase',
                 }}
@@ -204,7 +204,7 @@ export function MemberDetailPanel({
               <h2
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 28,
                   letterSpacing: '-.02em',
                   marginTop: 4,
@@ -216,7 +216,7 @@ export function MemberDetailPanel({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 12,
                   color: 'hsl(var(--accent))',
                   marginTop: 4,
@@ -237,7 +237,8 @@ export function MemberDetailPanel({
                     border: '1px solid rgba(218,165,32,.36)',
                     borderRadius: 99,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight:
+                      'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                     fontSize: 10,
                     letterSpacing: '.04em',
                     textTransform: 'uppercase',
@@ -262,7 +263,8 @@ export function MemberDetailPanel({
                       border: '1px solid rgba(255,255,255,.16)',
                       borderRadius: 99,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight:
+                        'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                       fontSize: 10,
                       letterSpacing: '.04em',
                       textTransform: 'uppercase',
@@ -279,7 +281,8 @@ export function MemberDetailPanel({
                       border: '1px solid rgba(255,255,255,.16)',
                       borderRadius: 99,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight:
+                        'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                       fontSize: 10,
                       letterSpacing: '.04em',
                       textTransform: 'uppercase',
@@ -296,7 +299,8 @@ export function MemberDetailPanel({
                       border: '1px solid rgba(255,255,255,.16)',
                       borderRadius: 99,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight:
+                        'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                       fontSize: 10,
                       letterSpacing: '.04em',
                       textTransform: 'uppercase',
@@ -319,7 +323,8 @@ export function MemberDetailPanel({
                   border: '1px solid rgba(218,165,32,.36)',
                   borderRadius: 99,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight:
+                    'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                   fontSize: 10,
                   letterSpacing: '.04em',
                   textTransform: 'uppercase',
@@ -344,7 +349,8 @@ export function MemberDetailPanel({
                     border: '1px solid rgba(255,255,255,.16)',
                     borderRadius: 99,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight:
+                      'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                     fontSize: 10,
                     letterSpacing: '.04em',
                     textTransform: 'uppercase',
@@ -361,7 +367,8 @@ export function MemberDetailPanel({
                     border: '1px solid rgba(255,255,255,.16)',
                     borderRadius: 99,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight:
+                      'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                     fontSize: 10,
                     letterSpacing: '.04em',
                     textTransform: 'uppercase',
@@ -378,7 +385,8 @@ export function MemberDetailPanel({
                     border: '1px solid rgba(255,255,255,.16)',
                     borderRadius: 99,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight:
+                      'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                     fontSize: 10,
                     letterSpacing: '.04em',
                     textTransform: 'uppercase',
@@ -477,7 +485,7 @@ export function MemberDetailPanel({
               style={{
                 padding: '14px 16px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 12,
                 color: activeTab === id ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))',
                 background: 'none',
@@ -499,7 +507,8 @@ export function MemberDetailPanel({
                     borderRadius: 99,
                     fontSize: 9,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight:
+                      'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                   }}
                 >
                   {count}

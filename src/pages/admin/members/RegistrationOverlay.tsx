@@ -67,7 +67,7 @@ export function RegistrationOverlay({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12.5,
             }}
           >

@@ -22,7 +22,9 @@ export default function StrategicPriorities() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768)
   const [showMobileFilter, setShowMobileFilter] = useState(false)
   const { openDelete, modal } = useDeleteModal()
-  const [imageUploadMode, setImageUploadMode] = useState<'url' | 'upload'>('upload')
+  const [imageUploadMode, setImageUploadMode] = useState<'upload' | 'media-library' | 'url'>(
+    'media-library'
+  )
   const [isUploadingImage, setIsUploadingImage] = useState(false)
 
   // Form State

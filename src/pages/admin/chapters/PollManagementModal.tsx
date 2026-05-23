@@ -84,7 +84,7 @@ export function PollManagementModal({
               <p
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 15,
                   color: '#fff',
                   margin: 0,
@@ -116,7 +116,7 @@ export function PollManagementModal({
               fontSize: 11,
               color: 'rgba(255,255,255,0.5)',
               margin: '3px 0 0',
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-normal, 400)',
             }}
           >
             {managePollChapterName}
@@ -133,7 +133,7 @@ export function PollManagementModal({
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
               }}
             >
               Loading polls…
@@ -156,7 +156,7 @@ export function PollManagementModal({
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
@@ -197,7 +197,7 @@ export function PollManagementModal({
                           <span
                             style={{
                               fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                               fontSize: 13,
                               color: 'hsl(var(--on-surface))',
                               overflow: 'hidden',
@@ -218,7 +218,7 @@ export function PollManagementModal({
                           <span
                             style={{
                               fontSize: 11,
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-normal, 400)',
                               color: 'hsl(var(--on-surface-muted))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}
@@ -233,7 +233,7 @@ export function PollManagementModal({
                           <span
                             style={{
                               fontSize: 11,
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-normal, 400)',
                               color: 'hsl(var(--on-surface-muted))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}
@@ -243,7 +243,7 @@ export function PollManagementModal({
                           <span
                             style={{
                               fontSize: 11,
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-normal, 400)',
                               color: 'hsl(var(--on-surface-muted))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}

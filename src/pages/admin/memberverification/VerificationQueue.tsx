@@ -71,7 +71,7 @@ export function VerificationQueue({
               borderRadius: 4,
               padding: '0 12px 0 32px',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
               outline: 'none',
               background: 'hsl(var(--surface))',
@@ -107,7 +107,7 @@ export function VerificationQueue({
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
               background: '#fff',
               color: 'hsl(var(--on-surface))',
@@ -153,7 +153,7 @@ export function VerificationQueue({
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
               background: '#fff',
               color: 'hsl(var(--on-surface))',
@@ -193,7 +193,7 @@ export function VerificationQueue({
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             Fetching identity files…
@@ -218,7 +218,7 @@ export function VerificationQueue({
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             No registrations match your search.
@@ -290,7 +290,7 @@ export function VerificationQueue({
                         <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 13,
                             color: isActive
                               ? 'rgba(255,255,255,.6)'
@@ -310,7 +310,7 @@ export function VerificationQueue({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 13,
                           color: isActive ? '#fff' : 'hsl(var(--on-surface))',
                         }}
@@ -322,7 +322,7 @@ export function VerificationQueue({
                           style={{
                             fontSize: 10.5,
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             color: isActive
                               ? 'rgba(255,255,255,.5)'
                               : 'hsl(var(--on-surface-muted))',
@@ -342,7 +342,7 @@ export function VerificationQueue({
                           style={{
                             fontSize: 10.5,
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             color: isActive
                               ? 'rgba(255,255,255,.5)'
                               : 'hsl(var(--on-surface-muted))',
@@ -361,7 +361,7 @@ export function VerificationQueue({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 11.5,
                           color: isActive ? 'rgba(255,255,255,.8)' : 'hsl(var(--on-surface))',
                         }}
@@ -372,7 +372,7 @@ export function VerificationQueue({
                         style={{
                           margin: '1px 0 0',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-normal, 400)',
                           fontSize: 10.5,
                           color: isActive
                             ? 'rgba(255,255,255,.45)'
@@ -391,7 +391,7 @@ export function VerificationQueue({
                           borderRadius: 99,
                           fontSize: 9.5,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           color: '#fff',
                           textTransform: 'uppercase',
                           letterSpacing: '.05em',
@@ -453,7 +453,7 @@ export function VerificationQueue({
             style={{
               fontSize: 11.5,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               color: 'hsl(var(--on-surface-muted))',
             }}
           >
@@ -480,7 +480,7 @@ export function VerificationQueue({
                   borderRadius: 4,
                   border: '1px solid hsl(var(--border))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11,
                   cursor: 'pointer',
                   background: page === safePage ? 'hsl(var(--primary))' : '#fff',

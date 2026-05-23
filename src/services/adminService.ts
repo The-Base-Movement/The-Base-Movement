@@ -658,12 +658,12 @@ class AdminService {
 
   async updateDonationCampaign(id: string, campaign: Partial<DonationCampaign>): Promise<boolean> {
     const updates: Record<string, string | number | null> = {}
-    if (campaign.title) updates.title = campaign.title
-    if (campaign.description) updates.description = campaign.description
-    if (campaign.targetAmount) updates.target_amount = campaign.targetAmount
-    if (campaign.endDate) updates.end_date = campaign.endDate
-    if (campaign.status) updates.status = campaign.status
-    if (campaign.imageUrl) updates.image_url = campaign.imageUrl
+    if (campaign.title !== undefined) updates.title = campaign.title
+    if (campaign.description !== undefined) updates.description = campaign.description
+    if (campaign.targetAmount !== undefined) updates.target_amount = campaign.targetAmount
+    if (campaign.endDate !== undefined) updates.end_date = campaign.endDate
+    if (campaign.status !== undefined) updates.status = campaign.status
+    if (campaign.imageUrl !== undefined) updates.image_url = campaign.imageUrl || null
 
     const { error } = await supabase.from('donation_campaigns').update(updates).eq('id', id)
 
@@ -818,9 +818,7 @@ class AdminService {
   }> {
     try {
       const [membersTotal, chaptersTotal, diasporaTotal, regionsTotal] = await Promise.all([
-        supabase
-          .from('users')
-          .select('*', { count: 'exact', head: true }),
+        supabase.from('users').select('*', { count: 'exact', head: true }),
         supabase.from('chapters').select('*', { count: 'exact', head: true }),
         supabase
           .from('users')

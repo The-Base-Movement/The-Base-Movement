@@ -85,7 +85,7 @@ export function NotesTab({
                   <b
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 11.5,
                     }}
                   >
@@ -99,7 +99,7 @@ export function NotesTab({
                       padding: '1px 6px',
                       borderRadius: 99,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     {n.role}
@@ -110,7 +110,7 @@ export function NotesTab({
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                   }}
                 >
                   {n.date}
@@ -139,7 +139,7 @@ export function NotesTab({
               <b
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11.5,
                 }}
               >
@@ -150,7 +150,7 @@ export function NotesTab({
                   fontSize: 10,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                 }}
               >
                 {member.joined || 'On join'}

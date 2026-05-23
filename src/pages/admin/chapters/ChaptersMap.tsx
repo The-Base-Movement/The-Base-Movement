@@ -49,7 +49,7 @@ export function ChaptersMap({
               <span
                 style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontFamily: "'Public Sans', sans-serif",
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -267,7 +267,7 @@ export function ChaptersMap({
                   <span
                     style={{
                       fontSize: 11,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontFamily: "'Public Sans', sans-serif",
                       color:
                         regionFilter.toLowerCase() === r.id.toLowerCase()
@@ -281,7 +281,7 @@ export function ChaptersMap({
                 <span
                   style={{
                     fontSize: 10,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     fontFamily: "'Public Sans', sans-serif",
                     color: hasActive
                       ? 'hsl(var(--primary))'

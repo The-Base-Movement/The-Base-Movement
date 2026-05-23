@@ -31,7 +31,7 @@ export function PollsTab({ votes }: PollsTabProps) {
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               No poll votes on record.
@@ -74,7 +74,7 @@ export function PollsTab({ votes }: PollsTabProps) {
                     style={{
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 12.5,
                     }}
                   >
@@ -85,7 +85,7 @@ export function PollsTab({ votes }: PollsTabProps) {
                       fontSize: 10.5,
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     {v.date}
@@ -99,7 +99,8 @@ export function PollsTab({ votes }: PollsTabProps) {
                     border: '1px solid rgba(0,107,63,.2)',
                     borderRadius: 99,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight:
+                      'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                     fontSize: 11,
                     color: 'hsl(var(--primary))',
                   }}

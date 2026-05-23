@@ -24,7 +24,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 36,
                 letterSpacing: '-.02em',
                 fontVariantNumeric: 'tabular-nums',
@@ -94,7 +94,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               No donation records yet.
@@ -126,7 +126,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               No donations on record.
@@ -169,7 +169,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                     style={{
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 12.5,
                     }}
                   >
@@ -180,7 +180,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                       fontSize: 10.5,
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     {d.date} · {d.method} · ref {d.ref}
@@ -190,7 +190,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 13,
                       color: 'hsl(var(--primary))',
                     }}
@@ -201,7 +201,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                     style={{
                       fontSize: 10,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       color: d.cleared ? 'hsl(var(--primary))' : '#a87d10',
                     }}
                   >

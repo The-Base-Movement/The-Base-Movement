@@ -10,7 +10,7 @@ INSERT INTO donation_campaigns (title, description, target_amount, raised_amount
     125000.00, 
     '2026-12-31', 
     'Active', 
-    'https://images.unsplash.com/photo-1540910419892-f0c74b0e8966?auto=format&fit=crop&q=80&w=800'
+    '/priorities/ghana_network_map.png'
 ),
 (
     'Digital Infrastructure Fund', 
@@ -19,7 +19,7 @@ INSERT INTO donation_campaigns (title, description, target_amount, raised_amount
     45000.00, 
     '2026-08-15', 
     'Active', 
-    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800'
+    '/priorities/digital_economy_illustration.png'
 ),
 (
     'National Headquarters Renovation', 
@@ -28,7 +28,7 @@ INSERT INTO donation_campaigns (title, description, target_amount, raised_amount
     210000.00, 
     '2026-06-30', 
     'Active', 
-    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800'
+    '/priorities/agro_processing_illustration.png'
 ),
 (
     '2025 Regional Youth Outreach', 
@@ -37,7 +37,7 @@ INSERT INTO donation_campaigns (title, description, target_amount, raised_amount
     100000.00, 
     '2025-12-31', 
     'Closed', 
-    'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=800'
+    '/priorities/ghana_network_map.png'
 );
 
 -- 2. Sample Donations (To be linked to existing users)

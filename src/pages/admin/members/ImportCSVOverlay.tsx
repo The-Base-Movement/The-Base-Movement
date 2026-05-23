@@ -369,13 +369,18 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                 fontSize: 20,
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
               }}
             >
               Import Physical Registration Forms
             </h2>
             <div
-              style={{ color: 'hsl(var(--accent))', marginTop: 3, fontSize: 12, fontWeight: 700 }}
+              style={{
+                color: 'hsl(var(--accent))',
+                marginTop: 3,
+                fontSize: 12,
+                fontWeight: 'var(--font-weight-normal, 400)' as React.CSSProperties['fontWeight'],
+              }}
             >
               Ghana Network · CSV batch import
             </div>
@@ -418,7 +423,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div
                   style={{
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 13,
                     marginBottom: 8,
                     color: 'hsl(var(--on-surface))',
@@ -472,7 +477,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               <div
                 style={{
                   fontSize: 11,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   marginBottom: 6,
                   textTransform: 'uppercase',
@@ -491,7 +496,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 3,
                       padding: '2px 8px',
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       color: REQUIRED_FIELDS.some(
                         (f) => String(f).replace(/_/g, ' ').toLowerCase() === h.toLowerCase()
                       )
@@ -508,7 +513,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                   fontSize: 10.5,
                   color: 'hsl(var(--primary))',
                   marginTop: 6,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                 }}
               >
                 Green = required
@@ -547,7 +552,13 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               >
                 cloud_upload
               </span>
-              <h4 style={{ margin: '0 0 6px 0', fontWeight: 800, fontSize: 15 }}>
+              <h4
+                style={{
+                  margin: '0 0 6px 0',
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontSize: 15,
+                }}
+              >
                 Tap to browse or drag &amp; drop
               </h4>
               <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
@@ -582,7 +593,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                   <div style={{ minWidth: 0 }}>
                     <div
                       style={{
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 13,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -626,13 +637,20 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                       border: '1px solid rgba(0,107,63,0.15)',
                     }}
                   >
-                    <div style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--primary))' }}>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight:
+                          'var(--font-weight-medium, 500)' as React.CSSProperties['fontWeight'],
+                        color: 'hsl(var(--primary))',
+                      }}
+                    >
                       VALID RECORDS
                     </div>
                     <div
                       style={{
                         fontSize: 28,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         marginTop: 4,
                         color: 'hsl(var(--primary))',
                       }}
@@ -655,7 +673,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     <div
                       style={{
                         fontSize: 11,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color:
                           invalidCount > 0
                             ? 'hsl(var(--destructive))'
@@ -667,7 +685,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     <div
                       style={{
                         fontSize: 28,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         marginTop: 4,
                         color:
                           invalidCount > 0 ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))',
@@ -684,7 +702,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                 <div className="panel" style={{ maxHeight: 180, overflowY: 'auto', padding: 16 }}>
                   <h5
                     style={{
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--destructive))',
                       margin: '0 0 10px 0',
                       fontSize: 12,
@@ -711,7 +729,13 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                             Row {record.rowNumber}:
                           </strong>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: 700, color: '#334155' }}>
+                            <div
+                              style={{
+                                fontWeight:
+                                  'var(--font-weight-medium, 500)' as React.CSSProperties['fontWeight'],
+                                color: '#334155',
+                              }}
+                            >
                               {record.data.full_name || 'Unnamed'}
                             </div>
                             <div
@@ -735,7 +759,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                 <div className="panel" style={{ padding: 16, overflowX: 'auto' }}>
                   <h5
                     style={{
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       color: 'hsl(var(--primary))',
                       margin: '0 0 10px 0',
                       fontSize: 12,
@@ -755,7 +779,14 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     <thead>
                       <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                         {['Name', 'Phone', 'Gender', 'Age', 'Region / Constituency'].map((h) => (
-                          <th key={h} style={{ padding: '6px 8px 6px 0', fontWeight: 800 }}>
+                          <th
+                            key={h}
+                            style={{
+                              padding: '6px 8px 6px 0',
+                              fontWeight:
+                                'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
+                            }}
+                          >
                             {h}
                           </th>
                         ))}
@@ -767,7 +798,13 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                         .slice(0, 10)
                         .map((record, index) => (
                           <tr key={index} style={{ borderBottom: '1px dotted hsl(var(--border))' }}>
-                            <td style={{ padding: '8px 8px 8px 0', fontWeight: 700 }}>
+                            <td
+                              style={{
+                                padding: '8px 8px 8px 0',
+                                fontWeight:
+                                  'var(--font-weight-normal, 400)' as React.CSSProperties['fontWeight'],
+                              }}
+                            >
                               {record.data.full_name}
                             </td>
                             <td
@@ -848,7 +885,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                   display: 'flex',
                   justifyContent: 'space-between',
                   fontSize: 11.5,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   marginBottom: 6,
                 }}
               >

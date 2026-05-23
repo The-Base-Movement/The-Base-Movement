@@ -33,13 +33,29 @@ export function ActionList({ actions, selectedAction, onSelect }: ActionListProp
   return (
     <aside style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
-
         {/* Panel header */}
-        <div className="ph" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11 }}>
+        <div
+          className="ph"
+          style={{
+            padding: '16px 24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontSize: 11,
+            }}
+          >
             Field actions
           </span>
-          <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}
+          >
             bolt
           </span>
         </div>
@@ -55,7 +71,8 @@ export function ActionList({ actions, selectedAction, onSelect }: ActionListProp
                 cursor: 'pointer',
                 // Red left border indicates the currently selected action
                 borderLeft: `4px solid ${selectedAction?.id === action.id ? 'hsl(var(--destructive))' : 'transparent'}`,
-                background: selectedAction?.id === action.id ? 'hsl(var(--container-low))' : 'transparent',
+                background:
+                  selectedAction?.id === action.id ? 'hsl(var(--container-low))' : 'transparent',
                 borderBottom: '1px solid hsl(var(--border))',
               }}
             >
@@ -64,30 +81,65 @@ export function ActionList({ actions, selectedAction, onSelect }: ActionListProp
                 <span
                   className="pill"
                   style={{
-                    background: action.status === 'Live' ? 'rgba(206, 17, 38, 0.1)' : 'hsl(var(--container-low))',
-                    color: action.status === 'Live' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
+                    background:
+                      action.status === 'Live'
+                        ? 'rgba(206, 17, 38, 0.1)'
+                        : 'hsl(var(--container-low))',
+                    color:
+                      action.status === 'Live'
+                        ? 'hsl(var(--destructive))'
+                        : 'hsl(var(--on-surface-muted))',
                     fontSize: 8,
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                   }}
                 >
                   {action.status}
                 </span>
-                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 9,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
                   {format(new Date(action.start_time), 'MMM dd, HH:mm')}
                 </span>
               </div>
 
               {/* Action title */}
-              <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))', margin: 0 }}>
+              <h3
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontSize: 14,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                }}
+              >
                 {action.title}
               </h3>
 
               {/* Location name with pin icon */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}
+                >
                   location_on
                 </span>
-                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    fontSize: 9,
+                    color: 'hsl(var(--on-surface-muted))',
+                    margin: 0,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {action.location_name}
                 </p>
               </div>

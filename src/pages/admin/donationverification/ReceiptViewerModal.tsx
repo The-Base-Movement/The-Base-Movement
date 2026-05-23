@@ -46,7 +46,7 @@ export function ReceiptViewerModal({ isOpen, receiptUrl, onClose }: ReceiptViewe
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
               }}
             >
@@ -57,7 +57,7 @@ export function ReceiptViewerModal({ isOpen, receiptUrl, onClose }: ReceiptViewe
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 marginTop: 2,
               }}
             >

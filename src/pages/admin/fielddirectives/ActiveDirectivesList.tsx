@@ -3,7 +3,7 @@ import type { FieldDirective } from '@/types/admin'
 const pillBase: React.CSSProperties = {
   padding: '2px 10px',
   fontSize: 9,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-medium, 500)',
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
   borderRadius: 4,
@@ -52,7 +52,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -62,7 +62,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               marginTop: 2,
@@ -108,7 +108,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -149,7 +149,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                     color: 'hsl(var(--accent))',
                   }}
@@ -160,7 +160,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 13,
                   color: 'hsl(var(--on-surface))',
                   marginBottom: 6,
@@ -185,7 +185,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
                   alignItems: 'center',
                   gap: 5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                 }}

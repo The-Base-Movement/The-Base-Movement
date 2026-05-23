@@ -31,7 +31,7 @@ export function FieldAgentsList({
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans'",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               marginTop: 2,
             }}
           >
@@ -51,7 +51,7 @@ export function FieldAgentsList({
             padding: '24px 18px',
             textAlign: 'center',
             fontFamily: "'Public Sans'",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -81,7 +81,7 @@ export function FieldAgentsList({
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: "'Public Sans'",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11,
                   flexShrink: 0,
                   color: 'hsl(var(--primary))',
@@ -98,7 +98,7 @@ export function FieldAgentsList({
                 <b
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12.5,
                     display: 'block',
                     whiteSpace: 'nowrap',
@@ -113,7 +113,7 @@ export function FieldAgentsList({
                     fontSize: 10.5,
                     color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans'",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                   }}
                 >
                   {a.constituency}

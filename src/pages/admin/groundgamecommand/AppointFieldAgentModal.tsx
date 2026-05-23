@@ -78,7 +78,7 @@ export function AppointFieldAgentModal({
             <h3
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 16,
                 margin: 0,
               }}
@@ -88,7 +88,7 @@ export function AppointFieldAgentModal({
             <p
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 margin: '4px 0 0',
@@ -155,7 +155,7 @@ export function AppointFieldAgentModal({
                   justifyContent: 'center',
                   color: '#fff',
                   fontFamily: "'Public Sans'",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11,
                 }}
               >
@@ -167,13 +167,19 @@ export function AppointFieldAgentModal({
                   .toUpperCase()}
               </div>
               <div style={{ flex: 1 }}>
-                <b style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 13 }}>
+                <b
+                  style={{
+                    fontFamily: "'Public Sans'",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 13,
+                  }}
+                >
                   {modalSelectedMember.full_name}
                 </b>
                 <span
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface-muted))',
                     display: 'block',
@@ -227,7 +233,7 @@ export function AppointFieldAgentModal({
                     borderRadius: 6,
                     fontFamily: "'Public Sans'",
                     fontSize: 12.5,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     boxSizing: 'border-box',
                     outline: 'none',
                   }}
@@ -278,7 +284,7 @@ export function AppointFieldAgentModal({
                           alignItems: 'center',
                           justifyContent: 'center',
                           fontFamily: "'Public Sans'",
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 10,
                           flexShrink: 0,
                         }}
@@ -294,7 +300,7 @@ export function AppointFieldAgentModal({
                         <b
                           style={{
                             fontFamily: "'Public Sans'",
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 12.5,
                           }}
                         >
@@ -303,7 +309,7 @@ export function AppointFieldAgentModal({
                         <span
                           style={{
                             fontFamily: "'Public Sans'",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             fontSize: 10.5,
                             color: 'hsl(var(--on-surface-muted))',
                             display: 'block',
@@ -348,7 +354,7 @@ export function AppointFieldAgentModal({
               borderRadius: 6,
               fontFamily: "'Public Sans'",
               fontSize: 12.5,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               boxSizing: 'border-box',
               outline: 'none',
               marginBottom: 20,

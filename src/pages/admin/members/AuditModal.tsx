@@ -69,7 +69,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 18,
                   color: '#fff',
                 }}
@@ -80,7 +80,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
                 style={{
                   margin: '2px 0 0',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11.5,
                   color: 'rgba(255,255,255,.5)',
                 }}
@@ -110,7 +110,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
                   fontSize: 12.5,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                 }}
               >
                 No audit records found for this resource.
@@ -162,7 +162,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
                             fontSize: 10.5,
                             color: 'hsl(var(--on-surface-muted))',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                           }}
                         >
                           {new Date(log.timestamp).toLocaleString()}
@@ -171,7 +171,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
                           style={{
                             margin: '4px 0 2px',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             fontSize: 13,
                           }}
                         >
@@ -183,7 +183,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
                             fontSize: 11.5,
                             color: 'hsl(var(--on-surface-muted))',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                           }}
                         >
                           Processed by: {log.adminName}
@@ -211,7 +211,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
                         padding: '2px 8px',
                         fontSize: 10,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                         borderRadius: 99,
                         background:
                           log.status === 'Success' ? 'rgba(0,107,63,.1)' : 'rgba(218,165,32,.1)',

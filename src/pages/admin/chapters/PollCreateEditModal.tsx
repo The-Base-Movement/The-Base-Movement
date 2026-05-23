@@ -7,7 +7,7 @@ const fieldStyle: React.CSSProperties = {
   borderRadius: 4,
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
   background: '#fff',
@@ -17,7 +17,7 @@ const fieldStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 10,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   color: 'hsl(var(--on-surface-muted))',
   fontFamily: "'Public Sans', sans-serif",
   marginBottom: 6,
@@ -140,7 +140,7 @@ export function PollCreateEditModal({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
                 color: '#fff',
                 margin: 0,
@@ -155,7 +155,7 @@ export function PollCreateEditModal({
               fontSize: 11,
               color: 'rgba(255,255,255,0.5)',
               margin: '3px 0 0',
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-normal, 400)',
             }}
           >
             {pollChapterName}
@@ -236,7 +236,7 @@ export function PollCreateEditModal({
                 <span
                   style={{
                     fontSize: 12,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
                   }}
@@ -370,7 +370,7 @@ export function PollCreateEditModal({
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontSize: 11,
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                               color: 'hsl(var(--on-surface))',
                             }}
                           >
@@ -394,7 +394,7 @@ export function PollCreateEditModal({
                               style={{
                                 margin: 0,
                                 fontSize: 13,
-                                fontWeight: 800,
+                                fontWeight: 'var(--font-weight-semibold, 600)',
                                 color: 'hsl(var(--on-surface))',
                                 fontFamily: "'Public Sans', sans-serif",
                               }}
@@ -405,7 +405,7 @@ export function PollCreateEditModal({
                               style={{
                                 margin: 0,
                                 fontSize: 10,
-                                fontWeight: 700,
+                                fontWeight: 'var(--font-weight-normal, 400)',
                                 color: 'hsl(var(--on-surface-muted))',
                                 fontFamily: "'Public Sans', sans-serif",
                               }}
@@ -444,7 +444,7 @@ export function PollCreateEditModal({
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                 }}
               >
                 Add at least 2 candidates to proceed.
@@ -476,7 +476,7 @@ export function PollCreateEditModal({
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: 11,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         color: 'hsl(var(--on-surface))',
                       }}
                     >
@@ -499,7 +499,7 @@ export function PollCreateEditModal({
                       <span
                         style={{
                           fontSize: 13,
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface))',
                           fontFamily: "'Public Sans', sans-serif",
                         }}
@@ -511,7 +511,7 @@ export function PollCreateEditModal({
                           style={{
                             marginLeft: 8,
                             fontSize: 10,
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-normal, 400)',
                             color: 'hsl(var(--on-surface-muted))',
                           }}
                         >

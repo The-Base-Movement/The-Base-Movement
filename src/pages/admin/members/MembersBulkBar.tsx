@@ -35,7 +35,7 @@ export function MembersBulkBar({
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 12,
             color: 'rgba(255,255,255,.9)',
           }}

@@ -31,7 +31,7 @@ export function SessionsTab({ sessions }: SessionsTabProps) {
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               No session records yet.
@@ -77,7 +77,7 @@ export function SessionsTab({ sessions }: SessionsTabProps) {
                     style={{
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 12.5,
                     }}
                   >
@@ -88,7 +88,7 @@ export function SessionsTab({ sessions }: SessionsTabProps) {
                       fontSize: 10.5,
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                     }}
                   >
                     {s.date} · {s.location} · {s.ip}
@@ -103,7 +103,8 @@ export function SessionsTab({ sessions }: SessionsTabProps) {
                       borderRadius: 99,
                       fontSize: 10,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight:
+                        'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
                       color: 'hsl(var(--primary))',
                     }}
                   >
