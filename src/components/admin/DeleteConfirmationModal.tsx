@@ -88,7 +88,7 @@ export function DeleteConfirmationModal({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: 16,
                 color: '#fff',
                 margin: 0,
@@ -103,7 +103,7 @@ export function DeleteConfirmationModal({
                 fontSize: 12,
                 color: 'rgba(255,255,255,0.55)',
                 margin: '4px 0 0',
-                fontWeight: 600,
+                fontWeight: 500,
                 lineHeight: 1.5,
               }}
             >
@@ -126,7 +126,7 @@ export function DeleteConfirmationModal({
             <p
               style={{
                 fontSize: 10,
-                fontWeight: 800,
+                fontWeight: 600,
                 textTransform: 'uppercase',
                 color: 'hsl(var(--on-surface-muted))',
                 letterSpacing: '0.05em',
@@ -138,7 +138,7 @@ export function DeleteConfirmationModal({
             <p
               style={{
                 fontSize: 14,
-                fontWeight: 800,
+                fontWeight: 700,
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",

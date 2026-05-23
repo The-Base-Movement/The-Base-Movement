@@ -15,7 +15,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="flex justify-between items-end mb-10 md:mb-12" data-fade>
           <div>
-            <span className="text-primary font-bold tracking-tight text-micro mb-3 block">
+            <span className="text-primary font-semibold tracking-tight text-micro mb-3 block">
               Updates
             </span>
             <h2
@@ -35,7 +35,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
           </div>
           <Link
             to="/blog"
-            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-bold tracking-tight text-xs hover:underline"
+            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-semibold tracking-tight text-xs hover:underline"
           >
             View all news
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
@@ -77,14 +77,14 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                            <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">
+                            <span className="text-micro font-semibold text-muted-foreground/80 tracking-tight">
                               The Base
                             </span>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-micro font-meta font-bold text-primary tracking-tight">
+                        <span className="text-micro font-meta font-semibold text-primary tracking-tight">
                           {post.category}
                         </span>
                         <span className="text-micro text-muted-foreground font-meta">
@@ -97,7 +97,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                             : ''}
                         </span>
                       </div>
-                      <h3 className="text-base font-meta font-bold text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
+                      <h3 className="text-base font-meta font-semibold text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
                         {post.title}
                       </h3>
                     </Link>
@@ -122,14 +122,14 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                        <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">
+                        <span className="text-micro font-semibold text-muted-foreground/80 tracking-tight">
                           The Base
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-micro font-meta font-bold text-primary tracking-tight">
+                    <span className="text-micro font-meta font-semibold text-primary tracking-tight">
                       {post.category}
                     </span>
                     <span className="text-micro text-muted-foreground font-meta">
@@ -142,7 +142,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                         : ''}
                     </span>
                   </div>
-                  <h3 className="text-base md:text-lg font-meta font-bold text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
+                  <h3 className="text-base md:text-lg font-meta font-semibold text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
                     {post.title}
                   </h3>
                 </Link>

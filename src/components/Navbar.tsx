@@ -113,7 +113,7 @@ export default function Navbar() {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 700,
                 fontSize: 18,
                 letterSpacing: '-.02em',
                 lineHeight: 1,
@@ -204,7 +204,7 @@ export default function Navbar() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 600,
                       fontSize: 13,
                       flexShrink: 0,
                     }}
@@ -218,7 +218,7 @@ export default function Navbar() {
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 600,
                       fontSize: 12,
                       color: 'hsl(var(--on-surface))',
                       maxWidth: 120,
@@ -253,7 +253,7 @@ export default function Navbar() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 600,
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -263,7 +263,7 @@ export default function Navbar() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 500,
                         fontSize: 10.5,
                         color: 'hsl(var(--accent))',
                         marginTop: 2,
@@ -288,7 +288,7 @@ export default function Navbar() {
                         textDecoration: 'none',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 500,
                         fontSize: 12,
                       }}
                       onMouseEnter={(e) =>
@@ -318,7 +318,7 @@ export default function Navbar() {
                       background: 'none',
                       color: 'hsl(var(--destructive))',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 500,
                       fontSize: 12,
                       cursor: 'pointer',
                       textAlign: 'left',
@@ -338,18 +338,10 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-              >
+              <Button asChild variant="outline" size="sm">
                 <Link to="/login">Login</Link>
               </Button>
-              <Button
-                asChild
-                variant="accent"
-                size="sm"
-              >
+              <Button asChild variant="accent" size="sm">
                 <Link to="/register">Register</Link>
               </Button>
             </>
@@ -467,7 +459,7 @@ export default function Navbar() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 600,
                         fontSize: 13,
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -477,7 +469,7 @@ export default function Navbar() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 500,
                         fontSize: 11,
                         color: 'hsl(var(--accent))',
                       }}
@@ -498,7 +490,7 @@ export default function Navbar() {
                     borderRadius: 4,
                     textDecoration: 'none',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 500,
                     fontSize: 13,
                   }}
                 >
@@ -518,7 +510,7 @@ export default function Navbar() {
                     borderRadius: 4,
                     textDecoration: 'none',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 500,
                     fontSize: 13,
                   }}
                 >
@@ -541,7 +533,7 @@ export default function Navbar() {
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 500,
                     fontSize: 13,
                   }}
                 >
@@ -553,12 +545,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="default"
-                  style={{ width: '100%' }}
-                >
+                <Button asChild variant="outline" size="default" style={{ width: '100%' }}>
                   <Link to="/login">Login</Link>
                 </Button>
                 <Button
