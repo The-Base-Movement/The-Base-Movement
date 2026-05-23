@@ -1,6 +1,12 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
-import type { Broadcast, Notification, LeaderboardEntry, MovementPulse, Milestone } from '@/types/admin'
+import type {
+  Broadcast,
+  Notification,
+  LeaderboardEntry,
+  MovementPulse,
+  Milestone,
+} from '@/types/admin'
 
 class TacticalService {
   private static instance: TacticalService
@@ -31,24 +37,28 @@ class TacticalService {
     }
   }
 
-  async sendBroadcast(broadcast: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'>): Promise<boolean> {
+  async sendBroadcast(
+    broadcast: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'>
+  ): Promise<boolean> {
     try {
       const user = authService.getUser()
       if (!user) return false
 
       const { data: bData, error: bError } = await supabase
         .from('broadcasts')
-        .insert([{
-          ...broadcast,
-          sender_id: user.id
-        }])
+        .insert([
+          {
+            ...broadcast,
+            sender_id: user.id,
+          },
+        ])
         .select()
         .single()
 
       if (bError) throw bError
 
       let memberQuery = supabase.from('users').select('id')
-      
+
       if (broadcast.target_type === 'REGION') {
         memberQuery = memberQuery.eq('region', broadcast.target_value)
       } else if (broadcast.target_type === 'CONSTITUENCY') {
@@ -59,30 +69,30 @@ class TacticalService {
       if (mError) throw mError
 
       if (members && members.length > 0) {
-        const notifications = members.map(m => ({
+        const notifications = members.map((m) => ({
           user_id: m.id,
           broadcast_id: bData.id,
           title: broadcast.title,
           message: broadcast.content,
-          type: broadcast.priority === 'Urgent' ? 'Alert' : 'Info'
+          type: broadcast.priority === 'Urgent' ? 'Alert' : 'Info',
         }))
 
-        const { error: nError } = await supabase
-          .from('notifications')
-          .insert(notifications)
+        const { error: nError } = await supabase.from('notifications').insert(notifications)
 
         if (nError) throw nError
       }
 
       if (broadcast.priority === 'Urgent') {
-        supabase.functions.invoke('broadcast-dispatcher', {
-          body: { 
-            broadcastId: bData.id,
-            priority: broadcast.priority,
-            targetType: broadcast.target_type,
-            targetValue: broadcast.target_value
-          }
-        }).catch(err => console.error('[EDGE] Dispatch trigger failed:', err))
+        supabase.functions
+          .invoke('broadcast-dispatcher', {
+            body: {
+              broadcastId: bData.id,
+              priority: broadcast.priority,
+              targetType: broadcast.target_type,
+              targetValue: broadcast.target_value,
+            },
+          })
+          .catch((err) => console.error('[EDGE] Dispatch trigger failed:', err))
       }
 
       return true
@@ -113,10 +123,7 @@ class TacticalService {
 
   async markNotificationRead(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', id)
+      const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', id)
 
       if (error) throw error
       return true
@@ -126,7 +133,7 @@ class TacticalService {
     }
   }
 
-  async getBroadcastMetrics(broadcastId: string): Promise<{ total: number, read: number }> {
+  async getBroadcastMetrics(broadcastId: string): Promise<{ total: number; read: number }> {
     try {
       const { count: total, error: tError } = await supabase
         .from('notifications')
@@ -167,12 +174,12 @@ class TacticalService {
       const { data, error } = await query
 
       if (error) throw error
-      
+
       return (data || []).map((entry, index) => ({
         name: entry.full_name,
         points: entry.total_points,
         region: entry.region,
-        rank: region ? entry.regional_rank : (entry.national_rank || index + 1)
+        rank: region ? entry.regional_rank : entry.national_rank || index + 1,
       }))
     } catch (error) {
       console.error('Error fetching leaderboard:', error)
@@ -185,7 +192,7 @@ class TacticalService {
       const [leaderboardRes, chaptersRes, velocityRes] = await Promise.all([
         supabase.from('movement_leaderboard').select('total_points, region'),
         supabase.from('chapter_performance').select('*'),
-        supabase.from('logistics_velocity').select('fulfillment_rate')
+        supabase.from('logistics_velocity').select('fulfillment_rate'),
       ])
 
       const leaderboard = leaderboardRes.data || []
@@ -194,26 +201,32 @@ class TacticalService {
 
       const totalPoints = leaderboard.reduce((sum, u) => sum + (u.total_points || 0), 0)
       const activeChapters = chapters.length
-      
-      const regionalPulse = chapters.map(c => ({
+
+      const regionalPulse = chapters.map((c) => ({
         name: `${c.chapter} (${c.region})`,
         growth: 0,
         activity: Math.round((c.aggregate_chapter_points / (c.total_patriots || 1)) * 10) / 10,
-        status: (c.aggregate_chapter_points > 1000 ? 'Ascending' : 'Stable') as 'Ascending' | 'Stable' | 'Descending'
+        status: (c.aggregate_chapter_points > 1000 ? 'Ascending' : 'Stable') as
+          | 'Ascending'
+          | 'Stable'
+          | 'Descending',
       }))
 
-      const regions = [...new Set(leaderboard.map(u => u.region))]
-      const regionalPoints = regions.map(r => ({
+      const regions = [...new Set(leaderboard.map((u) => u.region))]
+      const regionalPoints = regions.map((r) => ({
         region: r,
-        points: leaderboard.filter(u => u.region === r).reduce((sum, u) => sum + (u.total_points || 0), 0)
+        points: leaderboard
+          .filter((u) => u.region === r)
+          .reduce((sum, u) => sum + (u.total_points || 0), 0),
       }))
       const topRegion = regionalPoints.sort((a, b) => b.points - a.points)[0]?.region || 'N/A'
 
-      const avgFulfillment = velocity.length > 0
-        ? velocity.reduce((sum, v) => sum + (v.fulfillment_rate || 0), 0) / velocity.length
-        : 100
+      const avgFulfillment =
+        velocity.length > 0
+          ? velocity.reduce((sum, v) => sum + (v.fulfillment_rate || 0), 0) / velocity.length
+          : 100
 
-      const growthRate = leaderboard.length > 0 ? (leaderboard.length / 50).toFixed(1) : "0.0"
+      const growthRate = leaderboard.length > 0 ? (leaderboard.length / 50).toFixed(1) : '0.0'
 
       return {
         nationalGrowth: Number(growthRate) || 0,
@@ -221,7 +234,7 @@ class TacticalService {
         totalMobilizationPoints: totalPoints,
         topPerformingRegion: topRegion,
         logisticsHealth: Math.round(avgFulfillment),
-        regionalPulse: regionalPulse.slice(0, 6)
+        regionalPulse: regionalPulse.slice(0, 6),
       }
     } catch {
       return {
@@ -230,7 +243,7 @@ class TacticalService {
         totalMobilizationPoints: 0,
         topPerformingRegion: 'N/A',
         logisticsHealth: 100,
-        regionalPulse: []
+        regionalPulse: [],
       }
     }
   }
@@ -254,9 +267,7 @@ class TacticalService {
 
   async createMilestone(milestone: Omit<Milestone, 'id' | 'created_at'>): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('movement_milestones')
-        .insert([milestone])
+      const { error } = await supabase.from('movement_milestones').insert([milestone])
 
       if (error) throw error
       return true
@@ -268,10 +279,7 @@ class TacticalService {
 
   async updateMilestone(id: string, milestone: Partial<Milestone>): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('movement_milestones')
-        .update(milestone)
-        .eq('id', id)
+      const { error } = await supabase.from('movement_milestones').update(milestone).eq('id', id)
 
       if (error) throw error
       return true
@@ -283,10 +291,7 @@ class TacticalService {
 
   async deleteMilestone(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('movement_milestones')
-        .delete()
-        .eq('id', id)
+      const { error } = await supabase.from('movement_milestones').delete().eq('id', id)
 
       if (error) throw error
       return true
@@ -296,18 +301,54 @@ class TacticalService {
     }
   }
 
-  // --- Tactical Intelligence (AI/Mock) ---
+  // --- Enterprise KYC Integration ---
 
-  async verifyMemberID(memberId: string): Promise<{ confidence: number, matches: string[], flagged: boolean }> {
-    // High-fidelity identity verification simulation (Phase 12)
-    console.log(`[TACTICAL] Running biometric signature check for ID: ${memberId}`)
-    const score = Math.floor(Math.random() * 40) + 60
-    const flagged = score < 75
+  async verifyMemberID(
+    memberId: string,
+    idType: string = 'GHANA_CARD',
+    selfieBase64?: string,
+    imageBase64?: string
+  ): Promise<{
+    confidence: number
+    matches: string[]
+    flagged: boolean
+    smileJobId?: string
+    mocked?: boolean
+  }> {
+    try {
+      console.warn(`[TACTICAL] Initializing KYC Protocol for ID: ${memberId}`)
 
-    return {
-      confidence: score,
-      matches: flagged ? ['Partial ID Mismatch', 'Low Quality Photo'] : ['Face Match', 'ID Valid', 'No Prior Records'],
-      flagged
+      const { data, error } = await supabase.functions.invoke('kyc-verify', {
+        body: {
+          idNumber: memberId,
+          idType,
+          imageBase64,
+          selfieBase64,
+          userId: authService.getUser()?.id,
+        },
+      })
+
+      if (error) throw error
+
+      if (data?.success && data?.data) {
+        return {
+          confidence: data.data.confidence,
+          matches: data.data.matches || [],
+          flagged: data.data.status !== 'Verified',
+          smileJobId: data.data.smileJobId,
+          mocked: data.mocked,
+        }
+      }
+
+      throw new Error(data?.error || 'KYC Protocol response invalid')
+    } catch (error) {
+      console.error('[TACTICAL] KYC Protocol failure:', error)
+      // Fallback to high-fidelity mock if integration is pending
+      return {
+        confidence: 0.5,
+        matches: ['Protocol Error', 'Network Timeout'],
+        flagged: true,
+      }
     }
   }
 }
