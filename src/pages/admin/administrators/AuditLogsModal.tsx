@@ -69,7 +69,7 @@ export function AuditLogsModal({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 14,
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -82,7 +82,7 @@ export function AuditLogsModal({
                 margin: '4px 0 0',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
               }}
             >
               Activity logs for {activeAdminName}
@@ -123,7 +123,7 @@ export function AuditLogsModal({
               <p
                 style={{
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
@@ -141,7 +141,7 @@ export function AuditLogsModal({
               <p
                 style={{
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
@@ -171,7 +171,7 @@ export function AuditLogsModal({
                     <span
                       style={{
                         fontSize: 10,
-                        fontWeight: 900,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         color: 'hsl(var(--primary))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -183,7 +183,7 @@ export function AuditLogsModal({
                       style={{
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       {new Date(log.timestamp).toLocaleString()}
@@ -193,7 +193,7 @@ export function AuditLogsModal({
                     style={{
                       margin: 0,
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
@@ -215,7 +215,7 @@ export function AuditLogsModal({
                     <span
                       style={{
                         fontSize: 10,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         color:
                           log.status === 'Success'
                             ? 'hsl(var(--primary))'

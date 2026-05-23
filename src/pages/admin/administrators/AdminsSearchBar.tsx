@@ -42,7 +42,7 @@ export function AdminsSearchBar({ searchTerm, onChange }: AdminsSearchBarProps) 
               background: 'hsl(var(--container-low))',
               outline: 'none',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               borderRadius: 4,
               boxSizing: 'border-box',

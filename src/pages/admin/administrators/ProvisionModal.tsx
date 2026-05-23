@@ -26,7 +26,7 @@ const inputSt: React.CSSProperties = {
   background: 'hsl(var(--container-low))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12,
   borderRadius: 4,
   boxSizing: 'border-box',
@@ -40,7 +40,7 @@ const selectSt: React.CSSProperties = {
 
 const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -137,7 +137,7 @@ export function ProvisionModal({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 14,
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -150,7 +150,7 @@ export function ProvisionModal({
                 margin: '4px 0 0',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-normal, 400)',
               }}
             >
               Appoint a member to an administrative role
@@ -193,7 +193,7 @@ export function ProvisionModal({
                     style={{
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                     }}
@@ -274,7 +274,7 @@ export function ProvisionModal({
                         style={{
                           padding: '12px 16px',
                           fontSize: 12,
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
@@ -307,7 +307,7 @@ export function ProvisionModal({
                             style={{
                               margin: 0,
                               fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 800,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
                               fontSize: 12.5,
                               color: 'hsl(var(--on-surface))',
                             }}

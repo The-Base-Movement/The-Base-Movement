@@ -18,7 +18,7 @@ const avatarSt = (role: string): React.CSSProperties => ({
   alignItems: 'center',
   justifyContent: 'center',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-semibold, 600)',
   fontSize: 11,
   overflow: 'hidden',
   flexShrink: 0,
@@ -81,7 +81,7 @@ export function AdministratorsMobileCards({
             textAlign: 'center',
             padding: '40px 20px',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -121,7 +121,7 @@ export function AdministratorsMobileCards({
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
@@ -132,7 +132,7 @@ export function AdministratorsMobileCards({
                   <p
                     style={{
                       fontFamily: 'monospace',
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                       margin: '2px 0 0',
@@ -168,7 +168,7 @@ export function AdministratorsMobileCards({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 10,
                     color: isHighPrivilege(admin.role)
                       ? 'hsl(var(--destructive))'
@@ -195,7 +195,7 @@ export function AdministratorsMobileCards({
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -212,7 +212,7 @@ export function AdministratorsMobileCards({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface))',
                   }}

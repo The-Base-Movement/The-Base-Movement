@@ -66,7 +66,7 @@ export function RevokeConfirmModal({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 900,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 14,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -81,7 +81,7 @@ export function RevokeConfirmModal({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
               lineHeight: 1.6,
