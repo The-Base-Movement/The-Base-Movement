@@ -19,24 +19,9 @@ serve(async (req: Request) => {
     const apiKey = Deno.env.get('SMILE_ID_API_KEY')
 
     if (!partnerId || !apiKey) {
-      console.warn('[KYC] Smile ID credentials missing. Operating in High-Fidelity Mock Mode.')
-
-      // Industrial Grade Simulation for Testing
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      const success = Math.random() > 0.1
-      return new Response(
-        JSON.stringify({
-          success,
-          data: {
-            status: success ? 'Verified' : 'Flagged',
-            confidence: success ? 0.96 : 0.42,
-            matches: success ? ['Face Match', 'NIA Valid'] : ['Low Quality Image'],
-            smileJobId: `MOCK-${Date.now()}`,
-          },
-          mocked: true,
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      console.error('[KYC] Smile ID credentials missing. API connection required for production.')
+      throw new Error(
+        'KYC Provider API credentials not configured. Please supply SMILE_ID_API_KEY.'
       )
     }
 

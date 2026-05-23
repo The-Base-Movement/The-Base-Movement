@@ -79,9 +79,13 @@ export default function ChaptersManagement() {
         if (regionFilter) {
           if (isGhana) {
             const derived = getChapterRegion(c)
-            matchesRegion = derived?.toLowerCase() === regionFilter.toLowerCase()
+            matchesRegion =
+              derived?.toLowerCase() === regionFilter.toLowerCase() ||
+              (c.region || '').toLowerCase() === regionFilter.toLowerCase()
           } else {
-            matchesRegion = (c.region || '').toLowerCase() === regionFilter.toLowerCase()
+            matchesRegion =
+              (c.city_or_region || '').toLowerCase() === regionFilter.toLowerCase() ||
+              (c.country || '').toLowerCase() === regionFilter.toLowerCase()
           }
         }
         return (

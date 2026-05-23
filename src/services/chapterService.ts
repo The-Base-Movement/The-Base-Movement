@@ -120,6 +120,8 @@ class ChapterService {
         local_focus: c.local_focus || undefined,
         email: c.email || undefined,
         phone_number: c.phone_number || undefined,
+        latitude: c.latitude || undefined,
+        longitude: c.longitude || undefined,
         leadership:
           (c.leadership as unknown as ChapterLeaderRow[])?.map(
             (l: ChapterLeaderRow): ChapterLeader => ({
@@ -184,6 +186,8 @@ class ChapterService {
       local_focus: data.local_focus || undefined,
       email: data.email || undefined,
       phone_number: data.phone_number || undefined,
+      latitude: data.latitude || undefined,
+      longitude: data.longitude || undefined,
       leadership: data.leadership?.map(
         (l: ChapterLeaderRow): ChapterLeader => ({
           id: l.id,
@@ -204,7 +208,40 @@ class ChapterService {
     }
   }
 
+  private async geocodeLocation(
+    cityOrRegion: string,
+    country: string
+  ): Promise<{ lat: number; lng: number } | null> {
+    try {
+      const token = import.meta.env.VITE_MAPBOX_TOKEN
+      if (!token) return null
+      const query = encodeURIComponent(`${cityOrRegion}, ${country}`)
+      const res = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&limit=1`
+      )
+      const data = await res.json()
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center
+        return { lat, lng }
+      }
+    } catch (err) {
+      console.warn('[GEOCODING] Failed:', err)
+    }
+    return null
+  }
+
   async createChapter(chapter: Omit<Chapter, 'id'>): Promise<boolean> {
+    let lat = chapter.latitude
+    let lng = chapter.longitude
+
+    if (!lat || !lng) {
+      const coords = await this.geocodeLocation(chapter.city_or_region, chapter.country)
+      if (coords) {
+        lat = coords.lat
+        lng = coords.lng
+      }
+    }
+
     const { error } = await supabase.from('chapters').insert({
       name: chapter.name,
       city_or_region: chapter.city_or_region,
@@ -219,6 +256,8 @@ class ChapterService {
       local_focus: chapter.local_focus,
       email: chapter.email,
       phone_number: chapter.phone_number,
+      latitude: lat,
+      longitude: lng,
     })
 
     if (error) {
@@ -245,6 +284,19 @@ class ChapterService {
     if (chapter.local_focus) updateData.local_focus = chapter.local_focus
     if (chapter.email) updateData.email = chapter.email
     if (chapter.phone_number) updateData.phone_number = chapter.phone_number
+    if (chapter.latitude !== undefined) updateData.latitude = chapter.latitude
+    if (chapter.longitude !== undefined) updateData.longitude = chapter.longitude
+
+    // If location changed but no coordinates provided, auto-geocode
+    if ((chapter.city_or_region || chapter.country) && chapter.latitude === undefined) {
+      const cCity = chapter.city_or_region || ''
+      const cCountry = chapter.country || 'Ghana'
+      const coords = await this.geocodeLocation(cCity, cCountry)
+      if (coords) {
+        updateData.latitude = coords.lat
+        updateData.longitude = coords.lng
+      }
+    }
 
     const { error } = await supabase.from('chapters').update(updateData).eq('id', id)
 

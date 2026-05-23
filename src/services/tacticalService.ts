@@ -343,12 +343,8 @@ class TacticalService {
       throw new Error(data?.error || 'KYC Protocol response invalid')
     } catch (error) {
       console.error('[TACTICAL] KYC Protocol failure:', error)
-      // Fallback to high-fidelity mock if integration is pending
-      return {
-        confidence: 0.5,
-        matches: ['Protocol Error', 'Network Timeout'],
-        flagged: true,
-      }
+      // Hard fail without mock if integration is pending
+      throw error
     }
   }
 }

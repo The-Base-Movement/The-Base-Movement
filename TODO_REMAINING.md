@@ -7,7 +7,7 @@ This list tracks the final engineering and integration requirements to transitio
 - [ ] **Live KYC Integration**: Replace `tacticalService` simulation with a production-ready Identity Provider (Smile Identity or Onfido).
   - [ ] Implement biometric face-match for registration.
   - [ ] Connect automated Ghana Card / Voter ID validation.
-- [ ] **GIS Logistics Layer**: Replace SVG placeholders with a dynamic map (Mapbox GL).
+- [x] **GIS Logistics Layer**: Replace SVG placeholders with a dynamic map (Mapbox GL) (Chapters completed).
   - [ ] Integrate live warehouse inventory markers.
   - [ ] Plot real-time fulfillment transport routes across regions.
 - [ ] **ML Intelligence Microservice**: Connect Supabase data to a Python/FastAPI service for predictive analytics.
@@ -23,11 +23,12 @@ This list tracks the final engineering and integration requirements to transitio
 ## 3. Automation & Optimization
 
 - [ ] **Trash Vault Auto-Purge**: Deploy a 30-day cron job to permanently delete expired items from the trash.
-- [ ] **Low-Bandwidth Stress Test**: Validate asset delivery and state synchronization under simulated 3G/2G conditions.
+- [x] **Low-Bandwidth Stress Test**: Validate asset delivery and state synchronization under simulated 3G/2G conditions.
 - [ ] **Offline Mode Hardening**: Extend Service Worker to support draft registration saving during signal loss.
 
 ## 4. Final Deployment Readiness
 
+- [x] **Membership Card UX**: Replace the raw verification URL on the physical card footer with an "If found, please contact..." statement.
 - [ ] **Production RLS Audit**: Conduct a final security review of all Row Level Security policies.
 - [ ] **Analytics & Tracking**: Implement privacy-respecting usage tracking (Plausible or Matomo) for national metrics.
 

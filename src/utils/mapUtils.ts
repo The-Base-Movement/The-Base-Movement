@@ -89,6 +89,25 @@ export const REGION_CENTERS: Record<string, { x: number; y: number }> = {
   'Greater Accra': { x: 430, y: 710 },
 }
 
+export const GHANA_REGION_COORDS: Record<string, { lng: number; lat: number }> = {
+  Northern: { lng: -0.8393, lat: 9.4007 },
+  Ashanti: { lng: -1.6244, lat: 6.6666 },
+  'Bono East': { lng: -1.0232, lat: 7.9465 },
+  Bono: { lng: -2.3333, lat: 7.5833 },
+  Eastern: { lng: -0.25, lat: 6.1667 },
+  'Upper West': { lng: -2.1667, lat: 10.3333 },
+  Savannah: { lng: -1.8167, lat: 9.1 },
+  Oti: { lng: 0.2833, lat: 7.8 },
+  'Western North': { lng: -2.8, lat: 6.3 },
+  Western: { lng: -1.7554, lat: 4.8876 },
+  Volta: { lng: 0.45, lat: 6.55 },
+  Central: { lng: -1.25, lat: 5.2 },
+  'North East': { lng: -0.4, lat: 10.3 },
+  'Upper East': { lng: -0.85, lat: 10.75 },
+  Ahafo: { lng: -2.5, lat: 6.9 },
+  'Greater Accra': { lng: -0.1869, lat: 5.6037 },
+}
+
 export const GHANA_REGIONS_LIST: string[] = [
   'Ahafo',
   'Ashanti',
@@ -137,5 +156,71 @@ export function getChapterRegion(c: {
   if (city.includes('wa')) return 'Upper West'
   if (city.includes('bolgatanga')) return 'Upper East'
 
+  return null
+}
+
+export const DIASPORA_COORDS: Record<string, { lng: number; lat: number }> = {
+  Australia: { lng: 133.7751, lat: -25.2744 },
+  Melbourne: { lng: 144.9631, lat: -37.8136 },
+  Kuwait: { lng: 47.4818, lat: 29.3117 },
+  London: { lng: -0.1276, lat: 51.5072 },
+  'United Kingdom': { lng: -3.436, lat: 55.3781 },
+  Berlin: { lng: 13.405, lat: 52.52 },
+  Germany: { lng: 10.4515, lat: 51.1657 },
+  'New York': { lng: -74.006, lat: 40.7128 },
+  'United States': { lng: -95.7129, lat: 37.0902 },
+  Belgium: { lng: 4.4699, lat: 50.5039 },
+  Brazil: { lng: -51.9253, lat: -14.235 },
+  'Burkina Faso': { lng: -1.5616, lat: 12.2383 },
+  Cameroon: { lng: 12.3547, lat: 7.3697 },
+  Canada: { lng: -106.3468, lat: 56.1304 },
+  Toronto: { lng: -79.3832, lat: 43.6532 },
+  China: { lng: 104.1954, lat: 35.8617 },
+  'Czech Republic': { lng: 15.473, lat: 49.8175 },
+  Denmark: { lng: 9.5018, lat: 56.2639 },
+  Egypt: { lng: 30.8025, lat: 26.8206 },
+  Finland: { lng: 25.7482, lat: 61.9241 },
+  France: { lng: 2.2137, lat: 46.2276 },
+  India: { lng: 78.9629, lat: 20.5937 },
+  Ireland: { lng: -8.2439, lat: 53.4129 },
+  Israel: { lng: 34.8516, lat: 31.0461 },
+  Italy: { lng: 12.562, lat: 41.8719 },
+  'Ivory Coast': { lng: -5.5471, lat: 7.54 },
+  Japan: { lng: 138.2529, lat: 36.2048 },
+  Kenya: { lng: 37.9062, lat: -1.286389 },
+  Luxembourg: { lng: 6.1296, lat: 49.8153 },
+  Malaysia: { lng: 101.9758, lat: 4.2105 },
+  Mexico: { lng: -102.5528, lat: 23.6345 },
+  Morocco: { lng: -7.0926, lat: 31.7917 },
+  Netherlands: { lng: 5.2913, lat: 52.1326 },
+  'New Zealand': { lng: 174.886, lat: -40.9006 },
+  Nigeria: { lng: 8.6753, lat: 9.082 },
+  Norway: { lng: 8.4689, lat: 60.472 },
+  Poland: { lng: 19.1451, lat: 51.9194 },
+  Portugal: { lng: -8.2245, lat: 39.3999 },
+  Qatar: { lng: 51.1839, lat: 25.3548 },
+  Russia: { lng: 105.3188, lat: 61.524 },
+  'Saudi Arabia': { lng: 45.0792, lat: 23.8859 },
+  Senegal: { lng: -14.4524, lat: 14.4974 },
+  Singapore: { lng: 103.8198, lat: 1.3521 },
+  'South Africa': { lng: 22.9375, lat: -30.5595 },
+  'South Korea': { lng: 127.7669, lat: 35.9078 },
+  Spain: { lng: -3.7492, lat: 40.4637 },
+  Sweden: { lng: 18.0686, lat: 59.3293 },
+  Switzerland: { lng: 8.2275, lat: 46.8182 },
+  Austria: { lng: 13.3333, lat: 47.3333 },
+  Tanzania: { lng: 34.8888, lat: -6.369 },
+  Thailand: { lng: 100.9925, lat: 15.87 },
+  Togo: { lng: 0.8248, lat: 8.6195 },
+  Turkey: { lng: 35.2433, lat: 38.9637 },
+  'United Arab Emirates': { lng: 53.8478, lat: 23.4241 },
+}
+
+export function getDiasporaCoords(c: {
+  city_or_region: string
+  country: string
+}): { lng: number; lat: number } | null {
+  if (DIASPORA_COORDS[c.city_or_region]) return DIASPORA_COORDS[c.city_or_region]
+  if (DIASPORA_COORDS[c.country]) return DIASPORA_COORDS[c.country]
   return null
 }

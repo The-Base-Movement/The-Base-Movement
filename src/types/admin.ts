@@ -93,6 +93,8 @@ export interface Chapter {
   phone_number?: string
   leadership?: ChapterLeader[]
   activities?: ChapterActivity[]
+  latitude?: number
+  longitude?: number
 }
 
 export interface PollOption {

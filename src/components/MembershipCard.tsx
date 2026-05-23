@@ -366,8 +366,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
 
       {/* Footer */}
       <div style={footStyle}>
-        {typeof window !== 'undefined' ? window.location.host : 'thebasemovement.com'}/verify/
-        {userRegNo || 'GH-XXXXXX'}
+        If found, please return to the nearest Base Movement Chapter or contact the National HQ.
       </div>
 
       <style
