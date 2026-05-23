@@ -139,7 +139,7 @@ export default function Blog() {
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 500,
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -165,7 +165,7 @@ export default function Blog() {
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 500,
                 fontSize: 13,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -231,13 +231,13 @@ export default function Blog() {
               >
                 progress_activity
               </span>
-              <p className="text-micro font-bold tracking-tight text-stone-400">
+              <p className="text-micro font-semibold tracking-tight text-stone-400">
                 Loading articles...
               </p>
             </div>
           ) : posts.length === 0 ? (
             <div className="py-32 text-center">
-              <p className="text-sm font-bold text-stone-400 tracking-tight">
+              <p className="text-sm font-medium text-stone-400 tracking-tight">
                 No articles published yet.
               </p>
             </div>
@@ -294,7 +294,7 @@ export default function Blog() {
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 600,
                     fontSize: 14,
                     color: '#fff',
                     marginBottom: 4,
@@ -305,7 +305,7 @@ export default function Blog() {
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 400,
                     fontSize: 12,
                     color: 'rgba(255,255,255,0.5)',
                     lineHeight: 1.6,
@@ -331,7 +331,7 @@ export default function Blog() {
                     borderRadius: 4,
                     color: '#fff',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 400,
                     fontSize: 12,
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -349,7 +349,7 @@ export default function Blog() {
                     border: 'none',
                     borderRadius: 4,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 600,
                     fontSize: 12,
                     cursor: 'pointer',
                     letterSpacing: '0.04em',

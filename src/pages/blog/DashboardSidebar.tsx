@@ -42,7 +42,7 @@ export function DashboardSidebar({
                 border: 'none',
                 cursor: 'pointer',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 600,
                 fontSize: 12,
                 marginBottom: 2,
                 background: activeCategory === cat ? 'rgba(0,107,63,0.07)' : 'none',
@@ -50,7 +50,7 @@ export function DashboardSidebar({
               }}
             >
               <span>{cat === 'All' ? 'All Articles' : cat}</span>
-              <span style={{ fontWeight: 800, fontSize: 10, opacity: 0.5 }}>
+              <span style={{ fontWeight: 500, fontSize: 10, opacity: 0.5 }}>
                 {cat === 'All' ? posts.length : posts.filter((p) => p.category === cat).length}
               </span>
             </button>
@@ -69,7 +69,7 @@ export function DashboardSidebar({
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 600,
             fontSize: 14,
             color: '#fff',
             marginBottom: 6,
@@ -80,7 +80,7 @@ export function DashboardSidebar({
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 400,
             fontSize: 12,
             color: 'rgba(255,255,255,0.5)',
             lineHeight: 1.6,
@@ -106,7 +106,7 @@ export function DashboardSidebar({
             borderRadius: 4,
             color: '#fff',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 400,
             fontSize: 12,
             outline: 'none',
             boxSizing: 'border-box',

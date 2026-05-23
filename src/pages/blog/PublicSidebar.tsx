@@ -30,7 +30,7 @@ export function PublicSidebar({
             <button
               key={cat}
               onClick={() => onCategoryChange(cat)}
-              className={`w-full flex items-center justify-between p-3 text-xs font-bold tracking-tight transition-all group ${activeCategory === cat ? 'bg-brand-green/10 text-brand-green' : 'text-slate-600 hover:bg-slate-50 hover:text-brand-green'}`}
+              className={`w-full flex items-center justify-between p-3 text-xs font-semibold tracking-tight transition-all group ${activeCategory === cat ? 'bg-brand-green/10 text-brand-green' : 'text-slate-600 hover:bg-slate-50 hover:text-brand-green'}`}
             >
               {cat === 'All' ? 'All Articles' : cat}
               <span

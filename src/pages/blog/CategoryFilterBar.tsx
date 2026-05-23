@@ -44,7 +44,7 @@ export function CategoryFilterBar({
           className={!isFiltered ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
         >
           All
-          <span style={{ marginLeft: 6, fontWeight: 700, opacity: 0.65, fontSize: 10 }}>
+          <span style={{ marginLeft: 6, fontWeight: 500, opacity: 0.65, fontSize: 10 }}>
             {posts.length}
           </span>
         </button>
@@ -105,7 +105,7 @@ export function CategoryFilterBar({
                           background: active ? 'hsl(var(--primary) / 0.07)' : 'transparent',
                           color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 600,
                           fontSize: 12,
                           border: 'none',
                           cursor: 'pointer',
@@ -118,7 +118,7 @@ export function CategoryFilterBar({
                         <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 500,
                             fontSize: 10,
                             opacity: 0.5,
                           }}

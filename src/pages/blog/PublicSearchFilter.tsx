@@ -45,7 +45,7 @@ export function PublicSearchFilter({
             border: '1px solid',
             borderRadius: 4,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 600,
             fontSize: 11,
             letterSpacing: '0.04em',
             cursor: 'pointer',
@@ -59,7 +59,7 @@ export function PublicSearchFilter({
           }}
         >
           All
-          <span style={{ opacity: 0.65, fontSize: 10, fontWeight: 700 }}>{posts.length}</span>
+          <span style={{ opacity: 0.65, fontSize: 10, fontWeight: 500 }}>{posts.length}</span>
         </button>
 
         {nonAll.length > 0 && (
@@ -73,7 +73,7 @@ export function PublicSearchFilter({
                 border: '1px solid',
                 borderRadius: 4,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 600,
                 fontSize: 11,
                 letterSpacing: '0.04em',
                 cursor: 'pointer',
@@ -136,7 +136,7 @@ export function PublicSearchFilter({
                           background: active ? 'rgba(0,107,63,0.06)' : 'transparent',
                           color: active ? 'var(--brand-green)' : '#374151',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 600,
                           fontSize: 13,
                           border: 'none',
                           cursor: 'pointer',
@@ -147,7 +147,7 @@ export function PublicSearchFilter({
                         }}
                       >
                         {cat}
-                        <span style={{ fontWeight: 700, fontSize: 11, opacity: 0.5 }}>{count}</span>
+                        <span style={{ fontWeight: 500, fontSize: 11, opacity: 0.5 }}>{count}</span>
                       </button>
                     )
                   })}
