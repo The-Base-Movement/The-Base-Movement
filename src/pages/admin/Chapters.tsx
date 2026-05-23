@@ -4,7 +4,7 @@ import type { RegionalStat, Country, Region } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { ChaptersGrid } from './chapters/ChaptersGrid'
 import { PollManagementModal } from './chapters/PollManagementModal'
 import { PollCreateEditModal } from './chapters/PollCreateEditModal'
@@ -144,50 +144,32 @@ export default function ChaptersManagement() {
 
   return (
     <div className="main">
-      <div className="top" style={{ marginBottom: 20 }}>
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
+      <AdminPageHeader
+        title="Chapters"
+        icon="location_on"
+        description="Oversee and manage regional chapters and local mobilization units."
+        actions={
+          <>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => toast.info('Accessing audit vault...')}
             >
-              location_on
-            </span>
-            Chapters
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 6,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Oversee and manage regional chapters and local mobilization units.
-          </p>
-        </div>
-        <div className="actions">
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={() => toast.info('Accessing audit vault...')}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              history
-            </span>
-            Audit trail
-          </button>
-          {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
-            <button className="btn btn-dest btn-sm" onClick={chapterForm.openAddModal}>
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                add
+                history
               </span>
-              Add chapter
+              Audit trail
             </button>
-          )}
-        </div>
-      </div>
+            {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+              <button className="btn btn-dest btn-sm" onClick={chapterForm.openAddModal}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  add
+                </span>
+                Add chapter
+              </button>
+            )}
+          </>
+        }
+      />
 
       <div className="kpis">
         <TacticalKPI

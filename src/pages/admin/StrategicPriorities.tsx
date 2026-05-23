@@ -4,7 +4,7 @@ import { contentService } from '@/services/contentService'
 import type { DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { PriorityCard } from './strategicpriorities/PriorityCard'
@@ -201,40 +201,11 @@ export default function StrategicPriorities() {
 
   return (
     <div className="main">
-      <div className="top">
-        <div>
-          <h2
-            style={{
-              margin: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              target
-            </span>
-            Strategic priorities
-          </h2>
-          <div style={{ marginTop: 12 }}>
-            <BrandLine />
-          </div>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 500,
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 8,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Manage movement-wide mobilization goals, financial targets, and operational milestones.
-          </p>
-        </div>
-        <div className="actions">
+      <AdminPageHeader
+        title="Strategic priorities"
+        icon="target"
+        description="Manage movement-wide mobilization goals, financial targets, and operational milestones."
+        actions={
           <button
             className="btn btn-primary"
             onClick={() => {
@@ -254,8 +225,8 @@ export default function StrategicPriorities() {
             </span>
             Add Priority
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {isMobile && (
         <style

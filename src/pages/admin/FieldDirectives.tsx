@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { FieldDirective, FieldReport } from '@/types/admin'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Subcomponents
 import { ActiveDirectivesList } from './fielddirectives/ActiveDirectivesList'
@@ -132,57 +131,31 @@ export default function FieldDirectives() {
 
   return (
     <div className="admin-page-container">
-      {/* Header */}
-      <div className="ph" style={{ marginBottom: 32 }}>
-        <div>
-          <h1
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 24,
-              color: 'hsl(var(--on-surface))',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              margin: 0,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              flag
-            </span>
-            Field directives
-          </h1>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 12.5,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 6,
-            }}
-          >
-            Platform-wide deployment of tactical objectives and field verification protocols.
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Link
-            to="/admin/mobilization-metrics"
-            className="btn btn-outline btn-sm"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              bar_chart
-            </span>
-            Analytics
-          </Link>
-          <button className="btn btn-primary btn-sm" onClick={() => setIsCreating(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              add
-            </span>
-            Issue directive
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Field directives"
+        icon="flag"
+        description="Platform-wide deployment of tactical objectives and field verification protocols."
+        actions={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => (window.location.href = '/admin/mobilization-metrics')}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                bar_chart
+              </span>
+              Analytics
+            </button>
+            <button className="btn btn-primary btn-sm" onClick={() => setIsCreating(true)}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                add
+              </span>
+              Issue directive
+            </button>
+          </div>
+        }
+      />
 
       {/* KPIs */}
       <div className="kpis">

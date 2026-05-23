@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 
 import type { AuditLogEntry, RegionalStat, PendingVerification, Broadcast } from '@/types/admin'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Subcomponents
 import { VerificationsQueue } from './dashboard/VerificationsQueue'
@@ -204,26 +204,30 @@ export default function AdminDashboard() {
 
   return (
     <div className="main">
-      <div className="top">
-        <div>
-          <h2 style={{ margin: '4px 0 0' }}>Command center</h2>
-          <BrandLine />
-        </div>
-        <div className="actions">
-          <button className="btn btn-outline btn-sm" onClick={handleExport} disabled={isExporting}>
-            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
-              file_download
-            </span>
-            {isExporting ? 'Exporting...' : 'Export'}
-          </button>
-          <button className="btn btn-dest btn-sm" onClick={() => navigate('/admin/broadcasts')}>
-            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
-              notifications_active
-            </span>
-            Send broadcast
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Command center"
+        description="Comprehensive operational overview, strategic mobilization metrics, and high-level movement oversight."
+        actions={
+          <>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={handleExport}
+              disabled={isExporting}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
+                file_download
+              </span>
+              {isExporting ? 'Exporting...' : 'Export'}
+            </button>
+            <button className="btn btn-dest btn-sm" onClick={() => navigate('/admin/broadcasts')}>
+              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
+                notifications_active
+              </span>
+              Send broadcast
+            </button>
+          </>
+        }
+      />
 
       {/* KPI strip */}
       <div className="kpis">

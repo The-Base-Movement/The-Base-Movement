@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { NEXT_STATUS } from './orders/utils'
@@ -123,50 +123,30 @@ export default function AdminOrders() {
 
   return (
     <div className="main">
-      {/* Page Header - Industrial Standard */}
-      <div className="top" style={{ marginBottom: 20 }}>
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
-            >
-              inventory_2
-            </span>
-            Orders Manifest
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 6,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Manage official merchandise fulfillment, supply chain logistics, and movement resource
-            distribution.
-          </p>
-        </div>
-        <div className="actions">
-          <button className="btn btn-outline btn-sm" onClick={handleExport}>
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              download
-            </span>
-            Export CSV
-          </button>
-          <button className="btn btn-dest btn-sm" onClick={() => loadData(true)}>
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 15, animation: refreshing ? 'spin 2s linear infinite' : 'none' }}
-            >
-              sync
-            </span>
-            Synchronize
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Orders Manifest"
+        icon="inventory_2"
+        description="Manage official merchandise fulfillment, supply chain logistics, and movement resource distribution."
+        actions={
+          <>
+            <button className="btn btn-outline btn-sm" onClick={handleExport}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                download
+              </span>
+              Export CSV
+            </button>
+            <button className="btn btn-dest btn-sm" onClick={() => loadData(true)}>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 15, animation: refreshing ? 'spin 2s linear infinite' : 'none' }}
+              >
+                sync
+              </span>
+              Synchronize
+            </button>
+          </>
+        }
+      />
 
       {/* KPI Stats Row */}
       <OrdersKPIs loading={loading} stats={stats} />

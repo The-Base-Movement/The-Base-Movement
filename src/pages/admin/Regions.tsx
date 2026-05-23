@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminService, type Region } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { inputSt, type ConMap } from './regions/utils'
@@ -179,60 +179,25 @@ export default function AdminRegions() {
 
   return (
     <div className="main">
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          marginBottom: 24,
-          gap: 16,
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 24,
-              color: 'hsl(var(--on-surface))',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              margin: 0,
+      <AdminPageHeader
+        title="Regions & Constituencies"
+        icon="location_on"
+        description="Manage administrative regions and electoral jurisdictions."
+        actions={
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              setInputValue('')
+              setAddRegionModal(true)
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              location_on
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              add
             </span>
-            Regions &amp; Constituencies
-          </h1>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 4,
-              fontWeight: 600,
-            }}
-          >
-            Manage administrative regions and electoral jurisdictions.
-          </p>
-        </div>
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            setInputValue('')
-            setAddRegionModal(true)
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            add
-          </span>
-          Define new region
-        </button>
-      </div>
+            Define new region
+          </button>
+        }
+      />
 
       {/* KPI tiles */}
       <RegionsKPIs

@@ -5,7 +5,7 @@ import { authService } from '@/services/authService'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 import { ProfileSettingsTab } from './settings/components/ProfileSettingsTab'
 import { RolesManagementTab } from './settings/components/RolesManagementTab'
@@ -366,32 +366,11 @@ export default function AdminSettings() {
 
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Page header */}
-      <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
-        <div>
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-              settings
-            </span>
-            System settings
-          </h2>
-          <div style={{ marginTop: 10, marginBottom: 4 }}>
-            <BrandLine />
-          </div>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12.5,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 6,
-              marginBottom: 0,
-            }}
-          >
-            Manage your administrative identity and platform configuration.
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="System settings"
+        icon="settings"
+        description="Manage your administrative identity and platform configuration."
+      />
 
       <div className="settings-outer">
         {/* Tab navigation */}

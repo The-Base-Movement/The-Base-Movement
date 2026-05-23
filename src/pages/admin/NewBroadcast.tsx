@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
 import type { Broadcast, Region } from '@/services/adminService'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular components
 import { NewBroadcastForm } from './newbroadcast/NewBroadcastForm'
@@ -87,31 +87,23 @@ export default function NewBroadcast() {
 
   return (
     <div className="main">
-      {/* Top bar */}
-      <div className="top" style={{ marginBottom: 20 }}>
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
+      <AdminPageHeader
+        title="New broadcast"
+        icon="campaign"
+        actions={
+          <div className="actions">
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => navigate('/admin/broadcasts')}
             >
-              campaign
-            </span>
-            New broadcast
-          </h2>
-          <BrandLine />
-        </div>
-        <div className="actions">
-          <Link to="/admin/broadcasts">
-            <button className="btn btn-outline btn-sm">
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 arrow_back
               </span>
               Abort
             </button>
-          </Link>
-        </div>
-      </div>
+          </div>
+        }
+      />
 
       {/* Form panel */}
       <NewBroadcastForm

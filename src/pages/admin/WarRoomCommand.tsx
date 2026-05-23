@@ -13,7 +13,7 @@ import type {
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular page-specific subcomponents (chunks)
 import { WarRoomMap } from './warroom/WarRoomMap'
@@ -246,56 +246,25 @@ export default function WarRoomCommand() {
   return (
     <div style={{ margin: '-24px -28px', paddingBottom: 96, minHeight: 'calc(100vh - 3.5rem)' }}>
       <div style={{ padding: '20px 24px 0' }}>
-        {/* ── Header ── */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginBottom: 16,
-            gap: 12,
-            flexWrap: 'wrap',
-          }}
-        >
-          <div>
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                marginBottom: 4,
-                color: 'hsl(var(--on-surface-muted))',
-                fontFamily: "'Public Sans', sans-serif",
-              }}
-            >
-              Command center → War room
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-              <h2
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
-                  fontSize: 22,
-                  letterSpacing: '-0.015em',
-                  lineHeight: 1.2,
-                  margin: 0,
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
-                War Room — live mobilization
-              </h2>
+        <AdminPageHeader
+          title="War Room — live mobilization"
+          icon="sensors"
+          description="Real-time strategic oversight, crisis management, and rapid response coordination across all regional sectors."
+          actions={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
               <span
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  fontWeight:
-                    'var(--font-weight-semibold, 600)' as React.CSSProperties['fontWeight'],
-                  fontSize: 10.5,
+                  fontWeight: 600,
+                  fontSize: 10,
                   padding: '4px 10px',
                   borderRadius: 99,
                   border: '1px solid rgba(206,17,38,.3)',
                   color: 'hsl(var(--destructive))',
                   background: 'rgba(206,17,38,.12)',
+                  marginRight: 8,
                 }}
               >
                 <span
@@ -311,36 +280,31 @@ export default function WarRoomCommand() {
                 />
                 Live · updating
               </span>
+              <LiveClock />
+              <button
+                className="btn btn-outline"
+                style={{ height: 32, fontSize: 11, padding: '0 12px' }}
+                onClick={handleGenerateReport}
+                disabled={reportLoading}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  analytics
+                </span>
+                {reportLoading ? 'Generating...' : 'Compliance Report'}
+              </button>
+              <button
+                className="btn btn-outline"
+                style={{ height: 32, fontSize: 11, padding: '0 12px' }}
+                onClick={() => (window.location.href = '/admin/broadcasts/new')}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  send
+                </span>{' '}
+                Broadcast
+              </button>
             </div>
-            <div style={{ marginTop: 10, marginBottom: 4 }}>
-              <BrandLine />
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <LiveClock />
-            <button
-              className="btn btn-outline"
-              style={{ height: 32, fontSize: 11, padding: '0 12px' }}
-              onClick={handleGenerateReport}
-              disabled={reportLoading}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                analytics
-              </span>
-              {reportLoading ? 'Generating...' : 'Compliance Report'}
-            </button>
-            <button
-              className="btn btn-outline"
-              style={{ height: 32, fontSize: 11, padding: '0 12px' }}
-              onClick={() => (window.location.href = '/admin/broadcasts/new')}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                send
-              </span>{' '}
-              Broadcast
-            </button>
-          </div>
-        </div>
+          }
+        />
 
         <div className="kpis" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
           <TacticalKPI

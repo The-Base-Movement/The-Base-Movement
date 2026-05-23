@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Subcomponents
-import { BrandLine } from '@/components/ui/BrandLine'
 import { DonationsTable } from './donationverification/DonationsTable'
 import { DonationDetailSidebar } from './donationverification/DonationDetailSidebar'
 import { ReceiptViewerModal } from './donationverification/ReceiptViewerModal'
@@ -154,39 +154,27 @@ export default function FinancialAudit() {
 
   return (
     <div className="main">
-      {/* Top bar */}
-      <div className="top" style={{ marginBottom: 18 }}>
-        <div>
-          <h2 style={{ margin: '4px 0 0' }}>Donations · verification queue</h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 2,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Match MoMo transactions, confirm card receipts, and clear pending donations against the
-            chapter ledger.
-          </p>
-        </div>
-        <div className="actions">
-          <button className="btn btn-outline btn-sm" onClick={handleExport}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              download
-            </span>
-            Export CSV
-          </button>
-          <button className="btn btn-dest btn-sm" onClick={() => fetchData()}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              sync
-            </span>
-            {isLoading ? 'Loading…' : 'Reconcile MoMo'}
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Donations · verification queue"
+        icon="payments"
+        description="Match MoMo transactions, confirm card receipts, and clear pending donations against the chapter ledger."
+        actions={
+          <>
+            <button className="btn btn-outline btn-sm" onClick={handleExport}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                download
+              </span>
+              Export CSV
+            </button>
+            <button className="btn btn-dest btn-sm" onClick={() => fetchData()}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                sync
+              </span>
+              {isLoading ? 'Loading…' : 'Reconcile MoMo'}
+            </button>
+          </>
+        }
+      />
 
       <div className="kpis" style={{ marginBottom: 18 }}>
         {[

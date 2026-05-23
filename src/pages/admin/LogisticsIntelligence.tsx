@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { adminService } from '@/services/adminService'
 import type { LogisticsAuditEntry } from '@/types/admin'
 import { toast } from 'sonner'
@@ -166,65 +167,41 @@ export default function LogisticsIntelligence() {
   return (
     <div className="admin-page-container">
       {/* Header */}
-      <div className="ph" style={{ marginBottom: 32 }}>
-        <div>
-          <h1
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 24,
-              color: 'hsl(var(--on-surface))',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              margin: 0,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              inventory_2
-            </span>
-            Logistics monitoring
-          </h1>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 4,
-            }}
-          >
-            Automated supply chain monitoring and regional dispatch tracking.
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={handleRouteOptimization}
-            disabled={isOptimizing}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: 15,
-                ...(isOptimizing ? { animation: 'spin 1s linear infinite' } : {}),
-              }}
+      <AdminPageHeader
+        title="Logistics monitoring"
+        icon="inventory_2"
+        description="Automated supply chain monitoring and regional dispatch tracking."
+        actions={
+          <>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={handleRouteOptimization}
+              disabled={isOptimizing}
             >
-              map
-            </span>
-            Route optimization
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => setShowReplenishConfirm(true)}
-            disabled={isReplenishing}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              add_box
-            </span>
-            Replenish all
-          </button>
-        </div>
-      </div>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: 15,
+                  ...(isOptimizing ? { animation: 'spin 1s linear infinite' } : {}),
+                }}
+              >
+                map
+              </span>
+              Route optimization
+            </button>
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => setShowReplenishConfirm(true)}
+              disabled={isReplenishing}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                add_box
+              </span>
+              Replenish all
+            </button>
+          </>
+        }
+      />
 
       {/* KPIs */}
       <div className="kpis">

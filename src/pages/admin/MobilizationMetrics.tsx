@@ -3,7 +3,7 @@ import { adminService } from '@/services/adminService'
 import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/admin'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { MetricsFilters } from './mobilizationmetrics/MetricsFilters'
@@ -125,56 +125,30 @@ export default function MobilizationMetrics() {
 
   return (
     <div className="admin-page-container">
-      {/* Header */}
-      <div className="ph" style={{ marginBottom: 32 }}>
-        <div>
-          <h1
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 24,
-              color: 'hsl(var(--on-surface))',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              margin: 0,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              emoji_events
-            </span>
-            Mobilization metrics
-          </h1>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 12.5,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 6,
-            }}
-          >
-            Performance tracking and impact analytics for regional chapters.
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            className={isFilterVisible ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-            onClick={() => setIsFilterVisible(!isFilterVisible)}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              filter_list
-            </span>
-            {isFilterVisible ? 'Hide filters' : 'Filter'}
-          </button>
-          <button className="btn btn-primary btn-sm" onClick={handleExport}>
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              download
-            </span>
-            Export
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Mobilization metrics"
+        icon="emoji_events"
+        description="Performance tracking and impact analytics for regional chapters."
+        actions={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              className={isFilterVisible ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+              onClick={() => setIsFilterVisible(!isFilterVisible)}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                filter_list
+              </span>
+              {isFilterVisible ? 'Hide filters' : 'Filter'}
+            </button>
+            <button className="btn btn-primary btn-sm" onClick={handleExport}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                download
+              </span>
+              Export
+            </button>
+          </div>
+        }
+      />
 
       {/* Filter bar */}
       {isFilterVisible && (

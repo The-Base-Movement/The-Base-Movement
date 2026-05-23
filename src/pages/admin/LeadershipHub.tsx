@@ -5,7 +5,7 @@ import type { ChapterApplication } from '@/services/adminService'
 import type { Member, Chapter } from '@/types/admin'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular subcomponents
 import { SearchBar } from '@/components/SearchBar'
@@ -262,47 +262,31 @@ export default function LeadershipHub() {
 
   return (
     <div className="main">
-      {/* Page Header */}
-      <div className="top">
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              stars
-            </span>
-            Leadership hub
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 8,
-            }}
-          >
-            Vetting and authorization for movement chapter leadership and regional operations.
-          </p>
-        </div>
-        <div className="actions">
-          <button
-            className="btn btn-outline"
-            onClick={handleGenerateReport}
-            disabled={isGenerating}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-              {isGenerating ? 'sync' : 'analytics'}
-            </span>
-            {isGenerating ? 'Compiling...' : 'Generate Audit'}
-          </button>
-          <button className="btn btn-primary" onClick={openAppointModal}>
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-              add_circle
-            </span>
-            Direct Appoint
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Leadership hub"
+        icon="stars"
+        description="Vetting and authorization for movement chapter leadership and regional operations."
+        actions={
+          <div className="actions">
+            <button
+              className="btn btn-outline"
+              onClick={handleGenerateReport}
+              disabled={isGenerating}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                {isGenerating ? 'sync' : 'analytics'}
+              </span>
+              {isGenerating ? 'Compiling...' : 'Generate Audit'}
+            </button>
+            <button className="btn btn-primary" onClick={openAppointModal}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                add_circle
+              </span>
+              Direct Appoint
+            </button>
+          </div>
+        }
+      />
 
       <div className="kpis">
         <TacticalKPI

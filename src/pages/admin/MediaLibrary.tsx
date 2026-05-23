@@ -3,7 +3,7 @@ import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationMo
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { MediaKPIs } from './medialibrary/MediaKPIs'
@@ -168,85 +168,59 @@ export default function MediaLibrary() {
 
   return (
     <div className="admin-page-container">
-      {/* Header */}
-      <div className="ph" style={{ marginBottom: 32 }}>
-        <div>
-          <h1
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 24,
-              color: 'hsl(var(--on-surface))',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              marginBottom: 4,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              image
-            </span>
-            Media library
-          </h1>
-          <BrandLine />
-          <p
-            style={{
-              fontSize: 12.5,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-              marginTop: 6,
-            }}
-          >
-            Central repository for movement assets and deployment media.
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={handleRefreshClick}
-            disabled={isLoading}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: 14,
-                ...(isLoading ? { animation: 'spin 1s linear infinite' } : {}),
-              }}
+      <AdminPageHeader
+        title="Media library"
+        icon="image"
+        description="Central repository for movement assets and deployment media."
+        actions={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={handleRefreshClick}
+              disabled={isLoading}
             >
-              {isLoading ? 'sync' : 'refresh'}
-            </span>
-            {isLoading ? 'Refreshing…' : 'Refresh vault'}
-          </button>
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={() => setIsAddFolderOpen(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              create_new_folder
-            </span>
-            New Category
-          </button>
-          <input
-            type="file"
-            id="media-upload"
-            style={{ display: 'none' }}
-            onChange={handleUpload}
-            accept="image/*"
-            disabled={isUploading}
-          />
-          <label
-            htmlFor="media-upload"
-            className={`btn btn-primary btn-sm${isUploading ? ' opacity-60' : ''}`}
-            style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              {isUploading ? 'sync' : 'upload'}
-            </span>
-            {isUploading ? 'Ingesting…' : 'Ingest asset'}
-          </label>
-        </div>
-      </div>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: 14,
+                  ...(isLoading ? { animation: 'spin 1s linear infinite' } : {}),
+                }}
+              >
+                {isLoading ? 'sync' : 'refresh'}
+              </span>
+              {isLoading ? 'Refreshing…' : 'Refresh vault'}
+            </button>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => setIsAddFolderOpen(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                create_new_folder
+              </span>
+              New Category
+            </button>
+            <input
+              type="file"
+              id="media-upload"
+              style={{ display: 'none' }}
+              onChange={handleUpload}
+              accept="image/*"
+              disabled={isUploading}
+            />
+            <label
+              htmlFor="media-upload"
+              className={`btn btn-primary btn-sm${isUploading ? ' opacity-60' : ''}`}
+              style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                {isUploading ? 'sync' : 'upload'}
+              </span>
+              {isUploading ? 'Ingesting…' : 'Ingest asset'}
+            </label>
+          </div>
+        }
+      />
 
       {/* KPIs */}
       <MediaKPIs filesCount={files.length} activeFolder={activeFolder} />

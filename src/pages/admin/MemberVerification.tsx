@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { PAGE_SIZE } from './memberverification/utils'
@@ -135,78 +135,66 @@ export default function MemberVerification() {
 
   return (
     <div className="main">
-      {/* Top bar */}
-      <div className="top">
-        <div>
-          <h2 style={{ margin: '4px 0 0' }}>Member verification</h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 4,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Review and approve new member registrations for movement security.
-          </p>
-        </div>
-        <div className="actions">
-          {pendingCount > 0 && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '8px 14px',
-                background: 'rgba(218,165,32,.08)',
-                border: '1px solid rgba(218,165,32,.25)',
-                borderRadius: 4,
-              }}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 16, color: '#a87d10' }}
+      <AdminPageHeader
+        title="Member verification"
+        description="Review and approve new member registrations for movement security."
+        actions={
+          <div className="actions">
+            {pendingCount > 0 && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 14px',
+                  background: 'rgba(218,165,32,.08)',
+                  border: '1px solid rgba(218,165,32,.25)',
+                  borderRadius: 4,
+                }}
               >
-                pending
-              </span>
-              <div>
-                <div
-                  style={{
-                    fontSize: 9.5,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
-                    color: '#a87d10',
-                    letterSpacing: '.06em',
-                    textTransform: 'uppercase',
-                    lineHeight: 1,
-                  }}
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 16, color: '#a87d10' }}
                 >
-                  Pending
-                </div>
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
-                    color: 'hsl(var(--on-surface))',
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {pendingCount} review{pendingCount !== 1 ? 's' : ''}
+                  pending
+                </span>
+                <div>
+                  <div
+                    style={{
+                      fontSize: 9.5,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      color: '#a87d10',
+                      letterSpacing: '.06em',
+                      textTransform: 'uppercase',
+                      lineHeight: 1,
+                    }}
+                  >
+                    Pending
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      color: 'hsl(var(--on-surface))',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {pendingCount} review{pendingCount !== 1 ? 's' : ''}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          <button className="btn btn-primary" onClick={() => setShowRegForm(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              person_add
-            </span>
-            Add member
-          </button>
-        </div>
-      </div>
+            )}
+            <button className="btn btn-primary" onClick={() => setShowRegForm(true)}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                person_add
+              </span>
+              Add member
+            </button>
+          </div>
+        }
+      />
 
       {/* KPI Stats Row */}
       <div className="kpis">

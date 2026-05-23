@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { PAGE_SIZE, type Station } from './pollingstations/utils'
@@ -105,24 +105,10 @@ export default function PollingStations() {
 
   return (
     <div className="main">
-      {/* Header */}
-      <div className="top">
-        <div>
-          <h2>Polling stations</h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 2,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            20,361 EC-registered polling stations across Ghana
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Polling stations"
+        description="20,361 EC-registered polling stations across Ghana"
+      />
 
       {/* KPI Strip */}
       <PollingStationsKPIs stats={stats} />

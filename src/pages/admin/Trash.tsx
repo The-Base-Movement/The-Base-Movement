@@ -5,7 +5,7 @@ import { adminService, type Member } from '@/services/adminService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 import { TrashContent } from './trash/TrashContent'
 
@@ -171,30 +171,11 @@ export default function TrashPage() {
 
   return (
     <div className="main">
-      <div className="top" style={{ marginBottom: 20 }}>
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              delete
-            </span>
-            Trash
-          </h2>
-          <div style={{ marginTop: 12 }}>
-            <BrandLine />
-          </div>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 8,
-            }}
-          >
-            Deleted items are kept for 30 days, then removed forever.
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Trash"
+        icon="delete"
+        description="Deleted items are kept for 30 days, then removed forever."
+      />
 
       {/* KPI row — horizontally scrollable */}
       <div

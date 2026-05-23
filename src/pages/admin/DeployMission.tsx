@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Subcomponents
 import { DeployMissionForm } from './deploymission/DeployMissionForm'
@@ -82,32 +82,11 @@ export default function DeployMission() {
 
   return (
     <div className="main">
-      {/* Top bar */}
-      <div className="top" style={{ marginBottom: 20 }}>
-        <div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 22, color: 'hsl(var(--destructive))' }}
-            >
-              sports_kabaddi
-            </span>
-            Deploy mobilization mission
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 6,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Launch and track strategic field directives and missions.
-          </p>
-        </div>
-        <div className="actions">
+      <AdminPageHeader
+        title="Deploy mobilization mission"
+        icon="sports_kabaddi"
+        description="Launch and track strategic field directives and missions."
+        actions={
           <Link to="/admin/ground-game">
             <button className="btn btn-outline btn-sm">
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
@@ -116,8 +95,8 @@ export default function DeployMission() {
               Abort
             </button>
           </Link>
-        </div>
-      </div>
+        }
+      />
 
       {/* Two-column layout */}
       <div

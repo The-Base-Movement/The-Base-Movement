@@ -4,7 +4,7 @@ import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Subcomponents
 import { ConstituencyCoverageTable } from './groundgamecommand/ConstituencyCoverageTable'
@@ -348,94 +348,82 @@ export default function GroundGameCommand() {
 
   return (
     <div className="main">
-      {/* Header */}
-      <div className="top">
-        <div>
-          <h2>Constituency Operations{selectedRegion !== 'ALL' ? ` · ${selectedRegion}` : ''}</h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 2,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Field agents · routes · constituency coverage
-          </p>
-        </div>
-        <div className="actions">
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <span
-              className="material-symbols-outlined"
-              style={{
-                position: 'absolute',
-                left: 10,
-                fontSize: 15,
-                color: 'hsl(var(--on-surface-muted))',
-                pointerEvents: 'none',
-              }}
+      <AdminPageHeader
+        title={`Constituency Operations${selectedRegion !== 'ALL' ? ` · ${selectedRegion}` : ''}`}
+        description="Field agents · routes · constituency coverage"
+        actions={
+          <div className="actions">
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  fontSize: 15,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                place
+              </span>
+              <select
+                aria-label="Filter by region"
+                value={selectedRegion}
+                onChange={(e) => setSelectedRegion(e.target.value)}
+                style={{
+                  paddingLeft: 30,
+                  paddingRight: 28,
+                  height: 34,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 6,
+                  fontFamily: "'Public Sans'",
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontSize: 12,
+                  background: '#fff',
+                  cursor: 'pointer',
+                  appearance: 'none',
+                  outline: 'none',
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
+                <option value="ALL">All regions</option>
+                {ghanaRegions.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  fontSize: 14,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                expand_more
+              </span>
+            </div>
+            <button className="btn btn-outline btn-sm" onClick={openFieldModal}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                badge
+              </span>
+              Appoint field agent
+            </button>
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => navigate('/admin/ground-game/deploy')}
             >
-              place
-            </span>
-            <select
-              aria-label="Filter by region"
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              style={{
-                paddingLeft: 30,
-                paddingRight: 28,
-                height: 34,
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 6,
-                fontFamily: "'Public Sans'",
-                fontWeight: 'var(--font-weight-semibold, 600)',
-                fontSize: 12,
-                background: '#fff',
-                cursor: 'pointer',
-                appearance: 'none',
-                outline: 'none',
-                color: 'hsl(var(--on-surface))',
-              }}
-            >
-              <option value="ALL">All regions</option>
-              {ghanaRegions.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-            <span
-              className="material-symbols-outlined"
-              style={{
-                position: 'absolute',
-                right: 8,
-                fontSize: 14,
-                color: 'hsl(var(--on-surface-muted))',
-                pointerEvents: 'none',
-              }}
-            >
-              expand_more
-            </span>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                add
+              </span>
+              Assign turf
+            </button>
           </div>
-          <button className="btn btn-outline btn-sm" onClick={openFieldModal}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              badge
-            </span>
-            Appoint field agent
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => navigate('/admin/ground-game/deploy')}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              add
-            </span>
-            Assign turf
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* KPI Stats Row */}
       <div className="kpis">

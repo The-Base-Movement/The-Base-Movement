@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import { RoadmapKPIs } from './roadmap/RoadmapKPIs'
@@ -119,45 +119,19 @@ export default function RoadmapManagement() {
 
   return (
     <div className="admin-page-container">
-      {/* Header */}
-      <div className="ph" style={{ marginBottom: 32 }}>
-        <div>
-          <h1
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 24,
-              color: 'hsl(var(--on-surface))',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              margin: 0,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
-              flag
+      <AdminPageHeader
+        title="National strategic roadmap"
+        icon="flag"
+        description="Manage movement objectives, mobilization phases, and strategic timelines."
+        actions={
+          <button className="btn btn-primary btn-sm" onClick={() => handleOpenModal()}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              add
             </span>
-            National strategic roadmap
-          </h1>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 6,
-            }}
-          >
-            Manage movement objectives, mobilization phases, and strategic timelines.
-          </p>
-        </div>
-        <button className="btn btn-primary btn-sm" onClick={() => handleOpenModal()}>
-          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-            add
-          </span>
-          Add milestone
-        </button>
-      </div>
+            Add milestone
+          </button>
+        }
+      />
 
       {/* KPIs */}
       <RoadmapKPIs milestones={milestones} />

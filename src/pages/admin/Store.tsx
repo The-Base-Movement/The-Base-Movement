@@ -9,7 +9,7 @@ import {
 } from '@/services/adminService'
 import { toast } from 'sonner'
 import { contentService } from '@/services/contentService'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 import { StoreStatsOverview } from './store/components/StoreStatsOverview'
 import { InventoryTable } from './store/components/InventoryTable'
@@ -222,45 +222,33 @@ export default function AdminStore() {
 
   return (
     <div className="main">
-      {/* Top bar */}
-      <div className="top">
-        <div>
-          <h2 style={{ margin: '4px 0 0' }}>Logistics and supply</h2>
-          <BrandLine />
-          <p
-            style={{
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12.5,
-              marginTop: 4,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Movement inventory, merchandising, and regional distribution infrastructure.
-          </p>
-        </div>
-        <div className="actions">
-          {activeTab === 'inventory' && (
-            <button className="btn btn-primary" onClick={() => handleOpenModal()}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                add
-              </span>
-              Add item
-            </button>
-          )}
-          {activeTab === 'audit' && (
-            <button
-              className="btn btn-outline btn-sm"
-              onClick={() => toast.info('Export triggered from parent')}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                download
-              </span>
-              Export log
-            </button>
-          )}
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Logistics and supply"
+        description="Movement inventory, merchandising, and regional distribution infrastructure."
+        actions={
+          <>
+            {activeTab === 'inventory' && (
+              <button className="btn btn-primary" onClick={() => handleOpenModal()}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  add
+                </span>
+                Add item
+              </button>
+            )}
+            {activeTab === 'audit' && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => toast.info('Export triggered from parent')}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  download
+                </span>
+                Export log
+              </button>
+            )}
+          </>
+        }
+      />
 
       {isLoading ? (
         <div style={{ padding: '64px 24px', textAlign: 'center' }}>

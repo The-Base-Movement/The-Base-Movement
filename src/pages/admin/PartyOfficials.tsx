@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
 import type { PartyOfficial, PartyTier } from './partyofficials/utils'
@@ -186,52 +186,27 @@ export default function PartyOfficials() {
 
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
-        <div>
-          <h2
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              marginTop: 6,
-              marginBottom: 0,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-              badge
-            </span>
-            Party Officials
-          </h2>
-          <BrandLine />
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 10,
-              marginBottom: 0,
-              maxWidth: 600,
-            }}
-          >
-            Manage movement leadership, regional representatives, and institutional authority
-            figures across all operational tiers.
-          </p>
-        </div>
-        <div className="actions" style={{ display: 'flex', gap: 10 }}>
-          <button className="btn btn-outline" onClick={() => setIsTiersModalOpen(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              layers
-            </span>
-            Manage Tiers
-          </button>
-          <button className="btn btn-primary" onClick={() => handleOpenModal()}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              add
-            </span>
-            Add Official
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Party Officials"
+        icon="badge"
+        description="Manage movement leadership, regional representatives, and institutional authority figures across all operational tiers."
+        actions={
+          <>
+            <button className="btn btn-outline" onClick={() => setIsTiersModalOpen(true)}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                layers
+              </span>
+              Manage Tiers
+            </button>
+            <button className="btn btn-primary" onClick={() => handleOpenModal()}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                add
+              </span>
+              Add Official
+            </button>
+          </>
+        }
+      />
 
       <OfficialsTable
         loading={loading}
