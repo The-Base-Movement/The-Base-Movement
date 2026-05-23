@@ -190,7 +190,7 @@ export default function Impact() {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 500,
               fontSize: 10,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -216,7 +216,7 @@ export default function Impact() {
           <h2
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: 20,
               color: 'hsl(var(--on-surface))',
               margin: 0,

@@ -106,7 +106,7 @@ export default function Dashboard() {
           <p
             className="animate-pulse"
             style={{
-              fontWeight: 700,
+              fontWeight: 500,
               color: 'hsl(var(--on-surface-muted))',
               fontSize: 10,
               letterSpacing: '0.04em',
@@ -127,7 +127,7 @@ export default function Dashboard() {
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 500,
             fontSize: 10,
             color: 'hsl(var(--on-surface-muted))',
             textTransform: 'uppercase',
@@ -140,7 +140,7 @@ export default function Dashboard() {
           className="dash-welcome-name"
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 700,
             fontSize: 28,
             color: 'hsl(var(--on-surface))',
             margin: '4px 0 0',
@@ -191,7 +191,7 @@ export default function Dashboard() {
               style={{
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 14,
-                fontWeight: 800,
+                fontWeight: 700,
                 letterSpacing: '-0.01em',
                 color: 'hsl(var(--on-surface))',
                 marginBottom: 20,
@@ -207,7 +207,7 @@ export default function Dashboard() {
                   alignItems: 'center',
                   gap: 6,
                   fontSize: 10,
-                  fontWeight: 800,
+                  fontWeight: 600,
                   color: 'hsl(var(--destructive))',
                   textTransform: 'uppercase',
                   letterSpacing: '.06em',
