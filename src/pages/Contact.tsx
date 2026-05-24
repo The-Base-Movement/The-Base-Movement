@@ -73,7 +73,12 @@ export default function Contact() {
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8 mt-12 md:mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
           {/* Contact Info */}
-          <ContactInfoPanel contactEmail={contactEmail} />
+          <ContactInfoPanel
+            contactEmail={contactEmail as string}
+            contactPhone={settings.primary_phone as string}
+            contactAddress={settings.primary_address as string}
+            contactAddressUrl={settings.primary_address_url as string}
+          />
 
           {/* Form */}
           <div className="lg:col-span-3">

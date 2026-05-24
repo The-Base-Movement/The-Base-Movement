@@ -42,6 +42,10 @@ export function useMembersActions(
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false)
   const [auditTargetMember, setAuditTargetMember] = useState<string | null>(null)
 
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false)
+  const [verifyingMembers, setVerifyingMembers] = useState<Member[]>([])
+  const [isVerifyingMembers, setIsVerifyingMembers] = useState(false)
+
   const getMissingRequiredFields = (m: Member): string[] => {
     const missing: string[] = []
     if (!m.name?.trim()) missing.push('Full name')
@@ -57,7 +61,7 @@ export function useMembersActions(
     return missing
   }
 
-  const handleVerify = async (id: string, name: string) => {
+  const handleVerify = async (id: string, _name: string) => {
     if (!adminService.can('VERIFY_MEMBER', 'MEMBERS')) {
       toast.error('You do not have authorization to verify members.')
       return
@@ -69,13 +73,30 @@ export function useMembersActions(
         toast.error(`Cannot approve — missing: ${missing.join(', ')}`)
         return
       }
+      setVerifyingMembers([member])
+      setIsVerifyModalOpen(true)
     }
-    if (window.confirm(`Are you sure you want to verify and admit ${name} into the movement?`)) {
-      const success = await adminService.verifyMember(id, true, 'Administrative Approval')
-      if (success) {
-        toast.success(`${name} has been successfully admitted.`)
-        fetchMembers()
-      }
+  }
+
+  const handleConfirmVerify = async () => {
+    setIsVerifyingMembers(true)
+    let successCount = 0
+    for (const member of verifyingMembers) {
+      const success = await adminService.verifyMember(
+        member.id,
+        true,
+        verifyingMembers.length > 1 ? 'Bulk Administrative Approval' : 'Administrative Approval'
+      )
+      if (success) successCount++
+    }
+    setIsVerifyingMembers(false)
+    setIsVerifyModalOpen(false)
+    if (successCount > 0) {
+      toast.success(
+        `Successfully admitted ${successCount} member${successCount > 1 ? 's' : ''} into the movement.`
+      )
+      if (verifyingMembers.length > 1) setSelectedIds(new Set())
+      fetchMembers()
     }
   }
 
@@ -269,20 +290,10 @@ export function useMembersActions(
       toast.error('You lack the authority for bulk verification.')
       return
     }
-    if (
-      window.confirm(
-        `Are you sure you want to verify and admit all ${selectedIds.size} selected members?`
-      )
-    ) {
-      let successCount = 0
-      for (const id of selectedIds) {
-        const success = await adminService.verifyMember(id, true, 'Bulk Administrative Approval')
-        if (success) successCount++
-      }
-      toast.success(`Successfully admitted ${successCount} members into the movement.`)
-      setSelectedIds(new Set())
-      fetchMembers()
-    }
+    const selectedMembers = members.filter((m) => selectedIds.has(m.id))
+    if (selectedMembers.length === 0) return
+    setVerifyingMembers(selectedMembers)
+    setIsVerifyModalOpen(true)
   }
 
   const handleBulkDelete = () => {
@@ -403,8 +414,13 @@ export function useMembersActions(
     isAuditModalOpen,
     setIsAuditModalOpen,
     auditTargetMember,
+    isVerifyModalOpen,
+    setIsVerifyModalOpen,
+    verifyingMembers,
+    isVerifyingMembers,
     chapters,
     handleVerify,
+    handleConfirmVerify,
     handleViewAudit,
     handleSubmitRegistration,
     handlePrint,

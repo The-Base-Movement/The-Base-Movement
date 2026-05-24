@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { toast as ToastFn } from 'sonner'
 
 type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density'
@@ -13,6 +14,20 @@ export function SystemPreferencesTab({
   setInterfaceDensity,
   toast,
 }: SystemPreferencesTabProps) {
+  const [toggles, setToggles] = useState<Record<string, boolean>>({
+    reg: true,
+    sec: true,
+    audit: true,
+  })
+
+  const handleToggle = (id: string, label: string) => {
+    setToggles((prev) => {
+      const nextState = !prev[id]
+      toast.success(`${label} notifications ${nextState ? 'enabled' : 'disabled'}`)
+      return { ...prev, [id]: nextState }
+    })
+  }
+
   return (
     <div className="panel">
       <div className="ph" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
@@ -98,75 +113,81 @@ export function SystemPreferencesTab({
                 desc: 'Notify on new device recognition',
               },
               { id: 'audit', label: 'Critical Audit Events', desc: 'Alert on system modification' },
-            ].map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px 14px',
-                  borderRadius: 4,
-                  border: '1px solid hsl(var(--border))',
-                  background: 'hsl(var(--container-low))',
-                }}
-              >
-                <div>
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface))',
-                      margin: 0,
-                    }}
-                  >
-                    {item.label}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      margin: '2px 0 0',
-                    }}
-                  >
-                    {item.desc}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked="true"
-                  aria-label={`Toggle ${item.label}`}
+            ].map((item) => {
+              const isChecked = toggles[item.id]
+              return (
+                <div
+                  key={item.id}
                   style={{
-                    width: 36,
-                    height: 20,
-                    background: 'hsl(var(--primary))',
-                    borderRadius: 10,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    padding: '0 3px',
-                    cursor: 'pointer',
-                    border: 'none',
-                    outline: 'none',
-                    flexShrink: 0,
+                    justifyContent: 'space-between',
+                    padding: '12px 14px',
+                    borderRadius: 4,
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--container-low))',
                   }}
                 >
-                  <div
+                  <div>
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface))',
+                        margin: 0,
+                      }}
+                    >
+                      {item.label}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        margin: '2px 0 0',
+                      }}
+                    >
+                      {item.desc}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={isChecked}
+                    aria-label={`Toggle ${item.label}`}
+                    onClick={() => handleToggle(item.id, item.label)}
                     style={{
-                      width: 14,
-                      height: 14,
-                      background: '#fff',
-                      borderRadius: '50%',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                      width: 36,
+                      height: 20,
+                      background: isChecked ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                      borderRadius: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: isChecked ? 'flex-end' : 'flex-start',
+                      padding: '0 3px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                      flexShrink: 0,
+                      transition: 'all 0.2s ease',
                     }}
-                  />
-                </button>
-              </div>
-            ))}
+                  >
+                    <div
+                      style={{
+                        width: 14,
+                        height: 14,
+                        background: '#fff',
+                        borderRadius: '50%',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    />
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

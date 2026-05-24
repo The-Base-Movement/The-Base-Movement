@@ -66,7 +66,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
           />
           <StatCard
             accent="#006B3F"
-            eye="Members"
+            eye="Ghana Base"
             value={stats.members}
             label="Verified citizens registered nationwide"
             sparkHeights={[4, 6, 7, 7, 9, 11, 12, 14, 15, 16, 17, 18]}

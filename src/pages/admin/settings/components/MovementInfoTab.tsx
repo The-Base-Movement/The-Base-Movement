@@ -55,8 +55,11 @@ export function MovementInfoTab({
         <span>Authoritative Communications</span>
       </div>
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 28 }}>
-        {/* Contact emails */}
-        <div className="settings-form-grid">
+        {/* Contact Information */}
+        <div
+          className="settings-form-grid"
+          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}
+        >
           <div>
             <label htmlFor="input-e727d9" style={labelSt}>
               Primary contact email
@@ -89,6 +92,38 @@ export function MovementInfoTab({
             <p style={hintSt}>Used for contact forms and general inquiries.</p>
           </div>
           <div>
+            <label htmlFor="input-phone123" style={labelSt}>
+              Primary contact phone
+            </label>
+            <div style={{ position: 'relative' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 15,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                call
+              </span>
+              <input
+                name="name-phone123"
+                id="input-phone123"
+                style={{ ...inputSt, paddingLeft: 34 }}
+                value={(siteSettings.primary_phone as string) || ''}
+                onChange={(e) =>
+                  setSiteSettings({ ...siteSettings, primary_phone: e.target.value })
+                }
+                placeholder="+233 55 123 4567, +233 24 987 6543"
+              />
+            </div>
+            <p style={hintSt}>Separate multiple numbers with commas.</p>
+          </div>
+          <div>
             <label htmlFor="input-ce9df3" style={labelSt}>
               Newsletter dispatch email
             </label>
@@ -118,6 +153,67 @@ export function MovementInfoTab({
               />
             </div>
             <p style={hintSt}>Authoritative sender for all movement broadcasts.</p>
+          </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label htmlFor="input-address" style={labelSt}>
+              Primary physical address
+            </label>
+            <div style={{ position: 'relative', marginBottom: 12 }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 15,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                location_on
+              </span>
+              <input
+                name="name-address"
+                id="input-address"
+                style={{ ...inputSt, paddingLeft: 34 }}
+                value={(siteSettings.primary_address as string) || ''}
+                onChange={(e) =>
+                  setSiteSettings({ ...siteSettings, primary_address: e.target.value })
+                }
+                placeholder="123 Independence Ave, Accra, Ghana"
+              />
+            </div>
+            <label htmlFor="input-address-url" style={labelSt}>
+              Address Google Maps URL
+            </label>
+            <div style={{ position: 'relative' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 15,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                link
+              </span>
+              <input
+                name="name-address-url"
+                id="input-address-url"
+                style={{ ...inputSt, paddingLeft: 34 }}
+                value={(siteSettings.primary_address_url as string) || ''}
+                onChange={(e) =>
+                  setSiteSettings({ ...siteSettings, primary_address_url: e.target.value })
+                }
+                placeholder="https://maps.google.com/?q=..."
+              />
+            </div>
+            <p style={hintSt}>Location displayed on contact pages.</p>
           </div>
         </div>
 
@@ -320,6 +416,9 @@ export function MovementInfoTab({
               try {
                 const settingsToUpdate = [
                   { key: 'primary_email', value: siteSettings.primary_email },
+                  { key: 'primary_phone', value: siteSettings.primary_phone },
+                  { key: 'primary_address', value: siteSettings.primary_address },
+                  { key: 'primary_address_url', value: siteSettings.primary_address_url },
                   { key: 'newsletter_email', value: siteSettings.newsletter_email },
                   { key: 'primary_color', value: siteSettings.primary_color },
                   { key: 'accent_color', value: siteSettings.accent_color },
@@ -354,7 +453,7 @@ export function MovementInfoTab({
               }
             }}
           >
-            {isSaving ? 'Syncing…' : 'Synchronize Configurations'}
+            {isSaving ? 'Updating…' : 'Update Configurations'}
           </button>
         </div>
       </div>

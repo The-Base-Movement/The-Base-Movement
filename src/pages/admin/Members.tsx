@@ -4,6 +4,7 @@ import { MemberDetailPanel } from './members/MemberDetailPanel'
 import { AuditModal } from './members/AuditModal'
 import { AssignmentModal } from './members/AssignmentModal'
 import { DeleteModal } from './members/DeleteModal'
+import { VerifyModal } from './members/VerifyModal'
 import { EditModal } from './members/EditModal'
 import { MembersTable } from './members/MembersTable'
 import { MembersHeader } from './members/MembersHeader'
@@ -79,8 +80,13 @@ export default function MembersList() {
     isAuditModalOpen,
     setIsAuditModalOpen,
     auditTargetMember,
+    isVerifyModalOpen,
+    setIsVerifyModalOpen,
+    verifyingMembers,
+    isVerifyingMembers,
     chapters,
     handleVerify,
+    handleConfirmVerify,
     handleViewAudit,
     handleSubmitRegistration,
     handlePrint,
@@ -202,6 +208,14 @@ export default function MembersList() {
         onConfirm={handleConfirmAssignment}
         onClose={() => setIsAssignModalOpen(false)}
         isSubmitting={isSubmittingAssignment}
+      />
+
+      <VerifyModal
+        isOpen={isVerifyModalOpen}
+        members={verifyingMembers}
+        isVerifying={isVerifyingMembers}
+        onConfirm={handleConfirmVerify}
+        onClose={() => setIsVerifyModalOpen(false)}
       />
 
       <DeleteModal

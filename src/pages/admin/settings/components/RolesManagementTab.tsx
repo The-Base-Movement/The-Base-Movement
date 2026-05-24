@@ -1,30 +1,49 @@
+import { useEffect, useState } from 'react'
+import { memberService } from '@/services/memberService'
+
 export function RolesManagementTab() {
+  const [counts, setCounts] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    memberService.getAdministrators().then((admins) => {
+      const newCounts: Record<string, number> = {}
+      admins.forEach((a) => {
+        const role = a.role || 'Unknown'
+        newCounts[role] = (newCounts[role] || 0) + 1
+      })
+      setCounts(newCounts)
+    })
+  }, [])
+
   const roles = [
     {
       role: 'Super Admin',
       desc: 'Full system sovereignty and configuration rights.',
-      count: 2,
+      count: (counts['SuperAdmin'] || 0) + (counts['SUPER_ADMIN'] || 0) + (counts['FOUNDER'] || 0),
       icon: 'shield',
       color: 'hsl(var(--destructive))',
     },
     {
       role: 'Regional Admin',
       desc: 'Operational oversight within assigned regional boundaries.',
-      count: 16,
+      count: (counts['RegionalAdmin'] || 0) + (counts['REGIONAL_DIRECTOR'] || 0),
       icon: 'language',
       color: 'hsl(var(--on-surface))',
     },
     {
       role: 'Chapter Lead',
       desc: 'Local verification and mobilization management.',
-      count: 124,
+      count:
+        (counts['ChapterLead'] || 0) +
+        (counts['CONSTITUENCY_LEAD'] || 0) +
+        (counts['ORGANIZER'] || 0),
       icon: 'groups',
       color: 'hsl(var(--on-surface))',
     },
     {
       role: 'Audit View',
       desc: 'Read-only access to financial and telemetry streams.',
-      count: 4,
+      count: (counts['AuditView'] || 0) + (counts['VERIFIER'] || 0),
       icon: 'history',
       color: 'hsl(var(--on-surface-muted))',
     },

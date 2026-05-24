@@ -1,8 +1,16 @@
 interface ContactInfoPanelProps {
   contactEmail: string
+  contactPhone?: string
+  contactAddress?: string
+  contactAddressUrl?: string
 }
 
-export function ContactInfoPanel({ contactEmail }: ContactInfoPanelProps) {
+export function ContactInfoPanel({
+  contactEmail,
+  contactPhone,
+  contactAddress,
+  contactAddressUrl,
+}: ContactInfoPanelProps) {
   return (
     <div className="lg:col-span-2 space-y-8">
       <div>
@@ -29,9 +37,18 @@ export function ContactInfoPanel({ contactEmail }: ContactInfoPanelProps) {
             <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">
               Email
             </p>
-            <p className="text-charcoal-dark font-medium text-sm md:text-base truncate">
-              {contactEmail}
-            </p>
+            <div className="text-charcoal-dark font-medium text-sm md:text-base truncate">
+              {contactEmail ? (
+                <a
+                  href={`mailto:${contactEmail}`}
+                  className="hover:text-[var(--brand-green)] hover:underline transition-colors"
+                >
+                  {contactEmail}
+                </a>
+              ) : (
+                'Contact via email for inquiries'
+              )}
+            </div>
           </div>
         </div>
 
@@ -48,9 +65,20 @@ export function ContactInfoPanel({ contactEmail }: ContactInfoPanelProps) {
             <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">
               Phone
             </p>
-            <p className="text-charcoal-dark font-medium text-sm md:text-base">
-              Contact via email for inquiries
-            </p>
+            <div className="text-charcoal-dark font-medium text-sm md:text-base">
+              {contactPhone
+                ? contactPhone.split(',').map((phone, i) => (
+                    <div key={i} className={i > 0 ? 'mt-1' : ''}>
+                      <a
+                        href={`tel:${phone.trim().replace(/\s+/g, '')}`}
+                        className="hover:text-[var(--brand-green)] hover:underline transition-colors"
+                      >
+                        {phone.trim()}
+                      </a>
+                    </div>
+                  ))
+                : 'Phone lines opening soon'}
+            </div>
           </div>
         </div>
 
@@ -67,20 +95,40 @@ export function ContactInfoPanel({ contactEmail }: ContactInfoPanelProps) {
             <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">
               Location
             </p>
-            <p className="text-charcoal-dark font-medium text-sm md:text-base">
-              Ghana & Global Diaspora
-            </p>
+            <div className="text-charcoal-dark font-medium text-sm md:text-base">
+              {contactAddress ? (
+                contactAddressUrl ? (
+                  <a
+                    href={contactAddressUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[var(--brand-green)] hover:underline transition-colors"
+                  >
+                    {contactAddress}
+                  </a>
+                ) : (
+                  contactAddress
+                )
+              ) : (
+                'Ghana & Global Diaspora'
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Headquarters Image */}
-        <div className="overflow-hidden border border-slate-200 shadow-sm group bg-white">
-          <div className="aspect-[16/9] overflow-hidden">
-            <img
-              src="/branding/party-headquarters-image.webp"
-              alt="The Base Party Headquarters"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              decoding="async"
+        {/* Location Map */}
+        <div className="overflow-hidden border border-slate-200 shadow-sm bg-white">
+          <div className="aspect-[16/9] w-full bg-slate-100">
+            <iframe
+              title="Headquarters Location"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              style={{ border: 0 }}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(
+                contactAddress || 'Accra, Ghana'
+              )}&output=embed`}
+              allowFullScreen
               loading="lazy"
             />
           </div>
@@ -89,8 +137,7 @@ export function ContactInfoPanel({ contactEmail }: ContactInfoPanelProps) {
               Official headquarters
             </p>
             <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
-              Our central hub in Accra, serving as the heart of movement operations and community
-              engagement.
+              Our central hub, serving as the heart of movement operations and community engagement.
             </p>
           </div>
         </div>

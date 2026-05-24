@@ -269,7 +269,7 @@ export function ProfileSettingsTab({
             disabled={isSaving}
             style={{ minWidth: 180, justifyContent: 'center' }}
           >
-            {isSaving ? 'Syncing…' : 'Synchronize Profile'}
+            {isSaving ? 'Updating…' : 'Update Profile'}
           </button>
         </div>
       </div>
