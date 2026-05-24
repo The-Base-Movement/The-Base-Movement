@@ -4,9 +4,9 @@ This list tracks the final engineering and integration requirements to transitio
 
 ## 1. Enterprise Technical Integrations
 
-- [ ] **Live KYC Integration**: Replace `tacticalService` simulation with a production-ready Identity Provider (Smile Identity or Onfido).
-  - [ ] Implement biometric face-match for registration.
-  - [ ] Connect automated Ghana Card / Voter ID validation.
+- [x] **Live KYC Integration**: Replace `tacticalService` simulation with a production-ready Identity Provider (Smile Identity or Onfido).
+  - [x] Implement biometric face-match for registration.
+  - [x] Connect automated Ghana Card / Voter ID validation.
 - [x] **GIS Logistics Layer**: Replace SVG placeholders with a dynamic map (Mapbox GL) (Chapters completed).
   - [ ] Integrate live warehouse inventory markers.
   - [ ] Plot real-time fulfillment transport routes across regions.
