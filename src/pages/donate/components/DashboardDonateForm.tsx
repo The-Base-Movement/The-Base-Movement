@@ -9,6 +9,7 @@ interface FormData {
   membershipNumber: string
   showOnDashboard: boolean
   campaignId: string
+  memberId: string
 }
 
 interface DashboardDonateFormProps {

@@ -7,6 +7,8 @@ import {
   type MobilizationLedger,
 } from '@/services/adminService'
 import { authService } from '@/services/authService'
+import { memberService } from '@/services/memberService'
+import type { Member } from '@/types/admin'
 import { toast } from 'sonner'
 import { BrandLine } from '@/components/ui/BrandLine'
 
@@ -56,10 +58,10 @@ export default function PublicDonate() {
       const user = authService.getUser()
       setIsLoggedIn(!!user)
 
-      let profile = null
+      let profile: Member | null = null
       if (user) {
         try {
-          profile = await adminService.getMemberProfileByAuthId(user.id)
+          profile = await memberService.getMemberProfileByAuthId(user.id)
         } catch (err) {
           console.error('Failed to fetch user profile for pre-filling:', err)
         }

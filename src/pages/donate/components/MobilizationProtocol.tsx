@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+import type { FormEvent, Dispatch, SetStateAction } from 'react'
 import type { DonationCampaign } from '@/types/admin'
 
 interface FormData {
@@ -9,6 +9,7 @@ interface FormData {
   membershipNumber: string
   showOnDashboard: boolean
   campaignId: string
+  memberId: string
 }
 
 interface Country {
@@ -22,7 +23,7 @@ interface MobilizationProtocolProps {
   activeStep: number
   setActiveStep: (step: number) => void
   formData: FormData
-  setFormData: (data: FormData) => void
+  setFormData: Dispatch<SetStateAction<FormData>>
   isLoggedIn: boolean
   countriesLoading: boolean
   countries: Country[]
