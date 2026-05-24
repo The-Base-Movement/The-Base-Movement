@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
 import type { DonationDetail } from '@/types/admin'
-import { RealtimeChannel } from '@supabase/supabase-js'
+import type { RealtimeChannel } from '@supabase/supabase-js'
 
 class DonationService {
   private static instance: DonationService

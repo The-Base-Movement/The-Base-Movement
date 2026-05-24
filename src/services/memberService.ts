@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { PostgrestError } from '@supabase/supabase-js'
+import type { PostgrestError } from '@supabase/supabase-js'
 import type {
   Member,
   PendingVerification,

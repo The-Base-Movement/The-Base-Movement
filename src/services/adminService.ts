@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { PostgrestError } from '@supabase/supabase-js'
+import type { PostgrestError, RealtimeChannel } from '@supabase/supabase-js'
 import { authService } from './authService'
 import { memberService } from './memberService'
 import { logisticsService } from './logisticsService'
@@ -11,7 +11,6 @@ import { gamificationService } from './gamificationService'
 import { intelligenceService } from './intelligenceService'
 import { pollService } from './pollService'
 import { auditService } from './auditService'
-import { RealtimeChannel } from '@supabase/supabase-js'
 import type { Product } from '@/types/product'
 import type {
   Member,
