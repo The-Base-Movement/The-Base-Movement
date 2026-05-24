@@ -22,7 +22,7 @@ This list tracks the final engineering and integration requirements to transitio
 
 ## 3. Automation & Optimization
 
-- [ ] **Trash Vault Auto-Purge**: Deploy a 30-day cron job to permanently delete expired items from the trash.
+- [x] **Trash Vault Auto-Purge**: Deploy a 30-day cron job to permanently delete expired items from the trash.
 - [x] **Low-Bandwidth Stress Test**: Validate asset delivery and state synchronization under simulated 3G/2G conditions.
 - [ ] **Offline Mode Hardening**: Extend Service Worker to support draft registration saving during signal loss.
 

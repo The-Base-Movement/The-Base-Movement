@@ -20,7 +20,7 @@
 
 ### 4. System Governance
 
-- [ ] **Trash Auto-Purge**: 30-day automated cleanup protocol.
+- [x] **Trash Auto-Purge**: 30-day automated cleanup protocol.
 - [ ] **Production Audit**: Final security and RLS policy validation.
 
 ---
