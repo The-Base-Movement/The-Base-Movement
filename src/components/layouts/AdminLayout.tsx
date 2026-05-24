@@ -13,7 +13,9 @@ import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } fro
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const { settings } = useBranding()
   const { session } = useAuth()
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= 1024 : true
+  )
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     Overview: true,
     Members: true,
@@ -30,7 +32,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const [unreadCount, setUnreadCount] = useState(0)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const [windowWidth, setWindowWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1280
+  )
   const [pendingVerificationsCount, setPendingVerificationsCount] = useState<number>(0)
   const [pendingDonationsCount, setPendingDonationsCount] = useState<number>(0)
 

@@ -63,7 +63,6 @@ export default defineConfig(({ mode }) => {
             // Everything else goes into one vendor chunk to prevent cross-chunk
             // circular reference errors at runtime.
             if (id.includes('@tinymce')) return 'vendor-editor'
-            if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf'
             if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-'))
               return 'vendor-charts'
             if (id.includes('@supabase')) return 'vendor-supabase'

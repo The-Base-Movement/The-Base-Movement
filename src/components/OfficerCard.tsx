@@ -30,7 +30,9 @@ export interface OfficerCardProps {
 
 export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProps) {
   const [isHovered, setIsHovered] = useState(false)
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  )
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('resize', handler)
