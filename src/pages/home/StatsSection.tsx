@@ -20,7 +20,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
   return (
     <section
       aria-labelledby="stats-heading"
-      className="py-16 md:py-24 bg-[#fafaf6] border-y border-border/40"
+      className="py-16 md:py-24 bg-background border-y border-border/40"
     >
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="mb-5">

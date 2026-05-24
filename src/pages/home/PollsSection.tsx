@@ -12,7 +12,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
   return (
     <section
       aria-labelledby="polls-heading"
-      className="py-16 md:py-24 bg-white border-b border-border/30"
+      className="py-16 md:py-24 bg-background border-b border-border/30"
     >
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="flex items-end justify-between mb-8 md:mb-10">
@@ -167,7 +167,9 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                           }}
                         >
                           <span>{opt.label}</span>
-                          <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{pct}%</span>
+                          <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
+                            {pct}%
+                          </span>
                         </div>
                       </div>
                     )

@@ -74,7 +74,7 @@ export function HomeOfficers() {
   return (
     <section
       aria-labelledby="officers-heading"
-      className="py-16 md:py-24 bg-white border-b border-border/30"
+      className="py-16 md:py-24 bg-background border-b border-border/30"
     >
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <ScrollReveal duration={850} distance="25px" direction="up">

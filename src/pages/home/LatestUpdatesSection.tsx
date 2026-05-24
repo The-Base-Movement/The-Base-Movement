@@ -11,7 +11,10 @@ interface LatestUpdatesSectionProps {
 
 export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps) {
   return (
-    <section aria-labelledby="updates-heading" className="pt-16 md:pt-24 pb-16 md:pb-32 bg-white">
+    <section
+      aria-labelledby="updates-heading"
+      className="pt-16 md:pt-24 pb-16 md:pb-32 bg-background"
+    >
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="flex justify-between items-end mb-10 md:mb-12" data-fade>
           <div>
