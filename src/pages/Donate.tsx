@@ -46,6 +46,7 @@ export default function PublicDonate() {
     country: 'Ghana',
     campaignId: '',
     membershipNumber: '',
+    memberId: '',
     showOnDashboard: true,
   })
 
@@ -55,12 +56,20 @@ export default function PublicDonate() {
       const user = authService.getUser()
       setIsLoggedIn(!!user)
 
+      let profile = null
       if (user) {
+        try {
+          profile = await adminService.getMemberProfileByAuthId(user.id)
+        } catch (err) {
+          console.error('Failed to fetch user profile for pre-filling:', err)
+        }
+
         setFormData((prev) => ({
           ...prev,
-          fullName: user.user_metadata?.full_name || '',
-          phone: user.user_metadata?.phone || '',
-          membershipNumber: user.user_metadata?.membership_number || '',
+          fullName: profile?.name || user.user_metadata?.full_name || '',
+          phone: profile?.phone || user.user_metadata?.phone || '',
+          membershipNumber: profile?.id || user.user_metadata?.membership_number || '',
+          memberId: user.id,
         }))
       }
 
