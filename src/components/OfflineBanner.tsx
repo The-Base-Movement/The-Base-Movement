@@ -117,7 +117,7 @@ export function OfflineBanner() {
             style={{
               margin: '2px 0 0 0',
               fontSize: 11,
-              fontWeight: 500,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: isOnline ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.65)',
               fontFamily: "'Public Sans', sans-serif",
               lineHeight: 1.4,

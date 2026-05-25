@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import type { RegistrationFormData } from '@/types/registration'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
 
@@ -41,7 +41,7 @@ export function OfflineSuccessStep({
             cloud_off
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-on-surface tracking-tighter font-meta mb-2">
+        <h1 className="text-3xl font-semibold text-on-surface tracking-tighter font-meta mb-2">
           Saved Offline Successfully
         </h1>
         <p className="text-on-surface-muted font-meta tracking-tight text-xs max-w-md mx-auto">
@@ -74,14 +74,14 @@ export function OfflineSuccessStep({
           />
 
           <div className="flex items-center justify-between border-b border-border/40 pb-4 mb-5">
-            <h3 className="font-meta font-bold text-[13px] text-on-surface tracking-tight flex items-center gap-2">
+            <h3 className="font-meta font-semibold text-[13px] text-on-surface tracking-tight flex items-center gap-2">
               <span className="material-symbols-outlined text-accent" style={{ fontSize: 18 }}>
                 encrypted
               </span>
               Offline Draft Encryption Vault
             </h3>
             <span
-              className="pill font-bold text-[10px]"
+              className="pill font-medium text-[10px]"
               style={{
                 background: 'rgba(234, 179, 8, 0.1)',
                 color: '#eab308',
@@ -100,7 +100,7 @@ export function OfflineSuccessStep({
                 check_circle
               </span>
               <div>
-                <h4 className="text-xs font-bold text-on-surface font-meta mb-0.5">
+                <h4 className="text-xs font-semibold text-on-surface font-meta mb-0.5">
                   Patriot Registration Draft Created
                 </h4>
                 <p className="text-[11px] text-on-surface-muted font-medium">
@@ -114,7 +114,7 @@ export function OfflineSuccessStep({
                 check_circle
               </span>
               <div>
-                <h4 className="text-xs font-bold text-on-surface font-meta mb-0.5">
+                <h4 className="text-xs font-semibold text-on-surface font-meta mb-0.5">
                   Biometrics & Identity Documents Cached
                 </h4>
                 <p className="text-[11px] text-on-surface-muted font-medium">
@@ -137,7 +137,7 @@ export function OfflineSuccessStep({
                 {isOnline ? 'check_circle' : 'hourglass_empty'}
               </span>
               <div>
-                <h4 className="text-xs font-bold text-on-surface font-meta mb-0.5">
+                <h4 className="text-xs font-semibold text-on-surface font-meta mb-0.5">
                   {isOnline ? 'Uplink Signal Available' : 'Awaiting HQ Network Uplink'}
                 </h4>
                 <p className="text-[11px] text-on-surface-muted font-medium">
@@ -165,7 +165,7 @@ export function OfflineSuccessStep({
             }}
           >
             <div>
-              <h4 className="font-meta font-bold text-xs text-on-surface tracking-tight mb-2">
+              <h4 className="font-meta font-semibold text-xs text-on-surface tracking-tight mb-2">
                 Synchronization
               </h4>
               <p className="text-[11px] text-on-surface-muted font-medium leading-relaxed mb-4">
@@ -226,7 +226,7 @@ export function OfflineSuccessStep({
             }}
           >
             <div>
-              <h4 className="font-meta font-bold text-xs text-on-surface tracking-tight mb-2">
+              <h4 className="font-meta font-semibold text-xs text-on-surface tracking-tight mb-2">
                 Register Next Patriot
               </h4>
               <p className="text-[11px] text-on-surface-muted font-medium leading-relaxed mb-4">
