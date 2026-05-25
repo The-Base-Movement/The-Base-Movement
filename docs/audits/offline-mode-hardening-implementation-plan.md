@@ -2,6 +2,11 @@
 
 Provide support for patriots to register offline during signal loss or connectivity issues. The system will gracefully save their registration details, photographed ID cards, and selfies securely on their local device in an IndexedDB database, allowing automatic background synchronization or manual upload when connectivity is restored.
 
+**Audit Date:** 2026-05-25
+**Status:** COMPLETE — All items implemented and verified ✅
+
+---
+
 ## User Review Required
 
 > [!IMPORTANT]
@@ -9,6 +14,20 @@ Provide support for patriots to register offline during signal loss or connectiv
 
 > [!TIP]
 > **Data URL String Storage in IndexedDB:** Photo IDs and selfie files are read into memory as base64-encoded Data URLs by `Register.tsx`. IndexedDB handles storing large strings easily, allowing us to serialize draft files alongside form metadata with zero performance issues and no complex binary blob serialization code. When synchronization starts, these will be converted to Blobs and uploaded to Supabase using existing service routines.
+
+---
+
+## Implementation Status
+
+| Item                                                   | Status    | Notes                                                                                                              |
+| ------------------------------------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------ |
+| `src/utils/offlineDb.ts`                               | ✅ DONE   | All 5 CRUD functions implemented, correct DB name (`tbm_offline_db`), draft structure matches spec                 |
+| `src/hooks/useOfflineSync.ts`                          | ✅ DONE   | All features present; see note on effect re-runs below                                                             |
+| `src/components/OfflineBanner.tsx`                     | ✅ DONE   | Brand colours, animations, offline/online states all correct                                                       |
+| `src/pages/register/components/OfflineSuccessStep.tsx` | ✅ DONE   | Checklist, manual sync button, reactive online/offline state; typography patched post-audit                        |
+| `public/sw.js`                                         | ✅ DONE   | `/index.html` in PRECACHE, navigation fallback to SPA shell implemented                                            |
+| `src/pages/Register.tsx`                               | ✅ DONE   | `OfflineBanner` mounted on both form-step renders, `saveDraftRegistration` integrated, `isOnline` branching active |
+| `src/services/registrationService.ts`                  | ✅ EXISTS | `registrationService.submit()` confirmed — correct signature, used by sync hook                                    |
 
 ---
 
@@ -43,6 +62,8 @@ A React hook / state manager that:
 - Iterates over all pending drafts in IndexedDB, submits them sequentially using the existing `useRegistrationSubmit` API workflow (biometric verification fallback -> user authentication signup -> file upload -> user insert), and reports progress via toasts.
 - Handles partial failures gracefully by updating the status with errors in IndexedDB.
 
+> **Implementation note:** `isSyncing` is a dependency of both `triggerSync` and the main `useEffect`. Each sync state change causes the effect to re-run, briefly detaching and re-attaching the `online`/`offline` listeners and clearing/recreating the 30s polling interval. Not a correctness bug — low priority.
+
 #### [NEW] [OfflineBanner.tsx](file:///c:/MAMP/htdocs/The-Base/src/components/OfflineBanner.tsx)
 
 A premium floating toast banner shown on the Registration screen when connection is lost.
@@ -58,6 +79,8 @@ A beautiful replacement for `SuccessStep` rendered when a registration is submit
 - Displays a checklist explaining that their registration has been saved as a local draft.
 - Informs them of the exact synchronization queue and details their temporary offline status.
 - Offers a manual "Sync Now" button (which shows when they come back online or want to trigger retry).
+
+> **Post-audit fix (2026-05-25):** 8 Tailwind `font-bold` violations patched — h1/h3/h4 → `font-semibold`, pill badge → `font-medium`. Also fixed raw `fontWeight: 500` in `OfflineBanner.tsx` → `'var(--font-weight-medium, 500)'`.
 
 ---
 
