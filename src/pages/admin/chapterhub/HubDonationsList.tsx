@@ -71,7 +71,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                       style={{
                         margin: 0,
                         fontSize: 10,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
@@ -117,7 +117,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                     style={{
                       padding: '12px 18px',
                       fontSize: 12,
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       whiteSpace: 'nowrap',
                     }}

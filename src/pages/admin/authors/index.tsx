@@ -191,7 +191,7 @@ export default function AdminAuthors() {
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
@@ -204,7 +204,7 @@ export default function AdminAuthors() {
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 'var(--kpi-num-size)',
                 color: 'hsl(var(--on-surface))',
                 margin: '0 0 4px',
@@ -259,7 +259,7 @@ export default function AdminAuthors() {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -520,7 +520,7 @@ export default function AdminAuthors() {
                               <span
                                 style={{
                                   fontSize: 12,
-                                  fontWeight: 'bold',
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   color: 'hsl(var(--on-surface-muted))',
                                 }}
                               >
@@ -538,7 +538,7 @@ export default function AdminAuthors() {
                             <span
                               style={{
                                 fontSize: 10,
-                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 opacity: 0.5,
                               }}
                             >
@@ -782,7 +782,7 @@ export default function AdminAuthors() {
                           <span
                             style={{
                               fontSize: 12,
-                              fontWeight: 'bold',
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--on-surface-muted))',
                             }}
                           >
@@ -794,7 +794,7 @@ export default function AdminAuthors() {
                         <b
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 14,
                             color: 'hsl(var(--on-surface))',
                             display: 'block',
@@ -1131,7 +1131,7 @@ export default function AdminAuthors() {
                       style={{
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 20,
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -1168,7 +1168,7 @@ export default function AdminAuthors() {
                     <span
                       style={{
                         fontSize: 10,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -1206,7 +1206,7 @@ export default function AdminAuthors() {
                       <div
                         style={{
                           fontSize: 12,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           marginTop: 2,
                         }}
                       >
@@ -1220,7 +1220,7 @@ export default function AdminAuthors() {
                       <div
                         style={{
                           fontSize: 12,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           marginTop: 2,
                           color: 'hsl(var(--primary))',
                         }}

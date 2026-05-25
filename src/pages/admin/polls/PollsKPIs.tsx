@@ -76,7 +76,7 @@ export function PollsKPIs({ stats }: PollsKPIsProps) {
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 10,
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
@@ -91,7 +91,7 @@ export function PollsKPIs({ stats }: PollsKPIsProps) {
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 'var(--kpi-num-size)',
               color: 'hsl(var(--on-surface))',
               margin: '0 0 4px',

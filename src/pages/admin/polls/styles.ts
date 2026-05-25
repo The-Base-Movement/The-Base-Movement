@@ -29,7 +29,7 @@ export const selectSt: React.CSSProperties = { ...inputSt, cursor: 'pointer' }
 /** Form field label */
 export const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -41,7 +41,7 @@ export const thSt: React.CSSProperties = {
   padding: '11px 20px',
   textAlign: 'left',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   background: 'hsl(var(--container-low))',

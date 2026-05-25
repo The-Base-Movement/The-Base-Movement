@@ -248,7 +248,7 @@ export function MembersTable({
                           <span
                             style={{
                               fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               fontSize: 13,
                               color: 'hsl(var(--on-surface-muted))',
                             }}
@@ -266,7 +266,7 @@ export function MembersTable({
                           style={{
                             margin: 0,
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
                           }}
                         >
@@ -313,7 +313,7 @@ export function MembersTable({
                       style={{
                         fontSize: 12,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                       }}
                     >
                       {member.region || '—'}

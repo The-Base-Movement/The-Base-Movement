@@ -395,7 +395,7 @@ export default function MediaLibrary() {
               <h3
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 16,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -550,7 +550,7 @@ export default function MediaLibrary() {
                     <p
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
                         marginTop: 2,

@@ -18,7 +18,7 @@ const avatarSt = (role: string): React.CSSProperties => ({
   alignItems: 'center',
   justifyContent: 'center',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   overflow: 'hidden',
   flexShrink: 0,
@@ -28,7 +28,7 @@ const thSt: React.CSSProperties = {
   padding: '11px 20px',
   textAlign: 'left',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   background: 'hsl(var(--container-low))',
@@ -178,7 +178,7 @@ export function AdministratorsTable({
                         <p
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                             margin: 0,
@@ -216,7 +216,7 @@ export function AdministratorsTable({
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 11,
                           color: isHighPrivilege(admin.role)
                             ? 'hsl(var(--destructive))'
@@ -304,7 +304,7 @@ export function AdministratorsTable({
                                   background: 'none',
                                   border: 'none',
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 'var(--font-weight-semibold, 600)',
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 11,
                                   cursor: 'pointer',
                                   color: 'hsl(var(--on-surface))',
@@ -329,7 +329,7 @@ export function AdministratorsTable({
                                   background: 'none',
                                   border: 'none',
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 'var(--font-weight-semibold, 600)',
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 11,
                                   cursor: 'pointer',
                                   color: 'hsl(var(--on-surface))',
@@ -361,7 +361,7 @@ export function AdministratorsTable({
                                   background: 'none',
                                   border: 'none',
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 'var(--font-weight-semibold, 600)',
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 11,
                                   cursor: 'pointer',
                                   color: 'hsl(var(--destructive))',

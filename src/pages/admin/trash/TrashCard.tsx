@@ -105,7 +105,7 @@ export function TrashCard({
                 background: 'hsl(var(--on-surface))',
                 color: '#fff',
                 fontSize: 9,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 padding: '2px 7px',
               }}
             >
@@ -136,7 +136,7 @@ export function TrashCard({
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     margin: '0 0 3px',
@@ -150,7 +150,7 @@ export function TrashCard({
                 <h4
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 14,
                     color: 'hsl(var(--on-surface))',
                     margin: 0,
@@ -179,7 +179,7 @@ export function TrashCard({
                 <div
                   style={{
                     fontSize: 20,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: isExpiringSoon ? '#fff' : 'hsl(var(--on-surface))',
                     lineHeight: 1,
                   }}
@@ -208,7 +208,11 @@ export function TrashCard({
                 history
               </span>
               <span
-                style={{ fontSize: 10, fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}
+                style={{
+                  fontSize: 10,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
               >
                 Deleted {new Date(deletedAt).toLocaleDateString()}
               </span>
@@ -282,7 +286,7 @@ export function TrashCard({
                     background: 'hsl(var(--on-surface))',
                     color: '#fff',
                     fontSize: 9,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     padding: '2px 7px',
                   }}
                 >
@@ -291,7 +295,7 @@ export function TrashCard({
                 <span
                   style={{
                     fontSize: 10,
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -304,7 +308,7 @@ export function TrashCard({
               <h4
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 14,
                   color: 'hsl(var(--on-surface))',
                   margin: 0,
@@ -331,7 +335,7 @@ export function TrashCard({
             <div
               style={{
                 fontSize: 18,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: isExpiringSoon ? '#fff' : 'hsl(var(--on-surface))',
                 lineHeight: 1,
               }}
@@ -357,7 +361,13 @@ export function TrashCard({
           >
             history
           </span>
-          <span style={{ fontSize: 10, fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
             Deleted {new Date(deletedAt).toLocaleDateString()}
           </span>
         </div>

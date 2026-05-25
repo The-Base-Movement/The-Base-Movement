@@ -241,6 +241,14 @@
     font-size: var(--h6-size);
   }
 
+  /* Admin-specific Tactical Weights (Keep at 600 for authority) */
+  .admin-context h1,
+  .admin-context h2,
+  .admin-context h3,
+  .admin-context .top h2 {
+    font-weight: 600;
+  }
+
   p {
     @apply font-body-md leading-relaxed mb-4;
     font-size: var(--p-size);

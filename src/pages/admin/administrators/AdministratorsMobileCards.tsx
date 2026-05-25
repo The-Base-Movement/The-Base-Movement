@@ -18,7 +18,7 @@ const avatarSt = (role: string): React.CSSProperties => ({
   alignItems: 'center',
   justifyContent: 'center',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   overflow: 'hidden',
   flexShrink: 0,
@@ -121,7 +121,7 @@ export function AdministratorsMobileCards({
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
@@ -168,7 +168,7 @@ export function AdministratorsMobileCards({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: isHighPrivilege(admin.role)
                       ? 'hsl(var(--destructive))'
@@ -195,7 +195,7 @@ export function AdministratorsMobileCards({
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -212,7 +212,7 @@ export function AdministratorsMobileCards({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface))',
                   }}

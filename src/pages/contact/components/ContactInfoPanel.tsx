@@ -14,7 +14,7 @@ export function ContactInfoPanel({
   return (
     <div className="lg:col-span-2 space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">
+        <h2 className="text-2xl font-medium text-charcoal-dark mb-4 font-meta tracking-tight">
           Get in touch
         </h2>
         <p className="text-slate-600 mb-8 leading-relaxed text-sm md:text-base">
@@ -34,7 +34,7 @@ export function ContactInfoPanel({
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">
+            <p className="text-micro font-medium tracking-tight text-slate-400 mb-1 font-meta">
               Email
             </p>
             <div className="text-charcoal-dark font-medium text-sm md:text-base truncate">
@@ -62,7 +62,7 @@ export function ContactInfoPanel({
             </span>
           </div>
           <div>
-            <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">
+            <p className="text-micro font-medium tracking-tight text-slate-400 mb-1 font-meta">
               Phone
             </p>
             <div className="text-charcoal-dark font-medium text-sm md:text-base">
@@ -92,7 +92,7 @@ export function ContactInfoPanel({
             </span>
           </div>
           <div>
-            <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">
+            <p className="text-micro font-medium tracking-tight text-slate-400 mb-1 font-meta">
               Location
             </p>
             <div className="text-charcoal-dark font-medium text-sm md:text-base">
@@ -133,7 +133,7 @@ export function ContactInfoPanel({
             />
           </div>
           <div className="p-5 border-t border-slate-100">
-            <p className="text-micro font-meta font-bold text-[var(--brand-green)] tracking-tight">
+            <p className="text-micro font-meta font-medium text-[var(--brand-green)] tracking-tight">
               Official headquarters
             </p>
             <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">

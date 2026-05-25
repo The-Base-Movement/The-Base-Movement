@@ -66,7 +66,7 @@ export function CreatePollModal({
               alignItems: 'center',
               gap: 6,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13.5,
               color: 'hsl(var(--on-surface))',
             }}

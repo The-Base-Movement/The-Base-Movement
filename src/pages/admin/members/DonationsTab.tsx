@@ -24,7 +24,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 36,
                 letterSpacing: '-.02em',
                 fontVariantNumeric: 'tabular-nums',
@@ -169,7 +169,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                     style={{
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12.5,
                     }}
                   >
@@ -190,7 +190,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 13,
                       color: 'hsl(var(--primary))',
                     }}

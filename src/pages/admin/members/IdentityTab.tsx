@@ -49,7 +49,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                   <dt
                     style={{
                       fontSize: 9.5,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
@@ -161,7 +161,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     flex: 1,
                   }}
                 >

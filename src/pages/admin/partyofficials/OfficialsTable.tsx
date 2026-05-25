@@ -11,7 +11,7 @@ interface OfficialsTableProps {
 const thSt: React.CSSProperties = {
   padding: '11px 20px',
   textAlign: 'left',
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   borderBottom: '1px solid hsl(var(--border))',
@@ -53,7 +53,7 @@ function TierBadge({ official, tiers }: { official: PartyOfficial; tiers: PartyT
       style={{
         textTransform: 'uppercase',
         fontSize: 10,
-        fontWeight: 'var(--font-weight-semibold, 600)',
+        fontWeight: 'var(--font-weight-medium, 500)',
         color: 'hsl(var(--primary))',
         background: 'hsla(var(--primary), 0.08)',
         border: '1px solid hsla(var(--primary), 0.2)',
@@ -182,7 +182,7 @@ export function OfficialsTable({
                     >
                       <span
                         style={{
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 13,
                           color: 'hsl(var(--on-surface))',
                           overflow: 'hidden',

@@ -369,7 +369,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                 fontSize: 20,
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               Import Physical Registration Forms
@@ -423,7 +423,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div
                   style={{
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                     marginBottom: 8,
                     color: 'hsl(var(--on-surface))',
@@ -555,7 +555,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               <h4
                 style={{
                   margin: '0 0 6px 0',
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 15,
                 }}
               >
@@ -593,7 +593,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                   <div style={{ minWidth: 0 }}>
                     <div
                       style={{
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 13,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -650,7 +650,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     <div
                       style={{
                         fontSize: 28,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         marginTop: 4,
                         color: 'hsl(var(--primary))',
                       }}
@@ -685,7 +685,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     <div
                       style={{
                         fontSize: 28,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         marginTop: 4,
                         color:
                           invalidCount > 0 ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))',
@@ -702,7 +702,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                 <div className="panel" style={{ maxHeight: 180, overflowY: 'auto', padding: 16 }}>
                   <h5
                     style={{
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--destructive))',
                       margin: '0 0 10px 0',
                       fontSize: 12,
@@ -759,7 +759,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                 <div className="panel" style={{ padding: 16, overflowX: 'auto' }}>
                   <h5
                     style={{
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--primary))',
                       margin: '0 0 10px 0',
                       fontSize: 12,

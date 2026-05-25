@@ -43,7 +43,7 @@ export default function Press() {
           <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">
             Media & communications
           </p>
-          <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4">
+          <h1 className="font-meta font-medium text-4xl md:text-5xl tracking-tight leading-tight mb-4">
             Press <span className="text-brand-green">center</span>
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl font-body-md">
@@ -58,7 +58,7 @@ export default function Press() {
           {/* Main Feed */}
           <div className="lg:col-span-2 space-y-12">
             <div>
-              <h2 className="font-meta font-bold text-2xl tracking-tight mb-8 flex items-center gap-3">
+              <h2 className="font-meta font-medium text-2xl tracking-tight mb-8 flex items-center gap-3">
                 <span
                   className="material-symbols-outlined text-brand-green"
                   style={{ fontSize: 24 }}
@@ -88,7 +88,7 @@ export default function Press() {
                       className="bg-white p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all group"
                     >
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-micro font-semibold tracking-tight rounded-sm">
+                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-micro font-medium tracking-tight rounded-sm">
                           {pr.category}
                         </span>
                         <span className="text-tiny text-slate-400 font-medium tracking-tight">
@@ -99,7 +99,7 @@ export default function Press() {
                           })}
                         </span>
                       </div>
-                      <h3 className="text-xl font-bold text-charcoal-dark mb-4 group-hover:text-brand-green transition-colors">
+                      <h3 className="text-xl font-medium text-charcoal-dark mb-4 group-hover:text-brand-green transition-colors">
                         {pr.title}
                       </h3>
                       <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
@@ -107,7 +107,7 @@ export default function Press() {
                       </p>
                       <button
                         onClick={() => setSelectedRelease(pr)}
-                        className="flex items-center gap-2 text-brand-green font-semibold text-xs bg-transparent border-none cursor-pointer hover:underline p-0"
+                        className="flex items-center gap-2 text-brand-green font-medium text-xs bg-transparent border-none cursor-pointer hover:underline p-0"
                       >
                         View full release
                         <span

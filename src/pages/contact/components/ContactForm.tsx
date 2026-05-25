@@ -18,7 +18,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
       <div className="space-y-2">
         <label
           htmlFor="fullName"
-          className="text-micro font-bold text-charcoal-dark font-meta tracking-tight"
+          className="text-micro font-medium text-charcoal-dark font-meta tracking-tight"
         >
           Full name <span className="text-[var(--brand-red)]">*</span>
         </label>
@@ -36,7 +36,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
         <div className="space-y-2">
           <label
             htmlFor="email"
-            className="text-micro font-bold text-charcoal-dark font-meta tracking-tight"
+            className="text-micro font-medium text-charcoal-dark font-meta tracking-tight"
           >
             Email address
           </label>
@@ -52,7 +52,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
         <div className="space-y-2">
           <label
             htmlFor="phone"
-            className="text-micro font-bold text-charcoal-dark font-meta tracking-tight"
+            className="text-micro font-medium text-charcoal-dark font-meta tracking-tight"
           >
             Phone number
           </label>
@@ -70,7 +70,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
       <div className="space-y-2">
         <label
           htmlFor="platform"
-          className="text-micro font-bold text-charcoal-dark font-meta tracking-tight"
+          className="text-micro font-medium text-charcoal-dark font-meta tracking-tight"
         >
           Your platform
         </label>
@@ -96,7 +96,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
       <div className="space-y-2">
         <label
           htmlFor="message"
-          className="text-micro font-bold text-charcoal-dark font-meta tracking-tight"
+          className="text-micro font-medium text-charcoal-dark font-meta tracking-tight"
         >
           Message <span className="text-[var(--brand-red)]">*</span>
         </label>
@@ -111,7 +111,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
 
       <button
         type="submit"
-        className="w-full py-4 bg-primary text-white flex items-center justify-center gap-2 font-bold text-sm border-none cursor-pointer hover:opacity-90 transition-opacity"
+        className="w-full py-4 bg-primary text-white flex items-center justify-center gap-2 font-medium text-sm border-none cursor-pointer hover:opacity-90 transition-opacity"
       >
         <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
           send

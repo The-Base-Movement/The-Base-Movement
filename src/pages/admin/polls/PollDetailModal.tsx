@@ -54,7 +54,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
               alignItems: 'center',
               gap: 6,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13.5,
               color: 'hsl(var(--on-surface))',
             }}
@@ -85,7 +85,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 16,
                 color: 'hsl(var(--on-surface))',
                 lineHeight: 1.45,
@@ -128,7 +128,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: 'hsl(var(--on-surface))',
                     }}
@@ -153,7 +153,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 margin: 0,
@@ -189,7 +189,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
                           alignItems: 'center',
                           justifyContent: 'center',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 10,
                           background:
                             rank === 0 ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
@@ -202,7 +202,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12.5,
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -281,7 +281,7 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 color: 'hsl(var(--on-surface))',
               }}

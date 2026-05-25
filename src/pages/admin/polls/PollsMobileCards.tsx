@@ -137,7 +137,7 @@ export function PollsMobileCards({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                     color: 'hsl(var(--on-surface))',
                     lineHeight: 1.4,
@@ -196,7 +196,7 @@ export function PollsMobileCards({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 14,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -252,7 +252,7 @@ export function PollsMobileCards({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface))',
                   }}

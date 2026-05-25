@@ -176,13 +176,12 @@ export function VerificationQueue({
       {loading ? (
         <div style={{ padding: '48px 24px', textAlign: 'center' }}>
           <span
-            className="material-symbols-outlined"
+            className="material-symbols-outlined animate-spin"
             style={{
               fontSize: 32,
               color: 'hsl(var(--border))',
               display: 'block',
               marginBottom: 10,
-              animation: 'spin 1.2s linear infinite',
             }}
           >
             refresh
@@ -250,14 +249,6 @@ export function VerificationQueue({
                     boxShadow: isActive ? 'inset 3px 0 0 hsl(var(--primary))' : '',
                     transition: 'background .15s',
                   }}
-                  onMouseEnter={(e) => {
-                    if (!isActive)
-                      (e.currentTarget as HTMLElement).style.background =
-                        'hsl(var(--container-low))'
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) (e.currentTarget as HTMLElement).style.background = ''
-                  }}
                 >
                   {/* Avatar + name */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -290,7 +281,7 @@ export function VerificationQueue({
                         <span
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
                             color: isActive
                               ? 'rgba(255,255,255,.6)'
@@ -310,7 +301,7 @@ export function VerificationQueue({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 13,
                           color: isActive ? '#fff' : 'hsl(var(--on-surface))',
                         }}
@@ -361,7 +352,7 @@ export function VerificationQueue({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 11.5,
                           color: isActive ? 'rgba(255,255,255,.8)' : 'hsl(var(--on-surface))',
                         }}
@@ -391,7 +382,7 @@ export function VerificationQueue({
                           borderRadius: 99,
                           fontSize: 9.5,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: '#fff',
                           textTransform: 'uppercase',
                           letterSpacing: '.05em',
@@ -480,7 +471,7 @@ export function VerificationQueue({
                   borderRadius: 4,
                   border: '1px solid hsl(var(--border))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   cursor: 'pointer',
                   background: page === safePage ? 'hsl(var(--primary))' : '#fff',

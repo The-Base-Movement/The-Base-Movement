@@ -505,10 +505,24 @@ export default function RegistrationForm({
         }}
       >
         <div>
-          <h2 style={{ color: '#fff', fontSize: isMobile ? '18px' : '24px', margin: 0 }}>
+          <h2
+            style={{
+              color: '#fff',
+              fontSize: isMobile ? '18px' : '24px',
+              margin: 0,
+              fontWeight: 600,
+            }}
+          >
             Register new member
           </h2>
-          <div className="meta" style={{ color: 'hsl(var(--accent))', marginTop: '4px' }}>
+          <div
+            className="meta"
+            style={{
+              color: 'hsl(var(--accent))',
+              marginTop: '4px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
             Admin override workflow
           </div>
         </div>
@@ -545,7 +559,7 @@ export default function RegistrationForm({
             <div
               style={{
                 fontSize: '10px',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
@@ -585,7 +599,7 @@ export default function RegistrationForm({
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '11px',
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       background:
                         formStep >= item.step ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
                       color: formStep >= item.step ? '#fff' : 'hsl(var(--on-surface-muted))',
@@ -602,7 +616,7 @@ export default function RegistrationForm({
                   <span
                     style={{
                       fontSize: '12px',
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color:
                         formStep === item.step
                           ? 'hsl(var(--on-surface))'
@@ -645,7 +659,7 @@ export default function RegistrationForm({
                   style={{
                     margin: 0,
                     fontSize: 11,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
                     letterSpacing: '.06em',
@@ -673,7 +687,13 @@ export default function RegistrationForm({
                       marginBottom: '32px',
                     }}
                   >
-                    <h3 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        margin: 0,
+                      }}
+                    >
                       Step 1: Primary details
                     </h3>
                     <p
@@ -681,6 +701,7 @@ export default function RegistrationForm({
                         fontSize: '13px',
                         color: 'hsl(var(--on-surface-muted))',
                         marginTop: '4px',
+                        fontWeight: 'var(--font-weight-normal, 400)',
                       }}
                     >
                       Basic information required for the membership profile.
@@ -691,7 +712,7 @@ export default function RegistrationForm({
                     <label
                       style={{
                         fontSize: '10px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -724,7 +745,7 @@ export default function RegistrationForm({
                     <label
                       style={{
                         fontSize: '10px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -744,7 +765,7 @@ export default function RegistrationForm({
                             padding: '16px',
                             textAlign: 'center',
                             borderRadius: '4px',
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: '11px',
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em',
@@ -786,7 +807,7 @@ export default function RegistrationForm({
                         <label
                           style={{
                             fontSize: '10px',
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface-muted))',
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em',
@@ -825,7 +846,7 @@ export default function RegistrationForm({
                       <label
                         style={{
                           fontSize: '10px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -845,7 +866,7 @@ export default function RegistrationForm({
                             flexShrink: 0,
                             padding: '14px 8px',
                             fontSize: '12px',
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             background: 'hsl(var(--container-low))',
                             border: '1px solid hsl(var(--border))',
                             borderRadius: '4px',
@@ -890,7 +911,7 @@ export default function RegistrationForm({
                     <label
                       style={{
                         fontSize: '10px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -952,7 +973,13 @@ export default function RegistrationForm({
                       marginBottom: '32px',
                     }}
                   >
-                    <h3 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        margin: 0,
+                      }}
+                    >
                       Step 2: Demographic details
                     </h3>
                     <p
@@ -977,7 +1004,7 @@ export default function RegistrationForm({
                       <label
                         style={{
                           fontSize: '10px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -997,7 +1024,7 @@ export default function RegistrationForm({
                               padding: '12px',
                               textAlign: 'center',
                               borderRadius: '4px',
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               fontSize: '10px',
                               textTransform: 'uppercase',
                               letterSpacing: '0.05em',
@@ -1035,7 +1062,7 @@ export default function RegistrationForm({
                       <label
                         style={{
                           fontSize: '10px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -1055,7 +1082,7 @@ export default function RegistrationForm({
                               padding: '12px',
                               textAlign: 'center',
                               borderRadius: '4px',
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               fontSize: '10px',
                               textTransform: 'uppercase',
                               letterSpacing: '0.05em',
@@ -1094,7 +1121,7 @@ export default function RegistrationForm({
                     <label
                       style={{
                         fontSize: '10px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -1137,7 +1164,7 @@ export default function RegistrationForm({
                           <label
                             style={{
                               fontSize: '10px',
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--on-surface-muted))',
                               textTransform: 'uppercase',
                               letterSpacing: '0.05em',
@@ -1174,7 +1201,7 @@ export default function RegistrationForm({
                           <label
                             style={{
                               fontSize: '10px',
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--on-surface-muted))',
                               textTransform: 'uppercase',
                               letterSpacing: '0.05em',
@@ -1216,7 +1243,7 @@ export default function RegistrationForm({
                         <label
                           style={{
                             fontSize: '10px',
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface-muted))',
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em',
@@ -1259,7 +1286,13 @@ export default function RegistrationForm({
                       marginBottom: '32px',
                     }}
                   >
-                    <h3 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        margin: 0,
+                      }}
+                    >
                       Step 3: Emergency & profession details
                     </h3>
                     <p
@@ -1277,7 +1310,7 @@ export default function RegistrationForm({
                     <label
                       style={{
                         fontSize: '10px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -1318,7 +1351,7 @@ export default function RegistrationForm({
                       <label
                         style={{
                           fontSize: '10px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -1350,7 +1383,7 @@ export default function RegistrationForm({
                       <label
                         style={{
                           fontSize: '10px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -1393,7 +1426,7 @@ export default function RegistrationForm({
                       <label
                         style={{
                           fontSize: '10px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -1426,7 +1459,7 @@ export default function RegistrationForm({
                       <label
                         style={{
                           fontSize: '10px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -1472,7 +1505,13 @@ export default function RegistrationForm({
                       marginBottom: '32px',
                     }}
                   >
-                    <h3 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        margin: 0,
+                      }}
+                    >
                       Step 4: Final verification
                     </h3>
                     <p
@@ -1490,7 +1529,7 @@ export default function RegistrationForm({
                     <label
                       style={{
                         fontSize: '10px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -1547,8 +1586,7 @@ export default function RegistrationForm({
                         <p
                           style={{
                             fontSize: '11px',
-                            fontWeight: 700,
-                            color: 'hsl(var(--on-surface-muted))',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em',
                           }}
@@ -1614,8 +1652,7 @@ export default function RegistrationForm({
                         <p
                           style={{
                             fontSize: '10px',
-                            fontWeight: 700,
-                            color: 'hsl(var(--on-surface-muted))',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             textAlign: 'center',
                             marginTop: '16px',
                           }}
@@ -1643,7 +1680,7 @@ export default function RegistrationForm({
                         color: 'hsl(var(--accent))',
                         marginBottom: '12px',
                         fontSize: '11px',
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.08em',
                       }}
@@ -1683,7 +1720,7 @@ export default function RegistrationForm({
                         htmlFor="privacy"
                         style={{
                           fontSize: '13px',
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'rgba(255,255,255,0.7)',
                           cursor: 'pointer',
                         }}
@@ -1728,6 +1765,7 @@ export default function RegistrationForm({
                     flex: 2,
                     height: '54px',
                     opacity: (formStep === 4 && !agreed) || isSubmitting ? 0.5 : 1,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                   }}
                 >
                   {isSubmitting ? (

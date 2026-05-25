@@ -99,7 +99,7 @@ export function MediaLibrary({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 9,
               color: 'hsl(var(--on-surface-muted))',
               background: 'hsl(var(--border))',
@@ -327,7 +327,7 @@ export function MediaLibrary({
                   gap: 3,
                   fontSize: 9,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   width: '80%',
                   justifyContent: 'center',
                 }}
@@ -353,7 +353,7 @@ export function MediaLibrary({
                   gap: 3,
                   fontSize: 9,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   width: '80%',
                   justifyContent: 'center',
                 }}

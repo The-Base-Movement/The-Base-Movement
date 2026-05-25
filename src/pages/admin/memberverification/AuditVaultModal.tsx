@@ -70,7 +70,7 @@ export function AuditVaultModal({
                   style={{
                     fontSize: 10.5,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'rgba(255,255,255,.5)',
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
@@ -91,7 +91,7 @@ export function AuditVaultModal({
                 style={{
                   margin: '0 0 4px',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 28,
                   color: '#fff',
                   letterSpacing: '-.02em',
@@ -147,7 +147,7 @@ export function AuditVaultModal({
                 style={{
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.07em',
                   textTransform: 'uppercase',
@@ -180,7 +180,7 @@ export function AuditVaultModal({
                     <dt
                       style={{
                         fontSize: 9.5,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         letterSpacing: '.06em',
                         textTransform: 'uppercase',
@@ -210,7 +210,7 @@ export function AuditVaultModal({
                 style={{
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.07em',
                   textTransform: 'uppercase',
@@ -248,7 +248,7 @@ export function AuditVaultModal({
                       style={{
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12.5,
                       }}
                     >
@@ -298,7 +298,7 @@ export function AuditVaultModal({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12.5,
                           color: 'hsl(var(--primary))',
                         }}
@@ -350,7 +350,7 @@ export function AuditVaultModal({
                         style={{
                           margin: 0,
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12.5,
                           color: 'hsl(var(--destructive))',
                         }}
@@ -392,7 +392,7 @@ export function AuditVaultModal({
                 style={{
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.07em',
                   textTransform: 'uppercase',
@@ -464,7 +464,7 @@ export function AuditVaultModal({
                   margin: '0 0 4px',
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.06em',
                   textTransform: 'uppercase',

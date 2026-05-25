@@ -9,7 +9,7 @@ export function PressSidebar({ mediaKit }: PressSidebarProps) {
     <div className="space-y-8">
       {/* Media Contact */}
       <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
-        <h3 className="font-meta font-bold text-xl tracking-tight mb-4 flex items-center gap-2">
+        <h3 className="font-meta font-medium text-xl tracking-tight mb-4 flex items-center gap-2">
           <span className="material-symbols-outlined text-warm-gold" style={{ fontSize: 20 }}>
             mail
           </span>
@@ -21,21 +21,23 @@ export function PressSidebar({ mediaKit }: PressSidebarProps) {
         </p>
         <div className="space-y-4">
           <div>
-            <p className="text-micro font-bold tracking-tight text-slate-500 mb-1">General press</p>
-            <p className="text-sm font-bold">press@thebasemovement.org</p>
+            <p className="text-micro font-medium tracking-tight text-slate-500 mb-1">
+              General press
+            </p>
+            <p className="text-sm font-medium">press@thebasemovement.org</p>
           </div>
           <div>
-            <p className="text-micro font-bold tracking-tight text-slate-500 mb-1">
+            <p className="text-micro font-medium tracking-tight text-slate-500 mb-1">
               Global diaspora
             </p>
-            <p className="text-sm font-bold">diaspora.media@thebasemovement.org</p>
+            <p className="text-sm font-medium">diaspora.media@thebasemovement.org</p>
           </div>
         </div>
       </div>
 
       {/* Media Kit */}
       <div className="bg-white p-8 border border-slate-100 shadow-sm">
-        <h3 className="font-meta font-bold text-xl tracking-tight mb-4 flex items-center gap-2 text-charcoal-dark">
+        <h3 className="font-meta font-medium text-xl tracking-tight mb-4 flex items-center gap-2 text-charcoal-dark">
           <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>
             download
           </span>

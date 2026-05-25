@@ -172,7 +172,7 @@ export function MemberDetailPanel({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 24,
                     color: '#fff',
                   }}
@@ -204,7 +204,7 @@ export function MemberDetailPanel({
               <h2
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 28,
                   letterSpacing: '-.02em',
                   marginTop: 4,
@@ -216,7 +216,7 @@ export function MemberDetailPanel({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--accent))',
                   marginTop: 4,
@@ -485,7 +485,7 @@ export function MemberDetailPanel({
               style={{
                 padding: '14px 16px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 color: activeTab === id ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))',
                 background: 'none',

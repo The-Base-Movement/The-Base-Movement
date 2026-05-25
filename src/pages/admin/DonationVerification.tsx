@@ -248,7 +248,7 @@ export default function FinancialAudit() {
             <p
               style={{
                 fontSize: 22,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
@@ -323,7 +323,7 @@ export default function FinancialAudit() {
                 border: 'none',
                 borderRight: '1px solid hsl(var(--border))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 cursor: 'pointer',
               }}

@@ -392,7 +392,7 @@ export default function AdminSettings() {
                   borderRadius: 4,
                   cursor: 'pointer',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   whiteSpace: 'nowrap',
                   transition: 'all 0.15s',

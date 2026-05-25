@@ -50,7 +50,7 @@ function LiveClock() {
   return (
     <span
       style={{
-        fontWeight: 'var(--font-weight-semibold, 600)',
+        fontWeight: 'var(--font-weight-medium, 500)',
         fontSize: 13,
         fontVariantNumeric: 'tabular-nums',
         letterSpacing: '.04em',
@@ -267,7 +267,7 @@ export default function WarRoomCommand() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 10,
                   padding: '4px 10px',
                   borderRadius: 99,

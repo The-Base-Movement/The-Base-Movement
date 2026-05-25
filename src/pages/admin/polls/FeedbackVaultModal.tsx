@@ -49,7 +49,7 @@ export function FeedbackVaultModal({ onClose }: FeedbackVaultModalProps) {
               alignItems: 'center',
               gap: 6,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13.5,
               color: 'hsl(var(--on-surface))',
             }}
@@ -100,7 +100,7 @@ export function FeedbackVaultModal({ onClose }: FeedbackVaultModalProps) {
               <p
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                   margin: 0,

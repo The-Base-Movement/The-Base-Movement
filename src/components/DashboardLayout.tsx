@@ -226,10 +226,10 @@ export default function DashboardLayout() {
               className="overflow-hidden whitespace-nowrap"
               style={{ textDecoration: 'none' }}
             >
-              <h1 className="text-[16px] font-extrabold text-white leading-none mb-0 tracking-tight">
+              <h1 className="text-[16px] font-medium text-white leading-none mb-0 tracking-tight">
                 The Base
               </h1>
-              <p className="text-[9px] text-accent font-bold tracking-[0.04em] uppercase mt-1 mb-0">
+              <p className="text-[9px] text-accent font-medium tracking-[0.04em] uppercase mt-1 mb-0">
                 Member portal
               </p>
             </Link>
@@ -244,7 +244,7 @@ export default function DashboardLayout() {
               className="flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-[4px] transition-all group border border-white/5"
             >
               <span className="material-symbols-outlined text-[18px] text-accent">arrow_back</span>
-              <span className="text-[11px] font-semibold uppercase tracking-[0.06em]">
+              <span className="text-[11px] font-medium uppercase tracking-[0.06em]">
                 Back to Site
               </span>
             </Link>
@@ -284,7 +284,7 @@ export default function DashboardLayout() {
           ].map((group) => (
             <div key={group.label} className="nav-sec mt-2">
               {!isSidebarCollapsed && (
-                <h6 className="text-[9px] font-bold text-white/40 tracking-[0.08em] uppercase mb-2 mt-2 px-6 font-meta">
+                <h6 className="text-[9px] font-medium text-white/40 tracking-[0.08em] uppercase mb-2 mt-2 px-6 font-meta">
                   {group.label}
                 </h6>
               )}
@@ -292,7 +292,7 @@ export default function DashboardLayout() {
                 {group.items.map((item) => (
                   <Link
                     key={item.to}
-                    className={`flex items-center transition-all font-meta text-[12px] font-semibold tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
+                    className={`flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                     to={item.to}
                   >
                     <span
@@ -326,7 +326,7 @@ export default function DashboardLayout() {
                 justifyContent: 'center',
                 gap: 8,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 letterSpacing: '0.02em',
                 boxShadow: '0 4px 16px rgba(0,107,63,0.25)',
@@ -353,7 +353,7 @@ export default function DashboardLayout() {
               )}
             </div>
             <div className="min-w-0">
-              <b className="block text-[12px] text-white font-bold leading-none mb-1 truncate capitalize">
+              <b className="block text-[12px] text-white font-medium leading-none mb-1 truncate capitalize">
                 {userName?.toLowerCase()}
               </b>
               <span className="block text-[10px] text-white/50 truncate">
@@ -389,7 +389,7 @@ export default function DashboardLayout() {
                 <span className="material-symbols-outlined text-[28px]">menu</span>
               </button>
 
-              <h1 className="hidden md:block text-[20px] md:text-[24px] font-extrabold tracking-tight text-on-surface m-0 font-meta">
+              <h1 className="hidden md:block text-[20px] md:text-[24px] font-medium tracking-tight text-on-surface m-0 font-meta">
                 {getPageTitle()}
               </h1>
             </div>
@@ -428,7 +428,7 @@ export default function DashboardLayout() {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: 4,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface))',
                     outline: 'none',
@@ -450,7 +450,7 @@ export default function DashboardLayout() {
                   color: 'hsl(var(--on-surface))',
                   borderRadius: 4,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   textDecoration: 'none',
                   flexShrink: 0,
@@ -562,7 +562,7 @@ export default function DashboardLayout() {
                         <span
                           style={{
                             fontFamily: "'Public Sans',sans-serif",
-                            fontWeight: 600,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                           }}
@@ -572,7 +572,7 @@ export default function DashboardLayout() {
                         <span
                           style={{
                             fontFamily: "'Public Sans',sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 10,
                             color: 'hsl(var(--on-surface-muted))',
                           }}
@@ -597,7 +597,7 @@ export default function DashboardLayout() {
                             <span
                               style={{
                                 fontFamily: "'Public Sans',sans-serif",
-                                fontWeight: 700,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 fontSize: 12,
                                 color: 'hsl(var(--on-surface-muted))',
                               }}
@@ -641,7 +641,7 @@ export default function DashboardLayout() {
                                 <div
                                   style={{
                                     fontFamily: "'Public Sans',sans-serif",
-                                    fontWeight: 600,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     fontSize: 12,
                                     color: 'hsl(var(--on-surface))',
                                     marginBottom: 2,
@@ -663,7 +663,7 @@ export default function DashboardLayout() {
                                 <div
                                   style={{
                                     fontFamily: "'Public Sans',sans-serif",
-                                    fontWeight: 700,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     fontSize: 10,
                                     color: 'hsl(var(--on-surface-muted))',
                                     marginTop: 4,
@@ -730,7 +730,7 @@ export default function DashboardLayout() {
                           justifyContent: 'center',
                           color: '#fff',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 11,
                         }}
                       >
@@ -742,7 +742,7 @@ export default function DashboardLayout() {
                     className="hidden md:block"
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface))',
                       maxWidth: 100,
@@ -754,6 +754,7 @@ export default function DashboardLayout() {
                   >
                     {userName?.toLowerCase()}
                   </span>
+
                   <span
                     className="material-symbols-outlined"
                     style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
@@ -793,7 +794,7 @@ export default function DashboardLayout() {
                         <div
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                             textTransform: 'capitalize',
@@ -805,7 +806,7 @@ export default function DashboardLayout() {
                         <div
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 10,
                             color: 'hsl(var(--on-surface-muted))',
                           }}
@@ -828,7 +829,7 @@ export default function DashboardLayout() {
                             gap: 10,
                             padding: '10px 14px',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 12,
                             color: 'hsl(var(--on-surface))',
                             textDecoration: 'none',
@@ -859,7 +860,7 @@ export default function DashboardLayout() {
                           gap: 10,
                           padding: '10px 14px',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12,
                           color: 'hsl(var(--destructive))',
                           background: 'none',
@@ -895,24 +896,24 @@ export default function DashboardLayout() {
         {/* Dashboard Footer */}
         <footer className="mt-16 py-10 px-12 border-t border-border/10 bg-muted/5">
           <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-micro text-muted-foreground/40 mb-0 font-bold tracking-tight uppercase">
+            <p className="text-micro text-muted-foreground/40 mb-0 font-medium tracking-tight uppercase">
               © {new Date().getFullYear()} The Base Movement. National Infrastructure.
             </p>
             <div className="flex flex-wrap justify-center items-center gap-6">
               <Link
-                className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
+                className="font-medium text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
                 to="/dashboard/privacy"
               >
                 Privacy
               </Link>
               <Link
-                className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
+                className="font-medium text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
                 to="/dashboard/terms"
               >
                 Terms
               </Link>
               <Link
-                className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
+                className="font-medium text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
                 to="/dashboard/contact"
               >
                 Support

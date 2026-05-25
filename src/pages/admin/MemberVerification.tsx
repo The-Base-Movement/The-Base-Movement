@@ -163,7 +163,7 @@ export default function MemberVerification() {
                     style={{
                       fontSize: 9.5,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: '#a87d10',
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
@@ -176,7 +176,7 @@ export default function MemberVerification() {
                     style={{
                       fontSize: 13,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       lineHeight: 1.2,
                     }}
@@ -285,7 +285,7 @@ export default function MemberVerification() {
                 margin: 0,
                 fontSize: 12,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >

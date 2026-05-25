@@ -307,7 +307,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           to: '/admin/blogs',
           icon: 'description',
           label: 'Blog posts',
-          permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+          permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
         },
         {
           to: '/admin/authors',
@@ -393,7 +393,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   return (
-    <div className="h-screen bg-[#f1f5ee] font-meta text-on-surface flex overflow-hidden">
+    <div className="h-screen bg-[#f1f5ee] font-meta text-on-surface flex overflow-hidden admin-context">
       <SEO noindex />
       <div
         className={cn(

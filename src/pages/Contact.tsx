@@ -55,7 +55,7 @@ export default function Contact() {
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
-          <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-4">
+          <h1 className="text-white text-5xl md:text-7xl font-medium tracking-tighter mb-4">
             Get in touch
           </h1>
           <div className={cn('bl', 'mx-auto')}>
@@ -63,7 +63,7 @@ export default function Contact() {
             <div />
             <div />
           </div>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto font-body-md">
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto font-body-md prose-standard">
             Have a question or want to get involved? Reach out to our team. We are a movement of
             ordinary citizens building an extraordinary nation.
           </p>
@@ -83,7 +83,7 @@ export default function Contact() {
           {/* Form */}
           <div className="lg:col-span-3">
             <div className="bg-white p-6 sm:p-8 md:p-12 border border-slate-200 rounded-none shadow-sm h-full">
-              <h2 className="text-2xl font-bold text-charcoal-dark mb-8 font-meta tracking-tight">
+              <h2 className="text-2xl font-medium text-charcoal-dark mb-8 font-meta tracking-tight">
                 Send us a message
               </h2>
 
@@ -97,7 +97,7 @@ export default function Contact() {
                       send
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-charcoal-dark mb-3 font-meta tracking-tight">
+                  <h3 className="text-xl font-medium text-charcoal-dark mb-3 font-meta tracking-tight">
                     Message sent
                   </h3>
                   <p className="text-slate-600 text-sm md:text-base max-w-xs mx-auto">

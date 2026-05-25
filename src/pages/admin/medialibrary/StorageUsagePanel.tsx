@@ -36,7 +36,7 @@ export function StorageUsagePanel() {
           <h4
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
               color: '#fff',
               marginBottom: 2,
@@ -70,7 +70,7 @@ export function StorageUsagePanel() {
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--primary))',
             }}
@@ -99,7 +99,7 @@ export function StorageUsagePanel() {
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 10,
               color: 'rgba(255,255,255,0.25)',
             }}
@@ -109,7 +109,7 @@ export function StorageUsagePanel() {
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 10,
               color: 'rgba(255,255,255,0.25)',
             }}

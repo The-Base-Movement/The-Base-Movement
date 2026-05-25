@@ -38,7 +38,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
         <h4
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-semibold, 600)',
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 15,
             color: '#fff',
             margin: 0,
@@ -98,7 +98,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
               alignItems: 'center',
               gap: 6,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13.5,
               color: 'hsl(var(--on-surface))',
             }}
@@ -155,7 +155,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               margin: 0,
@@ -173,7 +173,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
               alignItems: 'center',
               gap: 2,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               color: 'hsl(var(--accent))',
               padding: 0,

@@ -59,7 +59,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
             borderRadius: 4,
             fontSize: 13,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             outline: 'none',
             boxSizing: 'border-box',
           }}
@@ -163,7 +163,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                           style={{
                             margin: 0,
                             fontSize: 10,
-                            fontWeight: 600,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface-muted))',
                           }}
                         >
@@ -199,7 +199,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                       style={{
                         margin: 0,
                         fontSize: 10,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
@@ -223,7 +223,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                     style={{
                       padding: '12px 18px',
                       fontSize: 12,
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       whiteSpace: 'nowrap',
                     }}

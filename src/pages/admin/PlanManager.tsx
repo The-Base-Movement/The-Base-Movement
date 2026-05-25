@@ -281,7 +281,7 @@ export default function PlanManager() {
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
@@ -340,7 +340,7 @@ export default function PlanManager() {
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10.5,
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
@@ -359,7 +359,7 @@ export default function PlanManager() {
                         textAlign: 'left',
                         padding: '12px 16px',
                         fontSize: 11,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                       }}
@@ -371,7 +371,7 @@ export default function PlanManager() {
                         textAlign: 'left',
                         padding: '12px 16px',
                         fontSize: 11,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                       }}
@@ -383,7 +383,7 @@ export default function PlanManager() {
                         textAlign: 'left',
                         padding: '12px 16px',
                         fontSize: 11,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                       }}
@@ -395,7 +395,7 @@ export default function PlanManager() {
                         textAlign: 'center',
                         padding: '12px 16px',
                         fontSize: 11,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         width: 100,
@@ -408,7 +408,7 @@ export default function PlanManager() {
                         textAlign: 'right',
                         padding: '12px 16px',
                         fontSize: 11,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         width: 120,
@@ -451,7 +451,7 @@ export default function PlanManager() {
                             <span
                               style={{
                                 fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 fontSize: 10,
                                 color: pillar.color,
                                 textTransform: 'uppercase',
@@ -478,7 +478,7 @@ export default function PlanManager() {
                       <td style={{ padding: '16px', verticalAlign: 'top', maxWidth: 360 }}>
                         <div
                           style={{
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                           }}
@@ -520,7 +520,7 @@ export default function PlanManager() {
                                 key={i}
                                 style={{
                                   fontSize: 10.5,
-                                  fontWeight: 'var(--font-weight-semibold, 600)',
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   color: 'hsl(var(--on-surface))',
                                   background: 'hsl(var(--container-low))',
                                   border: '1px solid hsl(var(--border))',
@@ -649,7 +649,7 @@ export default function PlanManager() {
                 <h4
                   style={{
                     margin: 0,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 16,
                   }}
                 >
@@ -689,7 +689,7 @@ export default function PlanManager() {
                     style={{
                       display: 'block',
                       fontSize: 10.5,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -727,7 +727,7 @@ export default function PlanManager() {
                     style={{
                       display: 'block',
                       fontSize: 10.5,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -762,7 +762,7 @@ export default function PlanManager() {
                     style={{
                       display: 'block',
                       fontSize: 10.5,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -805,7 +805,7 @@ export default function PlanManager() {
                     style={{
                       display: 'block',
                       fontSize: 10.5,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -839,7 +839,7 @@ export default function PlanManager() {
                     style={{
                       display: 'block',
                       fontSize: 10.5,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -877,7 +877,7 @@ export default function PlanManager() {
                   style={{
                     display: 'block',
                     fontSize: 10.5,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
@@ -921,7 +921,7 @@ export default function PlanManager() {
                     <h5
                       style={{
                         margin: 0,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 13,
                       }}
                     >
@@ -988,7 +988,7 @@ export default function PlanManager() {
                           <span
                             style={{
                               fontSize: 11,
-                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--primary))',
                             }}
                           >
@@ -1008,7 +1008,7 @@ export default function PlanManager() {
                               border: '1px solid hsl(var(--border))',
                               borderRadius: 4,
                               fontSize: 12,
-                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               background: '#fff',
                               color: 'hsl(var(--on-surface))',
                             }}
@@ -1044,7 +1044,7 @@ export default function PlanManager() {
                             <span
                               style={{
                                 fontSize: 10,
-                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 color: 'hsl(var(--on-surface-muted))',
                                 textTransform: 'uppercase',
                               }}

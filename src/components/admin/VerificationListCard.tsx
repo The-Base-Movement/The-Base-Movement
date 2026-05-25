@@ -29,7 +29,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
     marginTop: 6,
     fontSize: 12,
     fontFamily: "'Public Sans', sans-serif",
-    fontWeight: 700,
+    fontWeight: 'var(--font-weight-medium, 500)',
     color: 'hsl(var(--on-surface-muted))',
   }
 
@@ -74,7 +74,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: isActive ? 'rgba(255,255,255,.6)' : 'hsl(var(--on-surface-muted))',
               }}
@@ -88,7 +88,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13.5,
               color: isActive ? '#fff' : 'hsl(var(--on-surface))',
               overflow: 'hidden',
@@ -103,7 +103,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
               fontSize: 10.5,
               color: isActive ? 'rgba(255,255,255,.45)' : 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontVariantNumeric: 'tabular-nums',
               display: 'block',
             }}
@@ -115,7 +115,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
               fontSize: 10,
               color: isActive ? 'rgba(255,255,255,.3)' : 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               display: 'block',
               marginTop: 1,
               opacity: 0.8,
@@ -166,7 +166,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
               borderRadius: 99,
               fontSize: 9.5,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: '#fff',
               textTransform: 'uppercase',
               letterSpacing: '.05em',

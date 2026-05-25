@@ -4,7 +4,7 @@ import SEO from '@/components/SEO'
 export default function Terms() {
   return (
     <main className="bg-surface-warm font-body-md min-h-screen pb-24">
-      <SEO 
+      <SEO
         title="Terms of Service"
         description="Official terms and membership agreement for The Base Movement."
         canonical="/terms"
@@ -15,12 +15,15 @@ export default function Terms() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10">
           <Breadcrumbs />
-          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">Member Governance</p>
-          <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4">
+          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">
+            Member Governance
+          </p>
+          <h1 className="font-meta font-medium text-4xl md:text-5xl tracking-tight leading-tight mb-4">
             Terms of <span className="text-brand-green">service</span>
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl font-body-md">
-            The institutional framework and membership agreement that governs participation in The Base Movement.
+            The institutional framework and membership agreement that governs participation in The
+            Base Movement.
           </p>
         </div>
       </div>
@@ -28,16 +31,25 @@ export default function Terms() {
       <div className="max-w-[1280px] mx-auto px-8 py-16">
         <div className="max-w-4xl">
           <div className="flow" style={{ '--flow-space': '3rem' } as React.CSSProperties}>
-            
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
                 <div className="w-12 h-12 bg-brand-green/10 rounded-none flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 24 }}>balance</span>
+                  <span
+                    className="material-symbols-outlined text-brand-green"
+                    style={{ fontSize: 24 }}
+                  >
+                    balance
+                  </span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Membership agreement</h2>
+                  <h2 className="text-xl font-medium text-charcoal-dark mb-4 font-meta tracking-tight">
+                    Membership agreement
+                  </h2>
                   <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
-                    By joining The Base, you agree to support the movement's objectives of promoting civic engagement and youth empowerment. You commit to upholding the values of integrity, accountability, and national development. This agreement constitutes a formal commitment to the principles of 'Ghana First'.
+                    By joining The Base, you agree to support the movement's objectives of promoting
+                    civic engagement and youth empowerment. You commit to upholding the values of
+                    integrity, accountability, and national development. This agreement constitutes
+                    a formal commitment to the principles of 'Ghana First'.
                   </p>
                 </div>
               </div>
@@ -46,12 +58,22 @@ export default function Terms() {
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
                 <div className="w-12 h-12 bg-warm-gold/10 rounded-none flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-warm-gold" style={{ fontSize: 24 }}>info</span>
+                  <span
+                    className="material-symbols-outlined text-warm-gold"
+                    style={{ fontSize: 24 }}
+                  >
+                    info
+                  </span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Code of conduct</h2>
+                  <h2 className="text-xl font-medium text-charcoal-dark mb-4 font-meta tracking-tight">
+                    Code of conduct
+                  </h2>
                   <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
-                    Members are expected to engage in constructive dialogue and represent the movement with dignity at all times. Any form of hate speech, violence, or illegal activity will result in immediate termination of membership and potential restriction from movement spaces.
+                    Members are expected to engage in constructive dialogue and represent the
+                    movement with dignity at all times. Any form of hate speech, violence, or
+                    illegal activity will result in immediate termination of membership and
+                    potential restriction from movement spaces.
                   </p>
                 </div>
               </div>
@@ -60,25 +82,37 @@ export default function Terms() {
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
                 <div className="w-12 h-12 bg-charcoal-dark/10 rounded-none flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-charcoal-dark" style={{ fontSize: 24 }}>check_circle</span>
+                  <span
+                    className="material-symbols-outlined text-charcoal-dark"
+                    style={{ fontSize: 24 }}
+                  >
+                    check_circle
+                  </span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Platform usage & security</h2>
+                  <h2 className="text-xl font-medium text-charcoal-dark mb-4 font-meta tracking-tight">
+                    Platform usage & security
+                  </h2>
                   <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
-                    Your member portal is for personal use only. You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account. Unauthorized attempts to access movement data or disrupt platform operations will be met with institutional and legal action.
+                    Your member portal is for personal use only. You are responsible for maintaining
+                    the confidentiality of your login credentials and for all activities that occur
+                    under your account. Unauthorized attempts to access movement data or disrupt
+                    platform operations will be met with institutional and legal action.
                   </p>
                 </div>
               </div>
             </section>
 
             <div className="bg-charcoal-dark p-8 md:p-12 border-l-4 border-warm-gold text-white">
-              <h3 className="font-meta font-bold text-xl tracking-tight mb-6">Institutional commitments</h3>
+              <h3 className="font-meta font-medium text-xl tracking-tight mb-6">
+                Institutional commitments
+              </h3>
               <ul className="space-y-4">
                 {[
                   'Support movement activities and local chapter events',
                   'Promote the values of The Base within your digital and local community',
                   'Engage respectfully with other members and movement leadership',
-                  'Maintain the integrity of movement information and internal dispatches'
+                  'Maintain the integrity of movement information and internal dispatches',
                 ].map((commitment, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-warm-gold mt-2 shrink-0"></span>
@@ -89,7 +123,8 @@ export default function Terms() {
             </div>
 
             <p className="text-xs text-slate-400 pt-8 border-t border-slate-200">
-              Last updated: April 2026. By continuing to use the portal, you agree to these institutional terms.
+              Last updated: April 2026. By continuing to use the portal, you agree to these
+              institutional terms.
             </p>
           </div>
         </div>

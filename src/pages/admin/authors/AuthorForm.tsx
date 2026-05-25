@@ -191,7 +191,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 10,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               textTransform: 'uppercase',
               letterSpacing: '0.15em',
               color: 'hsl(var(--on-surface-muted))',
@@ -255,7 +255,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                     onClick={clearMemberSelection}
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 10,
                       textTransform: 'uppercase',
                       color: 'hsl(var(--destructive))',
@@ -443,7 +443,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                                 <span
                                   style={{
                                     fontSize: 10,
-                                    fontWeight: 'var(--font-weight-semibold, 600)',
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     color: 'hsl(var(--primary))',
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.06em',
@@ -515,7 +515,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                         <b
                           style={{
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
                             color: 'hsl(var(--on-surface))',
                             overflow: 'hidden',
@@ -554,7 +554,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
                         fontSize: 9,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--primary))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.06em',
@@ -814,7 +814,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
                     fontSize: 11,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.1em',
                     color: 'hsl(var(--on-surface))',

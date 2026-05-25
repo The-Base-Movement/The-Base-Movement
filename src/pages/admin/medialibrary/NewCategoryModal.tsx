@@ -55,7 +55,7 @@ export function NewCategoryModal({
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 16,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -117,7 +117,7 @@ export function NewCategoryModal({
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 4,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 outline: 'none',
                 boxSizing: 'border-box',
@@ -157,7 +157,7 @@ export function NewCategoryModal({
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 4,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 outline: 'none',
                 boxSizing: 'border-box',

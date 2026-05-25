@@ -104,7 +104,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                           <b
                             style={{
                               fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              fontWeight: 'var(--font-weight-medium, 500)',
                             }}
                           >
                             {log.action}
@@ -219,7 +219,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 30,
                   letterSpacing: '-.02em',
                   fontVariantNumeric: 'tabular-nums',
@@ -330,7 +330,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                   <dt
                     style={{
                       fontSize: 9.5,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       letterSpacing: '.06em',
                       textTransform: 'uppercase',
@@ -415,7 +415,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     flex: 1,
                   }}
                 >
@@ -457,7 +457,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11.5,
                   }}
                 >
