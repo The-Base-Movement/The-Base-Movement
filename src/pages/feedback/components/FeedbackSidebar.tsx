@@ -58,7 +58,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 10,
             color: 'hsl(var(--accent))',
             textTransform: 'uppercase',
@@ -112,7 +112,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 color: 'rgba(255,255,255,.65)',
                 lineHeight: 1.55,
@@ -148,7 +148,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11.5,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -179,7 +179,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 16,
                       color: sentimentColor,
                       lineHeight: 1,
@@ -190,7 +190,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 10.5,
                       color: 'hsl(var(--on-surface-muted))',
                       marginTop: 3,
@@ -205,7 +205,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 9.5,
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
@@ -217,7 +217,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 9.5,
                       color: sentimentColor,
                     }}
@@ -281,7 +281,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--on-surface))',
                   lineHeight: 1.55,

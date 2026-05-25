@@ -123,7 +123,7 @@ export default function Dashboard() {
   return (
     <div className="main">
       {/* Welcome */}
-      <div style={{ marginBottom: 24 }}>
+      <div style={{ marginBottom: 'var(--stack-md, 24px)' }}>
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
@@ -140,8 +140,8 @@ export default function Dashboard() {
           className="dash-welcome-name"
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-semibold, 600)',
-            fontSize: 28,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 'var(--fs-xl, 28px)',
             color: 'hsl(var(--on-surface))',
             margin: '4px 0 0',
             lineHeight: 1,
@@ -191,8 +191,8 @@ export default function Dashboard() {
               style={{
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 14,
-                fontWeight: 'var(--font-weight-semibold, 600)',
-                letterSpacing: '-0.01em',
+                fontWeight: 'var(--font-weight-medium, 500)',
+                letterSpacing: '-.01em',
                 color: 'hsl(var(--on-surface))',
                 marginBottom: 20,
                 display: 'flex',
@@ -207,7 +207,7 @@ export default function Dashboard() {
                   alignItems: 'center',
                   gap: 6,
                   fontSize: 10,
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--destructive))',
                   textTransform: 'uppercase',
                   letterSpacing: '.06em',

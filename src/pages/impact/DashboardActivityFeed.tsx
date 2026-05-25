@@ -63,7 +63,7 @@ export function DashboardActivityFeed({
                 border: 'none',
                 cursor: 'pointer',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 textTransform: 'capitalize',
                 background: activeFilter === t ? '#fff' : 'none',
@@ -85,7 +85,7 @@ export function DashboardActivityFeed({
             border: '1px solid hsl(var(--border))',
             cursor: 'pointer',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 10,
             display: 'flex',
             alignItems: 'center',
@@ -128,7 +128,7 @@ export function DashboardActivityFeed({
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 9,
                       color: 'hsl(var(--on-surface-muted))',
                       marginBottom: 4,
@@ -147,7 +147,7 @@ export function DashboardActivityFeed({
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 4,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       outline: 'none',
                       boxSizing: 'border-box',
@@ -197,7 +197,7 @@ export function DashboardActivityFeed({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -229,7 +229,7 @@ export function DashboardActivityFeed({
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--primary))',
                     flexShrink: 0,
@@ -241,7 +241,7 @@ export function DashboardActivityFeed({
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface))',
                       overflow: 'hidden',
@@ -254,7 +254,7 @@ export function DashboardActivityFeed({
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -267,7 +267,7 @@ export function DashboardActivityFeed({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--primary))',
                   }}
@@ -277,7 +277,7 @@ export function DashboardActivityFeed({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 9,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -305,7 +305,7 @@ export function DashboardActivityFeed({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}

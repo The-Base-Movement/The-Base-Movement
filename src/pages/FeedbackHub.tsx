@@ -104,7 +104,7 @@ export default function FeedbackHub() {
               fontSize: 12.5,
               marginTop: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             Submit ground-level intelligence directly to the national steering committee.
@@ -131,7 +131,7 @@ export default function FeedbackHub() {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11.5,
                 color: 'hsl(var(--primary))',
               }}
@@ -156,7 +156,7 @@ export default function FeedbackHub() {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 10.5,
                   color: 'hsl(var(--primary))',
                 }}
@@ -205,7 +205,7 @@ export default function FeedbackHub() {
                     <span
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
                         color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
                         letterSpacing: '-.005em',
@@ -226,7 +226,7 @@ export default function FeedbackHub() {
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 10.5,
                   color:
                     feedback.length > 450
@@ -255,7 +255,7 @@ export default function FeedbackHub() {
                     borderRadius: 4,
                     padding: '14px 14px 40px',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                     color: 'hsl(var(--on-surface))',
                     background: 'hsl(var(--container-low))',
@@ -295,7 +295,7 @@ export default function FeedbackHub() {
                 style={{
                   margin: '8px 0 0',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface-muted))',
                 }}

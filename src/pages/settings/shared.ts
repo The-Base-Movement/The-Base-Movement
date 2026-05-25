@@ -1,6 +1,6 @@
 export const labelStyle: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 10.5,
   color: 'hsl(var(--on-surface-muted))',
   letterSpacing: '.06em',

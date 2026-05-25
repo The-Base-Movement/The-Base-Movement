@@ -125,8 +125,8 @@ export default function ProductDetails() {
       <div className="bg-off-white min-h-screen">
         <SEO title="Product Not Found" noindex />
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 text-center">
-          <h2 className="text-2xl font-bold text-stone-900 mb-4">Product not found</h2>
-          <Link to="/store" className="text-brand-green font-bold hover:underline">
+          <h2 className="text-2xl font-medium text-stone-900 mb-4">Product not found</h2>
+          <Link to="/store" className="text-brand-green font-medium hover:underline">
             Back to store
           </Link>
         </div>
@@ -172,7 +172,7 @@ export default function ProductDetails() {
         <div className="flex items-center justify-between mb-10 gap-4 flex-wrap">
           <Link
             to={storeUrl}
-            className="flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors text-xs font-bold font-meta shrink-0"
+            className="flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors text-xs font-medium font-meta shrink-0"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               arrow_back
@@ -190,11 +190,11 @@ export default function ProductDetails() {
               >
                 favorite
               </span>
-              <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-red hidden sm:inline">
+              <span className="font-meta text-micro font-medium tracking-tight text-stone-600 group-hover:text-brand-red hidden sm:inline">
                 Wishlist
               </span>
               {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-medium w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                   {wishlistCount}
                 </span>
               )}
@@ -209,11 +209,11 @@ export default function ProductDetails() {
               >
                 shopping_bag
               </span>
-              <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-green hidden sm:inline">
+              <span className="font-meta text-micro font-medium tracking-tight text-stone-600 group-hover:text-brand-green hidden sm:inline">
                 Bag
               </span>
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-medium w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                   {cartCount}
                 </span>
               )}

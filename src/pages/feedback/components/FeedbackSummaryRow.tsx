@@ -69,7 +69,7 @@ export function FeedbackSummaryRow({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
@@ -81,7 +81,7 @@ export function FeedbackSummaryRow({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -114,7 +114,7 @@ export function FeedbackSummaryRow({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 10,
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
@@ -126,7 +126,7 @@ export function FeedbackSummaryRow({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
                   color: sentimentColor,
                 }}
@@ -159,7 +159,7 @@ export function FeedbackSummaryRow({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
@@ -171,7 +171,7 @@ export function FeedbackSummaryRow({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
               }}

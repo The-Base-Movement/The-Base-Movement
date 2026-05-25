@@ -77,7 +77,7 @@ export function DirectAppointModal({
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 15,
               color: '#fff',
               margin: 0,
@@ -127,7 +127,7 @@ export function DirectAppointModal({
                   htmlFor="appoint-member-search"
                   style={{
                     fontSize: 11,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
@@ -208,7 +208,7 @@ export function DirectAppointModal({
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 12,
                             flexShrink: 0,
                             color: 'hsl(var(--on-surface))',
@@ -238,7 +238,7 @@ export function DirectAppointModal({
                             style={{
                               margin: 0,
                               fontSize: 13,
-                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--on-surface))',
                               fontFamily: "'Public Sans', sans-serif",
                             }}
@@ -309,7 +309,7 @@ export function DirectAppointModal({
                     htmlFor="appoint-chapter-select"
                     style={{
                       fontSize: 11,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -368,7 +368,7 @@ export function DirectAppointModal({
                     htmlFor="appoint-role-select"
                     style={{
                       fontSize: 11,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',

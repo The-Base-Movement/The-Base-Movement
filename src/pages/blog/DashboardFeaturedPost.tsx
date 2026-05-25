@@ -30,7 +30,7 @@ export function DashboardFeaturedPost({ post, baseUrl }: DashboardFeaturedPostPr
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 10,
               color: 'hsl(var(--on-surface-muted))',
             }}
@@ -48,7 +48,7 @@ export function DashboardFeaturedPost({ post, baseUrl }: DashboardFeaturedPostPr
           <h2
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 18,
               color: 'hsl(var(--on-surface))',
               margin: '0 0 8px',
@@ -62,7 +62,7 @@ export function DashboardFeaturedPost({ post, baseUrl }: DashboardFeaturedPostPr
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 12.5,
             color: 'hsl(var(--on-surface-muted))',
             lineHeight: 1.55,
@@ -85,7 +85,7 @@ export function DashboardFeaturedPost({ post, baseUrl }: DashboardFeaturedPostPr
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
             }}
@@ -100,7 +100,7 @@ export function DashboardFeaturedPost({ post, baseUrl }: DashboardFeaturedPostPr
               alignItems: 'center',
               gap: 4,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--primary))',
               textDecoration: 'none',

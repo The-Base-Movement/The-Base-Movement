@@ -49,35 +49,53 @@ export function ProductInfo({
   availability,
   setAvailability,
   checkingAvailability,
-  checkRegionalAvailability
+  checkRegionalAvailability,
 }: ProductInfoProps) {
   return (
     <div className="flex flex-col">
       <div className="mb-8">
-        <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-micro font-bold tracking-tight rounded-full mb-4">
+        <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-micro font-medium tracking-tight rounded-full mb-4">
           {product.category}
         </span>
-        <h1 className="font-meta text-xl sm:text-2xl md:text-4xl font-bold tracking-tighter text-stone-900 mb-4">{product.name}</h1>
+        <h1 className="font-meta text-xl sm:text-2xl md:text-4xl font-medium tracking-tighter text-stone-900 mb-4">
+          {product.name}
+        </h1>
         {(() => {
           const count = product.reviews_data?.length ?? product.reviews ?? 0
           const avg = product.reviews_data?.length
-            ? (product.reviews_data.reduce((s, r) => s + r.rating, 0) / product.reviews_data.length)
-            : (product.rating || 4.8)
+            ? product.reviews_data.reduce((s, r) => s + r.rating, 0) / product.reviews_data.length
+            : product.rating || 4.8
           const displayRating = typeof avg === 'number' ? avg : parseFloat(String(avg))
           return (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-6">
               <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <span key={i} className="material-symbols-outlined" style={{ fontSize: 14, color: i <= displayRating ? '#DAA520' : '#d6d3d1', fontVariationSettings: i <= displayRating ? "'FILL' 1" : "'FILL' 0" }}>star</span>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <span
+                    key={i}
+                    className="material-symbols-outlined"
+                    style={{
+                      fontSize: 14,
+                      color: i <= displayRating ? '#DAA520' : '#d6d3d1',
+                      fontVariationSettings: i <= displayRating ? "'FILL' 1" : "'FILL' 0",
+                    }}
+                  >
+                    star
+                  </span>
                 ))}
-                <span className="ml-1 text-xs font-bold text-stone-900">{displayRating.toFixed(1)}</span>
+                <span className="ml-1 text-xs font-medium text-stone-900">
+                  {displayRating.toFixed(1)}
+                </span>
               </div>
               <span className="text-stone-300 text-xs">|</span>
-              <span className="text-xs text-stone-500 whitespace-nowrap">{count} verified {count === 1 ? 'review' : 'reviews'}</span>
+              <span className="text-xs text-stone-500 whitespace-nowrap">
+                {count} verified {count === 1 ? 'review' : 'reviews'}
+              </span>
             </div>
           )
         })()}
-        <p className="text-2xl font-bold text-brand-green">₵{product.price.toString().replace('GHS', '').replace('GH₵', '').replace('₵', '').trim()}</p>
+        <p className="text-2xl font-medium text-brand-green">
+          ₵{product.price.toString().replace('GHS', '').replace('GH₵', '').replace('₵', '').trim()}
+        </p>
       </div>
 
       <p className="text-stone-600 font-body-md leading-relaxed mb-10">
@@ -88,16 +106,29 @@ export function ProductInfo({
         {/* Color Selection */}
         {product.colors && product.colors.length > 0 && (
           <div>
-            <p className="text-micro font-bold text-stone-900 tracking-tight mb-4">Color: {selectedColor}</p>
+            <p className="text-micro font-medium text-stone-900 tracking-tight mb-4">
+              Color: {selectedColor}
+            </p>
+
             <div className="flex gap-3">
-              {product.colors.map(color => (
+              {product.colors.map((color) => (
                 <button
                   key={color}
                   onClick={() => setSelectedColor(color)}
                   className={`w-8 h-8 rounded-full border-2 transition-all ${
-                    selectedColor === color ? 'border-brand-green scale-110 shadow-md' : 'border-transparent shadow-sm'
+                    selectedColor === color
+                      ? 'border-brand-green scale-110 shadow-md'
+                      : 'border-transparent shadow-sm'
                   }`}
-                  style={{ backgroundColor: color.toLowerCase() === 'black' || color.toLowerCase() === 'jet black' ? '#1a1a1a' : color.toLowerCase() === 'green' || color.toLowerCase() === 'movement green' ? '#006B3C' : '#f5f5f4' }}
+                  style={{
+                    backgroundColor:
+                      color.toLowerCase() === 'black' || color.toLowerCase() === 'jet black'
+                        ? '#1a1a1a'
+                        : color.toLowerCase() === 'green' ||
+                            color.toLowerCase() === 'movement green'
+                          ? '#006B3C'
+                          : '#f5f5f4',
+                  }}
                   title={color}
                 />
               ))}
@@ -109,20 +140,20 @@ export function ProductInfo({
         {product.sizes && product.sizes.length > 0 && (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <p className="text-micro font-bold text-stone-900 tracking-tight">Select size</p>
-              <button 
+              <p className="text-micro font-medium text-stone-900 tracking-tight">Select size</p>
+              <button
                 onClick={() => setShowSizeGuide(true)}
-                className="text-micro font-bold text-brand-green tracking-tight hover:underline"
+                className="text-micro font-medium text-brand-green tracking-tight hover:underline"
               >
                 Size guide
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {product.sizes.map(size => (
+              {product.sizes.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
-                  className={`min-w-[48px] h-12 flex items-center justify-center border text-xs font-bold transition-all rounded-sm ${
+                  className={`min-w-[48px] h-12 flex items-center justify-center border text-xs font-medium transition-all rounded-sm ${
                     selectedSize === size
                       ? 'bg-brand-green border-brand-green text-white shadow-md'
                       : 'bg-white border-stone-200 text-stone-600 hover:border-brand-green'
@@ -139,18 +170,25 @@ export function ProductInfo({
         {product.customization_allowed && (
           <div className="p-6 bg-stone-50 border-l-4 border-brand-green space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-micro font-bold text-stone-900 tracking-tight">Patriot customization</p>
-              <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-0.5">Free</span>
+              <p className="text-micro font-medium text-stone-900 tracking-tight">
+                Patriot customization
+              </p>
+              <span className="text-micro font-medium text-brand-green bg-brand-green/10 px-2 py-0.5">
+                Free
+              </span>
             </div>
             <div className="relative">
-              <input aria-label="Enter your constituency or name" name="customizationText" id="input-3cf7f8"
+              <input
+                aria-label="Enter your constituency or name"
+                name="customizationText"
+                id="input-3cf7f8"
                 type="text"
                 placeholder="Enter your constituency or name..."
                 value={customizationText}
                 onChange={(e) => setCustomizationText(e.target.value.substring(0, 24))}
-                className="w-full h-12 bg-white border border-stone-200 px-4 text-xs font-bold focus:border-brand-green outline-none transition-all rounded-sm placeholder:text-stone-300 placeholder:font-medium"
+                className="w-full h-12 bg-white border border-stone-200 px-4 text-xs font-medium focus:border-brand-green outline-none transition-all rounded-sm placeholder:text-stone-300 placeholder:font-medium"
               />
-              <span className="absolute right-3 bottom-[-18px] text-[8px] font-bold text-stone-400">
+              <span className="absolute right-3 bottom-[-18px] text-[8px] font-medium text-stone-400">
                 {customizationText.length}/24 characters
               </span>
             </div>
@@ -160,42 +198,74 @@ export function ProductInfo({
         {/* Regional Availability Check */}
         <div className="p-6 bg-stone-50 border border-stone-200 rounded-sm space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-micro font-bold text-stone-900 tracking-tight">Regional fulfillment</p>
+            <p className="text-micro font-medium text-stone-900 tracking-tight">
+              Regional fulfillment
+            </p>
             <div className="flex items-center gap-1">
-              <div className={cn("w-2 h-2 rounded-full animate-pulse", availability ? (availability.available ? "bg-brand-green" : "bg-brand-red") : "bg-stone-300")} />
-              <span className="text-micro font-bold text-stone-500">Live status</span>
+              <div
+                className={cn(
+                  'w-2 h-2 rounded-full animate-pulse',
+                  availability
+                    ? availability.available
+                      ? 'bg-brand-green'
+                      : 'bg-brand-red'
+                    : 'bg-stone-300'
+                )}
+              />
+              <span className="text-micro font-medium text-stone-500">Live status</span>
             </div>
           </div>
-          
+
           <div className="flex gap-2">
-            <select name="selectedRegion" id="select-aa3e2f" 
+            <select
+              name="selectedRegion"
+              id="select-aa3e2f"
               value={selectedRegion}
               onChange={(e) => {
                 setSelectedRegion(e.target.value)
                 setAvailability(null)
               }}
-              className="flex-1 h-10 bg-white border border-stone-200 px-3 text-micro font-bold tracking-tight outline-none focus:border-brand-green rounded-sm"
+              className="flex-1 h-10 bg-white border border-stone-200 px-3 text-micro font-medium tracking-tight outline-none focus:border-brand-green rounded-sm"
             >
-              {['Greater Accra', 'Ashanti', 'Western', 'Central', 'Eastern', 'Volta', 'Northern', 'Upper East', 'Upper West', 'Bono', 'Bono East', 'Ahafo', 'Savannah', 'North East', 'Oti', 'Western North'].map(r => (
-                <option key={r} value={r}>{r}</option>
+              {[
+                'Greater Accra',
+                'Ashanti',
+                'Western',
+                'Central',
+                'Eastern',
+                'Volta',
+                'Northern',
+                'Upper East',
+                'Upper West',
+                'Bono',
+                'Bono East',
+                'Ahafo',
+                'Savannah',
+                'North East',
+                'Oti',
+                'Western North',
+              ].map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
               ))}
             </select>
             <button
               onClick={checkRegionalAvailability}
               disabled={checkingAvailability}
-              className="h-10 px-4 bg-primary text-white text-micro font-bold tracking-tight rounded-sm transition-all border-none cursor-pointer disabled:opacity-60 hover:opacity-90"
+              className="h-10 px-4 bg-primary text-white text-micro font-medium tracking-tight rounded-sm transition-all border-none cursor-pointer disabled:opacity-60 hover:opacity-90"
             >
               {checkingAvailability ? 'Checking...' : 'Check'}
             </button>
           </div>
 
           {availability && (
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               className={cn(
-                "text-micro font-bold leading-relaxed",
-                availability.available ? "text-brand-green" : "text-brand-red"
+                'text-micro font-medium leading-relaxed',
+                availability.available ? 'text-brand-green' : 'text-brand-red'
               )}
             >
               {availability.message}
@@ -206,34 +276,46 @@ export function ProductInfo({
         {/* Quantity */}
         <div className="flex items-end gap-8">
           <div className="flex-1">
-            <p className="text-micro font-bold text-stone-900 tracking-tight mb-4">Quantity</p>
+            <p className="text-micro font-medium text-stone-900 tracking-tight mb-4">Quantity</p>
             <div className="flex items-center w-full h-12 border border-stone-200 bg-white rounded-sm overflow-hidden">
-              <button 
+              <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="flex-1 h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
               >
-                <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 16 }}>remove</span>
+                <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 16 }}>
+                  remove
+                </span>
               </button>
-              <span className="flex-1 text-center font-bold text-stone-900">{quantity}</span>
-              <button 
+              <span className="flex-1 text-center font-medium text-stone-900">{quantity}</span>
+
+              <button
                 onClick={() => setQuantity(quantity + 1)}
                 className="flex-1 h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
               >
-                <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 16 }}>add</span>
+                <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 16 }}>
+                  add
+                </span>
               </button>
             </div>
           </div>
-          
+
           {product.specifications && Object.keys(product.specifications).length > 0 && (
             <div className="flex-1 hidden md:block">
-              <p className="text-micro font-bold text-stone-400 tracking-tight mb-4">Quick specs</p>
+              <p className="text-micro font-medium text-stone-400 tracking-tight mb-4">
+                Quick specs
+              </p>
+
               <div className="grid grid-cols-2 gap-2">
-                {Object.entries(product.specifications).slice(0, 2).map(([key, value]) => (
-                  <div key={key} className="flex flex-col">
-                    <span className="text-[8px] font-bold text-stone-400">{key}</span>
-                    <span className="text-micro font-bold text-stone-900 truncate">{value}</span>
-                  </div>
-                ))}
+                {Object.entries(product.specifications)
+                  .slice(0, 2)
+                  .map(([key, value]) => (
+                    <div key={key} className="flex flex-col">
+                      <span className="text-[8px] font-medium text-stone-400">{key}</span>
+                      <span className="text-micro font-medium text-stone-900 truncate">
+                        {value}
+                      </span>
+                    </div>
+                  ))}
               </div>
             </div>
           )}
@@ -245,13 +327,19 @@ export function ProductInfo({
           onClick={handleAddToCart}
           disabled={isComingSoon}
           className={cn(
-            "flex-1 h-14 text-xs font-bold tracking-tight rounded-sm border-none cursor-pointer transition-opacity flex items-center justify-center gap-2",
-            isComingSoon ? "bg-stone-100 text-stone-400 border border-stone-200" : "bg-primary text-white shadow-lg shadow-brand-green/20 hover:opacity-90"
+            'flex-1 h-14 text-xs font-medium tracking-tight rounded-sm border-none cursor-pointer transition-opacity flex items-center justify-center gap-2',
+            isComingSoon
+              ? 'bg-stone-100 text-stone-400 border border-stone-200'
+              : 'bg-primary text-white shadow-lg shadow-brand-green/20 hover:opacity-90'
           )}
         >
-          {isComingSoon ? 'Coming soon' : (
+          {isComingSoon ? (
+            'Coming soon'
+          ) : (
             <>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>shopping_bag</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                shopping_bag
+              </span>
               Add to bag
             </>
           )}
@@ -268,32 +356,57 @@ export function ProductInfo({
           }}
           className={`w-14 h-14 border flex items-center justify-center transition-all rounded-sm ${isWishlisted ? 'border-brand-red bg-brand-red/5 text-brand-red shadow-lg shadow-brand-red/10' : 'border-stone-200 text-stone-400 hover:border-brand-red hover:text-brand-red'}`}
         >
-          <span className="material-symbols-outlined transition-all" style={{ fontSize: 24, fontVariationSettings: isWishlisted ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+          <span
+            className="material-symbols-outlined transition-all"
+            style={{ fontSize: 24, fontVariationSettings: isWishlisted ? "'FILL' 1" : "'FILL' 0" }}
+          >
+            favorite
+          </span>
         </button>
         <button
           onClick={() => setIsShareModalOpen(true)}
           className="w-14 h-14 border border-stone-200 text-stone-400 hover:border-brand-green hover:text-brand-green transition-all rounded-sm flex items-center justify-center"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 24 }}>share</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
+            share
+          </span>
         </button>
       </div>
 
       {/* Delivery & Returns Info */}
       <div className="grid grid-cols-3 gap-2 sm:gap-6 py-8 border-t border-stone-200">
         <div className="flex flex-col items-center text-center gap-1 sm:gap-2">
-          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>local_shipping</span>
-          <p className="text-[10px] sm:text-sm font-bold text-stone-900 tracking-tight leading-tight">Fast delivery</p>
-          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">2-3 Days</p>
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>
+            local_shipping
+          </span>
+          <p className="text-[10px] sm:text-sm font-medium text-stone-900 tracking-tight leading-tight">
+            Fast delivery
+          </p>
+          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">
+            2-3 Days
+          </p>
         </div>
         <div className="flex flex-col items-center text-center gap-1 sm:gap-2 border-x border-stone-100 px-1 sm:px-2">
-          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>verified_user</span>
-          <p className="text-[10px] sm:text-sm font-bold text-stone-900 tracking-tight leading-tight">Secure pay</p>
-          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">Verified</p>
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>
+            verified_user
+          </span>
+          <p className="text-[10px] sm:text-sm font-medium text-stone-900 tracking-tight leading-tight">
+            Secure pay
+          </p>
+          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">
+            Verified
+          </p>
         </div>
         <div className="flex flex-col items-center text-center gap-1 sm:gap-2">
-          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>autorenew</span>
-          <p className="text-[10px] sm:text-sm font-bold text-stone-900 tracking-tight leading-tight">Easy returns</p>
-          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">7-Day Policy</p>
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>
+            autorenew
+          </span>
+          <p className="text-[10px] sm:text-sm font-medium text-stone-900 tracking-tight leading-tight">
+            Easy returns
+          </p>
+          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">
+            7-Day Policy
+          </p>
         </div>
       </div>
     </div>

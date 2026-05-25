@@ -63,7 +63,7 @@ export function OperationalTransparency({
             <h2
               style={{
                 fontSize: 'clamp(22px, 4vw, 36px)',
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
                 letterSpacing: '-0.02em',
@@ -99,7 +99,7 @@ export function OperationalTransparency({
             <p
               style={{
                 fontSize: 10,
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -112,7 +112,7 @@ export function OperationalTransparency({
             <p
               style={{
                 fontSize: 20,
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
@@ -133,7 +133,7 @@ export function OperationalTransparency({
             <p
               style={{
                 fontSize: 10,
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--primary))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -146,7 +146,7 @@ export function OperationalTransparency({
             <p
               style={{
                 fontSize: 20,
-                fontWeight: 900,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--primary))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
@@ -181,7 +181,7 @@ export function OperationalTransparency({
                 padding: '0 20px',
                 height: 42,
                 fontSize: 12,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontFamily: "'Public Sans', sans-serif",
                 border: 'none',
                 borderRadius: 4,
@@ -242,7 +242,7 @@ export function OperationalTransparency({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 4,
                   fontSize: 13,
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontFamily: "'Public Sans', sans-serif",
                   outline: 'none',
                   boxSizing: 'border-box',
@@ -291,7 +291,7 @@ export function OperationalTransparency({
               <p
                 style={{
                   fontSize: 10,
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -324,7 +324,7 @@ export function OperationalTransparency({
                         style={{
                           padding: '10px 16px',
                           fontSize: 10,
-                          fontWeight: 600,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           textTransform: 'uppercase',
                           letterSpacing: '0.05em',
@@ -368,7 +368,7 @@ export function OperationalTransparency({
                             <p
                               style={{
                                 fontSize: 13,
-                                fontWeight: 700,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 color: 'hsl(var(--on-surface))',
                                 margin: 0,
                                 overflow: 'hidden',
@@ -383,7 +383,7 @@ export function OperationalTransparency({
                             <span
                               style={{
                                 fontSize: 11,
-                                fontWeight: 600,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 padding: '3px 8px',
                                 borderRadius: 3,
                                 background: 'hsl(var(--container-low))',
@@ -397,7 +397,7 @@ export function OperationalTransparency({
                             <p
                               style={{
                                 fontSize: 12,
-                                fontWeight: 600,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 color: 'hsl(var(--on-surface-muted))',
                                 margin: 0,
                               }}
@@ -415,7 +415,7 @@ export function OperationalTransparency({
                             <span
                               style={{
                                 fontSize: 13,
-                                fontWeight: 800,
+                                fontWeight: 'var(--font-weight-semibold, 600)',
                                 color: 'hsl(var(--on-surface))',
                                 fontFamily: "'Public Sans', sans-serif",
                               }}
@@ -484,7 +484,7 @@ export function OperationalTransparency({
                         <p
                           style={{
                             fontSize: 13,
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface))',
                             margin: 0,
                             overflow: 'hidden',
@@ -519,7 +519,7 @@ export function OperationalTransparency({
                         <p
                           style={{
                             fontSize: 14,
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             color: 'hsl(var(--on-surface))',
                             margin: 0,
                             fontFamily: "'Public Sans', sans-serif",
@@ -560,7 +560,7 @@ export function OperationalTransparency({
               <p
                 style={{
                   fontSize: 10,
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',

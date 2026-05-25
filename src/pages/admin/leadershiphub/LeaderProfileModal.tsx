@@ -63,7 +63,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
               color: '#fff',
             }}
@@ -99,7 +99,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 22,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -123,7 +123,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 17,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -199,7 +199,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                       style={{
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 9,
                         textTransform: 'uppercase',
                         color: 'hsl(var(--on-surface-muted))',

@@ -231,7 +231,7 @@ export default function Blog() {
               >
                 progress_activity
               </span>
-              <p className="text-micro font-semibold tracking-tight text-stone-400">
+              <p className="text-micro font-medium tracking-tight text-stone-400">
                 Loading articles...
               </p>
             </div>
@@ -262,7 +262,7 @@ export default function Blog() {
                   <div className="lg:w-2/3">
                     {rest.length > 0 && (
                       <>
-                        <h2 className="text-stone-900 font-bold tracking-tight mb-5 text-base">
+                        <h2 className="text-stone-900 font-medium tracking-tight mb-5 text-base">
                           Latest articles
                         </h2>
                         <div className="grid sm:grid-cols-2 gap-5 md:gap-8">
@@ -294,7 +294,7 @@ export default function Blog() {
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 14,
                     color: '#fff',
                     marginBottom: 4,
@@ -349,7 +349,7 @@ export default function Blog() {
                     border: 'none',
                     borderRadius: 4,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     cursor: 'pointer',
                     letterSpacing: '0.04em',

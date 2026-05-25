@@ -431,7 +431,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   isSidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0 w-0'
                 )}
               >
-                <p className="text-white font-bold text-sm leading-none mb-0 tracking-tight">
+                <p className="text-white font-medium text-sm leading-none mb-0 tracking-tight">
                   The Base
                 </p>
                 <div className="flex items-center gap-1.5 mt-1.5">
@@ -439,7 +439,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     Admin · Ops
                   </p>
                   <span className="w-1 h-1 rounded-full bg-white/20" />
-                  <p className="text-white/40 text-[8px] font-bold uppercase leading-none tracking-tight">
+                  <p className="text-white/40 text-[8px] font-medium uppercase leading-none tracking-tight">
                     HQ
                   </p>
                 </div>
@@ -486,7 +486,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   >
                     <div className="flex items-center gap-3">
                       {isSidebarOpen ? (
-                        <span className="text-[9px] font-bold text-white/35 tracking-[0.08em] uppercase whitespace-nowrap py-1">
+                        <span className="text-[9px] font-medium text-white/35 tracking-[0.08em] uppercase whitespace-nowrap py-1">
                           {group.label}
                         </span>
                       ) : (
@@ -525,7 +525,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            'flex items-center gap-[10px] px-[10px] py-[8px] mx-[8px] transition-all relative group/item rounded-[3px] font-display font-bold text-[11.5px]',
+                            'flex items-center gap-[10px] px-[10px] py-[8px] mx-[8px] transition-all relative group/item rounded-[3px] font-display font-medium text-[11.5px]',
                             isActive
                               ? 'bg-[hsl(var(--destructive))] text-white shadow-sm'
                               : 'text-white/70 hover:text-white hover:bg-white/5'
@@ -578,7 +578,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       overflow: 'hidden',
                       flexShrink: 0,
@@ -603,7 +603,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         color: '#fff',
                         lineHeight: 1.3,
@@ -617,7 +617,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 9.5,
                         color: 'rgba(255,255,255,0.4)',
                         lineHeight: 1.3,
@@ -753,7 +753,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 4,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   background: 'hsl(var(--container-low))',
                   color: 'hsl(var(--on-surface))',
@@ -891,7 +891,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                                 <div
                                   style={{
                                     fontFamily: "'Public Sans', sans-serif",
-                                    fontWeight: 700,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     fontSize: 10.5,
                                     color: 'hsl(var(--on-surface-muted))',
                                     overflow: 'hidden',
@@ -936,7 +936,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                             padding: '28px 16px',
                             textAlign: 'center',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 12,
                             color: 'hsl(var(--on-surface-muted))',
                           }}
@@ -957,7 +957,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 10.5,
                           color: 'hsl(var(--on-surface-muted))',
                         }}
@@ -1009,7 +1009,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       borderRadius: 99,
                       border: '1.5px solid #fff',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 8,
                       display: 'flex',
                       alignItems: 'center',
@@ -1056,7 +1056,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 13,
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -1071,7 +1071,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                             border: 'none',
                             color: 'hsl(var(--primary))',
                             fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 700,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 10,
                             cursor: 'pointer',
                             textTransform: 'uppercase',
@@ -1138,7 +1138,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                               <div
                                 style={{
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 700,
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 10.5,
                                   color: 'hsl(var(--on-surface-muted))',
                                   lineHeight: 1.4,
@@ -1191,7 +1191,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           <p
                             style={{
                               fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               fontSize: 12,
                               color: 'hsl(var(--on-surface-muted))',
                               marginTop: 12,
@@ -1213,7 +1213,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                         background: 'hsl(var(--container-low))',
                         textDecoration: 'none',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                       }}
@@ -1253,7 +1253,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface))',
                       lineHeight: 1.3,
@@ -1264,7 +1264,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 10.5,
                       color: 'hsl(var(--on-surface-muted))',
                       lineHeight: 1.3,
@@ -1344,7 +1344,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       <div
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 13,
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -1354,7 +1354,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       <div
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 11,
                           color: 'hsl(var(--on-surface-muted))',
                           marginTop: 2,
@@ -1378,7 +1378,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           textDecoration: 'none',
                           color: 'hsl(var(--on-surface))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12,
                         }}
                         onMouseEnter={(e) =>
@@ -1405,7 +1405,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                         background: 'none',
                         color: 'hsl(var(--destructive))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         cursor: 'pointer',
                         textAlign: 'left',
@@ -1447,10 +1447,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 <div className="h-1 w-10 bg-[hsl(var(--primary))]" />
               </div>
               <div className="text-center space-y-1">
-                <p className="text-micro font-extrabold text-on-surface/60 uppercase tracking-[.06em]">
+                <p className="text-micro font-medium text-on-surface/60 uppercase tracking-[.06em]">
                   Ghana First, Jobs for the Youth!
                 </p>
-                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-[.06em]">
+                <p className="text-[9px] font-medium text-muted-foreground/40 uppercase tracking-[.06em]">
                   © {new Date().getFullYear()} The Base Movement · Operational Command Center
                 </p>
               </div>

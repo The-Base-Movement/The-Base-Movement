@@ -10,7 +10,7 @@ export function FoundationSection() {
         <div className="mb-10 md:mb-16" data-fade>
           <h2
             id="foundation-heading"
-            className="font-meta font-bold leading-tight mb-4 tracking-tighter"
+            className="font-meta font-medium leading-tight mb-4 tracking-tighter"
             style={{ fontSize: 'clamp(28px, 6vw, 48px)' }}
           >
             Our Foundation
@@ -20,10 +20,10 @@ export function FoundationSection() {
 
         <div className="grid md:grid-cols-3 gap-8 md:gap-12" data-fade-stagger>
           <div className="border-l-2 border-destructive pl-6">
-            <span className="text-destructive font-meta font-bold tracking-tight text-xs mb-3 block">
+            <span className="text-destructive font-meta font-medium tracking-tight text-xs mb-3 block">
               Core Pillar 01
             </span>
-            <h3 className="text-xl md:text-2xl font-meta font-bold mb-4 tracking-tight text-white">
+            <h3 className="text-xl md:text-2xl font-meta font-medium mb-4 tracking-tight text-white">
               Economic Responsibility
             </h3>
             <p className="text-white/80 leading-relaxed font-body-md text-sm">
@@ -32,10 +32,10 @@ export function FoundationSection() {
             </p>
           </div>
           <div className="border-l-2 border-accent pl-6">
-            <span className="text-accent font-meta font-bold tracking-tight text-xs mb-3 block">
+            <span className="text-accent font-meta font-medium tracking-tight text-xs mb-3 block">
               Core Pillar 02
             </span>
-            <h3 className="text-xl md:text-2xl font-meta font-bold mb-4 tracking-tight text-white">
+            <h3 className="text-xl md:text-2xl font-meta font-medium mb-4 tracking-tight text-white">
               Youth Participation
             </h3>
             <p className="text-white/80 leading-relaxed font-body-md text-sm">
@@ -44,10 +44,10 @@ export function FoundationSection() {
             </p>
           </div>
           <div className="border-l-2 border-primary pl-6">
-            <span className="text-primary font-meta font-bold tracking-tight text-xs mb-3 block">
+            <span className="text-primary font-meta font-medium tracking-tight text-xs mb-3 block">
               Core Pillar 03
             </span>
-            <h3 className="text-xl md:text-2xl font-meta font-bold mb-4 tracking-tight text-white">
+            <h3 className="text-xl md:text-2xl font-meta font-medium mb-4 tracking-tight text-white">
               Integrity & Accountability
             </h3>
             <p className="text-white/80 leading-relaxed font-body-md text-sm">

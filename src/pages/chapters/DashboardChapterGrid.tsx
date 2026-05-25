@@ -38,7 +38,7 @@ export function DashboardChapterGrid({
             style={{
               margin: '0 0 12px',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface-muted))',
             }}

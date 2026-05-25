@@ -8,7 +8,7 @@ export function DashboardPageHeader({ totalChapters }: DashboardPageHeaderProps)
       <div
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 700,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 10,
           color: 'hsl(var(--on-surface-muted))',
           textTransform: 'uppercase',
@@ -21,8 +21,8 @@ export function DashboardPageHeader({ totalChapters }: DashboardPageHeaderProps)
       <h2
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 800,
-          fontSize: 20,
+          fontWeight: 'var(--font-weight-medium, 500)',
+          fontSize: 'var(--h3-size, 20px)',
           color: 'hsl(var(--on-surface))',
           margin: '0 0 4px',
         }}
@@ -32,7 +32,7 @@ export function DashboardPageHeader({ totalChapters }: DashboardPageHeaderProps)
       <p
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 600,
+          fontWeight: 'var(--font-weight-normal, 400)',
           fontSize: 12,
           color: 'hsl(var(--on-surface-muted))',
           margin: 0,

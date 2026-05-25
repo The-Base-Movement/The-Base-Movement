@@ -20,7 +20,7 @@ export function CategoryFilter({
           key={cat}
           onClick={() => onSelect(cat)}
           className={cn(
-            'px-[14px] py-[6px] rounded-full border font-meta font-bold text-[11px] cursor-pointer transition-all',
+            'px-[14px] py-[6px] rounded-full border font-meta font-medium text-[11px] cursor-pointer transition-all',
             activeCategory === cat
               ? 'bg-on-surface text-white border-on-surface'
               : 'bg-white text-on-surface border-border hover:border-primary hover:text-primary'

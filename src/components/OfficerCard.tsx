@@ -147,7 +147,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: officer.tier === 'executive' ? 20 : 18,
               color: 'hsl(var(--on-surface))',
             }}
@@ -171,7 +171,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -182,7 +182,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: tierColor,
                   background: `color-mix(in srgb, ${tierColor} 10%, transparent)`,

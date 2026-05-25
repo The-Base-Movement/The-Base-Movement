@@ -114,6 +114,7 @@ const tileStyles = `
     margin: 0 0 6px;
   }
 
+
   .tile .delta {
     font-size: 10.5px;
     font-weight: var(--font-weight-medium, 500);

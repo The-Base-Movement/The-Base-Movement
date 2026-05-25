@@ -31,7 +31,7 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -42,7 +42,7 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
             }}
@@ -64,20 +64,25 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
               }}
             >
               ₵{stats.raised.toLocaleString()}{' '}
-              <span style={{ fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>
+              <span
+                style={{
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
                 / {stats.goal.toLocaleString()}
               </span>
             </span>
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--primary))',
               }}
@@ -122,7 +127,7 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     marginBottom: 4,
@@ -133,7 +138,7 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 15,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -179,7 +184,7 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: 'hsl(var(--on-surface))',
                   marginBottom: 6,
@@ -210,7 +215,7 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color:
                       region.engagement > 0

@@ -48,7 +48,7 @@ export function PublicImpactView({
       <header className="bg-white border-b border-slate-100 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 md:py-24 relative z-10">
           <div className="max-w-3xl">
-            <h1 className="text-slate-900 text-4xl md:text-6xl font-meta font-extrabold tracking-tighter mb-6 leading-[1.1]">
+            <h1 className="text-slate-900 text-4xl md:text-6xl font-meta font-medium tracking-tighter mb-6 leading-[1.1]">
               Transparency in Action.
               <br />
               <span className="text-brand-green">Real Impact, Real People.</span>
@@ -66,28 +66,28 @@ export function PublicImpactView({
       <div className="max-w-7xl mx-auto px-5 sm:px-8 -mt-8 relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-brand-green p-8 text-white flex flex-col justify-between">
-            <span className="text-micro font-bold uppercase tracking-widest opacity-60">
+            <span className="text-micro font-medium uppercase tracking-widest opacity-60">
               Total Contributions
             </span>
             <div>
-              <h2 className="text-4xl md:text-5xl font-meta font-bold tracking-tighter mt-4 mb-2">
+              <h2 className="text-4xl md:text-5xl font-meta font-medium tracking-tighter mt-4 mb-2">
                 {isLoading ? '₵—' : stats.totalDonations}
               </h2>
-              <div className="flex items-center gap-2 text-tiny font-bold text-white/60">
+              <div className="flex items-center gap-2 text-tiny font-medium text-white/60">
                 <span className="w-2 h-2 bg-white/40 rounded-full" />
                 Updated in real-time
               </div>
             </div>
           </div>
           <div className="bg-charcoal-dark p-8 text-white flex flex-col justify-between">
-            <span className="text-micro font-bold uppercase tracking-widest opacity-60">
+            <span className="text-micro font-medium uppercase tracking-widest opacity-60">
               Active Patriots
             </span>
             <div>
-              <h2 className="text-4xl md:text-5xl font-meta font-bold tracking-tighter mt-4 mb-2">
+              <h2 className="text-4xl md:text-5xl font-meta font-medium tracking-tighter mt-4 mb-2">
                 {isLoading ? '—' : stats.totalMembers}
               </h2>
-              <div className="flex items-center gap-2 text-tiny font-bold text-white/60">
+              <div className="flex items-center gap-2 text-tiny font-medium text-white/60">
                 <span className="w-2 h-2 bg-white/40 rounded-full" />
                 Verified members worldwide
               </div>
@@ -100,14 +100,14 @@ export function PublicImpactView({
             <section className="bg-white border border-slate-100 p-8">
               <div className="flex items-center justify-between mb-10">
                 <div>
-                  <h3 className="text-slate-900 font-meta font-bold text-lg mb-1">
+                  <h3 className="text-slate-900 font-meta font-medium text-lg mb-1">
                     Regional Engagement
                   </h3>
-                  <p className="text-tiny font-bold text-slate-400 uppercase tracking-wider">
+                  <p className="text-tiny font-medium text-slate-400 uppercase tracking-wider">
                     Mobilization index by region
                   </p>
                 </div>
-                <div className="bg-slate-50 px-3 py-1 text-micro font-bold text-slate-500 rounded border border-slate-100">
+                <div className="bg-slate-50 px-3 py-1 text-micro font-medium text-slate-500 rounded border border-slate-100">
                   Top Performing
                 </div>
               </div>
@@ -125,8 +125,8 @@ export function PublicImpactView({
                   : regions.map((region) => (
                       <div key={region.name} className="space-y-3">
                         <div className="flex justify-between items-end">
-                          <span className="text-sm font-bold text-slate-700">{region.name}</span>
-                          <span className="text-tiny font-bold text-slate-400">
+                          <span className="text-sm font-medium text-slate-700">{region.name}</span>
+                          <span className="text-tiny font-medium text-slate-400">
                             {region.engagement > 0 ? `${region.engagement}% scale` : 'Mobilizing'}
                           </span>
                         </div>
@@ -139,7 +139,7 @@ export function PublicImpactView({
                           </div>
                           <span
                             className={cn(
-                              'text-tiny font-bold',
+                              'text-tiny font-medium',
                               region.engagement > 0 ? 'text-brand-green' : 'text-slate-300'
                             )}
                           >
@@ -155,7 +155,7 @@ export function PublicImpactView({
           <div>
             <section className="bg-white border border-slate-100 p-8 flex flex-col">
               <div className="flex items-center justify-between mb-6">
-                <h5 className="text-charcoal-dark font-bold text-sm mb-0">Recent activity</h5>
+                <h5 className="text-charcoal-dark font-medium text-sm mb-0">Recent activity</h5>
                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse ring-4 ring-red-500/10" />
               </div>
               <div className="flex gap-2 bg-slate-100/80 p-1.5 border border-slate-200/50 mb-6 overflow-x-auto">
@@ -164,7 +164,7 @@ export function PublicImpactView({
                     key={t}
                     onClick={() => onFilterChange(t)}
                     className={cn(
-                      'flex-1 h-8 px-3 text-micro font-bold capitalize transition-all',
+                      'flex-1 h-8 px-3 text-micro font-medium capitalize transition-all',
                       activeFilter === t
                         ? 'bg-white text-brand-green shadow-md'
                         : 'text-slate-400 hover:text-slate-600'
@@ -196,20 +196,20 @@ export function PublicImpactView({
                       className="flex items-center justify-between p-3 border border-slate-50 hover:bg-slate-50 transition-colors"
                     >
                       <div className="flex gap-3 items-center">
-                        <div className="w-8 h-8 bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs">
+                        <div className="w-8 h-8 bg-brand-green/10 flex items-center justify-center text-brand-green font-medium text-xs">
                           {(item.fullName || 'A')[0]}
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-charcoal-dark mb-0">
+                          <p className="text-xs font-medium text-charcoal-dark mb-0">
                             {item.fullName || 'Anonymous Patriot'}
                           </p>
-                          <p className="text-tiny font-bold text-slate-400 mb-0">
+                          <p className="text-tiny font-medium text-slate-400 mb-0">
                             {item.country || 'Ghana'} · {new Date(item.date).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs font-bold text-brand-green">₵{item.amount}</p>
+                        <p className="text-xs font-semibold text-brand-green">₵{item.amount}</p>
                       </div>
                     </div>
                   ))
@@ -221,7 +221,7 @@ export function PublicImpactView({
                     >
                       monitoring
                     </span>
-                    <p className="text-micro font-bold text-slate-400">
+                    <p className="text-micro font-medium text-slate-400">
                       No activity in this period
                     </p>
                   </div>
@@ -230,7 +230,7 @@ export function PublicImpactView({
               <div className="mt-6 pt-4 border-t border-slate-50">
                 <button
                   onClick={onViewFullLog}
-                  className="w-full h-10 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green text-micro font-bold tracking-tight border border-transparent transition-all flex items-center justify-center cursor-pointer"
+                  className="w-full h-10 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green text-micro font-medium tracking-tight border border-transparent transition-all flex items-center justify-center cursor-pointer"
                 >
                   View full activity log{' '}
                   <span

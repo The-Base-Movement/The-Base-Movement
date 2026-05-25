@@ -79,12 +79,12 @@ export function HomeOfficers() {
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <ScrollReveal duration={850} distance="25px" direction="up">
           <div className="mb-10 md:mb-12">
-            <span className="text-[10px] font-bold tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
+            <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
               Leadership
             </span>
             <h2
               id="officers-heading"
-              className="text-2xl md:text-3xl font-meta font-bold text-on-surface tracking-tight mb-1"
+              className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight mb-1"
             >
               {topTier?.title || 'National Executives'}
             </h2>

@@ -17,12 +17,12 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="flex items-end justify-between mb-8 md:mb-10">
           <div>
-            <span className="text-[10px] font-bold tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
+            <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
               Member voice
             </span>
             <h2
               id="polls-heading"
-              className="text-2xl md:text-3xl font-meta font-bold text-on-surface tracking-tight"
+              className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight"
             >
               Open polls
             </h2>
@@ -32,7 +32,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
           </div>
           <Link
             to="/polls"
-            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-bold tracking-tight text-xs hover:underline"
+            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-medium tracking-tight text-xs hover:underline"
           >
             All polls{' '}
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
@@ -151,7 +151,9 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
                             top: 0,
                             bottom: 0,
                             width: `${pct}%`,
-                            background: isLead ? 'rgba(0,107,63,.18)' : 'rgba(0,107,63,.1)',
+                            background: isLead
+                              ? 'hsl(var(--primary) / 18%)'
+                              : 'hsl(var(--primary) / 10%)',
                           }}
                         />
                         <div

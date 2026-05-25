@@ -259,11 +259,11 @@ export default function Register() {
         <div className="mb-8 flex justify-between items-center px-2">
           <Link to="/" className="flex items-center gap-2">
             <img src={settings.logo_url} alt="Logo" className="h-10 w-auto" />
-            <h1 className="text-lg font-extrabold tracking-tight text-on-surface">The Base</h1>
+            <h1 className="text-lg font-medium tracking-tight text-on-surface">The Base</h1>
           </Link>
           <button
             onClick={() => setStep('choice')}
-            className="text-xs font-bold gap-2 flex items-center bg-transparent border-none cursor-pointer text-on-surface-muted hover:text-on-surface transition-colors"
+            className="text-xs font-medium gap-2 flex items-center bg-transparent border-none cursor-pointer text-on-surface-muted hover:text-on-surface transition-colors"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
               arrow_back
@@ -305,7 +305,7 @@ export default function Register() {
         <div className="mt-8 text-center">
           <p className="text-[12px] text-on-surface-muted">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary font-bold hover:underline">
+            <Link to="/login" className="text-primary font-semibold hover:underline">
               Sign in here →
             </Link>
           </p>

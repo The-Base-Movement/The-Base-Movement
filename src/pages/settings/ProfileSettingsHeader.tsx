@@ -6,7 +6,7 @@ export function ProfileSettingsHeader() {
           fontSize: 10,
           color: 'hsl(var(--on-surface-muted))',
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 'var(--font-weight-semibold, 600)',
+          fontWeight: 'var(--font-weight-medium, 500)',
           letterSpacing: '.05em',
           textTransform: 'uppercase',
         }}
@@ -17,7 +17,7 @@ export function ProfileSettingsHeader() {
         style={{
           margin: '4px 0 0',
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 'var(--font-weight-semibold, 600)',
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 26,
           letterSpacing: '-.02em',
           color: 'hsl(var(--on-surface))',

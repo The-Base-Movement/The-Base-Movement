@@ -37,7 +37,7 @@ export function DashboardFilterControls({
     alignItems: 'center',
     gap: 6,
     fontFamily: "'Public Sans', sans-serif",
-    fontWeight: 800,
+    fontWeight: 'var(--font-weight-medium, 500)',
     fontSize: 11,
     color: 'hsl(var(--on-surface-muted))',
     marginBottom: 10,
@@ -78,7 +78,7 @@ export function DashboardFilterControls({
             background: 'hsl(var(--container-low))',
             outline: 'none',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 12,
             borderRadius: 4,
             color: 'hsl(var(--on-surface))',
@@ -112,7 +112,9 @@ export function DashboardFilterControls({
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 {t.icon}
               </span>
-              <span style={{ fontSize: 11, fontWeight: 700 }}>{t.label}</span>
+              <span style={{ fontSize: 11, fontWeight: 'var(--font-weight-medium, 500)' }}>
+                {t.label}
+              </span>
             </button>
           ))}
         </div>
@@ -141,7 +143,7 @@ export function DashboardFilterControls({
                 background: 'hsl(var(--container-low))',
                 outline: 'none',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 borderRadius: 4,
                 color: 'hsl(var(--on-surface))',
@@ -223,7 +225,7 @@ export function DashboardFilterControls({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 9,
                   color: 'rgba(255,255,255,0.4)',
                   textTransform: 'uppercase',
@@ -236,7 +238,7 @@ export function DashboardFilterControls({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 22,
                   color: '#fff',
                   lineHeight: 1,
@@ -249,7 +251,7 @@ export function DashboardFilterControls({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 9,
                   color: 'hsl(var(--accent))',
                   textTransform: 'uppercase',
@@ -262,7 +264,7 @@ export function DashboardFilterControls({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 22,
                   color: '#fff',
                   lineHeight: 1,
@@ -290,7 +292,7 @@ export function DashboardFilterControls({
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 10,
             color: 'hsl(var(--on-surface-muted))',
             textAlign: 'center',

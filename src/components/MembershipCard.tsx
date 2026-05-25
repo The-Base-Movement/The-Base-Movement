@@ -94,7 +94,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   }
 
   const nameStyle: React.CSSProperties = {
-    fontWeight: 700,
+    fontWeight: 'var(--font-weight-medium, 500)',
     fontSize: '18px',
     lineHeight: '28px',
     letterSpacing: '-.015em',
@@ -115,7 +115,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
 
   const dtStyle: React.CSSProperties = {
     fontSize: '10px',
-    fontWeight: 700,
+    fontWeight: 'var(--font-weight-medium, 500)',
     color: 'hsl(var(--on-surface-muted))',
     textTransform: 'uppercase',
     lineHeight: '16px',
@@ -152,7 +152,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     borderTop: '1px solid hsl(var(--border))',
     padding: '5px 14px',
     fontSize: '8px',
-    fontWeight: 700,
+    fontWeight: 'var(--font-weight-medium, 500)',
     color: 'hsl(var(--on-surface-muted))',
     textAlign: 'center',
     flexShrink: 0,
@@ -182,7 +182,15 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             />
           </div>
           <div>
-            <h4 style={{ margin: 0, color: '#fff', fontSize: 11, fontWeight: 700, lineHeight: 1 }}>
+            <h4
+              style={{
+                margin: 0,
+                color: '#fff',
+                fontSize: 11,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                lineHeight: 1,
+              }}
+            >
               The Base Movement
             </h4>
             <p
@@ -251,7 +259,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: 24,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                 }}
               >
                 {initials || 'M'}
@@ -334,7 +342,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
           <span
             style={{
               fontSize: 8,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
             }}

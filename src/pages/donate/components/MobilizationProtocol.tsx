@@ -88,7 +88,7 @@ export function MobilizationProtocol({
           <h4
             style={{
               fontSize: 11,
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               marginBottom: 32,
               letterSpacing: '0.02em',
@@ -126,7 +126,7 @@ export function MobilizationProtocol({
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: 12,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     transition: 'all 0.3s ease',
                     background: activeStep === s.step ? s.color : 'hsl(var(--container-low))',
                     color: activeStep === s.step ? '#fff' : 'hsl(var(--on-surface-muted))',
@@ -140,7 +140,7 @@ export function MobilizationProtocol({
                   <span
                     style={{
                       fontSize: 12,
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       letterSpacing: '-0.01em',
                       display: 'block',
                       transition: 'colors 0.3s ease',
@@ -217,7 +217,7 @@ export function MobilizationProtocol({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -226,7 +226,7 @@ export function MobilizationProtocol({
             </span>
             <h3
               style={{
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: '#fff',
                 fontFamily: "'Public Sans', sans-serif",
                 letterSpacing: '-0.02em',
@@ -252,7 +252,7 @@ export function MobilizationProtocol({
               </p>
               <p
                 style={{
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--primary))',
                   fontSize: 24,
                   letterSpacing: '-0.02em',
@@ -277,7 +277,7 @@ export function MobilizationProtocol({
               </p>
               <p
                 style={{
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: '#fff',
                   fontSize: 24,
                   letterSpacing: '-0.02em',
@@ -313,7 +313,7 @@ export function MobilizationProtocol({
                 <p
                   style={{
                     color: 'rgba(255,255,255,0.9)',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontFamily: "'Public Sans', sans-serif",
                     fontSize: 16,
                   }}
@@ -336,7 +336,7 @@ export function MobilizationProtocol({
                 <p
                   style={{
                     color: 'hsl(var(--accent))',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontFamily: "'Public Sans', sans-serif",
                     fontSize: 16,
                     fontStyle: 'italic',
@@ -404,7 +404,7 @@ export function MobilizationProtocol({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -413,7 +413,7 @@ export function MobilizationProtocol({
             </span>
             <h3
               style={{
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
                 letterSpacing: '-0.02em',
@@ -458,7 +458,7 @@ export function MobilizationProtocol({
                   borderBottom: '1px solid hsl(var(--border))',
                   color: 'hsl(var(--on-surface))',
                   fontSize: 14,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontFamily: "'Public Sans', sans-serif",
                   outline: 'none',
                   padding: 0,
@@ -624,7 +624,7 @@ export function MobilizationProtocol({
                     borderBottom: '1px solid hsl(var(--border))',
                     color: 'hsl(var(--on-surface))',
                     fontSize: 14,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontFamily: "'Public Sans', sans-serif",
                     outline: 'none',
                     appearance: 'none',
@@ -667,7 +667,7 @@ export function MobilizationProtocol({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -676,7 +676,7 @@ export function MobilizationProtocol({
             </span>
             <h3
               style={{
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
                 letterSpacing: '-0.02em',
@@ -707,7 +707,7 @@ export function MobilizationProtocol({
                 </span>
                 <h4
                   style={{
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface))',
                     fontFamily: "'Public Sans', sans-serif",
                     letterSpacing: '-0.01em',
@@ -852,7 +852,7 @@ export function MobilizationProtocol({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -861,7 +861,7 @@ export function MobilizationProtocol({
             </span>
             <h3
               style={{
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
                 letterSpacing: '-0.02em',
@@ -965,7 +965,7 @@ export function MobilizationProtocol({
                 </span>
                 <h4
                   style={{
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface))',
                     fontFamily: "'Public Sans', sans-serif",
                     letterSpacing: '-0.01em',

@@ -19,7 +19,9 @@ export function PostHeroImage({ imageUrl, title, logoUrl }: PostHeroImageProps) 
         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
           <img src={logoUrl} alt="The Base" className="w-32 h-32 opacity-20 mb-6 grayscale" />
-          <span className="text-xs font-bold text-white/20 tracking-tight">The Base editorial</span>
+          <span className="text-xs font-medium text-white/20 tracking-tight">
+            The Base editorial
+          </span>
         </div>
       )}
       <div className="absolute inset-0 bg-charcoal-dark/10"></div>

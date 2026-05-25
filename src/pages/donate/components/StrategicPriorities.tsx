@@ -20,7 +20,7 @@ export function StrategicPriorities({
         <h2
           style={{
             fontSize: 'clamp(26px, 5vw, 44px)',
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-medium, 500)',
             color: 'hsl(var(--on-surface))',
             fontFamily: "'Public Sans', sans-serif",
             letterSpacing: '-0.02em',
@@ -108,7 +108,7 @@ export function StrategicPriorities({
                         background: 'hsl(var(--primary))',
                         color: '#fff',
                         fontSize: 10,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         padding: '6px 12px',
                         letterSpacing: '0.02em',
                         fontFamily: "'Public Sans', sans-serif",
@@ -123,7 +123,7 @@ export function StrategicPriorities({
                   <h3
                     style={{
                       fontSize: 18,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       marginBottom: 12,
                       fontFamily: "'Public Sans', sans-serif",
@@ -173,7 +173,7 @@ export function StrategicPriorities({
                         <span
                           style={{
                             fontSize: 14,
-                            fontWeight: 900,
+                            fontWeight: 'var(--font-weight-semibold, 600)',
                             color: 'hsl(var(--on-surface))',
                             fontFamily: "'Public Sans', sans-serif",
                           }}

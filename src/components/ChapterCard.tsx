@@ -67,7 +67,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
           <h4
             style={{
               color: headerTextColor,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 14,
               letterSpacing: '-0.005em',
               lineHeight: 1.2,
@@ -97,7 +97,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
             style={{
               color: headerMutedColor,
               fontSize: 9.5,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
               marginTop: 2,
@@ -146,7 +146,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
             <div key={l}>
               <div
                 style={{
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 18,
                   letterSpacing: '-0.015em',
                   color: 'hsl(var(--on-surface))',
@@ -159,7 +159,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
               <div
                 style={{
                   fontSize: 9.5,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   letterSpacing: '0.05em',
                   textTransform: 'uppercase',
                   color: 'hsl(var(--on-surface-muted))',
@@ -232,7 +232,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
               style={{
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               {leaderRole}

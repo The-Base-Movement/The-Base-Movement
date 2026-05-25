@@ -26,7 +26,7 @@ export function ProductGrid({ loading, products, onShare }: ProductGridProps) {
           >
             shopping_bag
           </span>
-          <h3 className="text-stone-400 font-bold tracking-tight">No products found.</h3>
+          <h3 className="text-stone-400 font-medium tracking-tight">No products found.</h3>
         </div>
       )}
     </div>

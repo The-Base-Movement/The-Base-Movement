@@ -42,7 +42,7 @@ export function DashboardSidebar({
                 border: 'none',
                 cursor: 'pointer',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 marginBottom: 2,
                 background: activeCategory === cat ? 'rgba(0,107,63,0.07)' : 'none',
@@ -69,7 +69,7 @@ export function DashboardSidebar({
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 14,
             color: '#fff',
             marginBottom: 6,

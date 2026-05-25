@@ -81,7 +81,7 @@ export function PostSidebar({
     <aside className="lg:col-span-1 space-y-8 order-2 lg:order-1">
       <div className="sticky top-32 space-y-8">
         <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
-          <p className="text-xs font-bold text-stone-500 tracking-tight mb-0">Authored by</p>
+          <p className="text-xs font-medium text-stone-500 tracking-tight mb-0">Authored by</p>
           <div className="flex items-center gap-3">
             {authorImage ? (
               <img
@@ -102,7 +102,7 @@ export function PostSidebar({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 16,
                     color: 'var(--brand-green)',
                   }}
@@ -112,7 +112,7 @@ export function PostSidebar({
               </div>
             )}
             <div>
-              <p className="text-sm font-bold text-stone-900 leading-none mb-0">{displayName}</p>
+              <p className="text-sm font-medium text-stone-900 leading-none mb-0">{displayName}</p>
               <p className="text-xs text-stone-500 tracking-tight mt-1.5 mb-0 font-medium">
                 {displayRole}
               </p>
@@ -124,7 +124,7 @@ export function PostSidebar({
         </div>
 
         <div className="space-y-4">
-          <p className="text-xs font-bold text-stone-500 tracking-tight">Share this update</p>
+          <p className="text-xs font-medium text-stone-500 tracking-tight">Share this update</p>
           <div className="grid grid-cols-3 gap-2">
             {SHARE_BUTTONS.map(({ brandColor, key, icon }) => (
               <button
@@ -140,13 +140,15 @@ export function PostSidebar({
         </div>
 
         <div className="pt-8 border-t border-stone-100 space-y-6">
-          <p className="text-xs font-bold text-stone-500 tracking-tight mb-0">Explore categories</p>
+          <p className="text-xs font-medium text-stone-500 tracking-tight mb-0">
+            Explore categories
+          </p>
           <div className="space-y-2">
             {CATEGORIES.map((cat) => (
               <Link
                 to={`/blog?category=${cat.toLowerCase()}`}
                 key={cat}
-                className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-micro font-bold tracking-tight text-stone-600 hover:text-[var(--brand-green)] transition-all"
+                className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-micro font-medium tracking-tight text-stone-600 hover:text-[var(--brand-green)] transition-all"
               >
                 {cat}
                 <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 12 }}>

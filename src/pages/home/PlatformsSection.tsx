@@ -11,7 +11,7 @@ export function PlatformsSection() {
         </h2>
         <div className="grid md:grid-cols-2 gap-10 md:gap-24" data-fade-stagger>
           <div className="border-t-[4px] border-primary pt-8">
-            <h3 className="text-[22px] md:text-[32px] font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight leading-tight">
+            <h3 className="text-[22px] md:text-[32px] font-meta font-medium text-on-surface mb-4 flex items-center gap-3 tracking-tight leading-tight">
               <span className="material-symbols-outlined text-primary" style={{ fontSize: 28 }}>
                 place
               </span>
@@ -32,7 +32,7 @@ export function PlatformsSection() {
           </div>
 
           <div className="border-t-[4px] border-accent pt-8">
-            <h3 className="text-[22px] md:text-[32px] font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight leading-tight">
+            <h3 className="text-[22px] md:text-[32px] font-meta font-medium text-on-surface mb-4 flex items-center gap-3 tracking-tight leading-tight">
               <span className="material-symbols-outlined text-accent" style={{ fontSize: 28 }}>
                 language
               </span>

@@ -12,7 +12,7 @@ export function PostToolbar({ title, onShare }: PostToolbarProps) {
       <div className="flex items-center gap-3">
         <button
           onClick={onShare}
-          className="h-10 px-4 border border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-micro font-bold tracking-tight bg-white flex items-center cursor-pointer"
+          className="h-10 px-4 border border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-micro font-medium tracking-tight bg-white flex items-center cursor-pointer"
         >
           <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 8 }}>
             share

@@ -24,7 +24,7 @@ export function VisionStatementsList({ filteredApps }: VisionStatementsListProps
             style={{
               display: 'block',
               fontSize: 10,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               textTransform: 'uppercase',
               color: 'hsl(var(--on-surface-muted))',
               marginBottom: 16,
@@ -59,7 +59,7 @@ export function VisionStatementsList({ filteredApps }: VisionStatementsListProps
               style={{
                 display: 'block',
                 fontSize: 9,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 textTransform: 'uppercase',
                 color: 'hsl(var(--on-surface-muted))',
                 marginBottom: 8,

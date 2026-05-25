@@ -18,12 +18,12 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="flex justify-between items-end mb-10 md:mb-12" data-fade>
           <div>
-            <span className="text-primary font-semibold tracking-tight text-micro mb-3 block">
+            <span className="text-primary font-medium tracking-tight text-micro mb-3 block">
               Updates
             </span>
             <h2
               id="updates-heading"
-              className="text-2xl md:text-3xl font-meta font-bold text-on-surface tracking-tight"
+              className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight"
             >
               Latest updates
             </h2>
@@ -38,7 +38,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
           </div>
           <Link
             to="/blog"
-            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-semibold tracking-tight text-xs hover:underline"
+            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-medium tracking-tight text-xs hover:underline"
           >
             View all news
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
@@ -87,7 +87,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                         )}
                       </div>
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-micro font-meta font-semibold text-primary tracking-tight">
+                        <span className="text-micro font-meta font-medium text-primary tracking-tight">
                           {post.category}
                         </span>
                         <span className="text-micro text-muted-foreground font-meta">
@@ -100,7 +100,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                             : ''}
                         </span>
                       </div>
-                      <h3 className="text-base font-meta font-semibold text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
+                      <h3 className="text-base font-meta font-medium text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
                         {post.title}
                       </h3>
                     </Link>
@@ -132,7 +132,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                     )}
                   </div>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-micro font-meta font-semibold text-primary tracking-tight">
+                    <span className="text-micro font-meta font-medium text-primary tracking-tight">
                       {post.category}
                     </span>
                     <span className="text-micro text-muted-foreground font-meta">
@@ -145,7 +145,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                         : ''}
                     </span>
                   </div>
-                  <h3 className="text-base md:text-lg font-meta font-semibold text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
+                  <h3 className="text-base md:text-lg font-meta font-medium text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
                     {post.title}
                   </h3>
                 </Link>

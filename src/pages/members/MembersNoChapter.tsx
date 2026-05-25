@@ -18,7 +18,7 @@ export function MembersNoChapter() {
       <div
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 800,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 16,
           color: 'hsl(var(--on-surface))',
           marginBottom: 8,
@@ -29,7 +29,7 @@ export function MembersNoChapter() {
       <div
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 700,
+          fontWeight: 'var(--font-weight-normal, 400)',
           fontSize: 12,
           color: 'hsl(var(--on-surface-muted))',
           marginBottom: 24,

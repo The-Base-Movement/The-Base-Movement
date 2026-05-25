@@ -83,7 +83,7 @@ export default function BlogPost() {
         >
           progress_activity
         </span>
-        <p className="text-micro font-bold tracking-tight text-stone-400">Loading update...</p>
+        <p className="text-micro font-medium tracking-tight text-stone-400">Loading update...</p>
       </div>
     )
   }
@@ -98,7 +98,7 @@ export default function BlogPost() {
               search
             </span>
           </div>
-          <h2 className="font-meta font-bold text-2xl tracking-tight text-charcoal-dark mb-4">
+          <h2 className="font-meta font-medium text-2xl tracking-tight text-charcoal-dark mb-4">
             Update not found
           </h2>
           <p className="text-sm font-medium text-stone-500 max-w-xs mx-auto mb-10 leading-relaxed">
@@ -179,11 +179,11 @@ export default function BlogPost() {
 
             <div className="lg:col-span-3 order-1 lg:order-2">
               <div
-                className="prose prose-stone prose-lg max-w-none
-                  prose-headings:font-meta prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-stone-900
+                className="prose prose-stone prose-lg max-w-none prose-standard
+                  prose-headings:font-meta prose-headings:font-medium prose-headings:tracking-tight prose-headings:text-stone-900
                   prose-p:text-stone-600 prose-p:leading-relaxed prose-p:mb-8
-                  prose-blockquote:border-l-brand-green prose-blockquote:bg-stone-50 prose-blockquote:p-8 prose-blockquote:font-bold prose-blockquote:text-stone-900 prose-blockquote:italic
-                  prose-strong:text-stone-900 prose-strong:font-bold"
+                  prose-blockquote:border-l-brand-green prose-blockquote:bg-stone-50 prose-blockquote:p-8 prose-blockquote:font-medium prose-blockquote:text-stone-900 prose-blockquote:italic
+                  prose-strong:text-stone-900 prose-strong:font-medium"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
 
@@ -191,7 +191,7 @@ export default function BlogPost() {
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1.5 bg-stone-100 text-stone-500 text-micro font-bold tracking-tight hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors"
+                    className="px-3 py-1.5 bg-stone-100 text-stone-500 text-micro font-medium tracking-tight hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors"
                   >
                     #{tag}
                   </span>
@@ -234,7 +234,7 @@ export default function BlogPost() {
                     <p
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 10,
                         letterSpacing: '0.14em',
                         textTransform: 'uppercase',
@@ -248,7 +248,7 @@ export default function BlogPost() {
                       style={{
                         color: '#fff',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 'clamp(1.3rem, 3vw, 1.9rem)',
                         letterSpacing: '-0.02em',
                         lineHeight: 1.1,
@@ -279,7 +279,7 @@ export default function BlogPost() {
                         height: 46,
                         padding: '0 28px',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         letterSpacing: '0.04em',
                         cursor: 'pointer',
@@ -302,7 +302,7 @@ export default function BlogPost() {
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       letterSpacing: '0.1em',
                       textTransform: 'uppercase',
@@ -360,7 +360,7 @@ export default function BlogPost() {
                               style={{
                                 display: 'block',
                                 fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 800,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 fontSize: 11,
                                 color: 'var(--brand-green)',
                                 letterSpacing: '0.04em',
@@ -372,7 +372,7 @@ export default function BlogPost() {
                             <h5
                               style={{
                                 fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 800,
+                                fontWeight: 'var(--font-weight-semibold, 600)',
                                 fontSize: 14,
                                 color: '#1c1c1c',
                                 lineHeight: 1.35,

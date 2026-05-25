@@ -45,7 +45,7 @@ export function MembersHeader({ myChapter, sortOrder, onToggleSort }: MembersHea
         <h2
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 20,
             color: 'hsl(var(--on-surface))',
             margin: 0,

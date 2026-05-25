@@ -38,7 +38,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 14,
               letterSpacing: '-.005em',
               display: 'flex',
@@ -59,7 +59,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
             style={{
               fontSize: 9.5,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               letterSpacing: '.06em',
               textTransform: 'uppercase',
               color: isFeatured ? 'rgba(255,255,255,.85)' : 'hsl(var(--accent))',
@@ -76,7 +76,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
             border: '1px solid rgba(255,255,255,.18)',
             borderRadius: 2,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 9,
             letterSpacing: '.05em',
             textTransform: 'uppercase',
@@ -104,7 +104,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 17,
                   letterSpacing: '-.015em',
                 }}
@@ -116,7 +116,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
                   fontSize: 9.5,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   letterSpacing: '.05em',
                   textTransform: 'uppercase',
                   marginTop: 2,
@@ -174,7 +174,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
               style={{
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 11.5,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
               }}
             >
               {leaderName}
@@ -185,7 +185,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
                 color: 'hsl(var(--on-surface-muted))',
                 display: 'block',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               Branch chair
@@ -213,12 +213,12 @@ export function ChaptersSection({ chapters }: ChaptersSectionProps) {
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="flex items-end justify-between mb-8 md:mb-10" data-fade>
           <div>
-            <span className="text-[10px] font-bold tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
+            <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
               Community
             </span>
             <h2
               id="chapters-heading"
-              className="text-2xl md:text-3xl font-meta font-bold text-on-surface tracking-tight"
+              className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight"
             >
               Chapters near you
             </h2>
@@ -228,7 +228,7 @@ export function ChaptersSection({ chapters }: ChaptersSectionProps) {
           </div>
           <Link
             to="/chapters"
-            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-bold tracking-tight text-xs hover:underline"
+            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-medium tracking-tight text-xs hover:underline"
           >
             All chapters{' '}
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>

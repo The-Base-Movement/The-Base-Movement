@@ -92,8 +92,8 @@ module.exports = {
         black: "var(--font-weight-black, 900)",
       },
       fontSize: {
-        "micro": ["var(--fs-micro)", {"lineHeight": "1.4", "fontWeight": "700"}],
-        "tiny": ["var(--fs-tiny)", {"lineHeight": "1.4", "fontWeight": "700"}],
+        "micro": ["var(--fs-micro)", {"lineHeight": "1.4", "fontWeight": "500"}],
+        "tiny": ["var(--fs-tiny)", {"lineHeight": "1.4", "fontWeight": "500"}],
         "xs": ["var(--fs-xs)", {"lineHeight": "1.4"}],
         "sm": ["var(--fs-sm)", {"lineHeight": "1.4"}],
         "base": ["var(--fs-base)", {"lineHeight": "1.5"}],
@@ -102,8 +102,8 @@ module.exports = {
         "2xl": ["var(--fs-2xl)", {"lineHeight": "1.1"}],
         "3xl": ["var(--fs-3xl)", {"lineHeight": "1.1"}],
         "4xl": ["var(--fs-4xl)", {"lineHeight": "1.0"}],
-        "h1": ["var(--h1-size)", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-        "h2": ["var(--h2-size)", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+        "h1": ["var(--h1-size)", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+        "h2": ["var(--h2-size)", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "500"}],
         "h3": ["var(--h3-size)", {"lineHeight": "1.3", "fontWeight": "600"}],
       },
       boxShadow: {

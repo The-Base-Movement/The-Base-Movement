@@ -164,7 +164,7 @@ export default function PublicDonate() {
             <h1
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 'clamp(32px, 8vw, 48px)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,

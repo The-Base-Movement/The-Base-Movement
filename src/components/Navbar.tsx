@@ -113,7 +113,7 @@ export default function Navbar() {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 18,
                 letterSpacing: '-.02em',
                 lineHeight: 1,
@@ -132,7 +132,7 @@ export default function Navbar() {
               to={linkPath(link)}
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 letterSpacing: '.01em',
                 textDecoration: 'none',
@@ -204,7 +204,7 @@ export default function Navbar() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 13,
                       flexShrink: 0,
                     }}
@@ -218,7 +218,7 @@ export default function Navbar() {
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface))',
                       maxWidth: 120,
@@ -253,7 +253,7 @@ export default function Navbar() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -389,7 +389,7 @@ export default function Navbar() {
                   borderRadius: 4,
                   textDecoration: 'none',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
                   background: linkActive(link) ? 'hsl(var(--primary) / 8%)' : 'none',
                   color: linkActive(link) ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
@@ -459,7 +459,7 @@ export default function Navbar() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 13,
                         color: 'hsl(var(--on-surface))',
                       }}

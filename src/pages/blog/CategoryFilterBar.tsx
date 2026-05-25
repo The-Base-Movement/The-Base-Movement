@@ -105,7 +105,7 @@ export function CategoryFilterBar({
                           background: active ? 'hsl(var(--primary) / 0.07)' : 'transparent',
                           color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 600,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12,
                           border: 'none',
                           cursor: 'pointer',

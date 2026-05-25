@@ -71,7 +71,7 @@ export function DashboardKpiRow({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
@@ -90,8 +90,8 @@ export function DashboardKpiRow({
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
-              fontSize: 28,
+              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontSize: 'var(--kpi-num-size, 28px)',
               color: 'hsl(var(--on-surface))',
               lineHeight: 1,
               marginBottom: 4,
@@ -103,7 +103,7 @@ export function DashboardKpiRow({
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
             }}

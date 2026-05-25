@@ -75,7 +75,7 @@ export default function Login() {
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-1.5">
-                <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                   Email or Phone
                 </span>
                 <input
@@ -92,10 +92,10 @@ export default function Login() {
 
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                     Password
                   </span>
-                  <Link to="#" className="text-primary text-[11.5px] font-[800] hover:underline">
+                  <Link to="#" className="text-primary text-[11.5px] font-semibold hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -119,7 +119,7 @@ export default function Login() {
                   className="w-4 h-4 accent-primary"
                   defaultChecked
                 />
-                <label htmlFor="remember" className="text-[11.5px] font-[700] text-on-surface">
+                <label htmlFor="remember" className="text-[11.5px] font-medium text-on-surface">
                   Keep me signed in
                 </label>
               </div>
@@ -127,7 +127,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-[52px] font-bold text-sm tracking-tight flex items-center justify-center gap-2 active:scale-[0.98] transition-transform bg-primary text-white border-none cursor-pointer"
+                className="w-full h-[52px] font-medium text-sm tracking-tight flex items-center justify-center gap-2 active:scale-[0.98] transition-transform bg-primary text-white border-none cursor-pointer"
               >
                 {isLoading ? (
                   <>

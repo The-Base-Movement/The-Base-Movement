@@ -52,7 +52,7 @@ export function MembersFilterSidebar({
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
             color: 'hsl(var(--on-surface))',
             display: 'flex',
@@ -101,7 +101,7 @@ export function MembersFilterSidebar({
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface))',
               display: 'flex',

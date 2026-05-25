@@ -45,7 +45,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 14,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -55,7 +55,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -119,7 +119,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 13,
                       color: 'hsl(var(--primary))',
                     }}
@@ -130,7 +130,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 13,
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -140,7 +140,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
                       }}
@@ -153,7 +153,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 13,
                       color: 'hsl(var(--primary))',
                     }}
@@ -163,7 +163,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -191,7 +191,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -212,7 +212,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
               fontStyle: 'italic',

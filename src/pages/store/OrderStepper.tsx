@@ -28,7 +28,7 @@ const steps = [
 export function OrderStepper() {
   return (
     <section className="mt-16 pt-10 border-t-2 border-on-surface">
-      <h2 className="font-meta font-extrabold text-[18px] md:text-[20px] mb-5 m-0">
+      <h2 className="font-meta font-medium text-[18px] md:text-[20px] mb-5 m-0">
         Checkout · Order flow
       </h2>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-[14px]">
@@ -39,12 +39,12 @@ export function OrderStepper() {
             style={{ borderLeft: `3px solid ${step.color}` }}
           >
             <div
-              className="font-meta font-extrabold text-[24px] md:text-[32px] tracking-tight leading-none"
+              className="font-meta font-medium text-[24px] md:text-[32px] tracking-tight leading-none"
               style={{ color: step.color }}
             >
               {step.num}
             </div>
-            <b className="font-meta font-extrabold text-[12px] md:text-[13px] block mt-2">
+            <b className="font-meta font-semibold text-[12px] md:text-[13px] block mt-2">
               {step.title}
             </b>
             <p className="text-[10.5px] md:text-[11.5px] text-on-surface-muted font-medium mt-1 leading-relaxed m-0">

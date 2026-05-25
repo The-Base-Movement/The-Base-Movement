@@ -36,13 +36,13 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#181d19] to-[#181d19]/90">
-            <span className="font-['Public_Sans',sans-serif] font-black text-[64px] text-white/[0.06] tracking-[-0.04em] leading-none select-none">
+            <span className="font-['Public_Sans',sans-serif] font-medium text-[64px] text-white/[0.06] tracking-[-0.04em] leading-none select-none">
               {post.title.charAt(0)}
             </span>
           </div>
         )}
         {post.category && (
-          <span className="absolute bottom-[14px] left-[14px] px-[10px] py-1 bg-white font-semibold text-[11.5px] text-[var(--primary)] tracking-[0.05em] uppercase rounded-[2px]">
+          <span className="absolute bottom-[14px] left-[14px] px-[10px] py-1 bg-white font-medium text-[11.5px] text-[var(--primary)] tracking-[0.05em] uppercase rounded-[2px]">
             {post.category}
           </span>
         )}
@@ -51,7 +51,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
       {/* Body */}
       <div className="p-[18px] flex flex-col flex-1">
         {/* Meta */}
-        <div className="flex items-center gap-2 mb-2 text-[12px] font-semibold tracking-[0.04em] uppercase text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
+        <div className="flex items-center gap-2 mb-2 text-[12px] font-medium tracking-[0.04em] uppercase text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
           <span>{post.category || 'Movement'}</span>
           <span className="w-[3px] h-[3px] rounded-full bg-current opacity-60 shrink-0" />
           <span>{post.readTime}</span>
@@ -63,7 +63,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
         >
           <h3
             id={`blog-post-title-${post.id}`}
-            className="font-['Public_Sans',sans-serif] font-semibold text-[17px] leading-[1.3] tracking-[-0.01em] mb-2 text-[var(--on-surface,#181d19)] group-hover/title:text-[var(--primary)] transition-colors"
+            className="font-['Public_Sans',sans-serif] font-medium text-[17px] leading-[1.3] tracking-[-0.01em] mb-2 text-[var(--on-surface,#181d19)] group-hover/title:text-[var(--primary)] transition-colors"
           >
             {post.title}
           </h3>
@@ -89,13 +89,13 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
             />
           ) : (
             <div
-              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-semibold shrink-0"
+              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-medium shrink-0"
               style={{ background: 'hsl(var(--primary))' }}
             >
               {authorInitial}
             </div>
           )}
-          <span className="font-['Public_Sans',sans-serif] text-[11.5px] font-semibold text-[var(--on-surface,#181d19)]">
+          <span className="font-['Public_Sans',sans-serif] text-[11.5px] font-medium text-[var(--on-surface,#181d19)]">
             {displayName}
           </span>
           <span className="ml-auto text-[10.5px] text-[var(--on-surface-muted,#6b7280)] font-medium font-['Public_Sans',sans-serif]">

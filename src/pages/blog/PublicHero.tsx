@@ -43,7 +43,7 @@ export function PublicHero() {
             style={{
               display: 'block',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 10,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
@@ -58,7 +58,7 @@ export function PublicHero() {
             style={{
               color: '#fff',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 'clamp(2rem, 5vw, 3.5rem)',
               letterSpacing: '-0.03em',
               lineHeight: 1.05,

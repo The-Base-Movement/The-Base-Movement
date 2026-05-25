@@ -80,7 +80,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
             color: 'hsl(var(--on-surface))',
             marginBottom: 2,
@@ -94,7 +94,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -118,7 +118,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
             alignItems: 'center',
             gap: 6,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -143,7 +143,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
             alignItems: 'center',
             gap: 6,
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--on-surface-muted))',
           }}
@@ -169,7 +169,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             color: 'hsl(var(--primary))',
           }}

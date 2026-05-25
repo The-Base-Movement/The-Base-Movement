@@ -39,7 +39,7 @@ export function DashboardDonateForm({
         <div>
           <p
             style={{
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -79,7 +79,7 @@ export function DashboardDonateForm({
           <label
             style={{
               fontSize: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -102,7 +102,7 @@ export function DashboardDonateForm({
               borderRadius: 4,
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               background: '#fff',
               color: 'hsl(var(--on-surface))',
               boxSizing: 'border-box',
@@ -121,7 +121,7 @@ export function DashboardDonateForm({
           <label
             style={{
               fontSize: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -139,7 +139,7 @@ export function DashboardDonateForm({
                 top: '50%',
                 transform: 'translateY(-50%)',
                 fontSize: 13,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
@@ -163,7 +163,7 @@ export function DashboardDonateForm({
                 borderRadius: 4,
                 fontSize: 13,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 boxSizing: 'border-box',
                 outline: 'none',
               }}
@@ -178,7 +178,7 @@ export function DashboardDonateForm({
                 style={{
                   padding: '4px 10px',
                   fontSize: 11,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 4,
                   cursor: 'pointer',
@@ -197,7 +197,7 @@ export function DashboardDonateForm({
           <label
             style={{
               fontSize: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -222,7 +222,7 @@ export function DashboardDonateForm({
               borderRadius: 4,
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               boxSizing: 'border-box',
               outline: 'none',
             }}
@@ -233,7 +233,7 @@ export function DashboardDonateForm({
           <label
             style={{
               fontSize: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -260,7 +260,7 @@ export function DashboardDonateForm({
               borderRadius: 4,
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               boxSizing: 'border-box',
               outline: 'none',
             }}
@@ -297,7 +297,7 @@ export function DashboardDonateForm({
             htmlFor="showOnDashboard"
             style={{
               fontSize: 12,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface))',
               cursor: 'pointer',
             }}

@@ -41,7 +41,7 @@ export function DashboardKpiTiles({ kpis, kpiValueSize }: Props) {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
@@ -60,7 +60,7 @@ export function DashboardKpiTiles({ kpis, kpiValueSize }: Props) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: kpiValueSize(kpi.value),
               color: 'hsl(var(--on-surface))',
               lineHeight: 1,
@@ -73,7 +73,7 @@ export function DashboardKpiTiles({ kpis, kpiValueSize }: Props) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
             }}

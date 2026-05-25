@@ -14,7 +14,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       <button
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className="h-9 px-3 border border-border rounded-sm text-xs font-bold cursor-pointer disabled:opacity-30 hover:border-primary hover:text-primary transition-colors bg-white"
+        className="h-9 px-3 border border-border rounded-sm text-xs font-medium cursor-pointer disabled:opacity-30 hover:border-primary hover:text-primary transition-colors bg-white"
       >
         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
           chevron_left
@@ -25,7 +25,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           key={i}
           onClick={() => onPageChange(i + 1)}
           className={cn(
-            'w-9 h-9 border rounded-sm text-xs font-bold cursor-pointer transition-colors',
+            'w-9 h-9 border rounded-sm text-xs font-medium cursor-pointer transition-colors',
             currentPage === i + 1
               ? 'bg-on-surface text-white border-on-surface'
               : 'bg-white border-border hover:border-primary hover:text-primary'
@@ -37,7 +37,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       <button
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className="h-9 px-3 border border-border rounded-sm text-xs font-bold cursor-pointer disabled:opacity-30 hover:border-primary hover:text-primary transition-colors bg-white"
+        className="h-9 px-3 border border-border rounded-sm text-xs font-medium cursor-pointer disabled:opacity-30 hover:border-primary hover:text-primary transition-colors bg-white"
       >
         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
           chevron_right

@@ -76,21 +76,21 @@ export default function OurAgenda() {
           {/* Main Content */}
           <div className="lg:w-3/4 flow" style={{ '--flow-space': '4rem' } as React.CSSProperties}>
             <AgendaIntroCards />
-            
+
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <div 
+                <div
                   className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
                   style={{ borderColor: 'hsl(var(--primary))', borderTopColor: 'transparent' }}
                 />
-                <p className="text-sm font-bold text-stone-400 font-display uppercase tracking-wider">
+                <p className="text-sm font-medium text-stone-400 font-display uppercase tracking-wider">
                   Loading Strategic Plan…
                 </p>
               </div>
             ) : (
               <AgendaPillarsContent pillars={pillars} />
             )}
-            
+
             <AgendaCovenant isLoggedIn={isLoggedIn} />
           </div>
         </div>
@@ -98,4 +98,3 @@ export default function OurAgenda() {
     </main>
   )
 }
-

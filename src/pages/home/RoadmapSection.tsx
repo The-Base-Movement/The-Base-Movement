@@ -19,12 +19,12 @@ export function RoadmapSection({ roadmapItems }: RoadmapSectionProps) {
     >
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
         <div className="mb-10 md:mb-12" data-fade>
-          <span className="text-[10px] font-bold tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
+          <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
             Movement roadmap
           </span>
           <h2
             id="roadmap-heading"
-            className="text-2xl md:text-3xl font-meta font-bold text-on-surface tracking-tight mb-1"
+            className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight mb-1"
           >
             Where we are,
             <br />
@@ -82,12 +82,12 @@ export function RoadmapSection({ roadmapItems }: RoadmapSectionProps) {
 
                 <div className={idx < 3 ? '' : ''}>
                   <div
-                    className="text-[11px] font-bold tracking-[.06em] uppercase mb-1.5 font-meta"
+                    className="text-[11px] font-medium tracking-[.06em] uppercase mb-1.5 font-meta"
                     style={{ color: 'hsl(var(--on-surface-muted))' }}
                   >
                     {ms.year}
                   </div>
-                  <h4 className="font-meta font-extrabold text-[15px] tracking-[-0.01em] text-on-surface mb-1.5 leading-snug">
+                  <h4 className="font-meta font-semibold text-[15px] tracking-[-0.01em] text-on-surface mb-1.5 leading-snug">
                     {ms.title}
                   </h4>
                   <p className="text-[12px] text-muted-foreground leading-[1.5] font-body-md">

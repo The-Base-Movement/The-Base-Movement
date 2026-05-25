@@ -4,7 +4,7 @@ export function DashboardPageHeader() {
       <div
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 700,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 10,
           color: 'hsl(var(--on-surface-muted))',
           textTransform: 'uppercase',
@@ -30,7 +30,7 @@ export function DashboardPageHeader() {
       <h2
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 800,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 20,
           color: 'hsl(var(--on-surface))',
           margin: 0,

@@ -11,7 +11,7 @@ export function PublicCTA() {
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-brand-green" />
       <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">Join the conversation</p>
-      <h2 className="font-meta font-bold text-3xl tracking-tight mb-4">
+      <h2 className="font-meta font-medium text-3xl tracking-tight mb-4">
         Become a member. Shape the narrative.
       </h2>
       <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">

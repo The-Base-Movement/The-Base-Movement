@@ -273,8 +273,8 @@ export default function ChapterDetails() {
           <h2
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: 22,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 'var(--fs-lg, 22px)',
               color: 'hsl(var(--on-surface))',
               marginBottom: 16,
             }}
@@ -314,7 +314,7 @@ export default function ChapterDetails() {
       />
 
       <div className="main-sidebar">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--stack-md, 20px)' }}>
           <AboutPanel
             name={chapter.name}
             description={chapter.description ?? ''}

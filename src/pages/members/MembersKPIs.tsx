@@ -83,7 +83,7 @@ export function MembersKPIs({ chapterMembers, verifiedCount, myChapter }: Member
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 30,
               color: kpi.val,
               lineHeight: 1,

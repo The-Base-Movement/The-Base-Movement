@@ -24,7 +24,7 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
               <img src={logoUrl} alt="The Base" className="w-16 h-16 opacity-20 mb-4 grayscale" />
-              <span className="text-micro font-bold text-white/20 tracking-tight">
+              <span className="text-micro font-medium text-white/20 tracking-tight">
                 The Base Editorial
               </span>
             </div>
@@ -32,7 +32,7 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
         </div>
         <div className="p-6 md:p-10 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-4">
-            <span className="px-2.5 py-1 rounded-sm text-xs font-bold tracking-tight border bg-stone-50 text-stone-500 border-stone-100">
+            <span className="px-2.5 py-1 rounded-sm text-xs font-medium tracking-tight border bg-stone-50 text-stone-500 border-stone-100">
               {post.category}
             </span>
             <span className="mx-2 text-stone-300 opacity-50">|</span>
@@ -47,7 +47,7 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
             </span>
           </div>
           <Link to={`${baseUrl}/${post.slug}`}>
-            <h2 className="text-xl md:text-2xl font-bold text-charcoal-dark tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
+            <h2 className="text-xl md:text-2xl font-medium text-charcoal-dark tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
               {post.title}
             </h2>
           </Link>
@@ -59,7 +59,7 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
             </div>
             <Link
               to={`${baseUrl}/${post.slug}`}
-              className="flex items-center gap-2 text-brand-green font-bold text-xs hover:underline"
+              className="flex items-center gap-2 text-brand-green font-medium text-xs hover:underline"
             >
               Read article{' '}
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
