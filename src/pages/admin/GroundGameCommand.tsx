@@ -307,45 +307,6 @@ export default function GroundGameCommand() {
     }
   }
 
-  if (loading) {
-    return (
-      <div
-        className="main"
-        style={{
-          minHeight: 'calc(100vh - 3.5rem)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <div
-            className="animate-spin"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              border: '2px solid hsl(var(--border))',
-              borderTopColor: 'hsl(var(--primary))',
-            }}
-          />
-          <p
-            style={{
-              fontSize: 11,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--primary))',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              fontFamily: "'Public Sans', sans-serif",
-            }}
-          >
-            Initializing ground game protocols…
-          </p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="main">
       <AdminPageHeader
@@ -426,119 +387,159 @@ export default function GroundGameCommand() {
         }
       />
 
-      {/* KPI Stats Row */}
-      <div className="kpis">
-        <TacticalKPI
-          label="Field Operations"
-          value={canvassersOnline > 0 ? canvassersOnline : '—'}
-          variant="red"
-          description="Agents active and synced today"
-          delta={
-            activeCampaigns.length > 0
-              ? `${activeCampaigns.length} active campaign${activeCampaigns.length !== 1 ? 's' : ''}`
-              : 'No active campaigns'
-          }
-        />
-        <TacticalKPI
-          label="Engagement"
-          value={doorsKnocked > 0 ? doorsKnocked.toLocaleString() : '—'}
-          variant="gold"
-          description="Households reached door-to-door"
-          delta={doorsKnocked > 0 ? '▲ on track' : 'No logs today'}
-        />
-        <TacticalKPI
-          label="Mobilization"
-          value={signupsToday > 0 ? signupsToday : '—'}
-          variant="black"
-          description="Sign-ups secured today"
-          delta={
-            signupsToday > 0
-              ? `avg ${(signupsToday / Math.max(canvassersOnline, 1)).toFixed(1)} per agent`
-              : 'No sign-ups logged'
-          }
-        />
-        <TacticalKPI
-          label="Intelligence"
-          value={doorsKnocked > 0 ? `${routePct}%` : '—'}
-          variant="green"
-          description="Route completion across active campaigns"
-          delta={
-            activeCampaigns.length > 0
-              ? `${activeCampaigns.filter((c) => (c.goal_contacts || 0) > 200).length} routes flagged behind`
-              : 'No campaigns active'
-          }
-        />
-      </div>
-
-      {/* Constituency breakdown + Leaderboard */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 340px',
-          gap: 14,
-          marginBottom: 14,
-          alignItems: 'start',
-        }}
-      >
-        <ConstituencyCoverageTable constituencyStats={constituencyStats} />
-
-        <LeaderboardPanel
-          leaderboard={leaderboard}
-          canvassersOnline={canvassersOnline}
-          memberNameMap={memberNameMap}
-          topScore={topScore}
-        />
-      </div>
-
-      {/* Routes */}
-      {(activeCampaigns.length > 0 || doorsKnocked > 0) && (
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginTop: 14 }}>
-          <RoutesPanel
-            campaigns={campaigns}
-            activeCampaigns={activeCampaigns}
-            fieldLogs={fieldLogs}
+      {loading ? (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '80px 0',
+            gap: 16,
+          }}
+        >
+          <div
+            className="animate-spin"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              border: '2px solid hsl(var(--border))',
+              borderTopColor: 'hsl(var(--primary))',
+            }}
           />
-
-          <QuickActionsPanel
-            onNavigateDeploy={() => navigate('/admin/ground-game/deploy')}
-            onBroadcast={() => {}}
-            onAppointFieldAgent={openFieldModal}
-            onExportRouteSheet={() => {}}
-            pendingTransportRequests={transportReqs.filter((r) => r.status === 'PENDING')}
-            onDispatchTransport={handleDispatch}
-          />
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--primary))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            Initializing ground game protocols…
+          </p>
         </div>
+      ) : (
+        <>
+          {/* KPI Stats Row */}
+          <div className="kpis">
+            <TacticalKPI
+              label="Field Operations"
+              value={canvassersOnline > 0 ? canvassersOnline : '—'}
+              variant="red"
+              description="Agents active and synced today"
+              delta={
+                activeCampaigns.length > 0
+                  ? `${activeCampaigns.length} active campaign${activeCampaigns.length !== 1 ? 's' : ''}`
+                  : 'No active campaigns'
+              }
+            />
+            <TacticalKPI
+              label="Engagement"
+              value={doorsKnocked > 0 ? doorsKnocked.toLocaleString() : '—'}
+              variant="gold"
+              description="Households reached door-to-door"
+              delta={doorsKnocked > 0 ? '▲ on track' : 'No logs today'}
+            />
+            <TacticalKPI
+              label="Mobilization"
+              value={signupsToday > 0 ? signupsToday : '—'}
+              variant="black"
+              description="Sign-ups secured today"
+              delta={
+                signupsToday > 0
+                  ? `avg ${(signupsToday / Math.max(canvassersOnline, 1)).toFixed(1)} per agent`
+                  : 'No sign-ups logged'
+              }
+            />
+            <TacticalKPI
+              label="Intelligence"
+              value={doorsKnocked > 0 ? `${routePct}%` : '—'}
+              variant="green"
+              description="Route completion across active campaigns"
+              delta={
+                activeCampaigns.length > 0
+                  ? `${activeCampaigns.filter((c) => (c.goal_contacts || 0) > 200).length} routes flagged behind`
+                  : 'No campaigns active'
+              }
+            />
+          </div>
+
+          {/* Constituency breakdown + Leaderboard */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 340px',
+              gap: 14,
+              marginBottom: 14,
+              alignItems: 'start',
+            }}
+          >
+            <ConstituencyCoverageTable constituencyStats={constituencyStats} />
+
+            <LeaderboardPanel
+              leaderboard={leaderboard}
+              canvassersOnline={canvassersOnline}
+              memberNameMap={memberNameMap}
+              topScore={topScore}
+            />
+          </div>
+
+          {/* Routes */}
+          {(activeCampaigns.length > 0 || doorsKnocked > 0) && (
+            <div
+              style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginTop: 14 }}
+            >
+              <RoutesPanel
+                campaigns={campaigns}
+                activeCampaigns={activeCampaigns}
+                fieldLogs={fieldLogs}
+              />
+
+              <QuickActionsPanel
+                onNavigateDeploy={() => navigate('/admin/ground-game/deploy')}
+                onBroadcast={() => {}}
+                onAppointFieldAgent={openFieldModal}
+                onExportRouteSheet={() => {}}
+                pendingTransportRequests={transportReqs.filter((r) => r.status === 'PENDING')}
+                onDispatchTransport={handleDispatch}
+              />
+            </div>
+          )}
+
+          {/* Field Agents + Polling Station Agents */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
+            <FieldAgentsList
+              fieldAgents={fieldAgents}
+              onAppointFieldAgent={openFieldModal}
+              onRemoveFieldAgent={handleRemoveFieldAgent}
+            />
+
+            <PollingAgentsList
+              pollingAgents={pollingAgents}
+              onRemovePollingAgent={handleRemovePollingAgent}
+            />
+          </div>
+
+          {/* Member Readiness */}
+          <MemberReadinessTable
+            voterRegs={voterRegs}
+            filteredVoterRegs={filteredVoterRegs}
+            submittedCount={submittedCount}
+            verifiedCount={verifiedCount}
+            inProgressCount={inProgressCount}
+            unverifiedCount={unverifiedCount}
+            readinessSearch={readinessSearch}
+            setReadinessSearch={setReadinessSearch}
+            readinessFilter={readinessFilter}
+            setReadinessFilter={setReadinessFilter}
+            pollingAgentMemberIds={pollingAgentMemberIds}
+            openStationModal={openStationModal}
+          />
+        </>
       )}
-
-      {/* Field Agents + Polling Station Agents */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
-        <FieldAgentsList
-          fieldAgents={fieldAgents}
-          onAppointFieldAgent={openFieldModal}
-          onRemoveFieldAgent={handleRemoveFieldAgent}
-        />
-
-        <PollingAgentsList
-          pollingAgents={pollingAgents}
-          onRemovePollingAgent={handleRemovePollingAgent}
-        />
-      </div>
-
-      {/* Member Readiness */}
-      <MemberReadinessTable
-        voterRegs={voterRegs}
-        filteredVoterRegs={filteredVoterRegs}
-        submittedCount={submittedCount}
-        verifiedCount={verifiedCount}
-        inProgressCount={inProgressCount}
-        unverifiedCount={unverifiedCount}
-        readinessSearch={readinessSearch}
-        setReadinessSearch={setReadinessSearch}
-        readinessFilter={readinessFilter}
-        setReadinessFilter={setReadinessFilter}
-        pollingAgentMemberIds={pollingAgentMemberIds}
-        openStationModal={openStationModal}
-      />
 
       {/* Field Agent Appointment Modal */}
       <AppointFieldAgentModal
