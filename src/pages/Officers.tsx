@@ -80,7 +80,7 @@ export default function Officers() {
         )}
         <div className="max-w-[1280px] mx-auto px-5 sm:px-8 relative z-10 text-center">
           <ScrollReveal direction="down" duration={1000}>
-            <h1 className="font-meta font-extrabold text-4xl md:text-6xl mb-6 tracking-tight">
+            <h1 className="font-meta font-medium text-4xl md:text-6xl mb-6 tracking-tight">
               National Leadership
             </h1>
           </ScrollReveal>
@@ -105,7 +105,7 @@ export default function Officers() {
           </div>
         )}
         {loading ? (
-          <div className="py-20 text-center text-muted-foreground font-meta font-bold">
+          <div className="py-20 text-center text-muted-foreground font-meta font-medium">
             Loading leadership roster...
           </div>
         ) : (
@@ -134,7 +134,7 @@ export default function Officers() {
                     <ScrollReveal duration={850} distance="25px" direction="up">
                       <div className="mb-10 text-center">
                         <h2
-                          className={`text-3xl font-meta font-bold tracking-tight mb-2 ${headerColor}`}
+                          className={`text-3xl font-meta font-semibold tracking-tight mb-2 ${headerColor}`}
                         >
                           {tier.title}
                         </h2>
