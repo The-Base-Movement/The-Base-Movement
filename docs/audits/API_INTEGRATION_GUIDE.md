@@ -11,7 +11,7 @@ This document is the single source of truth for all third-party integrations req
 | Integration                 | Status                                                | Remaining Work                                                  |
 | --------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
 | KYC / Identity Verification | ⚠️ Infrastructure built, fetch commented out          | Supply API credentials + uncomment fetch in `kyc-verify`        |
-| Mapbox GL (GIS Maps)        | ✅ Fully implemented                                  | Supply `VITE_MAPBOX_TOKEN` only                                 |
+| Mapbox GL (GIS Maps)        | ✅ Complete                                           | `VITE_MAPBOX_TOKEN` configured in `.env` — no further action    |
 | SMS Gateway                 | ⚠️ Infrastructure built, dispatcher halts before send | Supply provider key + implement fetch in `broadcast-dispatcher` |
 | FastAPI ML Intelligence     | ⏳ Simulated locally                                  | Deploy FastAPI service + wire endpoints                         |
 
@@ -79,7 +79,7 @@ async function performKYCCheck(userId: string, idPhoto: string, selfie: string) 
 
 **Purpose**: High-performance interactive national maps for Chapter hubs and Supply Chain logistics.
 
-**Status**: ✅ **Fully implemented.** Both `ChaptersMap.tsx` and `NationalSupplyChainMap.tsx` (via `LogisticsMap.tsx`) import from `react-map-gl/mapbox` and render live interactive maps. The static SVG placeholder has been removed. Supplying `VITE_MAPBOX_TOKEN` is the only remaining step.
+**Status**: ✅ **Complete.** Both `ChaptersMap.tsx` and `NationalSupplyChainMap.tsx` (via `LogisticsMap.tsx`) import from `react-map-gl/mapbox` and render live interactive maps. The static SVG placeholder has been removed. `VITE_MAPBOX_TOKEN` is configured in `.env` (2026-05-25).
 
 > **Audit note (2026-05-25):** The original roadmap referenced `LogisticsIntelligence.tsx` — that file no longer exists. The map is now in `src/pages/admin/logisticsintelligence/NationalSupplyChainMap.tsx`.
 
