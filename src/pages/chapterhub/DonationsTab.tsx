@@ -32,7 +32,7 @@ export function DonationsTab({ donations }: Props) {
                     padding: '11px 18px',
                     textAlign: 'left',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 900,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 9,
                     textTransform: 'uppercase',
                     color: 'hsl(var(--on-surface-muted))',
@@ -69,7 +69,7 @@ export function DonationsTab({ donations }: Props) {
                       style={{
                         margin: 0,
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
                       }}
@@ -80,7 +80,7 @@ export function DonationsTab({ donations }: Props) {
                       style={{
                         margin: 0,
                         fontSize: 10,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
@@ -91,7 +91,7 @@ export function DonationsTab({ donations }: Props) {
                     style={{
                       padding: '12px 18px',
                       fontSize: 15,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--primary))',
                       fontFamily: "'Public Sans', sans-serif",
                       whiteSpace: 'nowrap',
@@ -103,7 +103,7 @@ export function DonationsTab({ donations }: Props) {
                     style={{
                       padding: '12px 18px',
                       fontSize: 11,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -115,7 +115,7 @@ export function DonationsTab({ donations }: Props) {
                     style={{
                       padding: '12px 18px',
                       fontSize: 11,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontFamily: 'monospace',
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -126,7 +126,7 @@ export function DonationsTab({ donations }: Props) {
                     style={{
                       padding: '12px 18px',
                       fontSize: 12,
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       whiteSpace: 'nowrap',
                     }}

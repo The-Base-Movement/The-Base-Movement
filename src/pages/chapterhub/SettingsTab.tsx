@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react'
 const lbl: CSSProperties = {
   display: 'block',
   fontSize: 9.5,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-medium, 500)',
   color: 'hsl(var(--on-surface-muted))',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
@@ -18,7 +18,7 @@ const inp: CSSProperties = {
   borderRadius: 4,
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 600,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
   boxSizing: 'border-box',
@@ -84,7 +84,7 @@ export function SettingsTab({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
                 textTransform: 'uppercase',
@@ -118,7 +118,7 @@ export function SettingsTab({
                 borderRadius: 4,
                 padding: '10px 12px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 outline: 'none',
                 boxSizing: 'border-box',
@@ -145,7 +145,7 @@ export function SettingsTab({
                       border: '1px solid hsl(var(--primary) / 0.2)',
                       borderRadius: 20,
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--primary))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
@@ -204,7 +204,7 @@ export function SettingsTab({
               style={{
                 margin: '6px 0 0',
                 fontSize: 10,
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -236,7 +236,7 @@ export function SettingsTab({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
                 textTransform: 'uppercase',

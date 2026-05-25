@@ -47,7 +47,7 @@ export function BoardTab({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
               textTransform: 'uppercase',
@@ -70,7 +70,7 @@ export function BoardTab({
             borderRadius: 4,
             padding: '10px 12px',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
             outline: 'none',
             boxSizing: 'border-box',
@@ -135,7 +135,7 @@ export function BoardTab({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: 'hsl(var(--primary))',
                       fontFamily: "'Public Sans', sans-serif",
@@ -163,7 +163,7 @@ export function BoardTab({
                       style={{
                         margin: 0,
                         fontSize: 12,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
                       }}
@@ -174,7 +174,7 @@ export function BoardTab({
                       style={{
                         margin: 0,
                         fontSize: 10,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >

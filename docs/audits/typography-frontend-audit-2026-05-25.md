@@ -179,16 +179,16 @@ The following front-end files were checked and found clean (already compliant or
 
 ## Remediation Progress
 
-| Stage                         | Files                                             | Status     |
-| ----------------------------- | ------------------------------------------------- | ---------- |
-| 1 · `src/index.css`           | 1                                                 | ✅ DONE    |
-| 2 · Shared components         | CommentSection, LiveContributionFeed, ChapterCard | ✅ DONE    |
-| 3 · Polls module              | Polls.tsx + 4 sub-components                      | ✅ DONE    |
-| 4 · Chapter Details           | 8 sub-components (incl. LeaderBanner)             | ✅ DONE    |
-| 5 · Chapter Hub               | 7 sub-components                                  | ⏳ Pending |
-| 6 · Donate module             | 4 components                                      | ⏳ Pending |
-| 7 · Dashboard components      | AchievementsAndLeaderboard                        | ⏳ Pending |
-| 8 · Tailwind-heavy components | 9 files                                           | ⏳ Pending |
+| Stage                         | Files                                                | Status     |
+| ----------------------------- | ---------------------------------------------------- | ---------- |
+| 1 · `src/index.css`           | 1                                                    | ✅ DONE    |
+| 2 · Shared components         | CommentSection, LiveContributionFeed, ChapterCard    | ✅ DONE    |
+| 3 · Polls module              | Polls.tsx + 4 sub-components                         | ✅ DONE    |
+| 4 · Chapter Details           | 8 sub-components (incl. LeaderBanner)                | ✅ DONE    |
+| 5 · Chapter Hub               | 9 sub-components (incl. ChapterHubTabs, SettingsTab) | ✅ DONE    |
+| 6 · Donate module             | 4 components                                         | ⏳ Pending |
+| 7 · Dashboard components      | AchievementsAndLeaderboard                           | ⏳ Pending |
+| 8 · Tailwind-heavy components | 9 files                                              | ⏳ Pending |
 
 ---
 

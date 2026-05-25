@@ -27,7 +27,7 @@ export function ChapterHubTabs({ tabs, activeTab, onTabChange }: Props) {
             border: 'none',
             cursor: 'pointer',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 10,
             textTransform: 'uppercase',
             letterSpacing: '0.04em',

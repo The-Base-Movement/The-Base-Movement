@@ -38,7 +38,7 @@ export function ChapterHubKPIs({ totalMembers, activeCount, pendingCount, totalD
           <p
             style={{
               fontSize: 10,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               color: 'hsl(var(--on-surface-muted))',
@@ -50,7 +50,7 @@ export function ChapterHubKPIs({ totalMembers, activeCount, pendingCount, totalD
           <p
             style={{
               fontSize: 26,
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface))',
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",

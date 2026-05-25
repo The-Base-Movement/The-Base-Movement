@@ -11,7 +11,7 @@ type Activity = {
 const lbl: CSSProperties = {
   display: 'block',
   fontSize: 9.5,
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-medium, 500)',
   color: 'hsl(var(--on-surface-muted))',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
@@ -26,7 +26,7 @@ const inp: CSSProperties = {
   borderRadius: 4,
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 600,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
   boxSizing: 'border-box',
@@ -115,7 +115,7 @@ export function ActivitiesTab({
                     background: isActive ? 'hsl(var(--primary))' : 'transparent',
                     color: isActive ? '#fff' : 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     cursor: 'pointer',
                     transition: 'all 0.15s',
@@ -158,7 +158,7 @@ export function ActivitiesTab({
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
                   color: 'hsl(var(--on-surface))',
                   textTransform: 'uppercase',
@@ -243,7 +243,7 @@ export function ActivitiesTab({
                   borderRadius: 4,
                   padding: '10px 12px',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
                   outline: 'none',
                   boxSizing: 'border-box',
@@ -328,7 +328,7 @@ export function ActivitiesTab({
                   <span
                     style={{
                       fontSize: 18,
-                      fontWeight: 900,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--primary))',
                       fontFamily: "'Public Sans', sans-serif",
                       lineHeight: 1,
@@ -339,7 +339,7 @@ export function ActivitiesTab({
                   <span
                     style={{
                       fontSize: 9,
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--primary))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -363,7 +363,7 @@ export function ActivitiesTab({
                       style={{
                         margin: 0,
                         fontSize: 14,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
                       }}
@@ -373,7 +373,7 @@ export function ActivitiesTab({
                     <span
                       style={{
                         fontSize: 10,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         padding: '2px 8px',
                         borderRadius: 20,
                         background: 'hsl(var(--container-low))',
@@ -390,7 +390,7 @@ export function ActivitiesTab({
                     style={{
                       margin: 0,
                       fontSize: 12,
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}

@@ -41,7 +41,7 @@ export function RequestsTab({ joinRequests, processingRequestId, onApprove, onRe
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface-muted))',
               margin: 0,
@@ -76,7 +76,7 @@ export function RequestsTab({ joinRequests, processingRequestId, onApprove, onRe
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 14,
                   color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
@@ -96,7 +96,7 @@ export function RequestsTab({ joinRequests, processingRequestId, onApprove, onRe
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -106,7 +106,7 @@ export function RequestsTab({ joinRequests, processingRequestId, onApprove, onRe
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     color: 'hsl(var(--on-surface-muted))',
                     marginTop: 2,

@@ -21,7 +21,7 @@ export function ChapterHubHeader({ chapter, slug }: Props) {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
             color: 'hsl(var(--on-surface-muted))',
             marginTop: 8,
