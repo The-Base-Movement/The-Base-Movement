@@ -653,7 +653,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     color: 'rgba(255,255,255,0.6)',
                     cursor: 'pointer',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                   }}
                   onMouseEnter={(e) => {
@@ -796,7 +796,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 600,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 10,
                           color: 'hsl(var(--on-surface-muted))',
                           letterSpacing: '.05em',
@@ -877,7 +877,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                               <div
                                 style={{
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 600,
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 12.5,
                                   color: 'hsl(var(--on-surface))',
                                   overflow: 'hidden',
@@ -917,7 +917,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                             <span
                               style={{
                                 fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 600,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 fontSize: 9.5,
                                 color: 'hsl(var(--on-surface-muted))',
                                 padding: '2px 6px',
@@ -1127,7 +1127,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                               <div
                                 style={{
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 600,
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 11.5,
                                   color: 'hsl(var(--on-surface))',
                                   marginBottom: 2,
@@ -1151,7 +1151,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                                 <span
                                   style={{
                                     fontFamily: "'Public Sans', sans-serif",
-                                    fontWeight: 600,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     fontSize: 9,
                                     color: 'hsl(var(--on-surface-muted))',
                                     opacity: 0.6,
@@ -1295,7 +1295,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     overflow: 'hidden',
                     flexShrink: 0,

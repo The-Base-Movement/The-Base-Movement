@@ -188,7 +188,7 @@ export default function Footer() {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     color: 'hsl(var(--primary))',
                     letterSpacing: '.06em',
@@ -264,7 +264,7 @@ export default function Footer() {
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--primary))',
                   }}

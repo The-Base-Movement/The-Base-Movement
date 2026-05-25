@@ -442,7 +442,7 @@ export default function Members() {
                     <div
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12,
                         color: 'hsl(var(--on-surface))',
                         display: 'flex',

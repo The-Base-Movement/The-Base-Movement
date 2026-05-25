@@ -284,7 +284,7 @@ export function LiveContributionFeed() {
                   <p
                     style={{
                       fontSize: 14,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
                       fontFamily: "'Public Sans', sans-serif",

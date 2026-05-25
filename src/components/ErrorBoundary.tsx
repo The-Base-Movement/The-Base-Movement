@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <h1
               style={{
                 fontSize: 22,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 margin: '0 0 8px',
               }}

@@ -48,7 +48,7 @@ export function DashboardMobileFilterDrawer({
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
               color: 'hsl(var(--on-surface))',
             }}

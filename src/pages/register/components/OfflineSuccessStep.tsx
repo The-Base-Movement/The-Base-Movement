@@ -192,7 +192,7 @@ export function OfflineSuccessStep({
                 opacity: isOnline ? 1 : 0.6,
                 border: 'none',
                 color: '#ffffff',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 boxShadow: isOnline ? '0 4px 10px rgba(26, 107, 60, 0.2)' : 'none',
               }}
             >
@@ -250,7 +250,7 @@ export function OfflineSuccessStep({
                 borderColor: '#e5e5e5',
                 color: 'var(--on-surface)',
                 background: '#ffffff',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>

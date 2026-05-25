@@ -125,7 +125,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   const ddStyle: React.CSSProperties = {
     margin: 0,
     fontSize: '11px',
-    fontWeight: 600,
+    fontWeight: 'var(--font-weight-medium, 500)',
     color: 'hsl(var(--on-surface))',
     letterSpacing: '-.005em',
     whiteSpace: 'nowrap',
@@ -213,7 +213,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             border: '1px solid rgba(255,255,255,.2)',
             color: '#fff',
             fontSize: 9,
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             letterSpacing: '-.005em',
           }}
         >

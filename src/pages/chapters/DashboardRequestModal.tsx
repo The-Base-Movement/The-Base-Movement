@@ -8,7 +8,7 @@ const inputSt: React.CSSProperties = {
   background: 'hsl(var(--container-low))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 700,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12,
   borderRadius: 4,
   color: 'hsl(var(--on-surface))',
@@ -16,7 +16,7 @@ const inputSt: React.CSSProperties = {
 }
 const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 800,
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -85,7 +85,7 @@ export function DashboardRequestModal({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 15,
                 color: '#fff',
               }}
@@ -97,7 +97,7 @@ export function DashboardRequestModal({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'rgba(255,255,255,0.5)',
               lineHeight: 1.5,
@@ -123,7 +123,7 @@ export function DashboardRequestModal({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 15,
                 color: 'hsl(var(--on-surface))',
                 marginBottom: 6,
@@ -135,7 +135,7 @@ export function DashboardRequestModal({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
               }}
