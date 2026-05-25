@@ -228,6 +228,7 @@ export default function AdminStore() {
     <div className="main">
       <AdminPageHeader
         title="Logistics and supply"
+        icon="local_shipping"
         description="Movement inventory, merchandising, and regional distribution infrastructure."
         actions={
           <>

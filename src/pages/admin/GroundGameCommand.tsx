@@ -350,6 +350,7 @@ export default function GroundGameCommand() {
     <div className="main">
       <AdminPageHeader
         title={`Constituency Operations${selectedRegion !== 'ALL' ? ` · ${selectedRegion}` : ''}`}
+        icon="campaign"
         description="Field agents · routes · constituency coverage"
         actions={
           <>

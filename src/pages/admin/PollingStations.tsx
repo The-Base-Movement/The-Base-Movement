@@ -107,6 +107,7 @@ export default function PollingStations() {
     <div className="main">
       <AdminPageHeader
         title="Polling stations"
+        icon="how_to_vote"
         description="20,361 EC-registered polling stations across Ghana"
       />
 

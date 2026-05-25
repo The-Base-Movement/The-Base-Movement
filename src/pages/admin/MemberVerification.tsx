@@ -137,6 +137,7 @@ export default function MemberVerification() {
     <div className="main">
       <AdminPageHeader
         title="Member verification"
+        icon="fact_check"
         description="Review and approve new member registrations for movement security."
         actions={
           <>

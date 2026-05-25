@@ -206,6 +206,7 @@ export default function AdminDashboard() {
     <div className="main">
       <AdminPageHeader
         title="Command center"
+        icon="space_dashboard"
         description="Comprehensive operational overview, strategic mobilization metrics, and high-level movement oversight."
         actions={
           <>
