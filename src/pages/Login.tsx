@@ -57,9 +57,7 @@ export default function Login() {
 
       <div className="max-w-[420px] w-full">
         <div className="auth-frame">
-          <div className="auth-header-label">
-            01 · Login <span>Returning patriot</span>
-          </div>
+          <div className="auth-header-label">Member Sign In</div>
 
           <div className="auth-content">
             <div className="auth-brand">

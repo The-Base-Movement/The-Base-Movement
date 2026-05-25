@@ -157,6 +157,7 @@ export default function DashboardLayout() {
     if (path === '/dashboard/store') return 'Store'
     if (path === '/dashboard/donate') return 'Donations'
     if (path === '/dashboard/members') return 'Verified'
+    if (path === '/dashboard/leadership') return 'Leadership'
     if (path === '/dashboard/chapters') return 'Chapters'
     if (path.startsWith('/dashboard/chapters/')) return 'Chapter Details'
     if (path === '/dashboard/chapter-hub' || path.startsWith('/dashboard/chapter-hub/'))
@@ -263,6 +264,7 @@ export default function DashboardLayout() {
                 { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
                 { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
                 { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+                { to: '/dashboard/leadership', icon: 'groups_3', label: 'Leadership' },
                 ...(myChapterLink
                   ? [{ to: myChapterLink.to, icon: myChapterLink.icon, label: 'My Chapter' }]
                   : []),

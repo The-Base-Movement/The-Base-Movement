@@ -136,6 +136,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/donate', element: <Donate /> },
           { path: '/dashboard/contact', element: <Contact /> },
           { path: '/dashboard/members', element: <Members /> },
+          { path: '/dashboard/leadership', element: <Officers /> },
           { path: '/dashboard/privacy', element: <Privacy /> },
           { path: '/dashboard/terms', element: <Terms /> },
           { path: '/dashboard/settings', element: <ProfileSettings /> },

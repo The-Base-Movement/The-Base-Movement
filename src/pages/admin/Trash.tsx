@@ -218,100 +218,88 @@ export default function TrashPage() {
         description="Deleted items are kept for 30 days, then removed forever."
       />
 
-      {/* KPI row — horizontally scrollable */}
-      <div
-        className="thin-scroll"
-        style={{
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
-          marginBottom: 20,
-          paddingBottom: 4,
-        }}
-      >
-        <div style={{ display: 'flex', gap: 12, minWidth: 'max-content' }}>
-          {[
-            {
-              label: 'Total in trash',
-              value: isLoading ? '—' : total.toString(),
-              icon: 'delete',
-              bar: 'hsl(var(--on-surface))',
-            },
-            {
-              label: 'Kept for',
-              value: '30 days',
-              icon: 'schedule',
-              bar: 'hsl(var(--destructive))',
-            },
-            {
-              label: 'Viewing',
-              value: isLoading ? '—' : (TABS.find((t) => t.value === activeTab)?.label ?? ''),
-              icon: 'folder_open',
-              bar: 'hsl(var(--accent))',
-            },
-            { label: 'Status', value: 'Ready', icon: 'check_circle', bar: 'hsl(var(--primary))' },
-          ].map((kpi) => (
+      {/* KPI row */}
+      <div className="kpis" style={{ marginBottom: 20 }}>
+        {[
+          {
+            label: 'Total in trash',
+            value: isLoading ? '—' : total.toString(),
+            icon: 'delete',
+            bar: 'hsl(var(--on-surface))',
+          },
+          {
+            label: 'Kept for',
+            value: '30 days',
+            icon: 'schedule',
+            bar: 'hsl(var(--destructive))',
+          },
+          {
+            label: 'Viewing',
+            value: isLoading ? '—' : (TABS.find((t) => t.value === activeTab)?.label ?? ''),
+            icon: 'folder_open',
+            bar: 'hsl(var(--accent))',
+          },
+          { label: 'Status', value: 'Ready', icon: 'check_circle', bar: 'hsl(var(--primary))' },
+        ].map((kpi) => (
+          <div
+            key={kpi.label}
+            className="panel"
+            style={{
+              padding: '14px 16px 14px 20px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
             <div
-              key={kpi.label}
-              className="panel"
               style={{
-                width: 200,
-                flexShrink: 0,
-                padding: '14px 16px 14px 20px',
-                position: 'relative',
-                overflow: 'hidden',
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: 3,
+                background: kpi.bar,
+              }}
+            />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 6,
               }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 3,
-                  background: kpi.bar,
-                }}
-              />
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 6,
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface-muted))',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    margin: 0,
-                  }}
-                >
-                  {kpi.label}
-                </p>
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
-                >
-                  {kpi.icon}
-                </span>
-              </div>
               <p
                 style={{
-                  fontSize: 20,
+                  fontSize: 10,
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface))',
+                  color: 'hsl(var(--on-surface-muted))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
                   margin: 0,
-                  fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                {kpi.value}
+                {kpi.label}
               </p>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
+              >
+                {kpi.icon}
+              </span>
             </div>
-          ))}
-        </div>
+            <p
+              style={{
+                fontSize: 20,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+                margin: 0,
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              {kpi.value}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Mobile: horizontal tab strip */}
