@@ -114,7 +114,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
             padding: '2px 8px',
             border: `1px solid ${isActive && !isFeatured ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)'}`,
             borderRadius: 2,
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 9,
             letterSpacing: '0.05em',
             textTransform: 'uppercase',
@@ -207,18 +207,26 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
                   const parent = target.parentElement
                   if (parent) {
                     parent.dataset.showInitial = 'true'
-                    parent.innerHTML = `<span style="color:#fff;font-size:12px;font-weight:700">${leaderInitial}</span>`
+                    parent.innerHTML = `<span style="color:#fff;font-size:12px;font-weight:500">${leaderInitial}</span>`
                   }
                 }}
               />
             ) : (
-              <span style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>{leaderInitial}</span>
+              <span
+                style={{
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                }}
+              >
+                {leaderInitial}
+              </span>
             )}
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
             <div
               style={{
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11.5,
                 color: 'hsl(var(--on-surface))',
                 overflow: 'hidden',
@@ -245,7 +253,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
                 padding: '6px 12px',
                 borderRadius: 4,
                 fontSize: 11,
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 background: 'hsla(var(--primary), 0.08)',
                 color: 'hsl(var(--primary))',
                 border: '1px solid hsla(var(--primary), 0.25)',
@@ -262,7 +270,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 4,
                 fontSize: 11,
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 textDecoration: 'none',
                 display: 'inline-block',

@@ -441,7 +441,7 @@
   border-left: 3px solid hsl(var(--primary));
   padding-left: 1rem;
   color: hsl(var(--primary));
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* Component specific classes */
@@ -927,7 +927,7 @@
 }
 .member-quick-stats .sv {
   font-family: 'Public Sans';
-  font-weight: 800;
+  font-weight: 500;
   font-size: 22px;
   letter-spacing: -0.015em;
   margin: 8px 0 4px;
@@ -1022,7 +1022,7 @@
 }
 .card .num {
   font-family: 'Public Sans', sans-serif;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 48px;
   letter-spacing: -0.03em;
   line-height: 0.95;
@@ -1309,7 +1309,7 @@
 }
 .compose .field input.title {
   font-family: 'Public Sans';
-  font-weight: 800;
+  font-weight: 600;
   font-size: 18px;
   letter-spacing: -0.015em;
 }
@@ -1401,7 +1401,7 @@
 }
 .log-row .body p b {
   font-family: 'Public Sans';
-  font-weight: 800;
+  font-weight: 500;
 }
 .log-row .body span {
   font-size: 10.5px;

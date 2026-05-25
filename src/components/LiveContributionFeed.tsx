@@ -44,7 +44,12 @@ function InitialAvatar({ name }: { name: string }) {
         </span>
       ) : (
         <span
-          style={{ fontSize: 14, fontWeight: 700, color, fontFamily: "'Public Sans', sans-serif" }}
+          style={{
+            fontSize: 14,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color,
+            fontFamily: "'Public Sans', sans-serif",
+          }}
         >
           {initial}
         </span>
@@ -164,7 +169,7 @@ export function LiveContributionFeed() {
           <h3
             style={{
               fontSize: 14,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               color: 'hsl(var(--on-surface))',
               fontFamily: "'Public Sans', sans-serif",
               letterSpacing: '-0.01em',
@@ -198,7 +203,7 @@ export function LiveContributionFeed() {
           <span
             style={{
               fontSize: 10,
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--primary))',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -249,7 +254,7 @@ export function LiveContributionFeed() {
                     <p
                       style={{
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         margin: 0,
                         overflow: 'hidden',

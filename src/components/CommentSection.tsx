@@ -70,7 +70,7 @@ function CommentAvatar({ avatar, initials }: { avatar?: string; initials?: strin
         <span
           style={{
             fontSize: 12,
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             color: 'var(--brand-green)',
             fontFamily: "'Public Sans', sans-serif",
           }}
@@ -208,7 +208,7 @@ export function CommentSection() {
         <h2
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 18,
             color: '#1c1c1c',
             margin: 0,
@@ -222,7 +222,7 @@ export function CommentSection() {
             background: '#f0f0f0',
             color: '#555',
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
             padding: '2px 8px',
             borderRadius: 2,
@@ -282,7 +282,7 @@ export function CommentSection() {
                 height: 38,
                 padding: '0 24px',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
                 letterSpacing: '0.04em',
                 cursor: newComment.trim() ? 'pointer' : 'default',
@@ -321,7 +321,7 @@ export function CommentSection() {
                     <span
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 13,
                         color: '#1c1c1c',
                         letterSpacing: '-0.01em',
@@ -333,7 +333,7 @@ export function CommentSection() {
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 600,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 11,
                           color: '#9ca3af',
                         }}
@@ -345,7 +345,7 @@ export function CommentSection() {
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: '#9ca3af',
                       flexShrink: 0,
@@ -371,7 +371,7 @@ export function CommentSection() {
                     onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: replyingTo === comment.id ? 'var(--brand-green)' : '#6b7280',
                       background: 'none',
@@ -387,7 +387,7 @@ export function CommentSection() {
                     disabled={flagged.has(comment.id)}
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: flagged.has(comment.id) ? '#9ca3af' : '#6b7280',
                       background: 'none',
@@ -452,7 +452,7 @@ export function CommentSection() {
                       height: 34,
                       padding: '0 20px',
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       letterSpacing: '0.04em',
                       cursor: replyText.trim() ? 'pointer' : 'default',
