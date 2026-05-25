@@ -2,6 +2,7 @@ const CACHE = 'tbm-v1'
 
 const PRECACHE = [
   '/',
+  '/index.html',
   '/offline.html',
   '/branding/logo.png',
   '/branding/favicon.ico',
@@ -52,7 +53,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Navigation (HTML pages) — network first, fall back to cache then offline page
+  // Navigation (HTML pages) — network first, fall back to SPA shell, cache, or offline page
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -64,7 +65,17 @@ self.addEventListener('fetch', (event) => {
           return response
         })
         .catch(() =>
-          caches.match(request).then(cached => cached || caches.match('/offline.html'))
+          caches.match(request).then(cached => {
+            if (cached) return cached
+            // If network fails, serve the index.html shell so React Router handles the route client-side offline!
+            return caches.match('/index.html').then(indexCached => {
+              if (indexCached) return indexCached
+              return caches.match('/').then(rootCached => {
+                if (rootCached) return rootCached
+                return caches.match('/offline.html')
+              })
+            })
+          })
         )
     )
   }

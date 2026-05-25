@@ -13,6 +13,10 @@ import { useRegistrationData } from './register/useRegistrationData'
 import { useRegistrationSubmit } from './register/useRegistrationSubmit'
 import type { RegistrationFormData } from '@/types/registration'
 import SEO from '@/components/SEO'
+import { OfflineBanner } from '@/components/OfflineBanner'
+import { OfflineSuccessStep } from './register/components/OfflineSuccessStep'
+import { saveDraftRegistration } from '@/utils/offlineDb'
+import { useOfflineSync } from '@/hooks/useOfflineSync'
 
 export default function Register() {
   const { settings } = useBranding()
@@ -34,6 +38,9 @@ export default function Register() {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+  const [offlineSubmitted, setOfflineSubmitted] = useState(false)
+
+  const { isOnline } = useOfflineSync()
 
   const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapters } =
     useRegistrationData()
@@ -191,18 +198,99 @@ export default function Register() {
       setFormStep((prev) => prev + 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (formStep === 3) {
-      await runKycProtocol()
+      if (!isOnline) {
+        // Skip biometric verification offline, proceed to final confirmation step
+        setFormStep(4)
+        toast.info('Offline Mode: Biometric verification skipped for local draft.')
+      } else {
+        await runKycProtocol()
+      }
     } else {
-      await submitRegistration({
-        platform,
-        formData,
-        photoUrl,
-        selfieUrl,
-        croppedAreaPixels,
-        usedScan,
-        refParam,
-      })
+      if (!isOnline) {
+        try {
+          await saveDraftRegistration({
+            platform,
+            formData,
+            photoUrl,
+            selfieUrl,
+            croppedAreaPixels,
+            usedScan,
+            refParam,
+          })
+          setOfflineSubmitted(true)
+          toast.success('Registration saved locally. It will auto-sync once signal is restored!')
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        } catch (error) {
+          console.error('[REGISTER] Offline draft save failed:', error)
+          toast.error('Failed to save offline draft locally.')
+        }
+      } else {
+        try {
+          await submitRegistration({
+            platform,
+            formData,
+            photoUrl,
+            selfieUrl,
+            croppedAreaPixels,
+            usedScan,
+            refParam,
+          })
+        } catch (err) {
+          if (!navigator.onLine) {
+            // Sudden signal loss fallback
+            try {
+              await saveDraftRegistration({
+                platform,
+                formData,
+                photoUrl,
+                selfieUrl,
+                croppedAreaPixels,
+                usedScan,
+                refParam,
+              })
+              setOfflineSubmitted(true)
+              toast.success('Connection lost during submission. Saved securely as offline draft!')
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            } catch (saveErr) {
+              console.error('[REGISTER] Offline fallback draft save failed:', saveErr)
+              toast.error('Connection lost and failed to save offline draft.')
+            }
+          } else {
+            toast.error((err as Error)?.message || 'Registration failed. Please try again.')
+          }
+        }
+      }
     }
+  }
+
+  const handleRegisterAnother = () => {
+    setFormData({
+      idNumber: '',
+      fullName: '',
+      countryCode: '+233',
+      country: 'Ghana',
+      children_count: 0,
+      contactNumber: '',
+      ageRange: '',
+      gender: 'Male',
+      password: '',
+      email: '',
+      residentialAddress: '',
+      region: '',
+      constituency: '',
+      chapter: '',
+      profession: '',
+      educationLevel: '',
+      emergencyContactName: '',
+      emergencyRelationship: '',
+      emergencyNumber: '',
+    })
+    setPhotoUrl(null)
+    setSelfieUrl(null)
+    setStep('choice')
+    setFormStep(1)
+    setOfflineSubmitted(false)
+    setSubmitted(false)
   }
 
   if (submitted) {
@@ -219,6 +307,19 @@ export default function Register() {
     )
   }
 
+  if (offlineSubmitted) {
+    return (
+      <main className="bg-container-low min-h-screen py-12 px-4 flex items-center justify-center">
+        <OfflineSuccessStep
+          formData={formData}
+          photoUrl={photoUrl}
+          selfieUrl={selfieUrl}
+          onRegisterAnother={handleRegisterAnother}
+        />
+      </main>
+    )
+  }
+
   if (physicalSubmitted) {
     return (
       <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
@@ -230,6 +331,7 @@ export default function Register() {
   if (step === 'choice') {
     return (
       <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
+        <OfflineBanner />
         <ChoiceStep
           settings={settings}
           isScanning={isScanningForm}
@@ -249,6 +351,7 @@ export default function Register() {
 
   return (
     <main className="bg-container-low min-h-screen flex flex-col items-center justify-center py-12 px-4">
+      <OfflineBanner />
       <SEO
         title="Member Registration"
         description="Join The Base Movement. Create your account and help build a better Ghana."

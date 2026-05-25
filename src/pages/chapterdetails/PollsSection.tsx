@@ -74,7 +74,7 @@ export function PollsSection({
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-semibold, 600)',
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                       textTransform: 'uppercase',
@@ -90,7 +90,7 @@ export function PollsSection({
                         fontSize: 11,
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                       }}
                     >
                       {poll.description}
@@ -114,7 +114,7 @@ export function PollsSection({
                     style={{
                       margin: '0 0 8px',
                       fontSize: 11,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
@@ -165,7 +165,7 @@ export function PollsSection({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12,
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -188,7 +188,7 @@ export function PollsSection({
                         <span
                           style={{
                             fontSize: 13,
-                            fontWeight: 800,
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
@@ -199,7 +199,7 @@ export function PollsSection({
                             style={{
                               marginLeft: 8,
                               fontSize: 10,
-                              fontWeight: 700,
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--on-surface-muted))',
                               textTransform: 'uppercase',
                             }}
@@ -223,7 +223,7 @@ export function PollsSection({
                     style={{
                       margin: '0 0 8px',
                       fontSize: 11,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
@@ -270,7 +270,7 @@ export function PollsSection({
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontWeight: 800,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 fontSize: 11,
                                 color: 'hsl(var(--on-surface))',
                               }}
@@ -309,7 +309,7 @@ export function PollsSection({
                               <span
                                 style={{
                                   fontSize: 13,
-                                  fontWeight: 800,
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   color: 'hsl(var(--on-surface))',
                                   fontFamily: "'Public Sans', sans-serif",
                                 }}
@@ -320,7 +320,7 @@ export function PollsSection({
                                 <span
                                   style={{
                                     fontSize: 10,
-                                    fontWeight: 700,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     color: 'hsl(var(--on-surface-muted))',
                                     textTransform: 'uppercase',
                                   }}
@@ -332,7 +332,7 @@ export function PollsSection({
                                 <span
                                   style={{
                                     fontSize: 9,
-                                    fontWeight: 800,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                     padding: '2px 6px',
                                     borderRadius: 10,
                                     background: 'hsl(var(--primary) / 0.1)',
@@ -348,7 +348,7 @@ export function PollsSection({
                             <span
                               style={{
                                 fontSize: 12,
-                                fontWeight: 800,
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 color: 'hsl(var(--on-surface-muted))',
                                 fontFamily: "'Public Sans', sans-serif",
                                 flexShrink: 0,

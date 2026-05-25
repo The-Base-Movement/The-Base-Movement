@@ -25,7 +25,7 @@ export function AboutPanel({
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 13,
             color: 'hsl(var(--on-surface))',
             textTransform: 'uppercase',
@@ -80,7 +80,7 @@ export function AboutPanel({
           <div
             style={{
               fontSize: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
@@ -92,7 +92,7 @@ export function AboutPanel({
           <div
             style={{
               fontSize: 13,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface))',
               fontFamily: "'Public Sans', sans-serif",
             }}
@@ -111,7 +111,7 @@ export function AboutPanel({
           <div
             style={{
               fontSize: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
@@ -123,7 +123,7 @@ export function AboutPanel({
           <div
             style={{
               fontSize: 13,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface))',
               fontFamily: "'Public Sans', sans-serif",
             }}

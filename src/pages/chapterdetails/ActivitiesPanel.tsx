@@ -18,7 +18,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
               textTransform: 'uppercase',
@@ -31,7 +31,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
         <button
           style={{
             fontSize: 11,
-            fontWeight: 700,
+            fontWeight: 'var(--font-weight-medium, 500)',
             color: 'hsl(var(--primary))',
             background: 'none',
             border: 'none',
@@ -82,7 +82,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
                     <span
                       style={{
                         fontSize: 9,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -93,7 +93,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
                     <span
                       style={{
                         fontSize: 18,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
                         lineHeight: 1,
@@ -106,7 +106,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
                     <div
                       style={{
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
                         overflow: 'hidden',
@@ -119,7 +119,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
                     <div
                       style={{
                         fontSize: 10,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -151,7 +151,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
             <p
               style={{
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',

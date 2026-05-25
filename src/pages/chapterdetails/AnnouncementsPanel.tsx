@@ -34,7 +34,7 @@ export function AnnouncementsPanel({ announcements, leaderAvatarUrl }: Announcem
         <span
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 13,
             color: 'hsl(var(--on-surface))',
             textTransform: 'uppercase',
@@ -57,7 +57,7 @@ export function AnnouncementsPanel({ announcements, leaderAvatarUrl }: Announcem
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   color: 'hsl(var(--primary))',
                   fontFamily: "'Public Sans', sans-serif",
@@ -84,7 +84,7 @@ export function AnnouncementsPanel({ announcements, leaderAvatarUrl }: Announcem
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -95,7 +95,7 @@ export function AnnouncementsPanel({ announcements, leaderAvatarUrl }: Announcem
                   style={{
                     marginLeft: 6,
                     fontSize: 10,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--primary))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.04em',
@@ -107,7 +107,7 @@ export function AnnouncementsPanel({ announcements, leaderAvatarUrl }: Announcem
                   style={{
                     marginLeft: 8,
                     fontSize: 10,
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                   }}
                 >

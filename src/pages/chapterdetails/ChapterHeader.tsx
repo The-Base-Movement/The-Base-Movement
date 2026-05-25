@@ -35,7 +35,7 @@ export function ChapterHeader({
               style={{
                 color: 'hsl(var(--on-surface-muted))',
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontFamily: "'Public Sans', sans-serif",
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -61,7 +61,7 @@ export function ChapterHeader({
           <h1
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 28,
               color: 'hsl(var(--on-surface))',
               letterSpacing: '-0.02em',
@@ -78,7 +78,7 @@ export function ChapterHeader({
               gap: '6px 16px',
               color: 'hsl(var(--on-surface-muted))',
               fontSize: 13,
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontFamily: "'Public Sans', sans-serif",
             }}
           >

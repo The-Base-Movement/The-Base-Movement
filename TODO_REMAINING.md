@@ -7,9 +7,12 @@ This list tracks the final engineering and integration requirements to transitio
 - [x] **Live KYC Integration**: Replace `tacticalService` simulation with a production-ready Identity Provider (Smile Identity or Onfido).
   - [x] Implement biometric face-match for registration.
   - [x] Connect automated Ghana Card / Voter ID validation.
-- [x] **GIS Logistics Layer**: Replace SVG placeholders with a dynamic map (Mapbox GL) (Chapters completed).
-  - [ ] Integrate live warehouse inventory markers.
-  - [ ] Plot real-time fulfillment transport routes across regions.
+- [x] **GIS Logistics Layer**: Rep
+
+lace SVG placeholders with a dynamic map (Mapbox GL) (Chapters completed).
+
+- [ ] Integrate live warehouse inventory markers.
+- [ ] Plot real-time fulfillment transport routes across regions.
 - [ ] **ML Intelligence Microservice**: Connect Supabase data to a Python/FastAPI service for predictive analytics.
   - [ ] Implement propentisy modeling for donors.
   - [ ] Deploy sentiment-based mobilization forecasting.

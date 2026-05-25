@@ -78,7 +78,7 @@ export function LeaderProfileModal({
                   justifyContent: 'center',
                   color: '#fff',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 20,
                 }}
               >
@@ -124,7 +124,7 @@ export function LeaderProfileModal({
               <h2
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   fontSize: 18,
                   color: 'hsl(var(--on-surface))',
                   margin: '0 0 3px',
@@ -135,7 +135,7 @@ export function LeaderProfileModal({
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -148,7 +148,7 @@ export function LeaderProfileModal({
                 padding: '2px 10px',
                 borderRadius: 4,
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontFamily: "'Public Sans', sans-serif",
                 background: 'hsla(var(--primary), 0.1)',
                 color: 'hsl(var(--primary))',
@@ -196,7 +196,7 @@ export function LeaderProfileModal({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
@@ -209,7 +209,7 @@ export function LeaderProfileModal({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface))',
                     display: 'flex',
@@ -240,7 +240,7 @@ export function LeaderProfileModal({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
                 lineHeight: 1.65,

@@ -36,48 +36,49 @@ The front-end uses a **mix of inline styles AND Tailwind utility classes**. Viol
 
 ## Violation Summary
 
-| File                                                            | Violations | Severity | Primary Issue                                        |
-| --------------------------------------------------------------- | ---------- | -------- | ---------------------------------------------------- |
-| `src/index.css`                                                 | 4          | HIGH     | Raw `font-weight: 700` in selectors (non–@font-face) |
-| `src/pages/Polls.tsx`                                           | 2          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/polls/components/PollKPIs.tsx`                       | 3          | HIGH     | `fontWeight: 700`, raw `600`                         |
-| `src/pages/polls/components/PollsSidebar.tsx`                   | 4          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                 |
-| `src/pages/polls/components/ClosedPollsPanel.tsx`               | 6          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/PreviewOfficer.tsx`                                  | 2          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                 |
-| `src/pages/ChapterHub.tsx`                                      | 1          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/chapterdetails/ChapterHeader.tsx`                    | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/chapterdetails/LeaderProfileModal.tsx`               | 2          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/chapterdetails/LeadershipSidebar.tsx`                | 2          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/chapterdetails/ActivitiesPanel.tsx`                  | 2          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/chapterdetails/AnnouncementsPanel.tsx`               | 1          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/chapterdetails/AboutPanel.tsx`                       | 1          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/chapterdetails/PollsSection.tsx`                     | 2          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/chapterhub/ActivitiesTab.tsx`                        | 1          | HIGH     | `fontWeight: 900`                                    |
-| `src/pages/chapterhub/BoardTab.tsx`                             | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/chapterhub/DonationsTab.tsx`                         | 2          | HIGH     | `fontWeight: 900`, `fontWeight: 700`                 |
-| `src/pages/chapterhub/MembersTab.tsx`                           | 2          | HIGH     | `fontWeight: 900`, `fontWeight: 700`                 |
-| `src/pages/chapterhub/ChapterHubKPIs.tsx`                       | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/chapterhub/ChapterHubHeader.tsx`                     | 2          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                 |
-| `src/pages/chapterhub/RequestsTab.tsx`                          | 1          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/home/StatCard.tsx`                                   | 2          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                 |
-| `src/pages/donate/components/DashboardContributionHistory.tsx`  | 2          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/donate/components/AuditModal.tsx`                    | 1          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/donate/components/DashboardCampaignsList.tsx`        | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                 |
-| `src/pages/donate/components/DonateSuccessPanel.tsx`            | 1          | HIGH     | `fontWeight: 900`                                    |
-| `src/pages/donate/components/MobilizationProtocol.tsx`          | 1          | HIGH     | `fontWeight: 700`                                    |
-| `src/pages/dashboard/components/AchievementsAndLeaderboard.tsx` | 8          | HIGH     | `fontWeight: 800`, `fontWeight: 700` (8 instances)   |
-| `src/components/ChapterCard.tsx`                                | 2          | HIGH     | `fontWeight: 700`                                    |
-| `src/components/CommentSection.tsx`                             | 7          | HIGH     | `fontWeight: 700` (7 instances)                      |
-| `src/components/LiveContributionFeed.tsx`                       | 4          | HIGH     | `fontWeight: 700` (4 instances)                      |
-| `src/pages/CanvasserClipboard.tsx`                              | 4          | MEDIUM   | `font-bold` Tailwind (non-headers)                   |
-| `src/pages/Chapters.tsx`                                        | 3          | MEDIUM   | `font-bold` Tailwind (non-headers)                   |
-| `src/components/MovementRoadmap.tsx`                            | 5          | MEDIUM   | `font-bold` Tailwind (non-headers)                   |
-| `src/components/ReviewSection.tsx`                              | 8          | MEDIUM   | `font-bold` Tailwind (8+ instances)                  |
-| `src/components/WelcomeModal.tsx`                               | 3          | MEDIUM   | `font-bold` Tailwind (non-headers)                   |
-| `src/components/OpinionPollCard.tsx`                            | 2          | MEDIUM   | `font-bold`, `font-semibold` on non-headers          |
-| `src/components/EventCard.tsx`                                  | 2          | MEDIUM   | `font-bold` Tailwind (non-headers)                   |
-| `src/components/BlogCard.tsx`                                   | 1          | MEDIUM   | `font-bold` Tailwind (non-header)                    |
-| `src/components/Breadcrumbs.tsx`                                | 1          | MEDIUM   | `font-semibold` on nav link                          |
+| File                                                            | Violations | Severity | Primary Issue                                                          |
+| --------------------------------------------------------------- | ---------- | -------- | ---------------------------------------------------------------------- |
+| `src/index.css`                                                 | 4          | HIGH     | Raw `font-weight: 700` in selectors (non–@font-face)                   |
+| `src/pages/Polls.tsx`                                           | 2          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/polls/components/PollKPIs.tsx`                       | 3          | HIGH     | `fontWeight: 700`, raw `600`                                           |
+| `src/pages/polls/components/PollsSidebar.tsx`                   | 4          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                                   |
+| `src/pages/polls/components/ClosedPollsPanel.tsx`               | 6          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/PreviewOfficer.tsx`                                  | 2          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                                   |
+| `src/pages/ChapterHub.tsx`                                      | 1          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/chapterdetails/LeaderBanner.tsx`                     | 2          | HIGH     | `fontWeight: 800`, `fontWeight: 600` (missed in initial audit — fixed) |
+| `src/pages/chapterdetails/ChapterHeader.tsx`                    | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/chapterdetails/LeaderProfileModal.tsx`               | 2          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/chapterdetails/LeadershipSidebar.tsx`                | 2          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/chapterdetails/ActivitiesPanel.tsx`                  | 2          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/chapterdetails/AnnouncementsPanel.tsx`               | 1          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/chapterdetails/AboutPanel.tsx`                       | 1          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/chapterdetails/PollsSection.tsx`                     | 2          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/chapterhub/ActivitiesTab.tsx`                        | 1          | HIGH     | `fontWeight: 900`                                                      |
+| `src/pages/chapterhub/BoardTab.tsx`                             | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/chapterhub/DonationsTab.tsx`                         | 2          | HIGH     | `fontWeight: 900`, `fontWeight: 700`                                   |
+| `src/pages/chapterhub/MembersTab.tsx`                           | 2          | HIGH     | `fontWeight: 900`, `fontWeight: 700`                                   |
+| `src/pages/chapterhub/ChapterHubKPIs.tsx`                       | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/chapterhub/ChapterHubHeader.tsx`                     | 2          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                                   |
+| `src/pages/chapterhub/RequestsTab.tsx`                          | 1          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/home/StatCard.tsx`                                   | 2          | HIGH     | `fontWeight: 800`, `fontWeight: 700`                                   |
+| `src/pages/donate/components/DashboardContributionHistory.tsx`  | 2          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/donate/components/AuditModal.tsx`                    | 1          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/donate/components/DashboardCampaignsList.tsx`        | 3          | HIGH     | `fontWeight: 700`, `fontWeight: 800`                                   |
+| `src/pages/donate/components/DonateSuccessPanel.tsx`            | 1          | HIGH     | `fontWeight: 900`                                                      |
+| `src/pages/donate/components/MobilizationProtocol.tsx`          | 1          | HIGH     | `fontWeight: 700`                                                      |
+| `src/pages/dashboard/components/AchievementsAndLeaderboard.tsx` | 8          | HIGH     | `fontWeight: 800`, `fontWeight: 700` (8 instances)                     |
+| `src/components/ChapterCard.tsx`                                | 2          | HIGH     | `fontWeight: 700`                                                      |
+| `src/components/CommentSection.tsx`                             | 7          | HIGH     | `fontWeight: 700` (7 instances)                                        |
+| `src/components/LiveContributionFeed.tsx`                       | 4          | HIGH     | `fontWeight: 700` (4 instances)                                        |
+| `src/pages/CanvasserClipboard.tsx`                              | 4          | MEDIUM   | `font-bold` Tailwind (non-headers)                                     |
+| `src/pages/Chapters.tsx`                                        | 3          | MEDIUM   | `font-bold` Tailwind (non-headers)                                     |
+| `src/components/MovementRoadmap.tsx`                            | 5          | MEDIUM   | `font-bold` Tailwind (non-headers)                                     |
+| `src/components/ReviewSection.tsx`                              | 8          | MEDIUM   | `font-bold` Tailwind (8+ instances)                                    |
+| `src/components/WelcomeModal.tsx`                               | 3          | MEDIUM   | `font-bold` Tailwind (non-headers)                                     |
+| `src/components/OpinionPollCard.tsx`                            | 2          | MEDIUM   | `font-bold`, `font-semibold` on non-headers                            |
+| `src/components/EventCard.tsx`                                  | 2          | MEDIUM   | `font-bold` Tailwind (non-headers)                                     |
+| `src/components/BlogCard.tsx`                                   | 1          | MEDIUM   | `font-bold` Tailwind (non-header)                                      |
+| `src/components/Breadcrumbs.tsx`                                | 1          | MEDIUM   | `font-semibold` on nav link                                            |
 
 **Total estimated violations: ~120+**
 **HIGH (inline style raw bold values): ~85**
@@ -183,7 +184,7 @@ The following front-end files were checked and found clean (already compliant or
 | 1 · `src/index.css`           | 1                                                 | ✅ DONE    |
 | 2 · Shared components         | CommentSection, LiveContributionFeed, ChapterCard | ✅ DONE    |
 | 3 · Polls module              | Polls.tsx + 4 sub-components                      | ✅ DONE    |
-| 4 · Chapter Details           | 7 sub-components                                  | ⏳ Pending |
+| 4 · Chapter Details           | 8 sub-components (incl. LeaderBanner)             | ✅ DONE    |
 | 5 · Chapter Hub               | 7 sub-components                                  | ⏳ Pending |
 | 6 · Donate module             | 4 components                                      | ⏳ Pending |
 | 7 · Dashboard components      | AchievementsAndLeaderboard                        | ⏳ Pending |

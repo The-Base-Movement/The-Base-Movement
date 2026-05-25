@@ -31,7 +31,7 @@ export function LeaderBanner({ chapterSlug }: LeaderBannerProps) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 800,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 13,
               color: '#fff',
             }}
@@ -41,7 +41,7 @@ export function LeaderBanner({ chapterSlug }: LeaderBannerProps) {
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               color: 'rgba(255,255,255,0.5)',
               marginTop: 2,

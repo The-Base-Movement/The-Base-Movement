@@ -33,7 +33,7 @@ export function LeadershipSidebar({
         <h3
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 13,
             color: 'hsl(var(--on-surface))',
             textTransform: 'uppercase',
@@ -70,7 +70,7 @@ export function LeadershipSidebar({
                   flexShrink: 0,
                   color: '#fff',
                   fontSize: 16,
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontFamily: "'Public Sans', sans-serif",
                   overflow: 'hidden',
                 }}
@@ -89,7 +89,7 @@ export function LeadershipSidebar({
                 <div
                   style={{
                     fontSize: 14,
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface))',
                     fontFamily: "'Public Sans', sans-serif",
                   }}
@@ -99,7 +99,7 @@ export function LeadershipSidebar({
                 <div
                   style={{
                     fontSize: 10,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--primary))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
@@ -173,7 +173,7 @@ export function LeadershipSidebar({
                     <span
                       style={{
                         fontSize: 13,
-                        fontWeight: 800,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
                       }}
@@ -186,7 +186,7 @@ export function LeadershipSidebar({
                   <div
                     style={{
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
@@ -217,7 +217,7 @@ export function LeadershipSidebar({
               <p
                 style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
@@ -297,7 +297,7 @@ export function LeadershipSidebar({
           <div
             style={{
               fontSize: 10,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--accent))',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
@@ -328,7 +328,7 @@ export function LeadershipSidebar({
               background: 'rgba(0,107,63,0.25)',
               color: 'hsl(var(--primary))',
               fontSize: 11,
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               borderRadius: 4,
               border: '1px solid rgba(0,107,63,0.4)',
             }}
@@ -346,7 +346,7 @@ export function LeadershipSidebar({
         <h3
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 13,
             color: 'hsl(var(--on-surface))',
             marginBottom: 8,
