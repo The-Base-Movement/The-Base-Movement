@@ -40,7 +40,7 @@ export function PollsSidebar({
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 10,
             color: 'hsl(var(--accent))',
             textTransform: 'uppercase',
@@ -81,7 +81,7 @@ export function PollsSidebar({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'rgba(255,255,255,0.4)',
                 marginBottom: 4,
@@ -92,7 +92,7 @@ export function PollsSidebar({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 20,
                 color: '#fff',
                 lineHeight: 1,
@@ -112,7 +112,7 @@ export function PollsSidebar({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 color: 'rgba(255,255,255,0.4)',
                 marginBottom: 4,
@@ -123,7 +123,7 @@ export function PollsSidebar({
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 20,
                 color: '#fff',
                 lineHeight: 1,
@@ -140,7 +140,7 @@ export function PollsSidebar({
         <div
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 14,
             color: '#fff',
             marginBottom: 8,

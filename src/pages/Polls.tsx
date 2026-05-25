@@ -115,7 +115,7 @@ export default function Polls() {
           <h2
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 20,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -156,7 +156,7 @@ export default function Polls() {
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: isDashboard ? 13 : 16,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -302,7 +302,7 @@ export default function Polls() {
               style={{
                 display: 'block',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
@@ -316,7 +316,7 @@ export default function Polls() {
               style={{
                 color: '#fff',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 800,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                 letterSpacing: '-0.03em',
                 lineHeight: 1.05,

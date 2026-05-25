@@ -182,7 +182,7 @@ The following front-end files were checked and found clean (already compliant or
 | ----------------------------- | ------------------------------------------------- | ---------- |
 | 1 · `src/index.css`           | 1                                                 | ✅ DONE    |
 | 2 · Shared components         | CommentSection, LiveContributionFeed, ChapterCard | ✅ DONE    |
-| 3 · Polls module              | Polls.tsx + 4 sub-components                      | ⏳ Pending |
+| 3 · Polls module              | Polls.tsx + 4 sub-components                      | ✅ DONE    |
 | 4 · Chapter Details           | 7 sub-components                                  | ⏳ Pending |
 | 5 · Chapter Hub               | 7 sub-components                                  | ⏳ Pending |
 | 6 · Donate module             | 4 components                                      | ⏳ Pending |

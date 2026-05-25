@@ -29,7 +29,7 @@ export function ClosedPollsPanel({
           <p
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               margin: 0,
@@ -60,7 +60,7 @@ export function ClosedPollsPanel({
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 9,
                       color: 'hsl(var(--destructive))',
                       textTransform: 'uppercase',
@@ -73,7 +73,7 @@ export function ClosedPollsPanel({
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 800,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12.5,
                     color: 'hsl(var(--on-surface))',
                     margin: '0 0 8px',
@@ -132,7 +132,7 @@ export function ClosedPollsPanel({
                               <span
                                 style={{
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 700,
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 11,
                                   color: 'hsl(var(--on-surface))',
                                 }}
@@ -142,7 +142,7 @@ export function ClosedPollsPanel({
                               <span
                                 style={{
                                   fontFamily: "'Public Sans', sans-serif",
-                                  fontWeight: 800,
+                                  fontWeight: 'var(--font-weight-medium, 500)',
                                   fontSize: 11,
                                   color: 'hsl(var(--on-surface-muted))',
                                 }}
@@ -163,7 +163,7 @@ export function ClosedPollsPanel({
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
@@ -180,7 +180,7 @@ export function ClosedPollsPanel({
                       alignItems: 'center',
                       gap: 4,
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 800,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
                       color: 'hsl(var(--primary))',
                     }}
