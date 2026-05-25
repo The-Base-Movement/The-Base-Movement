@@ -68,7 +68,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                 campaign.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
               color: '#fff',
               fontSize: 9,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
             {campaign.status}
@@ -89,7 +89,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 16,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -138,7 +138,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
               <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 14,
                   color: 'hsl(var(--on-surface))',
                 }}
@@ -168,7 +168,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10,
               }}
             >

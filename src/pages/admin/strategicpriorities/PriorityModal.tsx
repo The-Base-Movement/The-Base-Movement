@@ -103,7 +103,7 @@ export function PriorityModal({
               style={{
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 18,
                 color: 'hsl(var(--on-surface))',
               }}
@@ -155,7 +155,7 @@ export function PriorityModal({
                 htmlFor="input-afc280"
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -192,7 +192,7 @@ export function PriorityModal({
                 htmlFor="textarea-e67af7"
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -236,7 +236,7 @@ export function PriorityModal({
                   htmlFor="input-489f6e"
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -272,7 +272,7 @@ export function PriorityModal({
                   htmlFor="input-94fab5"
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -308,7 +308,7 @@ export function PriorityModal({
                 htmlFor="select-683ee2"
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color: 'hsl(var(--on-surface-muted))',
                 }}
@@ -350,7 +350,7 @@ export function PriorityModal({
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                   }}
@@ -379,7 +379,7 @@ export function PriorityModal({
                           ? '#fff'
                           : 'hsl(var(--on-surface-muted))',
                       fontSize: 11,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       padding: '4px 8px',
                       borderRadius: 3,
                       cursor: 'pointer',
@@ -402,7 +402,7 @@ export function PriorityModal({
                         imageUploadMode === 'upload' ? 'hsl(var(--on-surface))' : 'transparent',
                       color: imageUploadMode === 'upload' ? '#fff' : 'hsl(var(--on-surface-muted))',
                       fontSize: 11,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       padding: '4px 8px',
                       borderRadius: 3,
                       cursor: 'pointer',
@@ -425,7 +425,7 @@ export function PriorityModal({
                         imageUploadMode === 'url' ? 'hsl(var(--on-surface))' : 'transparent',
                       color: imageUploadMode === 'url' ? '#fff' : 'hsl(var(--on-surface-muted))',
                       fontSize: 11,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       padding: '4px 8px',
                       borderRadius: 3,
                       cursor: 'pointer',
@@ -538,7 +538,7 @@ export function PriorityModal({
                                   style={{
                                     color: '#fff',
                                     fontSize: 20,
-                                    fontWeight: 'var(--font-weight-semibold, 600)',
+                                    fontWeight: 'var(--font-weight-medium, 500)',
                                   }}
                                 >
                                   check_circle
@@ -600,7 +600,7 @@ export function PriorityModal({
                       <span
                         style={{
                           fontSize: 12,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
@@ -641,7 +641,7 @@ export function PriorityModal({
                       <span
                         style={{
                           fontSize: 12,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
@@ -695,7 +695,7 @@ export function PriorityModal({
                       style={{
                         margin: 0,
                         fontSize: 12,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',

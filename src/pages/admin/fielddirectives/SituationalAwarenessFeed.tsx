@@ -52,7 +52,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -169,7 +169,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                       <span
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 9,
                           color: 'rgba(255,255,255,0.8)',
                           textTransform: 'uppercase',
@@ -212,7 +212,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                       <div
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12,
                           color: 'hsl(var(--on-surface))',
                         }}

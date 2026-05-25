@@ -52,7 +52,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -149,7 +149,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
                 <span
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     color: 'hsl(var(--accent))',
                   }}
@@ -160,7 +160,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
               <div
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
                   color: 'hsl(var(--on-surface))',
                   marginBottom: 6,

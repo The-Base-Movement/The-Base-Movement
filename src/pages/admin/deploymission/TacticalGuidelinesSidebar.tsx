@@ -44,7 +44,7 @@ export function TacticalGuidelinesSidebar({
           <h3
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13.5,
               color: '#fff',
               margin: 0,
@@ -112,7 +112,7 @@ export function TacticalGuidelinesSidebar({
                 <b
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12,
                     display: 'block',
                     marginBottom: 3,
@@ -156,7 +156,7 @@ export function TacticalGuidelinesSidebar({
             <b
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 display: 'block',
                 marginBottom: 4,

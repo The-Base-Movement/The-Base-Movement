@@ -187,7 +187,7 @@ export default function StrategicPriorities() {
         <p
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-semibold, 600)',
+            fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 12,
             color: 'hsl(var(--on-surface-muted))',
             marginTop: 16,
@@ -282,7 +282,7 @@ export default function StrategicPriorities() {
                   <h3
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 20,
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
