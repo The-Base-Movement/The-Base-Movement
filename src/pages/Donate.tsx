@@ -20,6 +20,7 @@ import { VictoriesSection } from './donate/components/VictoriesSection'
 import { OperationalTransparency } from './donate/components/OperationalTransparency'
 import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
 import { AuditModal } from './donate/components/AuditModal'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 export default function PublicDonate() {
   const [loading, setLoading] = useState(true)
@@ -160,6 +161,7 @@ export default function PublicDonate() {
         }}
       >
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 clamp(16px, 4vw, 32px)' }}>
+          <Breadcrumbs />
           <div style={{ position: 'relative', zIndex: 2 }}>
             <h1
               style={{

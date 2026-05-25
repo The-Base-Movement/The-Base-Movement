@@ -18,6 +18,11 @@ const LABEL_OVERRIDES: Record<string, string> = {
   regions: 'Regions',
   new: 'New',
   edit: 'Edit',
+  officers: 'Leadership',
+  'our-agenda': 'Our Agenda',
+  contact: 'Contact',
+  donate: 'Donate',
+  impact: 'Impact',
 }
 
 // Routes where the Breadcrumbs component should render
@@ -35,6 +40,7 @@ const SUPPORTED_PREFIXES = [
   '/press',
   '/privacy',
   '/terms',
+  '/officers',
 ]
 
 // Root labels and links per context

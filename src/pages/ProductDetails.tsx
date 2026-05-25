@@ -15,6 +15,7 @@ import { Reviews } from './product-details/components/Reviews'
 import { RelatedProducts } from './product-details/components/RelatedProducts'
 import { TechnicalDetails } from './product-details/components/TechnicalDetails'
 import { SizeGuideModal } from './product-details/components/SizeGuideModal'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 export default function ProductDetails() {
   const { slug } = useParams()
@@ -169,6 +170,7 @@ export default function ProductDetails() {
         jsonLd={productSchema}
       />
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+        <Breadcrumbs currentLabel={product.name} />
         <div className="flex items-center justify-between mb-10 gap-4 flex-wrap">
           <Link
             to={storeUrl}

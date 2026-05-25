@@ -5,6 +5,7 @@ import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
 import { ContactInfoPanel } from './contact/components/ContactInfoPanel'
 import { ContactForm } from './contact/components/ContactForm'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 export default function Contact() {
   const { settings } = useBranding()
   const [submitted, setSubmitted] = useState(false)
@@ -55,6 +56,7 @@ export default function Contact() {
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
+          <Breadcrumbs variant="dark" />
           <h1 className="text-white text-5xl md:text-7xl font-medium tracking-tighter mb-4">
             Get in touch
           </h1>

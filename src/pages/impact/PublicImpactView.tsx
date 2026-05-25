@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import type { DonationDetail } from '@/types/admin'
 import { ImpactActivityModal } from './ImpactActivityModal'
 
@@ -47,6 +48,7 @@ export function PublicImpactView({
 
       <header className="bg-white border-b border-slate-100 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 md:py-24 relative z-10">
+          <Breadcrumbs />
           <div className="max-w-3xl">
             <h1 className="text-slate-900 text-4xl md:text-6xl font-meta font-medium tracking-tighter mb-6 leading-[1.1]">
               Transparency in Action.

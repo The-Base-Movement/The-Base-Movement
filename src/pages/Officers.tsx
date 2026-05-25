@@ -7,6 +7,7 @@ import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
 import { usePerformance } from '@/context/PerformanceContext'
 import { ScrollReveal } from '@/components/ScrollReveal'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 export default function Officers() {
   const { lowBandwidthMode } = usePerformance()
@@ -79,6 +80,7 @@ export default function Officers() {
           />
         )}
         <div className="max-w-[1280px] mx-auto px-5 sm:px-8 relative z-10 text-center">
+          <Breadcrumbs variant="dark" />
           <ScrollReveal direction="down" duration={1000}>
             <h1 className="font-meta font-medium text-4xl md:text-6xl mb-6 tracking-tight">
               National Leadership
