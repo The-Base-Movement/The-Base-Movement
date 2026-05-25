@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
@@ -117,7 +117,7 @@ export default function CanvasserClipboard() {
           >
             assignment
           </span>
-          <p className="text-micro font-bold tracking-tight text-primary">
+          <p className="text-micro font-medium tracking-tight text-primary">
             Loading mobilization protocols...
           </p>
         </div>
@@ -133,11 +133,11 @@ export default function CanvasserClipboard() {
           <div className="mt-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="flex h-2 w-2 rounded-full bg-primary animate-ping"></span>
-              <span className="text-micro font-bold tracking-tight text-primary">
+              <span className="text-micro font-medium tracking-tight text-primary">
                 Operation ground game
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-stone-900 flex items-center gap-3 mb-0 tracking-tight italic font-meta">
+            <h1 className="text-2xl md:text-3xl font-semibold text-stone-900 flex items-center gap-3 mb-0 tracking-tight italic font-meta">
               Digital <span className="text-stone-400">clipboard</span>
             </h1>
             <p className="text-stone-500 text-xs font-medium tracking-wide mt-1 mb-0">
@@ -156,7 +156,7 @@ export default function CanvasserClipboard() {
 
             <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
               <div className="space-y-4">
-                <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
+                <label className="text-micro font-medium tracking-tight text-stone-900 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary" style={{ fontSize: 16 }}>
                     person
                   </span>{' '}
@@ -186,7 +186,7 @@ export default function CanvasserClipboard() {
               </div>
 
               <div className="space-y-4">
-                <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
+                <label className="text-micro font-medium tracking-tight text-stone-900 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary" style={{ fontSize: 16 }}>
                     description
                   </span>{' '}
@@ -252,7 +252,7 @@ export default function CanvasserClipboard() {
                     >
                       <span
                         className={cn(
-                          'text-micro font-bold tracking-tight block',
+                          'text-micro font-medium tracking-tight block',
                           interactionResult === res.val ? res.color : 'text-stone-500'
                         )}
                       >
@@ -265,7 +265,7 @@ export default function CanvasserClipboard() {
 
               {interactionResult !== 'NOT_HOME' && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                  <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
+                  <label className="text-micro font-medium tracking-tight text-stone-900 flex items-center gap-2">
                     <span
                       className="material-symbols-outlined text-primary"
                       style={{ fontSize: 16 }}
@@ -281,7 +281,7 @@ export default function CanvasserClipboard() {
                         type="button"
                         onClick={() => toggleIssue(issue)}
                         className={cn(
-                          'px-4 py-2 text-micro font-bold tracking-tight border transition-all',
+                          'px-4 py-2 text-micro font-medium tracking-tight border transition-all',
                           keyIssues.includes(issue)
                             ? 'bg-stone-900 text-white border-stone-900'
                             : 'bg-white text-stone-500 border-stone-200 hover:border-stone-300'
@@ -305,7 +305,7 @@ export default function CanvasserClipboard() {
                     className="w-5 h-5 border-2 border-stone-300 text-primary focus:ring-primary rounded-none"
                   />
                   <div>
-                    <span className="text-micro font-bold tracking-tight text-stone-900 block">
+                    <span className="text-micro font-medium tracking-tight text-stone-900 block">
                       Needs follow-up
                     </span>
                     <span className="text-micro text-stone-500 font-medium">
@@ -317,7 +317,7 @@ export default function CanvasserClipboard() {
                 <button
                   type="submit"
                   disabled={submitting || !addressNotes}
-                  className="bg-primary text-white hover:bg-green-700 h-12 px-6 rounded-none text-micro font-bold tracking-tight shadow-lg border-none cursor-pointer disabled:opacity-60"
+                  className="bg-primary text-white hover:bg-green-700 h-12 px-6 rounded-none text-micro font-medium tracking-tight shadow-lg border-none cursor-pointer disabled:opacity-60"
                 >
                   {submitting ? 'Logging...' : 'Log interaction'}
                 </button>

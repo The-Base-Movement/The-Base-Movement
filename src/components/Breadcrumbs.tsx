@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 // Human-readable label overrides for path segments
@@ -87,12 +87,12 @@ export function Breadcrumbs({ currentLabel, variant = 'light' }: BreadcrumbsProp
   const chevronClass = isDark ? 'text-white/30' : 'text-stone-300'
 
   const activeClass = isDark
-    ? 'text-xs font-semibold text-white font-meta max-w-[120px] sm:max-w-[200px] truncate'
-    : 'text-xs font-semibold text-[var(--brand-green)] font-meta max-w-[120px] sm:max-w-[200px] truncate'
+    ? 'text-xs font-medium text-white font-meta max-w-[120px] sm:max-w-[200px] truncate'
+    : 'text-xs font-medium text-[var(--brand-green)] font-meta max-w-[120px] sm:max-w-[200px] truncate'
 
   const inactiveLinkClass = isDark
-    ? 'text-white/50 hover:text-white transition-colors text-xs font-semibold font-meta'
-    : 'text-stone-400 hover:text-[var(--brand-green)] transition-colors text-xs font-semibold font-meta'
+    ? 'text-white/50 hover:text-white transition-colors text-xs font-medium font-meta'
+    : 'text-stone-400 hover:text-[var(--brand-green)] transition-colors text-xs font-medium font-meta'
 
   return (
     <nav aria-label="Breadcrumb" className={navClass}>
@@ -100,7 +100,7 @@ export function Breadcrumbs({ currentLabel, variant = 'light' }: BreadcrumbsProp
         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
           home
         </span>
-        <span className="text-xs font-semibold font-meta">{root.label}</span>
+        <span className="text-xs font-medium font-meta">{root.label}</span>
       </Link>
 
       {pathnames.map((value, index) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import { authService } from '@/services/authService'
@@ -277,7 +277,7 @@ export default function Chapters() {
         <div className="lg:hidden mb-8 flex gap-4">
           <button
             onClick={() => setShowMobileFilters(true)}
-            className="flex-1 h-12 gap-2 font-bold text-xs border border-stone-200 bg-white cursor-pointer hover:bg-stone-50 flex items-center justify-center"
+            className="flex-1 h-12 gap-2 font-medium text-xs border border-stone-200 bg-white cursor-pointer hover:bg-stone-50 flex items-center justify-center"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               filter_list
@@ -286,7 +286,7 @@ export default function Chapters() {
           </button>
           <button
             onClick={() => setIsRequestModalOpen(true)}
-            className="flex-1 font-bold text-xs h-12 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            className="flex-1 font-medium text-xs h-12 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               add
