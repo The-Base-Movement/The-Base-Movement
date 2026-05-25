@@ -31,7 +31,7 @@ export function DashboardContributionHistory({
         <div>
           <p
             style={{
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -72,7 +72,7 @@ export function DashboardContributionHistory({
                   style={{
                     padding: '10px 18px',
                     fontSize: 10,
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
@@ -121,7 +121,7 @@ export function DashboardContributionHistory({
                     <p
                       style={{
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         margin: 0,
                       }}
@@ -133,7 +133,7 @@ export function DashboardContributionHistory({
                         fontSize: 10,
                         color: 'hsl(var(--on-surface-muted))',
                         margin: 0,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                       }}
                     >
                       {item.date}
@@ -143,7 +143,7 @@ export function DashboardContributionHistory({
                     <p
                       style={{
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         margin: 0,
                       }}
@@ -155,7 +155,7 @@ export function DashboardContributionHistory({
                     <p
                       style={{
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         margin: 0,
                         fontFamily: "'Public Sans', sans-serif",

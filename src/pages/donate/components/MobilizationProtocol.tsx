@@ -988,8 +988,15 @@ export function MobilizationProtocol({
                 }}
               >
                 Use deployment code{' '}
-                <span style={{ color: 'hsl(var(--primary))', fontWeight: 700 }}>thebasem</span> on
-                taptap for resource scaling bonus.
+                <span
+                  style={{
+                    color: 'hsl(var(--primary))',
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
+                  thebasem
+                </span>{' '}
+                on taptap for resource scaling bonus.
               </p>
             </div>
 

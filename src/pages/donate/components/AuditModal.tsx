@@ -82,7 +82,7 @@ export function AuditModal({
             <div>
               <h3
                 style={{
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
                   color: 'hsl(var(--on-surface))',
                   fontFamily: "'Public Sans', sans-serif",
                   letterSpacing: '-0.02em',
@@ -144,7 +144,7 @@ export function AuditModal({
                       style={{
                         padding: '9px 16px',
                         fontSize: 10,
-                        fontWeight: 600,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
@@ -165,7 +165,7 @@ export function AuditModal({
                       <p
                         style={{
                           fontSize: 13,
-                          fontWeight: 700,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface))',
                           margin: 0,
                         }}
@@ -203,7 +203,7 @@ export function AuditModal({
                       <p
                         style={{
                           fontSize: 13,
-                          fontWeight: 800,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface))',
                           fontFamily: "'Public Sans', sans-serif",
                           margin: 0,
@@ -223,7 +223,7 @@ export function AuditModal({
                           padding: '3px 9px',
                           borderRadius: 3,
                           fontSize: 10,
-                          fontWeight: 600,
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           background: 'hsla(var(--primary), 0.08)',
                           color: 'hsl(var(--primary))',
                         }}
@@ -260,7 +260,7 @@ export function AuditModal({
               <h4
                 style={{
                   fontSize: 16,
-                  fontWeight: 700,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface))',
                   marginBottom: 8,
                   fontFamily: "'Public Sans', sans-serif",
@@ -306,7 +306,13 @@ export function AuditModal({
                 flexShrink: 0,
               }}
             />
-            <span style={{ fontSize: 11, fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface-muted))',
+              }}
+            >
               {contributionsCount} verified deployment records
             </span>
           </div>

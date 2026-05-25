@@ -66,7 +66,7 @@ export default function PreviewOfficer() {
         <h1
           style={{
             fontSize: '32px',
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             marginBottom: '20px',
             color: 'hsl(var(--on-surface))',
           }}
@@ -79,7 +79,7 @@ export default function PreviewOfficer() {
             <h2
               style={{
                 fontSize: '24px',
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-semibold, 600)',
                 margin: 0,
                 color: 'hsl(var(--primary))',
                 borderBottom: '2px solid hsl(var(--border))',

@@ -34,7 +34,7 @@ export function DonateSuccessPanel({ variant, onNewContribution }: DonateSuccess
         <h2
           style={{
             fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 800,
+            fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 20,
             color: 'hsl(var(--on-surface))',
             marginBottom: 10,
@@ -50,7 +50,7 @@ export function DonateSuccessPanel({ variant, onNewContribution }: DonateSuccess
             marginBottom: 24,
             fontFamily: "'Public Sans', sans-serif",
             fontSize: 13,
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
           }}
         >
           Your capital has been recorded in the mobilization queue. Verification is in progress.
@@ -100,7 +100,7 @@ export function DonateSuccessPanel({ variant, onNewContribution }: DonateSuccess
       <h2
         style={{
           fontSize: 'clamp(24px, 5vw, 32px)',
-          fontWeight: 900,
+          fontWeight: 'var(--font-weight-semibold, 600)',
           color: 'hsl(var(--on-surface))',
           marginBottom: 16,
           fontFamily: "'Public Sans', sans-serif",
@@ -114,7 +114,7 @@ export function DonateSuccessPanel({ variant, onNewContribution }: DonateSuccess
           color: 'hsl(var(--on-surface-muted))',
           lineHeight: 1.6,
           marginBottom: 40,
-          fontWeight: 700,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontFamily: "'Public Sans', sans-serif",
         }}
       >

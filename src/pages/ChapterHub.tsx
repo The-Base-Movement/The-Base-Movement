@@ -409,7 +409,7 @@ export default function ChapterHub() {
           <h2
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 18,
               color: 'hsl(var(--on-surface))',
               marginTop: 16,

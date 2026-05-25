@@ -101,7 +101,7 @@ export function StatCard({
         <span
           style={{
             fontSize: '9.5px',
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             color: '#6f7a71',
             letterSpacing: '.08em',
             textTransform: 'uppercase',
@@ -115,7 +115,7 @@ export function StatCard({
       <div
         style={{
           fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 800,
+          fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: '48px',
           letterSpacing: '-.03em',
           lineHeight: '.95',
@@ -128,7 +128,7 @@ export function StatCard({
           <small
             style={{
               fontSize: '20px',
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: '#6f7a71',
               marginLeft: '2px',
               letterSpacing: 0,
@@ -168,7 +168,7 @@ export function StatCard({
             alignItems: 'center',
             gap: '5px',
             fontSize: '10.5px',
-            fontWeight: 600,
+            fontWeight: 'var(--font-weight-medium, 500)',
             color: accent,
             letterSpacing: '-.005em',
             fontFamily: "'Public Sans', sans-serif",

@@ -27,7 +27,7 @@ export function DashboardCampaignsList({
         <div>
           <p
             style={{
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
               color: 'hsl(var(--on-surface))',
               margin: 0,
@@ -108,7 +108,7 @@ export function DashboardCampaignsList({
                   <p
                     style={{
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       margin: '0 0 4px',
                       letterSpacing: '-0.01em',
@@ -120,7 +120,7 @@ export function DashboardCampaignsList({
                     style={{
                       fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
-                      fontWeight: 600,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       margin: '0 0 10px',
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -158,7 +158,7 @@ export function DashboardCampaignsList({
                     <span
                       style={{
                         fontSize: 10,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
                       }}
@@ -168,7 +168,7 @@ export function DashboardCampaignsList({
                     <span
                       style={{
                         fontSize: 12,
-                        fontWeight: 700,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--primary))',
                       }}
                     >
