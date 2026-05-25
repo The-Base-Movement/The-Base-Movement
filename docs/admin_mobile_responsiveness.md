@@ -1,4 +1,3 @@
-
 ## Context
 
 This is a React + TypeScript + Vite project called **The Base Movement** admin panel. All admin pages are already built and working on desktop. Your job is to make specific pages **fully mobile-responsive** without changing any colors, fonts, component logic, or desktop layouts.
@@ -47,16 +46,35 @@ This is a React + TypeScript + Vite project called **The Base Movement** admin p
 ```css
 /* Visibility toggles */
 @media (max-width: 768px) {
-  .desktop-only { display: none !important; }
-  .main { padding: 14px 14px 60px; }
-  .top { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .top .actions { flex-wrap: wrap; }
-  .kpis { grid-template-columns: repeat(2, 1fr); }
-  .twocol { grid-template-columns: 1fr; }
-  .pagination-bar { flex-wrap: wrap; row-gap: 8px; }
+  .desktop-only {
+    display: none !important;
+  }
+  .main {
+    padding: 14px 14px 60px;
+  }
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .top .actions {
+    flex-wrap: wrap;
+  }
+  .kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .twocol {
+    grid-template-columns: 1fr;
+  }
+  .pagination-bar {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
 }
 @media (min-width: 769px) {
-  .mobile-only { display: none !important; }
+  .mobile-only {
+    display: none !important;
+  }
 }
 ```
 
@@ -107,9 +125,9 @@ style={{
 
 Text styles:
 
-* Title: `fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))'`
-* Subtitle/meta: `fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5-12, color: 'hsl(var(--on-surface-muted))'`
-* Icons: `<span className="material-symbols-outlined" style={{ fontSize: 13 }}>icon_name</span>` (uses Google Material Symbols, already loaded)
+- Title: `fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))'`
+- Subtitle/meta: `fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5-12, color: 'hsl(var(--on-surface-muted))'`
+- Icons: `<span className="material-symbols-outlined" style={{ fontSize: 13 }}>icon_name</span>` (uses Google Material Symbols, already loaded)
 
 ### Step 3 — Two-column splits
 
@@ -118,11 +136,17 @@ Any `display: grid; gridTemplateColumns: 'X Y'` inline style that creates a 2-co
 1. Add a named CSS class to that element (e.g. `className="my-feature-split"`)
 2. In `src/index.css`, define the class outside media queries:
    ```css
-   .my-feature-split { display: grid; grid-template-columns: X Y; gap: ...; }
+   .my-feature-split {
+     display: grid;
+     grid-template-columns: X Y;
+     gap: ...;
+   }
    ```
 3. Override inside the existing `@media (max-width: 768px)` block:
    ```css
-   .my-feature-split { grid-template-columns: 1fr !important; }
+   .my-feature-split {
+     grid-template-columns: 1fr !important;
+   }
    ```
 
 ### Step 4 — Detail/review panels
@@ -131,22 +155,39 @@ Dark header panels (dark gradient background with member/item identity info) use
 
 ```css
 /* In @media (max-width: 768px) */
-.my-detail-header { padding: 18px 16px !important; }
-.my-detail-header h2 { font-size: 22px !important; }
-.my-detail-identity-row { flex-wrap: wrap; gap: 12px !important; }
-.my-detail-actions { width: 100%; order: 2; }
+.my-detail-header {
+  padding: 18px 16px !important;
+}
+.my-detail-header h2 {
+  font-size: 22px !important;
+}
+.my-detail-identity-row {
+  flex-wrap: wrap;
+  gap: 12px !important;
+}
+.my-detail-actions {
+  width: 100%;
+  order: 2;
+}
 ```
 
 For pills/tags inside a flex identity row that sit inside a `flex: 1` info column (leaving blank space below the avatar on mobile), duplicate them:
 
 ```tsx
-{/* Desktop only — inside info column */}
-<div className="desktop-only" style={{ display: 'flex', gap: 6, marginTop: 14, flexWrap: 'wrap' }}>
+{
+  /* Desktop only — inside info column */
+}
+;<div className="desktop-only" style={{ display: 'flex', gap: 6, marginTop: 14, flexWrap: 'wrap' }}>
   {pills}
 </div>
 
-{/* Mobile only — full-width row after the info column */}
-<div className="mobile-only" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', width: '100%', order: 1 }}>
+{
+  /* Mobile only — full-width row after the info column */
+}
+;<div
+  className="mobile-only"
+  style={{ display: 'flex', gap: 6, flexWrap: 'wrap', width: '100%', order: 1 }}
+>
   {pills}
 </div>
 ```
@@ -184,24 +225,24 @@ Add `className="pagination-bar"` to any pagination row — CSS already handles w
 
 ## What NOT to do
 
-* Do not change any color values, font families, or font weights
-* Do not remove any functionality or change component logic
-* Do not use Tailwind responsive classes (`sm:`, `md:`, `lg:`) — this project uses named CSS classes + `@media` in `src/index.css`
-* Do not use `display: none` inline — always use the `.desktop-only` / `.mobile-only` CSS classes
-* Do not create new `@media` blocks in `index.css` — append to the existing ones
-* Do not touch `ProductFormDialog.tsx` or any modal that uses shadcn `Dialog` — those are fine
-* Do not restructure JSX logic, rename variables, or add features
+- Do not change any color values, font families, or font weights
+- Do not remove any functionality or change component logic
+- Do not use Tailwind responsive classes (`sm:`, `md:`, `lg:`) — this project uses named CSS classes + `@media` in `src/index.css`
+- Do not use `display: none` inline — always use the `.desktop-only` / `.mobile-only` CSS classes
+- Do not create new `@media` blocks in `index.css` — append to the existing ones
+- Do not touch `ProductFormDialog.tsx` or any modal that uses shadcn `Dialog` — those are fine
+- Do not restructure JSX logic, rename variables, or add features
 
 ---
 
 ## Pages already done (skip these)
 
-* `WarRoomCommand.tsx`
-* `Members.tsx` (member directory)
-* `MemberVerification.tsx` (KYC queue)
-* `DonationVerification.tsx`
-* `Dashboard.tsx`
-* `Store.tsx` + all sub-components
+- `WarRoomCommand.tsx`
+- `Members.tsx` (member directory)
+- `MemberVerification.tsx` (KYC queue)
+- `DonationVerification.tsx`
+- `Dashboard.tsx`
+- `Store.tsx` + all sub-components
 
 ---
 
