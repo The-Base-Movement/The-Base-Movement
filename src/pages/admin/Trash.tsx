@@ -289,7 +289,7 @@ export default function TrashPage() {
             </div>
             <p
               style={{
-                fontSize: 20,
+                fontSize: 'var(--kpi-num-size)',
                 fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,

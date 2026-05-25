@@ -83,7 +83,7 @@ export function PollingStationsKPIs({ stats }: PollingStationsKPIsProps) {
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: 'var(--font-weight-semibold, 600)',
-                  fontSize: 26,
+                  fontSize: 'var(--kpi-num-size)',
                   color: 'hsl(var(--on-surface))',
                   lineHeight: 1,
                   marginBottom: 4,
