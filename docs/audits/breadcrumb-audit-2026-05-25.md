@@ -7,12 +7,11 @@
 
 ## Component Architecture
 
-The platform uses one shared component with one legacy outlier:
+The platform uses one shared component across all pages:
 
-| Component         | Path                                  | Usage                                                                |
-| ----------------- | ------------------------------------- | -------------------------------------------------------------------- |
-| `Breadcrumbs`     | `src/components/Breadcrumbs.tsx`      | All public + dashboard + admin pages                                 |
-| `StoreBreadcrumb` | `src/pages/store/StoreBreadcrumb.tsx` | `/store` only — static custom markup, NOT using `Breadcrumbs.tsx` ⚠️ |
+| Component     | Path                             | Usage                                |
+| ------------- | -------------------------------- | ------------------------------------ |
+| `Breadcrumbs` | `src/components/Breadcrumbs.tsx` | All public + dashboard + admin pages |
 
 ### `Breadcrumbs.tsx` Design
 
@@ -66,7 +65,7 @@ contact → 'Contact'     donate → 'Donate'           impact → 'Impact'
 | `/our-agenda`          | `src/pages/ouragenda/AgendaHeader.tsx:9`   | `dark`  | In dark hero section                                    |
 | `/contact`             | `src/pages/Contact.tsx:59`                 | `dark`  | In dark hero section                                    |
 | `/donate`              | `src/pages/Donate.tsx:164`                 | `light` | Above header content block                              |
-| `/store`               | `src/pages/store/StoreBreadcrumb.tsx`      | n/a     | ⚠️ Uses bespoke static component — see note below       |
+| `/store`               | `src/pages/Store.tsx:187`                  | `light` |                                                         |
 | `/store/product/:slug` | `src/pages/ProductDetails.tsx:173`         | `light` | `currentLabel={product.name}`                           |
 | `/store/cart`          | `src/pages/Cart.tsx:25`                    | `light` |                                                         |
 | `/store/wishlist`      | `src/pages/Wishlist.tsx:21`                | `light` |                                                         |
@@ -115,12 +114,6 @@ All other dashboard routes (`/dashboard`, `/dashboard/blog`, `/dashboard/store`,
 ---
 
 ## Known Issues & Future Work
-
-### ⚠️ `StoreBreadcrumb.tsx` — Legacy Static Component
-
-`src/pages/Store.tsx` renders `<StoreBreadcrumb />` instead of `<Breadcrumbs />`. `StoreBreadcrumb` is a manually-coded static markup breadcrumb (`Home · Store · All products`) that does not use the shared component. It predates the `Breadcrumbs.tsx` component.
-
-**Recommended fix:** Replace `<StoreBreadcrumb />` in `Store.tsx` with `<Breadcrumbs />` and delete `StoreBreadcrumb.tsx`.
 
 ### Dashboard Pages Missing Breadcrumbs
 

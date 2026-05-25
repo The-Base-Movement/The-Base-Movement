@@ -5,7 +5,7 @@ import SEO from '@/components/SEO'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
-import { StoreBreadcrumb } from './store/StoreBreadcrumb'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { CategoryFilter } from './store/CategoryFilter'
 import { ProductGrid } from './store/ProductGrid'
 import { Pagination } from './store/Pagination'
@@ -184,7 +184,7 @@ export default function Store() {
       />
 
       <div className="max-w-[1280px] mx-auto px-4 md:px-8 pt-8">
-        <StoreBreadcrumb />
+        <Breadcrumbs />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
           <section>
