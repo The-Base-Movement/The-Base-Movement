@@ -29,7 +29,7 @@ The frontend engineering, data models, and edge function infrastructures are com
 ## 2. Mapbox GL (GIS Logistics Layer)
 
 **Purpose**: Render high-performance, dynamic, and interactive national maps for Chapter hubs and Supply Chain logistics instead of static SVGs.
-**Status**: Fully implemented. Both `LogisticsMap.tsx` and `ChaptersMap.tsx` are now rendering high-fidelity interactive maps using the configured token.
+**Status**: Fully implemented. Both `LogisticsMap.tsx` and `ChaptersMap.tsx` are rendering high-fidelity interactive maps via `react-map-gl/mapbox`. The static SVG has been removed.
 
 ### Integration Steps:
 
@@ -39,9 +39,7 @@ The frontend engineering, data models, and edge function infrastructures are com
    ```env
    VITE_MAPBOX_TOKEN=pk.eyJ1I...
    ```
-4. **Implementation File**: `src/pages/admin/chapters/ChaptersMap.tsx`
-   - Replace the static `<svg viewBox="0 0 600 900">` block with the `react-map-gl` `<Map>` component (similar to how it is done in `src/components/admin/LogisticsMap.tsx`).
-   - Feed the regional coordinates (`REGION_CENTERS`) into Mapbox markers.
+4. ~~**Implementation File**: `src/pages/admin/chapters/ChaptersMap.tsx`~~ — **Already done.** Both `ChaptersMap.tsx` and `LogisticsMap.tsx` import from `react-map-gl/mapbox` and render live interactive maps. No code changes needed — supplying `VITE_MAPBOX_TOKEN` is the only remaining step.
 
 ---
 
