@@ -32,7 +32,7 @@ export function OrdersTable({
           <p
             style={{
               fontSize: 10,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               marginTop: 16,
               color: 'hsl(var(--border))',
               fontFamily: "'Public Sans', sans-serif",
@@ -52,7 +52,7 @@ export function OrdersTable({
           <p
             style={{
               fontSize: 10,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               marginTop: 16,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
@@ -101,7 +101,7 @@ export function OrdersTable({
                         <b
                           style={{
                             fontSize: 11,
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface-muted))',
                           }}
                         >
@@ -111,7 +111,7 @@ export function OrdersTable({
                       <td>
                         <b
                           style={{
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
@@ -134,7 +134,7 @@ export function OrdersTable({
                       <td
                         style={{
                           fontSize: 10,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >

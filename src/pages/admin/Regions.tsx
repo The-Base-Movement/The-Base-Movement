@@ -262,7 +262,7 @@ export default function AdminRegions() {
             htmlFor="input-bff317"
             style={{
               fontSize: 11,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,
@@ -319,7 +319,7 @@ export default function AdminRegions() {
             htmlFor="input-5066bc"
             style={{
               fontSize: 11,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,
@@ -375,7 +375,7 @@ export default function AdminRegions() {
             htmlFor="input-fe8639"
             style={{
               fontSize: 11,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,
@@ -432,7 +432,7 @@ export default function AdminRegions() {
             htmlFor="input-1238ff"
             style={{
               fontSize: 11,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               display: 'block',
               marginBottom: 6,

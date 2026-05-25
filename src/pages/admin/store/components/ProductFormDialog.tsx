@@ -31,7 +31,7 @@ const inputSt: React.CSSProperties = {
 
 const labelSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11,
   color: 'hsl(var(--on-surface-muted))',
   display: 'block',
@@ -311,7 +311,7 @@ export function ProductFormDialog({
                       <span
                         style={{
                           fontSize: 8,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           marginTop: 4,
                         }}

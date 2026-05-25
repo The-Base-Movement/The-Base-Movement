@@ -59,7 +59,7 @@ export function AppointStationAgentModal({
           <h3
             style={{
               fontFamily: "'Public Sans'",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 16,
               margin: 0,
             }}
@@ -79,7 +79,7 @@ export function AppointStationAgentModal({
             <b
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 14,
                 display: 'block',
                 marginBottom: 4,

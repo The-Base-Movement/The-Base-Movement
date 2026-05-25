@@ -23,7 +23,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                     padding: '11px 18px',
                     textAlign: 'left',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 9,
                     textTransform: 'uppercase',
                     color: 'hsl(var(--on-surface-muted))',
@@ -82,7 +82,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                     style={{
                       padding: '12px 18px',
                       fontSize: 15,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--primary))',
                       fontFamily: "'Public Sans', sans-serif",
                       whiteSpace: 'nowrap',

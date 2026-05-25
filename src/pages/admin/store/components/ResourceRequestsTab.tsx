@@ -35,7 +35,7 @@ const selectStyle: React.CSSProperties = {
 const thStyle: React.CSSProperties = {
   padding: '10px 14px',
   fontSize: 9.5,
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   color: 'hsl(var(--on-surface-muted))',
   letterSpacing: '.06em',
   textTransform: 'uppercase',
@@ -118,7 +118,7 @@ export function ResourceRequestsTab({ requests, handleStatusUpdate }: ResourceRe
                   <div
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12.5,
                     }}
                   >
@@ -217,7 +217,7 @@ export function ResourceRequestsTab({ requests, handleStatusUpdate }: ResourceRe
                   style={{
                     margin: 0,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13.5,
                     color: 'hsl(var(--on-surface))',
                   }}
@@ -255,7 +255,7 @@ export function ResourceRequestsTab({ requests, handleStatusUpdate }: ResourceRe
                 style={{
                   fontSize: 9.5,
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '.05em',
                   textTransform: 'uppercase',
@@ -282,7 +282,7 @@ export function ResourceRequestsTab({ requests, handleStatusUpdate }: ResourceRe
                   <span
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                       color: 'hsl(var(--on-surface-muted))',
                     }}

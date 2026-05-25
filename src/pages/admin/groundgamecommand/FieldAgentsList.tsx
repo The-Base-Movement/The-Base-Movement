@@ -81,7 +81,7 @@ export function FieldAgentsList({
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: "'Public Sans'",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   flexShrink: 0,
                   color: 'hsl(var(--primary))',
@@ -98,7 +98,7 @@ export function FieldAgentsList({
                 <b
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12.5,
                     display: 'block',
                     whiteSpace: 'nowrap',

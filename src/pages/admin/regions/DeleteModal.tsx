@@ -81,7 +81,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
                 fontSize: 12,
                 color: 'rgba(255,255,255,0.55)',
                 margin: '3px 0 0',
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 lineHeight: 1.5,
               }}
             >

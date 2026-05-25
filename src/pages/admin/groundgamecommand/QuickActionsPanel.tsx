@@ -35,7 +35,7 @@ export function QuickActionsPanel({
           style={{
             background: 'hsl(var(--accent))',
             color: '#000',
-            fontWeight: 'var(--font-weight-semibold, 600)',
+            fontWeight: 'var(--font-weight-medium, 500)',
           }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
@@ -61,7 +61,7 @@ export function QuickActionsPanel({
           <div
             style={{
               fontSize: 9.5,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface-muted))',
               letterSpacing: '.06em',
               textTransform: 'uppercase',
@@ -85,7 +85,7 @@ export function QuickActionsPanel({
               <b
                 style={{
                   fontFamily: "'Public Sans'",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11.5,
                   color: 'hsl(var(--destructive))',
                   display: 'block',

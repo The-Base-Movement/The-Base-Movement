@@ -302,7 +302,7 @@ export function ChaptersGrid({
                         style={{
                           margin: 0,
                           fontSize: 13,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontFamily: "'Public Sans', sans-serif",
                           color: chapter.status === 'Active' ? '#000' : 'hsl(var(--on-surface))',
                           lineHeight: 1.25,
@@ -336,7 +336,7 @@ export function ChaptersGrid({
                         flexShrink: 0,
                         background: chapter.status === 'Active' ? '#000' : undefined,
                         color: chapter.status === 'Active' ? '#fff' : undefined,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 9,
                       }}
                     >
@@ -355,7 +355,7 @@ export function ChaptersGrid({
                       <div
                         style={{
                           fontSize: 10,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           fontFamily: "'Public Sans', sans-serif",
                           marginBottom: 3,
@@ -366,7 +366,7 @@ export function ChaptersGrid({
                       <b
                         style={{
                           fontSize: 12,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontFamily: "'Public Sans', sans-serif",
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -378,7 +378,7 @@ export function ChaptersGrid({
                       <div
                         style={{
                           fontSize: 10,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           fontFamily: "'Public Sans', sans-serif",
                           marginBottom: 3,
@@ -389,7 +389,7 @@ export function ChaptersGrid({
                       <b
                         style={{
                           fontSize: 12,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontFamily: "'Public Sans', sans-serif",
                           color: 'hsl(var(--on-surface))',
                           display: 'flex',
@@ -510,7 +510,7 @@ export function ChaptersGrid({
             <span
               style={{
                 fontSize: 12,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontFamily: "'Public Sans', sans-serif",
                 color: 'hsl(var(--primary))',
               }}

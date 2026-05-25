@@ -62,7 +62,7 @@ export function Modal({ title, subtitle, onClose, children }: ModalProps) {
                   fontSize: 12,
                   color: 'rgba(255,255,255,0.55)',
                   margin: '2px 0 0',
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                 }}
               >
                 {subtitle}

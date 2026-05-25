@@ -78,7 +78,7 @@ export function AppointFieldAgentModal({
             <h3
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 16,
                 margin: 0,
               }}
@@ -120,7 +120,7 @@ export function AppointFieldAgentModal({
           <label
             style={{
               fontFamily: "'Public Sans'",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               letterSpacing: '.05em',
               textTransform: 'uppercase',
@@ -155,7 +155,7 @@ export function AppointFieldAgentModal({
                   justifyContent: 'center',
                   color: '#fff',
                   fontFamily: "'Public Sans'",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                 }}
               >
@@ -170,7 +170,7 @@ export function AppointFieldAgentModal({
                 <b
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                   }}
                 >
@@ -284,7 +284,7 @@ export function AppointFieldAgentModal({
                           alignItems: 'center',
                           justifyContent: 'center',
                           fontFamily: "'Public Sans'",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 10,
                           flexShrink: 0,
                         }}
@@ -300,7 +300,7 @@ export function AppointFieldAgentModal({
                         <b
                           style={{
                             fontFamily: "'Public Sans'",
-                            fontWeight: 'var(--font-weight-semibold, 600)',
+                            fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 12.5,
                           }}
                         >
@@ -330,7 +330,7 @@ export function AppointFieldAgentModal({
             htmlFor="ggc-modal-constituency"
             style={{
               fontFamily: "'Public Sans'",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               letterSpacing: '.05em',
               textTransform: 'uppercase',

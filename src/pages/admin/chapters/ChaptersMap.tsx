@@ -409,7 +409,7 @@ export function ChaptersMap({
                   <span
                     style={{
                       fontSize: 11,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontFamily: "'Public Sans', sans-serif",
                       color:
                         regionFilter.toLowerCase() === loc.id.toLowerCase()

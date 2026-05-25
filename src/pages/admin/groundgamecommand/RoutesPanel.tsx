@@ -42,7 +42,7 @@ export function RoutesPanel({ campaigns, activeCampaigns, fieldLogs }: RoutesPan
                 <b
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12.5,
                   }}
                 >
@@ -77,7 +77,7 @@ export function RoutesPanel({ campaigns, activeCampaigns, fieldLogs }: RoutesPan
                   <b
                     style={{
                       color: 'hsl(var(--on-surface))',
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                     }}
                   >
                     {c.target_constituency}
@@ -88,7 +88,7 @@ export function RoutesPanel({ campaigns, activeCampaigns, fieldLogs }: RoutesPan
                   <b
                     style={{
                       color: 'hsl(var(--on-surface))',
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                     }}
                   >
                     {knocked}

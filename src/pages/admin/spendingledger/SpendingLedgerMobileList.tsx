@@ -123,7 +123,7 @@ export function SpendingLedgerMobileList({
                 <p
                   style={{
                     fontSize: 14,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface))',
                     margin: '0 0 8px',
                     fontFamily: "'Public Sans', sans-serif",

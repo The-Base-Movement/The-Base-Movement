@@ -98,7 +98,7 @@ export function MemberReadinessTable({
             <div
               style={{
                 fontFamily: "'Public Sans'",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 22,
                 letterSpacing: '-.02em',
                 lineHeight: 1,
@@ -178,7 +178,7 @@ export function MemberReadinessTable({
               borderRadius: 99,
               border: '1px solid hsl(var(--border))',
               fontFamily: "'Public Sans'",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 10.5,
               cursor: 'pointer',
               letterSpacing: '.04em',
@@ -223,7 +223,7 @@ export function MemberReadinessTable({
                   style={{
                     padding: '9px 18px',
                     textAlign: 'left',
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 10,
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
@@ -268,7 +268,7 @@ export function MemberReadinessTable({
                     <td
                       style={{
                         padding: '11px 18px',
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 12.5,
                       }}
                     >

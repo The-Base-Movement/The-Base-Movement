@@ -17,7 +17,7 @@ const fieldStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 10,
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   color: 'hsl(var(--on-surface-muted))',
   fontFamily: "'Public Sans', sans-serif",
   marginBottom: 6,
@@ -140,7 +140,7 @@ export function PollCreateEditModal({
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 15,
                 color: '#fff',
                 margin: 0,
@@ -370,7 +370,7 @@ export function PollCreateEditModal({
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontSize: 11,
-                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              fontWeight: 'var(--font-weight-medium, 500)',
                               color: 'hsl(var(--on-surface))',
                             }}
                           >
@@ -394,7 +394,7 @@ export function PollCreateEditModal({
                               style={{
                                 margin: 0,
                                 fontSize: 13,
-                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                fontWeight: 'var(--font-weight-medium, 500)',
                                 color: 'hsl(var(--on-surface))',
                                 fontFamily: "'Public Sans', sans-serif",
                               }}
@@ -476,7 +476,7 @@ export function PollCreateEditModal({
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: 11,
-                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                       }}
                     >

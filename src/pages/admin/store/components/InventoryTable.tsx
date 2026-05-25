@@ -59,7 +59,7 @@ export function InventoryTable({
   const thStyle: React.CSSProperties = {
     padding: '10px 14px',
     fontSize: 9.5,
-    fontWeight: 'var(--font-weight-semibold, 600)',
+    fontWeight: 'var(--font-weight-medium, 500)',
     color: 'hsl(var(--on-surface-muted))',
     letterSpacing: '.06em',
     textTransform: 'uppercase',
@@ -104,7 +104,7 @@ export function InventoryTable({
                 background: activeCategory === cat ? 'hsl(var(--primary))' : '#fff',
                 color: activeCategory === cat ? '#fff' : 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10.5,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
@@ -227,7 +227,7 @@ export function InventoryTable({
                       <div
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 12.5,
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -263,7 +263,7 @@ export function InventoryTable({
                   style={{
                     padding: '12px 14px',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12.5,
                   }}
                 >
@@ -274,7 +274,7 @@ export function InventoryTable({
                     padding: '12px 14px',
                     textAlign: 'center',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12.5,
                     color:
                       product.stock === 0
@@ -368,7 +368,7 @@ export function InventoryTable({
                   style={{
                     margin: 0,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13.5,
                     color: 'hsl(var(--on-surface))',
                     overflow: 'hidden',
@@ -408,7 +408,7 @@ export function InventoryTable({
                   style={{
                     fontSize: 9.5,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     letterSpacing: '.05em',
                     textTransform: 'uppercase',
@@ -420,7 +420,7 @@ export function InventoryTable({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                   }}
                 >
@@ -439,7 +439,7 @@ export function InventoryTable({
                   style={{
                     fontSize: 9.5,
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface-muted))',
                     letterSpacing: '.05em',
                     textTransform: 'uppercase',
@@ -451,7 +451,7 @@ export function InventoryTable({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                     color:
                       product.stock === 0

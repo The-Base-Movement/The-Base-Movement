@@ -50,7 +50,7 @@ export function LeaderboardPanel({
                 <div
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 18,
                     color: i === 0 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface-muted))',
                     width: 24,
@@ -69,7 +69,7 @@ export function LeaderboardPanel({
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontFamily: "'Public Sans'",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 11,
                     flexShrink: 0,
                   }}
@@ -85,7 +85,7 @@ export function LeaderboardPanel({
                   <b
                     style={{
                       fontFamily: "'Public Sans'",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12.5,
                       display: 'block',
                       whiteSpace: 'nowrap',
@@ -128,7 +128,7 @@ export function LeaderboardPanel({
                 <div
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontVariantNumeric: 'tabular-nums',
                     textAlign: 'right',
                   }}

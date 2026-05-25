@@ -19,7 +19,7 @@ const fieldStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 10,
-  fontWeight: 'var(--font-weight-semibold, 600)',
+  fontWeight: 'var(--font-weight-medium, 500)',
   color: 'hsl(var(--on-surface-muted))',
   fontFamily: "'Public Sans', sans-serif",
   marginBottom: 6,
@@ -96,7 +96,7 @@ export function ChapterDetailModal({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
               color: '#fff',
               display: 'flex',
@@ -286,7 +286,7 @@ export function ChapterDetailModal({
                           padding: '9px 12px',
                           cursor: 'pointer',
                           fontSize: 13,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontFamily: "'Public Sans', sans-serif",
                           display: 'flex',
                           justifyContent: 'space-between',

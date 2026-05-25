@@ -65,7 +65,7 @@ export function RegionsKPIs({ regions, totalConstituencies, isLoading }: Regions
             <p
               style={{
                 fontSize: 11,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface-muted))',
                 margin: 0,
               }}
@@ -82,7 +82,7 @@ export function RegionsKPIs({ regions, totalConstituencies, isLoading }: Regions
           <p
             style={{
               fontSize: 22,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface))',
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",

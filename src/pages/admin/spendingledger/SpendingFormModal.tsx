@@ -61,7 +61,7 @@ export function SpendingFormModal({
           <div>
             <h3
               style={{
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 15,
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",

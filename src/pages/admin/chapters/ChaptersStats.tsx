@@ -109,7 +109,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 <span
                   style={{
                     fontSize: 12,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontFamily: "'Public Sans', sans-serif",
                     color: 'hsl(var(--on-surface))',
                   }}

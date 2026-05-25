@@ -36,7 +36,7 @@ export function BroadcastHistory({
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
@@ -188,7 +188,7 @@ export function BroadcastHistory({
                 <div
                   style={{
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 13,
                     color: 'hsl(var(--on-surface))',
                     marginBottom: 6,

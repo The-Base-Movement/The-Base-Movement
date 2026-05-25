@@ -314,7 +314,7 @@ export default function AdminStore() {
                   background: 'none',
                   cursor: 'pointer',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   color:
                     activeTab === tab.id ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
@@ -336,7 +336,7 @@ export default function AdminStore() {
                       borderRadius: 99,
                       padding: '1px 7px',
                       fontSize: 9,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                     }}
                   >
                     {tab.count}

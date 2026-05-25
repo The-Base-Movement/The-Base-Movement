@@ -332,7 +332,7 @@ export default function GroundGameCommand() {
           <p
             style={{
               fontSize: 11,
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--primary))',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
@@ -377,7 +377,7 @@ export default function GroundGameCommand() {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 6,
                   fontFamily: "'Public Sans'",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
                   background: '#fff',
                   cursor: 'pointer',

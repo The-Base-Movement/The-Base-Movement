@@ -68,7 +68,7 @@ export function HubHeader({
             <p
               style={{
                 fontSize: 10,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 color: 'hsl(var(--on-surface-muted))',
@@ -80,7 +80,7 @@ export function HubHeader({
             <p
               style={{
                 fontSize: 26,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
@@ -111,7 +111,7 @@ export function HubHeader({
               border: 'none',
               cursor: 'pointer',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 11,
               textTransform: 'uppercase',
               letterSpacing: '0.06em',

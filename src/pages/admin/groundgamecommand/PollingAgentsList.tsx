@@ -72,7 +72,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: "'Public Sans'",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 11,
                   flexShrink: 0,
                   color: 'hsl(var(--accent))',
@@ -89,7 +89,7 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
                 <b
                   style={{
                     fontFamily: "'Public Sans'",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 12.5,
                     display: 'block',
                     whiteSpace: 'nowrap',

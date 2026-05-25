@@ -130,7 +130,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: 0,
                       fontSize: 15,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                       fontFamily: "'Public Sans', sans-serif",
                       overflow: 'hidden',
@@ -160,7 +160,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: 0,
                       fontSize: 10,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -172,7 +172,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: '2px 0 0',
                       fontSize: 16,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
@@ -184,7 +184,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     style={{
                       margin: 0,
                       fontSize: 10,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -214,7 +214,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
               <span
                 style={{
                   fontSize: 11,
-                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--primary))',
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
