@@ -12,7 +12,7 @@ export function PhysicalSuccessStep({ onUploadAnother }: PhysicalSuccessStepProp
           check_circle
         </span>
       </div>
-      <h2 className="text-2xl font-extrabold text-on-surface mb-3 tracking-tight">
+      <h2 className="text-2xl font-semibold text-on-surface mb-3 tracking-tight">
         Form Received, Patriot!
       </h2>
       <p className="text-[14px] text-on-surface-muted leading-relaxed mb-8">
@@ -22,13 +22,13 @@ export function PhysicalSuccessStep({ onUploadAnother }: PhysicalSuccessStepProp
       <div className="space-y-4">
         <Link
           to="/"
-          className="block w-full py-4 bg-primary text-white font-bold uppercase tracking-widest text-[12px] rounded-sm hover:opacity-90 transition-all"
+          className="block w-full py-4 bg-primary text-white font-medium uppercase tracking-widest text-[12px] rounded-sm hover:opacity-90 transition-all"
         >
           Return Home
         </Link>
         <button
           onClick={onUploadAnother}
-          className="w-full text-xs font-bold bg-transparent border-none cursor-pointer text-on-surface-muted hover:text-on-surface transition-colors py-2"
+          className="w-full text-xs font-medium bg-transparent border-none cursor-pointer text-on-surface-muted hover:text-on-surface transition-colors py-2"
         >
           Upload Another Form
         </button>

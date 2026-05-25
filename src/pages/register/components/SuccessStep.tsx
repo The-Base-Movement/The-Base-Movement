@@ -95,7 +95,7 @@ export function SuccessStep({
             check_circle
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-on-surface tracking-tighter font-meta mb-2">
+        <h1 className="text-3xl font-medium text-on-surface tracking-tighter font-meta mb-2">
           Registration complete
         </h1>
         <p className="text-muted-foreground/90 font-meta tracking-tight text-xs">
@@ -106,7 +106,7 @@ export function SuccessStep({
       <div className="space-y-8">
         <div className="bg-white border border-border/60 p-2 shadow-2xl relative">
           <div className="border-b border-border/40 pb-3 mb-4 px-4 pt-2">
-            <h3 className="font-meta font-bold text-micro text-muted-foreground/80 tracking-tight">
+            <h3 className="font-meta font-semibold text-micro text-muted-foreground/80 tracking-tight">
               Official membership card
             </h3>
           </div>
@@ -140,10 +140,10 @@ export function SuccessStep({
           <div className="bg-muted/30 p-6 mt-4 border-t border-border/40">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>
-                <h4 className="font-meta font-bold text-xs text-on-surface tracking-tight mb-1">
+                <h4 className="font-meta font-semibold text-xs text-on-surface tracking-tight mb-1">
                   Registration number
                 </h4>
-                <p className="font-meta font-bold text-xl text-primary tracking-tight">
+                <p className="font-meta font-medium text-xl text-primary tracking-tight">
                   {regNumber}
                 </p>
               </div>
@@ -157,7 +157,7 @@ export function SuccessStep({
                         ? 'A profile photo is required to print your card'
                         : undefined
                     }
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-white font-bold text-sm shadow-md hover:scale-[1.02] active:scale-95 transition-all border-none"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-white font-medium text-sm shadow-md hover:scale-[1.02] active:scale-95 transition-all border-none"
                     style={{
                       cursor: selfieUrl || photoUrl ? 'pointer' : 'not-allowed',
                       opacity: selfieUrl || photoUrl ? 1 : 0.4,
@@ -170,7 +170,7 @@ export function SuccessStep({
                   </button>
                   <button
                     onClick={onEdit}
-                    className="flex items-center justify-center gap-2 px-6 py-3 text-stone-500 border border-stone-200 bg-white hover:text-primary hover:bg-stone-50 transition-all active:scale-95 shadow-sm font-bold text-sm cursor-pointer"
+                    className="flex items-center justify-center gap-2 px-6 py-3 text-stone-500 border border-stone-200 bg-white hover:text-primary hover:bg-stone-50 transition-all active:scale-95 shadow-sm font-medium text-sm cursor-pointer"
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                       arrow_back
@@ -179,7 +179,7 @@ export function SuccessStep({
                   </button>
                 </div>
                 {!photoUrl && (
-                  <p className="text-[11px] font-bold text-muted-foreground font-meta tracking-tight">
+                  <p className="text-[11px] font-medium text-muted-foreground font-meta tracking-tight">
                     <span
                       className="material-symbols-outlined"
                       style={{ fontSize: 12, verticalAlign: 'middle' }}
@@ -196,12 +196,12 @@ export function SuccessStep({
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white border border-border/60 p-8 shadow-sm">
-            <h4 className="font-meta font-bold text-micro text-muted-foreground/80 tracking-tight mb-4">
+            <h4 className="font-meta font-semibold text-micro text-muted-foreground/80 tracking-tight mb-4">
               Membership verification
             </h4>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-              <p className="text-xs font-bold text-on-surface font-meta tracking-tight">
+              <p className="text-xs font-medium text-on-surface font-meta tracking-tight">
                 Status: Verified
               </p>
             </div>
@@ -212,16 +212,16 @@ export function SuccessStep({
 
           <div className="bg-primary text-primary-foreground p-8 flex flex-col justify-between shadow-lg">
             <div>
-              <h4 className="font-meta font-bold text-micro text-primary-foreground/90 tracking-tight mb-4 normal-case">
+              <h4 className="font-meta font-semibold text-micro text-primary-foreground/90 tracking-tight mb-4 normal-case">
                 Next step
               </h4>
-              <p className="text-sm font-bold font-meta leading-tight mb-4">
+              <p className="text-sm font-medium font-meta leading-tight mb-4">
                 Access your portal to join a chapter.
               </p>
             </div>
             <button
               onClick={() => navigate('/dashboard')}
-              className="w-full inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-auto p-3 text-center justify-center font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
+              className="w-full inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-auto p-3 text-center justify-center font-medium transition-all active:scale-95 shadow-sm cursor-pointer"
             >
               Enter Overview{' '}
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>

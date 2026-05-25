@@ -130,7 +130,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
             {formStep === 1 && (
               <div className="space-y-4 animate-in fade-in duration-500">
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block mb-1">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1">
                     Full name{' '}
                     <span className="text-primary normal-case tracking-normal ml-1">
                       (Must match ID Card exactly)
@@ -150,7 +150,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block mb-1">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1">
                     Email address{' '}
                     <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
                       (Optional - You can register with phone number instead)
@@ -169,7 +169,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                     Membership platform
                   </span>
                   <div className="grid grid-cols-2 gap-2">
@@ -233,7 +233,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 {platform === 'GHANA' ? (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         Region
                       </span>
                       <select
@@ -253,7 +253,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         Constituency
                       </span>
                       <select
@@ -284,7 +284,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 ) : (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         Country
                       </span>
                       <select
@@ -304,7 +304,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         City
                       </span>
                       <input
@@ -321,11 +321,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 )}
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                     Mobile Number
                   </span>
                   <div className="flex">
-                    <div className="flex items-center justify-center h-[46px] px-3 bg-muted/10 border border-border border-r-0 text-sm font-bold text-on-surface-muted min-w-[60px]">
+                    <div className="flex items-center justify-center h-[46px] px-3 bg-muted/10 border border-border border-r-0 text-sm font-medium text-on-surface-muted min-w-[60px]">
                       {formData.countryCode || '+233'}
                     </div>
                     <input
@@ -342,7 +342,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                    <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                       Gender
                     </span>
                     <select
@@ -359,7 +359,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                    <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                       Age Range
                     </span>
                     <select
@@ -381,7 +381,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                     Chapter
                   </span>
                   <select
@@ -401,7 +401,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                     Set password
                   </span>
                   <div className="relative">
@@ -454,7 +454,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       )}
                     ></div>
                   </div>
-                  <div className="text-[10.5px] font-bold text-on-surface-muted mt-1">
+                  <div className="text-[10.5px] font-medium text-on-surface-muted mt-1">
                     {(formData.password?.length || 0) > 10 ? (
                       <>
                         Strong · <b className="text-primary">good</b> for a member account
@@ -471,7 +471,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
               <div className="space-y-6 animate-in fade-in duration-500">
                 {/* 1. Ghana Card Upload */}
                 <div className="space-y-2">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                     1. Ghana Card Photo
                   </span>
                   {!photoUrl ? (
@@ -489,7 +489,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       >
                         credit_card
                       </span>
-                      <b className="text-[12px] block font-extrabold text-on-surface">
+                      <b className="text-[12px] block font-medium text-on-surface">
                         Click to upload card photo
                       </b>
                     </div>
@@ -519,7 +519,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
                 {/* 2. Selfie Upload */}
                 <div className="space-y-2">
-                  <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                     2. Biometric Selfie
                   </span>
                   {!selfieUrl ? (
@@ -538,7 +538,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       >
                         account_circle
                       </span>
-                      <b className="text-[12px] block font-extrabold text-on-surface">
+                      <b className="text-[12px] block font-medium text-on-surface">
                         Capture biometric selfie
                       </b>
                     </div>
@@ -630,7 +630,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 <div className="space-y-4 animate-in fade-in duration-0">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         Profession
                       </span>
                       <input
@@ -643,7 +643,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         Education Level
                       </span>
                       <select
@@ -668,7 +668,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         No. of Children
                       </span>
                       <input
@@ -683,7 +683,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                         Residential Address{' '}
                         {platform === 'DIASPORA' && (
                           <span className="opacity-50 lowercase">(Optional)</span>
@@ -706,13 +706,13 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   </div>
 
                   <div className="pt-2 border-t border-border">
-                    <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block mb-3">
+                    <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-3">
                       Emergency Contact
                     </span>
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                          <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                          <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                             Full Name
                           </span>
                           <input
@@ -725,7 +725,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                          <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                             Relationship
                           </span>
                           <select
@@ -746,7 +746,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                        <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                           Phone Number
                         </span>
                         <input
@@ -786,7 +786,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
               <button
                 type="button"
                 onClick={onBack}
-                className="w-1/3 h-[46px] font-bold border border-border bg-white text-on-surface cursor-pointer hover:bg-container-low transition-colors"
+                className="w-1/3 h-[46px] font-medium border border-border bg-white text-on-surface cursor-pointer hover:bg-container-low transition-colors"
               >
                 ← Back
               </button>
@@ -795,7 +795,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
               type="submit"
               disabled={(formStep === 4 && !agreed) || isLoading}
               className={cn(
-                'flex-1 h-[46px] font-bold text-sm tracking-tight border-none cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-60',
+                'flex-1 h-[46px] font-medium text-sm tracking-tight border-none cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-60',
                 formStep === 4 ? 'bg-accent text-white' : 'bg-primary text-white'
               )}
             >
