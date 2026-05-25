@@ -109,13 +109,10 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
         ></textarea>
       </div>
 
-      <button
-        type="submit"
-        className="w-full py-4 bg-primary text-white flex items-center justify-center gap-2 font-medium text-sm border-none cursor-pointer hover:opacity-90 transition-opacity"
-      >
+      <button type="submit" className="btn btn-primary w-full" style={{ height: 52 }}>
         <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
           send
-        </span>{' '}
+        </span>
         Send Message
       </button>
     </form>

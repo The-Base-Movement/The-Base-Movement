@@ -1,7 +1,7 @@
 # Button System Audit
 
 **Audit Date:** 2026-05-25
-**Status:** Store section migrated ✅ — Public page CTAs pending
+**Status:** Store section migrated ✅ — Public page CTAs migrated ✅ — Audit complete
 
 ---
 
@@ -42,14 +42,14 @@ Intended for all public-facing (`PublicLayout`) pages.
 
 ## Compliance Summary
 
-| Surface                                         | System         | Status                                         |
-| ----------------------------------------------- | -------------- | ---------------------------------------------- |
-| Admin panel (`/admin/*`)                        | `.btn` classes | ✅ Compliant — 100+ files, consistent          |
-| Dashboard pages (`/dashboard/*`)                | `.btn` classes | ✅ Compliant — chapters, donate, members, etc. |
-| Store pages (`/store/*`)                        | `.btn` classes | ✅ Migrated — primary CTAs on `.btn` system    |
-| Public pages (`/`, `/officers`, `/polls`, etc.) | None           | ❌ Non-compliant — raw Tailwind buttons        |
-| Shared components                               | Mixed          | ⚠️ Partially compliant                         |
-| `NeonButton` component (via wrappers)           | n/a            | ✅ Active — used in Home sections via wrappers |
+| Surface                                         | System                       | Status                                                                    |
+| ----------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------- |
+| Admin panel (`/admin/*`)                        | `.btn` classes               | ✅ Compliant — 100+ files, consistent                                     |
+| Dashboard pages (`/dashboard/*`)                | `.btn` classes               | ✅ Compliant — chapters, donate, members, etc.                            |
+| Store pages (`/store/*`)                        | `.btn` classes               | ✅ Migrated — primary CTAs on `.btn` system                               |
+| Public pages (`/`, `/officers`, `/polls`, etc.) | `.btn` + NeonButton wrappers | ✅ Migrated — Contact submit on `.btn`; Home CTAs via NeonButton wrappers |
+| Shared components                               | Mixed                        | ⚠️ Partially compliant                                                    |
+| `NeonButton` component (via wrappers)           | n/a                          | ✅ Active — used in Home sections via wrappers                            |
 
 ---
 
@@ -217,9 +217,14 @@ Intentionally left as raw (not appropriate for `.btn`):
 - Category filter pills (`rounded-full` pill style incompatible)
 - Mobile cart bar (full-height custom dark bar)
 
-### Priority 2 — Public page CTAs
+### Public page CTAs — ✅ MIGRATED
 
-Pending: `Home.tsx`, `Contact.tsx`, `Polls.tsx` form/vote submit buttons.
+| File                                 | Change                                                                                |
+| ------------------------------------ | ------------------------------------------------------------------------------------- |
+| `contact/components/ContactForm.tsx` | Submit → `btn btn-primary w-full`                                                     |
+| `Home.tsx` sections                  | Already compliant — all CTAs via `ButtonPrimary` / `ButtonAccent` NeonButton wrappers |
+| `Polls.tsx`                          | No CTA buttons — poll option buttons are selection widgets (kept raw)                 |
+| `Officers.tsx`                       | Display-only page — no action buttons                                                 |
 
 ### Priority 3 — Utility/icon buttons
 
