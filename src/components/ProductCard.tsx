@@ -136,10 +136,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
 
           {!isComingSoon && (
             <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/60 to-transparent z-10">
-              <button
-                onClick={handleQuickAdd}
-                className="w-full h-10 bg-primary text-white font-medium text-xs flex items-center justify-center gap-2 border-none cursor-pointer hover:opacity-90 transition-opacity"
-              >
+              <button onClick={handleQuickAdd} className="btn btn-primary w-full">
                 <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                   add
                 </span>{' '}
@@ -199,10 +196,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
                 </small>
               )}
             </div>
-            <button
-              onClick={handleQuickAdd}
-              className="h-8 px-4 text-[12px] font-medium shrink-0 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity rounded-[4px]"
-            >
+            <button onClick={handleQuickAdd} className="btn btn-primary btn-sm shrink-0">
               Add
             </button>
           </div>

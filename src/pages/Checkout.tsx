@@ -288,7 +288,8 @@ export default function Checkout() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-60"
+                className="btn btn-primary w-full disabled:opacity-60"
+                style={{ height: 56 }}
               >
                 {isSubmitting ? 'Processing Order...' : 'Complete Purchase'}
               </button>

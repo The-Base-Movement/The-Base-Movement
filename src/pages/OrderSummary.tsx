@@ -62,10 +62,7 @@ export default function OrderSummary() {
           <p className="text-xs text-stone-500 mt-2 mb-6 tracking-tight">
             The requested order could not be synchronized with the vault.
           </p>
-          <Link
-            to="/store"
-            className="w-full h-12 bg-stone-900 text-white rounded-none flex items-center justify-center font-bold text-xs"
-          >
+          <Link to="/store" className="btn btn-primary w-full">
             Back to store
           </Link>
         </div>
@@ -232,32 +229,26 @@ export default function OrderSummary() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button
-                    onClick={() => window.print()}
-                    className="flex-1 h-12 border border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white cursor-pointer hover:bg-stone-50"
-                  >
+                  <button onClick={() => window.print()} className="btn btn-outline flex-1">
                     <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                       print
-                    </span>{' '}
+                    </span>
                     Print invoice
                   </button>
                   <button
                     onClick={() =>
                       navigator.share?.({ title: 'The Base Store', url: window.location.href })
                     }
-                    className="flex-1 h-12 border border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white cursor-pointer hover:bg-stone-50"
+                    className="btn btn-outline flex-1"
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                       share
-                    </span>{' '}
+                    </span>
                     Share support
                   </button>
                 </div>
 
-                <Link
-                  to="/dashboard"
-                  className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 bg-primary text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                >
+                <Link to="/dashboard" className="btn btn-primary w-full" style={{ height: 56 }}>
                   Back to dashboard
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                     arrow_forward

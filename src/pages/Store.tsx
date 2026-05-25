@@ -231,10 +231,7 @@ export default function Store() {
                 <CartSummary />
               </div>
               <div className="p-[18px] pt-3.5 pb-4">
-                <Link
-                  to="/store/checkout"
-                  className="w-full h-14 font-medium bg-accent text-white flex items-center justify-center text-sm tracking-tight rounded-sm hover:opacity-90 transition-opacity"
-                >
+                <Link to="/store/checkout" className="btn btn-accent w-full" style={{ height: 56 }}>
                   Checkout securely →
                 </Link>
                 <div className="flex gap-1.5 justify-center mt-3 opacity-40">
@@ -304,7 +301,8 @@ export default function Store() {
               <Link
                 to="/store/checkout"
                 onClick={() => setIsCartDrawerOpen(false)}
-                className="w-full h-12 font-medium bg-accent text-white flex items-center justify-center text-sm tracking-tight rounded-sm hover:opacity-90 transition-opacity"
+                className="btn btn-accent w-full"
+                style={{ height: 48 }}
               >
                 Checkout securely →
               </Link>

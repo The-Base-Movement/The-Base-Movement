@@ -1,7 +1,7 @@
 # Button System Audit
 
 **Audit Date:** 2026-05-25
-**Status:** FINDINGS — Store section 100% non-compliant; public pages partially non-compliant
+**Status:** Store section migrated ✅ — Public page CTAs pending
 
 ---
 
@@ -46,10 +46,10 @@ Intended for all public-facing (`PublicLayout`) pages.
 | ----------------------------------------------- | -------------- | ---------------------------------------------- |
 | Admin panel (`/admin/*`)                        | `.btn` classes | ✅ Compliant — 100+ files, consistent          |
 | Dashboard pages (`/dashboard/*`)                | `.btn` classes | ✅ Compliant — chapters, donate, members, etc. |
-| Store pages (`/store/*`)                        | None           | ❌ Non-compliant — 100% raw buttons            |
+| Store pages (`/store/*`)                        | `.btn` classes | ✅ Migrated — primary CTAs on `.btn` system    |
 | Public pages (`/`, `/officers`, `/polls`, etc.) | None           | ❌ Non-compliant — raw Tailwind buttons        |
 | Shared components                               | Mixed          | ⚠️ Partially compliant                         |
-| `NeonButton` component                          | n/a            | ⚠️ Defined but **never used anywhere**         |
+| `NeonButton` component (via wrappers)           | n/a            | ✅ Active — used in Home sections via wrappers |
 
 ---
 
@@ -178,42 +178,49 @@ Notable non-compliant CTAs:
 
 ## `NeonButton` Status
 
-`src/components/buttons/ui/neon-button.tsx` — **defined but never used**.
+`src/components/buttons/ui/neon-button.tsx` — **active, used via wrapper components**.
 
-Grep result across entire `src/` directory: **0 usages**.
+The component is exported as `Button` (not `NeonButton`) and consumed through thin wrapper components:
 
-The component exists, reads `var(--button-radius)` and `var(--button-font-weight)` correctly, and is the intended public button system. It has simply never been wired up to any page.
+| Wrapper             | Variant       | Used in                                                              |
+| ------------------- | ------------- | -------------------------------------------------------------------- |
+| `ButtonPrimary`     | `primary`     | `ChaptersSection`, `LatestUpdatesSection`, `PlatformsSection` (Home) |
+| `ButtonAccent`      | `accent`      | `PlatformsSection` (Home)                                            |
+| `ButtonDestructive` | `destructive` | Utilities                                                            |
+| `ButtonActiveTab`   | `active-tab`  | Tab UIs                                                              |
+| `ButtonInactiveTab` | `default`     | Tab UIs                                                              |
+
+Both systems read the same CSS variables (`--button-radius`, `--button-font-weight`) so admin Settings → Button Customizer applies to both.
 
 ---
 
-## Recommended Migration Path
+## Migration Status (2026-05-25)
 
-### Priority 1 — Store section (highest user impact)
+### Store section — ✅ MIGRATED
 
-Replace all raw styled buttons in the 9 store files with either:
+All primary action CTAs in the 9 store files have been migrated to `.btn` classes:
 
-- `.btn .btn-primary` / `.btn .btn-outline` — if adopting the `.btn` system site-wide
-- `<NeonButton>` — if the intent is to keep `.btn` for admin/dashboard only and use `NeonButton` for public pages
+| File                                | Buttons migrated                                                           |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| `ProductCard.tsx`                   | Quick Add overlay, Add bottom card button                                  |
+| `ProductInfo.tsx` (product-details) | Add to bag, regional Check                                                 |
+| `Cart.tsx`                          | Proceed to Checkout, Remove item, Explore Store (empty state)              |
+| `Checkout.tsx`                      | Complete Purchase submit                                                   |
+| `Wishlist.tsx`                      | Add to Cart, Details link, Explore Store (empty state)                     |
+| `OrderSummary.tsx`                  | Back to store (not-found), Print invoice, Share support, Back to dashboard |
+| `Store.tsx`                         | Checkout securely (desktop sidebar), Checkout securely (mobile drawer)     |
 
-Primary CTAs to migrate first (most visible):
+Intentionally left as raw (not appropriate for `.btn`):
 
-1. `Cart.tsx` — Proceed to Checkout link
-2. `Checkout.tsx` — Place Order submit
-3. `ProductCard.tsx` — Add to Cart button (renders on every product tile)
-4. `Wishlist.tsx` — Add to Cart, Explore Store
-5. `OrderSummary.tsx` — Back to Dashboard
+- Quantity stepper +/− buttons (icon-only, inline stepper)
+- Wishlist/share icon buttons on product cards (icon-only overlay)
+- Category filter pills (`rounded-full` pill style incompatible)
+- Mobile cart bar (full-height custom dark bar)
 
 ### Priority 2 — Public page CTAs
 
-`Home.tsx`, `Contact.tsx`, `Polls.tsx` form/vote submit buttons.
+Pending: `Home.tsx`, `Contact.tsx`, `Polls.tsx` form/vote submit buttons.
 
 ### Priority 3 — Utility/icon buttons
 
-Icon-only buttons in `Navbar`, `DashboardLayout`, `ProductCard` (wishlist/quickview) — these are functional chrome, lower priority for design-system alignment.
-
-### Decision required
-
-Confirm whether the intended pattern for public pages is:
-
-- **Option A**: Extend `.btn` system to public pages (simplest — one system)
-- **Option B**: Activate `NeonButton` for public pages (two systems, matches original intent)
+Icon-only buttons in `Navbar`, `DashboardLayout`, `ProductCard` (wishlist/quickview icon) — layout chrome, not semantic action buttons. `.btn` not appropriate.

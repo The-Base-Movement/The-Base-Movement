@@ -253,7 +253,7 @@ export function ProductInfo({
             <button
               onClick={checkRegionalAvailability}
               disabled={checkingAvailability}
-              className="h-10 px-4 bg-primary text-white text-micro font-medium tracking-tight rounded-sm transition-all border-none cursor-pointer disabled:opacity-60 hover:opacity-90"
+              className="btn btn-primary btn-sm disabled:opacity-60"
             >
               {checkingAvailability ? 'Checking...' : 'Check'}
             </button>
@@ -327,11 +327,10 @@ export function ProductInfo({
           onClick={handleAddToCart}
           disabled={isComingSoon}
           className={cn(
-            'flex-1 h-14 text-xs font-medium tracking-tight rounded-sm border-none cursor-pointer transition-opacity flex items-center justify-center gap-2',
-            isComingSoon
-              ? 'bg-stone-100 text-stone-400 border border-stone-200'
-              : 'bg-primary text-white shadow-lg shadow-brand-green/20 hover:opacity-90'
+            'flex-1',
+            isComingSoon ? 'btn btn-outline disabled:opacity-60' : 'btn btn-primary'
           )}
+          style={{ height: 56 }}
         >
           {isComingSoon ? (
             'Coming soon'
