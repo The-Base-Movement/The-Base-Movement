@@ -1199,6 +1199,11 @@ class AdminService {
         `DONATIONS/${donationId}`,
         status === 'Verified' ? 'Success' : 'Warning'
       )
+      if (status === 'Verified') {
+        supabase.functions.invoke('send-donation-receipt', { body: { donationId } }).catch(() => {
+          // Fire-and-forget — receipt failure must not block the verification response
+        })
+      }
     }
     return success
   }

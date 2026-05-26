@@ -1,67 +1,102 @@
-// 🚩 THE BASE: MULTI-CHANNEL BROADCAST DISPATCHER
-// This Edge Function handles external dispatch (SMS/Push) for Urgent broadcasts.
+// THE BASE: MULTI-CHANNEL BROADCAST DISPATCHER
+// Handles SMS/email dispatch for Urgent broadcasts.
+// Set RESEND_API_KEY in Supabase secrets to activate email sending.
 
-// @ts-expect-error: Deno supports URL imports, but the local IDE might not recognize them
+// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { broadcastEmail } from '../_shared/email-templates.ts'
 
-// @ts-expect-error: Deno is a global in the Edge Function environment
+// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   try {
-    const { broadcastId, priority, targetType, targetValue } = await req.json()
-    
+    const { broadcastId, priority, targetType, targetValue, subject, body, region } =
+      await req.json()
+
     if (priority !== 'Urgent') {
-      return new Response(JSON.stringify({ success: true, message: "Non-urgent broadcast, skipping external dispatch." }), {
-        headers: { "Content-Type": "application/json" }
-      })
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Non-urgent broadcast, skipping external dispatch.',
+        }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
     }
 
-    // 1. Initialize Supabase Client
+    // @ts-expect-error: Deno global
     const supabaseAdmin = createClient(
-      // @ts-expect-error: Deno is a global in the Edge Function environment
       Deno.env.get('SUPABASE_URL') ?? '',
-      // @ts-expect-error: Deno is a global in the Edge Function environment
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // 2. Fetch Target Users
-    let userQuery = supabaseAdmin.from('users').select('full_name, phone_number')
-    
-    if (targetType === 'REGION') {
-      userQuery = userQuery.eq('region', targetValue)
-    } else if (targetType === 'CONSTITUENCY') {
-      userQuery = userQuery.eq('constituency', targetValue)
-    }
+    let userQuery = supabaseAdmin.from('users').select('full_name, phone_number, email')
+    if (targetType === 'REGION') userQuery = userQuery.eq('region', targetValue)
+    else if (targetType === 'CONSTITUENCY') userQuery = userQuery.eq('constituency', targetValue)
 
     const { data: users, error: userError } = await userQuery
     if (userError) throw userError
 
     interface Patriot {
-      full_name: string;
-      phone_number: string | null;
+      full_name: string
+      phone_number: string | null
+      email: string | null
     }
+    const recipients = (users as Patriot[])?.filter((u) => u.phone_number || u.email) || []
 
-    const recipients = (users as Patriot[])?.filter((u: Patriot) => u.phone_number) || []
-    
-    // 3. Simulate SMS Dispatch (e.g. Twilio)
-    console.log(`[URGENT DISPATCH] Initiating SMS blast for ${broadcastId} to ${recipients.length} patriots.`);
-    
-    // TODO: Integrate with real SMS provider
-    // await sendSmsBlast(recipients, "URGENT MOVEMENT ALERT: " + broadcastId);
-
-    return new Response(JSON.stringify({ 
-      success: true, 
-      recipientCount: recipients.length 
-    }), { 
-      headers: { "Content-Type": "application/json" },
-      status: 200 
+    const html = broadcastEmail({
+      subject: subject ?? 'Movement update',
+      preheader: subject ?? 'An important update from The Base Movement.',
+      body: body ? `<p style="line-height:1.65;color:#444;margin-bottom:14px">${body}</p>` : '',
+      region: region ?? targetValue,
+      ctaLabel: 'Read the full update →',
+      ctaUrl: 'https://thebasemovement.com/dashboard',
     })
 
+    // @ts-expect-error: Deno global
+    const resendKey: string | undefined = Deno.env.get('RESEND_API_KEY')
+    const emailRecipients = recipients.filter((u) => u.email).map((u) => u.email as string)
+
+    if (resendKey && emailRecipients.length > 0) {
+      // Resend supports up to 50 recipients per call; batch for larger lists
+      const BATCH = 50
+      for (let i = 0; i < emailRecipients.length; i += BATCH) {
+        const batch = emailRecipients.slice(i, i + BATCH)
+        const res = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
+          body: JSON.stringify({
+            from: 'The Base Movement <noreply@thebasemovement.com>',
+            to: batch,
+            subject: subject ?? 'Movement update',
+            html,
+          }),
+        })
+        const data = await res.json()
+        console.warn(`[EMAIL] Broadcast batch ${i / BATCH + 1}:`, data)
+      }
+    } else {
+      console.warn(
+        `[EMAIL] RESEND_API_KEY not set — would send to ${emailRecipients.length} addresses`
+      )
+    }
+
+    const phoneRecipients = recipients.filter((u) => u.phone_number)
+    // TODO: Integrate with SMS provider (e.g. Twilio) for phoneRecipients
+    console.warn(
+      `[URGENT DISPATCH] ${broadcastId} — ${emailRecipients.length} email / ${phoneRecipients.length} SMS recipients`
+    )
+
+    return new Response(JSON.stringify({ success: true, recipientCount: recipients.length }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 200,
+    })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     console.error(`[DISPATCH-ERROR] ${message}`)
-    return new Response(JSON.stringify({ error: message }), { 
-      headers: { "Content-Type": "application/json" },
-      status: 400 
+    return new Response(JSON.stringify({ error: message }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 400,
     })
   }
 })
