@@ -7,6 +7,7 @@ import { Button } from '@/components/buttons/ui/neon-button'
 
 const NAV_LINKS = [
   { label: 'Home', publicPath: '/', dashPath: '/dashboard' },
+  { label: 'About', publicPath: '/about', dashPath: '/dashboard/about' },
   { label: 'Updates', publicPath: '/blog', dashPath: '/dashboard/blog' },
   { label: 'Polls', publicPath: '/polls', dashPath: '/dashboard/polls' },
   { label: 'The Plan', publicPath: '/our-agenda', dashPath: '/dashboard/agenda' },

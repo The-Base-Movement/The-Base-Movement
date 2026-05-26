@@ -35,6 +35,7 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const RegistrationFormPreview = lazy(() => import('./pages/RegistrationFormPreview'))
 const PreviewOfficer = lazy(() => import('./pages/PreviewOfficer'))
 const Officers = lazy(() => import('./pages/Officers'))
+const About = lazy(() => import('./pages/About'))
 
 // Dashboard components
 const ChapterHub = lazy(() => import('./pages/ChapterHub'))
@@ -113,6 +114,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard', element: <Dashboard /> },
           { path: '/dashboard/blog', element: <Blog /> },
           { path: '/dashboard/blog/:id', element: <BlogPost /> },
+          { path: '/dashboard/about', element: <About /> },
           { path: '/dashboard/agenda', element: <OurAgenda /> },
           { path: '/dashboard/impact', element: <Impact /> },
           { path: '/dashboard/polls', element: <Polls /> },
@@ -191,6 +193,7 @@ export const routes: RouteObject[] = [
     element: <PublicLayout />,
     children: [
       { path: '/', element: <Home /> },
+      { path: '/about', element: <About /> },
       { path: '/blog', element: <Blog /> },
       { path: '/blog/:id', element: <BlogPost /> },
       { path: '/our-agenda', element: <OurAgenda /> },
