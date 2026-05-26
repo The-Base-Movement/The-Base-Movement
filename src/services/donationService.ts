@@ -44,6 +44,7 @@ class DonationService {
       receipt_url: string
       campaign_id: string
       member_id: string
+      reference: string | null
       donation_campaigns: { title: string }
     }
 
@@ -53,7 +54,7 @@ class DonationService {
       amount: d.amount.toString(),
       method: d.payment_method,
       status: d.status,
-      reference: d.id.substring(0, 8),
+      reference: d.reference ?? d.id.substring(0, 8).toUpperCase(),
       campaignTitle: d.donation_campaigns?.title,
       fullName: d.full_name,
       phone: d.phone,
@@ -247,6 +248,7 @@ class DonationService {
       status: 'Verified'
       full_name: string
       show_on_dashboard: boolean
+      reference: string | null
       donation_campaigns: { title: string }
     }
 
@@ -256,7 +258,7 @@ class DonationService {
       amount: d.amount.toString(),
       method: d.payment_method,
       status: d.status,
-      reference: d.id.substring(0, 8),
+      reference: d.reference ?? d.id.substring(0, 8).toUpperCase(),
       campaignTitle: d.donation_campaigns?.title,
       fullName: d.show_on_dashboard ? d.full_name : 'Anonymous Patriot',
       phone: '', // Redacted for public feed
@@ -285,7 +287,7 @@ class DonationService {
       amount: d.amount.toString(),
       method: d.payment_method,
       status: d.status,
-      reference: d.id.substring(0, 8),
+      reference: (d.reference as string | null) ?? d.id.substring(0, 8).toUpperCase(),
       campaignTitle: d.donation_campaigns?.title,
       fullName: d.full_name,
       phone: d.phone,
@@ -322,7 +324,7 @@ class DonationService {
               amount: data.amount.toString(),
               method: data.payment_method,
               status: data.status,
-              reference: data.id.substring(0, 8),
+              reference: (data.reference as string | null) ?? data.id.substring(0, 8).toUpperCase(),
               campaignTitle: data.donation_campaigns?.title,
               fullName: data.show_on_dashboard ? data.full_name : 'Anonymous Patriot',
               phone: '',
@@ -357,7 +359,7 @@ class DonationService {
               amount: data.amount.toString(),
               method: data.payment_method,
               status: data.status,
-              reference: data.id.substring(0, 8),
+              reference: (data.reference as string | null) ?? data.id.substring(0, 8).toUpperCase(),
               campaignTitle: data.donation_campaigns?.title,
               fullName: data.show_on_dashboard ? data.full_name : 'Anonymous Patriot',
               phone: '',

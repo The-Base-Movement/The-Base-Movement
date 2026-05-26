@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -22,11 +22,32 @@ const TAB_CONFIG: {
   { label: 'Refunded', value: 'Refunded' },
 ]
 
+const METHOD_OPTIONS = ['All', 'MoMo', 'Card', 'Cash'] as const
+type MethodOption = (typeof METHOD_OPTIONS)[number]
+
+interface FilterState {
+  method: MethodOption
+  amountMin: string
+  amountMax: string
+  dateFrom: string
+  dateTo: string
+  country: 'All' | 'Ghana' | 'Diaspora'
+}
+
+const DEFAULT_FILTERS: FilterState = {
+  method: 'All',
+  amountMin: '',
+  amountMax: '',
+  dateFrom: '',
+  dateTo: '',
+  country: 'All',
+}
+
 const fieldStyle: React.CSSProperties = {
   width: '100%',
   height: 34,
   border: '1px solid hsl(var(--border))',
-  borderRadius: 4,
+  borderRadius: 'var(--radius-sm)',
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-medium, 500)',
@@ -34,6 +55,24 @@ const fieldStyle: React.CSSProperties = {
   outline: 'none',
   background: '#fff',
   color: 'hsl(var(--on-surface))',
+  boxSizing: 'border-box',
+}
+
+function matchesMethod(d: DonationDetail, m: MethodOption): boolean {
+  if (m === 'All') return true
+  const method = d.method.toLowerCase()
+  if (m === 'MoMo')
+    return (
+      method.includes('momo') ||
+      method.includes('mtn') ||
+      method.includes('vodafone') ||
+      method.includes('airteltigo') ||
+      method.includes('mobile')
+    )
+  if (m === 'Card')
+    return method.includes('card') || method.includes('visa') || method.includes('mastercard')
+  if (m === 'Cash') return method.includes('cash')
+  return true
 }
 
 export default function FinancialAudit() {
@@ -51,6 +90,17 @@ export default function FinancialAudit() {
   const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState<string | null>(null)
   const [internalNote, setInternalNote] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
+  const filterPanelRef = useRef<HTMLDivElement>(null)
+
+  const hasActiveFilters =
+    filters.method !== 'All' ||
+    filters.amountMin !== '' ||
+    filters.amountMax !== '' ||
+    filters.dateFrom !== '' ||
+    filters.dateTo !== '' ||
+    filters.country !== 'All'
 
   const fetchData = useCallback(
     async (silent = false) => {
@@ -81,6 +131,18 @@ export default function FinancialAudit() {
       clearTimeout(timer)
     }
   }, [fetchData])
+
+  // Close filter panel on outside click
+  useEffect(() => {
+    if (!showFilters) return
+    const handler = (e: MouseEvent) => {
+      if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
+        setShowFilters(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showFilters])
 
   const handleVerify = async (
     donationId: string,
@@ -144,13 +206,41 @@ export default function FinancialAudit() {
     }
   }
 
-  const filteredDonations = donations.filter(
-    (d) =>
-      d.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      d.campaignTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      d.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      d.phone?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredDonations = donations.filter((d) => {
+    const q = searchQuery.toLowerCase()
+    const matchesSearch =
+      d.fullName.toLowerCase().includes(q) ||
+      d.campaignTitle?.toLowerCase().includes(q) ||
+      d.reference.toLowerCase().includes(q) ||
+      d.phone?.toLowerCase().includes(q)
+
+    const amt = parseFloat(d.amount)
+    const matchesAmount =
+      (filters.amountMin === '' || amt >= parseFloat(filters.amountMin)) &&
+      (filters.amountMax === '' || amt <= parseFloat(filters.amountMax))
+
+    const donationDate = new Date(d.date)
+    const matchesDate =
+      (filters.dateFrom === '' || donationDate >= new Date(filters.dateFrom)) &&
+      (filters.dateTo === '' || donationDate <= new Date(filters.dateTo + 'T23:59:59'))
+
+    const matchesCountry =
+      filters.country === 'All' ||
+      (filters.country === 'Ghana' && d.country === 'Ghana') ||
+      (filters.country === 'Diaspora' && d.country !== 'Ghana')
+
+    return (
+      matchesSearch &&
+      matchesMethod(d, filters.method) &&
+      matchesAmount &&
+      matchesDate &&
+      matchesCountry
+    )
+  })
+
+  function setFilter<K extends keyof FilterState>(key: K, value: FilterState[K]) {
+    setFilters((prev) => ({ ...prev, [key]: value }))
+  }
 
   return (
     <div className="main">
@@ -265,7 +355,7 @@ export default function FinancialAudit() {
         style={{
           background: '#fff',
           border: '1px solid hsl(var(--border))',
-          borderRadius: 6,
+          borderRadius: 'var(--radius-md)',
           padding: '12px 14px',
           display: 'flex',
           gap: 8,
@@ -293,16 +383,17 @@ export default function FinancialAudit() {
             id="input-4a5fad"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name, reg. no., reference, phone, or amount…"
+            placeholder="Search by name, reference, phone…"
             style={{ ...fieldStyle, paddingLeft: 32 }}
-            aria-label="Search by name, reference, or phone"
+            aria-label="Search donations"
           />
         </div>
+
         <div
           style={{
             display: 'flex',
             border: '1px solid hsl(var(--border))',
-            borderRadius: 4,
+            borderRadius: 'var(--radius-sm)',
             overflow: 'hidden',
             overflowX: 'auto',
             flexShrink: 0,
@@ -337,13 +428,292 @@ export default function FinancialAudit() {
             </button>
           ))}
         </div>
-        <button className="btn btn-outline btn-sm">
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-            tune
-          </span>
-          Filters
-        </button>
+
+        {/* Filters button + dropdown */}
+        <div style={{ position: 'relative', flexShrink: 0 }} ref={filterPanelRef}>
+          <button
+            className={hasActiveFilters ? 'btn btn-accent btn-sm' : 'btn btn-outline btn-sm'}
+            onClick={() => setShowFilters((v) => !v)}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              tune
+            </span>
+            Filters
+            {hasActiveFilters && (
+              <span
+                style={{
+                  background: 'rgba(255,255,255,.3)',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '1px 6px',
+                  fontSize: 10,
+                  marginLeft: 2,
+                }}
+              >
+                on
+              </span>
+            )}
+          </button>
+
+          {showFilters && (
+            <>
+              <div
+                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                onClick={() => setShowFilters(false)}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 'calc(100% + 6px)',
+                  zIndex: 50,
+                  background: '#fff',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 16,
+                  width: 280,
+                  boxShadow: '0 4px 20px rgba(0,0,0,.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 14,
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 11,
+                      textTransform: 'uppercase',
+                      letterSpacing: '.06em',
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Filter options
+                  </span>
+                  {hasActiveFilters && (
+                    <button
+                      onClick={() => setFilters(DEFAULT_FILTERS)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: 11,
+                        color: 'hsl(var(--destructive))',
+                        fontFamily: "'Public Sans', sans-serif",
+                        padding: 0,
+                      }}
+                    >
+                      Clear all
+                    </button>
+                  )}
+                </div>
+
+                {/* Method */}
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '.06em',
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Payment method
+                  </label>
+                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                    {METHOD_OPTIONS.map((m) => (
+                      <button
+                        key={m}
+                        onClick={() => setFilter('method', m)}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: 'var(--radius-pill)',
+                          border: '1px solid hsl(var(--border))',
+                          background: filters.method === m ? 'hsl(var(--on-surface))' : '#fff',
+                          color: filters.method === m ? '#fff' : 'hsl(var(--on-surface))',
+                          fontSize: 11,
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Origin */}
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '.06em',
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Origin
+                  </label>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    {(['All', 'Ghana', 'Diaspora'] as const).map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => setFilter('country', c)}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: 'var(--radius-pill)',
+                          border: '1px solid hsl(var(--border))',
+                          background: filters.country === c ? 'hsl(var(--on-surface))' : '#fff',
+                          color: filters.country === c ? '#fff' : 'hsl(var(--on-surface))',
+                          fontSize: 11,
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Amount range */}
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '.06em',
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Amount (₵)
+                  </label>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={filters.amountMin}
+                      onChange={(e) => setFilter('amountMin', e.target.value)}
+                      style={{ ...fieldStyle, height: 30, fontSize: 12 }}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={filters.amountMax}
+                      onChange={(e) => setFilter('amountMax', e.target.value)}
+                      style={{ ...fieldStyle, height: 30, fontSize: 12 }}
+                    />
+                  </div>
+                </div>
+
+                {/* Date range */}
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '.06em',
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Date range
+                  </label>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <input
+                      type="date"
+                      value={filters.dateFrom}
+                      onChange={(e) => setFilter('dateFrom', e.target.value)}
+                      style={{ ...fieldStyle, height: 30, fontSize: 12 }}
+                    />
+                    <input
+                      type="date"
+                      value={filters.dateTo}
+                      onChange={(e) => setFilter('dateTo', e.target.value)}
+                      style={{ ...fieldStyle, height: 30, fontSize: 12 }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
+
+      {/* Active filter summary */}
+      {hasActiveFilters && (
+        <div
+          style={{
+            marginBottom: 10,
+            display: 'flex',
+            gap: 6,
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 10,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              textTransform: 'uppercase',
+              letterSpacing: '.05em',
+            }}
+          >
+            Active filters:
+          </span>
+          {filters.method !== 'All' && (
+            <span className="pill pill-warn" style={{ fontSize: 9 }}>
+              {filters.method}
+            </span>
+          )}
+          {filters.country !== 'All' && (
+            <span className="pill pill-warn" style={{ fontSize: 9 }}>
+              {filters.country}
+            </span>
+          )}
+          {(filters.amountMin || filters.amountMax) && (
+            <span className="pill pill-warn" style={{ fontSize: 9 }}>
+              ₵{filters.amountMin || '0'} – ₵{filters.amountMax || '∞'}
+            </span>
+          )}
+          {(filters.dateFrom || filters.dateTo) && (
+            <span className="pill pill-warn" style={{ fontSize: 9 }}>
+              {filters.dateFrom || '…'} → {filters.dateTo || '…'}
+            </span>
+          )}
+          <span
+            style={{
+              fontSize: 10,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            — {filteredDonations.length} result{filteredDonations.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+      )}
 
       {/* Split view */}
       <div
@@ -362,7 +732,6 @@ export default function FinancialAudit() {
         {selectedDonation && (
           <DonationDetailSidebar
             selectedDonation={selectedDonation}
-            donations={donations}
             internalNote={internalNote}
             setInternalNote={setInternalNote}
             isVerifying={isVerifying}

@@ -1208,6 +1208,15 @@ class AdminService {
     return success
   }
 
+  async getDonationCountByPhone(phone: string, excludeId: string): Promise<number> {
+    const { count } = await supabase
+      .from('donations')
+      .select('id', { count: 'exact', head: true })
+      .eq('phone', phone)
+      .neq('id', excludeId)
+    return count ?? 0
+  }
+
   async getStrategicPriorities(): Promise<DonationCampaign[]> {
     const { data } = await supabase
       .from('donation_campaigns')

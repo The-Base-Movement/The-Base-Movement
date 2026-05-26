@@ -1,8 +1,9 @@
+import { useState, useEffect } from 'react'
 import type { DonationDetail } from '@/services/adminService'
+import { adminService } from '@/services/adminService'
 
 interface DonationDetailSidebarProps {
   selectedDonation: DonationDetail
-  donations: DonationDetail[]
   internalNote: string
   setInternalNote: (note: string) => void
   isVerifying: string | null
@@ -34,57 +35,139 @@ function statusPill(status: string): { cls: string; label: string } {
   return { cls: 'pill pill-mute', label: status }
 }
 
-function getChecks(d: DonationDetail, allDonations: DonationDetail[]) {
+type CheckType = 'ok' | 'warn' | 'err'
+interface Check {
+  type: CheckType
+  label: string
+  detail: string
+}
+
+function autoChecks(d: DonationDetail, priorCount: number | null): Check[] {
   const hasPhone = !!(d.phone && d.phone.trim().length >= 9)
   const refValid = !!(d.reference && d.reference.trim().length >= 6)
-  const priorDonations = allDonations.filter((x) => x.id !== d.id && x.phone === d.phone).length
-  const isFirstFromSource = priorDonations === 0
+
+  const firstDonation: Check =
+    priorCount === null
+      ? { type: 'warn', label: 'First donation from this phone', detail: 'Checking…' }
+      : priorCount === 0
+        ? { type: 'warn', label: 'First donation from this phone', detail: 'Review carefully' }
+        : { type: 'ok', label: 'Prior donations from this phone', detail: `${priorCount} previous` }
+
   return [
     {
       type: hasPhone ? 'ok' : 'warn',
       label: 'Phone number on record',
       detail: d.phone || 'Missing',
     },
-    { type: 'warn', label: 'Name vs wallet holder — manual review required', detail: d.fullName },
     {
       type: refValid ? 'ok' : 'warn',
       label: 'Reference code format valid',
       detail: refValid ? d.reference.toUpperCase() : 'Invalid format',
     },
-    {
-      type: isFirstFromSource ? 'warn' : 'ok',
-      label: isFirstFromSource
-        ? 'First donation from this phone'
-        : 'Prior donations from this phone',
-      detail: isFirstFromSource ? 'Review carefully' : `${priorDonations} previous`,
-    },
-    {
-      type: 'warn',
-      label: 'AML watchlist check — manual verification',
-      detail: 'No automated watchlist available',
-    },
+    firstDonation,
   ]
+}
+
+const manualChecks: Check[] = [
+  { type: 'warn', label: 'Name vs wallet holder', detail: 'Compare manually' },
+  { type: 'warn', label: 'AML watchlist', detail: 'No external API — verify with officer' },
+]
+
+function CheckRow({ ck }: { ck: Check }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '6px 0',
+        fontSize: 12,
+        fontFamily: "'Public Sans', sans-serif",
+        fontWeight: 'var(--font-weight-normal, 400)',
+      }}
+    >
+      <div
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          background:
+            ck.type === 'ok'
+              ? 'rgba(0,107,63,.12)'
+              : ck.type === 'warn'
+                ? 'rgba(218,165,32,.14)'
+                : 'rgba(206,17,38,.1)',
+          color:
+            ck.type === 'ok'
+              ? 'hsl(var(--primary))'
+              : ck.type === 'warn'
+                ? '#a87d10'
+                : 'hsl(var(--destructive))',
+        }}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+          {ck.type === 'ok' ? 'check' : ck.type === 'warn' ? 'warning' : 'close'}
+        </span>
+      </div>
+      <span style={{ flex: 1 }}>{ck.label}</span>
+      <span style={{ marginLeft: 'auto', color: 'hsl(var(--on-surface-muted))', fontSize: 10.5 }}>
+        {ck.detail}
+      </span>
+    </div>
+  )
+}
+
+const sectionLabel: React.CSSProperties = {
+  fontSize: 9.5,
+  fontWeight: 'var(--font-weight-semibold, 600)' as const,
+  color: 'hsl(var(--on-surface-muted))',
+  letterSpacing: '.06em',
+  textTransform: 'uppercase' as const,
+  fontFamily: "'Public Sans', sans-serif",
+  marginBottom: 6,
 }
 
 export function DonationDetailSidebar({
   selectedDonation,
-  donations,
   internalNote,
   setInternalNote,
   isVerifying,
   onVerify,
   onViewReceipt,
 }: DonationDetailSidebarProps) {
+  const [countData, setCountData] = useState<{ id: string; count: number } | null>(null)
+  const selId = selectedDonation.id
+  const selPhone = selectedDonation.phone
+  // null means "still loading for this donation"
+  const priorCount = countData?.id === selId ? countData.count : null
+
+  useEffect(() => {
+    let cancelled = false
+    const fetching = selPhone
+      ? adminService.getDonationCountByPhone(selPhone, selId).catch(() => 0)
+      : Promise.resolve(0)
+    fetching.then((count) => {
+      if (!cancelled) setCountData({ id: selId, count })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [selId, selPhone])
+
   const mb = methodBadge(selectedDonation.method)
   const sp = statusPill(selectedDonation.status)
-  const checks = getChecks(selectedDonation, donations)
+  const automated = autoChecks(selectedDonation, priorCount)
 
   return (
     <aside
       style={{
         background: '#fff',
         border: '1px solid hsl(var(--border))',
-        borderRadius: 6,
+        borderRadius: 'var(--radius-md)',
         alignSelf: 'start',
         position: 'sticky',
         top: 24,
@@ -171,13 +254,7 @@ export function DonationDetailSidebar({
             lineHeight: 1,
           }}
         >
-          <span
-            style={{
-              fontSize: 18,
-              color: 'hsl(var(--on-surface-muted))',
-              marginRight: 4,
-            }}
-          >
+          <span style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))', marginRight: 4 }}>
             ₵
           </span>
           {parseFloat(selectedDonation.amount).toLocaleString()}
@@ -199,7 +276,7 @@ export function DonationDetailSidebar({
               alignItems: 'center',
               gap: 5,
               padding: '3px 8px',
-              borderRadius: 3,
+              borderRadius: 'var(--radius-xs)',
               background: mb.bg,
               color: mb.color,
               fontFamily: "'Public Sans', sans-serif",
@@ -221,71 +298,17 @@ export function DonationDetailSidebar({
       </div>
 
       {/* Automated checks */}
-      <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))' }}>
-        <div
-          style={{
-            fontSize: 9.5,
-            fontWeight: 'var(--font-weight-semibold, 600)',
-            color: 'hsl(var(--on-surface-muted))',
-            letterSpacing: '.06em',
-            textTransform: 'uppercase',
-            fontFamily: "'Public Sans', sans-serif",
-            marginBottom: 10,
-          }}
-        >
-          Automated checks
-        </div>
-        {checks.map((ck, i) => (
-          <div
-            key={i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '6px 0',
-              fontSize: 12,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-            }}
-          >
-            <div
-              style={{
-                width: 22,
-                height: 22,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                background:
-                  ck.type === 'ok'
-                    ? 'rgba(0,107,63,.12)'
-                    : ck.type === 'warn'
-                      ? 'rgba(218,165,32,.14)'
-                      : 'rgba(206,17,38,.1)',
-                color:
-                  ck.type === 'ok'
-                    ? 'hsl(var(--primary))'
-                    : ck.type === 'warn'
-                      ? '#a87d10'
-                      : 'hsl(var(--destructive))',
-              }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                {ck.type === 'ok' ? 'check' : ck.type === 'warn' ? 'warning' : 'close'}
-              </span>
-            </div>
-            <span style={{ flex: 1 }}>{ck.label}</span>
-            <span
-              style={{
-                marginLeft: 'auto',
-                color: 'hsl(var(--on-surface-muted))',
-                fontSize: 10.5,
-              }}
-            >
-              {ck.detail}
-            </span>
-          </div>
+      <div style={{ padding: '14px 20px 10px', borderBottom: '1px solid hsl(var(--border))' }}>
+        <p style={{ ...sectionLabel, marginBottom: 8 }}>Automated checks</p>
+        {automated.map((ck, i) => (
+          <CheckRow key={i} ck={ck} />
+        ))}
+
+        <p style={{ ...sectionLabel, marginTop: 14, marginBottom: 6, color: 'hsl(var(--accent))' }}>
+          Manual review required
+        </p>
+        {manualChecks.map((ck, i) => (
+          <CheckRow key={i} ck={ck} />
         ))}
       </div>
 
@@ -303,10 +326,7 @@ export function DonationDetailSidebar({
         {[
           { dt: 'Earmark', dd: selectedDonation.campaignTitle || 'General fund' },
           { dt: 'Country', dd: selectedDonation.country },
-          {
-            dt: 'Receipt issued',
-            dd: selectedDonation.receiptUrl ? 'Yes' : 'No · pending',
-          },
+          { dt: 'Receipt issued', dd: selectedDonation.receiptUrl ? 'Yes' : 'No · pending' },
           { dt: 'Reference', dd: selectedDonation.reference.toUpperCase() },
         ].map(({ dt, dd }) => (
           <div key={dt}>
@@ -396,7 +416,7 @@ export function DonationDetailSidebar({
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-normal, 400)',
             border: '1px solid hsl(var(--border))',
-            borderRadius: 4,
+            borderRadius: 'var(--radius-sm)',
             resize: 'vertical',
             outline: 'none',
             boxSizing: 'border-box',
@@ -406,12 +426,7 @@ export function DonationDetailSidebar({
 
       {/* Actions */}
       <div
-        style={{
-          padding: '0 20px 18px',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 8,
-        }}
+        style={{ padding: '0 20px 18px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}
       >
         <button
           className="btn btn-outline btn-sm"
@@ -434,7 +449,7 @@ export function DonationDetailSidebar({
           Refund
         </button>
         <button
-          className="btn btn-dest"
+          className="btn btn-primary"
           style={{ gridColumn: '1/3', justifyContent: 'center' }}
           onClick={() => onVerify(selectedDonation.id, selectedDonation.fullName, 'Verified')}
           disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
