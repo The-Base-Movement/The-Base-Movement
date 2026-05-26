@@ -265,8 +265,9 @@ export default function OfficerDetail() {
             className="officer-detail-grid"
             style={{
               background: 'hsl(var(--background))',
-              borderRadius: 16,
-              boxShadow: '0 4px 32px rgba(0,0,0,0.08)',
+              borderRadius: 12,
+              border: '1px solid hsl(var(--border))',
+              boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)',
               overflow: 'hidden',
               display: 'grid',
               gridTemplateColumns: 'minmax(0, 320px) 1fr',
@@ -395,8 +396,8 @@ export default function OfficerDetail() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 4,
-                    padding: '4px 10px',
-                    borderRadius: 6,
+                    padding: '4px 12px',
+                    borderRadius: 999,
                     background: 'hsl(var(--container-low))',
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-medium, 500)',
@@ -441,8 +442,8 @@ export default function OfficerDetail() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 4,
-                    padding: '4px 10px',
-                    borderRadius: 6,
+                    padding: '4px 12px',
+                    borderRadius: 999,
                     background: 'hsl(var(--container-low))',
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-medium, 500)',
@@ -590,8 +591,9 @@ export default function OfficerDetail() {
             <aside
               style={{
                 background: 'hsl(var(--background))',
-                borderRadius: 16,
-                boxShadow: '0 4px 32px rgba(0,0,0,0.06)',
+                borderRadius: 8,
+                border: '1px solid hsl(var(--border))',
+                boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)',
                 overflow: 'hidden',
               }}
             >
@@ -671,7 +673,7 @@ export default function OfficerDetail() {
           className="flex flex-col md:flex-row items-center justify-between gap-6"
           style={{
             background: 'hsl(var(--on-surface))',
-            borderRadius: 16,
+            borderRadius: 12,
             padding: 'clamp(24px, 4vw, 40px) clamp(24px, 5vw, 48px)',
             opacity: ctaVisible ? 1 : 0,
             transform: ctaVisible ? 'translateY(0)' : 'translateY(24px)',
