@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { XIcon, LinkedInIcon, FacebookIcon, InstagramIcon } from '@/components/icons/SocialIcons'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { Button } from '@/components/buttons/ui/neon-button'
 import SEO from '@/components/SEO'
 
 interface OfficerFull {
@@ -120,6 +121,27 @@ export default function OfficerDetail() {
   const [tierIndex, setTierIndex] = useState(2)
   const [tierTitle, setTierTitle] = useState('')
   const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const [ctaVisible, setCtaVisible] = useState(false)
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setCtaVisible(true)
+      },
+      { threshold: 0.2 }
+    )
+    if (ctaRef.current) obs.observe(ctaRef.current)
+    return () => obs.disconnect()
+  }, [])
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   useEffect(() => {
     if (!slug) return
@@ -290,23 +312,55 @@ export default function OfficerDetail() {
                 gap: 20,
               }}
             >
-              <span
+              <div
                 style={{
-                  display: 'inline-flex',
-                  alignSelf: 'flex-start',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 10,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: accentColor,
-                  background: `color-mix(in srgb, ${accentColor} 10%, transparent)`,
-                  padding: '3px 10px',
-                  borderRadius: 99,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 8,
                 }}
               >
-                {tierTitle || officer.tier}
-              </span>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 10,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: accentColor,
+                    background: `color-mix(in srgb, ${accentColor} 10%, transparent)`,
+                    padding: '3px 10px',
+                    borderRadius: 99,
+                  }}
+                >
+                  {tierTitle || officer.tier}
+                </span>
+                <button
+                  onClick={handleShare}
+                  title="Copy link"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    border: '1px solid hsl(var(--border))',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 11,
+                    color: copied ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                    {copied ? 'check' : 'link'}
+                  </span>
+                  {copied ? 'Copied!' : 'Share'}
+                </button>
+              </div>
 
               <div>
                 <h1
@@ -332,25 +386,78 @@ export default function OfficerDetail() {
                 >
                   {officer.role}
                 </p>
+              </div>
+
+              {/* Key facts strip */}
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    background: 'hsl(var(--container-low))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 13, color: accentColor }}
+                  >
+                    verified
+                  </span>
+                  {tierTitle || officer.tier}
+                </span>
                 {officer.region && (
                   <span
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 4,
-                      marginTop: 8,
+                      padding: '4px 10px',
+                      borderRadius: 6,
+                      background: 'hsl(var(--container-low))',
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 12,
+                      fontSize: 11,
                       color: 'hsl(var(--on-surface-muted))',
                     }}
                   >
-                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 13, color: accentColor }}
+                    >
                       location_on
                     </span>
                     {officer.region}
                   </span>
                 )}
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    background: 'hsl(var(--container-low))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 13, color: accentColor }}
+                  >
+                    flag
+                  </span>
+                  Ghana First
+                </span>
               </div>
 
               <BrandLine />
@@ -548,6 +655,60 @@ export default function OfficerDetail() {
               </div>
             </aside>
           )}
+        </div>
+      </section>
+
+      {/* CTA strip */}
+      <section
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: '0 clamp(16px, 5vw, 48px) clamp(48px, 6vw, 72px)',
+        }}
+      >
+        <div
+          ref={ctaRef}
+          className="flex flex-col md:flex-row items-center justify-between gap-6"
+          style={{
+            background: 'hsl(var(--on-surface))',
+            borderRadius: 16,
+            padding: 'clamp(24px, 4vw, 40px) clamp(24px, 5vw, 48px)',
+            opacity: ctaVisible ? 1 : 0,
+            transform: ctaVisible ? 'translateY(0)' : 'translateY(24px)',
+            transition: 'opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s',
+          }}
+        >
+          <div>
+            <h3
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                color: '#fff',
+                margin: '0 0 6px',
+              }}
+            >
+              Inspired by {officer.name.split(' ')[0]}? Join the movement.
+            </h3>
+            <p
+              style={{
+                fontSize: 14,
+                fontWeight: 'var(--font-weight-normal, 400)',
+                color: 'rgba(255,255,255,0.65)',
+                margin: 0,
+              }}
+            >
+              Add your name. Strengthen the cause. Ghana First.
+            </p>
+          </div>
+          <Link to="/register" style={{ flexShrink: 0 }}>
+            <Button variant="accent" size="lg">
+              Join the Base
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                arrow_forward
+              </span>
+            </Button>
+          </Link>
         </div>
       </section>
 
