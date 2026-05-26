@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { OfficerCard, type OfficerProfile } from '@/components/OfficerCard'
 import { OfficerCardSlider } from '@/components/OfficerCardSlider'
@@ -10,6 +11,12 @@ import { ScrollReveal } from '@/components/ScrollReveal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 export default function Officers() {
+  const navigate = useNavigate()
+  const toSlug = (name: string) =>
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
   const { lowBandwidthMode } = usePerformance()
   const { settings } = useBranding()
   const [officers, setOfficers] = useState<OfficerProfile[]>([])
@@ -136,7 +143,7 @@ export default function Officers() {
                     <ScrollReveal duration={850} distance="25px" direction="up">
                       <div className="mb-10 text-center">
                         <h2
-                          className={`text-3xl font-meta font-semibold tracking-tight mb-2 ${headerColor}`}
+                          className={`text-3xl font-meta font-medium tracking-tight mb-2 ${headerColor}`}
                         >
                           {tier.title}
                         </h2>
@@ -147,7 +154,12 @@ export default function Officers() {
                     <ScrollReveal duration={1000} delay={100} distance="35px" direction="up">
                       <OfficerCardSlider>
                         {tierOfficers.map((officer) => (
-                          <OfficerCard key={officer.id} officer={officer} tierIndex={idx} />
+                          <OfficerCard
+                            key={officer.id}
+                            officer={officer}
+                            tierIndex={idx}
+                            onClick={(o) => navigate(`/officers/${toSlug(o.name)}`)}
+                          />
                         ))}
                       </OfficerCardSlider>
                     </ScrollReveal>

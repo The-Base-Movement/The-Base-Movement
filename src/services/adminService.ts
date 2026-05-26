@@ -816,43 +816,40 @@ class AdminService {
     chaptersDelta: string
     diasporaDelta: string
   }> {
-    try {
-      const [membersTotal, chaptersTotal, diasporaTotal, regionsTotal] = await Promise.all([
-        supabase
-          .from('users')
-          .select('*', { count: 'exact', head: true })
-          .ilike('platform', 'ghana')
-          .or('status.in.(Active,Approved,Verified),verification_status.in.(Approved,Verified)'),
-        supabase.from('chapters').select('*', { count: 'exact', head: true }),
-        supabase
-          .from('users')
-          .select('*', { count: 'exact', head: true })
-          .ilike('platform', 'diaspora')
-          .or('status.in.(Active,Approved,Verified),verification_status.in.(Approved,Verified)'),
-        supabase.from('ghana_regions').select('*', { count: 'exact', head: true }),
-      ])
-
-      return {
-        members: membersTotal.count || 0,
-        chapters: chaptersTotal.count || 0,
-        regions: regionsTotal.count || 16,
-        diaspora: diasporaTotal.count || 0,
-        membersDelta: 'Steady growth',
-        chaptersDelta: 'Growing nationwide',
-        diasporaDelta: 'Global network',
-      }
-    } catch (error) {
+    const { data, error } = await supabase.rpc('get_public_stats')
+    if (error || !data) {
       console.warn('[ADMIN SERVICE] Failed to fetch public stats:', error)
       return {
         members: 0,
         chapters: 0,
-        regions: 0,
+        regions: 16,
         diaspora: 0,
-        membersDelta: '...',
-        chaptersDelta: '...',
-        diasporaDelta: '...',
+        membersDelta: '',
+        chaptersDelta: '',
+        diasporaDelta: '',
       }
     }
+    return {
+      members: data.members ?? 0,
+      chapters: data.chapters ?? 0,
+      regions: data.regions ?? 16,
+      diaspora: data.diaspora ?? 0,
+      membersDelta: 'Steady growth',
+      chaptersDelta: 'Growing nationwide',
+      diasporaDelta: 'Global network',
+    }
+  }
+
+  async getAboutOfficials(): Promise<
+    { id: string; name: string; role: string; avatar_url: string | null }[]
+  > {
+    const { data, error } = await supabase
+      .from('party_officials')
+      .select('id, name, role, avatar_url')
+      .eq('tier', 'executive')
+      .order('order_index', { ascending: true })
+    if (error || !data) return []
+    return data
   }
 
   async getGlobalStats(): Promise<{ label: string; value: string; change: string }[]> {

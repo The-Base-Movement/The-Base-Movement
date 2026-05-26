@@ -14,9 +14,18 @@ import { MovementInfoTab } from './settings/components/MovementInfoTab'
 import { SecuritySettingsTab } from './settings/components/SecuritySettingsTab'
 import { ButtonCustomizerTab } from './settings/components/ButtonCustomizerTab'
 import { AuditLogTab } from './settings/components/AuditLogTab'
+import { AboutPageTab } from './settings/components/AboutPageTab'
 
 type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density'
-type SettingsTab = 'profile' | 'roles' | 'system' | 'movement' | 'security' | 'buttons' | 'audit'
+type SettingsTab =
+  | 'profile'
+  | 'roles'
+  | 'system'
+  | 'movement'
+  | 'about'
+  | 'security'
+  | 'buttons'
+  | 'audit'
 
 interface SupabaseAuthWithMFA {
   mfa: {
@@ -41,6 +50,7 @@ const tabs: { id: SettingsTab; label: string; icon: string }[] = [
   { id: 'roles', label: 'Admin Roles', icon: 'shield' },
   { id: 'system', label: 'Preferences', icon: 'tune' },
   { id: 'movement', label: 'Movement Info', icon: 'campaign' },
+  { id: 'about', label: 'About Page', icon: 'info' },
   { id: 'security', label: 'Security', icon: 'lock' },
   { id: 'buttons', label: 'Buttons', icon: 'ads_click' },
   { id: 'audit', label: 'Audit Log', icon: 'history' },
@@ -442,6 +452,15 @@ export default function AdminSettings() {
           )}
           {activeTab === 'movement' && (
             <MovementInfoTab
+              siteSettings={siteSettings}
+              setSiteSettings={setSiteSettings}
+              isSaving={isSaving}
+              setIsSaving={setIsSaving}
+              toast={toast}
+            />
+          )}
+          {activeTab === 'about' && (
+            <AboutPageTab
               siteSettings={siteSettings}
               setSiteSettings={setSiteSettings}
               isSaving={isSaving}

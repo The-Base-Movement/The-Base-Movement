@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
         // Only prerender public SEO routes, keep admin/dashboard as SPA
         const publicRoutes = [
           '/',
+          '/about',
           '/blog',
           '/our-agenda',
           '/contact',

@@ -35,6 +35,7 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const RegistrationFormPreview = lazy(() => import('./pages/RegistrationFormPreview'))
 const PreviewOfficer = lazy(() => import('./pages/PreviewOfficer'))
 const Officers = lazy(() => import('./pages/Officers'))
+const OfficerDetail = lazy(() => import('./pages/OfficerDetail'))
 const About = lazy(() => import('./pages/About'))
 
 // Dashboard components
@@ -217,6 +218,7 @@ export const routes: RouteObject[] = [
       { path: '/admin-login', element: <AdminLogin /> },
       { path: '/preview-officer', element: <PreviewOfficer /> },
       { path: '/officers', element: <Officers /> },
+      { path: '/officers/:slug', element: <OfficerDetail /> },
       { path: '*', element: <NotFound /> },
     ],
   },

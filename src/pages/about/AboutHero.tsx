@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { BrandLine } from '@/components/ui/BrandLine'
 
-export function AboutHero() {
+const DEFAULT_TAGLINE =
+  'We are a political movement dedicated to the transformation of Ghana through patriotism, honesty, and discipline. From the grassroots of every constituency to Ghanaians across the globe. The Base unites patriots behind a single, actionable vision: Ghana First.'
+
+export function AboutHero({ tagline }: { tagline?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
@@ -69,9 +72,7 @@ export function AboutHero() {
           margin: 0,
         }}
       >
-        We are a political movement dedicated to the transformation of Ghana through patriotism,
-        honesty, and discipline. From the grassroots of every constituency to Ghanaians across the
-        globe — The Base unites patriots behind a single, actionable vision: Ghana First.
+        {tagline || DEFAULT_TAGLINE}
       </p>
     </div>
   )

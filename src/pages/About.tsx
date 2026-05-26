@@ -5,10 +5,19 @@ import { AboutPillars } from './about/AboutPillars'
 import { AboutStats } from './about/AboutStats'
 import { AboutCTA } from './about/AboutCTA'
 
-const DEFAULT_STATS = { members: 0, chapters: 0, regions: 16, diaspora: 0 }
+const DEFAULT_STATS = {
+  members: 0,
+  chapters: 0,
+  regions: 16,
+  diaspora: 0,
+  membersDelta: '',
+  chaptersDelta: '',
+  diasporaDelta: '',
+}
 
 export default function About() {
   const [stats, setStats] = useState(DEFAULT_STATS)
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({})
 
   useEffect(() => {
     adminService
@@ -19,8 +28,16 @@ export default function About() {
           chapters: s.chapters,
           regions: s.regions,
           diaspora: s.diaspora,
+          membersDelta: s.membersDelta,
+          chaptersDelta: s.chaptersDelta,
+          diasporaDelta: s.diasporaDelta,
         })
       })
+      .catch(() => {})
+
+    adminService
+      .getSiteSettings()
+      .then((s) => setSiteSettings(s as Record<string, string>))
       .catch(() => {})
   }, [])
 
@@ -38,7 +55,7 @@ export default function About() {
           padding: 'clamp(64px, 10vw, 100px) clamp(16px, 5vw, 32px) clamp(48px, 6vw, 72px)',
         }}
       >
-        <AboutHero />
+        <AboutHero tagline={siteSettings.about_hero_tagline} />
       </section>
 
       {/* Pillars */}
@@ -49,7 +66,14 @@ export default function About() {
           padding: '0 clamp(16px, 5vw, 48px) clamp(64px, 8vw, 96px)',
         }}
       >
-        <AboutPillars />
+        <AboutPillars
+          mission={siteSettings.about_pillar_mission}
+          vision={siteSettings.about_pillar_vision}
+          values={siteSettings.about_pillar_values}
+          leadership={siteSettings.about_pillar_leadership}
+          ghanaNetwork={siteSettings.about_pillar_ghana_network}
+          diaspora={siteSettings.about_pillar_diaspora}
+        />
       </section>
 
       {/* Stats */}

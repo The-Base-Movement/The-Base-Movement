@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-
-interface Stat {
-  icon: string
-  value: number
-  label: string
-  suffix: string
-}
+import { Sparkline } from '../home/Sparkline'
 
 function useCountUp(target: number, active: boolean, duration = 1800) {
   const [count, setCount] = useState(0)
@@ -20,6 +14,7 @@ function useCountUp(target: number, active: boolean, duration = 1800) {
       const eased = 1 - Math.pow(1 - progress, 3)
       setCount(Math.floor(eased * target))
       if (progress < 1) rafRef.current = requestAnimationFrame(animate)
+      else setCount(target)
     }
     rafRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(rafRef.current)
@@ -28,9 +23,32 @@ function useCountUp(target: number, active: boolean, duration = 1800) {
   return count
 }
 
-function StatCard({ icon, value, label, suffix, delay }: Stat & { delay: number }) {
+interface StatCardProps {
+  accent: string
+  eye: string
+  value: number
+  suffix?: string
+  label: string
+  sparkHeights: number[]
+  delta: string
+  deltaIcon: 'up' | 'circle'
+  delay: number
+}
+
+function StatCard({
+  accent,
+  eye,
+  value,
+  suffix,
+  label,
+  sparkHeights,
+  delta,
+  deltaIcon,
+  delay,
+}: StatCardProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  const count = useCountUp(value, visible)
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -43,43 +61,69 @@ function StatCard({ icon, value, label, suffix, delay }: Stat & { delay: number 
     return () => obs.disconnect()
   }, [])
 
-  const count = useCountUp(value, visible)
-
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center text-center group"
       style={{
-        background: 'rgba(255,255,255,0.6)',
-        backdropFilter: 'blur(8px)',
-        borderRadius: 16,
-        padding: '28px 20px',
+        background: '#fff',
+        border: '1px solid #dfe4dd',
+        borderRadius: '6px',
+        padding: '22px 22px 20px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 4px 20px -2px rgba(0,0,0,.04)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '14px',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms, box-shadow 0.2s`,
-        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+        transform: visible ? 'translateY(0)' : 'translateY(16px)',
+        transition: `opacity 0.55s ease ${delay}ms, transform 0.55s ease ${delay}ms, box-shadow .18s ease`,
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 8px 28px rgba(0,0,0,0.1)')}
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)')}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.boxShadow = '0 12px 30px -8px rgba(0,0,0,.10)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = ''
+        e.currentTarget.style.boxShadow = '0 4px 20px -2px rgba(0,0,0,.04)'
+      }}
     >
+      {/* Top accent bar */}
       <div
         style={{
-          width: 52,
-          height: 52,
-          borderRadius: '50%',
-          background: 'hsl(var(--on-surface) / 0.05)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 14,
-          transition: 'background 0.2s',
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          height: '5px',
+          background: accent,
         }}
-      >
+      />
+      {/* Corner dot */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '14px',
+          right: '18px',
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          background: accent,
+        }}
+      />
+
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
         <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 22, color: 'hsl(var(--accent))' }}
+          style={{
+            fontSize: '9.5px',
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: '#6f7a71',
+            letterSpacing: '.08em',
+            textTransform: 'uppercase',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
         >
-          {icon}
+          {eye}
         </span>
       </div>
 
@@ -87,37 +131,77 @@ function StatCard({ icon, value, label, suffix, delay }: Stat & { delay: number 
         style={{
           fontFamily: "'Public Sans', sans-serif",
           fontWeight: 'var(--font-weight-medium, 500)',
-          fontSize: 32,
-          color: 'hsl(var(--on-surface))',
-          lineHeight: 1,
-          marginBottom: 6,
+          fontSize: '48px',
+          letterSpacing: '-.03em',
+          lineHeight: '.95',
+          color: '#181d19',
+          fontVariantNumeric: 'tabular-nums',
         }}
       >
         {count.toLocaleString()}
-        {suffix}
+        {suffix && (
+          <small
+            style={{
+              fontSize: '20px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: '#6f7a71',
+              marginLeft: '2px',
+              letterSpacing: 0,
+            }}
+          >
+            {suffix}
+          </small>
+        )}
       </div>
-
-      <p
-        style={{
-          fontSize: 12,
-          fontWeight: 'var(--font-weight-normal, 400)',
-          color: 'hsl(var(--on-surface-muted))',
-          margin: '0 0 12px',
-        }}
-      >
-        {label}
-      </p>
 
       <div
         style={{
-          width: 28,
-          height: 2,
-          borderRadius: 999,
-          background: 'hsl(var(--accent))',
-          transition: 'width 0.3s',
+          fontSize: '12px',
+          fontWeight: 500,
+          color: '#181d19',
+          letterSpacing: '-.005em',
+          lineHeight: 1.4,
+          fontFamily: "'Public Sans', sans-serif",
         }}
-        className="group-hover:w-12"
-      />
+      >
+        {label}
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          borderTop: '1px solid #dfe4dd',
+          paddingTop: '12px',
+          marginTop: 'auto',
+        }}
+      >
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            fontSize: '10.5px',
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: accent,
+            letterSpacing: '-.005em',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
+          {deltaIcon === 'circle' ? (
+            <svg viewBox="0 0 8 8" width="9" height="9">
+              <circle cx="4" cy="4" r="3" fill="currentColor" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 8 8" width="9" height="9">
+              <path d="M0 6 L4 2 L8 6 Z" fill="currentColor" />
+            </svg>
+          )}
+          {delta}
+        </span>
+        <Sparkline heights={sparkHeights} accent={accent} />
+      </div>
     </div>
   )
 }
@@ -128,22 +212,56 @@ interface AboutStatsProps {
     chapters: number
     regions: number
     diaspora: number
+    membersDelta: string
+    chaptersDelta: string
+    diasporaDelta: string
   }
 }
 
 export function AboutStats({ stats }: AboutStatsProps) {
-  const STAT_ITEMS: Stat[] = [
-    { icon: 'people', value: stats.members, label: 'Ghana patriots', suffix: '+' },
-    { icon: 'account_balance', value: stats.chapters, label: 'Active chapters', suffix: '+' },
-    { icon: 'map', value: stats.regions, label: 'Regions covered', suffix: '' },
-    { icon: 'public', value: stats.diaspora, label: 'Diaspora members', suffix: '+' },
-  ]
-
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-      {STAT_ITEMS.map((s, i) => (
-        <StatCard key={s.label} {...s} delay={i * 100} />
-      ))}
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
+      <StatCard
+        accent="#CE1126"
+        eye="Regions"
+        value={stats.regions}
+        suffix="/16"
+        label="Full presence across every administrative region of Ghana"
+        sparkHeights={[6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18]}
+        delta="National coverage"
+        deltaIcon="circle"
+        delay={0}
+      />
+      <StatCard
+        accent="#DAA520"
+        eye="Branches"
+        value={stats.chapters}
+        label="Community branches active in nearly every district"
+        sparkHeights={[5, 6, 7, 7, 9, 10, 10, 12, 13, 14, 16, 18]}
+        delta={stats.chaptersDelta}
+        deltaIcon="up"
+        delay={80}
+      />
+      <StatCard
+        accent="#1A1A1A"
+        eye="Diaspora"
+        value={stats.diaspora}
+        label="Global Ghanaians supporting from abroad"
+        sparkHeights={[3, 4, 4, 5, 7, 7, 10, 11, 13, 14, 16, 18]}
+        delta={stats.diasporaDelta}
+        deltaIcon="up"
+        delay={160}
+      />
+      <StatCard
+        accent="#006B3F"
+        eye="Ghana Base"
+        value={stats.members}
+        label="Verified citizens registered nationwide"
+        sparkHeights={[4, 6, 7, 7, 9, 11, 12, 14, 15, 16, 17, 18]}
+        delta={stats.membersDelta}
+        deltaIcon="up"
+        delay={240}
+      />
     </div>
   )
 }

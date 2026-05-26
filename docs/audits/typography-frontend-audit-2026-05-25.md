@@ -171,7 +171,14 @@ The following front-end files were checked and found clean (already compliant or
 - `src/pages/NotFound.tsx`
 - `src/pages/Privacy.tsx`
 - `src/pages/Terms.tsx`
-- `src/pages/Officers.tsx` ✅ (updated this session with search bar)
+- `src/pages/Officers.tsx` ✅ (h2 corrected 2026-05-26: `font-semibold` → `font-medium` on tier section headings)
+- `src/pages/OfficerDetail.tsx` ✅ (new — 2026-05-26; all weights use `var(--font-weight-medium, 500)` / `var(--font-weight-normal, 400)`)
+- `src/pages/about/AboutHero.tsx` ✅ (new — 2026-05-26; h1 uses `var(--font-weight-medium, 500)`)
+- `src/pages/about/AboutPillars.tsx` ✅ (new — 2026-05-26; all inline styles use medium/normal)
+- `src/pages/about/LeaderSlider.tsx` ✅ (new — 2026-05-26; all inline styles use medium/normal)
+- `src/pages/about/AboutStats.tsx` ✅ (new — 2026-05-26; uses `var(--font-weight-medium, 500)`)
+- `src/pages/about/AboutCTA.tsx` ✅ (new — 2026-05-26; clean)
+- `src/pages/admin/settings/components/AboutPageTab.tsx` ✅ (new — 2026-05-26; follows admin design system)
 - `src/components/DashboardLayout.tsx` ✅ (updated this session)
 - `src/components/AdminPageHeader.tsx` ✅
 
