@@ -60,11 +60,12 @@ export function MemberReadinessTable({
         </div>
       </div>
 
-      {/* Readiness KPIs */}
+      {/* Readiness KPIs — horizontal scroll slider */}
       <div
         style={{
           display: 'flex',
-          flexWrap: 'wrap',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
           gap: 10,
           padding: '14px 18px 18px',
         }}
@@ -79,8 +80,7 @@ export function MemberReadinessTable({
             key={k.label}
             className="panel"
             style={{
-              flex: '1 1 130px',
-              minWidth: 0,
+              flex: '0 0 160px',
               padding: '14px 16px 14px 20px',
               position: 'relative',
               overflow: 'hidden',
@@ -171,34 +171,33 @@ export function MemberReadinessTable({
             }}
           />
         </div>
-        {(['ALL', 'VERIFIED_VOTER', 'IN_PROGRESS', 'UNVERIFIED'] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setReadinessFilter(f)}
-            style={{
-              padding: '5px 14px',
-              borderRadius: 'var(--radius-pill)',
-              border: '1px solid hsl(var(--border))',
-              fontFamily: "'Public Sans'",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 10.5,
-              cursor: 'pointer',
-              letterSpacing: '.04em',
-              textTransform: 'uppercase',
-              background: readinessFilter === f ? 'hsl(var(--primary))' : 'transparent',
-              color: readinessFilter === f ? '#fff' : 'hsl(var(--on-surface-muted))',
-              transition: 'all .15s',
-            }}
-          >
-            {f === 'ALL'
-              ? 'All'
-              : f === 'VERIFIED_VOTER'
-                ? 'Verified'
-                : f === 'IN_PROGRESS'
-                  ? 'In progress'
-                  : 'Unverified'}
-          </button>
-        ))}
+        <select
+          value={readinessFilter}
+          onChange={(e) =>
+            setReadinessFilter(
+              e.target.value as 'ALL' | 'VERIFIED_VOTER' | 'IN_PROGRESS' | 'UNVERIFIED'
+            )
+          }
+          style={{
+            height: 34,
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            fontFamily: "'Public Sans'",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--background))',
+            padding: '0 10px',
+            boxSizing: 'border-box',
+            cursor: 'pointer',
+            outline: 'none',
+          }}
+        >
+          <option value="ALL">All statuses</option>
+          <option value="VERIFIED_VOTER">Verified</option>
+          <option value="IN_PROGRESS">In progress</option>
+          <option value="UNVERIFIED">Unverified</option>
+        </select>
       </div>
 
       {/* Table — desktop */}

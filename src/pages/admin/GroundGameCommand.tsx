@@ -52,6 +52,7 @@ type FieldAgent = {
   status: 'active' | 'inactive'
   notes: string | null
   created_at: string
+  avatar_url: string | null
 }
 
 type PollingAgent = {

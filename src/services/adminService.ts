@@ -2095,6 +2095,7 @@ class AdminService {
       status: 'active' | 'inactive'
       notes: string | null
       created_at: string
+      avatar_url: string | null
     }>
   > {
     const { data: rows, error } = await supabase
@@ -2110,9 +2111,12 @@ class AdminService {
     const memberIds = rows.map((r) => r.member_id as string)
     const { data: users } = await supabase
       .from('users')
-      .select('id, full_name, registration_number')
+      .select('id, full_name, registration_number, avatar_url')
       .in('id', memberIds)
-    const userMap: Record<string, { full_name: string; registration_number: string }> = {}
+    const userMap: Record<
+      string,
+      { full_name: string; registration_number: string; avatar_url: string | null }
+    > = {}
     ;(users || []).forEach((u) => {
       userMap[u.id as string] = u as (typeof userMap)[string]
     })
@@ -2121,6 +2125,7 @@ class AdminService {
       member_id: r.member_id as string,
       member_name: userMap[r.member_id as string]?.full_name || 'Unknown',
       registration_number: userMap[r.member_id as string]?.registration_number || '',
+      avatar_url: userMap[r.member_id as string]?.avatar_url || null,
       constituency: r.constituency as string,
       region: (r.region as string | null) || null,
       status: r.status as 'active' | 'inactive',
