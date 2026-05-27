@@ -1,4 +1,5 @@
 import { PAGE_SIZE, type Station } from './utils'
+import { DotLoader } from '@/components/states'
 
 interface PollingStationsTableProps {
   loading: boolean
@@ -60,37 +61,7 @@ export function PollingStationsTable({
             {loading ? (
               <tr>
                 <td colSpan={6} style={{ padding: '40px 16px', textAlign: 'center' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 10,
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 28,
-                        height: 28,
-                        border: '2px solid hsl(var(--border))',
-                        borderTopColor: 'hsl(var(--primary))',
-                        borderRadius: '50%',
-                        animation: 'spin 0.7s linear infinite',
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontFamily: "'Public Sans'",
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 11,
-                        color: 'hsl(var(--on-surface-muted))',
-                        textTransform: 'uppercase',
-                        letterSpacing: '.05em',
-                      }}
-                    >
-                      Loading stations…
-                    </span>
-                  </div>
+                  <DotLoader label="Loading stations…" />
                 </td>
               </tr>
             ) : stations.length === 0 ? (

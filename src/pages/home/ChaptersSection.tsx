@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
 import { type Chapter } from '@/services/adminService'
 import { Button } from '@/components/buttons/ui/neon-button'
+import { Skeleton } from '@/components/states'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 
 interface ChaptersSectionProps {
@@ -242,14 +243,18 @@ export function ChaptersSection({ chapters }: ChaptersSectionProps) {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-sm border border-border/50 overflow-hidden animate-pulse"
+                style={{
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  overflow: 'hidden',
+                }}
               >
-                <div className="h-14 bg-muted" />
-                <div className="p-4 space-y-3">
-                  <div className="h-3 bg-muted rounded w-3/4" />
-                  <div className="grid grid-cols-3 gap-2">
-                    {Array.from({ length: 3 }).map((_, j) => (
-                      <div key={j} className="h-8 bg-muted rounded" />
+                <Skeleton variant="img" height={56} style={{ borderRadius: 0 }} />
+                <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <Skeleton variant="text-sm" width="75%" />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                    {[0, 1, 2].map((j) => (
+                      <Skeleton key={j} variant="btn" />
                     ))}
                   </div>
                 </div>

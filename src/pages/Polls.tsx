@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { EmptyState } from '@/components/states'
 import { useLocation } from 'react-router-dom'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
 import { adminService } from '@/services/adminService'
@@ -181,31 +182,15 @@ export default function Polls() {
               ))}
             </div>
           ) : activePolls.length === 0 ? (
-            <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
-              <span
-                className="material-symbols-outlined"
-                style={{
-                  fontSize: 32,
-                  color: 'hsl(var(--on-surface-muted))',
-                  opacity: 0.3,
-                  display: 'block',
-                  marginBottom: 8,
-                }}
-              >
-                {searchQuery ? 'search_off' : 'how_to_vote'}
-              </span>
-              <p
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 400,
-                  fontSize: 13,
-                  color: 'hsl(var(--on-surface-muted))',
-                  margin: 0,
-                }}
-              >
-                {searchQuery ? `No polls match "${searchQuery}"` : 'No active polls at this time.'}
-              </p>
-            </div>
+            <EmptyState
+              icon={searchQuery ? 'search_off' : 'how_to_vote'}
+              title={searchQuery ? `No results for "${searchQuery}"` : 'No active polls.'}
+              body={
+                searchQuery
+                  ? 'Try a different search term.'
+                  : 'Open polls from your chapter will appear here.'
+              }
+            />
           ) : (
             activePolls.map((poll) => (
               <OpinionPollCard

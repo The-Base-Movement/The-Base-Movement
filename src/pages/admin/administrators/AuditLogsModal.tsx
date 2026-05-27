@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import { DotLoader } from '@/components/states'
 import { motion } from 'framer-motion'
 import type { AuditLogEntry } from '@/types/admin'
 
@@ -108,28 +109,10 @@ export function AuditLogsModal({
 
         <div style={{ padding: 24, maxHeight: 400, overflowY: 'auto' }}>
           {isLogsLoading ? (
-            <div style={{ padding: '40px 0', textAlign: 'center' }}>
-              <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  border: '3px solid hsl(var(--border))',
-                  borderTopColor: 'hsl(var(--primary))',
-                  borderRadius: '50%',
-                  margin: '0 auto 16px',
-                }}
-                className="animate-spin"
-              />
-              <p
-                style={{
-                  fontSize: 12,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                Decrypting audit stream...
-              </p>
-            </div>
+            <DotLoader
+              label="Decrypting audit stream..."
+              style={{ padding: '40px 0', justifyContent: 'center' }}
+            />
           ) : selectedAdminLogs.length === 0 ? (
             <div style={{ padding: '60px 0', textAlign: 'center' }}>
               <span

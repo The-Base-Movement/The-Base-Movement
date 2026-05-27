@@ -12,6 +12,7 @@ import { SentimentKPIs } from './sentimentintelligence/SentimentKPIs'
 import { SentimentImpactForecasts } from './sentimentintelligence/SentimentImpactForecasts'
 import { SentimentRegionalMetrics } from './sentimentintelligence/SentimentRegionalMetrics'
 import { SentimentLiveFeedback } from './sentimentintelligence/SentimentLiveFeedback'
+import { DotLoader } from '@/components/states'
 
 export default function SentimentIntelligence() {
   const [feedback, setFeedback] = useState<MemberFeedback[]>([])
@@ -50,32 +51,13 @@ export default function SentimentIntelligence() {
     return (
       <div
         style={{
-          height: '100%',
-          width: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '80px 0',
         }}
       >
-        <span
-          className="material-symbols-outlined animate-spin"
-          style={{ fontSize: 48, color: 'hsl(var(--primary))' }}
-        >
-          sync
-        </span>
-        <p
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-medium, 500)',
-            fontSize: 12,
-            color: 'hsl(var(--on-surface-muted))',
-            marginTop: 16,
-          }}
-        >
-          Initializing AI intelligence core...
-        </p>
+        <DotLoader label="Initializing AI intelligence core…" />
       </div>
     )
   }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { DotLoader } from '@/components/states'
 import { useNavigate } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
@@ -388,39 +389,10 @@ export default function GroundGameCommand() {
       />
 
       {loading ? (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '80px 0',
-            gap: 16,
-          }}
-        >
-          <div
-            className="animate-spin"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              border: '2px solid hsl(var(--border))',
-              borderTopColor: 'hsl(var(--primary))',
-            }}
-          />
-          <p
-            style={{
-              fontSize: 11,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--primary))',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              fontFamily: "'Public Sans', sans-serif",
-            }}
-          >
-            Initializing ground game protocols…
-          </p>
-        </div>
+        <DotLoader
+          label="Initializing ground game protocols…"
+          style={{ padding: '80px 0', justifyContent: 'center' }}
+        />
       ) : (
         <>
           {/* KPI Stats Row */}

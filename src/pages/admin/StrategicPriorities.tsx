@@ -11,6 +11,7 @@ import { PriorityCard } from './strategicpriorities/PriorityCard'
 import { StrategicPrioritiesKPIs } from './strategicpriorities/StrategicPrioritiesKPIs'
 import { StrategicPrioritiesSidebar } from './strategicpriorities/StrategicPrioritiesSidebar'
 import { MobileFilterModal } from './strategicpriorities/MobileFilterModal'
+import { DotLoader } from '@/components/states'
 import { PriorityModal } from './strategicpriorities/PriorityModal'
 
 export default function StrategicPriorities() {
@@ -169,32 +170,13 @@ export default function StrategicPriorities() {
     return (
       <div
         style={{
-          height: '100%',
-          width: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '80px 0',
         }}
       >
-        <span
-          className="material-symbols-outlined animate-spin"
-          style={{ fontSize: 48, color: 'hsl(var(--primary))' }}
-        >
-          sync
-        </span>
-        <p
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-medium, 500)',
-            fontSize: 12,
-            color: 'hsl(var(--on-surface-muted))',
-            marginTop: 16,
-          }}
-        >
-          Synchronizing tactical priorities...
-        </p>
+        <DotLoader label="Synchronizing tactical priorities…" />
       </div>
     )
   }

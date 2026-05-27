@@ -1,4 +1,5 @@
 import type { ChapterApplication } from '@/services/adminService'
+import { Skeleton } from '@/components/states'
 
 interface ChapterApplicationsTableProps {
   isLoading: boolean
@@ -142,16 +143,11 @@ export function ChapterApplicationsTable({
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                  <td colSpan={5} style={{ padding: '24px 32px' }}>
-                    <div
-                      style={{
-                        height: 40,
-                        background: 'hsl(var(--container-low))',
-                        width: '100%',
-                        borderRadius: 4,
-                      }}
-                      className="animate-pulse"
-                    />
+                  <td colSpan={5} style={{ padding: '14px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <Skeleton variant="avatar-sm" />
+                      <Skeleton variant="text-sm" width="50%" />
+                    </div>
                   </td>
                 </tr>
               ))

@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderItem } from '@/types/admin'
 import SEO from '@/components/SEO'
+import { Skeleton } from '@/components/states'
 import { useBranding } from '@/hooks/useBranding'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 
@@ -28,18 +29,24 @@ export default function OrderSummary() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-off-white">
+      <div
+        className="min-h-screen bg-off-white"
+        style={{ maxWidth: 680, margin: '0 auto', padding: '48px 20px' }}
+      >
         <SEO title="Syncing Order..." noindex />
-        <div className="flex flex-col items-center gap-4">
-          <span
-            className="material-symbols-outlined animate-spin"
-            style={{ fontSize: 40, color: 'var(--brand-green)' }}
-          >
-            progress_activity
-          </span>
-          <p className="text-micro font-bold tracking-tight text-stone-400">
-            Retrieving transaction data...
-          </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <Skeleton variant="text-xl" width="50%" />
+          <Skeleton variant="text-sm" width="30%" />
+          <Skeleton
+            variant="img"
+            height={200}
+            style={{ borderRadius: 'var(--radius-md)', marginTop: 8 }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} variant="text-md" width={i % 2 === 1 ? '60%' : '100%'} />
+            ))}
+          </div>
         </div>
       </div>
     )

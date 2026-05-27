@@ -4,6 +4,7 @@ import { Pagination } from 'swiper/modules'
 import { cn } from '@/lib/utils'
 import { type BlogPost } from '@/services/adminService'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
+import { Skeleton } from '@/components/states'
 
 interface LatestUpdatesSectionProps {
   latestPosts: BlogPost[]
@@ -50,10 +51,10 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
         {latestPosts.length === 0 ? (
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="space-y-4">
-                <div className="aspect-[16/10] bg-muted animate-pulse" />
-                <div className="h-4 bg-muted animate-pulse w-3/4" />
-                <div className="h-3 bg-muted animate-pulse w-1/2" />
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <Skeleton variant="img" style={{ aspectRatio: '16/10', height: 'auto' }} />
+                <Skeleton variant="text-md" width="75%" />
+                <Skeleton variant="text-sm" width="50%" />
               </div>
             ))}
           </div>

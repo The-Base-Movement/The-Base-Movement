@@ -1,39 +1,194 @@
-export function AgendaIntroCards() {
+import { type AgendaPillar } from './agendaData'
+
+interface AgendaIntroCardsProps {
+  pillars: AgendaPillar[]
+  onSelect: (id: string) => void
+}
+
+export function AgendaIntroCards({ pillars, onSelect }: AgendaIntroCardsProps) {
+  const handleSelect = (id: string) => {
+    onSelect(id)
+    setTimeout(() => {
+      document
+        .getElementById('pillar-panel')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 50)
+  }
+
   return (
-    <section
-      aria-labelledby="agenda-intro-heading"
-      className="flex-columns items-stretch"
-      style={{ '--column-gap': '2rem' } as React.CSSProperties}
-    >
-      <h2 id="agenda-intro-heading" className="sr-only">
-        Agenda Definitions
-      </h2>
+    <section style={{ padding: 'clamp(48px, 6vw, 72px) 0 0' }} className="agenda-overview-section">
       <div
-        className="bg-white p-5 md:p-8 border border-slate-200 rounded-none shadow-sm flow"
-        style={{ '--flow-space': '1rem' } as React.CSSProperties}
+        style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          gap: 24,
+          marginBottom: 32,
+          flexWrap: 'wrap',
+        }}
       >
-        <h3 className="text-primary tracking-tight">What is an Aim?</h3>
-        <p className="text-slate-600 leading-relaxed text-sm prose-standard">
-          An Aim is a broad, long-term statement of intent. It describes the desired end state or
-          the overall direction a movement or organisation wishes to pursue. Aims are visionary in
-          nature. They answer the question: "What kind of Ghana are we trying to build?" They are
-          not time-bound or immediately measurable, but they provide the moral compass and purpose
-          that guides all action.
+        <h2
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 'clamp(1.75rem, 3vw, 2.25rem)',
+            letterSpacing: '-0.025em',
+            margin: 0,
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          {pillars.length} aims.
+          <br />
+          One plan.
+        </h2>
+        <p
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-normal, 400)',
+            fontSize: 14,
+            color: 'hsl(var(--on-surface-muted))',
+            maxWidth: 360,
+            margin: 0,
+            textAlign: 'right',
+            lineHeight: 1.6,
+          }}
+        >
+          Select an aim to read its full objectives and delivery plan.
         </p>
       </div>
+
       <div
-        className="bg-white p-5 md:p-8 border border-slate-200 rounded-none shadow-sm flow"
-        style={{ '--flow-space': '1rem' } as React.CSSProperties}
+        className="agenda-overview-grid"
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}
       >
-        <h3 className="text-primary tracking-tight">What is an Objective?</h3>
-        <p className="text-slate-600 leading-relaxed text-sm prose-standard">
-          An Objective is a specific, actionable, and measurable step taken in pursuit of an Aim.
-          Objectives answer the question: "Exactly what will we do and how?" They are concrete,
-          time-oriented, and directly deliverable. Where an Aim sets the destination, an Objective
-          maps the route. Every objective in this document is derived from one of THE BASE's six
-          core Aims.
-        </p>
+        {pillars.map((pillar) => (
+          <button
+            key={pillar.id}
+            onClick={() => handleSelect(pillar.id)}
+            style={{
+              textDecoration: 'none',
+              display: 'block',
+              textAlign: 'left',
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              width: '100%',
+            }}
+          >
+            <div
+              style={{
+                borderRadius: 'var(--radius-md)',
+                overflow: 'hidden',
+                border: '1px solid hsl(var(--border))',
+                borderTop: `3px solid ${pillar.color}`,
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                background: 'hsl(var(--background))',
+                height: '100%',
+              }}
+              onMouseEnter={(e) => {
+                const d = e.currentTarget as HTMLDivElement
+                d.style.transform = 'translateY(-2px)'
+                d.style.boxShadow = '0 16px 32px -8px rgba(0,0,0,.1)'
+              }}
+              onMouseLeave={(e) => {
+                const d = e.currentTarget as HTMLDivElement
+                d.style.transform = ''
+                d.style.boxShadow = ''
+              }}
+            >
+              <div style={{ padding: '20px 22px', background: 'hsl(var(--container-low))' }}>
+                <div
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 44,
+                    letterSpacing: '-0.04em',
+                    lineHeight: 1,
+                    opacity: 0.15,
+                    color: pillar.color,
+                    userSelect: 'none',
+                  }}
+                >
+                  {pillar.number}
+                </div>
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 10,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: pillar.color,
+                    display: 'block',
+                    marginBottom: 8,
+                  }}
+                >
+                  Aim {pillar.number}
+                </span>
+                <h3
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 15,
+                    letterSpacing: '-0.01em',
+                    lineHeight: 1.3,
+                    margin: 0,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {pillar.title}
+                </h3>
+              </div>
+              <div style={{ padding: '16px 22px', borderTop: '1px solid hsl(var(--border))' }}>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface-muted))',
+                    lineHeight: 1.6,
+                    marginBottom: 12,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {pillar.summary}
+                </p>
+                <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                  {pillar.objectives.map((obj, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        padding: '3px 8px',
+                        borderRadius: 'var(--radius-xs)',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 10,
+                        background: 'hsl(var(--container-low))',
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {obj.title.split(' ').slice(0, 3).join(' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </button>
+        ))}
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .agenda-overview-section { display: none; }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .agenda-overview-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+      `}</style>
     </section>
   )
 }

@@ -1,5 +1,6 @@
 import type { DonationDetail } from '@/services/adminService'
 import DonationListCard from '@/components/admin/DonationListCard'
+import { Skeleton } from '@/components/states'
 
 type StatusFilter = 'Pending' | 'Rejected' | 'Verified' | 'Refunded'
 
@@ -47,17 +48,29 @@ export function DonationsTable({
   return (
     <div className="panel">
       {isLoading ? (
-        <div style={{ padding: 40, textAlign: 'center' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              fontSize: 28,
-              color: 'hsl(var(--on-surface-muted))',
-              animation: 'spin 1s linear infinite',
-            }}
-          >
-            sync
-          </span>
+        <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '14px 0',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
+            >
+              <Skeleton variant="avatar-sm" />
+              <div style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <Skeleton variant="text-sm" width="55%" />
+                <Skeleton variant="text-sm" width="35%" />
+              </div>
+              <Skeleton variant="chip" width={80} style={{ flex: '0 0 auto' }} />
+              <Skeleton variant="text-sm" width={90} style={{ flex: '0 0 auto' }} />
+              <Skeleton variant="text-sm" width={48} style={{ flex: '0 0 auto' }} />
+              <Skeleton variant="text-md" width={60} style={{ flex: '0 0 auto' }} />
+            </div>
+          ))}
         </div>
       ) : filteredDonations.length === 0 ? (
         <div style={{ padding: 64, textAlign: 'center' }}>
@@ -225,7 +238,7 @@ export function DonationsTable({
                             alignItems: 'center',
                             gap: 5,
                             padding: '3px 8px',
-                            borderRadius: 3,
+                            borderRadius: 'var(--radius-xs)',
                             background: mb.bg,
                             color: mb.color,
                             fontFamily: "'Public Sans', sans-serif",

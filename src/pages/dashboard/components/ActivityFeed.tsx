@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { Skeleton } from '@/components/states'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { formatDistanceToNow } from 'date-fns'
@@ -20,6 +21,7 @@ interface Activity {
 export function ActivityFeed() {
   const { lowBandwidthMode } = usePerformance()
   const [activities, setActivities] = useState<Activity[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function initFeed() {
@@ -54,6 +56,7 @@ export function ActivityFeed() {
       setActivities(
         initial.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10)
       )
+      setLoading(false)
     }
 
     initFeed()
@@ -98,12 +101,17 @@ export function ActivityFeed() {
   return (
     <div className="flex flex-col">
       <div className="activities-container">
-        {activities.length === 0 ? (
-          <div className="py-10 text-center">
-            <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-[.06em] font-meta">
-              Synchronizing Feed...
-            </p>
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '8px 0' }}>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <Skeleton variant="avatar-sm" />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <Skeleton variant="text-sm" width="70%" />
+                  <Skeleton variant="text-sm" width="40%" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           activities.map((act, i) => (

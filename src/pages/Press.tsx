@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { EmptyState, Skeleton } from '@/components/states'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { adminService } from '@/services/adminService'
 import type { PressRelease, MediaKitAsset } from '@/types/admin'
@@ -70,16 +71,16 @@ export default function Press() {
 
               <div className="space-y-8">
                 {loading ? (
-                  <div className="py-12 flex flex-col items-center justify-center gap-4 text-stone-300">
-                    <span
-                      className="material-symbols-outlined animate-spin"
-                      style={{ fontSize: 32 }}
-                    >
-                      progress_activity
-                    </span>
-                    <p className="text-micro font-medium tracking-tight">
-                      Scanning dispatch desk...
-                    </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    {[0, 1, 2].map((i) => (
+                      <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <Skeleton variant="text-sm" width={80} />
+                        <Skeleton variant="text-lg" width="70%" />
+                        <Skeleton variant="text-md" />
+                        <Skeleton variant="text-md" width="80%" />
+                        <Skeleton variant="text-sm" width="40%" />
+                      </div>
+                    ))}
                   </div>
                 ) : releases.length > 0 ? (
                   releases.map((pr) => (
@@ -120,17 +121,12 @@ export default function Press() {
                     </div>
                   ))
                 ) : (
-                  <div className="p-12 border-2 border-dashed border-slate-100 text-center">
-                    <span
-                      className="material-symbols-outlined text-slate-200 block mx-auto mb-4"
-                      style={{ fontSize: 48 }}
-                    >
-                      newspaper
-                    </span>
-                    <p className="text-slate-400 text-sm font-medium tracking-tight">
-                      No active dispatches found.
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon="newspaper"
+                    title="No dispatches found."
+                    body="Press releases and media updates will appear here."
+                    bordered
+                  />
                 )}
               </div>
             </div>

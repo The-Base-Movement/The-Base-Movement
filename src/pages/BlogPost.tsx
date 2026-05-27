@@ -12,6 +12,7 @@ import { PostToolbar } from './blogpost/PostToolbar'
 import { PostHeader } from './blogpost/PostHeader'
 import { PostHeroImage } from './blogpost/PostHeroImage'
 import { PostSidebar } from './blogpost/PostSidebar'
+import { Skeleton } from '@/components/states'
 
 export default function BlogPost() {
   const { settings } = useBranding()
@@ -76,14 +77,23 @@ export default function BlogPost() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-        <span
-          className="material-symbols-outlined animate-spin"
-          style={{ fontSize: 32, color: 'var(--brand-green)' }}
-        >
-          progress_activity
-        </span>
-        <p className="text-micro font-medium tracking-tight text-stone-400">Loading update...</p>
+      <div className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12 pb-20">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <Skeleton variant="chip" width={80} />
+          <Skeleton variant="text-xl" width="60%" />
+          <Skeleton variant="text-md" width="80%" />
+          <Skeleton variant="text-md" width="50%" />
+          <Skeleton
+            variant="img"
+            height={420}
+            style={{ borderRadius: 'var(--radius-lg)', marginTop: 8 }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} variant="text-md" width={i % 3 === 2 ? '65%' : '100%'} />
+            ))}
+          </div>
+        </div>
       </div>
     )
   }

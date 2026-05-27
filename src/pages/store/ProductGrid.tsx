@@ -1,4 +1,5 @@
 import { ProductCard } from '@/components/ProductCard'
+import { EmptyState, Skeleton } from '@/components/states'
 import type { Product } from '@/types/product'
 
 interface ProductGridProps {
@@ -12,21 +13,23 @@ export function ProductGrid({ loading, products, onShare }: ProductGridProps) {
     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-[18px] mb-12">
       {loading ? (
         Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="aspect-square bg-stone-100 animate-pulse rounded-[6px]" />
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <Skeleton variant="img" style={{ aspectRatio: '1/1', height: 'auto' }} />
+            <Skeleton variant="text-md" width="75%" />
+            <Skeleton variant="text-sm" width="40%" />
+          </div>
         ))
       ) : products.length > 0 ? (
         products.map((product) => (
           <ProductCard key={product.id} product={product} onShare={onShare} />
         ))
       ) : (
-        <div className="col-span-full py-24 text-center bg-white border border-stone-200 rounded-[6px]">
-          <span
-            className="material-symbols-outlined text-stone-100 block mx-auto mb-4"
-            style={{ fontSize: 64 }}
-          >
-            shopping_bag
-          </span>
-          <h3 className="text-stone-400 font-medium tracking-tight">No products found.</h3>
+        <div className="col-span-full">
+          <EmptyState
+            icon="shopping_bag"
+            title="No products found."
+            body="Check back later or clear your search to see all available items."
+          />
         </div>
       )}
     </div>

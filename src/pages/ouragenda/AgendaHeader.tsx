@@ -1,23 +1,148 @@
-import { cn } from '@/lib/utils'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { BrandLine } from '@/components/ui/BrandLine'
+import { LeaderSlider } from '@/pages/about/LeaderSlider'
 
-export function AgendaHeader() {
+interface AgendaHeaderProps {
+  pillarsCount: number
+}
+
+export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
+  const stats = [
+    { value: pillarsCount < 10 ? `0${pillarsCount}` : `${pillarsCount}`, label: 'Core aims' },
+    { value: '16', label: 'Regions covered' },
+    { value: '2026', label: 'Publication date' },
+  ]
+
   return (
-    <header className="bg-charcoal-dark text-white pt-16 pb-12 md:pt-24 md:pb-16 relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
-      <div className="max-w-[1280px] mx-auto px-4 md:px-8 relative z-10 text-center">
+    <header
+      style={{
+        background: 'hsl(var(--on-surface))',
+        padding: 'clamp(56px, 8vw, 88px) clamp(16px, 5vw, 48px) clamp(40px, 6vw, 64px)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(ellipse 50% 100% at 80% 50%, rgba(218,165,32,.12), transparent 60%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
         <Breadcrumbs variant="dark" />
-        <h1 className="tracking-tighter mb-4">The Plan</h1>
-        <div className={cn('bl', 'mx-auto')}>
-          <div />
-          <div />
-          <div />
+
+        <div
+          className="agenda-hero-inner"
+          style={{
+            marginTop: 24,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'clamp(32px, 5vw, 64px)',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* Text column */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <span
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 11,
+                color: 'hsl(var(--accent))',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                display: 'block',
+                marginBottom: 16,
+              }}
+            >
+              The Base Movement · Official agenda
+            </span>
+            <BrandLine />
+            <h1
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                letterSpacing: '-0.03em',
+                lineHeight: 0.95,
+                margin: '16px 0 20px',
+                color: '#fff',
+              }}
+            >
+              The <span style={{ color: 'hsl(var(--accent))' }}>Plan</span>
+              <br />
+              for Ghana.
+            </h1>
+            <p
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-normal, 400)',
+                fontSize: 'clamp(0.95rem, 1.5vw, 1.1rem)',
+                color: 'rgba(255,255,255,0.75)',
+                maxWidth: 520,
+                lineHeight: 1.65,
+                margin: '0 0 36px',
+              }}
+            >
+              A detailed, actionable blueprint to build a stronger, more prosperous nation through
+              patriotism, honesty, and discipline.
+            </p>
+            <div style={{ display: 'flex', gap: 40, flexWrap: 'wrap' }}>
+              {stats.map((s) => (
+                <div key={s.label}>
+                  <div
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 'clamp(1.8rem, 3vw, 2.25rem)',
+                      letterSpacing: '-0.025em',
+                      lineHeight: 1,
+                      color: '#fff',
+                    }}
+                  >
+                    {s.value}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 11,
+                      color: 'rgba(255,255,255,0.5)',
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      marginTop: 4,
+                    }}
+                  >
+                    {s.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Slider column */}
+          <div className="agenda-hero-slider" style={{ flexShrink: 0 }}>
+            <LeaderSlider />
+          </div>
         </div>
-        <p className="text-slate-300 max-w-2xl mx-auto prose-standard">
-          The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more
-          prosperous nation through patriotism, honesty, and discipline.
-        </p>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .agenda-hero-slider { display: none; }
+          .agenda-hero-inner { flex-direction: column; }
+        }
+      `}</style>
     </header>
   )
 }

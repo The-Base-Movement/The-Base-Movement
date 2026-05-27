@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { EmptyState } from '@/components/states'
 import { type Chapter } from '@/types/admin'
 import { ChapterCard } from '@/components/ChapterCard'
 
@@ -67,21 +68,17 @@ export function PublicChapterGrid({
         </div>
       )}
       {filteredTotal === 0 && (
-        <div className="py-20 text-center border-2 border-dashed border-stone-200">
-          <span
-            className="material-symbols-outlined text-stone-200 block mx-auto mb-4"
-            style={{ fontSize: 48 }}
-          >
-            account_balance
-          </span>
-          <p className="text-stone-400 font-bold tracking-tight">No strategic hubs found.</p>
-          <button
-            onClick={onClearSearch}
-            className="mt-4 text-brand-green font-bold text-xs bg-transparent border-none cursor-pointer hover:underline"
-          >
-            Clear search
-          </button>
-        </div>
+        <EmptyState
+          icon="account_balance"
+          title="No strategic hubs found."
+          body="Try adjusting your search to find a chapter near you."
+          bordered
+          action={
+            <button className="btn btn-outline btn-sm" onClick={onClearSearch}>
+              Clear search
+            </button>
+          }
+        />
       )}
     </div>
   )

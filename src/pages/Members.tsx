@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
+import { EmptyState, Skeleton } from '@/components/states'
 import { MemberProfileCard } from '@/components/MemberProfileCard'
 import SEO from '@/components/SEO'
 import { supabase } from '@/lib/supabase'
-import { LoadingScreen } from '@/components/LoadingScreen'
 import { useAuth } from '@/context/AuthContext'
 import type { Member } from '@/types/admin'
 import { MembersHeader } from './members/MembersHeader'
@@ -114,7 +114,58 @@ export default function Members() {
     setSelectedProfession('all')
   }
 
-  if (isLoading) return <LoadingScreen />
+  if (isLoading)
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="kpis">
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="panel"
+              style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 3,
+                  background: 'hsl(var(--border))',
+                }}
+              />
+              <Skeleton variant="text-sm" width={80} style={{ marginBottom: 8 }} />
+              <Skeleton variant="text-xl" width={60} />
+            </div>
+          ))}
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: 12,
+          }}
+        >
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              className="panel"
+              style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}
+            >
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <Skeleton variant="avatar" />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <Skeleton variant="text-md" width="70%" />
+                  <Skeleton variant="text-sm" width="50%" />
+                </div>
+              </div>
+              <Skeleton variant="text-sm" width="60%" />
+              <Skeleton variant="btn" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -199,45 +250,16 @@ export default function Members() {
                   ))}
                 </div>
               ) : (
-                <div className="panel" style={{ padding: '48px 24px', textAlign: 'center' }}>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{
-                      fontSize: 48,
-                      color: 'hsl(var(--on-surface-muted))',
-                      opacity: 0.2,
-                      display: 'block',
-                      marginBottom: 12,
-                    }}
-                  >
-                    manage_search
-                  </span>
-                  <div
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 14,
-                      color: 'hsl(var(--on-surface))',
-                      marginBottom: 6,
-                    }}
-                  >
-                    No members found
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 400,
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface-muted))',
-                      marginBottom: 18,
-                    }}
-                  >
-                    Try adjusting your search or filter.
-                  </div>
-                  <button className="btn btn-outline btn-sm" onClick={clearFilters}>
-                    Clear filters
-                  </button>
-                </div>
+                <EmptyState
+                  icon="manage_search"
+                  title="No members found"
+                  body="Try adjusting your search or filter."
+                  action={
+                    <button className="btn btn-outline btn-sm" onClick={clearFilters}>
+                      Clear filters
+                    </button>
+                  }
+                />
               )}
 
               <div

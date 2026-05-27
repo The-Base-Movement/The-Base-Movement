@@ -17,6 +17,7 @@
  */
 
 import { selectSt } from './styles'
+import { Spinner } from '@/components/states'
 
 interface MediaLibraryProps {
   mediaFiles: string[]
@@ -256,16 +257,7 @@ export function MediaLibrary({
               justifyContent: 'center',
             }}
           >
-            <div
-              style={{
-                width: 20,
-                height: 20,
-                border: '2px solid hsl(var(--border))',
-                borderTopColor: 'hsl(var(--primary))',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-              }}
-            />
+            <Spinner size="sm" />
           </div>
         )}
 

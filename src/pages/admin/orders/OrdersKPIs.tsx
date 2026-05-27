@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { OrderStats } from '@/services/adminService'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { Skeleton } from '@/components/states'
 
 interface OrdersKPIsProps {
   loading: boolean
@@ -44,8 +45,25 @@ export function OrdersKPIs({ loading, stats }: OrdersKPIsProps) {
   return (
     <div className="kpis">
       {loading
-        ? Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="card black animate-pulse h-48 bg-white" />
+        ? [0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="panel"
+              style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 3,
+                  background: 'hsl(var(--border))',
+                }}
+              />
+              <Skeleton variant="text-sm" width={80} style={{ marginBottom: 10 }} />
+              <Skeleton variant="text-xl" width={60} />
+            </div>
           ))
         : statCards.map((s) => (
             <TacticalKPI

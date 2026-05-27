@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import PublicLayout from './components/PublicLayout'
 import DashboardLayout from './components/DashboardLayout'
 import ProtectedRoute from './components/ProtectedRoute'
+import VerifiedRoute from './components/VerifiedRoute'
 
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
@@ -118,7 +119,13 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/about', element: <About /> },
           { path: '/dashboard/agenda', element: <OurAgenda /> },
           { path: '/dashboard/impact', element: <Impact /> },
-          { path: '/dashboard/polls', element: <Polls /> },
+          {
+            element: <VerifiedRoute />,
+            children: [
+              { path: '/dashboard/polls', element: <Polls /> },
+              { path: '/dashboard/members', element: <Members /> },
+            ],
+          },
           {
             element: <WithChapters />,
             children: [
@@ -138,7 +145,6 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/chapter-hub/:chapterId', element: <ChapterHub /> },
           { path: '/dashboard/donate', element: <Donate /> },
           { path: '/dashboard/contact', element: <Contact /> },
-          { path: '/dashboard/members', element: <Members /> },
           { path: '/dashboard/leadership', element: <Officers /> },
           { path: '/dashboard/privacy', element: <Privacy /> },
           { path: '/dashboard/terms', element: <Terms /> },

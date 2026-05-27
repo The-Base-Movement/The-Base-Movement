@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { DotLoader } from '@/components/states'
 import { adminService } from '@/services/adminService'
 import { StatCards } from './dashboard/components/StatCards'
 import MembershipCard from '@/components/MembershipCard'
@@ -92,30 +93,7 @@ export default function Dashboard() {
           justifyContent: 'center',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <div
-            className="animate-spin"
-            style={{
-              width: 48,
-              height: 48,
-              border: '4px solid hsl(var(--border))',
-              borderTopColor: 'hsl(var(--primary))',
-              borderRadius: '50%',
-            }}
-          />
-          <p
-            className="animate-pulse"
-            style={{
-              fontWeight: 500,
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 10,
-              letterSpacing: '0.04em',
-              fontFamily: "'Public Sans', sans-serif",
-            }}
-          >
-            Synchronizing tactical data...
-          </p>
-        </div>
+        <DotLoader label="Synchronizing tactical data..." />
       </div>
     )
   }

@@ -14,6 +14,7 @@ import { ProductInfo } from './product-details/components/ProductInfo'
 import { Reviews } from './product-details/components/Reviews'
 import { RelatedProducts } from './product-details/components/RelatedProducts'
 import { TechnicalDetails } from './product-details/components/TechnicalDetails'
+import { Skeleton } from '@/components/states'
 import { SizeGuideModal } from './product-details/components/SizeGuideModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 
@@ -105,14 +106,20 @@ export default function ProductDetails() {
     return (
       <div className="bg-off-white min-h-screen">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
-          <div className="animate-pulse space-y-8">
-            <div className="h-4 w-32 bg-stone-200" />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <Skeleton variant="text-sm" width={120} />
             <div className="grid md:grid-cols-2 gap-12">
-              <div className="aspect-square bg-stone-200 rounded-sm" />
-              <div className="space-y-6">
-                <div className="h-8 w-64 bg-stone-200" />
-                <div className="h-4 w-48 bg-stone-200" />
-                <div className="h-24 w-full bg-stone-200" />
+              <Skeleton
+                variant="img"
+                style={{ aspectRatio: '1/1', height: 'auto', borderRadius: 'var(--radius-sm)' }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <Skeleton variant="text-xl" width="70%" />
+                <Skeleton variant="text-md" width="50%" />
+                <Skeleton variant="text-md" />
+                <Skeleton variant="text-md" />
+                <Skeleton variant="text-md" width="80%" />
+                <Skeleton variant="btn" style={{ marginTop: 8 }} />
               </div>
             </div>
           </div>

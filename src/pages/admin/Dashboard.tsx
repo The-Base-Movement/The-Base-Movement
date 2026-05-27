@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import type { AuditLogEntry, RegionalStat, PendingVerification, Broadcast } from '@/types/admin'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { Skeleton } from '@/components/states'
 
 // Subcomponents
 import { VerificationsQueue } from './dashboard/VerificationsQueue'
@@ -234,10 +235,26 @@ export default function AdminDashboard() {
       <div className="kpis">
         {isLoading ? (
           <>
-            <div className="card red animate-pulse h-48 bg-white" />
-            <div className="card gold animate-pulse h-48 bg-white" />
-            <div className="card black animate-pulse h-48 bg-white" />
-            <div className="card green animate-pulse h-48 bg-white" />
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="panel"
+                style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 3,
+                    background: 'hsl(var(--border))',
+                  }}
+                />
+                <Skeleton variant="text-sm" width={80} style={{ marginBottom: 10 }} />
+                <Skeleton variant="text-xl" width={60} />
+              </div>
+            ))}
           </>
         ) : (
           <>

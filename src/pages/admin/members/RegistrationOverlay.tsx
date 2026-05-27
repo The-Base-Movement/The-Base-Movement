@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import { DotLoader } from '@/components/states'
 import RegistrationForm, { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import { toast } from 'sonner'
 
@@ -52,27 +53,7 @@ export function RegistrationOverlay({
             justifyContent: 'center',
           }}
         >
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              border: '3px solid rgba(0,107,63,.2)',
-              borderTopColor: 'hsl(var(--primary))',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite',
-              marginBottom: 12,
-            }}
-          />
-          <p
-            style={{
-              margin: 0,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12.5,
-            }}
-          >
-            Finalizing registration…
-          </p>
+          <DotLoader label="Finalizing registration…" />
         </div>
       )}
     </div>,

@@ -1,6 +1,7 @@
 import VerificationListCard from '@/components/admin/VerificationListCard'
 import { statusPill, PAGE_SIZE, STATUS_OPTIONS } from './utils'
 import type { PendingVerification } from '@/services/adminService'
+import { Skeleton } from '@/components/states'
 
 interface VerificationQueueProps {
   loading: boolean
@@ -174,29 +175,26 @@ export function VerificationQueue({
 
       {/* List rows */}
       {loading ? (
-        <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-          <span
-            className="material-symbols-outlined animate-spin"
-            style={{
-              fontSize: 32,
-              color: 'hsl(var(--border))',
-              display: 'block',
-              marginBottom: 10,
-            }}
-          >
-            refresh
-          </span>
-          <p
-            style={{
-              margin: 0,
-              fontSize: 12,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Fetching identity files…
-          </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '14px 16px',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
+            >
+              <Skeleton variant="avatar" />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <Skeleton variant="text-md" width="55%" />
+                <Skeleton variant="text-sm" width="35%" />
+              </div>
+              <Skeleton variant="chip" width={70} style={{ flexShrink: 0 }} />
+            </div>
+          ))}
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ padding: '48px 24px', textAlign: 'center' }}>

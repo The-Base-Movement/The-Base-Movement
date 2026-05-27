@@ -29,6 +29,7 @@ import { ActionList } from './rally/ActionList'
 import { OperationalMetrics } from './rally/OperationalMetrics'
 import { AttendanceTable } from './rally/AttendanceTable'
 import { GeofenceViewer } from './rally/GeofenceViewer'
+import { DotLoader } from '@/components/states'
 
 export default function RallyCommand() {
   const [actions, setActions] = useState<FieldAction[]>([])
@@ -113,32 +114,13 @@ export default function RallyCommand() {
     return (
       <div
         style={{
-          height: '100%',
-          width: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '80px 0',
         }}
       >
-        <span
-          className="material-symbols-outlined animate-spin"
-          style={{ fontSize: 48, color: 'hsl(var(--primary))' }}
-        >
-          sync
-        </span>
-        <p
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-semibold, 600)',
-            fontSize: 12,
-            color: 'hsl(var(--on-surface-muted))',
-            marginTop: 16,
-          }}
-        >
-          Initializing mobilization command...
-        </p>
+        <DotLoader label="Initializing mobilization command…" />
       </div>
     )
   }

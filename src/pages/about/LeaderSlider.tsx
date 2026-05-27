@@ -70,11 +70,8 @@ export function LeaderSlider() {
             modules={[Autoplay, EffectFade, Pagination]}
             effect="fade"
             loop={multiple}
-            autoplay={
-              multiple
-                ? { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }
-                : false
-            }
+            loopAdditionalSlides={1}
+            autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
             pagination={multiple ? { clickable: true } : false}
             style={{ width: '100%', height: '100%' }}
             className="leader-swiper"

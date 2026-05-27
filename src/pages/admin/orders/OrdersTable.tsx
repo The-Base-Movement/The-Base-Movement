@@ -1,6 +1,7 @@
 import { OrderListCard } from '@/components/admin/OrderListCard'
 import { STATUS_CONFIG, NEXT_STATUS } from './utils'
 import type { Order } from '@/services/adminService'
+import { Skeleton } from '@/components/states'
 
 interface OrdersTableProps {
   loading: boolean
@@ -22,24 +23,27 @@ export function OrdersTable({
   return (
     <div style={{ overflowX: 'auto' }}>
       {loading ? (
-        <div style={{ padding: 80, textAlign: 'center' }}>
-          <span
-            className="material-symbols-outlined animate-spin"
-            style={{ fontSize: 32, color: 'hsl(var(--primary) / 0.2)' }}
-          >
-            sync
-          </span>
-          <p
-            style={{
-              fontSize: 10,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              marginTop: 16,
-              color: 'hsl(var(--border))',
-              fontFamily: "'Public Sans', sans-serif",
-            }}
-          >
-            Synchronizing order flow...
-          </p>
+        <div style={{ padding: '12px 0', display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '14px 16px',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
+            >
+              <Skeleton variant="avatar-sm" />
+              <div style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <Skeleton variant="text-sm" width="50%" />
+                <Skeleton variant="text-sm" width="30%" />
+              </div>
+              <Skeleton variant="chip" width={70} style={{ flex: '0 0 auto' }} />
+              <Skeleton variant="text-sm" width={60} style={{ flex: '0 0 auto' }} />
+            </div>
+          ))}
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ padding: 80, textAlign: 'center' }}>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { EmptyState, Skeleton, Banner } from '@/components/states'
 import { useLocation } from 'react-router-dom'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
@@ -30,6 +31,7 @@ export default function Blog() {
   const [sidebarSubmitting, setSidebarSubmitting] = useState(false)
   const [publicEmail, setPublicEmail] = useState('')
   const [publicSubmitting, setPublicSubmitting] = useState(false)
+  const [error, setError] = useState(false)
 
   const handleNewsletter = async (
     email: string,
@@ -58,6 +60,7 @@ export default function Blog() {
         if (isMounted) setPosts(data)
       } catch (err) {
         console.error('Failed to fetch blog posts:', err)
+        if (isMounted) setError(true)
       } finally {
         if (isMounted) setLoading(false)
       }
@@ -114,65 +117,47 @@ export default function Blog() {
           onSearchChange={handleSearchChange}
         />
 
+        {error && (
+          <Banner
+            variant="error"
+            title="Failed to load articles."
+            body="Check your connection and try refreshing the page."
+            style={{ marginBottom: 16 }}
+          />
+        )}
         {loading ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '60px 0',
-              gap: 12,
-            }}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: 32,
-                color: 'hsl(var(--primary))',
-                animation: 'spin 1.2s linear infinite',
-              }}
-            >
-              sync
-            </span>
-            <p
-              style={{
-                margin: 0,
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 500,
-                fontSize: 12,
-                color: 'hsl(var(--on-surface-muted))',
-              }}
-            >
-              Loading articles…
-            </p>
+          <div className="main-sidebar" style={{ alignItems: 'start' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <Skeleton variant="img" height={180} />
+                <Skeleton variant="chip" width={90} />
+                <Skeleton variant="text-xl" width="75%" />
+                <Skeleton variant="text-md" />
+                <Skeleton variant="text-md" width="55%" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <Skeleton variant="img" height={120} />
+                    <Skeleton variant="chip" width={70} />
+                    <Skeleton variant="text-lg" width="80%" />
+                    <Skeleton variant="text-sm" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 4 }}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} variant="text-md" />
+              ))}
+            </div>
           </div>
         ) : posts.length === 0 ? (
-          <div className="panel" style={{ padding: 48, textAlign: 'center' }}>
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: 32,
-                color: 'hsl(var(--on-surface-muted))',
-                opacity: 0.3,
-                display: 'block',
-                marginBottom: 8,
-              }}
-            >
-              article
-            </span>
-            <p
-              style={{
-                margin: 0,
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 500,
-                fontSize: 13,
-                color: 'hsl(var(--on-surface-muted))',
-              }}
-            >
-              No articles published yet.
-            </p>
-          </div>
+          <EmptyState
+            icon="article"
+            title="No articles yet."
+            body="Stories will appear here once content is published."
+          />
         ) : (
           <div className="main-sidebar" style={{ alignItems: 'start' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -223,24 +208,36 @@ export default function Blog() {
         <PublicHero />
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10 md:mt-16 pb-16">
+          {error && (
+            <Banner
+              variant="error"
+              title="Failed to load articles."
+              body="Check your connection and try refreshing the page."
+              style={{ marginBottom: 20 }}
+            />
+          )}
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-32 gap-4">
-              <span
-                className="material-symbols-outlined text-brand-green animate-spin"
-                style={{ fontSize: 32 }}
-              >
-                progress_activity
-              </span>
-              <p className="text-micro font-medium tracking-tight text-stone-400">
-                Loading articles...
-              </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <Skeleton variant="img" height={300} style={{ borderRadius: 'var(--radius-lg)' }} />
+              <div className="grid sm:grid-cols-2 gap-5 md:gap-8">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <Skeleton variant="img" height={150} />
+                    <Skeleton variant="chip" width={70} />
+                    <Skeleton variant="text-lg" width="85%" />
+                    <Skeleton variant="text-sm" />
+                    <Skeleton variant="text-sm" width="60%" />
+                  </div>
+                ))}
+              </div>
             </div>
           ) : posts.length === 0 ? (
-            <div className="py-32 text-center">
-              <p className="text-sm font-medium text-stone-400 tracking-tight">
-                No articles published yet.
-              </p>
-            </div>
+            <EmptyState
+              icon="article"
+              title="No articles yet."
+              body="Stories and updates will appear here once published."
+              style={{ maxWidth: 480, margin: '0 auto' }}
+            />
           ) : (
             <>
               {/* Mobile/tablet search + filter — sidebar handles desktop */}

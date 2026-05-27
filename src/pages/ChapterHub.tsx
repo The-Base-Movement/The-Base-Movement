@@ -16,6 +16,7 @@ import { BoardTab } from './chapterhub/BoardTab'
 import { ActivitiesTab } from './chapterhub/ActivitiesTab'
 import { RequestsTab } from './chapterhub/RequestsTab'
 import { SettingsTab } from './chapterhub/SettingsTab'
+import { Skeleton } from '@/components/states'
 
 interface ChapterMember {
   authId: string
@@ -380,8 +381,25 @@ export default function ChapterHub() {
     return (
       <div className="main">
         <div className="kpis">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="panel animate-pulse" style={{ height: 80 }} />
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="panel"
+              style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 3,
+                  background: 'hsl(var(--border))',
+                }}
+              />
+              <Skeleton variant="text-sm" width={80} style={{ marginBottom: 10 }} />
+              <Skeleton variant="text-xl" width={60} />
+            </div>
           ))}
         </div>
       </div>

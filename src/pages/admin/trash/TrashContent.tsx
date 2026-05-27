@@ -4,6 +4,7 @@ import { logisticsService } from '@/services/logisticsService'
 import { adminService, type Member } from '@/services/adminService'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 import type { DeleteOptions } from '@/hooks/useDeleteModal'
+import { DotLoader } from '@/components/states'
 
 type TrashTab = 'blogs' | 'products' | 'media' | 'authors' | 'members'
 
@@ -43,34 +44,12 @@ export function TrashContent({
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '80px 0',
-          gap: 16,
         }}
       >
-        <div
-          className="animate-spin"
-          style={{
-            width: 36,
-            height: 36,
-            border: '3px solid hsl(var(--border))',
-            borderTopColor: 'hsl(var(--destructive))',
-            borderRadius: '50%',
-          }}
-        />
-        <p
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-medium, 500)',
-            fontSize: 13,
-            color: 'hsl(var(--on-surface-muted))',
-            margin: 0,
-          }}
-        >
-          Loading…
-        </p>
+        <DotLoader label="Loading…" />
       </div>
     )
   }
