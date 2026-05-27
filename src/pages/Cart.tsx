@@ -67,14 +67,7 @@ export default function Cart() {
         </header>
 
         {cart.length > 0 ? (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(0, 1fr)',
-              gap: 24,
-            }}
-            className="lg:grid-cols-[1fr_340px]"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
             {/* Cart Items */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {cart.map((item) => {

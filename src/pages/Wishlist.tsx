@@ -24,22 +24,6 @@ export default function Wishlist() {
         <header className="mb-12 mt-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <Link
-                to={
-                  typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')
-                    ? '/dashboard/store'
-                    : '/store'
-                }
-                className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors mb-6 group"
-              >
-                <span
-                  className="material-symbols-outlined group-hover:-translate-x-1 transition-transform"
-                  style={{ fontSize: 16 }}
-                >
-                  arrow_back
-                </span>
-                <span className="font-meta text-micro font-bold tracking-tight">Back to store</span>
-              </Link>
               <h1 className="text-stone-900 mb-2 flex items-center gap-3">
                 <span
                   className="material-symbols-outlined text-brand-red"
