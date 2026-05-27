@@ -478,7 +478,7 @@ export function BlogEditorView({
                         'undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
                       statusbar: false,
                       content_style:
-                        'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; }',
+                        'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; } img { max-width: 100%; height: auto; display: block; margin: 1.5em 0; border-radius: 4px; }',
                       branding: false,
                       images_upload_handler: async (blobInfo: {
                         blob: () => Blob
