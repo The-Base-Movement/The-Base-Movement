@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { FieldReport } from '@/types/admin'
 
 const pillBase: React.CSSProperties = {
@@ -30,25 +31,31 @@ const reportStatusStyle = (s: string): React.CSSProperties => {
   }
 }
 
+type StatusFilter = 'ALL' | 'Pending' | 'Verified' | 'Rejected'
+
 interface SituationalAwarenessFeedProps {
   reports: FieldReport[]
   onVerify: (reportId: string, status: 'Verified' | 'Rejected') => Promise<void>
 }
 
 export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAwarenessFeedProps) {
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
+
+  const filteredReports =
+    statusFilter === 'ALL' ? reports : reports.filter((r) => r.status === statusFilter)
+
   return (
     <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+      {/* Header */}
       <div
         style={{
           padding: '16px 20px',
           borderBottom: '1px solid hsl(var(--border))',
           background: 'hsl(var(--container-low))',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
         }}
       >
-        <div>
+        {/* Row 1: title + description */}
+        <div style={{ marginBottom: 12 }}>
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
@@ -71,14 +78,74 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
             Real-time field intelligence
           </div>
         </div>
-        <button className="btn btn-sm">
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+
+        {/* Row 2: filter select — full width */}
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          >
             filter_list
           </span>
-          Filter
-        </button>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+            style={{
+              width: '100%',
+              height: 34,
+              paddingLeft: 32,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12,
+              background: 'hsl(var(--background))',
+              color: 'hsl(var(--on-surface))',
+              boxSizing: 'border-box',
+              cursor: 'pointer',
+              outline: 'none',
+              appearance: 'none',
+            }}
+          >
+            <option value="ALL">All reports ({reports.length})</option>
+            <option value="Pending">
+              Pending ({reports.filter((r) => r.status === 'Pending').length})
+            </option>
+            <option value="Verified">
+              Verified ({reports.filter((r) => r.status === 'Verified').length})
+            </option>
+            <option value="Rejected">
+              Rejected ({reports.filter((r) => r.status === 'Rejected').length})
+            </option>
+          </select>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 14,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            expand_more
+          </span>
+        </div>
       </div>
-      {reports.length === 0 ? (
+
+      {filteredReports.length === 0 ? (
         <div
           style={{
             display: 'flex',
@@ -105,12 +172,12 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
               letterSpacing: '0.06em',
             }}
           >
-            Feed is quiet
+            {reports.length === 0 ? 'Feed is quiet' : 'No reports match this filter'}
           </p>
         </div>
       ) : (
         <div style={{ maxHeight: 800, overflowY: 'auto' }}>
-          {reports.map((report) => (
+          {filteredReports.map((report) => (
             <div key={report.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
               {report.media_url && (
                 <div
@@ -182,7 +249,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                   )}
                 </div>
               )}
-              <div style={{ padding: '20px 24px' }}>
+              <div style={{ padding: '16px 20px' }}>
                 <div
                   style={{
                     display: 'flex',
@@ -204,7 +271,6 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: 11,
                         color: 'hsl(var(--primary))',
                       }}
                     >
