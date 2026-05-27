@@ -218,11 +218,10 @@ export function AuditLogsModal({
           style={{
             padding: '16px 24px',
             borderTop: '1px solid hsl(var(--border))',
-            textAlign: 'right',
             background: 'hsl(var(--container-low))',
           }}
         >
-          <button onClick={onClose} className="btn btn-sm btn-outline" style={{ minWidth: 100 }}>
+          <button onClick={onClose} className="btn btn-sm btn-outline" style={{ width: '100%' }}>
             Close Vault
           </button>
         </div>

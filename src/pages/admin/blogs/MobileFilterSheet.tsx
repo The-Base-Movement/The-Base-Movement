@@ -21,10 +21,6 @@ interface MobileFilterSheetProps {
   isMobile: boolean
   show: boolean
   onClose: () => void
-  searchQuery: string
-  setSearchQuery: (v: string) => void
-  statusFilter: string
-  setStatusFilter: (v: string) => void
   categoryFilter: string
   setCategoryFilter: (v: string) => void
 }
@@ -45,10 +41,6 @@ export function MobileFilterSheet({
   isMobile,
   show,
   onClose,
-  searchQuery,
-  setSearchQuery,
-  statusFilter,
-  setStatusFilter,
   categoryFilter,
   setCategoryFilter,
 }: MobileFilterSheetProps) {
@@ -122,56 +114,6 @@ export function MobileFilterSheet({
             overflowY: 'auto',
           }}
         >
-          {/* Search */}
-          <div>
-            <label htmlFor="mob-search-blogs" style={sheetLabelSt}>
-              Search
-            </label>
-            <div style={{ position: 'relative' }}>
-              <span
-                className="material-symbols-outlined"
-                style={{
-                  position: 'absolute',
-                  left: 10,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  fontSize: 15,
-                  color: 'hsl(var(--on-surface-muted))',
-                  pointerEvents: 'none',
-                }}
-              >
-                search
-              </span>
-              <input
-                id="mob-search-blogs"
-                name="mobBlogSearch"
-                placeholder="Keywords…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ ...selectSt, paddingLeft: 34, height: 42 }}
-              />
-            </div>
-          </div>
-
-          {/* Status */}
-          <div>
-            <label htmlFor="mob-status-blogs" style={sheetLabelSt}>
-              Status
-            </label>
-            <select
-              id="mob-status-blogs"
-              name="mobStatusFilter"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ ...selectSt, height: 42 }}
-            >
-              <option value="all">All statuses</option>
-              <option value="Published">Published</option>
-              <option value="Pending Verification">Pending</option>
-              <option value="Draft">Drafts</option>
-            </select>
-          </div>
-
           {/* Category */}
           <div>
             <label htmlFor="mob-cat-blogs" style={sheetLabelSt}>

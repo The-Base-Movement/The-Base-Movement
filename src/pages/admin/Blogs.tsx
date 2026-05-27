@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
@@ -372,6 +373,48 @@ export default function AdminBlogs() {
       <BlogsHeader onWrite={() => handleEditPost()} />
       <BlogsKPIs posts={posts} />
 
+      {/* Mobile search — shown above the grid on small screens */}
+      <div className="mobile-only" style={{ marginBottom: 12, position: 'relative' }}>
+        <span
+          className="material-symbols-outlined"
+          style={{
+            position: 'absolute',
+            left: 11,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 16,
+            color: 'hsl(var(--on-surface-muted))',
+            pointerEvents: 'none',
+          }}
+        >
+          search
+        </span>
+        <input
+          aria-label="Search posts"
+          name="mobBlogSearch"
+          id="input-mob-blog-search"
+          type="text"
+          placeholder="Search posts…"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: '100%',
+            height: 40,
+            paddingLeft: 36,
+            paddingRight: 12,
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 13,
+            color: 'hsl(var(--on-surface))',
+            background: '#fff',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
+      </div>
+
       <div className="sidebar-main">
         <BlogsFilters
           searchQuery={searchQuery}
@@ -409,41 +452,39 @@ export default function AdminBlogs() {
         isMobile={isMobile}
         show={showMobileFilter}
         onClose={() => setShowMobileFilter(false)}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
       />
 
-      {isMobile && (
-        <button
-          onClick={() => setShowMobileFilter(true)}
-          style={{
-            position: 'fixed',
-            bottom: 88,
-            left: 16,
-            zIndex: 50,
-            width: 46,
-            height: 46,
-            borderRadius: '50%',
-            background: 'hsl(var(--on-surface))',
-            color: '#fff',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.28)',
-            cursor: 'pointer',
-          }}
-          aria-label="Open filters"
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-            filter_list
-          </span>
-        </button>
-      )}
+      {isMobile &&
+        createPortal(
+          <button
+            onClick={() => setShowMobileFilter(true)}
+            style={{
+              position: 'fixed',
+              bottom: 88,
+              left: 16,
+              zIndex: 50,
+              width: 46,
+              height: 46,
+              borderRadius: '50%',
+              background: 'hsl(var(--on-surface))',
+              color: '#fff',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.28)',
+              cursor: 'pointer',
+            }}
+            aria-label="Open filters"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+              filter_list
+            </span>
+          </button>,
+          document.body
+        )}
 
       {deleteModal}
     </div>

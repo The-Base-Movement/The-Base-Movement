@@ -96,17 +96,16 @@ export function RevokeConfirmModal({
             padding: '16px 24px',
             borderTop: '1px solid hsl(var(--border))',
             display: 'flex',
-            justifyContent: 'flex-end',
             gap: 10,
             background: 'hsl(var(--container-low))',
           }}
         >
-          <button className="btn btn-outline btn-sm" onClick={onClose} style={{ minWidth: 80 }}>
+          <button className="btn btn-outline btn-sm" onClick={onClose} style={{ flex: 1 }}>
             Cancel
           </button>
           <button
             className="btn btn-dest btn-sm"
-            style={{ minWidth: 120 }}
+            style={{ flex: 1 }}
             disabled={isRevoking}
             onClick={handleRevoke}
           >

@@ -639,7 +639,11 @@ function DeleteModal({ role, onClose, onDeleted }: DeleteModalProps) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function RolesManager() {
-  usePageLabel('Roles Manager')
+  const { setCurrentLabel } = usePageLabel()
+
+  useEffect(() => {
+    setCurrentLabel('Roles Manager')
+  }, [setCurrentLabel])
 
   const [roles, setRoles] = useState<AdminRoleRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)

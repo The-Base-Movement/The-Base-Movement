@@ -73,8 +73,11 @@ export function BlogsGrid({
 
   return (
     <div style={{ minWidth: 0 }}>
-      {/* Status tab bar */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+      {/* Status tab bar — desktop */}
+      <div
+        className="desktop-only"
+        style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}
+      >
         {tabs.map((tab) => (
           <button
             key={tab.value}
@@ -87,6 +90,34 @@ export function BlogsGrid({
             {tab.label}
           </button>
         ))}
+      </div>
+
+      {/* Status dropdown — mobile */}
+      <div className="mobile-only" style={{ marginBottom: 12 }}>
+        <select
+          name="mobStatusTabFilter"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          style={{
+            width: '100%',
+            height: 38,
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            padding: '0 10px',
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface))',
+            background: '#fff',
+            outline: 'none',
+          }}
+        >
+          {tabs.map((tab) => (
+            <option key={tab.value} value={tab.value}>
+              {tab.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Card grid */}

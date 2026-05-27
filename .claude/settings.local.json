@@ -48,7 +48,8 @@
       "Bash(node -e \"const pkg = require\\('./node_modules/swiper/package.json'\\); console.log\\(pkg.version\\)\")",
       "PowerShell(Copy-Item -Path \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\docs\\\\The Base Movement Design System-handoff\\\\the-base-movement-design-system\\\\project\" -Destination \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\docs\\\\design-system-handoff\\\\the-base-movement-design-system\\\\project\" -Recurse -Force)",
       "PowerShell(head -20)",
-      "PowerShell(Remove-Item -Path \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\docs\\\\The Base Movement Design System-handoff\" -Recurse -Force -Confirm:$false)"
+      "PowerShell(Remove-Item -Path \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\docs\\\\The Base Movement Design System-handoff\" -Recurse -Force -Confirm:$false)",
+      "Bash(git check-ignore *)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -99,7 +99,7 @@ export function AdministratorsMobileCards({
                 marginBottom: 14,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
                 <div style={{ ...avatarSt(admin.role), width: 44, height: 44, fontSize: 13 }}>
                   {admin.avatarUrl ? (
                     <img
@@ -117,7 +117,7 @@ export function AdministratorsMobileCards({
                       .join('')
                   )}
                 </div>
-                <div>
+                <div style={{ minWidth: 0, flex: 1 }}>
                   <p
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
@@ -125,6 +125,9 @@ export function AdministratorsMobileCards({
                       fontSize: 13,
                       color: 'hsl(var(--on-surface))',
                       margin: 0,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {admin.name}
@@ -136,6 +139,9 @@ export function AdministratorsMobileCards({
                       fontSize: 10,
                       color: 'hsl(var(--on-surface-muted))',
                       margin: '2px 0 0',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {admin.id}
@@ -224,7 +230,7 @@ export function AdministratorsMobileCards({
 
             <div style={{ display: 'flex', gap: 8 }}>
               <button
-                className="btn"
+                className="btn btn-sm"
                 style={{
                   flex: 1,
                   background: 'hsl(var(--accent))',
@@ -240,22 +246,24 @@ export function AdministratorsMobileCards({
                 Activity
               </button>
               <button
-                className="btn btn-outline"
-                style={{ justifyContent: 'center' }}
+                className="btn btn-outline btn-sm"
+                style={{ flex: 1, justifyContent: 'center' }}
                 onClick={() => openEdit(admin)}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                   edit
                 </span>
+                Edit
               </button>
               <button
-                className="btn btn-dest"
-                style={{ justifyContent: 'center' }}
+                className="btn btn-dest btn-sm"
+                style={{ flex: 1, justifyContent: 'center' }}
                 onClick={() => setRevokeTarget(admin)}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                   block
                 </span>
+                Revoke
               </button>
             </div>
           </div>

@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { format } from 'date-fns'
 import { adminService, type Author } from '@/services/adminService'
+import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePerformance } from '@/context/PerformanceContext'
@@ -53,9 +52,7 @@ export default function AdminAuthors() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [publishedPostCount, setPublishedPostCount] = useState<number | null>(null)
-
-  const isMobile = useMediaQuery('(max-width: 768px)')
-  const [showMobileFilter, setShowMobileFilter] = useState(false)
+  const [authorRoles, setAuthorRoles] = useState<string[]>([])
 
   // Form view state: null | 'create' | 'edit'
   const [formView, setFormView] = useState<{ mode: 'create' | 'edit'; authorId?: string } | null>(
@@ -86,6 +83,7 @@ export default function AdminAuthors() {
   useEffect(() => {
     fetchAuthors()
     fetchStats()
+    contentService.getAuthorRoles().then(setAuthorRoles)
   }, [])
 
   const handleDelete = async () => {
@@ -115,8 +113,6 @@ export default function AdminAuthors() {
     const matchesRole = roleFilter === 'all' || a.role === roleFilter
     return matchesSearch && matchesRole
   })
-
-  const availableRoles = Array.from(new Set(authors.map((a) => a.role).filter(Boolean)))
 
   // ── Layout ──
   if (formView) {
@@ -152,7 +148,7 @@ export default function AdminAuthors() {
         }
       />
 
-      <div className="kpis">
+      <div className="kpis" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
         {[
           {
             label: 'Total Personnel',
@@ -226,6 +222,52 @@ export default function AdminAuthors() {
             </p>
           </div>
         ))}
+      </div>
+
+      {/* Mobile filters — inline above the card list */}
+      <div
+        className="mobile-only"
+        style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}
+      >
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            aria-label="Search authors"
+            name="mobAuthorSearch"
+            id="input-mob-author-search"
+            type="text"
+            placeholder="Search authors…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ ...inputSt, height: 40, paddingLeft: 34 }}
+          />
+        </div>
+        <select
+          name="mobRoleFilter"
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          style={{ ...selectSt, height: 40 }}
+        >
+          <option value="all">All roles</option>
+          {authorRoles.map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="sidebar-main">
@@ -331,7 +373,7 @@ export default function AdminAuthors() {
                 style={selectSt}
               >
                 <option value="all">All roles</option>
-                {availableRoles.map((role) => (
+                {authorRoles.map((role) => (
                   <option key={role} value={role}>
                     {role}
                   </option>
@@ -912,117 +954,6 @@ export default function AdminAuthors() {
         </div>
       </div>
 
-      {/* Mobile filter FAB + bottom sheet */}
-      {isMobile && (
-        <>
-          <button
-            onClick={() => setShowMobileFilter(true)}
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: 0,
-              transform: 'translateY(-50%)',
-              zIndex: 50,
-              width: 38,
-              height: 48,
-              borderRadius: '0 8px 8px 0',
-              background: 'hsl(var(--on-surface))',
-              color: '#fff',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '4px 0 16px rgba(0,0,0,0.18)',
-              cursor: 'pointer',
-            }}
-            aria-label="Open filters"
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-              filter_list
-            </span>
-          </button>
-
-          <div
-            className={cn(
-              'fixed inset-0 z-[100] transition-opacity duration-300',
-              showMobileFilter ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-            )}
-            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
-            onClick={() => setShowMobileFilter(false)}
-          >
-            <div
-              className={cn(
-                'absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6 transition-transform duration-300 ease-out',
-                showMobileFilter ? 'translate-y-0' : 'translate-y-full'
-              )}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div
-                style={{
-                  width: 40,
-                  height: 4,
-                  background: 'hsl(var(--border))',
-                  borderRadius: 2,
-                  margin: '0 auto 20px',
-                }}
-              />
-              <h4 style={{ margin: '0 0 20px', fontSize: 16 }}>Filter authors</h4>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div>
-                  <label
-                    style={{
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      display: 'block',
-                    }}
-                  >
-                    Search name or role
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Search…"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{ ...inputSt, paddingLeft: 12 }}
-                  />
-                </div>
-                <div>
-                  <label
-                    style={{
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      display: 'block',
-                    }}
-                  >
-                    Role classification
-                  </label>
-                  <select
-                    value={roleFilter}
-                    onChange={(e) => setRoleFilter(e.target.value)}
-                    style={selectSt}
-                  >
-                    <option value="all">All roles</option>
-                    {availableRoles.map((role) => (
-                      <option key={role} value={role}>
-                        {role}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <button
-                className="btn btn-primary w-full"
-                style={{ marginTop: 24 }}
-                onClick={() => setShowMobileFilter(false)}
-              >
-                Apply filters
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
       {/* Author Details Modal */}
       {viewingAuthor &&
         createPortal(
@@ -1228,7 +1159,7 @@ export default function AdminAuthors() {
                         Verified
                       </div>
                     </div>
-                    <div>
+                    <div style={{ gridColumn: '1 / -1' }}>
                       <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>
                         Member ID
                       </span>
@@ -1238,6 +1169,7 @@ export default function AdminAuthors() {
                           fontWeight: 'var(--font-weight-medium, 500)',
                           marginTop: 2,
                           fontFamily: "'Courier New', monospace",
+                          wordBreak: 'break-all',
                         }}
                       >
                         {viewingAuthor.memberId || 'None linked'}

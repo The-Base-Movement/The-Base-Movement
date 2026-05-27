@@ -7,7 +7,7 @@ export function AdminsSearchBar({ searchTerm, onChange }: AdminsSearchBarProps) 
   return (
     <div className="panel">
       <div style={{ padding: '14px 20px' }}>
-        <div style={{ position: 'relative', maxWidth: 400 }}>
+        <div style={{ position: 'relative' }}>
           <label htmlFor="input-2deddd" style={{ display: 'none' }}>
             Filter by name, ID or role…
           </label>
