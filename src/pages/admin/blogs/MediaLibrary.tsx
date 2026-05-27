@@ -213,6 +213,8 @@ export function MediaLibrary({
         >
           <input
             type="file"
+            id="input-media-upload"
+            name="mediaUpload"
             accept="image/*"
             style={{ display: 'none' }}
             onChange={async (e) => {
