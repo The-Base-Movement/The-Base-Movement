@@ -18,6 +18,7 @@ export function NationalSupplyChainMap({ data, onEnterpriseView }: NationalSuppl
       }}
     >
       <div
+        className="logistics-map-header"
         style={{
           padding: '28px 32px',
           display: 'flex',

@@ -219,8 +219,8 @@ export default function WarRoomCommand() {
   if (loading) {
     return (
       <div
+        className="war-room-page"
         style={{
-          margin: '-24px -28px',
           minHeight: 'calc(100vh - 3.5rem)',
           display: 'flex',
           alignItems: 'center',
@@ -254,64 +254,70 @@ export default function WarRoomCommand() {
   }
 
   return (
-    <div style={{ margin: '-24px -28px', paddingBottom: 96, minHeight: 'calc(100vh - 3.5rem)' }}>
+    <div className="war-room-page" style={{ paddingBottom: 96, minHeight: 'calc(100vh - 3.5rem)' }}>
       <div style={{ padding: '20px 24px 0' }}>
         <AdminPageHeader
           title="War Room — live mobilization"
           icon="sensors"
           description="Real-time strategic oversight, crisis management, and rapid response coordination across all regional sectors."
           actions={
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 10,
-                  padding: '4px 10px',
-                  borderRadius: 99,
-                  border: '1px solid rgba(206,17,38,.3)',
-                  color: 'hsl(var(--destructive))',
-                  background: 'rgba(206,17,38,.12)',
-                  marginRight: 8,
-                }}
-              >
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+              {/* Status group: pill + clock always stay together */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                 <span
-                  className="animate-pulse"
                   style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
-                    background: 'hsl(var(--destructive))',
-                    display: 'inline-block',
-                    flexShrink: 0,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 10,
+                    padding: '4px 10px',
+                    borderRadius: 99,
+                    border: '1px solid rgba(206,17,38,.3)',
+                    color: 'hsl(var(--destructive))',
+                    background: 'rgba(206,17,38,.12)',
                   }}
-                />
-                Live · updating
-              </span>
-              <LiveClock />
-              <button
-                className="btn btn-outline"
-                style={{ height: 32, fontSize: 11, padding: '0 12px' }}
-                onClick={handleGenerateReport}
-                disabled={reportLoading}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                  analytics
+                >
+                  <span
+                    className="animate-pulse"
+                    style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      background: 'hsl(var(--destructive))',
+                      display: 'inline-block',
+                      flexShrink: 0,
+                    }}
+                  />
+                  Live · updating
                 </span>
-                {reportLoading ? 'Generating...' : 'Compliance Report'}
-              </button>
-              <button
-                className="btn btn-outline"
-                style={{ height: 32, fontSize: 11, padding: '0 12px' }}
-                onClick={() => (window.location.href = '/admin/broadcasts/new')}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                  send
-                </span>{' '}
-                Broadcast
-              </button>
+                <LiveClock />
+              </div>
+
+              {/* Action buttons group: always stay on same line */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <button
+                  className="btn btn-outline"
+                  style={{ height: 32, fontSize: 11, padding: '0 12px' }}
+                  onClick={handleGenerateReport}
+                  disabled={reportLoading}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    analytics
+                  </span>
+                  {reportLoading ? 'Generating...' : 'Compliance Report'}
+                </button>
+                <button
+                  className="btn btn-outline"
+                  style={{ height: 32, fontSize: 11, padding: '0 12px' }}
+                  onClick={() => (window.location.href = '/admin/broadcasts/new')}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    send
+                  </span>
+                  Broadcast
+                </button>
+              </div>
             </div>
           }
         />
@@ -385,7 +391,7 @@ export default function WarRoomCommand() {
         <TrendChartsPanel growthTrends={growthTrends} />
 
         {/* ── Lower row: Incidents detail + Narratives ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div className="war-room-lower">
           {/* Active crisis incidents */}
           <CrisisIncidentsPanel
             incidents={incidents}

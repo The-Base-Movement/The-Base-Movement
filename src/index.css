@@ -745,6 +745,30 @@
   fill: rgba(255, 255, 255, 0.2);
 }
 
+/* Logistics Intelligence main grid */
+.logistics-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+}
+
+/* Mobilization Metrics main grid */
+.mobilization-main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+/* War Room page breakout (escape admin content padding on desktop only) */
+.war-room-page {
+  margin: -24px -28px;
+}
+.war-room-lower {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
 /* War Room 3-col main grid — collapses to 1 col on mobile, 3 on desktop */
 .war-room-main-grid {
   display: grid;
@@ -764,7 +788,8 @@
     padding-right: 0 !important;
     padding-top: 12px !important;
   }
-  .main {
+  .main,
+  .admin-page-container {
     padding: 10px 14px 40px;
   }
   .top {
@@ -805,6 +830,51 @@
   .compose .toolbar {
     flex-wrap: wrap;
     gap: 8px;
+  }
+  /* Admin page header — stack title above actions on mobile */
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .admin-page-header .actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  /* War Room — remove breakout margins on mobile */
+  .war-room-page {
+    margin: 0 !important;
+  }
+  /* War Room lower 2-col → 1-col on mobile */
+  .war-room-lower {
+    grid-template-columns: 1fr !important;
+  }
+  /* Logistics / Mobilization main grids — single column on mobile */
+  .logistics-main-grid,
+  .mobilization-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  /* Audit vault — hide secondary columns on mobile */
+  .audit-col-secondary {
+    display: none !important;
+  }
+  /* Audit vault — min widths so core columns breathe */
+  .audit-col-ts {
+    min-width: 80px;
+  }
+  .audit-col-act {
+    min-width: 90px;
+  }
+  .audit-col-chg {
+    min-width: 70px;
+  }
+  /* Logistics map header — tighter padding on mobile */
+  .logistics-map-header {
+    padding: 18px 16px !important;
+  }
+  /* Sentiment live feedback — remove fixed width so sidebar-main collapses cleanly */
+  .sentiment-live-feedback {
+    width: 100% !important;
   }
   /* Responsive visibility */
   .desktop-only {

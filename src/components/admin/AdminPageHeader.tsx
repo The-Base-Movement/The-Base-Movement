@@ -29,7 +29,10 @@ export function AdminPageHeader({
   style,
 }: AdminPageHeaderProps) {
   return (
-    <div className={cn('ph', className)} style={{ marginBottom: 32, ...style }}>
+    <div
+      className={cn('ph admin-page-header', className)}
+      style={{ marginBottom: 32, padding: '0 0 16px', ...style }}
+    >
       <div>
         <h1
           style={{

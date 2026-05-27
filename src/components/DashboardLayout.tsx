@@ -27,6 +27,16 @@ export default function DashboardLayout() {
   const [openNotifications, setOpenNotifications] = useState(false)
   const [notifications, setNotifications] = useState<import('@/types/admin').Notification[]>([])
   const [myChapterLink, setMyChapterLink] = useState<{ to: string; icon: string } | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!session?.user?.id) return
+      const adminData = await adminService.getAdminData(session.user.id)
+      setIsAdmin(!!adminData)
+    }
+    checkAdmin()
+  }, [session])
 
   useEffect(() => {
     const checkChapterRole = async () => {
@@ -183,6 +193,77 @@ export default function DashboardLayout() {
       >
         Skip to main content
       </a>
+      {/* Admin back-link banner */}
+      {isAdmin && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 200,
+            background: '#181d19',
+            borderBottom: '2px solid hsl(var(--accent))',
+            height: 36,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 16px',
+            fontFamily: "'Public Sans', sans-serif",
+            fontSize: 12,
+            fontWeight: 500,
+            color: 'rgba(255,255,255,0.7)',
+            letterSpacing: '0.01em',
+            gap: 8,
+          }}
+        >
+          {/* Left: icon + label */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 14, color: 'hsl(var(--accent))', flexShrink: 0 }}
+            >
+              admin_panel_settings
+            </span>
+            <span
+              className="hidden sm:inline"
+              style={{
+                color: 'rgba(255,255,255,0.7)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              Viewing member dashboard as admin
+            </span>
+            <span className="sm:hidden" style={{ color: 'rgba(255,255,255,0.7)' }}>
+              Admin view
+            </span>
+          </div>
+
+          {/* Right: back link */}
+          <Link
+            to="/admin/dashboard"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              color: 'hsl(var(--accent))',
+              fontWeight: 600,
+              textDecoration: 'none',
+              fontSize: 12,
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+              arrow_back
+            </span>
+            <span className="hidden sm:inline">Back to </span>Admin
+          </Link>
+        </div>
+      )}
+
       {/* Mobile Backdrop */}
       {isSidebarOpen && (
         <div
@@ -206,7 +287,8 @@ export default function DashboardLayout() {
       {/* Navigation Shell (SideNavBar) */}
       <aside
         aria-label="Dashboard Sidebar"
-        className={`fixed left-0 top-0 h-full flex flex-col bg-[#181d19] text-white border-r-[4px] border-accent z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-60'}`}
+        className={`fixed left-0 flex flex-col bg-[#181d19] text-white border-r-[4px] border-accent z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-60'}`}
+        style={{ top: isAdmin ? 36 : 0, height: isAdmin ? 'calc(100% - 36px)' : '100%' }}
       >
         {/* Fixed Header */}
         <div
@@ -371,11 +453,13 @@ export default function DashboardLayout() {
       {/* Main Content Canvas */}
       <main
         id="main-content"
-        className={`min-h-screen bg-muted/10 flex flex-col pt-20 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'}`}
+        className={`min-h-screen bg-muted/10 flex flex-col transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'}`}
+        style={{ paddingTop: isAdmin ? 116 : 80 }}
       >
         {/* ── Topbar ── fixed, clears the sidebar */}
         <div
-          className={`fixed top-0 left-0 right-0 z-40 bg-white border-b border-border shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-60'}`}
+          className={`fixed left-0 right-0 z-40 bg-white border-b border-border shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-60'}`}
+          style={{ top: isAdmin ? 36 : 0 }}
         >
           <div className="flex items-center justify-between px-6 md:px-10 h-20">
             {/* Left: Hamburger (Mobile) + Current Page Title */}

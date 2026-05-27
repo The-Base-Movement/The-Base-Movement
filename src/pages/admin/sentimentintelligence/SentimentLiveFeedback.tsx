@@ -8,7 +8,7 @@ interface SentimentLiveFeedbackProps {
 
 export function SentimentLiveFeedback({ feedback }: SentimentLiveFeedbackProps) {
   return (
-    <aside style={{ width: 400, flexShrink: 0 }}>
+    <aside className="sentiment-live-feedback" style={{ width: 400, flexShrink: 0 }}>
       <div className="panel" style={{ padding: 0, overflow: 'hidden', height: '100%' }}>
         <div
           className="ph"

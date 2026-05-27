@@ -85,11 +85,13 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
         <table className="table">
           <thead>
             <tr>
-              <th>Timestamp</th>
-              <th>Action</th>
-              <th>Change</th>
-              <th>Source hub</th>
-              <th style={{ textAlign: 'right' }}>Authorized</th>
+              <th className="audit-col-ts">Timestamp</th>
+              <th className="audit-col-act">Action</th>
+              <th className="audit-col-chg">Change</th>
+              <th className="audit-col-secondary">Source hub</th>
+              <th className="audit-col-secondary" style={{ textAlign: 'right' }}>
+                Authorized
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -113,6 +115,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
               auditLogs.map((log) => (
                 <tr key={log.id}>
                   <td
+                    className="audit-col-ts"
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 'var(--font-weight-normal, 400)',
@@ -122,12 +125,13 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
                   >
                     {format(new Date(log.timestamp), 'MMM dd, HH:mm')}
                   </td>
-                  <td>
+                  <td className="audit-col-act">
                     <span style={{ ...pillBase, ...auditActionStyle(log.action) }}>
                       {log.action}
                     </span>
                   </td>
                   <td
+                    className="audit-col-chg"
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 'var(--font-weight-semibold, 600)',
@@ -138,6 +142,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
                     +{log.quantityChange} units
                   </td>
                   <td
+                    className="audit-col-secondary"
                     style={{
                       fontFamily: 'monospace',
                       fontSize: 10,
@@ -146,7 +151,7 @@ export function LogisticsAuditVault({ auditLogs }: LogisticsAuditVaultProps) {
                   >
                     {log.sourceLocation}
                   </td>
-                  <td style={{ textAlign: 'right' }}>
+                  <td className="audit-col-secondary" style={{ textAlign: 'right' }}>
                     <div
                       style={{
                         display: 'flex',

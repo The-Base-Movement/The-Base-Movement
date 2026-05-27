@@ -244,7 +244,7 @@ export default function LogisticsIntelligence() {
       </div>
 
       {/* Main grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24 }}>
+      <div className="logistics-main-grid">
         {/* Inventory Alerts */}
         <div
           className="panel"

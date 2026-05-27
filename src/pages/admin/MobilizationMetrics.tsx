@@ -186,7 +186,7 @@ export default function MobilizationMetrics() {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
+      <div className="mobilization-main-grid">
         {/* Leaderboard */}
         <LeaderboardTable filteredLeaderboard={filteredLeaderboard} />
 
