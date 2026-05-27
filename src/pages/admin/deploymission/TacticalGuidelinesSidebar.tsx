@@ -234,7 +234,7 @@ export function TacticalGuidelinesSidebar({
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: done
-                    ? 'var(--font-weight-semibold, 600)'
+                    ? 'var(--font-weight-medium, 500)'
                     : 'var(--font-weight-normal, 400)',
                   color: done ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))',
                 }}

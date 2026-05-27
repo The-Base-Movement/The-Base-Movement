@@ -5,7 +5,7 @@ const fieldStyle = {
   width: '100%',
   height: 42,
   border: '1px solid hsl(var(--border))',
-  borderRadius: 4,
+  borderRadius: 'var(--radius-sm)',
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-medium, 500)',
@@ -82,8 +82,8 @@ export function DeployMissionForm({
           </div>
 
           {/* Region + Constituency */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
+            <div style={{ flex: '1 1 180px' }}>
               <label htmlFor="select-cc2672" style={labelStyle}>
                 Target region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
@@ -103,7 +103,7 @@ export function DeployMissionForm({
                 ))}
               </select>
             </div>
-            <div>
+            <div style={{ flex: '1 1 180px' }}>
               <label htmlFor="select-fb8880" style={labelStyle}>
                 Target constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
@@ -132,8 +132,8 @@ export function DeployMissionForm({
           </div>
 
           {/* Start + End dates */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
+            <div style={{ flex: '1 1 160px' }}>
               <label htmlFor="input-f385be" style={labelStyle}>
                 Start date <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
@@ -149,7 +149,7 @@ export function DeployMissionForm({
                 required
               />
             </div>
-            <div>
+            <div style={{ flex: '1 1 160px' }}>
               <label htmlFor="input-2b3dd1" style={labelStyle}>
                 End date <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
@@ -217,7 +217,7 @@ export function DeployMissionForm({
             gap: 10,
             justifyContent: 'flex-end',
             background: 'hsl(var(--container-low))',
-            borderRadius: '0 0 6px 6px',
+            borderRadius: '0 0 var(--radius-lg) var(--radius-lg)',
           }}
         >
           <Link to="/admin/ground-game">

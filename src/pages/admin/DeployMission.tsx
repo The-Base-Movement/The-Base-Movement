@@ -99,27 +99,28 @@ export default function DeployMission() {
       />
 
       {/* Two-column layout */}
-      <div
-        style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14, alignItems: 'start' }}
-      >
-        <DeployMissionForm
-          handleSubmit={handleSubmit}
-          newCampaign={newCampaign}
-          setNewCampaign={setNewCampaign}
-          regions={regions}
-          selectedRegion={selectedRegion}
-          setSelectedRegion={setSelectedRegion}
-          selectedConstituency={selectedConstituency}
-          setSelectedConstituency={setSelectedConstituency}
-          filteredConstituencies={filteredConstituencies}
-          loading={loading}
-        />
-
-        <TacticalGuidelinesSidebar
-          newCampaign={newCampaign}
-          selectedRegion={selectedRegion}
-          selectedConstituency={selectedConstituency}
-        />
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'flex-start' }}>
+        <div style={{ flex: '3 1 400px', minWidth: 0 }}>
+          <DeployMissionForm
+            handleSubmit={handleSubmit}
+            newCampaign={newCampaign}
+            setNewCampaign={setNewCampaign}
+            regions={regions}
+            selectedRegion={selectedRegion}
+            setSelectedRegion={setSelectedRegion}
+            selectedConstituency={selectedConstituency}
+            setSelectedConstituency={setSelectedConstituency}
+            filteredConstituencies={filteredConstituencies}
+            loading={loading}
+          />
+        </div>
+        <div style={{ flex: '1 1 280px' }}>
+          <TacticalGuidelinesSidebar
+            newCampaign={newCampaign}
+            selectedRegion={selectedRegion}
+            selectedConstituency={selectedConstituency}
+          />
+        </div>
       </div>
     </div>
   )
