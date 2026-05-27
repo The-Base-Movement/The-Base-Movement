@@ -130,7 +130,7 @@ export function BlogEditorView({
         </div>
 
         {/* Top-bar actions */}
-        <div className="actions !gap-2">
+        <div className="actions !gap-2" style={isMobile ? { width: '100%' } : {}}>
           {/* Toggle media library */}
           <button
             className={showMediaPanel ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
