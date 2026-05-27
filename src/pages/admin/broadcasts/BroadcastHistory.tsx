@@ -55,7 +55,7 @@ export function BroadcastHistory({
             HQ-to-field transmission log
           </div>
         </div>
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', flex: '1 1 200px' }}>
           <span
             className="material-symbols-outlined"
             style={{
@@ -83,14 +83,14 @@ export function BroadcastHistory({
               paddingLeft: 30,
               paddingRight: 12,
               border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               outline: 'none',
               background: '#fff',
               color: 'hsl(var(--on-surface))',
-              width: 220,
+              width: '100%',
               boxSizing: 'border-box',
             }}
           />

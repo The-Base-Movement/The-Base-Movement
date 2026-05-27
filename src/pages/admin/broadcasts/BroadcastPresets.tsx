@@ -56,7 +56,7 @@ export function BroadcastPresets() {
               style={{
                 padding: '12px 14px',
                 border: '1px solid hsl(var(--border))',
-                borderRadius: 4,
+                borderRadius: 'var(--radius-sm)',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
@@ -121,7 +121,7 @@ export function BroadcastPresets() {
       <div
         style={{
           background: 'hsl(var(--on-surface))',
-          borderRadius: 6,
+          borderRadius: 'var(--radius-md)',
           borderTop: '4px solid hsl(var(--destructive))',
           padding: 28,
           position: 'relative',

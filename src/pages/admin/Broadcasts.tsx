@@ -59,17 +59,20 @@ export default function Broadcasts() {
         urgentCount={broadcasts.filter((b) => b.priority === 'Urgent').length}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
-        <BroadcastHistory
-          isLoading={isLoading}
-          filteredBroadcasts={filteredBroadcasts}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          broadcastMetrics={broadcastMetrics}
-          fetchMetrics={fetchMetrics}
-        />
-
-        <BroadcastPresets />
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
+        <div style={{ flex: '1 1 400px', minWidth: 0 }}>
+          <BroadcastHistory
+            isLoading={isLoading}
+            filteredBroadcasts={filteredBroadcasts}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            broadcastMetrics={broadcastMetrics}
+            fetchMetrics={fetchMetrics}
+          />
+        </div>
+        <div style={{ flex: '1 1 280px', maxWidth: 340 }}>
+          <BroadcastPresets />
+        </div>
       </div>
     </div>
   )
