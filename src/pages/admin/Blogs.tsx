@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { usePageLabel } from '@/contexts/PageLabelContext'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { BlogPost, AdminUser, Author } from '@/types/admin'
@@ -92,6 +93,18 @@ export default function AdminBlogs() {
   const [mediaSearch, setMediaSearch] = useState('')
 
   const { openDelete, modal: deleteModal } = useDeleteModal()
+  const { setCurrentLabel } = usePageLabel()
+
+  /* ── Breadcrumb label sync ──────────────────────────────────── */
+  useEffect(() => {
+    if (currentView === 'edit') {
+      setCurrentLabel(editingPost ? formData.title || 'Untitled Article' : 'New Article')
+    } else if (currentView === 'view') {
+      setCurrentLabel(viewPost?.title || '')
+    } else {
+      setCurrentLabel('')
+    }
+  }, [currentView, editingPost, formData.title, viewPost, setCurrentLabel])
 
   /* ── Session-storage sync ───────────────────────────────────── */
   useEffect(() => {

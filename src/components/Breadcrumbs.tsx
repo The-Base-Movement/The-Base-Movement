@@ -5,6 +5,7 @@ import { usePageLabel } from '@/contexts/PageLabelContext'
 // Human-readable label overrides for path segments
 const LABEL_OVERRIDES: Record<string, string> = {
   blog: 'Updates',
+  blogs: 'Blog posts',
   dashboard: 'Dashboard',
   admin: 'Admin',
   authors: 'Authors',
@@ -121,18 +122,32 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
         if (!last && ['edit', 'new'].includes(value)) return null
 
         const to = `/${pathnames.slice(0, index + 1).join('/')}`
-        const label = last && currentLabel ? currentLabel : getLabel(value, location.pathname)
+        const segmentLabel = getLabel(value, location.pathname)
+        const isIdSegment = /^[0-9a-f-]{8,}$/i.test(value) || !isNaN(Number(value))
 
         return (
           <React.Fragment key={to}>
             <span className={`material-symbols-outlined ${chevronClass}`} style={{ fontSize: 12 }}>
               chevron_right
             </span>
-            {last ? (
-              <span className={activeClass}>{label}</span>
+            {last && currentLabel && !isIdSegment ? (
+              <>
+                <Link to={to} className={inactiveLinkClass}>
+                  {segmentLabel}
+                </Link>
+                <span
+                  className={`material-symbols-outlined ${chevronClass}`}
+                  style={{ fontSize: 12 }}
+                >
+                  chevron_right
+                </span>
+                <span className={activeClass}>{currentLabel}</span>
+              </>
+            ) : last ? (
+              <span className={activeClass}>{currentLabel || segmentLabel}</span>
             ) : (
               <Link to={to} className={inactiveLinkClass}>
-                {label}
+                {segmentLabel}
               </Link>
             )}
           </React.Fragment>
