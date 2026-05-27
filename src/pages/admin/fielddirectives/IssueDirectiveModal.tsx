@@ -11,7 +11,7 @@ const inputSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-normal, 400)',
   fontSize: 12,
-  borderRadius: 4,
+  borderRadius: 'var(--radius-sm)',
   color: 'hsl(var(--on-surface))',
   boxSizing: 'border-box',
 }
@@ -63,7 +63,7 @@ export function IssueDirectiveModal({
       <div
         style={{
           background: '#fff',
-          borderRadius: 6,
+          borderRadius: 'var(--radius-md)',
           width: '100%',
           maxWidth: 600,
           maxHeight: '90vh',
@@ -103,8 +103,8 @@ export function IssueDirectiveModal({
           </p>
         </div>
         <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+            <div style={{ flex: '1 1 200px' }}>
               <label style={labelSt} htmlFor="directive-title">
                 Directive title
               </label>
@@ -117,7 +117,7 @@ export function IssueDirectiveModal({
                 onChange={(e) => setNewDirective({ ...newDirective, title: e.target.value })}
               />
             </div>
-            <div>
+            <div style={{ flex: '1 1 200px' }}>
               <label style={labelSt} htmlFor="target-level">
                 Target level
               </label>
@@ -158,8 +158,8 @@ export function IssueDirectiveModal({
               onChange={(e) => setNewDirective({ ...newDirective, description: e.target.value })}
             />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-            <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+            <div style={{ flex: '1 1 140px' }}>
               <label style={labelSt} htmlFor="priority-level">
                 Priority
               </label>
@@ -180,7 +180,7 @@ export function IssueDirectiveModal({
                 <option>Urgent</option>
               </select>
             </div>
-            <div>
+            <div style={{ flex: '1 1 140px' }}>
               <label style={labelSt} htmlFor="directive-points">
                 Points
               </label>
@@ -195,7 +195,7 @@ export function IssueDirectiveModal({
                 }
               />
             </div>
-            <div>
+            <div style={{ flex: '1 1 140px' }}>
               <label style={labelSt} htmlFor="directive-deadline">
                 Deadline
               </label>

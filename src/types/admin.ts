@@ -275,6 +275,7 @@ export interface FieldReport {
   status: 'Pending' | 'Verified' | 'Rejected'
   points_applied: boolean
   created_at: string
+  users?: { full_name: string; avatar_url: string | null } | null
 }
 
 export interface ChapterApplication {

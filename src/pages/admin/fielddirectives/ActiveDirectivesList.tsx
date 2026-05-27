@@ -6,7 +6,7 @@ const pillBase: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
-  borderRadius: 4,
+  borderRadius: 'var(--radius-sm)',
   fontFamily: "'Public Sans', sans-serif",
 }
 

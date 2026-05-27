@@ -6,7 +6,7 @@ const pillBase: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
-  borderRadius: 4,
+  borderRadius: 'var(--radius-sm)',
   fontFamily: "'Public Sans', sans-serif",
 }
 
@@ -154,7 +154,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                         left: 12,
                         padding: '4px 10px',
                         background: 'rgba(0,0,0,0.6)',
-                        borderRadius: 4,
+                        borderRadius: 'var(--radius-sm)',
                         display: 'flex',
                         alignItems: 'center',
                         gap: 6,
@@ -196,17 +196,29 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                       style={{
                         width: 32,
                         height: 32,
-                        borderRadius: 4,
+                        borderRadius: 'var(--radius-sm)',
                         border: '1px solid hsl(var(--border))',
                         overflow: 'hidden',
                         flexShrink: 0,
+                        background: 'hsl(var(--container-low))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 11,
+                        color: 'hsl(var(--primary))',
                       }}
                     >
-                      <img
-                        src={`https://i.pravatar.cc/100?u=${report.member_id}`}
-                        alt=""
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
+                      {report.users?.avatar_url ? (
+                        <img
+                          src={report.users.avatar_url}
+                          alt={report.users.full_name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                          person
+                        </span>
+                      )}
                     </div>
                     <div>
                       <div
@@ -217,7 +229,8 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
-                        Member #{report.member_id.slice(0, 8).toUpperCase()}
+                        {report.users?.full_name ??
+                          `Member #${report.member_id.slice(0, 8).toUpperCase()}`}
                       </div>
                       <div
                         style={{

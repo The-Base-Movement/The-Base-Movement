@@ -1,11 +1,11 @@
 import { supabase } from '@/lib/supabase'
-import type { 
-  FieldDirective, 
-  FieldReport, 
-  FieldAction, 
-  RallyAttendance, 
-  MemberFeedback, 
-  SentimentIntelligence, 
+import type {
+  FieldDirective,
+  FieldReport,
+  FieldAction,
+  RallyAttendance,
+  MemberFeedback,
+  SentimentIntelligence,
   ImpactProjection,
   RapidResponseDirective,
   CrisisIncident,
@@ -14,7 +14,7 @@ import type {
   CanvassingCampaign,
   CanvasserLog,
   GOTVTransportRequest,
-  FieldEvent
+  FieldEvent,
 } from '@/types/admin'
 
 class IntelligenceService {
@@ -35,7 +35,7 @@ class IntelligenceService {
     try {
       let query = supabase.from('field_events').select('*')
       if (chapterName) query = query.eq('chapter', chapterName)
-      
+
       const { data, error } = await query.order('date', { ascending: false })
       if (error) throw error
       return data || []
@@ -47,11 +47,8 @@ class IntelligenceService {
 
   async updateFieldEvent(eventId: string, updates: Partial<FieldEvent>): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('field_events')
-        .update(updates)
-        .eq('id', eventId)
-      
+      const { error } = await supabase.from('field_events').update(updates).eq('id', eventId)
+
       if (error) throw error
       return true
     } catch (error) {
@@ -76,9 +73,7 @@ class IntelligenceService {
 
   async createFieldDirective(directive: Omit<FieldDirective, 'id' | 'status'>): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('field_directives')
-        .insert([directive])
+      const { error } = await supabase.from('field_directives').insert([directive])
       if (error) throw error
       return true
     } catch (error) {
@@ -89,9 +84,11 @@ class IntelligenceService {
 
   async getFieldReports(directiveId?: string): Promise<FieldReport[]> {
     try {
-      let query = supabase.from('field_reports').select('*')
+      let query = supabase
+        .from('field_reports')
+        .select('*, users!field_reports_member_id_fkey(full_name, avatar_url)')
       if (directiveId) query = query.eq('directive_id', directiveId)
-      
+
       const { data, error } = await query.order('created_at', { ascending: false })
       if (error) throw error
       return data || []
@@ -103,10 +100,7 @@ class IntelligenceService {
 
   async verifyFieldReport(reportId: string, status: FieldReport['status']): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('field_reports')
-        .update({ status })
-        .eq('id', reportId)
+      const { error } = await supabase.from('field_reports').update({ status }).eq('id', reportId)
       if (error) throw error
       return true
     } catch (error) {
@@ -121,11 +115,11 @@ class IntelligenceService {
         .from('field_actions')
         .select('*, field_action_attendance(count)')
         .order('start_time', { ascending: false })
-      
+
       if (error) throw error
-      return (data || []).map(action => ({
+      return (data || []).map((action) => ({
         ...action,
-        actual_attendance: action.field_action_attendance?.[0]?.count || 0
+        actual_attendance: action.field_action_attendance?.[0]?.count || 0,
       })) as FieldAction[]
     } catch (error) {
       console.error('[DATABASE] Failed to fetch field actions:', error)
@@ -139,11 +133,11 @@ class IntelligenceService {
         .from('field_action_attendance')
         .select('*, users(full_name)')
         .eq('action_id', actionId)
-      
+
       if (error) throw error
-      return (data || []).map(item => ({
+      return (data || []).map((item) => ({
         ...item,
-        user_name: item.users?.full_name
+        user_name: item.users?.full_name,
       })) as RallyAttendance[]
     } catch (error) {
       console.error('[DATABASE] Failed to fetch rally attendance:', error)
@@ -153,9 +147,7 @@ class IntelligenceService {
 
   async createFieldAction(action: Partial<FieldAction>): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('field_actions')
-        .insert([action])
+      const { error } = await supabase.from('field_actions').insert([action])
       if (error) throw error
       return true
     } catch (error) {
@@ -224,9 +216,7 @@ class IntelligenceService {
 
   async submitMemberFeedback(feedback: Partial<MemberFeedback>): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('member_feedback')
-        .insert([feedback])
+      const { error } = await supabase.from('member_feedback').insert([feedback])
       if (error) throw error
       return true
     } catch (error) {
@@ -251,11 +241,11 @@ class IntelligenceService {
     }
   }
 
-  async createRapidResponseDirective(directive: Omit<RapidResponseDirective, 'id' | 'created_at'>): Promise<boolean> {
+  async createRapidResponseDirective(
+    directive: Omit<RapidResponseDirective, 'id' | 'created_at'>
+  ): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('rapid_response_directives')
-        .insert([directive])
+      const { error } = await supabase.from('rapid_response_directives').insert([directive])
       if (error) throw error
       return true
     } catch (error) {
@@ -278,7 +268,10 @@ class IntelligenceService {
     }
   }
 
-  async updateCrisisIncident(incidentId: string, status: CrisisIncident['status']): Promise<boolean> {
+  async updateCrisisIncident(
+    incidentId: string,
+    status: CrisisIncident['status']
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('crisis_incidents')
@@ -294,7 +287,10 @@ class IntelligenceService {
 
   async getMediaCounterNarratives(crisisId?: string): Promise<MediaCounterNarrative[]> {
     try {
-      let query = supabase.from('media_counter_narratives').select('*').order('created_at', { ascending: false })
+      let query = supabase
+        .from('media_counter_narratives')
+        .select('*')
+        .order('created_at', { ascending: false })
       if (crisisId) {
         query = query.eq('crisis_id', crisisId)
       }
@@ -307,7 +303,10 @@ class IntelligenceService {
     }
   }
 
-  async updateMediaCounterNarrative(narrativeId: string, status: MediaCounterNarrative['dispatch_status']): Promise<boolean> {
+  async updateMediaCounterNarrative(
+    narrativeId: string,
+    status: MediaCounterNarrative['dispatch_status']
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('media_counter_narratives')
@@ -353,7 +352,10 @@ class IntelligenceService {
 
   async getCanvasserLogs(campaignId?: string): Promise<CanvasserLog[]> {
     try {
-      let query = supabase.from('canvasser_logs').select('*').order('created_at', { ascending: false })
+      let query = supabase
+        .from('canvasser_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
       if (campaignId) {
         query = query.eq('campaign_id', campaignId)
       }
@@ -380,7 +382,7 @@ class IntelligenceService {
     }
   }
 
-  async getGhanaRegions(): Promise<{ id: string, name: string }[]> {
+  async getGhanaRegions(): Promise<{ id: string; name: string }[]> {
     try {
       const { data, error } = await supabase
         .from('ghana_regions')
@@ -394,11 +396,16 @@ class IntelligenceService {
     }
   }
 
-  async getGhanaConstituencies(regionId?: string): Promise<{ id: string, region_id: string, name: string }[]> {
+  async getGhanaConstituencies(
+    regionId?: string
+  ): Promise<{ id: string; region_id: string; name: string }[]> {
     try {
-      let query = supabase.from('ghana_constituencies').select('*').order('name', { ascending: true })
+      let query = supabase
+        .from('ghana_constituencies')
+        .select('*')
+        .order('name', { ascending: true })
       if (regionId) query = query.eq('region_id', regionId)
-      
+
       const { data, error } = await query
       if (error) throw error
       return data || []
@@ -408,7 +415,10 @@ class IntelligenceService {
     }
   }
 
-  async updateTransportRequest(requestId: string, status: GOTVTransportRequest['status']): Promise<boolean> {
+  async updateTransportRequest(
+    requestId: string,
+    status: GOTVTransportRequest['status']
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('gotv_transport_requests')
@@ -424,9 +434,7 @@ class IntelligenceService {
 
   async createCanvassingCampaign(campaign: Partial<CanvassingCampaign>): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('canvassing_campaigns')
-        .insert([campaign])
+      const { error } = await supabase.from('canvassing_campaigns').insert([campaign])
       if (error) throw error
       return true
     } catch (error) {
