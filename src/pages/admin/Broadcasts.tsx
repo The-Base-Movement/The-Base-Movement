@@ -70,7 +70,7 @@ export default function Broadcasts() {
             fetchMetrics={fetchMetrics}
           />
         </div>
-        <div style={{ flex: '1 1 280px', maxWidth: 340 }}>
+        <div style={{ flex: '1 1 280px' }}>
           <BroadcastPresets />
         </div>
       </div>
