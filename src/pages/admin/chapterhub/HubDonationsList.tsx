@@ -4,10 +4,31 @@ interface HubDonationsListProps {
   donations: ChapterDonation[]
 }
 
+function donationStatusClass(status: string) {
+  if (status === 'Verified') return 'pill-ok'
+  if (status === 'Pending') return 'pill-warn'
+  return 'pill-mute'
+}
+
 export function HubDonationsList({ donations }: HubDonationsListProps) {
+  const emptyState = (
+    <div
+      style={{
+        padding: '48px 18px',
+        textAlign: 'center',
+        fontSize: 13,
+        color: 'hsl(var(--on-surface-muted))',
+        fontFamily: "'Public Sans', sans-serif",
+      }}
+    >
+      No donations from chapter members yet.
+    </div>
+  )
+
   return (
     <div className="panel" style={{ overflow: 'hidden' }}>
-      <div style={{ overflowX: 'auto' }}>
+      {/* Desktop table */}
+      <div className="desktop-only" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead
             style={{
@@ -39,18 +60,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
           <tbody>
             {donations.length === 0 ? (
               <tr>
-                <td
-                  colSpan={6}
-                  style={{
-                    padding: '48px 18px',
-                    textAlign: 'center',
-                    fontSize: 13,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  No donations from chapter members yet.
-                </td>
+                <td colSpan={6}>{emptyState}</td>
               </tr>
             ) : (
               donations.map((d) => (
@@ -125,23 +135,105 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                     {new Date(d.created_at).toLocaleDateString('en-GB')}
                   </td>
                   <td style={{ padding: '12px 18px' }}>
-                    <span
-                      className={`pill ${
-                        d.status === 'Verified'
-                          ? 'pill-ok'
-                          : d.status === 'Pending'
-                            ? 'pill-warn'
-                            : 'pill-mute'
-                      }`}
-                    >
-                      {d.status}
-                    </span>
+                    <span className={`pill ${donationStatusClass(d.status)}`}>{d.status}</span>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list */}
+      <div className="mobile-only">
+        {donations.length === 0 ? (
+          emptyState
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {donations.map((d) => (
+              <div
+                key={d.id}
+                style={{
+                  padding: '12px 16px',
+                  borderBottom: '1px solid hsl(var(--border))',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6,
+                }}
+              >
+                {/* Top row: name + amount */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <div>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      {d.full_name}
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {d.phone}
+                    </p>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--primary))',
+                      fontFamily: "'Public Sans', sans-serif",
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {`GH₵ ${Number(d.amount).toLocaleString()}`}
+                  </span>
+                </div>
+
+                {/* Bottom row: date + method + status */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    {new Date(d.created_at).toLocaleDateString('en-GB')}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    · {d.payment_method}
+                  </span>
+                  <span className={`pill ${donationStatusClass(d.status)}`}>{d.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
