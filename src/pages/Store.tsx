@@ -22,7 +22,7 @@ export default function Store() {
   const [shareData, setShareData] = useState({ title: '', url: '' })
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false)
 
-  const { cart, removeFromCart, updateCartQuantity } = useStore()
+  const { cart, wishlist, removeFromCart, updateCartQuantity } = useStore()
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
   const subtotal = cart.reduce((sum, item) => {
@@ -188,13 +188,54 @@ export default function Store() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
           <section>
-            <div className="mb-6">
-              <h1 className="text-stone-900 text-[26px] md:text-[32px] font-meta font-medium tracking-tighter mb-1">
-                Movement Store
-              </h1>
-              <p className="text-on-surface-muted text-sm m-0 font-medium">
-                Wear the colors. Fund the cause. 100% of proceeds support youth jobs programs.
-              </p>
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-stone-900 text-[26px] md:text-[32px] font-meta font-medium tracking-tighter mb-1">
+                  Movement Store
+                </h1>
+                <p className="text-on-surface-muted text-sm m-0 font-medium">
+                  Wear the colors. Fund the cause. 100% of proceeds support youth jobs programs.
+                </p>
+              </div>
+              <Link
+                to="/store/wishlist"
+                className="btn btn-outline btn-sm shrink-0 relative"
+                style={{ gap: 6 }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 16,
+                    fontVariationSettings: wishlist.length > 0 ? "'FILL' 1" : "'FILL' 0",
+                    color: wishlist.length > 0 ? 'var(--brand-red, #ce1126)' : undefined,
+                  }}
+                >
+                  favorite
+                </span>
+                Wishlist
+                {wishlist.length > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: -6,
+                      right: -6,
+                      width: 16,
+                      height: 16,
+                      borderRadius: '50%',
+                      background: 'var(--brand-red, #ce1126)',
+                      color: '#fff',
+                      fontSize: 9,
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    {wishlist.length}
+                  </span>
+                )}
+              </Link>
             </div>
 
             <CategoryFilter
