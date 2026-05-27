@@ -54,12 +54,22 @@ export function DeployMissionForm({
   return (
     <form onSubmit={handleSubmit}>
       <div className="panel">
-        <div className="ph">
-          <div>
-            <h3>Tactical deployment parameters</h3>
-            <div className="meta">Define the operational scope and objectives</div>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 8,
+              marginBottom: 3,
+            }}
+          >
+            <h3 style={{ margin: 0 }}>Tactical deployment parameters</h3>
+            <span className="pill pill-warn" style={{ flexShrink: 0 }}>
+              New mission
+            </span>
           </div>
-          <span className="pill pill-warn">New mission</span>
+          <div className="meta">Define the operational scope and objectives</div>
         </div>
 
         <div style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 18 }}>
