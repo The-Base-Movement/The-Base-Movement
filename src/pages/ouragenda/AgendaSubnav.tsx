@@ -77,7 +77,6 @@ export function AgendaSubnav({ pillars, activeSection, progress, onSelect }: Age
                   borderBottom: `3px solid ${isActive ? pillar.color : 'transparent'}`,
                   background: 'transparent',
                   border: 'none',
-                  borderBottom: `3px solid ${isActive ? pillar.color : 'transparent'}`,
                   whiteSpace: 'nowrap',
                   cursor: 'pointer',
                   transition: 'color 0.15s',
