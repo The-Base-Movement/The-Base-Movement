@@ -234,7 +234,7 @@ export function DeployMissionForm({
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               {loading ? 'hourglass_empty' : 'sports_kabaddi'}
             </span>
-            {loading ? 'Deploying...' : 'Initiate deployment →'}
+            {loading ? 'Deploying...' : 'Deploy'}
           </button>
         </div>
       </div>

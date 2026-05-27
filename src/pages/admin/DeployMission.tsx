@@ -92,7 +92,7 @@ export default function DeployMission() {
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 arrow_back
               </span>
-              Abort
+              Cancel
             </button>
           </Link>
         }
