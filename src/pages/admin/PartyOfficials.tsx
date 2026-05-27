@@ -9,6 +9,7 @@ import type { PartyOfficial, PartyTier } from './partyofficials/utils'
 import { OfficialsTable } from './partyofficials/OfficialsTable'
 import { OfficialModal } from './partyofficials/OfficialModal'
 import { TiersModal } from './partyofficials/TiersModal'
+import { ViewModal } from './partyofficials/ViewModal'
 
 export default function PartyOfficials() {
   const [officials, setOfficials] = useState<PartyOfficial[]>([])
@@ -16,6 +17,7 @@ export default function PartyOfficials() {
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [viewingOfficial, setViewingOfficial] = useState<PartyOfficial | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isTiersModalOpen, setIsTiersModalOpen] = useState(false)
   const [tierFormData, setTierFormData] = useState<Partial<PartyTier>>({
@@ -142,6 +144,8 @@ export default function PartyOfficials() {
           region: formData.region || null,
           bio: formData.bio || null,
           avatar_url: formData.avatar_url || null,
+          facebook_url: formData.facebook_url || null,
+          instagram_url: formData.instagram_url || null,
           twitter_url: formData.twitter_url || null,
           linkedin_url: formData.linkedin_url || null,
           email: formData.email || null,
@@ -214,6 +218,7 @@ export default function PartyOfficials() {
         tiers={tiers}
         handleOpenModal={handleOpenModal}
         handleDelete={handleDelete}
+        handleView={(official) => setViewingOfficial(official)}
       />
 
       {isModalOpen && (
@@ -226,6 +231,18 @@ export default function PartyOfficials() {
           handleUploadImage={handleUploadImage}
           isUploading={isUploading}
           handleSubmit={handleSubmit}
+        />
+      )}
+
+      {viewingOfficial && (
+        <ViewModal
+          official={viewingOfficial}
+          tiers={tiers}
+          onClose={() => setViewingOfficial(null)}
+          onEdit={(official) => {
+            setViewingOfficial(null)
+            handleOpenModal(official)
+          }}
         />
       )}
 

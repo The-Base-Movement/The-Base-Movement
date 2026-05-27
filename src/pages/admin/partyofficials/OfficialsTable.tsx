@@ -6,6 +6,7 @@ interface OfficialsTableProps {
   tiers: PartyTier[]
   handleOpenModal: (official: PartyOfficial) => void
   handleDelete: (id: string) => void
+  handleView: (official: PartyOfficial) => void
 }
 
 const thSt: React.CSSProperties = {
@@ -74,6 +75,7 @@ export function OfficialsTable({
   tiers,
   handleOpenModal,
   handleDelete,
+  handleView,
 }: OfficialsTableProps) {
   const empty = !loading && officials.length === 0
 
@@ -127,6 +129,16 @@ export function OfficialsTable({
                     <TierBadge official={official} tiers={tiers} />
                   </td>
                   <td style={{ ...tdSt, textAlign: 'right' }}>
+                    <button
+                      className="btn btn-sm btn-outline"
+                      onClick={() => handleView(official)}
+                      style={{ marginRight: 8 }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        visibility
+                      </span>
+                      View
+                    </button>
                     <button
                       className="btn btn-sm btn-outline"
                       onClick={() => handleOpenModal(official)}
@@ -213,6 +225,16 @@ export function OfficialsTable({
                     paddingTop: 10,
                   }}
                 >
+                  <button
+                    className="btn btn-sm btn-outline"
+                    style={{ flex: 1, justifyContent: 'center' }}
+                    onClick={() => handleView(official)}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                      visibility
+                    </span>
+                    View
+                  </button>
                   <button
                     className="btn btn-sm btn-outline"
                     style={{ flex: 1, justifyContent: 'center' }}

@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { toast } from 'sonner'
 import { auditService } from '@/services/auditService'
-import type { AuditLogEntry, AdminRole, AdminPermission } from '@/types/admin'
+import { roleService, type AdminRoleRecord } from '@/services/roleService'
+import type { AuditLogEntry, AdminRole } from '@/types/admin'
 import type { Member } from '@/types/admin'
 
 // Subcomponents
@@ -17,53 +18,7 @@ import { AdminsKPIs } from './administrators/AdminsKPIs'
 import { AdminsSearchBar } from './administrators/AdminsSearchBar'
 import { AdminsSecurityNote } from './administrators/AdminsSecurityNote'
 
-const REGIONAL_ROLES: AdminRole[] = ['REGIONAL_DIRECTOR', 'CONSTITUENCY_LEAD']
-
-function defaultPermissions(role: AdminRole): AdminPermission[] {
-  const all: AdminPermission[] = [
-    { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
-    { action: 'DELETE_MEMBER', resource: 'MEMBERS' },
-    { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
-    { action: 'MANAGE_POLLS', resource: 'POLLS' },
-    { action: 'MANAGE_INVENTORY', resource: 'STORE' },
-    { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
-    { action: 'APPOINT_LEAD', resource: 'CHAPTERS' },
-    { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
-    { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
-  ]
-  switch (role) {
-    case 'FOUNDER':
-    case 'SUPER_ADMIN':
-    case 'ORGANIZER':
-      return all
-    case 'REGIONAL_DIRECTOR':
-      return all.filter((p) =>
-        [
-          'VERIFY_MEMBER',
-          'MANAGE_CHAPTER',
-          'MANAGE_POLLS',
-          'VIEW_AUDIT_LOGS',
-          'APPOINT_LEAD',
-        ].includes(p.action)
-      )
-    case 'CONSTITUENCY_LEAD':
-      return all.filter((p) => ['VERIFY_MEMBER', 'MANAGE_CHAPTER'].includes(p.action))
-    case 'VERIFIER':
-      return [{ action: 'VERIFY_MEMBER', resource: 'MEMBERS' }]
-    case 'CHIEF_EDITOR':
-    case 'SENIOR_EDITOR':
-    case 'EDITOR':
-    case 'JUNIOR_EDITOR':
-      return [{ action: 'MANAGE_BLOGS', resource: 'BLOGS' }]
-    case 'REGIONAL_CORRESPONDENT':
-      return [
-        { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
-        { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
-      ]
-    default:
-      return []
-  }
-}
+const REGIONAL_ROLES: string[] = ['REGIONAL_DIRECTOR', 'CONSTITUENCY_LEAD']
 
 const formatRole = (role: string) =>
   role
@@ -74,6 +29,7 @@ const formatRole = (role: string) =>
 export default function Administrators() {
   const [admins, setAdmins] = useState<AdminUser[]>([])
   const [regions, setRegions] = useState<string[]>([])
+  const [roleList, setRoleList] = useState<AdminRoleRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
@@ -90,14 +46,14 @@ export default function Administrators() {
   const [memberResults, setMemberResults] = useState<Member[]>([])
   const [isMemberSearching, setIsMemberSearching] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
-  const [provisionRole, setProvisionRole] = useState<AdminRole>('VERIFIER')
+  const [provisionRole, setProvisionRole] = useState<string>('VERIFIER')
   const [provisionRegion, setProvisionRegion] = useState('')
   const [isProvisioning, setIsProvisioning] = useState(false)
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Edit modal
   const [editTarget, setEditTarget] = useState<AdminUser | null>(null)
-  const [editRole, setEditRole] = useState<AdminRole>('VERIFIER')
+  const [editRole, setEditRole] = useState<string>('VERIFIER')
   const [editRegion, setEditRegion] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
@@ -108,12 +64,14 @@ export default function Administrators() {
   const fetchAdmins = async () => {
     setIsLoading(true)
     try {
-      const [data, regionData] = await Promise.all([
+      const [data, regionData, roles] = await Promise.all([
         adminService.getAdministrators(),
         adminService.getRegions(),
+        roleService.getRoles(),
       ])
       setAdmins(data)
       setRegions(regionData.map((r: { name: string }) => r.name))
+      setRoleList(roles)
     } catch (err) {
       console.error('Failed to fetch admins:', err)
       toast.error('Failed to load administrative roster.')
@@ -121,6 +79,9 @@ export default function Administrators() {
       setIsLoading(false)
     }
   }
+
+  const getPermsForRole = (roleName: string) =>
+    roleList.find((r) => r.name === roleName)?.permissions ?? []
 
   const fetchLogs = async (adminId: string, adminName: string) => {
     setIsLogsLoading(true)
@@ -170,8 +131,8 @@ export default function Administrators() {
     try {
       const ok = await adminService.provisionAdministrator(
         selectedMember.id,
-        provisionRole,
-        defaultPermissions(provisionRole)
+        provisionRole as AdminRole,
+        getPermsForRole(provisionRole)
       )
       if (!ok) throw new Error('Provision failed')
       if (provisionRegion && REGIONAL_ROLES.includes(provisionRole)) {
@@ -204,8 +165,8 @@ export default function Administrators() {
     setIsEditing(true)
     try {
       await adminService.updateAdminData(editTarget.id, {
-        role: editRole,
-        permissions: defaultPermissions(editRole),
+        role: editRole as AdminRole,
+        permissions: getPermsForRole(editRole),
         assigned_region: REGIONAL_ROLES.includes(editRole) ? editRegion || null : null,
       })
       toast.success('Admin credentials updated')
@@ -296,6 +257,7 @@ export default function Administrators() {
           provisionRegion={provisionRegion}
           setProvisionRegion={setProvisionRegion}
           regions={regions}
+          roles={roleList.map((r) => ({ value: r.name, label: formatRole(r.name) }))}
           isProvisioning={isProvisioning}
           handleProvision={handleProvision}
         />
@@ -311,6 +273,7 @@ export default function Administrators() {
           editRegion={editRegion}
           setEditRegion={setEditRegion}
           regions={regions}
+          roles={roleList.map((r) => ({ value: r.name, label: formatRole(r.name) }))}
           isEditing={isEditing}
           handleEditSubmit={handleEditSubmit}
         />

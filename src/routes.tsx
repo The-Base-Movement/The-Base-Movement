@@ -81,6 +81,7 @@ const AdminPollingStations = lazy(() => import('./pages/admin/PollingStations'))
 const AdminTrash = lazy(() => import('./pages/admin/Trash'))
 const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
 const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPriorities'))
+const AdminRolesManager = lazy(() => import('./pages/admin/RolesManager'))
 
 export const routes: RouteObject[] = [
   {
@@ -195,6 +196,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/orders', element: <AdminOrders /> },
       { path: '/admin/roadmap', element: <AdminRoadmap /> },
       { path: '/admin/trash', element: <AdminTrash /> },
+      { path: '/admin/roles', element: <AdminRolesManager /> },
     ],
   },
   {

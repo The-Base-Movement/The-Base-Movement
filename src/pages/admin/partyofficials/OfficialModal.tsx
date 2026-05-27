@@ -120,7 +120,9 @@ export function OfficialModal({
                   <input
                     id="official-name"
                     name="name"
+                    type="text"
                     required
+                    autoComplete="name"
                     style={inputSt}
                     value={formData.name || ''}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -141,7 +143,9 @@ export function OfficialModal({
                   <input
                     id="official-role"
                     name="role"
+                    type="text"
                     required
+                    autoComplete="organization-title"
                     style={inputSt}
                     value={formData.role || ''}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
@@ -192,6 +196,8 @@ export function OfficialModal({
                   <input
                     id="official-region"
                     name="region"
+                    type="text"
+                    autoComplete="off"
                     style={inputSt}
                     value={formData.region || ''}
                     onChange={(e) => setFormData({ ...formData, region: e.target.value })}
@@ -216,6 +222,7 @@ export function OfficialModal({
                   <textarea
                     id="official-bio"
                     name="bio"
+                    autoComplete="off"
                     style={{
                       ...inputSt,
                       flex: 1,
@@ -295,6 +302,8 @@ export function OfficialModal({
                   <input
                     id="official-facebook"
                     name="facebook_url"
+                    type="text"
+                    autoComplete="url"
                     style={inputSt}
                     value={formData.facebook_url || ''}
                     onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
@@ -315,6 +324,8 @@ export function OfficialModal({
                   <input
                     id="official-instagram"
                     name="instagram_url"
+                    type="text"
+                    autoComplete="url"
                     style={inputSt}
                     value={formData.instagram_url || ''}
                     onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
@@ -335,6 +346,8 @@ export function OfficialModal({
                   <input
                     id="official-twitter"
                     name="twitter_url"
+                    type="text"
+                    autoComplete="url"
                     style={inputSt}
                     value={formData.twitter_url || ''}
                     onChange={(e) => setFormData({ ...formData, twitter_url: e.target.value })}
@@ -355,6 +368,8 @@ export function OfficialModal({
                   <input
                     id="official-linkedin"
                     name="linkedin_url"
+                    type="text"
+                    autoComplete="url"
                     style={inputSt}
                     value={formData.linkedin_url || ''}
                     onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
@@ -376,6 +391,7 @@ export function OfficialModal({
                     id="official-email"
                     name="email"
                     type="email"
+                    autoComplete="email"
                     style={inputSt}
                     value={formData.email || ''}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}

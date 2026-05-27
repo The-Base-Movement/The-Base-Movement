@@ -256,7 +256,9 @@ export function TiersModal({
                 <input
                   id="tier-name"
                   name="name"
+                  type="text"
                   required
+                  autoComplete="off"
                   style={inputSt}
                   value={tierFormData.name || ''}
                   onChange={(e) =>
@@ -283,7 +285,9 @@ export function TiersModal({
                 <input
                   id="tier-title"
                   name="title"
+                  type="text"
                   required
+                  autoComplete="off"
                   style={inputSt}
                   value={tierFormData.title || ''}
                   onChange={(e) => setTierFormData({ ...tierFormData, title: e.target.value })}
@@ -305,6 +309,7 @@ export function TiersModal({
               <textarea
                 id="tier-description"
                 name="description"
+                autoComplete="off"
                 style={{ ...inputSt, height: 60, padding: '8px 12px', resize: 'vertical' }}
                 value={tierFormData.description || ''}
                 onChange={(e) => setTierFormData({ ...tierFormData, description: e.target.value })}
@@ -325,8 +330,9 @@ export function TiersModal({
               <input
                 id="tier-order"
                 name="order_index"
-                required
                 type="number"
+                required
+                autoComplete="off"
                 style={inputSt}
                 value={tierFormData.order_index ?? 0}
                 onChange={(e) =>

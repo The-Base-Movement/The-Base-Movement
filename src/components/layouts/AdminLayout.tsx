@@ -347,6 +347,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
         },
         {
+          to: '/admin/roles',
+          icon: 'manage_accounts',
+          label: 'Roles manager',
+          permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        },
+        {
           to: '/admin/party-officials',
           icon: 'badge',
           label: 'Party Officials',
