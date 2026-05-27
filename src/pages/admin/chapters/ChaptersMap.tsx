@@ -28,6 +28,7 @@ export function ChaptersMap({
   onPageChange,
 }: ChaptersMapProps) {
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null)
+  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null)
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
   const mapRef = useRef<MapRef>(null)
 
@@ -37,10 +38,8 @@ export function ChaptersMap({
     zoom: 5.5,
   })
 
-  // Automatically adjust map view based on network filter and selected region
   useEffect(() => {
     if (regionFilter) {
-      // Find coordinates for the selected region
       const ghanaCoords = GHANA_REGION_COORDS[regionFilter]
       const diasporaCoords = getDiasporaCoords({
         city_or_region: regionFilter,
@@ -61,7 +60,6 @@ export function ChaptersMap({
         })
       }
     } else {
-      // Fallback to overview if no region selected
       if (networkFilter === 'Diaspora' || networkFilter === 'All') {
         mapRef.current?.flyTo({ center: [10, 20], zoom: 1.5, duration: 1500 })
       } else {
@@ -70,17 +68,14 @@ export function ChaptersMap({
     }
   }, [networkFilter, regionFilter])
 
-  // Pre-calculate chapter markers with jitter
   const chapterMarkers = useMemo(() => {
     return chapters
       .map((chapter, i) => {
         let baseCoords: { lat: number; lng: number } | null = null
 
-        // Priority 1: Exact coordinates from database
         if (chapter.latitude !== undefined && chapter.longitude !== undefined) {
           baseCoords = { lat: chapter.latitude, lng: chapter.longitude }
         } else {
-          // Priority 2: Fallback dictionaries
           if (chapter.country === 'Ghana') {
             const derivedReg = getChapterRegion(chapter)
             if (derivedReg) {
@@ -99,7 +94,6 @@ export function ChaptersMap({
         )
           return null
 
-        // Add small jitter to latitude/longitude so pins don't perfectly overlap
         const jitterLng = (i % 6) * 0.08 - 0.2
         const jitterLat = (Math.floor(i / 4) % 6) * 0.08 - 0.2
 
@@ -187,20 +181,47 @@ export function ChaptersMap({
     ],
   }
 
+  const title =
+    networkFilter === 'Diaspora'
+      ? 'Diaspora chapter coverage'
+      : networkFilter === 'Ghana'
+        ? 'Regional chapter coverage'
+        : 'Global chapter coverage'
+
   return (
     <div className="panel" style={{ marginBottom: 14 }}>
-      <div className="ph">
+      {/* Panel header — title, meta, and legend each on their own row */}
+      <div className="ph" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 10 }}>
         <div>
-          <h3>
-            {networkFilter === 'Diaspora'
-              ? 'Diaspora chapter coverage'
-              : networkFilter === 'Ghana'
-                ? 'Regional chapter coverage'
-                : 'Global chapter coverage'}
-          </h3>
+          <h3>{title}</h3>
           <div className="meta">Where chapters exist and where gaps remain</div>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          {[
+            { color: 'hsl(var(--accent))', label: 'Selected hub' },
+            { color: '#2a2a2a', label: 'Base region' },
+          ].map(({ color, label }) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div
+                style={{
+                  width: 9,
+                  height: 9,
+                  background: color,
+                  borderRadius: 'var(--radius-xs)',
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 11,
+                  fontFamily: "'Public Sans', sans-serif",
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {label}
+              </span>
+            </div>
+          ))}
           {regionFilter && (
             <button
               onClick={() => onRegionFilterChange('')}
@@ -210,56 +231,37 @@ export function ChaptersMap({
               Clear region filter
             </button>
           )}
-          {[
-            { color: 'hsl(var(--accent))', label: 'Selected hub' },
-            { color: '#2a2a2a', label: 'Base region' },
-          ].map(({ color, label }) => (
-            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <div
-                style={{ width: 9, height: 9, background: color, borderRadius: 2, flexShrink: 0 }}
-              />
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 'var(--font-weight-normal, 400)',
-                  fontFamily: "'Public Sans', sans-serif",
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                {label}
-              </span>
-            </div>
-          ))}
         </div>
       </div>
 
-      {/* Map + grid side-by-side */}
+      {/* Map + coverage grid — stacks on mobile via .chapters-density-split CSS */}
       <div
-        className="panel"
-        style={{
-          display: 'flex',
-          gap: 20,
-          padding: 0,
-          overflow: 'hidden',
-          alignItems: 'stretch',
-          minHeight: 650,
-        }}
+        className="chapters-density-split"
+        style={{ display: 'flex', overflow: 'hidden', alignItems: 'stretch' }}
       >
-        {/* Map Column */}
+        {/* Map column */}
         <div
           style={{
             flexShrink: 0,
-            width: 420,
-            minHeight: 650,
+            width: 400,
+            minHeight: 380,
             background: 'hsl(var(--container-low))',
-            padding: '24px 20px',
-            borderRight: '1px solid hsl(var(--border))',
+            padding: '20px',
             display: 'flex',
             flexDirection: 'column',
           }}
         >
           {mapboxToken ? (
-            <div className="relative w-full h-full rounded-md overflow-hidden border border-white/5">
+            <div
+              style={{
+                flex: 1,
+                minHeight: 320,
+                position: 'relative',
+                borderRadius: 'var(--radius-md)',
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.05)',
+              }}
+            >
               <Map
                 ref={mapRef}
                 initialViewState={viewState}
@@ -292,8 +294,15 @@ export function ChaptersMap({
                 {chapterMarkers.map((m) => (
                   <Marker key={m!.id} longitude={m!.lng} latitude={m!.lat}>
                     <div
-                      className="group relative flex flex-col items-center"
-                      style={{ cursor: 'pointer' }}
+                      style={{
+                        position: 'relative',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={() => setHoveredMarkerId(m!.id)}
+                      onMouseLeave={() => setHoveredMarkerId(null)}
                     >
                       <div
                         style={{
@@ -306,27 +315,89 @@ export function ChaptersMap({
                           boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
                         }}
                       />
-                      <div className="mt-1 px-2 py-0.5 bg-black/80 backdrop-blur-sm border border-white/10 rounded text-[9px] font-bold text-white uppercase tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">
-                        {m!.city_or_region}
-                      </div>
+                      {hoveredMarkerId === m!.id && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '100%',
+                            marginTop: 4,
+                            padding: '2px 8px',
+                            background: 'rgba(0,0,0,0.85)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 'var(--radius-xs)',
+                            fontSize: 9,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontFamily: "'Public Sans', sans-serif",
+                            color: '#fff',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            whiteSpace: 'nowrap',
+                            zIndex: 10,
+                          }}
+                        >
+                          {m!.city_or_region}
+                        </div>
+                      )}
                     </div>
                   </Marker>
                 ))}
               </Map>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center gap-4 text-white/40 h-full bg-black/20 rounded-md border border-white/5">
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 16,
+                flex: 1,
+                minHeight: 280,
+                color: 'rgba(255,255,255,0.4)',
+                background: 'rgba(0,0,0,0.2)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid rgba(255,255,255,0.05)',
+              }}
+            >
               <span className="material-symbols-outlined" style={{ fontSize: 48 }}>
                 map
               </span>
-              <div className="text-center px-8">
-                <p className="font-meta font-bold text-xs uppercase tracking-widest mb-2 text-white/60">
+              <div style={{ textAlign: 'center', padding: '0 32px' }}>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 10,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    marginBottom: 8,
+                    color: 'rgba(255,255,255,0.6)',
+                  }}
+                >
                   GIS Engine Offline
                 </p>
-                <p className="text-sm max-w-xs mx-auto leading-relaxed">
+                <p
+                  style={{
+                    fontSize: 13,
+                    maxWidth: 280,
+                    margin: '0 auto',
+                    lineHeight: 1.6,
+                    color: 'rgba(255,255,255,0.4)',
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
                   Mapbox API token not detected in environment. Please add{' '}
-                  <code className="mx-1 px-1 bg-white/10 rounded">VITE_MAPBOX_TOKEN</code> to
-                  activate high-fidelity tracking.
+                  <code
+                    style={{
+                      margin: '0 4px',
+                      padding: '0 4px',
+                      background: 'rgba(255,255,255,0.1)',
+                      borderRadius: 'var(--radius-xs)',
+                    }}
+                  >
+                    VITE_MAPBOX_TOKEN
+                  </code>{' '}
+                  to activate high-fidelity tracking.
                 </p>
               </div>
             </div>
@@ -342,6 +413,8 @@ export function ChaptersMap({
             gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
             gap: 2,
             alignContent: 'start',
+            maxHeight: 500,
+            overflowY: 'auto',
           }}
         >
           {gridLocations.map((loc) => {
@@ -381,7 +454,7 @@ export function ChaptersMap({
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   padding: '5px 8px',
-                  borderRadius: 4,
+                  borderRadius: 'var(--radius-sm)',
                   background:
                     regionFilter.toLowerCase() === loc.id.toLowerCase() || hoveredRegion === loc.id
                       ? 'hsl(var(--container-low))'
@@ -401,7 +474,7 @@ export function ChaptersMap({
                     style={{
                       width: 7,
                       height: 7,
-                      borderRadius: 2,
+                      borderRadius: 'var(--radius-xs)',
                       background: dotColor,
                       flexShrink: 0,
                     }}
@@ -423,7 +496,6 @@ export function ChaptersMap({
                 <span
                   style={{
                     fontSize: 10,
-                    fontWeight: 'var(--font-weight-normal, 400)',
                     fontFamily: "'Public Sans', sans-serif",
                     color: hasActive
                       ? 'hsl(var(--primary))'
