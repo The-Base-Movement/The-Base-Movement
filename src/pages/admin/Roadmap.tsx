@@ -118,7 +118,7 @@ export default function RoadmapManagement() {
   )
 
   return (
-    <div className="admin-page-container">
+    <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <AdminPageHeader
         title="National strategic roadmap"
         icon="flag"
