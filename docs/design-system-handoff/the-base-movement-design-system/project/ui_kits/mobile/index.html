@@ -3,14 +3,22 @@
 <head>
 <meta charset="utf-8">
 <title>Mobile — The Base</title>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/base.css">
 <style>
   body { background:var(--container-low); padding:32px; }
-  .row { display:flex; gap:32px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
+  .deck { display:flex; gap:32px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
   .col { display:flex; flex-direction:column; align-items:center; gap:14px; }
-  .col h4 { font-family:'Public Sans'; font-weight:800; font-size:13px; letter-spacing:-.005em; }
-  .col span { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .col h4 { font-family:'Public Sans'; font-weight:800; font-size:13px; letter-spacing:-.005em; text-align:center; }
+  .col .meta { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; text-align:center; }
+
+  /* Icon system */
+  .ico { display:inline-flex; flex-shrink:0; }
+  .ico svg { width:1em; height:1em; display:block; }
+  .ico[data-size="sm"] { font-size:13px; }
+  .ico[data-size="md"] { font-size:18px; }
+  .ico[data-size="lg"] { font-size:22px; }
+  .ico[data-size="xl"] { font-size:32px; }
 
   .device { width:340px; height:720px; background:#000; border-radius:42px; padding:9px;
     box-shadow:0 28px 60px -12px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06); position:relative; }
@@ -18,100 +26,88 @@
   .screen { width:100%; height:100%; background:#fff; border-radius:34px; overflow:hidden; position:relative;
     display:flex; flex-direction:column; }
   .status { height:40px; padding:14px 22px 0; display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:700; font-family:'Public Sans'; }
-  .status .icons { display:flex; gap:5px; }
-  .status .icons .material-symbols-outlined { font-size:13px; }
+  .status .stat-icons { display:flex; gap:5px; align-items:center; }
 
-  /* SCREEN 1: Dashboard mobile */
+  /* Dashboard */
   .m-top { padding:18px 20px 8px; display:flex; align-items:center; justify-content:space-between; }
   .m-top .who { display:flex; align-items:center; gap:10px; }
   .m-top .who img { width:36px; height:36px; border-radius:50%; border:2px solid var(--accent); }
   .m-top .who b { font-family:'Public Sans'; font-weight:800; font-size:13px; display:block; line-height:1.1; }
-  .m-top .who span { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
-  .m-top .ic { width:34px; height:34px; border:1px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative; }
-  .m-top .ic .material-symbols-outlined { font-size:18px; }
-  .m-top .ic .dot { position:absolute; top:6px; right:6px; width:6px; height:6px; background:var(--destructive); border-radius:50%; }
+  .m-top .who .sub { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .m-top .ic { width:34px; height:34px; border:1px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative; color:var(--on-surface); background:#fff; }
+  .m-top .ic .dot { position:absolute; top:6px; right:6px; width:6px; height:6px; background:var(--destructive); border-radius:50%; border:1.5px solid #fff; }
 
-  /* Hero membership tile */
   .m-hero { margin:14px 16px 16px; background:linear-gradient(135deg,#181d19,#0f1310); color:#fff;
     border-radius:14px; padding:16px 18px; position:relative; overflow:hidden;
     border-top:3px solid var(--destructive); border-bottom:3px solid var(--accent); }
   .m-hero::after { content:""; position:absolute; right:-30px; top:-30px; width:120px; height:120px;
-    background:radial-gradient(circle, rgba(218,165,32,.15), transparent 70%); }
-  .m-hero .row { display:flex; justify-content:space-between; align-items:flex-start; }
+    background:radial-gradient(circle, rgba(218,165,32,.15), transparent 70%); pointer-events:none; }
+  .m-hero .hrow { display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1; }
   .m-hero .label { font-size:10px; color:var(--accent); font-weight:800; letter-spacing:.06em; text-transform:uppercase; font-family:'Public Sans'; }
   .m-hero h2 { font-family:'Public Sans'; font-weight:800; font-size:18px; margin-top:4px; letter-spacing:-.01em; }
   .m-hero .reg { font-family:'Public Sans'; font-weight:800; font-size:11px; color:var(--accent); margin-top:6px; font-variant-numeric:tabular-nums; }
-  .m-hero .pillrow { display:flex; gap:6px; margin-top:14px; }
+  .m-hero .pillrow { display:flex; gap:6px; margin-top:14px; position:relative; z-index:1; }
   .m-hero .p { padding:3px 8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.04em; text-transform:uppercase; }
   .m-hero .p.ok { color:var(--accent); border-color:rgba(218,165,32,.3); }
+  .m-hero .verified-ic { color:var(--accent); opacity:.35; }
 
-  /* stat row */
   .m-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 16px 16px; }
-  .ms { background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; position:relative; }
+  .ms { background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px 12px 18px; position:relative; }
   .ms::before { content:""; position:absolute; left:0; top:14px; bottom:14px; width:3px; background:var(--ac); border-radius:0 2px 2px 0; }
   .ms.r { --ac:var(--destructive); }
   .ms.gr { --ac:var(--primary); }
-  .ms .l { font-size:9px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding-left:8px; }
-  .ms .v { font-family:'Public Sans'; font-weight:800; font-size:20px; letter-spacing:-.02em; padding-left:8px; margin-top:2px; line-height:1; }
+  .ms .l { font-size:9px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .ms .v { font-family:'Public Sans'; font-weight:800; font-size:20px; letter-spacing:-.02em; margin-top:2px; line-height:1; }
 
-  /* feed */
   .m-card { background:#fff; border:1px solid var(--border); border-radius:12px; margin:0 16px 14px; padding:14px 16px; }
   .m-card .h { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
   .m-card .h h3 { font-family:'Public Sans'; font-weight:800; font-size:13px; }
   .m-card .h .live { display:inline-flex; align-items:center; gap:5px; font-family:'Public Sans'; font-weight:800; font-size:9px; color:var(--destructive); letter-spacing:.05em; text-transform:uppercase; }
   .m-card .h .live i { width:5px; height:5px; background:var(--destructive); border-radius:50%; animation:pl 1.4s infinite; }
   @keyframes pl { 50% { opacity:.3; } }
-  .fl { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+  .fl { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); align-items:center; }
   .fl:last-child { border-bottom:0; }
   .fl img { width:28px; height:28px; border-radius:50%; flex-shrink:0; }
   .fl .b { flex:1; min-width:0; }
   .fl .b p { margin:0; font-size:11px; line-height:1.4; }
   .fl .b p b { font-family:'Public Sans'; font-weight:800; }
-  .fl .b span { font-size:9.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .fl .b .sub { font-size:9.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
   .fl .amt { font-family:'Public Sans'; font-weight:800; color:var(--primary); font-size:11.5px; }
 
-  /* tabbar */
   .tabbar { margin-top:auto; height:64px; background:#fff; border-top:1px solid var(--border); display:flex; padding-bottom:14px; }
-  .tabbar a { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-family:'Public Sans'; font-weight:800; font-size:9px; color:var(--on-surface-muted); letter-spacing:.04em; text-transform:uppercase; }
-  .tabbar a .material-symbols-outlined { font-size:22px; }
+  .tabbar a { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-family:'Public Sans'; font-weight:800; font-size:9px; color:var(--on-surface-muted); letter-spacing:.04em; text-transform:uppercase; }
   .tabbar a.is-active { color:var(--primary); }
-  .tabbar a.is-active .material-symbols-outlined { font-variation-settings:'FILL' 1; }
   .tabbar a.center { color:#fff; }
-  .tabbar a.center i { width:48px; height:48px; background:var(--destructive); border-radius:14px; display:flex; align-items:center; justify-content:center; margin-top:-22px; box-shadow:0 12px 24px -6px rgba(206,17,38,.5); }
-  .tabbar a.center i .material-symbols-outlined { color:#fff; font-size:22px; }
+  .tabbar a.center .pill { width:48px; height:48px; background:var(--destructive); border-radius:14px; display:flex; align-items:center; justify-content:center; margin-top:-22px; box-shadow:0 12px 24px -6px rgba(206,17,38,.5); color:#fff; }
 
-  /* SCREEN 2: Commerce mobile */
+  /* Commerce */
   .s2-top { padding:18px 20px 14px; display:flex; align-items:center; gap:10px; }
-  .s2-top .ic { width:34px; height:34px; border:1px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; }
-  .s2-top .ic .material-symbols-outlined { font-size:18px; }
+  .s2-top .ic { width:34px; height:34px; border:1px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; background:#fff; color:var(--on-surface); position:relative; }
   .s2-top h2 { font-family:'Public Sans'; font-weight:800; font-size:17px; flex:1; letter-spacing:-.01em; }
-  .s2-top .cart { position:relative; }
   .s2-top .cart .badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--destructive); color:#fff; border-radius:50%; font-family:'Public Sans'; font-weight:800; font-size:9px; display:flex; align-items:center; justify-content:center; }
   .s2-search { margin:0 16px 12px; position:relative; }
   .s2-search input { width:100%; height:38px; padding:0 12px 0 36px; background:var(--container-low); border:1px solid var(--border); border-radius:10px; font-size:12px; font-family:inherit; }
-  .s2-search .material-symbols-outlined { position:absolute; left:10px; top:10px; font-size:18px; color:var(--on-surface-muted); }
+  .s2-search .ico { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--on-surface-muted); }
   .s2-chips { display:flex; gap:6px; padding:0 16px 14px; overflow-x:auto; }
   .s2-chips .ch { padding:5px 12px; background:#fff; border:1px solid var(--border); border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:10px; flex-shrink:0; }
   .s2-chips .ch.is-active { background:#181d19; color:#fff; border-color:#181d19; }
   .s2-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px 14px; }
   .s2-pc { background:#fff; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
   .s2-pc .img { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; position:relative; }
-  .s2-pc .img .heart { position:absolute; top:8px; right:8px; width:26px; height:26px; background:rgba(255,255,255,.9); border-radius:50%; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(8px); }
-  .s2-pc .img .heart .material-symbols-outlined { font-size:14px; color:var(--destructive); font-variation-settings:'FILL' 1; }
+  .s2-pc .heart { position:absolute; top:8px; right:8px; width:26px; height:26px; background:rgba(255,255,255,.92); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--destructive); }
   .s2-pc .body { padding:10px 12px 12px; }
   .s2-pc .body .cat { font-family:'Public Sans'; font-weight:800; font-size:8.5px; color:var(--primary); letter-spacing:.06em; text-transform:uppercase; }
   .s2-pc .body h4 { font-family:'Public Sans'; font-weight:800; font-size:11.5px; margin-top:3px; line-height:1.3; letter-spacing:-.005em; min-height:30px; }
   .s2-pc .body .rwo { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
   .s2-pc .body .price { font-family:'Public Sans'; font-weight:800; font-size:13px; font-variant-numeric:tabular-nums; }
-  .s2-pc .body .add { width:26px; height:26px; background:var(--primary); color:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center; }
-  .s2-pc .body .add .material-symbols-outlined { font-size:16px; }
+  .s2-pc .body .add { width:26px; height:26px; background:var(--primary); color:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center; border:0; }
 
-  /* SCREEN 3: Canvasser clipboard */
+  /* Canvasser */
   .s3-head { background:var(--destructive); color:#fff; padding:14px 20px 18px; }
-  .s3-head .meta { font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.06em; text-transform:uppercase; opacity:.8; }
+  .s3-head .label { font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.06em; text-transform:uppercase; opacity:.8; }
   .s3-head h2 { font-family:'Public Sans'; font-weight:800; font-size:18px; margin-top:4px; letter-spacing:-.01em; }
-  .s3-head .row { display:flex; gap:8px; margin-top:12px; }
-  .s3-head .pill { padding:4px 10px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; }
+  .s3-head .pills { display:flex; gap:8px; margin-top:12px; align-items:center; }
+  .s3-head .pill { padding:4px 10px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; display:inline-flex; align-items:center; gap:5px; }
   .s3-prog { padding:14px 20px; background:var(--container-low); display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); }
   .s3-prog .v { font-family:'Public Sans'; font-weight:800; font-size:24px; letter-spacing:-.02em; color:var(--primary); font-variant-numeric:tabular-nums; }
   .s3-prog .l { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.05em; text-transform:uppercase; line-height:1.2; }
@@ -123,20 +119,58 @@
   .s3-form .seg { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:14px; }
   .s3-form .seg button { padding:10px; background:#fff; border:1px solid var(--border); border-radius:8px; font-family:'Public Sans'; font-weight:800; font-size:11px; }
   .s3-form .seg button.on { background:var(--primary); color:#fff; border-color:var(--primary); }
-  .s3-form .photo { background:var(--container-low); border:2px dashed var(--outline-variant); border-radius:10px; padding:24px; text-align:center; margin-bottom:14px; }
-  .s3-form .photo .material-symbols-outlined { font-size:32px; color:var(--on-surface-muted); }
-  .s3-form .photo b { display:block; font-family:'Public Sans'; font-weight:800; font-size:12px; margin-top:6px; }
-  .s3-form .photo span { font-size:10px; color:var(--on-surface-muted); }
+  .s3-form .photo { background:var(--container-low); border:2px dashed var(--outline-variant); border-radius:10px; padding:20px; text-align:center; margin-bottom:14px; color:var(--on-surface-muted); }
+  .s3-form .photo b { display:block; font-family:'Public Sans'; font-weight:800; font-size:12px; margin-top:6px; color:var(--on-surface); }
+  .s3-form .photo .sub { font-size:10px; color:var(--on-surface-muted); }
   .s3-fab { padding:14px 16px; border-top:1px solid var(--border); background:#fff; }
   .s3-fab .btn { width:100%; height:48px; }
-
-  /* shared brand line */
-  .blm { display:flex; height:3px; width:48px; }
-  .blm > * { flex:1; }
 </style>
 </head>
 <body>
-<div class="row">
+
+<!-- Inline SVG sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Status: cellular signal -->
+    <symbol id="i-signal" viewBox="0 0 24 24"><path fill="currentColor" d="M2 22h3v-6H2v6Zm5 0h3V12H7v10Zm5 0h3V6h-3v16Zm5 0h3V2h-3v20Z"/></symbol>
+    <!-- Status: wifi -->
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path fill="currentColor" d="M12 18a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm0-5c2.21 0 4.21.9 5.66 2.34l-1.42 1.42A6.97 6.97 0 0 0 12 15a6.97 6.97 0 0 0-4.24 1.76l-1.42-1.42A8.97 8.97 0 0 1 12 13Zm0-5c3.59 0 6.84 1.45 9.19 3.81l-1.42 1.41A10.97 10.97 0 0 0 12 10a10.97 10.97 0 0 0-7.77 3.22L2.81 11.8A12.97 12.97 0 0 1 12 8Zm0-5C16.97 3 21.5 5 24 8l-1.41 1.41A14.97 14.97 0 0 0 12 5 14.97 14.97 0 0 0 1.41 9.41L0 8c2.5-3 7.03-5 12-5Z"/></symbol>
+    <!-- Status: battery -->
+    <symbol id="i-battery" viewBox="0 0 24 24"><path fill="currentColor" d="M16 4h-1V2H9v2H8a2 2 0 0 0-2 2v15a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a2 2 0 0 0-2-2Z"/></symbol>
+    <!-- Notifications bell -->
+    <symbol id="i-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M6 8a6 6 0 1 1 12 0c0 4 1.5 6 2 7H4c.5-1 2-3 2-7Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M10 19a2 2 0 0 0 4 0"/></symbol>
+    <!-- Verified shield -->
+    <symbol id="i-verified" viewBox="0 0 24 24"><path fill="currentColor" d="m12 1 9 4v6c0 5.55-3.84 10.74-9 12-5.16-1.26-9-6.45-9-12V5l9-4Zm-1.2 14.3 6.4-6.4-1.4-1.4-5 5-2.4-2.4-1.4 1.4 3.8 3.8Z"/></symbol>
+    <!-- Home -->
+    <symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/></symbol>
+    <!-- Badge / ID card -->
+    <symbol id="i-badge" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 7h16v13H4z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M8 12h8M8 16h5"/></symbol>
+    <!-- Heart hand / donate -->
+    <symbol id="i-donate" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7-4.5-9-9c-1.5-3.4.6-7 4-7 2 0 3.5 1 5 3 1.5-2 3-3 5-3 3.4 0 5.5 3.6 4 7-2 4.5-9 9-9 9Z"/></symbol>
+    <!-- Polls / how to vote -->
+    <symbol id="i-vote" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 19h16v2H4zM6 15V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v10z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m8 9 2.5 2.5L15 7"/></symbol>
+    <!-- Person -->
+    <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
+    <!-- Arrow back -->
+    <symbol id="i-back" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7M8 12h13"/></symbol>
+    <!-- Bag -->
+    <symbol id="i-bag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M5 8h14l-1 12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 8Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+    <!-- Storefront -->
+    <symbol id="i-shop" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M3 9l1-5h16l1 5M4 9h16v11H4z"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 9a3 3 0 0 0 6 0 3 3 0 0 0 4 0 3 3 0 0 0 6 0"/></symbol>
+    <!-- Search -->
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m20 20-4-4"/></symbol>
+    <!-- Plus -->
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+    <!-- Heart filled -->
+    <symbol id="i-heart" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7-4.5-9-9c-1.5-3.4.6-7 4-7 2 0 3.5 1 5 3 1.5-2 3-3 5-3 3.4 0 5.5 3.6 4 7-2 4.5-9 9-9 9Z"/></symbol>
+    <!-- Camera -->
+    <symbol id="i-camera" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <!-- Pin -->
+    <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 22s7-6.5 7-13a7 7 0 0 0-14 0c0 6.5 7 13 7 13Z"/><circle cx="12" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  </defs>
+</svg>
+
+<div class="deck">
 
   <!-- Phone 1: Dashboard -->
   <div class="col">
@@ -144,31 +178,34 @@
       <div class="screen">
         <div class="status">
           <span>9:41</span>
-          <div class="icons">
-            <span class="material-symbols-outlined">signal_cellular_alt</span>
-            <span class="material-symbols-outlined">wifi</span>
-            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">battery_full</span>
+          <div class="stat-icons">
+            <span class="ico" data-size="sm"><svg><use href="#i-signal"/></svg></span>
+            <span class="ico" data-size="sm"><svg><use href="#i-wifi"/></svg></span>
+            <span class="ico" data-size="sm"><svg><use href="#i-battery"/></svg></span>
           </div>
         </div>
         <div class="m-top">
           <div class="who">
-            <img src="https://i.pravatar.cc/72?u=kwesi">
+            <img src="https://i.pravatar.cc/72?u=kwesi" alt="">
             <div>
               <b>Akwaaba, Kwesi</b>
-              <span>Member since Mar '25</span>
+              <span class="sub">Member since Mar '25</span>
             </div>
           </div>
-          <button class="ic"><span class="material-symbols-outlined">notifications</span><span class="dot"></span></button>
+          <button class="ic" aria-label="Notifications">
+            <span class="ico" data-size="md"><svg><use href="#i-bell"/></svg></span>
+            <span class="dot"></span>
+          </button>
         </div>
 
         <div class="m-hero">
-          <div class="row">
+          <div class="hrow">
             <div>
               <span class="label">My Membership</span>
               <h2>Verified · Patriot</h2>
               <div class="reg">GH-001847</div>
             </div>
-            <span class="material-symbols-outlined" style="color:var(--accent); font-size:32px; opacity:.4">verified</span>
+            <span class="ico verified-ic" data-size="xl"><svg><use href="#i-verified"/></svg></span>
           </div>
           <div class="pillrow">
             <span class="p ok">● Verified</span>
@@ -194,39 +231,42 @@
             <span class="live"><i></i>Live</span>
           </div>
           <div class="fl">
-            <img src="https://i.pravatar.cc/56?u=ama">
+            <img src="https://i.pravatar.cc/56?u=ama" alt="">
             <div class="b">
               <p><b>Ama D.</b> contributed to <b>Eastern jobs fund</b></p>
-              <span>2 min ago · Koforidua</span>
+              <span class="sub">2 min ago · Koforidua</span>
             </div>
             <div class="amt tnum">₵120</div>
           </div>
           <div class="fl">
-            <img src="https://i.pravatar.cc/56?u=kofi">
+            <img src="https://i.pravatar.cc/56?u=kofi" alt="">
             <div class="b">
               <p><b>Kofi M.</b> joined <b>Base Diaspora</b></p>
-              <span>12 min ago · London</span>
+              <span class="sub">12 min ago · London</span>
             </div>
           </div>
           <div class="fl">
-            <img src="https://i.pravatar.cc/56?u=akua">
+            <img src="https://i.pravatar.cc/56?u=akua" alt="">
             <div class="b">
               <p><b>Akua S.</b> joined <b>Lapaz 04</b></p>
-              <span>28 min ago · Accra</span>
+              <span class="sub">28 min ago · Accra</span>
             </div>
           </div>
         </div>
 
         <div class="tabbar">
-          <a class="is-active"><span class="material-symbols-outlined">home</span>Home</a>
-          <a><span class="material-symbols-outlined">badge</span>ID</a>
-          <a class="center"><i><span class="material-symbols-outlined">volunteer_activism</span></i></a>
-          <a><span class="material-symbols-outlined">how_to_vote</span>Polls</a>
-          <a><span class="material-symbols-outlined">person</span>Me</a>
+          <a class="is-active"><span class="ico" data-size="lg"><svg><use href="#i-home"/></svg></span>Home</a>
+          <a><span class="ico" data-size="lg"><svg><use href="#i-badge"/></svg></span>ID</a>
+          <a class="center"><span class="pill"><span class="ico" data-size="lg"><svg><use href="#i-donate"/></svg></span></span></a>
+          <a><span class="ico" data-size="lg"><svg><use href="#i-vote"/></svg></span>Polls</a>
+          <a><span class="ico" data-size="lg"><svg><use href="#i-person"/></svg></span>Me</a>
         </div>
       </div>
     </div>
-    <div><h4>Member home</h4><span style="display:block;text-align:center">Dashboard · mobile</span></div>
+    <div>
+      <h4>Member home</h4>
+      <div class="meta">Dashboard · mobile</div>
+    </div>
   </div>
 
   <!-- Phone 2: Commerce -->
@@ -235,19 +275,22 @@
       <div class="screen">
         <div class="status">
           <span>9:41</span>
-          <div class="icons">
-            <span class="material-symbols-outlined">signal_cellular_alt</span>
-            <span class="material-symbols-outlined">wifi</span>
-            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">battery_full</span>
+          <div class="stat-icons">
+            <span class="ico" data-size="sm"><svg><use href="#i-signal"/></svg></span>
+            <span class="ico" data-size="sm"><svg><use href="#i-wifi"/></svg></span>
+            <span class="ico" data-size="sm"><svg><use href="#i-battery"/></svg></span>
           </div>
         </div>
         <div class="s2-top">
-          <button class="ic"><span class="material-symbols-outlined">arrow_back</span></button>
+          <button class="ic" aria-label="Back"><span class="ico" data-size="md"><svg><use href="#i-back"/></svg></span></button>
           <h2>Movement supplies</h2>
-          <button class="ic cart"><span class="material-symbols-outlined">shopping_bag</span><span class="badge">3</span></button>
+          <button class="ic cart" aria-label="Cart">
+            <span class="ico" data-size="md"><svg><use href="#i-bag"/></svg></span>
+            <span class="badge">3</span>
+          </button>
         </div>
         <div class="s2-search">
-          <span class="material-symbols-outlined">search</span>
+          <span class="ico" data-size="md"><svg><use href="#i-search"/></svg></span>
           <input placeholder="Search supplies…">
         </div>
         <div class="s2-chips">
@@ -262,12 +305,12 @@
           <div class="s2-pc">
             <div class="img" style="background:linear-gradient(135deg,#006B3F,#005733)">
               <span style="font-family:'Public Sans';font-weight:800;font-size:30px;color:#fff;letter-spacing:-.02em">Base</span>
-              <button class="heart"><span class="material-symbols-outlined">favorite</span></button>
+              <span class="heart"><span class="ico" style="font-size:14px"><svg><use href="#i-heart"/></svg></span></span>
             </div>
             <div class="body">
               <span class="cat">Apparel</span>
               <h4>Ghana First — heavyweight tee</h4>
-              <div class="rwo"><span class="price">₵85</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+              <div class="rwo"><span class="price">₵85</span><button class="add"><span class="ico" style="font-size:16px"><svg><use href="#i-plus"/></svg></span></button></div>
             </div>
           </div>
           <div class="s2-pc">
@@ -277,7 +320,7 @@
             <div class="body">
               <span class="cat">Accessories</span>
               <h4>Black Star pin set</h4>
-              <div class="rwo"><span class="price">₵35</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+              <div class="rwo"><span class="price">₵35</span><button class="add"><span class="ico" style="font-size:16px"><svg><use href="#i-plus"/></svg></span></button></div>
             </div>
           </div>
           <div class="s2-pc">
@@ -287,7 +330,7 @@
             <div class="body">
               <span class="cat">Books</span>
               <h4>The Plan paperback</h4>
-              <div class="rwo"><span class="price">₵60</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+              <div class="rwo"><span class="price">₵60</span><button class="add"><span class="ico" style="font-size:16px"><svg><use href="#i-plus"/></svg></span></button></div>
             </div>
           </div>
           <div class="s2-pc">
@@ -297,21 +340,24 @@
             <div class="body">
               <span class="cat">Apparel</span>
               <h4>Movement bomber</h4>
-              <div class="rwo"><span class="price">₵320</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+              <div class="rwo"><span class="price">₵320</span><button class="add"><span class="ico" style="font-size:16px"><svg><use href="#i-plus"/></svg></span></button></div>
             </div>
           </div>
         </div>
 
         <div class="tabbar">
-          <a><span class="material-symbols-outlined">home</span>Home</a>
-          <a><span class="material-symbols-outlined">badge</span>ID</a>
-          <a class="center"><i><span class="material-symbols-outlined">volunteer_activism</span></i></a>
-          <a class="is-active"><span class="material-symbols-outlined">storefront</span>Shop</a>
-          <a><span class="material-symbols-outlined">person</span>Me</a>
+          <a><span class="ico" data-size="lg"><svg><use href="#i-home"/></svg></span>Home</a>
+          <a><span class="ico" data-size="lg"><svg><use href="#i-badge"/></svg></span>ID</a>
+          <a class="center"><span class="pill"><span class="ico" data-size="lg"><svg><use href="#i-donate"/></svg></span></span></a>
+          <a class="is-active"><span class="ico" data-size="lg"><svg><use href="#i-shop"/></svg></span>Shop</a>
+          <a><span class="ico" data-size="lg"><svg><use href="#i-person"/></svg></span>Me</a>
         </div>
       </div>
     </div>
-    <div><h4>Supplies</h4><span style="display:block;text-align:center">Commerce · mobile</span></div>
+    <div>
+      <h4>Supplies</h4>
+      <div class="meta">Commerce · mobile</div>
+    </div>
   </div>
 
   <!-- Phone 3: Canvasser -->
@@ -320,17 +366,17 @@
       <div class="screen">
         <div class="status">
           <span>9:41</span>
-          <div class="icons">
-            <span class="material-symbols-outlined">signal_cellular_alt</span>
-            <span class="material-symbols-outlined">wifi</span>
-            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">battery_full</span>
+          <div class="stat-icons">
+            <span class="ico" data-size="sm"><svg><use href="#i-signal"/></svg></span>
+            <span class="ico" data-size="sm"><svg><use href="#i-wifi"/></svg></span>
+            <span class="ico" data-size="sm"><svg><use href="#i-battery"/></svg></span>
           </div>
         </div>
         <div class="s3-head">
-          <span class="meta">Canvasser clipboard</span>
+          <span class="label">Canvasser clipboard</span>
           <h2>Sign up · new patriot</h2>
-          <div class="row">
-            <span class="pill">📍 Lapaz, Accra</span>
+          <div class="pills">
+            <span class="pill"><span class="ico" style="font-size:11px"><svg><use href="#i-pin"/></svg></span>Lapaz, Accra</span>
             <span class="pill">Branch 04</span>
           </div>
         </div>
@@ -358,9 +404,9 @@
           </div>
           <span class="lbl">Photo of Ghana Card</span>
           <div class="photo">
-            <span class="material-symbols-outlined">photo_camera</span>
+            <span class="ico" data-size="xl"><svg><use href="#i-camera"/></svg></span>
             <b>Tap to capture</b>
-            <span>Front side · auto-OCR</span>
+            <span class="sub">Front side · auto-OCR</span>
           </div>
         </div>
         <div class="s3-fab">
@@ -368,7 +414,10 @@
         </div>
       </div>
     </div>
-    <div><h4>Field sign-up</h4><span style="display:block;text-align:center">Canvasser · mobile</span></div>
+    <div>
+      <h4>Field sign-up</h4>
+      <div class="meta">Canvasser · mobile</div>
+    </div>
   </div>
 
 </div>

@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>War Room — The Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:#0a0d0b; color:#e8ece7; font-size:13px; }
+  .app { display:grid; grid-template-columns:64px 1fr; min-height:100vh; }
+  .rail { background:#000; border-right:1px solid #1c211d; padding:14px 0; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .rail .logo { width:32px; height:32px; background:var(--destructive); color:#fff; font-family:'Public Sans'; font-weight:800; font-size:14px; border-radius:6px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .rail a { width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.45); border-radius:6px; position:relative; }
+  .rail a:hover { color:#fff; background:rgba(255,255,255,.04); }
+  .rail a.on { color:#fff; background:rgba(206,17,38,.18); }
+  .rail a.on::before { content:""; position:absolute; left:-1px; top:8px; bottom:8px; width:2px; background:var(--destructive); border-radius:2px; }
+  .rail a .material-symbols-outlined { font-size:20px; }
+
+  .main { padding:18px 24px 60px; min-width:0; }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .top .l { display:flex; align-items:center; gap:14px; }
+  .top h2 { font-family:'Public Sans'; font-weight:800; font-size:22px; letter-spacing:-.015em; color:#fff; }
+  .top .live { display:inline-flex; align-items:center; gap:6px; font-family:'Public Sans'; font-weight:800; font-size:10.5px; color:var(--destructive); letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; background:rgba(206,17,38,.12); border:1px solid rgba(206,17,38,.3); border-radius:99px; }
+  .top .live i { width:6px; height:6px; background:var(--destructive); border-radius:50%; animation:p 1.4s infinite; }
+  @keyframes p { 50% { opacity:.3 } }
+  .top .crumbs { font-size:10px; color:rgba(255,255,255,.4); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .top .actions { display:flex; gap:8px; }
+  .top .actions .btn-outline { background:transparent; color:#fff; border-color:rgba(255,255,255,.18); }
+  .top .actions .btn-outline:hover { border-color:var(--destructive); color:var(--destructive); }
+  .top .clock { font-family:'Public Sans'; font-weight:800; font-size:13px; color:var(--accent); font-variant-numeric:tabular-nums; letter-spacing:.04em; }
+
+  .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:14px; }
+  .kpi { background:#11161210; background:#11161250; border:1px solid #1c221e; border-radius:6px; padding:14px 16px; position:relative; overflow:hidden; }
+  .kpi::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--ac); }
+  .kpi.r { --ac:var(--destructive); } .kpi.g { --ac:var(--accent); } .kpi.gr { --ac:var(--primary); } .kpi.k { --ac:#fff; }
+  .kpi .l { font-size:9.5px; color:rgba(255,255,255,.5); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .kpi .v { font-family:'Public Sans'; font-weight:800; font-size:26px; letter-spacing:-.02em; line-height:1; margin:8px 0 4px; color:#fff; font-variant-numeric:tabular-nums; }
+  .kpi .d { font-size:10.5px; font-family:'Public Sans'; font-weight:800; color:var(--primary); display:inline-flex; gap:3px; align-items:center; }
+  .kpi .d.dn { color:var(--destructive); }
+  .kpi .spark { position:absolute; right:8px; bottom:8px; opacity:.6; }
+
+  .grid { display:grid; grid-template-columns:1.4fr .8fr 1fr; gap:12px; }
+  .panel { background:#11161250; border:1px solid #1c221e; border-radius:6px; }
+  .ph { padding:12px 16px; border-bottom:1px solid #1c221e; display:flex; justify-content:space-between; align-items:center; }
+  .ph h3 { font-family:'Public Sans'; font-weight:800; font-size:12.5px; letter-spacing:.005em; color:#fff; }
+  .ph .meta { font-size:10px; color:rgba(255,255,255,.4); font-family:'Public Sans'; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+
+  /* Map panel */
+  .map { position:relative; height:380px; background:radial-gradient(ellipse at center, #1c2620 0%, #0a0d0b 70%); overflow:hidden; }
+  .map svg { width:100%; height:100%; }
+  .pin { position:absolute; transform:translate(-50%,-50%); }
+  .pin .dot { width:10px; height:10px; border-radius:50%; box-shadow:0 0 0 3px rgba(0,0,0,.6), 0 0 20px var(--cl); background:var(--cl); }
+  .pin .ring { position:absolute; inset:-12px; border:1px solid var(--cl); border-radius:50%; animation:ring 2s infinite; opacity:.6; }
+  @keyframes ring { 0% { transform:scale(.4); opacity:.8 } 100% { transform:scale(2); opacity:0 } }
+  .pin.r { --cl:var(--destructive); } .pin.g { --cl:var(--accent); } .pin.gr { --cl:var(--primary); }
+  .pin .lbl { position:absolute; left:14px; top:-4px; background:rgba(0,0,0,.7); border:1px solid #1c221e; padding:3px 8px; border-radius:3px; font-family:'Public Sans'; font-weight:800; font-size:9.5px; letter-spacing:.05em; text-transform:uppercase; color:#fff; white-space:nowrap; }
+  .pin .lbl b { color:var(--cl); }
+  .map-legend { position:absolute; bottom:12px; left:12px; right:12px; display:flex; gap:14px; padding:10px 12px; background:rgba(0,0,0,.6); backdrop-filter:blur(8px); border:1px solid #1c221e; border-radius:4px; font-family:'Public Sans'; font-weight:800; font-size:9.5px; letter-spacing:.05em; text-transform:uppercase; color:rgba(255,255,255,.7); }
+  .map-legend .lk { display:inline-flex; gap:5px; align-items:center; }
+  .map-legend .lk i { width:8px; height:8px; border-radius:50%; }
+
+  /* Region table */
+  .regtable { width:100%; border-collapse:collapse; font-size:11.5px; }
+  .regtable th { text-align:left; padding:8px 16px; font-size:9px; font-weight:800; color:rgba(255,255,255,.4); letter-spacing:.06em; text-transform:uppercase; font-family:'Public Sans'; background:#0d110f; border-bottom:1px solid #1c221e; }
+  .regtable td { padding:8px 16px; border-bottom:1px solid #1c221e; vertical-align:middle; font-family:'Public Sans'; font-weight:700; color:#e8ece7; }
+  .regtable tr:last-child td { border-bottom:0; }
+  .regtable .name { font-weight:800; }
+  .regtable .num { font-variant-numeric:tabular-nums; font-weight:800; text-align:right; }
+  .regtable .bar { width:80px; height:4px; background:#1c221e; border-radius:99px; overflow:hidden; }
+  .regtable .bar i { display:block; height:100%; background:var(--accent); }
+  .regtable .bar i.ok { background:var(--primary); }
+  .regtable .bar i.bad { background:var(--destructive); }
+
+  /* Feed */
+  .feed { padding:0 16px 14px; max-height:380px; overflow-y:auto; }
+  .fl { display:flex; gap:10px; padding:11px 0; border-bottom:1px solid #1c221e; }
+  .fl:last-child { border-bottom:0; }
+  .fl .ic { width:28px; height:28px; border-radius:50%; background:var(--ic, var(--primary)); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .fl.r .ic { background:var(--destructive); } .fl.g .ic { background:var(--accent); }
+  .fl .ic .material-symbols-outlined { font-size:14px; }
+  .fl .b { flex:1; min-width:0; }
+  .fl .b p { margin:0; font-size:11.5px; line-height:1.45; color:#e8ece7; }
+  .fl .b p b { font-family:'Public Sans'; font-weight:800; color:#fff; }
+  .fl .b span { font-size:9.5px; color:rgba(255,255,255,.4); font-family:'Public Sans'; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+  .fl .amt { font-family:'Public Sans'; font-weight:800; color:var(--accent); font-size:11.5px; font-variant-numeric:tabular-nums; align-self:center; }
+
+  /* Lower row */
+  .lower { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .chart { padding:14px 16px; height:200px; position:relative; }
+  .chart .ax { position:absolute; left:16px; right:16px; height:1px; background:#1c221e; }
+  .chart svg { width:100%; height:100%; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="rail">
+    <div class="logo">B</div>
+    <a><span class="material-symbols-outlined">dashboard</span></a>
+    <a class="on"><span class="material-symbols-outlined">radar</span></a>
+    <a><span class="material-symbols-outlined">groups</span></a>
+    <a><span class="material-symbols-outlined">volunteer_activism</span></a>
+    <a><span class="material-symbols-outlined">how_to_vote</span></a>
+    <a><span class="material-symbols-outlined">campaign</span></a>
+    <a><span class="material-symbols-outlined">edit_note</span></a>
+    <a style="margin-top:auto"><span class="material-symbols-outlined">settings</span></a>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <div class="l">
+        <div>
+          <div class="crumbs">Command center → War room</div>
+          <h2>War Room — live mobilization</h2>
+        </div>
+        <span class="live"><i></i>Live · 1.2 s ago</span>
+      </div>
+      <div class="actions">
+        <span class="clock">12 May · 16:47:08 GMT</span>
+        <button class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:14px">tune</span>Filters</button>
+        <button class="btn btn-dest btn-sm"><span class="material-symbols-outlined" style="font-size:14px">notifications_active</span>Send broadcast</button>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi r">
+        <div class="l">Sign-ups · today</div>
+        <div class="v">2,418</div>
+        <div class="d">▲ 18% vs yesterday</div>
+      </div>
+      <div class="kpi g">
+        <div class="l">MoMo donations</div>
+        <div class="v">₵148K</div>
+        <div class="d">▲ 24% MTD</div>
+      </div>
+      <div class="kpi gr">
+        <div class="l">Field canvassers online</div>
+        <div class="v">487</div>
+        <div class="d">across 142 branches</div>
+      </div>
+      <div class="kpi k">
+        <div class="l">Verified members</div>
+        <div class="v">355,840</div>
+        <div class="d">+ 2,418 today</div>
+      </div>
+      <div class="kpi r">
+        <div class="l">Active poll · turnout</div>
+        <div class="v">62%</div>
+        <div class="d dn">closes in 04:18:22</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Map panel -->
+      <div class="panel">
+        <div class="ph">
+          <h3>Ghana · live ground game</h3>
+          <span class="meta">10 regions · 142 active branches</span>
+        </div>
+        <div class="map">
+          <svg viewBox="0 0 400 380" preserveAspectRatio="xMidYMid meet">
+            <!-- stylized Ghana outline -->
+            <path d="M150 30 L235 40 L260 80 L275 130 L290 200 L280 270 L260 320 L230 350 L180 355 L140 340 L120 290 L115 230 L105 170 L120 100 Z"
+              fill="rgba(0,107,63,.06)" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+            <path d="M150 30 L235 40 L260 80 L275 130 L290 200 L280 270 L260 320 L230 350 L180 355 L140 340 L120 290 L115 230 L105 170 L120 100 Z"
+              fill="none" stroke="rgba(218,165,32,.25)" stroke-width="1" stroke-dasharray="2,3"/>
+            <text x="200" y="195" text-anchor="middle" font-family="Public Sans" font-size="9" font-weight="800" fill="rgba(255,255,255,.18)" letter-spacing="3">GHANA</text>
+          </svg>
+          <div class="pin gr" style="left:50%; top:80%"><span class="dot"></span><span class="ring"></span><span class="lbl"><b>Accra</b> · 412 online</span></div>
+          <div class="pin g" style="left:45%; top:55%"><span class="dot"></span><span class="ring"></span><span class="lbl"><b>Kumasi</b> · 218 online</span></div>
+          <div class="pin r" style="left:62%; top:35%"><span class="dot"></span><span class="ring"></span><span class="lbl"><b>Tamale</b> · 94 alert</span></div>
+          <div class="pin gr" style="left:30%; top:75%"><span class="dot"></span><span class="ring"></span><span class="lbl"><b>Cape Coast</b> · 86 online</span></div>
+          <div class="pin g" style="left:60%; top:65%"><span class="dot"></span><span class="ring"></span><span class="lbl"><b>Koforidua</b> · 71 online</span></div>
+          <div class="map-legend">
+            <span class="lk"><i style="background:var(--primary)"></i>Active branch</span>
+            <span class="lk"><i style="background:var(--accent)"></i>Below target</span>
+            <span class="lk"><i style="background:var(--destructive)"></i>Needs attention</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regional table -->
+      <div class="panel">
+        <div class="ph">
+          <h3>Regions · pace to goal</h3>
+          <span class="meta">YTD</span>
+        </div>
+        <table class="regtable">
+          <thead><tr><th>Region</th><th>Members</th><th>% goal</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Greater Accra</td><td class="num">112,408</td><td><div class="bar"><i class="ok" style="width:92%"></i></div></td></tr>
+            <tr><td class="name">Ashanti</td><td class="num">84,712</td><td><div class="bar"><i class="ok" style="width:78%"></i></div></td></tr>
+            <tr><td class="name">Eastern</td><td class="num">42,201</td><td><div class="bar"><i style="width:64%"></i></div></td></tr>
+            <tr><td class="name">Western</td><td class="num">31,540</td><td><div class="bar"><i style="width:58%"></i></div></td></tr>
+            <tr><td class="name">Central</td><td class="num">28,118</td><td><div class="bar"><i style="width:52%"></i></div></td></tr>
+            <tr><td class="name">Volta</td><td class="num">21,440</td><td><div class="bar"><i style="width:48%"></i></div></td></tr>
+            <tr><td class="name">Northern</td><td class="num">14,802</td><td><div class="bar"><i class="bad" style="width:32%"></i></div></td></tr>
+            <tr><td class="name">Upper East</td><td class="num">8,914</td><td><div class="bar"><i class="bad" style="width:28%"></i></div></td></tr>
+            <tr><td class="name">Bono</td><td class="num">7,318</td><td><div class="bar"><i class="bad" style="width:24%"></i></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Live feed -->
+      <div class="panel">
+        <div class="ph">
+          <h3>Activity stream</h3>
+          <span class="meta">last 5 min</span>
+        </div>
+        <div class="feed">
+          <div class="fl"><div class="ic"><span class="material-symbols-outlined">person_add</span></div><div class="b"><p><b>Ama Darko</b> signed up via canvasser <b>Yaw K.</b></p><span>14s ago · Lapaz 04</span></div></div>
+          <div class="fl g"><div class="ic"><span class="material-symbols-outlined">payments</span></div><div class="b"><p><b>MoMo donation</b> to <b>Eastern jobs fund</b></p><span>32s ago · pending verify</span></div><span class="amt">₵250</span></div>
+          <div class="fl"><div class="ic"><span class="material-symbols-outlined">how_to_vote</span></div><div class="b"><p><b>2,041</b> votes recorded on <b>Poll #41</b></p><span>1m ago · Greater Accra</span></div></div>
+          <div class="fl r"><div class="ic"><span class="material-symbols-outlined">priority_high</span></div><div class="b"><p>Tamale branch <b>flagged low turnout</b></p><span>2m ago · auto-alert</span></div></div>
+          <div class="fl g"><div class="ic"><span class="material-symbols-outlined">verified</span></div><div class="b"><p><b>17 members</b> verified by KYC bot</p><span>3m ago · queue clearing</span></div></div>
+          <div class="fl"><div class="ic"><span class="material-symbols-outlined">campaign</span></div><div class="b"><p>Broadcast <b>"Polling-day call"</b> sent</p><span>4m ago · 142K recipients</span></div></div>
+          <div class="fl"><div class="ic"><span class="material-symbols-outlined">edit_note</span></div><div class="b"><p><b>Esi M.</b> published <i>"Roadmap update"</i></p><span>5m ago · Updates</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lower">
+      <div class="panel">
+        <div class="ph">
+          <h3>Sign-ups · 24 h</h3>
+          <span class="meta">hourly · GMT</span>
+        </div>
+        <div class="chart">
+          <svg viewBox="0 0 600 180">
+            <defs>
+              <linearGradient id="gp" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="rgba(206,17,38,.4)"/>
+                <stop offset="100%" stop-color="rgba(206,17,38,0)"/>
+              </linearGradient>
+            </defs>
+            <g stroke="#1c221e" stroke-width="1">
+              <line x1="0" x2="600" y1="40" y2="40"/>
+              <line x1="0" x2="600" y1="90" y2="90"/>
+              <line x1="0" x2="600" y1="140" y2="140"/>
+            </g>
+            <path d="M0 120 L40 110 L80 130 L120 100 L160 90 L200 75 L240 85 L280 60 L320 50 L360 30 L400 45 L440 40 L480 25 L520 35 L560 20 L600 28 L600 180 L0 180 Z" fill="url(#gp)"/>
+            <path d="M0 120 L40 110 L80 130 L120 100 L160 90 L200 75 L240 85 L280 60 L320 50 L360 30 L400 45 L440 40 L480 25 L520 35 L560 20 L600 28" fill="none" stroke="var(--destructive)" stroke-width="2"/>
+            <circle cx="560" cy="20" r="4" fill="var(--destructive)"/>
+            <circle cx="560" cy="20" r="8" fill="rgba(206,17,38,.2)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph">
+          <h3>Donations · 24 h (₵)</h3>
+          <span class="meta">MoMo + card</span>
+        </div>
+        <div class="chart">
+          <svg viewBox="0 0 600 180">
+            <g fill="var(--accent)">
+              <rect x="10" y="100" width="20" height="80"/>
+              <rect x="40" y="80" width="20" height="100"/>
+              <rect x="70" y="120" width="20" height="60"/>
+              <rect x="100" y="90" width="20" height="90"/>
+              <rect x="130" y="60" width="20" height="120"/>
+              <rect x="160" y="70" width="20" height="110"/>
+              <rect x="190" y="40" width="20" height="140"/>
+              <rect x="220" y="55" width="20" height="125"/>
+              <rect x="250" y="35" width="20" height="145"/>
+              <rect x="280" y="50" width="20" height="130"/>
+              <rect x="310" y="25" width="20" height="155"/>
+              <rect x="340" y="30" width="20" height="150"/>
+              <rect x="370" y="45" width="20" height="135"/>
+              <rect x="400" y="20" width="20" height="160"/>
+              <rect x="430" y="35" width="20" height="145"/>
+              <rect x="460" y="15" width="20" height="165"/>
+              <rect x="490" y="22" width="20" height="158" fill="var(--destructive)"/>
+              <rect x="520" y="10" width="20" height="170" fill="var(--destructive)"/>
+              <rect x="550" y="18" width="20" height="162" fill="var(--destructive)"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
