@@ -158,8 +158,8 @@ export const routes: RouteObject[] = [
     children: [
       { path: '/admin/dashboard', element: <AdminDashboard /> },
       { path: '/admin/leadership', element: <AdminLeadershipHub /> },
-      { path: '/admin/chapter-hub', element: <AdminChapterHub /> },
-      { path: '/admin/chapter-hub/:chapterId', element: <AdminChapterHub /> },
+      { path: '/admin/regional-hub', element: <AdminChapterHub /> },
+      { path: '/admin/regional-hub/:chapterId', element: <AdminChapterHub /> },
       { path: '/admin/chapters/:chapterId', element: <AdminChapterHub /> },
       { path: '/admin/directives', element: <AdminFieldDirectives /> },
       { path: '/admin/mobilization-metrics', element: <AdminMobilizationMetrics /> },

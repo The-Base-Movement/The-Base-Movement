@@ -12,7 +12,7 @@ const LABEL_OVERRIDES: Record<string, string> = {
   members: 'Members',
   store: 'Store',
   chapters: 'Chapters',
-  'chapter-hub': 'Reg.',
+  'regional-hub': 'Reg.',
   settings: 'Settings',
   trash: 'Trash Vault',
   'media-library': 'Media Library',

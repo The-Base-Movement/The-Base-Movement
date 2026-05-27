@@ -257,7 +257,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
         },
         {
-          to: '/admin/chapter-hub',
+          to: '/admin/regional-hub',
           icon: 'shield',
           label: 'Regional hub',
           permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
