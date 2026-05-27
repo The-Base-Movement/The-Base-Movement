@@ -73,6 +73,18 @@ hsl(var(--container-low))    — subtle background
 hsl(var(--background))       — white
 ```
 
+### Border Radius Tokens (never hardcode px values)
+
+```
+var(--radius-xs)    — 2px   inputs, checkboxes
+var(--radius-sm)    — 4px   buttons, small controls
+var(--radius-md)    — 8px   compact panels, asides, dropdowns
+var(--radius-lg)    — 12px  main cards, modals, CTA strips
+var(--radius-pill)  — 999px status badges, pills, tags
+```
+
+Legacy files still use hardcoded values — migrate them on touch (see `docs/audits/border-radius-token-audit-2026-05-26.md`).
+
 ### Icons
 
 Use **Material Symbols** exclusively: `<span className="material-symbols-outlined" style={{ fontSize: N }}>icon_name</span>`  
@@ -191,3 +203,4 @@ interface Member {
 - Always `boxSizing: 'border-box'` on inputs
 - `isVerified(m)`: `m.status === 'Active' || m.status === 'Approved' || !m.status`
 - Media library folder for blog editor: `'blog-images'` (hardcoded — never fetch all folders)
+- **Border radius**: always use `var(--radius-xs/sm/md/lg/pill)` — never hardcode px values. Migrate on touch when editing existing components.
