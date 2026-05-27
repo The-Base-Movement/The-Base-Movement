@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
 import SEO from '@/components/SEO'
+import { EmptyState } from '@/components/states'
 
 export default function Cart() {
   const { cart, removeFromCart, updateCartQuantity } = useStore()
@@ -11,183 +12,414 @@ export default function Cart() {
       typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price
     return sum + price * item.quantity
   }, 0)
-  const shipping = cart.length > 0 ? 25.0 : 0
-  const total = subtotal + shipping
+  const shipping = cart.length > 0 ? 18 : 0
+  const discount = cart.length > 0 ? 25 : 0
+  const total = Math.max(0, subtotal + shipping - discount)
+
+  const checkoutPath = window.location.pathname.includes('/dashboard')
+    ? '/dashboard/store/checkout'
+    : '/store/checkout'
 
   return (
-    <div className="bg-off-white min-h-screen">
+    <div style={{ background: 'hsl(var(--background))', minHeight: '100vh' }}>
       <SEO
         title="Your Shopping Bag"
         description="Review your items and proceed to secure checkout."
         canonical="/store/cart"
         noindex
       />
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px 64px' }}>
         <Breadcrumbs />
-        <header className="mb-12">
-          <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 mb-2 flex items-center gap-3">
+
+        <header style={{ marginBottom: 32 }}>
+          <h1
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 28,
+              color: 'hsl(var(--on-surface))',
+              margin: '0 0 6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              letterSpacing: '-0.02em',
+            }}
+          >
             <span
-              className="material-symbols-outlined shrink-0"
-              style={{ fontSize: 32, color: 'var(--brand-green)' }}
+              className="material-symbols-outlined"
+              style={{ fontSize: 28, color: 'hsl(var(--primary))' }}
             >
               shopping_bag
             </span>
-            <span>Your Shopping Bag</span>
+            Your Shopping Bag
           </h1>
-          <p className="text-muted-gray font-body-md">
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface-muted))',
+              margin: 0,
+            }}
+          >
             Review your items and proceed to secure checkout.
           </p>
         </header>
 
         {cart.length > 0 ? (
-          <div className="grid lg:grid-cols-12 gap-12">
-            {/* Cart Items List */}
-            <div className="lg:col-span-8 space-y-4">
-              {cart.map((item) => (
-                <div
-                  key={`${item.id}-${item.selectedSize}-${item.selectedColor}`}
-                  className="bg-white border border-stone-200 p-6 rounded-sm shadow-sm flex flex-col md:flex-row gap-6 relative group"
-                >
-                  <div className="w-24 h-24 bg-stone-100 rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
-                    {item.image ? (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                        decoding="async"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <span
-                        className="material-symbols-outlined text-stone-300"
-                        style={{ fontSize: 40 }}
-                      >
-                        shopping_bag
-                      </span>
-                    )}
-                  </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 1fr)',
+              gap: 24,
+            }}
+            className="lg:grid-cols-[1fr_340px]"
+          >
+            {/* Cart Items */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {cart.map((item) => {
+                const unitPrice =
+                  typeof item.price === 'string'
+                    ? parseFloat(item.price.replace(/[^0-9.]/g, ''))
+                    : item.price
+                const lineTotal = unitPrice * item.quantity
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">
-                      <Link
-                        to={
-                          window.location.pathname.includes('/dashboard')
-                            ? `/dashboard/store/product/${item.slug}`
-                            : `/store/product/${item.slug}`
-                        }
-                        className="font-bold text-stone-900 text-sm sm:text-base leading-tight hover:text-[var(--brand-green)] transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                      <p className="font-bold text-[var(--brand-green)] text-sm sm:text-base whitespace-nowrap shrink-0">
-                        {typeof item.price === 'string' && item.price.startsWith('₵')
-                          ? item.price
-                          : `₵${parseFloat(String(item.price)).toFixed(2)}`}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-4 text-micro font-bold text-stone-500 tracking-tight mb-4">
-                      {item.selectedSize && <span>Size: {item.selectedSize}</span>}
-                      {item.selectedColor && <span>Color: {item.selectedColor}</span>}
-                    </div>
-
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center h-9 border border-stone-200 bg-white rounded-sm overflow-hidden">
-                        <button
-                          onClick={() =>
-                            updateCartQuantity(item.id, Math.max(1, item.quantity - 1))
-                          }
-                          className="w-9 h-full flex items-center justify-center hover:bg-stone-50"
+                return (
+                  <div
+                    key={`${item.id}-${item.selectedSize}-${item.selectedColor}`}
+                    style={{
+                      background: '#fff',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      gap: 16,
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    {/* Thumbnail */}
+                    <div
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'hsl(var(--container-low))',
+                        overflow: 'hidden',
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          decoding="async"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))' }}
                         >
-                          <span
-                            className="material-symbols-outlined text-stone-500"
-                            style={{ fontSize: 12 }}
-                          >
-                            remove
-                          </span>
-                        </button>
-                        <span className="w-10 text-center text-xs font-bold text-stone-900">
-                          {item.quantity}
+                          shopping_bag
                         </span>
-                        <button
-                          onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
-                          className="w-9 h-full flex items-center justify-center hover:bg-stone-50"
+                      )}
+                    </div>
+
+                    {/* Details */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          gap: 12,
+                          marginBottom: 6,
+                        }}
+                      >
+                        <Link
+                          to={
+                            window.location.pathname.includes('/dashboard')
+                              ? `/dashboard/store/product/${item.slug}`
+                              : `/store/product/${item.slug}`
+                          }
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 14,
+                            color: 'hsl(var(--on-surface))',
+                            textDecoration: 'none',
+                            lineHeight: 1.3,
+                          }}
                         >
-                          <span
-                            className="material-symbols-outlined text-stone-500"
-                            style={{ fontSize: 12 }}
-                          >
-                            add
-                          </span>
-                        </button>
+                          {item.name}
+                        </Link>
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 15,
+                            color: 'hsl(var(--primary))',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0,
+                            fontVariantNumeric: 'tabular-nums',
+                          }}
+                        >
+                          ₵{lineTotal.toFixed(0)}
+                        </span>
                       </div>
 
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="btn btn-outline-dest btn-sm"
+                      {(item.selectedSize || item.selectedColor) && (
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: 12,
+                            marginBottom: 10,
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-normal, 400)',
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                            letterSpacing: '0.04em',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {item.selectedSize && <span>Size: {item.selectedSize}</span>}
+                          {item.selectedColor && <span>Colour: {item.selectedColor}</span>}
+                        </div>
+                      )}
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 12,
+                          marginTop: 'auto',
+                        }}
                       >
-                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                          delete
-                        </span>
-                        Remove
-                      </button>
+                        {/* Quantity stepper */}
+                        <div
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: 'var(--radius-sm)',
+                            overflow: 'hidden',
+                            height: 32,
+                          }}
+                        >
+                          <button
+                            onClick={() =>
+                              updateCartQuantity(
+                                item.id,
+                                Math.max(1, item.quantity - 1),
+                                item.selectedSize,
+                                item.selectedColor
+                              )
+                            }
+                            style={{
+                              width: 32,
+                              height: '100%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: 'hsl(var(--on-surface-muted))',
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
+                              remove
+                            </span>
+                          </button>
+                          <span
+                            style={{
+                              width: 32,
+                              textAlign: 'center',
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              fontSize: 13,
+                              fontVariantNumeric: 'tabular-nums',
+                              color: 'hsl(var(--on-surface))',
+                              borderLeft: '1px solid hsl(var(--border))',
+                              borderRight: '1px solid hsl(var(--border))',
+                            }}
+                          >
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateCartQuantity(
+                                item.id,
+                                item.quantity + 1,
+                                item.selectedSize,
+                                item.selectedColor
+                              )
+                            }
+                            style={{
+                              width: 32,
+                              height: '100%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: 'hsl(var(--on-surface-muted))',
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
+                              add
+                            </span>
+                          </button>
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            removeFromCart(item.id, item.selectedSize, item.selectedColor)
+                          }
+                          className="btn btn-outline-dest btn-sm"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                            delete
+                          </span>
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
 
               <Link
                 to="/store"
-                className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mt-4 group"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                  textDecoration: 'none',
+                  marginTop: 4,
+                }}
               >
-                <span
-                  className="material-symbols-outlined group-hover:-translate-x-1 transition-transform"
-                  style={{ fontSize: 16 }}
-                >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                   arrow_back
                 </span>
-                <span className="font-meta text-micro font-bold tracking-tight">
-                  Continue shopping
-                </span>
+                Continue shopping
               </Link>
             </div>
 
-            {/* Order Summary Sidebar */}
-            <div className="lg:col-span-4">
-              <div className="bg-white border border-stone-200 p-8 rounded-sm shadow-sm sticky top-24">
-                <h2 className="font-h3 text-xl text-stone-900 mb-6 pb-4 border-b border-stone-100">
+            {/* Order Summary */}
+            <div>
+              <div
+                style={{
+                  background: '#fff',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '20px 24px',
+                  position: 'sticky',
+                  top: 24,
+                }}
+              >
+                <h2
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 15,
+                    color: 'hsl(var(--on-surface))',
+                    margin: '0 0 16px',
+                    paddingBottom: 14,
+                    borderBottom: '1px solid hsl(var(--border))',
+                    letterSpacing: '-0.01em',
+                  }}
+                >
                   Order Summary
                 </h2>
 
-                <div className="space-y-4 mb-8">
-                  <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
-                    <span>Subtotal</span>
-                    <span className="font-bold text-stone-900">₵{subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
-                    <span>Shipping Estimate</span>
-                    <span className="font-bold text-stone-900">₵{shipping.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
-                    <span>Taxes</span>
-                    <span className="font-bold text-stone-900">Calculated at checkout</span>
-                  </div>
-                  <div className="pt-4 border-t border-stone-200 flex justify-between items-center">
-                    <span className="font-h3 text-lg text-stone-900">Total</span>
-                    <span className="font-h3 text-xl text-[var(--brand-green)]">
-                      ₵{total.toFixed(2)}
-                    </span>
-                  </div>
+                <div
+                  style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}
+                >
+                  {[
+                    { label: 'Subtotal', value: `₵${subtotal.toFixed(0)}`, muted: false },
+                    { label: 'Shipping', value: `₵${shipping}`, muted: false },
+                    { label: 'Member discount', value: `−₵${discount}`, green: true },
+                    { label: 'Taxes', value: 'At checkout', muted: true },
+                  ].map(({ label, value, muted, green }) => (
+                    <div
+                      key={label}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                        fontSize: 13,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      <span>{label}</span>
+                      <span
+                        style={{
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: green
+                            ? 'hsl(var(--primary))'
+                            : muted
+                              ? 'hsl(var(--on-surface-muted))'
+                              : 'hsl(var(--on-surface))',
+                          fontVariantNumeric: 'tabular-nums',
+                          fontSize: muted ? 11 : 13,
+                        }}
+                      >
+                        {value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingTop: 14,
+                    borderTop: '1px solid hsl(var(--border))',
+                    marginBottom: 18,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 16,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    Total
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 22,
+                      color: 'hsl(var(--primary))',
+                      letterSpacing: '-0.02em',
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    ₵{total.toFixed(0)}
+                  </span>
                 </div>
 
                 <Link
-                  to={
-                    window.location.pathname.includes('/dashboard')
-                      ? '/dashboard/store/checkout'
-                      : '/store/checkout'
-                  }
-                  className="btn btn-primary w-full"
-                  style={{ height: 56 }}
+                  to={checkoutPath}
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'center', height: 52 }}
                 >
                   Proceed to Checkout
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
@@ -195,37 +427,84 @@ export default function Cart() {
                   </span>
                 </Link>
 
-                <div className="mt-8 space-y-4">
-                  <div className="flex items-center gap-3 text-stone-500">
-                    <span className="material-symbols-outlined text-sm">verified_user</span>
-                    <span className="text-micro font-bold tracking-tight">
-                      100% Secure transaction
+                <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {[
+                    { icon: 'verified_user', text: '100% Secure transaction' },
+                    { icon: 'local_shipping', text: 'Free shipping over ₵500' },
+                  ].map(({ icon, text }) => (
+                    <div
+                      key={icon}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        {icon}
+                      </span>
+                      {text}
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  style={{
+                    marginTop: 16,
+                    display: 'flex',
+                    gap: 6,
+                    justifyContent: 'center',
+                    opacity: 0.4,
+                  }}
+                >
+                  {['MoMo', 'Visa', 'Mastercard', 'PayPal'].map((m) => (
+                    <span
+                      key={m}
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 9,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 'var(--radius-xs)',
+                        padding: '2px 6px',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {m}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-3 text-stone-500">
-                    <span className="material-symbols-outlined text-sm">local_shipping</span>
-                    <span className="text-micro font-bold tracking-tight">
-                      Free shipping over ₵500
-                    </span>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="bg-white border border-stone-200 py-24 px-6 rounded-sm text-center shadow-sm max-w-2xl mx-auto">
-            <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 40 }}>
-                shopping_bag
-              </span>
+          <div
+            style={{
+              background: '#fff',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-lg)',
+              padding: '64px 24px',
+              textAlign: 'center',
+              maxWidth: 480,
+              margin: '0 auto',
+            }}
+          >
+            <EmptyState
+              icon="shopping_bag"
+              title="Your bag is empty"
+              body="Looks like you haven't added anything yet."
+            />
+            <div style={{ marginTop: 24 }}>
+              <Link to="/store" className="btn btn-primary">
+                Explore the Store
+              </Link>
             </div>
-            <h2 className="font-h3 text-2xl text-stone-900 mb-2">Your bag is empty</h2>
-            <p className="text-muted-gray font-body-md mb-8">
-              Looks like you haven't added anything to your bag yet.
-            </p>
-            <Link to="/store" className="btn btn-primary">
-              Explore the Store
-            </Link>
           </div>
         )}
       </div>
