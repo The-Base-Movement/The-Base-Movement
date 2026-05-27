@@ -41,7 +41,9 @@ export function PollingStationsFilterBar({
       }}
     >
       {/* Region select */}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{ position: 'relative', display: 'flex', alignItems: 'center', flex: '1 1 160px' }}
+      >
         <span
           className="material-symbols-outlined"
           style={{
@@ -59,7 +61,7 @@ export function PollingStationsFilterBar({
           aria-label="Filter by region"
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
-          style={{ ...selectStyle, minWidth: 180 }}
+          style={{ ...selectStyle, width: '100%' }}
         >
           <option value="">All regions</option>
           {regions.map((r) => (
@@ -83,7 +85,9 @@ export function PollingStationsFilterBar({
       </div>
 
       {/* Constituency select */}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{ position: 'relative', display: 'flex', alignItems: 'center', flex: '1 1 160px' }}
+      >
         <span
           className="material-symbols-outlined"
           style={{
@@ -102,7 +106,7 @@ export function PollingStationsFilterBar({
           value={selectedConstituency}
           onChange={(e) => setSelectedConstituency(e.target.value)}
           disabled={!selectedRegion}
-          style={{ ...selectStyle, minWidth: 200, opacity: selectedRegion ? 1 : 0.5 }}
+          style={{ ...selectStyle, width: '100%', opacity: selectedRegion ? 1 : 0.5 }}
         >
           <option value="">All constituencies</option>
           {filteredConstituencies.map((c) => (
@@ -126,7 +130,9 @@ export function PollingStationsFilterBar({
       </div>
 
       {/* Search input */}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{ position: 'relative', display: 'flex', alignItems: 'center', flex: '2 1 200px' }}
+      >
         <span
           className="material-symbols-outlined"
           style={{
@@ -148,7 +154,7 @@ export function PollingStationsFilterBar({
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleSearchKeyDown}
           onBlur={() => setSearch(searchInput)}
-          style={inputStyle}
+          style={{ ...inputStyle, width: '100%' }}
         />
       </div>
 

@@ -126,14 +126,23 @@ export default function PollingStations() {
                 fontFamily: "'Public Sans'",
                 fontWeight: 'var(--font-weight-medium, 500)',
                 marginTop: 2,
+                marginBottom: 4,
               }}
             >
               Browse, filter, and search all EC-registered polling stations.
             </p>
+            <p
+              style={{
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans'",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                margin: 0,
+              }}
+            >
+              {totalCount.toLocaleString()} {totalCount === 1 ? 'station' : 'stations'}
+            </p>
           </div>
-          <span className="meta">
-            {totalCount.toLocaleString()} {totalCount === 1 ? 'station' : 'stations'}
-          </span>
         </div>
 
         {/* Filter bar */}
