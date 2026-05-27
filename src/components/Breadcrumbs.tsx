@@ -12,7 +12,7 @@ const LABEL_OVERRIDES: Record<string, string> = {
   members: 'Members',
   store: 'Store',
   chapters: 'Chapters',
-  'chapter-hub': 'Chapter Hub',
+  'chapter-hub': 'Regional Hub',
   settings: 'Settings',
   trash: 'Trash Vault',
   'media-library': 'Media Library',
@@ -56,9 +56,9 @@ function getRootContext(pathname: string): { label: string; to: string } {
 // Segments to skip (already shown as root)
 const SKIP_SEGMENTS = new Set(['dashboard', 'admin'])
 
-function getLabel(value: string, post?: string): string {
+function getLabel(value: string, pathname: string, post?: string): string {
+  if (value === 'chapters' && pathname.startsWith('/admin')) return 'Chapter Management'
   if (LABEL_OVERRIDES[value]) return LABEL_OVERRIDES[value]
-  // UUID or numeric - use the post title if available, otherwise 'Details'
   if (/^[0-9a-f-]{8,}$/i.test(value) || !isNaN(Number(value))) return post || 'Details'
   return value
     .replace(/-/g, ' ')
@@ -121,7 +121,7 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
         if (!last && ['edit', 'new'].includes(value)) return null
 
         const to = `/${pathnames.slice(0, index + 1).join('/')}`
-        const label = last && currentLabel ? currentLabel : getLabel(value)
+        const label = last && currentLabel ? currentLabel : getLabel(value, location.pathname)
 
         return (
           <React.Fragment key={to}>
