@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -10,38 +10,57 @@ import { SpendingLedgerTable } from './spendingledger/SpendingLedgerTable'
 import { SpendingLedgerMobileList } from './spendingledger/SpendingLedgerMobileList'
 import { SpendingFormModal } from './spendingledger/SpendingFormModal'
 import { SpendingDeleteModal } from './spendingledger/SpendingDeleteModal'
+import { SpendingCategoryModal } from './spendingledger/SpendingCategoryModal'
 
-const EMPTY_FORM: FormState = {
-  chapter: '',
-  amount: '',
-  description: '',
-  category: 'Printing',
-  timestamp: new Date().toISOString().split('T')[0],
+interface Category {
+  id: string
+  name: string
 }
 
 export default function SpendingLedger() {
   const [entries, setEntries] = useState<Entry[]>([])
   const [loading, setLoading] = useState(true)
-  const [modal, setModal] = useState<'add' | 'edit' | 'delete' | null>(null)
+  const [modal, setModal] = useState<'add' | 'edit' | 'delete' | 'categories' | null>(null)
   const [selected, setSelected] = useState<Entry | null>(null)
-  const [form, setForm] = useState<FormState>(EMPTY_FORM)
+  const [form, setForm] = useState<FormState>({
+    chapter: '',
+    amount: '',
+    description: '',
+    category: '',
+    timestamp: new Date().toISOString().split('T')[0],
+  })
   const [saving, setSaving] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('All')
+  const [categories, setCategories] = useState<Category[]>([])
+
+  const loadCategories = useCallback(async () => {
+    const data = await adminService.getSpendingCategories()
+    setCategories(data)
+  }, [])
 
   async function load() {
-    setLoading(true)
     const data = await adminService.getAllSpendingEntries()
     setEntries(data)
     setLoading(false)
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load()
-  }, [])
+    const timer = setTimeout(() => {
+      void load()
+      void loadCategories()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [loadCategories])
 
   function openAdd() {
-    setForm(EMPTY_FORM)
+    setForm({
+      chapter: '',
+      amount: '',
+      description: '',
+      category: categories[0]?.name ?? '',
+      timestamp: new Date().toISOString().split('T')[0],
+    })
     setSelected(null)
     setModal('add')
   }
@@ -64,7 +83,7 @@ export default function SpendingLedger() {
   }
 
   async function handleSave() {
-    if (!form.description.trim() || !form.chapter.trim() || !form.amount) {
+    if (!form.description.trim() || !form.chapter.trim() || !form.amount || !form.category.trim()) {
       toast.error('Please fill in all required fields.')
       return
     }
@@ -79,16 +98,14 @@ export default function SpendingLedger() {
       chapter: form.chapter.trim(),
       amount,
       description: form.description.trim(),
-      category: form.category,
+      category: form.category.trim(),
       timestamp: new Date(form.timestamp).toISOString(),
     }
 
-    let ok: boolean
-    if (modal === 'add') {
-      ok = await adminService.addSpendingEntry(payload)
-    } else {
-      ok = await adminService.updateSpendingEntry(selected!.id, payload)
-    }
+    const ok =
+      modal === 'add'
+        ? await adminService.addSpendingEntry(payload)
+        : await adminService.updateSpendingEntry(selected!.id, payload)
 
     setSaving(false)
     if (ok) {
@@ -114,14 +131,16 @@ export default function SpendingLedger() {
     }
   }
 
+  const allFilterCategories = ['All', ...categories.map((c) => c.name)]
+
   const filtered = entries.filter((e) => {
-    if (!searchQuery) return true
-    const q = searchQuery.toLowerCase()
-    return (
-      e.description.toLowerCase().includes(q) ||
-      e.chapter.toLowerCase().includes(q) ||
-      e.category.toLowerCase().includes(q)
-    )
+    const matchesSearch =
+      !searchQuery ||
+      e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.chapter.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.category.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = categoryFilter === 'All' || e.category === categoryFilter
+    return matchesSearch && matchesCategory
   })
 
   return (
@@ -130,23 +149,38 @@ export default function SpendingLedger() {
         title="Movement spending ledger"
         icon="account_balance_wallet"
         description="Record and manage strategic fund allocations and regional mobilization expenditures."
+        actions={
+          <>
+            <button className="btn btn-outline btn-sm" onClick={() => setModal('categories')}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                category
+              </span>
+              Categories
+            </button>
+            <button className="btn btn-primary btn-sm" onClick={openAdd}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                add_circle
+              </span>
+              Add entry
+            </button>
+          </>
+        }
       />
 
-      {/* KPIs */}
       <SpendingLedgerKPIs entries={entries} loading={loading} />
 
-      {/* Table / List panel */}
       <SpendingLedgerTable
         filtered={filtered}
         loading={loading}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        openAdd={openAdd}
+        categoryFilter={categoryFilter}
+        setCategoryFilter={setCategoryFilter}
+        allCategories={allFilterCategories}
         openEdit={openEdit}
         openDelete={openDelete}
       />
 
-      {/* Mobile cards */}
       <SpendingLedgerMobileList
         filtered={filtered}
         loading={loading}
@@ -155,7 +189,6 @@ export default function SpendingLedger() {
         openDelete={openDelete}
       />
 
-      {/* Add / Edit modal */}
       <SpendingFormModal
         isOpen={modal === 'add' || modal === 'edit'}
         isEdit={modal === 'edit'}
@@ -166,13 +199,19 @@ export default function SpendingLedger() {
         onSave={handleSave}
       />
 
-      {/* Delete confirmation modal */}
       <SpendingDeleteModal
         isOpen={modal === 'delete'}
         onClose={() => setModal(null)}
         selected={selected}
         saving={saving}
         onDelete={handleDelete}
+      />
+
+      <SpendingCategoryModal
+        isOpen={modal === 'categories'}
+        onClose={() => setModal(null)}
+        categories={categories}
+        onChanged={loadCategories}
       />
     </div>
   )

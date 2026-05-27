@@ -1,5 +1,4 @@
 import type { Order } from '@/services/adminService'
-import { cn } from '@/lib/utils'
 
 interface OrderListCardProps {
   order: Order
@@ -24,44 +23,73 @@ export function OrderListCard({
 
   return (
     <div
-      className={cn(
-        'p-4 space-y-4 transition-colors',
-        isSelected ? 'bg-muted/5 shadow-inner' : 'bg-white'
-      )}
       style={{
         padding: '13px 16px',
         borderBottom: '1px solid hsl(var(--border))',
         background: isSelected ? 'rgba(0,107,63,.04)' : '#fff',
         boxShadow: isSelected ? 'inset 3px 0 0 hsl(var(--primary))' : undefined,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+        cursor: 'pointer',
       }}
       onClick={onClick}
     >
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-sm bg-muted/5 border border-border/10 flex items-center justify-center">
-            <span className="material-symbols-outlined text-slate-400" style={{ fontSize: 20 }}>
+      {/* Identity + status pill */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          gap: 8,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 'var(--radius-sm)',
+              background: 'hsl(var(--container-low))',
+              border: '1px solid hsl(var(--border))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+            >
               inventory_2
             </span>
           </div>
-          <div className="space-y-0.5">
-            <h4
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: 13.5,
-                color: 'hsl(var(--on-surface))',
-                margin: 0,
-              }}
-            >
-              {order.full_name}
-            </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 13.5,
+                color: 'hsl(var(--on-surface))',
+                margin: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {order.full_name}
+            </p>
+            <p
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 10.5,
                 color: 'hsl(var(--on-surface-muted))',
                 margin: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
             >
               #{order.id.slice(0, 8).toUpperCase()} · {order.email}
@@ -69,14 +97,8 @@ export function OrderListCard({
           </div>
         </div>
         <span
-          className={cn(
-            'pill',
-            order.status === 'Delivered'
-              ? 'pill-ok'
-              : order.status === 'Cancelled'
-                ? 'pill-err'
-                : 'pill-warn'
-          )}
+          className={`pill ${order.status === 'Delivered' ? 'pill-ok' : order.status === 'Cancelled' ? 'pill-err' : 'pill-warn'}`}
+          style={{ flexShrink: 0 }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
             {cfg.icon}
@@ -85,14 +107,25 @@ export function OrderListCard({
         </span>
       </div>
 
-      <div className="flex items-center gap-4 text-micro font-bold text-muted-foreground/60">
-        <div className="flex items-center gap-1">
+      {/* Meta: region + amount */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          fontSize: 11,
+          fontWeight: 'var(--font-weight-medium, 500)',
+          color: 'hsl(var(--on-surface-muted))',
+          fontFamily: "'Public Sans', sans-serif",
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
             location_on
           </span>
           {order.region_or_state || 'Unknown Hub'}
         </div>
-        <div className="flex items-center gap-1">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
             payments
           </span>
@@ -100,9 +133,14 @@ export function OrderListCard({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      {/* Actions */}
+      <div
+        style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
-          className="btn btn-outline btn-sm flex-1 h-9 rounded-sm"
+          className="btn btn-outline btn-sm"
+          style={{ flex: 1 }}
           onClick={(e) => {
             e.stopPropagation()
             onClick()
@@ -115,7 +153,8 @@ export function OrderListCard({
         </button>
         {nextStatus && (
           <button
-            className="btn btn-primary btn-sm flex-[1.5] h-9 rounded-sm"
+            className="btn btn-primary btn-sm"
+            style={{ flex: 1.5 }}
             disabled={updatingId === order.id}
             onClick={(e) => {
               e.stopPropagation()

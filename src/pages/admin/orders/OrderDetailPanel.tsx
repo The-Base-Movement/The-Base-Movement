@@ -131,7 +131,7 @@ export function OrderDetailPanel({
             gap: 8,
           }}
         >
-          <label className="field-label">Recipient details</label>
+          <p className="field-label">Recipient details</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <p
               style={{
@@ -177,7 +177,7 @@ export function OrderDetailPanel({
             gap: 8,
           }}
         >
-          <label className="field-label">Logistics destination</label>
+          <p className="field-label">Logistics destination</p>
           <div
             style={{
               fontSize: 12,
@@ -222,9 +222,9 @@ export function OrderDetailPanel({
               justifyContent: 'space-between',
             }}
           >
-            <label className="field-label" style={{ margin: 0 }}>
+            <p className="field-label" style={{ margin: 0 }}>
               Manifest items
-            </label>
+            </p>
             <span
               style={{
                 fontSize: 10,
@@ -247,7 +247,7 @@ export function OrderDetailPanel({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  borderRadius: 4,
+                  borderRadius: 'var(--radius-sm)',
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

@@ -178,6 +178,48 @@ class DonationService {
     return true
   }
 
+  async getSpendingCategories(): Promise<{ id: string; name: string }[]> {
+    const { data, error } = await supabase
+      .from('spending_categories')
+      .select('id, name')
+      .order('name', { ascending: true })
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch spending categories:', error)
+      return []
+    }
+    return data || []
+  }
+
+  async addSpendingCategory(name: string): Promise<boolean> {
+    const { error } = await supabase.from('spending_categories').insert({ name: name.trim() })
+    if (error) {
+      console.error('[DATABASE] Failed to add spending category:', error)
+      return false
+    }
+    return true
+  }
+
+  async renameSpendingCategory(id: string, name: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('spending_categories')
+      .update({ name: name.trim() })
+      .eq('id', id)
+    if (error) {
+      console.error('[DATABASE] Failed to rename spending category:', error)
+      return false
+    }
+    return true
+  }
+
+  async deleteSpendingCategory(id: string): Promise<boolean> {
+    const { error } = await supabase.from('spending_categories').delete().eq('id', id)
+    if (error) {
+      console.error('[DATABASE] Failed to delete spending category:', error)
+      return false
+    }
+    return true
+  }
+
   async getPendingDonations(): Promise<DonationDetail[]> {
     return this.getDonations('Pending')
   }

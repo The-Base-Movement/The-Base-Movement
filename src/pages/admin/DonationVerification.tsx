@@ -430,9 +430,10 @@ export default function FinancialAudit() {
         </div>
 
         {/* Filters button + dropdown */}
-        <div style={{ position: 'relative', flexShrink: 0 }} ref={filterPanelRef}>
+        <div style={{ position: 'relative', flexGrow: 1 }} ref={filterPanelRef}>
           <button
             className={hasActiveFilters ? 'btn btn-accent btn-sm' : 'btn btn-outline btn-sm'}
+            style={{ width: '100%' }}
             onClick={() => setShowFilters((v) => !v)}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
@@ -591,7 +592,7 @@ export default function FinancialAudit() {
 
                 {/* Amount range */}
                 <div>
-                  <label
+                  <p
                     style={{
                       display: 'block',
                       fontSize: 10,
@@ -601,13 +602,17 @@ export default function FinancialAudit() {
                       color: 'hsl(var(--on-surface-muted))',
                       marginBottom: 6,
                       fontFamily: "'Public Sans', sans-serif",
+                      margin: '0 0 6px',
                     }}
                   >
                     Amount (₵)
-                  </label>
+                  </p>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <input
                       type="number"
+                      id="filter-amount-min"
+                      name="amountMin"
+                      aria-label="Minimum amount (₵)"
                       placeholder="Min"
                       value={filters.amountMin}
                       onChange={(e) => setFilter('amountMin', e.target.value)}
@@ -615,6 +620,9 @@ export default function FinancialAudit() {
                     />
                     <input
                       type="number"
+                      id="filter-amount-max"
+                      name="amountMax"
+                      aria-label="Maximum amount (₵)"
                       placeholder="Max"
                       value={filters.amountMax}
                       onChange={(e) => setFilter('amountMax', e.target.value)}
@@ -625,7 +633,7 @@ export default function FinancialAudit() {
 
                 {/* Date range */}
                 <div>
-                  <label
+                  <p
                     style={{
                       display: 'block',
                       fontSize: 10,
@@ -633,21 +641,27 @@ export default function FinancialAudit() {
                       textTransform: 'uppercase',
                       letterSpacing: '.06em',
                       color: 'hsl(var(--on-surface-muted))',
-                      marginBottom: 6,
+                      margin: '0 0 6px',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
                   >
                     Date range
-                  </label>
-                  <div style={{ display: 'flex', gap: 6 }}>
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <input
                       type="date"
+                      id="filter-date-from"
+                      name="dateFrom"
+                      aria-label="From date"
                       value={filters.dateFrom}
                       onChange={(e) => setFilter('dateFrom', e.target.value)}
                       style={{ ...fieldStyle, height: 30, fontSize: 12 }}
                     />
                     <input
                       type="date"
+                      id="filter-date-to"
+                      name="dateTo"
+                      aria-label="To date"
                       value={filters.dateTo}
                       onChange={(e) => setFilter('dateTo', e.target.value)}
                       style={{ ...fieldStyle, height: 30, fontSize: 12 }}

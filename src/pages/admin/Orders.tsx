@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
-import { NEXT_STATUS } from './orders/utils'
+import { NEXT_STATUS, STATUS_CONFIG } from './orders/utils'
 import { OrdersKPIs } from './orders/OrdersKPIs'
 import { OrdersFilters } from './orders/OrdersFilters'
 import { OrdersTable } from './orders/OrdersTable'
@@ -175,6 +175,78 @@ export default function AdminOrders() {
               statusFilter={statusFilter}
               setStatusFilter={setStatusFilter}
             />
+          </div>
+
+          {/* Mobile search + filter pills */}
+          <div
+            className="mobile-only"
+            style={{
+              padding: '10px 14px',
+              borderBottom: '1px solid hsl(var(--border))',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+              background: 'hsl(var(--container-low))',
+            }}
+          >
+            <div style={{ position: 'relative' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 9,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 15,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                search
+              </span>
+              <input
+                aria-label="Search manifest"
+                name="search"
+                id="orders-search-mobile"
+                type="text"
+                placeholder="Search manifest..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: 34,
+                  paddingLeft: 30,
+                  paddingRight: 12,
+                  boxSizing: 'border-box',
+                  background: '#fff',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: 13,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  outline: 'none',
+                }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2 }}>
+              <button
+                className={`pill ${statusFilter === 'ALL' ? 'pill-ok' : 'pill-mute'}`}
+                style={{ flexShrink: 0 }}
+                onClick={() => setStatusFilter('ALL')}
+              >
+                All Statuses
+              </button>
+              {(Object.keys(STATUS_CONFIG) as Array<keyof typeof STATUS_CONFIG>).map((s) => (
+                <button
+                  key={s}
+                  className={`pill ${statusFilter === s ? 'pill-ok' : 'pill-mute'}`}
+                  style={{ flexShrink: 0 }}
+                  onClick={() => setStatusFilter(s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
 
           <OrdersTable

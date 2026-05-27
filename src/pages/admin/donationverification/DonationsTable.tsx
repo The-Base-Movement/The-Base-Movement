@@ -109,7 +109,7 @@ export function DonationsTable({
                           textAlign: i === 5 ? 'right' : 'left',
                           padding: '10px 14px',
                           fontSize: 9.5,
-                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           color: 'hsl(var(--on-surface-muted))',
                           letterSpacing: '.06em',
                           textTransform: 'uppercase',

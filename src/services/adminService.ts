@@ -1776,6 +1776,22 @@ class AdminService {
     return donationService.deleteSpendingEntry(id)
   }
 
+  async getSpendingCategories() {
+    return donationService.getSpendingCategories()
+  }
+
+  async addSpendingCategory(name: string) {
+    return donationService.addSpendingCategory(name)
+  }
+
+  async renameSpendingCategory(id: string, name: string) {
+    return donationService.renameSpendingCategory(id, name)
+  }
+
+  async deleteSpendingCategory(id: string) {
+    return donationService.deleteSpendingCategory(id)
+  }
+
   async getMemberDonationsByPhone(phone: string): Promise<DonationDetail[]> {
     return donationService.getMemberDonations(phone)
   }

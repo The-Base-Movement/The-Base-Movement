@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Entry } from './types'
 
 interface SpendingLedgerTableProps {
@@ -5,7 +6,9 @@ interface SpendingLedgerTableProps {
   loading: boolean
   searchQuery: string
   setSearchQuery: (q: string) => void
-  openAdd: () => void
+  categoryFilter: string
+  setCategoryFilter: (v: string) => void
+  allCategories: string[]
   openEdit: (entry: Entry) => void
   openDelete: (entry: Entry) => void
 }
@@ -15,19 +18,22 @@ export function SpendingLedgerTable({
   loading,
   searchQuery,
   setSearchQuery,
-  openAdd,
+  categoryFilter,
+  setCategoryFilter,
+  allCategories,
   openEdit,
   openDelete,
 }: SpendingLedgerTableProps) {
+  const [filterOpen, setFilterOpen] = useState(false)
+
   return (
-    <div className="panel">
+    <div className="panel" style={{ overflow: 'visible' }}>
       <div
         style={{
           padding: '14px 18px',
           borderBottom: '1px solid hsl(var(--border))',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           gap: 12,
           flexWrap: 'wrap',
         }}
@@ -47,6 +53,8 @@ export function SpendingLedgerTable({
             search
           </span>
           <input
+            id="sl-search"
+            name="searchQuery"
             aria-label="Search spending entries"
             type="text"
             placeholder="Search entries..."
@@ -67,12 +75,90 @@ export function SpendingLedgerTable({
             }}
           />
         </div>
-        <button onClick={openAdd} className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            add
-          </span>
-          Add entry
-        </button>
+
+        {/* Filter dropdown */}
+        <div style={{ position: 'relative', flexGrow: 1 }}>
+          <button
+            className={
+              categoryFilter !== 'All' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
+            }
+            style={{ width: '100%' }}
+            onClick={() => setFilterOpen((v) => !v)}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              tune
+            </span>
+            {categoryFilter === 'All' ? 'Filter' : categoryFilter}
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 14, marginLeft: 'auto' }}
+            >
+              {filterOpen ? 'expand_less' : 'expand_more'}
+            </span>
+          </button>
+          {filterOpen && (
+            <>
+              <div
+                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                onClick={() => setFilterOpen(false)}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  left: 0,
+                  right: 0,
+                  zIndex: 50,
+                  background: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                }}
+              >
+                {allCategories.map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => {
+                      setCategoryFilter(opt)
+                      setFilterOpen(false)
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      width: '100%',
+                      padding: '10px 14px',
+                      background:
+                        categoryFilter === opt ? 'hsl(var(--container-low))' : 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontSize: 13,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface))',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        fontSize: 15,
+                        color:
+                          categoryFilter === opt
+                            ? 'hsl(var(--primary))'
+                            : 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {categoryFilter === opt ? 'check_circle' : 'radio_button_unchecked'}
+                    </span>
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Desktop table */}
