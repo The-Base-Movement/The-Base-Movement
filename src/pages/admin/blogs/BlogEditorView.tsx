@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Editor } from '@tinymce/tinymce-react'
 import type { BlogPost, Author } from '@/types/admin'
 import { MediaLibrary } from './MediaLibrary'
@@ -108,24 +109,82 @@ export function BlogEditorView({
           >
             arrow_back
           </button>
-          <div>
-            <h2
-              className="!text-sm !font-bold !m-0"
-              style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: 4, minWidth: 0, flexWrap: 'wrap' }}
+          >
+            <Link
+              to="/admin/dashboard"
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 10,
+                color: 'hsl(var(--on-surface-muted))',
+                textDecoration: 'none',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                flexShrink: 0,
+              }}
             >
-              {formData.title || 'Untitled Article'}
-              <span
-                className="pill"
-                style={{
-                  background:
-                    formData.status === 'Published' ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
-                  color: formData.status === 'Published' ? '#fff' : 'hsl(var(--on-surface))',
-                  fontSize: 10,
-                }}
-              >
-                {formData.status}
-              </span>
-            </h2>
+              Admin
+            </Link>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 11, color: 'hsl(var(--border))', flexShrink: 0 }}
+            >
+              chevron_right
+            </span>
+            <button
+              onClick={onBack}
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 10,
+                color: 'hsl(var(--on-surface-muted))',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                flexShrink: 0,
+              }}
+            >
+              Blog posts
+            </button>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 11, color: 'hsl(var(--border))', flexShrink: 0 }}
+            >
+              chevron_right
+            </span>
+            <span
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 10,
+                color: 'hsl(var(--primary))',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                flexShrink: 1,
+              }}
+            >
+              {editingPost ? formData.title || 'Untitled Article' : 'New Article'}
+            </span>
+            <span
+              className="pill"
+              style={{
+                background:
+                  formData.status === 'Published' ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
+                color: formData.status === 'Published' ? '#fff' : 'hsl(var(--on-surface))',
+                fontSize: 10,
+                flexShrink: 0,
+              }}
+            >
+              {formData.status}
+            </span>
           </div>
         </div>
 
