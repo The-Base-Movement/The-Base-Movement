@@ -7,10 +7,12 @@ import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
+import { useStore } from '@/hooks/useStore'
 
 export default function DashboardLayout() {
   const { settings } = useBranding()
   const { session } = useAuth()
+  const { wishlist } = useStore()
   const location = useLocation()
   const navigate = useNavigate()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -820,6 +822,7 @@ export default function DashboardLayout() {
                       {[
                         { icon: 'person', label: 'Member Profile', to: '/dashboard/settings' },
                         { icon: 'settings', label: 'Settings', to: '/dashboard/settings' },
+                        { icon: 'favorite', label: 'My Wishlist', to: '/dashboard/store/wishlist' },
                       ].map((item) => (
                         <Link
                           key={item.to + item.label}
@@ -835,6 +838,7 @@ export default function DashboardLayout() {
                             fontSize: 12,
                             color: 'hsl(var(--on-surface))',
                             textDecoration: 'none',
+                            position: 'relative',
                           }}
                           onMouseEnter={(e) =>
                             (e.currentTarget.style.background = 'hsl(var(--container-low))')
@@ -848,6 +852,27 @@ export default function DashboardLayout() {
                             {item.icon}
                           </span>
                           {item.label}
+                          {item.icon === 'favorite' && wishlist.length > 0 && (
+                            <span
+                              style={{
+                                marginLeft: 'auto',
+                                minWidth: 18,
+                                height: 18,
+                                borderRadius: 'var(--radius-pill)',
+                                background: 'hsl(var(--primary))',
+                                color: '#fff',
+                                fontSize: 9,
+                                fontWeight: 'var(--font-weight-medium, 500)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '0 5px',
+                                fontFamily: "'Public Sans', sans-serif",
+                              }}
+                            >
+                              {wishlist.length}
+                            </span>
+                          )}
                         </Link>
                       ))}
                       <div style={{ height: 1, background: 'hsl(var(--border))' }} />
