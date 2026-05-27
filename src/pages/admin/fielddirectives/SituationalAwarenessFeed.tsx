@@ -97,6 +97,8 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
             filter_list
           </span>
           <select
+            id="feed-status-filter"
+            name="feedStatusFilter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
             style={{
