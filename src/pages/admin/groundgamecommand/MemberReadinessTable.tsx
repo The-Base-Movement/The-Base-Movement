@@ -63,8 +63,8 @@ export function MemberReadinessTable({
       {/* Readiness KPIs */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          display: 'flex',
+          flexWrap: 'wrap',
           gap: 10,
           padding: '14px 18px 18px',
         }}
@@ -79,6 +79,8 @@ export function MemberReadinessTable({
             key={k.label}
             className="panel"
             style={{
+              flex: '1 1 130px',
+              minWidth: 0,
               padding: '14px 16px 14px 20px',
               position: 'relative',
               overflow: 'hidden',
@@ -160,7 +162,7 @@ export function MemberReadinessTable({
               paddingRight: 12,
               height: 34,
               border: '1px solid hsl(var(--border))',
-              borderRadius: 6,
+              borderRadius: 'var(--radius-sm)',
               fontFamily: "'Public Sans'",
               fontSize: 12,
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -175,7 +177,7 @@ export function MemberReadinessTable({
             onClick={() => setReadinessFilter(f)}
             style={{
               padding: '5px 14px',
-              borderRadius: 99,
+              borderRadius: 'var(--radius-pill)',
               border: '1px solid hsl(var(--border))',
               fontFamily: "'Public Sans'",
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -199,199 +201,346 @@ export function MemberReadinessTable({
         ))}
       </div>
 
-      {/* Table */}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Public Sans'" }}>
-          <thead>
-            <tr
-              style={{
-                borderBottom: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-              }}
-            >
-              {[
-                'Member',
-                'Reg #',
-                'Chapter',
-                'Constituency',
-                'Polling station code',
-                'Status',
-                '',
-              ].map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    padding: '9px 18px',
-                    textAlign: 'left',
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 10,
-                    letterSpacing: '.06em',
-                    textTransform: 'uppercase',
-                    color: 'hsl(var(--on-surface-muted))',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredVoterRegs.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={7}
-                  style={{
-                    padding: '32px 18px',
-                    textAlign: 'center',
-                    fontWeight: 'var(--font-weight-normal, 400)',
-                    fontSize: 12,
-                    color: 'hsl(var(--on-surface-muted))',
-                  }}
-                >
-                  {voterRegs.length === 0
-                    ? 'No members have submitted a polling station code yet.'
-                    : 'No results match your search.'}
-                </td>
-              </tr>
-            ) : (
-              filteredVoterRegs.map((r, i) => {
-                const isStationAgent = pollingAgentMemberIds.has(r.user_id)
-                return (
-                  <tr
-                    key={r.id}
+      {/* Table — desktop */}
+      <div className="desktop-only">
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Public Sans'" }}>
+            <thead>
+              <tr
+                style={{
+                  borderBottom: '1px solid hsl(var(--border))',
+                  background: 'hsl(var(--container-low))',
+                }}
+              >
+                {[
+                  'Member',
+                  'Reg #',
+                  'Chapter',
+                  'Constituency',
+                  'Polling station code',
+                  'Status',
+                  '',
+                ].map((h) => (
+                  <th
+                    key={h}
                     style={{
-                      borderBottom:
-                        i < filteredVoterRegs.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                      padding: '9px 18px',
+                      textAlign: 'left',
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 10,
+                      letterSpacing: '.06em',
+                      textTransform: 'uppercase',
+                      color: 'hsl(var(--on-surface-muted))',
+                      whiteSpace: 'nowrap',
                     }}
                   >
-                    <td
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredVoterRegs.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    style={{
+                      padding: '32px 18px',
+                      textAlign: 'center',
+                      fontWeight: 'var(--font-weight-normal, 400)',
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    {voterRegs.length === 0
+                      ? 'No members have submitted a polling station code yet.'
+                      : 'No results match your search.'}
+                  </td>
+                </tr>
+              ) : (
+                filteredVoterRegs.map((r, i) => {
+                  const isStationAgent = pollingAgentMemberIds.has(r.user_id)
+                  return (
+                    <tr
+                      key={r.id}
                       style={{
-                        padding: '11px 18px',
+                        borderBottom:
+                          i < filteredVoterRegs.length - 1
+                            ? '1px solid hsl(var(--border))'
+                            : 'none',
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: '11px 18px',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 12.5,
+                        }}
+                      >
+                        {r.member_name}
+                      </td>
+                      <td
+                        style={{
+                          padding: '11px 18px',
+                          fontSize: 11.5,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                        }}
+                      >
+                        {r.registration_number || '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: '11px 18px',
+                          fontSize: 11.5,
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                        }}
+                      >
+                        {r.chapter || (
+                          <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
+                        )}
+                      </td>
+                      <td
+                        style={{
+                          padding: '11px 18px',
+                          fontSize: 11.5,
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                        }}
+                      >
+                        {r.constituency || (
+                          <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
+                        )}
+                      </td>
+                      <td style={{ padding: '11px 18px' }}>
+                        {r.polling_station_id ? (
+                          <span
+                            style={{
+                              fontFamily: 'monospace',
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              fontSize: 12,
+                              background: 'hsl(var(--container-low))',
+                              padding: '3px 8px',
+                              borderRadius: 'var(--radius-xs)',
+                              letterSpacing: '.04em',
+                            }}
+                          >
+                            {r.polling_station_id}
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              color: 'hsl(var(--on-surface-muted))',
+                              fontSize: 11.5,
+                              fontWeight: 'var(--font-weight-normal, 400)',
+                            }}
+                          >
+                            Not submitted
+                          </span>
+                        )}
+                      </td>
+                      <td style={{ padding: '11px 18px' }}>
+                        <span
+                          className={
+                            r.registration_status === 'VERIFIED_VOTER'
+                              ? 'pill pill-ok'
+                              : r.registration_status === 'IN_PROGRESS'
+                                ? 'pill pill-warn'
+                                : 'pill pill-mute'
+                          }
+                          style={{ fontSize: 9.5 }}
+                        >
+                          {r.registration_status === 'VERIFIED_VOTER'
+                            ? 'Verified'
+                            : r.registration_status === 'IN_PROGRESS'
+                              ? 'In progress'
+                              : 'Unverified'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '11px 18px' }}>
+                        {r.polling_station_id &&
+                          (isStationAgent ? (
+                            <span className="pill pill-ok" style={{ fontSize: 9.5 }}>
+                              Station agent
+                            </span>
+                          ) : (
+                            <button
+                              className="btn btn-outline btn-sm"
+                              style={{ fontSize: 10.5, padding: '3px 10px', whiteSpace: 'nowrap' }}
+                              onClick={() => openStationModal(r)}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                                add
+                              </span>
+                              Appoint
+                            </button>
+                          ))}
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {filteredVoterRegs.length > 0 && (
+          <div
+            style={{
+              padding: '12px 18px',
+              borderTop: '1px solid hsl(var(--border))',
+              fontFamily: "'Public Sans'",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            Showing {filteredVoterRegs.length} of {voterRegs.length} records
+          </div>
+        )}
+      </div>
+
+      {/* Card list — mobile */}
+      <div className="mobile-only">
+        {filteredVoterRegs.length === 0 ? (
+          <p
+            style={{
+              padding: '32px 16px',
+              textAlign: 'center',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            {voterRegs.length === 0
+              ? 'No members have submitted a polling station code yet.'
+              : 'No results match your search.'}
+          </p>
+        ) : (
+          filteredVoterRegs.map((r, i) => {
+            const isStationAgent = pollingAgentMemberIds.has(r.user_id)
+            return (
+              <div
+                key={r.id}
+                style={{
+                  padding: '12px 16px',
+                  borderBottom:
+                    i < filteredVoterRegs.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                {/* Row 1: name + reg / status pill */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: 8,
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 13,
                         fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 12.5,
+                        color: 'hsl(var(--on-surface))',
                       }}
                     >
                       {r.member_name}
-                    </td>
-                    <td
+                    </div>
+                    <div
                       style={{
-                        padding: '11px 18px',
-                        fontSize: 11.5,
+                        fontSize: 10,
+                        fontFamily: 'monospace',
                         color: 'hsl(var(--on-surface-muted))',
-                        fontWeight: 'var(--font-weight-normal, 400)',
+                        marginTop: 2,
                       }}
                     >
                       {r.registration_number || '—'}
-                    </td>
-                    <td
-                      style={{
-                        padding: '11px 18px',
-                        fontSize: 11.5,
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                      }}
-                    >
-                      {r.chapter || (
-                        <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
-                      )}
-                    </td>
-                    <td
-                      style={{
-                        padding: '11px 18px',
-                        fontSize: 11.5,
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                      }}
-                    >
-                      {r.constituency || (
-                        <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
-                      )}
-                    </td>
-                    <td style={{ padding: '11px 18px' }}>
-                      {r.polling_station_id ? (
-                        <span
-                          style={{
-                            fontFamily: 'monospace',
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            fontSize: 12,
-                            background: 'hsl(var(--container-low))',
-                            padding: '3px 8px',
-                            borderRadius: 4,
-                            letterSpacing: '.04em',
-                          }}
-                        >
-                          {r.polling_station_id}
-                        </span>
-                      ) : (
-                        <span
-                          style={{
-                            color: 'hsl(var(--on-surface-muted))',
-                            fontSize: 11.5,
-                            fontWeight: 'var(--font-weight-normal, 400)',
-                          }}
-                        >
-                          Not submitted
-                        </span>
-                      )}
-                    </td>
-                    <td style={{ padding: '11px 18px' }}>
+                    </div>
+                  </div>
+                  <span
+                    className={
+                      r.registration_status === 'VERIFIED_VOTER'
+                        ? 'pill pill-ok'
+                        : r.registration_status === 'IN_PROGRESS'
+                          ? 'pill pill-warn'
+                          : 'pill pill-mute'
+                    }
+                    style={{ fontSize: 9.5, flexShrink: 0 }}
+                  >
+                    {r.registration_status === 'VERIFIED_VOTER'
+                      ? 'Verified'
+                      : r.registration_status === 'IN_PROGRESS'
+                        ? 'In progress'
+                        : 'Unverified'}
+                  </span>
+                </div>
+                {/* Row 2: polling station code / appoint button */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 8,
+                    marginTop: 8,
+                  }}
+                >
+                  <div>
+                    {r.polling_station_id ? (
                       <span
-                        className={
-                          r.registration_status === 'VERIFIED_VOTER'
-                            ? 'pill pill-ok'
-                            : r.registration_status === 'IN_PROGRESS'
-                              ? 'pill pill-warn'
-                              : 'pill pill-mute'
-                        }
-                        style={{ fontSize: 9.5 }}
+                        style={{
+                          fontFamily: 'monospace',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 11.5,
+                          background: 'hsl(var(--container-low))',
+                          padding: '3px 8px',
+                          borderRadius: 'var(--radius-xs)',
+                          letterSpacing: '.04em',
+                        }}
                       >
-                        {r.registration_status === 'VERIFIED_VOTER'
-                          ? 'Verified'
-                          : r.registration_status === 'IN_PROGRESS'
-                            ? 'In progress'
-                            : 'Unverified'}
+                        {r.polling_station_id}
                       </span>
-                    </td>
-                    <td style={{ padding: '11px 18px' }}>
-                      {r.polling_station_id &&
-                        (isStationAgent ? (
-                          <span className="pill pill-ok" style={{ fontSize: 9.5 }}>
-                            Station agent
-                          </span>
-                        ) : (
-                          <button
-                            className="btn btn-outline btn-sm"
-                            style={{ fontSize: 10.5, padding: '3px 10px', whiteSpace: 'nowrap' }}
-                            onClick={() => openStationModal(r)}
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                              add
-                            </span>
-                            Appoint
-                          </button>
-                        ))}
-                    </td>
-                  </tr>
-                )
-              })
-            )}
-          </tbody>
-        </table>
+                    ) : (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                        }}
+                      >
+                        No code submitted
+                      </span>
+                    )}
+                  </div>
+                  {r.polling_station_id &&
+                    (isStationAgent ? (
+                      <span className="pill pill-ok" style={{ fontSize: 9.5, flexShrink: 0 }}>
+                        Station agent
+                      </span>
+                    ) : (
+                      <button
+                        className="btn btn-outline btn-sm"
+                        style={{
+                          fontSize: 10.5,
+                          padding: '3px 10px',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                        }}
+                        onClick={() => openStationModal(r)}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                          add
+                        </span>
+                        Appoint
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )
+          })
+        )}
       </div>
-
-      {filteredVoterRegs.length > 0 && (
-        <div
-          style={{
-            padding: '12px 18px',
-            borderTop: '1px solid hsl(var(--border))',
-            fontFamily: "'Public Sans'",
-            fontWeight: 'var(--font-weight-normal, 400)',
-            fontSize: 11,
-            color: 'hsl(var(--on-surface-muted))',
-          }}
-        >
-          Showing {filteredVoterRegs.length} of {voterRegs.length} records
-        </div>
-      )}
     </div>
   )
 }

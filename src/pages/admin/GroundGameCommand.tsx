@@ -316,7 +316,10 @@ export default function GroundGameCommand() {
         description="Field agents · routes · constituency coverage"
         actions={
           <>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <div
+              className="desktop-only"
+              style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+            >
               <span
                 className="material-symbols-outlined"
                 style={{
@@ -338,7 +341,7 @@ export default function GroundGameCommand() {
                   paddingRight: 28,
                   height: 34,
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: 6,
+                  borderRadius: 'var(--radius-sm)',
                   fontFamily: "'Public Sans'",
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
@@ -387,6 +390,76 @@ export default function GroundGameCommand() {
           </>
         }
       />
+
+      <div
+        className="mobile-only"
+        style={{
+          padding: '10px 14px',
+          borderBottom: '1px solid hsl(var(--border))',
+          background: 'hsl(var(--container-low))',
+          marginBottom: 0,
+        }}
+      >
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            place
+          </span>
+          <select
+            aria-label="Filter by region"
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+            style={{
+              width: '100%',
+              paddingLeft: 30,
+              paddingRight: 28,
+              height: 38,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: "'Public Sans'",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 13,
+              background: '#fff',
+              cursor: 'pointer',
+              appearance: 'none',
+              outline: 'none',
+              color: 'hsl(var(--on-surface))',
+              boxSizing: 'border-box',
+            }}
+          >
+            <option value="ALL">All regions</option>
+            {ghanaRegions.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              right: 12,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 14,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            expand_more
+          </span>
+        </div>
+      </div>
 
       {loading ? (
         <DotLoader
@@ -442,57 +515,64 @@ export default function GroundGameCommand() {
           {/* Constituency breakdown + Leaderboard */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 340px',
+              display: 'flex',
+              flexWrap: 'wrap',
               gap: 14,
               marginBottom: 14,
               alignItems: 'start',
             }}
           >
-            <ConstituencyCoverageTable constituencyStats={constituencyStats} />
-
-            <LeaderboardPanel
-              leaderboard={leaderboard}
-              canvassersOnline={canvassersOnline}
-              memberNameMap={memberNameMap}
-              topScore={topScore}
-            />
+            <div style={{ flex: '1 1 300px', minWidth: 0 }}>
+              <ConstituencyCoverageTable constituencyStats={constituencyStats} />
+            </div>
+            <div style={{ flex: '0 1 340px', minWidth: 0 }}>
+              <LeaderboardPanel
+                leaderboard={leaderboard}
+                canvassersOnline={canvassersOnline}
+                memberNameMap={memberNameMap}
+                topScore={topScore}
+              />
+            </div>
           </div>
 
           {/* Routes */}
           {(activeCampaigns.length > 0 || doorsKnocked > 0) && (
-            <div
-              style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginTop: 14 }}
-            >
-              <RoutesPanel
-                campaigns={campaigns}
-                activeCampaigns={activeCampaigns}
-                fieldLogs={fieldLogs}
-              />
-
-              <QuickActionsPanel
-                onNavigateDeploy={() => navigate('/admin/ground-game/deploy')}
-                onBroadcast={() => {}}
-                onAppointFieldAgent={openFieldModal}
-                onExportRouteSheet={() => {}}
-                pendingTransportRequests={transportReqs.filter((r) => r.status === 'PENDING')}
-                onDispatchTransport={handleDispatch}
-              />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 14 }}>
+              <div style={{ flex: '2 1 280px', minWidth: 0 }}>
+                <RoutesPanel
+                  campaigns={campaigns}
+                  activeCampaigns={activeCampaigns}
+                  fieldLogs={fieldLogs}
+                />
+              </div>
+              <div style={{ flex: '1 1 240px', minWidth: 0 }}>
+                <QuickActionsPanel
+                  onNavigateDeploy={() => navigate('/admin/ground-game/deploy')}
+                  onBroadcast={() => {}}
+                  onAppointFieldAgent={openFieldModal}
+                  onExportRouteSheet={() => {}}
+                  pendingTransportRequests={transportReqs.filter((r) => r.status === 'PENDING')}
+                  onDispatchTransport={handleDispatch}
+                />
+              </div>
             </div>
           )}
 
           {/* Field Agents + Polling Station Agents */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
-            <FieldAgentsList
-              fieldAgents={fieldAgents}
-              onAppointFieldAgent={openFieldModal}
-              onRemoveFieldAgent={handleRemoveFieldAgent}
-            />
-
-            <PollingAgentsList
-              pollingAgents={pollingAgents}
-              onRemovePollingAgent={handleRemovePollingAgent}
-            />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 14 }}>
+            <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+              <FieldAgentsList
+                fieldAgents={fieldAgents}
+                onAppointFieldAgent={openFieldModal}
+                onRemoveFieldAgent={handleRemoveFieldAgent}
+              />
+            </div>
+            <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+              <PollingAgentsList
+                pollingAgents={pollingAgents}
+                onRemovePollingAgent={handleRemovePollingAgent}
+              />
+            </div>
           </div>
 
           {/* Member Readiness */}

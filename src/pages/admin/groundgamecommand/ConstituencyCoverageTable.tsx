@@ -49,153 +49,293 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
           settings.
         </p>
       ) : (
-        <div style={{ overflowX: 'auto', maxHeight: 460, overflowY: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Public Sans'" }}>
-            <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
-              <tr
-                style={{
-                  background: 'hsl(var(--container-low))',
-                  borderBottom: '1px solid hsl(var(--border))',
-                }}
+        <>
+          {/* Table — desktop */}
+          <div className="desktop-only">
+            <div style={{ overflowX: 'auto', maxHeight: 460, overflowY: 'auto' }}>
+              <table
+                style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Public Sans'" }}
               >
-                {[
-                  'Constituency',
-                  'Region',
-                  'Members',
-                  'Codes submitted',
-                  'Verified',
-                  'Coverage',
-                ].map((h) => (
-                  <th
-                    key={h}
-                    style={{
-                      padding: '8px 16px',
-                      textAlign: 'left',
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 9.5,
-                      letterSpacing: '.06em',
-                      textTransform: 'uppercase',
-                      color: 'hsl(var(--on-surface-muted))',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {constituencyStats.map((row, i) => {
-                const coveragePct =
-                  row.members > 0 ? Math.round((row.submitted / row.members) * 100) : 0
-                const coverageColor =
-                  coveragePct >= 70
-                    ? 'hsl(var(--primary))'
-                    : coveragePct >= 40
-                      ? 'hsl(var(--accent))'
-                      : 'hsl(var(--destructive))'
-                return (
+                <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
                   <tr
-                    key={row.constituency}
                     style={{
-                      borderBottom:
-                        i < constituencyStats.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                      background: 'hsl(var(--container-low))',
+                      borderBottom: '1px solid hsl(var(--border))',
                     }}
                   >
-                    <td
-                      style={{
-                        padding: '10px 16px',
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 12.5,
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {row.constituency}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 16px',
-                        fontSize: 11,
-                        color: 'hsl(var(--on-surface-muted))',
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {row.region}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 16px',
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 13,
-                        fontVariantNumeric: 'tabular-nums',
-                      }}
-                    >
-                      {row.members}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 16px',
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                        fontSize: 12,
-                        fontVariantNumeric: 'tabular-nums',
-                      }}
-                    >
-                      {row.submitted}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 16px',
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                        fontSize: 12,
-                        fontVariantNumeric: 'tabular-nums',
-                        color:
-                          row.verified > 0 ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      {row.verified}
-                    </td>
-                    <td style={{ padding: '10px 16px', minWidth: 120 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div
+                    {[
+                      'Constituency',
+                      'Region',
+                      'Members',
+                      'Codes submitted',
+                      'Verified',
+                      'Coverage',
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        style={{
+                          padding: '8px 16px',
+                          textAlign: 'left',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 9.5,
+                          letterSpacing: '.06em',
+                          textTransform: 'uppercase',
+                          color: 'hsl(var(--on-surface-muted))',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {constituencyStats.map((row, i) => {
+                    const coveragePct =
+                      row.members > 0 ? Math.round((row.submitted / row.members) * 100) : 0
+                    const coverageColor =
+                      coveragePct >= 70
+                        ? 'hsl(var(--primary))'
+                        : coveragePct >= 40
+                          ? 'hsl(var(--accent))'
+                          : 'hsl(var(--destructive))'
+                    return (
+                      <tr
+                        key={row.constituency}
+                        style={{
+                          borderBottom:
+                            i < constituencyStats.length - 1
+                              ? '1px solid hsl(var(--border))'
+                              : 'none',
+                        }}
+                      >
+                        <td
                           style={{
-                            flex: 1,
-                            height: 5,
-                            background: 'hsl(var(--border))',
-                            borderRadius: 99,
-                            overflow: 'hidden',
+                            padding: '10px 16px',
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 12.5,
+                            whiteSpace: 'nowrap',
                           }}
                         >
-                          <div
-                            style={{
-                              width: `${coveragePct}%`,
-                              height: '100%',
-                              background: coverageColor,
-                              borderRadius: 99,
-                              transition: 'width .3s',
-                            }}
-                          />
-                        </div>
-                        <span
+                          {row.constituency}
+                        </td>
+                        <td
                           style={{
-                            fontSize: 10.5,
+                            padding: '10px 16px',
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                            fontWeight: 'var(--font-weight-normal, 400)',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {row.region}
+                        </td>
+                        <td
+                          style={{
+                            padding: '10px 16px',
                             fontWeight: 'var(--font-weight-medium, 500)',
-                            color: coverageColor,
-                            minWidth: 30,
-                            textAlign: 'right',
+                            fontSize: 13,
                             fontVariantNumeric: 'tabular-nums',
                           }}
                         >
-                          {coveragePct}%
-                        </span>
+                          {row.members}
+                        </td>
+                        <td
+                          style={{
+                            padding: '10px 16px',
+                            fontWeight: 'var(--font-weight-normal, 400)',
+                            fontSize: 12,
+                            fontVariantNumeric: 'tabular-nums',
+                          }}
+                        >
+                          {row.submitted}
+                        </td>
+                        <td
+                          style={{
+                            padding: '10px 16px',
+                            fontWeight: 'var(--font-weight-normal, 400)',
+                            fontSize: 12,
+                            fontVariantNumeric: 'tabular-nums',
+                            color:
+                              row.verified > 0
+                                ? 'hsl(var(--primary))'
+                                : 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          {row.verified}
+                        </td>
+                        <td style={{ padding: '10px 16px', minWidth: 120 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div
+                              style={{
+                                flex: 1,
+                                height: 5,
+                                background: 'hsl(var(--border))',
+                                borderRadius: 'var(--radius-pill)',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: `${coveragePct}%`,
+                                  height: '100%',
+                                  background: coverageColor,
+                                  borderRadius: 'var(--radius-pill)',
+                                  transition: 'width .3s',
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{
+                                fontSize: 10.5,
+                                fontWeight: 'var(--font-weight-medium, 500)',
+                                color: coverageColor,
+                                minWidth: 30,
+                                textAlign: 'right',
+                                fontVariantNumeric: 'tabular-nums',
+                              }}
+                            >
+                              {coveragePct}%
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Card list — mobile */}
+          <div className="mobile-only">
+            {constituencyStats.map((row, i) => {
+              const coveragePct =
+                row.members > 0 ? Math.round((row.submitted / row.members) * 100) : 0
+              const coverageColor =
+                coveragePct >= 70
+                  ? 'hsl(var(--primary))'
+                  : coveragePct >= 40
+                    ? 'hsl(var(--accent))'
+                    : 'hsl(var(--destructive))'
+              return (
+                <div
+                  key={row.constituency}
+                  style={{
+                    padding: '12px 16px',
+                    borderBottom:
+                      i < constituencyStats.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
+                  {/* Row 1: constituency name + members count */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      gap: 8,
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {row.constituency}
                       </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
+                      <div
+                        style={{
+                          fontSize: 10,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                          marginTop: 2,
+                        }}
+                      >
+                        {row.region}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div
+                        style={{
+                          fontSize: 15,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--primary))',
+                          fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
+                        {row.members}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 9,
+                          color: 'hsl(var(--on-surface-muted))',
+                          textTransform: 'uppercase',
+                          letterSpacing: '.04em',
+                        }}
+                      >
+                        members
+                      </div>
+                    </div>
+                  </div>
+                  {/* Row 2: coverage progress bar */}
+                  <div style={{ marginTop: 10 }}>
+                    <div
+                      style={{
+                        width: '100%',
+                        height: 5,
+                        background: 'hsl(var(--border))',
+                        borderRadius: 'var(--radius-pill)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: `${coveragePct}%`,
+                          height: '100%',
+                          background: coverageColor,
+                          borderRadius: 'var(--radius-pill)',
+                          transition: 'width .3s',
+                        }}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: 4,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 10,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                        }}
+                      >
+                        Submitted: {row.submitted} · Verified: {row.verified}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: 10.5,
+                          color: coverageColor,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
+                        {coveragePct}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
       )}
     </div>
   )
