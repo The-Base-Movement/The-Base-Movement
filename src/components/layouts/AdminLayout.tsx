@@ -8,6 +8,7 @@ import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { CountryBadge } from '@/components/CountryBadge'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { PageLabelProvider } from '@/contexts/PageLabelContext'
 import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } from '@/types/admin'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
@@ -1435,27 +1436,29 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             fontSize: `calc(1rem * var(--admin-font-scale, 1))`,
           }}
         >
-          <div className="max-w-7xl mx-auto w-full">
-            <Breadcrumbs />
-            {children || <Outlet />}
+          <PageLabelProvider>
+            <div className="max-w-7xl mx-auto w-full">
+              <Breadcrumbs />
+              {children || <Outlet />}
 
-            {/* Movement Slogan Footer */}
-            <footer className="mt-20 py-12 border-t border-border/10 flex flex-col items-center justify-center gap-4 opacity-50 hover:opacity-100 transition-opacity duration-500">
-              <div className="flex items-center gap-0">
-                <div className="h-1 w-10 bg-[hsl(var(--destructive))]" />
-                <div className="h-1 w-10 bg-[hsl(var(--accent))]" />
-                <div className="h-1 w-10 bg-[hsl(var(--primary))]" />
-              </div>
-              <div className="text-center space-y-1">
-                <p className="text-micro font-medium text-on-surface/60 uppercase tracking-[.06em]">
-                  Ghana First, Jobs for the Youth!
-                </p>
-                <p className="text-[9px] font-medium text-muted-foreground/40 uppercase tracking-[.06em]">
-                  © {new Date().getFullYear()} The Base Movement · Operational Command Center
-                </p>
-              </div>
-            </footer>
-          </div>
+              {/* Movement Slogan Footer */}
+              <footer className="mt-20 py-12 border-t border-border/10 flex flex-col items-center justify-center gap-4 opacity-50 hover:opacity-100 transition-opacity duration-500">
+                <div className="flex items-center gap-0">
+                  <div className="h-1 w-10 bg-[hsl(var(--destructive))]" />
+                  <div className="h-1 w-10 bg-[hsl(var(--accent))]" />
+                  <div className="h-1 w-10 bg-[hsl(var(--primary))]" />
+                </div>
+                <div className="text-center space-y-1">
+                  <p className="text-micro font-medium text-on-surface/60 uppercase tracking-[.06em]">
+                    Ghana First, Jobs for the Youth!
+                  </p>
+                  <p className="text-[9px] font-medium text-muted-foreground/40 uppercase tracking-[.06em]">
+                    © {new Date().getFullYear()} The Base Movement · Operational Command Center
+                  </p>
+                </div>
+              </footer>
+            </div>
+          </PageLabelProvider>
         </main>
       </div>
     </div>

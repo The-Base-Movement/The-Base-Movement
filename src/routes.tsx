@@ -159,7 +159,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/dashboard', element: <AdminDashboard /> },
       { path: '/admin/leadership', element: <AdminLeadershipHub /> },
       { path: '/admin/chapter-hub', element: <AdminChapterHub /> },
-      { path: '/admin/chapter-hub/:chapterId', element: <AdminChapterHub /> },
+      { path: '/admin/chapters/:chapterId', element: <AdminChapterHub /> },
       { path: '/admin/directives', element: <AdminFieldDirectives /> },
       { path: '/admin/mobilization-metrics', element: <AdminMobilizationMetrics /> },
       { path: '/admin/logistics-intelligence', element: <AdminLogisticsIntelligence /> },

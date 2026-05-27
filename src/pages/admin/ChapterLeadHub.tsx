@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { usePageLabel } from '@/contexts/PageLabelContext'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import type { Chapter } from '@/types/admin'
@@ -14,6 +15,7 @@ import { Skeleton } from '@/components/states'
 
 export default function AdminChapterLeadHub() {
   const { chapterId } = useParams<{ chapterId: string }>()
+  const { setCurrentLabel } = usePageLabel()
   const [chapters, setChapters] = useState<Chapter[]>([])
   const [chapter, setChapter] = useState<Chapter | null>(null)
   const [members, setMembers] = useState<ChapterMember[]>([])
@@ -21,6 +23,10 @@ export default function AdminChapterLeadHub() {
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'members' | 'donations'>('members')
   const [memberSearch, setMemberSearch] = useState('')
+
+  useEffect(() => {
+    return () => setCurrentLabel('')
+  }, [setCurrentLabel])
 
   useEffect(() => {
     async function load() {
@@ -38,6 +44,7 @@ export default function AdminChapterLeadHub() {
         return
       }
       setChapter(found)
+      setCurrentLabel(found.name)
 
       const { data: memberData } = await supabase
         .from('users')
@@ -73,7 +80,7 @@ export default function AdminChapterLeadHub() {
       setIsLoading(false)
     }
     load()
-  }, [chapterId])
+  }, [chapterId, setCurrentLabel])
 
   if (isLoading) {
     return (

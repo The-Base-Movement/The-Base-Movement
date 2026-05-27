@@ -418,7 +418,7 @@ export function ChaptersGrid({
                     }}
                   >
                     <Link
-                      to={`/admin/chapter-hub/${chapter.id}`}
+                      to={`/admin/chapters/${chapter.id}`}
                       className="btn btn-outline btn-sm"
                       style={{
                         flex: 1,

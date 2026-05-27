@@ -1,5 +1,6 @@
 ﻿import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { usePageLabel } from '@/contexts/PageLabelContext'
 
 // Human-readable label overrides for path segments
 const LABEL_OVERRIDES: Record<string, string> = {
@@ -72,8 +73,10 @@ interface BreadcrumbsProps {
   variant?: 'light' | 'dark'
 }
 
-export function Breadcrumbs({ currentLabel, variant = 'light' }: BreadcrumbsProps = {}) {
+export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: BreadcrumbsProps = {}) {
   const location = useLocation()
+  const { currentLabel: contextLabel } = usePageLabel()
+  const currentLabel = labelProp || contextLabel || undefined
   const pathnames = location.pathname.split('/').filter((x) => x)
 
   if (!SUPPORTED_PREFIXES.some((p) => location.pathname.startsWith(p))) return null

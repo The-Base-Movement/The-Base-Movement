@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
@@ -29,14 +28,6 @@ export function HubHeader({
         title={chapter.name}
         icon="account_balance"
         description={`${chapter.leader_name || 'No leader assigned'} — ${chapter.city_or_region}, ${chapter.country}`}
-        actions={
-          <Link to="/admin/chapters" className="btn btn-outline btn-sm">
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              arrow_back
-            </span>
-            All chapters
-          </Link>
-        }
       />
 
       <div className="kpis">
