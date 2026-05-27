@@ -119,3 +119,160 @@ The canonical example of correct `.btn` usage in a shared component:
 <button className="btn btn-primary">Try Again</button>
 <button className="btn btn-outline">Go Home</button>
 ```
+
+---
+
+## Mobile Button Layout Standard (established 2026-05-27)
+
+### The Rule
+
+On mobile, buttons inside an `.actions` group **grow to fill their row, never shrink below content width, and never break text**. A button alone on a row takes full width. Two buttons on the same row share it equally from their natural content widths.
+
+This is enforced globally in `src/index.css` inside `@media (max-width: 768px)`:
+
+```css
+/* Buttons grow to fill row, never shrink below content width */
+.actions .btn,
+.actions label.btn {
+  flex-grow: 1 !important;
+  flex-shrink: 0 !important;
+  flex-basis: auto !important;
+}
+
+/* Wrapper divs inside actions also grow and wrap */
+.actions > div {
+  flex-grow: 1 !important;
+  flex-wrap: wrap !important;
+}
+
+/* Admin page header actions take full available width */
+.admin-page-header .actions {
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+```
+
+### How Buttons Wrap
+
+With `flex-wrap: wrap` on `.actions` and `flex-grow: 1` on each `.btn`:
+
+| Buttons in group                     | Mobile layout                                        |
+| ------------------------------------ | ---------------------------------------------------- |
+| 1 button                             | Full width                                           |
+| 2 buttons that fit on one row        | Each takes ~50% — same row                           |
+| 2 buttons that are too wide to share | Each wraps to its own full-width row                 |
+| 3 buttons                            | First 2 share row 1 (or wrap); 3rd fills its own row |
+
+The wrapping is **content-driven** — buttons never have text forced to break. If "Generate Audit" + "Direct Appoint" would cause text to break at a given size, they wrap to separate rows and each fills the full width.
+
+### Using `btn-sm` in Admin Page Headers
+
+Admin page header actions **must use `btn-sm`** so that two buttons fit on the same row on mobile (≥320px viewports). Full-size buttons are too wide and will each wrap to their own row.
+
+```tsx
+// ✅ Correct — btn-sm fits 2 per row on mobile
+actions={
+  <>
+    <button className="btn btn-outline btn-sm">Generate Audit</button>
+    <button className="btn btn-primary btn-sm">Direct Appoint</button>
+  </>
+}
+
+// ❌ Wrong — full-size buttons each wrap to their own row on mobile
+actions={
+  <>
+    <button className="btn btn-outline">Generate Audit</button>
+    <button className="btn btn-primary">Direct Appoint</button>
+  </>
+}
+```
+
+### Fragment vs Wrapper `<div>`
+
+Buttons in `actions={}` must be **direct children of the `.actions` div** to receive the `flex-grow` rule. Use a `<>` fragment — never a wrapper `<div>` — unless you have intentional grouping.
+
+```tsx
+// ✅ Correct — buttons are direct children of .actions
+actions={
+  <>
+    <button className="btn btn-outline btn-sm">Export</button>
+    <button className="btn btn-primary btn-sm">Add member</button>
+  </>
+}
+
+// ❌ Wrong — wrapper div blocks the flex-grow rule
+actions={
+  <div style={{ display: 'flex', gap: 10 }}>
+    <button className="btn btn-outline btn-sm">Export</button>
+    <button className="btn btn-primary btn-sm">Add member</button>
+  </div>
+}
+```
+
+**Exception:** A wrapper `<div>` is acceptable when there is intentional column stacking (e.g. `SentimentHeader` stacks a score widget above two buttons). In that case the wrapper must have `flex-wrap: wrap` so its inner buttons still follow the grow rule.
+
+### Button Labels on Mobile
+
+Keep button labels short. Long labels cause buttons to wrap to their own rows even at `btn-sm` size:
+
+| ❌ Too long             | ✅ Use instead |
+| ----------------------- | -------------- |
+| Confirm Appointment     | Confirm        |
+| Export CSV Report       | Export         |
+| Run AI Analysis         | Run Analysis   |
+| Generate Purchase Order | Generate PO    |
+
+The goal: 2 action buttons should always share one row on a 375px screen at `btn-sm` size.
+
+### Mobile Card Pattern (Tables → Cards)
+
+Data tables with more than 3 columns break on mobile. The correct pattern is:
+
+- Wrap the table in `<div className="desktop-only">` — hidden on mobile
+- Add a `<div className="mobile-only">` card list below it
+
+Each card shows only the essential columns (name, primary info, status pill, action button). Secondary columns (phone, geography, ID) are omitted from cards.
+
+```tsx
+{
+  /* Desktop */
+}
+;<div className="desktop-only" style={{ overflowX: 'auto' }}>
+  <table>...</table>
+</div>
+
+{
+  /* Mobile cards */
+}
+;<div className="mobile-only">
+  {items.map((item) => (
+    <div
+      key={item.id}
+      style={{
+        padding: '14px 16px',
+        borderBottom: '1px solid hsl(var(--border))',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+      }}
+    >
+      {/* avatar */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {item.name}
+        </p>
+        <p style={{ color: 'hsl(var(--on-surface-muted))' }}>{item.subtitle}</p>
+      </div>
+      <button className="btn btn-outline btn-sm" style={{ flexShrink: 0 }}>
+        View
+      </button>
+    </div>
+  ))}
+</div>
+```
+
+CSS utilities:
+
+- `.desktop-only` — `display: none !important` at `max-width: 768px`
+- `.mobile-only` — `display: none !important` at `min-width: 769px`

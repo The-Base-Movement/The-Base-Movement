@@ -35,6 +35,11 @@ export default function LeadershipHub() {
   const [applications, setApplications] = useState<ChapterApplication[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Pending' | 'Approved' | 'Rejected'>(
+    'All'
+  )
+
+  const [filterOpen, setFilterOpen] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [appointModal, setAppointModal] = useState(false)
   const [appointMembers, setAppointMembers] = useState<Member[]>([])
@@ -254,11 +259,13 @@ export default function LeadershipHub() {
     toast.success(`${l.leader_name} removed from ${l.chapter_name}.`)
   }
 
-  const filteredApps = applications.filter(
-    (app: ChapterApplication) =>
+  const filteredApps = applications.filter((app: ChapterApplication) => {
+    const matchesSearch =
       app.applicant_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.proposed_chapter_name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+    const matchesStatus = statusFilter === 'All' || app.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
 
   return (
     <div className="main">
@@ -269,17 +276,17 @@ export default function LeadershipHub() {
         actions={
           <>
             <button
-              className="btn btn-outline"
+              className="btn btn-outline btn-sm"
               onClick={handleGenerateReport}
               disabled={isGenerating}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 {isGenerating ? 'sync' : 'analytics'}
               </span>
               {isGenerating ? 'Compiling...' : 'Generate Audit'}
             </button>
-            <button className="btn btn-primary" onClick={openAppointModal}>
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+            <button className="btn btn-primary btn-sm" onClick={openAppointModal}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 add_circle
               </span>
               Direct Appoint
@@ -329,6 +336,7 @@ export default function LeadershipHub() {
           alignItems: 'center',
           gap: 12,
           marginBottom: 24,
+          overflow: 'visible',
         }}
       >
         <div style={{ flex: 1, minWidth: 220 }}>
@@ -339,15 +347,86 @@ export default function LeadershipHub() {
             variant="dashboard"
           />
         </div>
-        <button
-          className="btn btn-outline"
-          style={{ height: 36, padding: '0 20px', flexShrink: 0 }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            filter_list
-          </span>
-          Filter Status
-        </button>
+        <div style={{ position: 'relative', flexGrow: 1 }}>
+          <button
+            className={statusFilter !== 'All' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+            style={{ width: '100%' }}
+            onClick={() => setFilterOpen((v) => !v)}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              tune
+            </span>
+            {statusFilter === 'All' ? 'Filter' : statusFilter}
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 14, marginLeft: 'auto' }}
+            >
+              {filterOpen ? 'expand_less' : 'expand_more'}
+            </span>
+          </button>
+          {filterOpen && (
+            <>
+              <div
+                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                onClick={() => setFilterOpen(false)}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  left: 0,
+                  right: 0,
+                  zIndex: 50,
+                  background: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                }}
+              >
+                {(['All', 'Pending', 'Approved', 'Rejected'] as const).map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => {
+                      setStatusFilter(opt)
+                      setFilterOpen(false)
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      width: '100%',
+                      padding: '10px 14px',
+                      background:
+                        statusFilter === opt ? 'hsl(var(--container-low))' : 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontSize: 13,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface))',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        fontSize: 15,
+                        color:
+                          statusFilter === opt
+                            ? 'hsl(var(--primary))'
+                            : 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {statusFilter === opt ? 'check_circle' : 'radio_button_unchecked'}
+                    </span>
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Applications Table */}

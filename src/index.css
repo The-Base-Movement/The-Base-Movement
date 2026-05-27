@@ -620,6 +620,48 @@
   flex-wrap: wrap;
 }
 
+/* Leadership hub — appointed officers panel header */
+.leaders-panel-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid hsl(var(--border));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.leaders-search-wrap {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+/* Leadership hub table columns */
+.leadership-col-primary th,
+th.leadership-col-primary {
+  padding: 14px 24px;
+  font-family: 'Public Sans', sans-serif;
+  font-weight: var(--font-weight-medium, 500);
+  font-size: 9px;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-muted));
+}
+.leadership-col-primary td,
+td.leadership-col-primary {
+  padding: 14px 24px;
+}
+.leadership-col-secondary th,
+th.leadership-col-secondary {
+  padding: 14px 24px;
+  font-family: 'Public Sans', sans-serif;
+  font-weight: var(--font-weight-medium, 500);
+  font-size: 9px;
+  text-transform: uppercase;
+  color: hsl(var(--on-surface-muted));
+}
+.leadership-col-secondary td,
+td.leadership-col-secondary {
+  padding: 14px 24px;
+}
+
 /* KPI strip */
 .kpis {
   display: grid;
@@ -840,6 +882,7 @@
   .admin-page-header .actions {
     flex-wrap: wrap;
     gap: 8px;
+    width: 100%;
   }
   /* War Room — remove breakout margins on mobile */
   .war-room-page {
@@ -872,9 +915,38 @@
   .logistics-map-header {
     padding: 18px 16px !important;
   }
+  /* Leadership hub — stack header, full-width search */
+  .leaders-panel-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 14px 16px !important;
+  }
+  .leaders-search-wrap {
+    width: 100% !important;
+  }
+  /* Leadership hub tables — hide secondary columns, tighten padding */
+  .leadership-col-secondary {
+    display: none !important;
+  }
+  th.leadership-col-primary,
+  td.leadership-col-primary {
+    padding: 12px 14px !important;
+  }
   /* Sentiment live feedback — remove fixed width so sidebar-main collapses cleanly */
   .sentiment-live-feedback {
     width: 100% !important;
+  }
+  /* All action groups — buttons grow to fill row, never shrink below content width */
+  .actions .btn,
+  .actions label.btn {
+    flex-grow: 1 !important;
+    flex-shrink: 0 !important;
+    flex-basis: auto !important;
+  }
+  /* Wrapper divs directly inside actions also grow and wrap */
+  .actions > div {
+    flex-grow: 1 !important;
+    flex-wrap: wrap !important;
   }
   /* Responsive visibility */
   .desktop-only {

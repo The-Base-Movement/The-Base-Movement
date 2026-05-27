@@ -41,26 +41,50 @@ export function AppointedLeadersTable({
       (l.phone_number || '').toLowerCase().includes(q)
   )
 
+  const Avatar = ({ l }: { l: AppointedLeader }) => (
+    <div
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 4,
+        background: 'hsl(var(--container-low))',
+        border: '1px solid hsl(var(--border))',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 'var(--font-weight-medium, 500)',
+        fontSize: 12,
+        flexShrink: 0,
+        overflow: 'hidden',
+        color: 'hsl(var(--on-surface))',
+      }}
+    >
+      {l.avatar_url ? (
+        <img
+          src={l.avatar_url}
+          alt={l.leader_name}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      ) : (
+        l.leader_name
+          .split(' ')
+          .map((n: string) => n[0])
+          .join('')
+          .slice(0, 2)
+      )}
+    </div>
+  )
+
   return (
     <div className="panel" style={{ padding: 0, overflow: 'hidden', marginTop: 24 }}>
-      <div
-        style={{
-          padding: '18px 24px',
-          borderBottom: '1px solid hsl(var(--border))',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 12,
-        }}
-      >
+      {/* Header */}
+      <div className="leaders-panel-header">
         <div>
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 10,
-              textTransform: 'uppercase',
+              fontSize: 13,
               color: 'hsl(var(--on-surface))',
             }}
           >
@@ -71,15 +95,14 @@ export function AppointedLeadersTable({
               margin: '4px 0 0',
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-normal, 400)',
-              fontSize: 9,
+              fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
-              textTransform: 'uppercase',
             }}
           >
             All leaders registered across chapters
           </p>
         </div>
-        <div style={{ width: 220 }}>
+        <div className="leaders-search-wrap">
           <SearchBar
             value={leadersSearch}
             onChange={setLeadersSearch}
@@ -88,7 +111,9 @@ export function AppointedLeadersTable({
           />
         </div>
       </div>
-      <div style={{ overflowX: 'auto' }}>
+
+      {/* Desktop table */}
+      <div className="desktop-only" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead
             style={{
@@ -104,7 +129,7 @@ export function AppointedLeadersTable({
                     padding: '11px 24px',
                     textAlign: 'left',
                     fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 9,
                     textTransform: 'uppercase',
                     color: 'hsl(var(--on-surface-muted))',
@@ -128,6 +153,7 @@ export function AppointedLeadersTable({
                     fontSize: 12,
                     color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
                   }}
                 >
                   {allLeaders.length === 0
@@ -140,37 +166,7 @@ export function AppointedLeadersTable({
                 <tr key={l.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td style={{ padding: '14px 24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 4,
-                          background: 'hsl(var(--container-low))',
-                          border: '1px solid hsl(var(--border))',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: 'var(--font-weight-semibold, 600)',
-                          fontSize: 12,
-                          flexShrink: 0,
-                          overflow: 'hidden',
-                          color: 'hsl(var(--on-surface))',
-                        }}
-                      >
-                        {l.avatar_url ? (
-                          <img
-                            src={l.avatar_url}
-                            alt={l.leader_name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          />
-                        ) : (
-                          l.leader_name
-                            .split(' ')
-                            .map((n: string) => n[0])
-                            .join('')
-                            .slice(0, 2)
-                        )}
-                      </div>
+                      <Avatar l={l} />
                       <div>
                         <p
                           style={{
@@ -239,6 +235,78 @@ export function AppointedLeadersTable({
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list */}
+      <div className="mobile-only">
+        {filtered.length === 0 ? (
+          <p
+            style={{
+              padding: '40px 16px',
+              textAlign: 'center',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            {allLeaders.length === 0
+              ? 'No leaders have been appointed yet.'
+              : 'No officers match your search.'}
+          </p>
+        ) : (
+          filtered.map((l) => (
+            <div
+              key={l.id}
+              style={{
+                padding: '14px 16px',
+                borderBottom: '1px solid hsl(var(--border))',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+              }}
+            >
+              <Avatar l={l} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {l.leader_name}
+                </p>
+                <p
+                  style={{
+                    margin: '2px 0 0',
+                    fontSize: 11,
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {l.chapter_name}
+                </p>
+              </div>
+              <button
+                className="btn btn-outline btn-sm"
+                style={{ flexShrink: 0 }}
+                onClick={() => onViewLeader(l)}
+              >
+                View
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   )

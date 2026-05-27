@@ -130,7 +130,7 @@ export default function MobilizationMetrics() {
         icon="emoji_events"
         description="Performance tracking and impact analytics for regional chapters."
         actions={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <>
             <button
               className={isFilterVisible ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
               onClick={() => setIsFilterVisible(!isFilterVisible)}
@@ -146,7 +146,7 @@ export default function MobilizationMetrics() {
               </span>
               Export
             </button>
-          </div>
+          </>
         }
       />
 

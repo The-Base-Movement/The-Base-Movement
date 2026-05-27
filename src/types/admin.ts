@@ -281,6 +281,7 @@ export interface ChapterApplication {
   id: string
   applicant_id: string
   applicant_name?: string
+  avatar_url?: string | null
   proposed_chapter_name: string
   region: string
   constituency: string

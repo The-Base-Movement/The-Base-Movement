@@ -173,7 +173,7 @@ export default function MediaLibrary() {
         icon="image"
         description="Central repository for movement assets and deployment media."
         actions={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <button
               className="btn btn-outline btn-sm"
               onClick={handleRefreshClick}

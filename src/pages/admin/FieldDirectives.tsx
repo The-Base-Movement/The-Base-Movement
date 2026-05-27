@@ -136,11 +136,10 @@ export default function FieldDirectives() {
         icon="flag"
         description="Platform-wide deployment of tactical objectives and field verification protocols."
         actions={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <>
             <button
               className="btn btn-outline btn-sm"
               onClick={() => (window.location.href = '/admin/mobilization-metrics')}
-              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 bar_chart
@@ -153,7 +152,7 @@ export default function FieldDirectives() {
               </span>
               Issue directive
             </button>
-          </div>
+          </>
         }
       />
 

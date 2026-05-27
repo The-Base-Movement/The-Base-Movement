@@ -303,7 +303,7 @@ export function DirectAppointModal({
               </div>
 
               {/* Chapter + role selects */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>
                 <div>
                   <label
                     htmlFor="appoint-chapter-select"
@@ -428,13 +428,18 @@ export function DirectAppointModal({
                     style={{
                       margin: 0,
                       fontSize: 13,
-                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontWeight: 'var(--font-weight-normal, 400)',
                       color: 'hsl(var(--on-surface))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
                   >
-                    <strong>{selectedMember.name}</strong> will be appointed as{' '}
-                    <strong>{appointRole}</strong>
+                    <span style={{ fontWeight: 'var(--font-weight-semibold, 600)' }}>
+                      {selectedMember.name}
+                    </span>{' '}
+                    will be appointed as{' '}
+                    <span style={{ fontWeight: 'var(--font-weight-semibold, 600)' }}>
+                      {appointRole}
+                    </span>
                   </p>
                 </div>
               )}
@@ -473,7 +478,7 @@ export function DirectAppointModal({
                 how_to_reg
               </span>
             )}
-            {isAppointing ? 'Appointing…' : 'Confirm Appointment'}
+            {isAppointing ? 'Appointing…' : 'Confirm'}
           </button>
         </div>
       </div>

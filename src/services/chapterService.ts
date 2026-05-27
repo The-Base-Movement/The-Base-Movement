@@ -526,7 +526,7 @@ class ChapterService {
   async getChapterApplications(): Promise<ChapterApplication[]> {
     const { data, error } = await supabase
       .from('chapter_applications')
-      .select('*, users(full_name)')
+      .select('*, users(full_name, avatar_url)')
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -544,13 +544,14 @@ class ChapterService {
       vision_statement: string
       status: 'Pending' | 'Approved' | 'Rejected'
       created_at: string
-      users: { full_name: string }
+      users: { full_name: string; avatar_url: string | null }
     }
 
     return (data || []).map((app: DBApplication) => ({
       id: app.id,
       applicant_id: app.applicant_id,
       applicant_name: app.users?.full_name,
+      avatar_url: app.users?.avatar_url ?? null,
       proposed_chapter_name: app.proposed_chapter_name,
       region: app.region,
       constituency: app.constituency,
