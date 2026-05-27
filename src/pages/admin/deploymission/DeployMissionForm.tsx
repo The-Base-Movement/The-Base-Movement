@@ -55,21 +55,30 @@ export function DeployMissionForm({
     <form onSubmit={handleSubmit}>
       <div className="panel">
         <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))' }}>
-          <div
+          <h3
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 8,
-              marginBottom: 3,
+              margin: '0 0 4px',
+              fontSize: 14,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontFamily: "'Public Sans', sans-serif",
+              color: 'hsl(var(--on-surface))',
+              letterSpacing: '-0.01em',
             }}
           >
-            <h3 style={{ margin: 0 }}>Tactical deployment parameters</h3>
-            <span className="pill pill-warn" style={{ flexShrink: 0 }}>
-              New mission
-            </span>
-          </div>
-          <div className="meta">Define the operational scope and objectives</div>
+            Tactical deployment parameters
+          </h3>
+          <p
+            style={{
+              margin: '0 0 10px',
+              fontSize: 11,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontFamily: "'Public Sans', sans-serif",
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            Define the operational scope and objectives
+          </p>
+          <span className="pill pill-warn">New mission</span>
         </div>
 
         <div style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 18 }}>
