@@ -49,7 +49,11 @@ export function FieldAgentsList({
         >
           Members deployed to mobilize specific constituencies.
         </p>
-        <button className="btn btn-primary btn-sm" onClick={onAppointFieldAgent}>
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={onAppointFieldAgent}
+          style={{ width: '100%' }}
+        >
           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
             add
           </span>
