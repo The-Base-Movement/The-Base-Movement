@@ -13,6 +13,7 @@
  * Props: see BlogEditorViewProps below.
  */
 
+import { useState, useEffect } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import type { BlogPost, Author } from '@/types/admin'
 import { MediaLibrary } from './MediaLibrary'
@@ -68,6 +69,13 @@ export function BlogEditorView({
   onBack,
   onSubmit,
 }: BlogEditorViewProps) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
   /* Called by MediaLibrary "Insert" button — injects <img> into TinyMCE */
   const handleInsert = (url: string) => {
     const editor = editorRef.current as unknown as { insertContent: (html: string) => void } | null
@@ -84,7 +92,7 @@ export function BlogEditorView({
       }}
     >
       {/* ── Top bar ─────────────────────────────────────────────── */}
-      <div className="top !mb-0 px-6 py-3 border-b border-border/40 bg-white shrink-0">
+      <div className="top !mb-0 px-3 sm:px-6 py-3 border-b border-border/40 bg-white shrink-0">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
           {/* Back arrow */}
           <button
@@ -105,7 +113,7 @@ export function BlogEditorView({
               className="!text-sm !font-bold !m-0"
               style={{ display: 'flex', alignItems: 'center', gap: 8 }}
             >
-              {formData.title || 'Untitled Dispatch'}
+              {formData.title || 'Untitled Article'}
               <span
                 className="pill"
                 style={{
@@ -156,20 +164,28 @@ export function BlogEditorView({
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden', position: 'relative' }}>
         {/* Left: media library (collapsible) */}
         {showMediaPanel && (
-          <MediaLibrary
-            mediaFiles={mediaFiles}
-            mediaFolders={mediaFolders}
-            activeMediaFolder={activeMediaFolder}
-            setActiveMediaFolder={setActiveMediaFolder}
-            mediaSearch={mediaSearch}
-            setMediaSearch={setMediaSearch}
-            isMediaLoading={isMediaLoading}
-            onRefresh={onRefreshMedia}
-            selectedImageUrl={formData.imageUrl ?? ''}
-            onSetCover={(url) => setFormData({ ...formData, imageUrl: url })}
-            onInsert={handleInsert}
-            onUpload={onUpload}
-          />
+          <div
+            style={
+              isMobile
+                ? { position: 'absolute', left: 0, top: 0, bottom: 0, zIndex: 50, display: 'flex' }
+                : {}
+            }
+          >
+            <MediaLibrary
+              mediaFiles={mediaFiles}
+              mediaFolders={mediaFolders}
+              activeMediaFolder={activeMediaFolder}
+              setActiveMediaFolder={setActiveMediaFolder}
+              mediaSearch={mediaSearch}
+              setMediaSearch={setMediaSearch}
+              isMediaLoading={isMediaLoading}
+              onRefresh={onRefreshMedia}
+              selectedImageUrl={formData.imageUrl ?? ''}
+              onSetCover={(url) => setFormData({ ...formData, imageUrl: url })}
+              onInsert={handleInsert}
+              onUpload={onUpload}
+            />
+          </div>
         )}
 
         {/* Center: article canvas */}
@@ -183,297 +199,301 @@ export function BlogEditorView({
             overflow: 'hidden',
           }}
         >
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
-            <div>
+          <div style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '0' : '16px' }}>
+            <div
+              className="panel !p-0 overflow-hidden"
+              style={{ boxShadow: isMobile ? 'none' : '0 8px 40px rgba(0,0,0,0.06)' }}
+            >
               <div
-                className="panel !p-0 overflow-hidden"
-                style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}
+                style={{
+                  background: '#fff',
+                  padding: isMobile ? '16px' : '32px 48px',
+                  minHeight: isMobile ? 'auto' : 900,
+                }}
               >
-                <div style={{ background: '#fff', padding: '32px 48px', minHeight: 900 }}>
-                  {/* Author + category row */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 16,
-                      borderBottom: '1px solid hsl(var(--border))',
-                      paddingBottom: 20,
-                      marginBottom: 24,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      {/* Author avatar */}
-                      <div
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: '50%',
-                          background: 'hsl(var(--primary))',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#fff',
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
-                          fontSize: 15,
-                          overflow: 'hidden',
-                          flexShrink: 0,
-                        }}
-                      >
-                        {formData.authorImage ? (
-                          <img
-                            src={formData.authorImage}
-                            crossOrigin="anonymous"
-                            loading="lazy"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            alt=""
-                          />
-                        ) : (
-                          formData.authorName?.[0] || 'A'
-                        )}
-                      </div>
-                      <div>
-                        <label htmlFor="select-7efb7f" style={{ display: 'none' }}>
-                          Author
-                        </label>
-                        {/* Author select — updates name/role/image/bio from authors list */}
-                        <select
-                          name="name-7efb7f"
-                          id="select-7efb7f"
-                          value={formData.authorId || authors[0]?.id}
-                          onChange={(e) => {
-                            const author = authors.find((a) => a.id === e.target.value)
-                            if (author)
-                              setFormData({
-                                ...formData,
-                                authorId: author.id,
-                                authorName: author.name,
-                                authorRole: author.role || '',
-                                authorImage: author.imageUrl || '',
-                                authorBio: author.bio || '',
-                              })
-                          }}
-                          style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-semibold, 600)',
-                            fontSize: 13,
-                            color: 'hsl(var(--on-surface))',
-                            background: 'transparent',
-                            border: 'none',
-                            outline: 'none',
-                            cursor: 'pointer',
-                            padding: 0,
-                          }}
-                        >
-                          {authors.map((a) => (
-                            <option key={a.id} value={a.id}>
-                              {a.name}
-                            </option>
-                          ))}
-                        </select>
-                        <div
-                          style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            fontSize: 11,
-                            color: 'hsl(var(--on-surface-muted))',
-                          }}
-                        >
-                          {formData.authorRole || 'Contributor'}
-                        </div>
-                      </div>
-                    </div>
-                    {/* Category select */}
-                    <label htmlFor="select-b23691" style={{ display: 'none' }}>
-                      Category
-                    </label>
-                    <select
-                      name="name-b23691"
-                      id="select-b23691"
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      style={{
-                        height: 34,
-                        padding: '0 10px',
-                        background: 'hsl(var(--container-low))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: 4,
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 11,
-                        outline: 'none',
-                        cursor: 'pointer',
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                    >
-                      {CATEGORIES.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Title + excerpt textareas */}
-                  <div
-                    style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}
-                  >
-                    <textarea
-                      aria-label="Article Title…"
-                      name="name-159e76"
-                      id="textarea-159e76"
-                      placeholder="Article Title…"
-                      style={{
-                        width: '100%',
-                        fontSize: 36,
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-semibold, 600)',
-                        letterSpacing: '-0.02em',
-                        lineHeight: 1.1,
-                        outline: 'none',
-                        border: 'none',
-                        background: 'transparent',
-                        resize: 'none',
-                        minHeight: 80,
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                      value={formData.title}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          title: e.target.value,
-                          slug: e.target.value
-                            .toLowerCase()
-                            .replace(/\s+/g, '-')
-                            .replace(/[^\w-]+/g, ''),
-                        })
-                      }
-                    />
-                    <textarea
-                      aria-label="Compelling opening hook or summary…"
-                      name="name-08e458"
-                      id="textarea-08e458"
-                      placeholder="Compelling opening hook or summary…"
-                      style={{
-                        width: '100%',
-                        fontSize: 17,
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 500,
-                        lineHeight: 1.65,
-                        outline: 'none',
-                        border: 'none',
-                        background: 'transparent',
-                        resize: 'none',
-                        minHeight: 70,
-                        color: 'hsl(var(--on-surface-muted))',
-                        fontStyle: 'italic',
-                      }}
-                      value={formData.excerpt}
-                      onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                    />
-                  </div>
-
-                  {/* Cover image preview with remove button */}
-                  {formData.imageUrl && (
+                {/* Author + category row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 16,
+                    borderBottom: '1px solid hsl(var(--border))',
+                    paddingBottom: 20,
+                    marginBottom: 24,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    {/* Author avatar */}
                     <div
                       style={{
-                        position: 'relative',
-                        borderRadius: 4,
+                        width: 40,
+                        height: 40,
+                        borderRadius: '50%',
+                        background: 'hsl(var(--primary))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontSize: 15,
                         overflow: 'hidden',
-                        aspectRatio: '16/9',
-                        border: '1px solid hsl(var(--border))',
-                        marginBottom: 20,
-                      }}
-                      onMouseEnter={(e) => {
-                        const btn = e.currentTarget.querySelector('button') as HTMLElement | null
-                        if (btn) btn.style.opacity = '1'
-                      }}
-                      onMouseLeave={(e) => {
-                        const btn = e.currentTarget.querySelector('button') as HTMLElement | null
-                        if (btn) btn.style.opacity = '0'
+                        flexShrink: 0,
                       }}
                     >
-                      <img
-                        src={formData.imageUrl}
-                        crossOrigin="anonymous"
-                        loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        alt=""
-                      />
-                      <button
-                        onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                      {formData.authorImage ? (
+                        <img
+                          src={formData.authorImage}
+                          crossOrigin="anonymous"
+                          loading="lazy"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          alt=""
+                        />
+                      ) : (
+                        formData.authorName?.[0] || 'A'
+                      )}
+                    </div>
+                    <div>
+                      <label htmlFor="select-7efb7f" style={{ display: 'none' }}>
+                        Author
+                      </label>
+                      {/* Author select — updates name/role/image/bio from authors list */}
+                      <select
+                        name="name-7efb7f"
+                        id="select-7efb7f"
+                        value={formData.authorId || authors[0]?.id}
+                        onChange={(e) => {
+                          const author = authors.find((a) => a.id === e.target.value)
+                          if (author)
+                            setFormData({
+                              ...formData,
+                              authorId: author.id,
+                              authorName: author.name,
+                              authorRole: author.role || '',
+                              authorImage: author.imageUrl || '',
+                              authorBio: author.bio || '',
+                            })
+                        }}
                         style={{
-                          position: 'absolute',
-                          top: 12,
-                          right: 12,
-                          width: 36,
-                          height: 36,
-                          background: 'rgba(0,0,0,0.7)',
-                          color: '#fff',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface))',
+                          background: 'transparent',
                           border: 'none',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          outline: 'none',
                           cursor: 'pointer',
-                          opacity: 0,
-                          transition: 'opacity 0.2s',
+                          padding: 0,
                         }}
                       >
-                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                          delete
-                        </span>
-                      </button>
+                        {authors.map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.name}
+                          </option>
+                        ))}
+                      </select>
+                      <div
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {formData.authorRole || 'Contributor'}
+                      </div>
                     </div>
-                  )}
-
-                  {/* TinyMCE editor — keyed by post id to force re-mount on post change */}
-                  <div style={{ minHeight: 500 }}>
-                    <Editor
-                      key={editingPost?.id ?? 'new'}
-                      apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-                      onInit={(_, editor) => (editorRef.current = editor)}
-                      initialValue={formData.content ?? ''}
-                      init={{
-                        height: 600,
-                        menubar: false,
-                        plugins: [
-                          'advlist',
-                          'autolink',
-                          'lists',
-                          'link',
-                          'image',
-                          'charmap',
-                          'preview',
-                          'searchreplace',
-                          'visualblocks',
-                          'insertdatetime',
-                          'table',
-                          'wordcount',
-                        ],
-                        toolbar:
-                          'undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
-                        statusbar: false,
-                        content_style:
-                          'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; }',
-                        branding: false,
-                        images_upload_handler: async (blobInfo: {
-                          blob: () => Blob
-                          filename: () => string
-                        }) => {
-                          const { contentService } = await import('@/services/contentService')
-                          const file = new File([blobInfo.blob()], blobInfo.filename(), {
-                            type: blobInfo.blob().type,
-                          })
-                          const url = await contentService.uploadImage(file, 'editor-content')
-                          if (!url) throw new Error('Upload failed')
-                          return url
-                        },
-                      }}
-                    />
                   </div>
+                  {/* Category select */}
+                  <label htmlFor="select-b23691" style={{ display: 'none' }}>
+                    Category
+                  </label>
+                  <select
+                    name="name-b23691"
+                    id="select-b23691"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    style={{
+                      height: 34,
+                      padding: '0 10px',
+                      background: 'hsl(var(--container-low))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 11,
+                      outline: 'none',
+                      cursor: 'pointer',
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Title + excerpt textareas */}
+                <div
+                  style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}
+                >
+                  <textarea
+                    aria-label="Article Title…"
+                    name="name-159e76"
+                    id="textarea-159e76"
+                    placeholder="Article Title…"
+                    style={{
+                      width: '100%',
+                      fontSize: 36,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      letterSpacing: '-0.02em',
+                      lineHeight: 1.1,
+                      outline: 'none',
+                      border: 'none',
+                      background: 'transparent',
+                      resize: 'none',
+                      minHeight: 80,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        title: e.target.value,
+                        slug: e.target.value
+                          .toLowerCase()
+                          .replace(/\s+/g, '-')
+                          .replace(/[^\w-]+/g, ''),
+                      })
+                    }
+                  />
+                  <textarea
+                    aria-label="Compelling opening hook or summary…"
+                    name="name-08e458"
+                    id="textarea-08e458"
+                    placeholder="Compelling opening hook or summary…"
+                    style={{
+                      width: '100%',
+                      fontSize: 17,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 500,
+                      lineHeight: 1.65,
+                      outline: 'none',
+                      border: 'none',
+                      background: 'transparent',
+                      resize: 'none',
+                      minHeight: 70,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontStyle: 'italic',
+                    }}
+                    value={formData.excerpt}
+                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                  />
+                </div>
+
+                {/* Cover image preview with remove button */}
+                {formData.imageUrl && (
+                  <div
+                    style={{
+                      position: 'relative',
+                      borderRadius: 'var(--radius-sm)',
+                      overflow: 'hidden',
+                      aspectRatio: '16/9',
+                      border: '1px solid hsl(var(--border))',
+                      marginBottom: 20,
+                    }}
+                    onMouseEnter={(e) => {
+                      const btn = e.currentTarget.querySelector('button') as HTMLElement | null
+                      if (btn) btn.style.opacity = '1'
+                    }}
+                    onMouseLeave={(e) => {
+                      const btn = e.currentTarget.querySelector('button') as HTMLElement | null
+                      if (btn) btn.style.opacity = '0'
+                    }}
+                  >
+                    <img
+                      src={formData.imageUrl}
+                      crossOrigin="anonymous"
+                      loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      alt=""
+                    />
+                    <button
+                      onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                      style={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 12,
+                        width: 36,
+                        height: 36,
+                        background: 'rgba(0,0,0,0.7)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        opacity: 0,
+                        transition: 'opacity 0.2s',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                        delete
+                      </span>
+                    </button>
+                  </div>
+                )}
+
+                {/* TinyMCE editor — keyed by post id to force re-mount on post change */}
+                <div style={{ minHeight: 500 }}>
+                  <Editor
+                    key={editingPost?.id ?? 'new'}
+                    apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+                    onInit={(_, editor) => (editorRef.current = editor)}
+                    initialValue={formData.content ?? ''}
+                    init={{
+                      height: 600,
+                      menubar: false,
+                      plugins: [
+                        'advlist',
+                        'autolink',
+                        'lists',
+                        'link',
+                        'image',
+                        'charmap',
+                        'preview',
+                        'searchreplace',
+                        'visualblocks',
+                        'insertdatetime',
+                        'table',
+                        'wordcount',
+                      ],
+                      toolbar:
+                        'undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
+                      statusbar: false,
+                      content_style:
+                        'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; }',
+                      branding: false,
+                      images_upload_handler: async (blobInfo: {
+                        blob: () => Blob
+                        filename: () => string
+                      }) => {
+                        const { contentService } = await import('@/services/contentService')
+                        const file = new File([blobInfo.blob()], blobInfo.filename(), {
+                          type: blobInfo.blob().type,
+                        })
+                        const url = await contentService.uploadImage(file, 'editor-content')
+                        if (!url) throw new Error('Upload failed')
+                        return url
+                      },
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -481,7 +501,17 @@ export function BlogEditorView({
         </main>
 
         {/* Right: intel panel (collapsible) */}
-        {showIntelPanel && <IntelPanel formData={formData} setFormData={setFormData} />}
+        {showIntelPanel && (
+          <div
+            style={
+              isMobile
+                ? { position: 'absolute', right: 0, top: 0, bottom: 0, zIndex: 50, display: 'flex' }
+                : {}
+            }
+          >
+            <IntelPanel formData={formData} setFormData={setFormData} />
+          </div>
+        )}
       </div>
     </div>
   )
