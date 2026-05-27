@@ -244,7 +244,6 @@ export function ChaptersMap({
           style={{
             flexShrink: 0,
             width: 400,
-            minHeight: 380,
             background: 'hsl(var(--container-low))',
             padding: '20px',
             display: 'flex',
@@ -254,8 +253,7 @@ export function ChaptersMap({
           {mapboxToken ? (
             <div
               style={{
-                flex: 1,
-                minHeight: 320,
+                height: 340,
                 position: 'relative',
                 borderRadius: 'var(--radius-md)',
                 overflow: 'hidden',

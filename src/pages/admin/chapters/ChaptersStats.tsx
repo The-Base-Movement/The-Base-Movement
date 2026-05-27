@@ -52,7 +52,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
               <BarChart
                 layout="vertical"
                 data={sorted}
-                margin={{ top: 4, right: 16, bottom: 4, left: 4 }}
+                margin={{ top: 4, right: 8, bottom: 4, left: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
                 <XAxis
@@ -68,7 +68,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 <YAxis
                   type="category"
                   dataKey="region"
-                  width={130}
+                  width={105}
                   axisLine={false}
                   tickLine={false}
                   tick={{
