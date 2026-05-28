@@ -110,10 +110,10 @@ Pages still using Lucide icons, Tailwind colour classes, or neon-button — need
 ### Priority 3 — Store
 
 - [x] `src/pages/Store.tsx` — hover:text-red-700 Tailwind class removed
-- [ ] `src/pages/ProductDetails.tsx`
-- [ ] `src/pages/Cart.tsx`
-- [ ] `src/pages/Checkout.tsx`
-- [ ] `src/pages/Polls.tsx`
+- [x] `src/pages/ProductDetails.tsx` — stone color classes → CSS vars
+- [x] `src/pages/Cart.tsx` — no violations
+- [x] `src/pages/Checkout.tsx` — stone color/border classes → CSS vars
+- [x] `src/pages/Polls.tsx` — bg-stone-50/50 → container-low CSS var
 
 > Reference: `docs/audits/frontend_mobile_guide.md` — full Lucide → Material Symbols mapping + per-page checklist
 
