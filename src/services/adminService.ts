@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { PostgrestError, RealtimeChannel } from '@supabase/supabase-js'
+import { compressForUpload } from '@/lib/imageUtils'
 import { authService } from './authService'
 import { memberService } from './memberService'
 import { logisticsService } from './logisticsService'
@@ -896,18 +897,19 @@ class AdminService {
     fileName: string,
     blob: Blob
   ): Promise<{ data: { path: string } | null; error: Error | null }> {
-    return supabase.storage.from('avatars').upload(fileName, blob, {
+    const compressed = await compressForUpload(blob, fileName)
+    return supabase.storage.from('avatars').upload(fileName, compressed, {
       upsert: true,
-      contentType: blob.type || 'image/jpeg',
+      contentType: compressed.type || 'image/webp',
     })
   }
 
   /**
-   * Generates a standardized avatar path following the pattern: {userId}/{timestamp}.jpg
+   * Generates a standardized avatar path following the pattern: {userId}/{timestamp}.webp
    * This ensures compliance with RLS policies that often restrict updates to user-owned folders.
    */
   generateAvatarPath(regNo: string): string {
-    return `${regNo}.jpg`
+    return `${regNo}.webp`
   }
 
   getAvatarPublicUrl(fileName: string): string {
