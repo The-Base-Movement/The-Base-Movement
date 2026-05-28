@@ -40,7 +40,9 @@ export default function SEO({
     name: 'The Base Movement',
     alternateName: 'TBM',
     url: siteUrl,
-    logo: `${siteUrl}/branding/logo.png`,
+    logo: settings.logo_url.startsWith('http')
+      ? settings.logo_url
+      : `${siteUrl}${settings.logo_url}`,
     description: defaultDescription,
     foundingDate: '2026',
     foundingLocation: { '@type': 'Place', name: 'Accra, Ghana' },

@@ -26,7 +26,7 @@ export interface BrandingSettings {
   button_active_tab_text_color?: string
   button_inactive_tab_bg_color?: string
   button_inactive_tab_text_color?: string
-  
+
   button_primary_hover_bg_color?: string
   button_accent_hover_bg_color?: string
   button_destructive_hover_bg_color?: string
@@ -37,7 +37,7 @@ export interface BrandingSettings {
 
 export const defaultSettings: BrandingSettings = {
   logo_url: '/branding/logo.png',
-  favicon_url: '/branding/favicon.ico',
+  favicon_url: '/branding/favicon.png',
   og_image_url: '/branding/og-image.png',
   twitter_card_url: '/branding/twitter-card.png',
   founder_image_url: '/branding/founder-image.jpg',
@@ -65,10 +65,10 @@ export const defaultSettings: BrandingSettings = {
   button_active_tab_text_color: '0 0% 100%',
   button_inactive_tab_bg_color: '0 0% 100%',
   button_inactive_tab_text_color: '156 100% 21%',
-  
+
   button_primary_hover_bg_color: '156 100% 15%',
   button_accent_hover_bg_color: '45 80% 35%',
   button_destructive_hover_bg_color: '0 85% 35%',
   button_active_tab_hover_bg_color: '156 100% 15%',
-  button_inactive_tab_hover_bg_color: '0 0% 95%'
+  button_inactive_tab_hover_bg_color: '0 0% 95%',
 }
