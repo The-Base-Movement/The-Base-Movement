@@ -62,6 +62,7 @@ export async function compressForUpload(input: File | Blob, name?: string): Prom
     const webpName = /\.[^.]+$/.test(fileName)
       ? fileName.replace(/\.[^.]+$/, '.webp')
       : fileName + '.webp'
+    // Use original fileName for the rename — the library preserves the input name, renaming is our responsibility
     return new File([compressed], webpName, {
       type: 'image/webp',
     })

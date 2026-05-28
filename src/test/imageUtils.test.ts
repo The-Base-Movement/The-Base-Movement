@@ -40,4 +40,13 @@ describe('compressForUpload', () => {
     const result = await compressForUpload(input)
     expect(result.name).toBe('image.webp')
   })
+
+  it('falls back to a File when Blob input fails compression', async () => {
+    const imageCompression = (await import('browser-image-compression')).default
+    vi.mocked(imageCompression).mockRejectedValueOnce(new Error('oom'))
+    const input = new Blob([new Uint8Array([1])], { type: 'image/jpeg' })
+    const result = await compressForUpload(input, 'avatar.jpg')
+    expect(result).toBeInstanceOf(File)
+    expect(result.name).toBe('avatar.jpg')
+  })
 })
