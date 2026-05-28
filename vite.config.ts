@@ -13,13 +13,14 @@ export default defineConfig(({ mode }) => {
     base: '/',
     plugins: [
       react(),
-      visualizer({
-        filename: 'stats.html',
-        gzipSize: true,
-        brotliSize: true,
-        template: 'treemap',
-      }),
-    ],
+      mode !== 'production' &&
+        visualizer({
+          filename: 'stats.html',
+          gzipSize: true,
+          brotliSize: true,
+          template: 'treemap',
+        }),
+    ].filter(Boolean),
     // vite-react-ssg options
     ssgOptions: {
       mock: true,
@@ -55,6 +56,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
+      sourcemap: false,
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
