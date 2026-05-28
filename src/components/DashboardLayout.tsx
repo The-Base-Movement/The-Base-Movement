@@ -358,6 +358,7 @@ export default function DashboardLayout() {
             {
               label: 'Mobilization',
               items: [
+                { to: '/dashboard/jobs', icon: 'work', label: 'Jobs' },
                 { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
                 { to: '/dashboard/store', icon: 'storefront', label: 'Store' },
                 { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback Hub' },

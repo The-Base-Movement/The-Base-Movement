@@ -329,6 +329,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'MANAGE_POLLS', resource: 'POLLS' },
         },
         {
+          to: '/admin/jobs',
+          icon: 'work',
+          label: 'Jobs Board',
+          permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+        },
+        {
           to: '/admin/plan-manager',
           icon: 'route',
           label: 'Mission plan',
