@@ -143,7 +143,13 @@ export default function Store() {
                 ₵{(parseFloat(item.price.replace(/[^0-9.]/g, '')) * item.quantity).toFixed(0)}
               </div>
               <button
-                className="text-destructive hover:text-red-700 p-1"
+                style={{
+                  color: 'hsl(var(--destructive))',
+                  padding: 4,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
                 onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 12 }}>

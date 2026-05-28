@@ -1,5 +1,4 @@
 import type { DonationCampaign } from '@/types/admin'
-import { Button } from '@/components/buttons/ui/neon-button'
 import { usePerformance } from '@/context/PerformanceContext'
 
 interface StrategicPrioritiesProps {
@@ -202,16 +201,30 @@ export function StrategicPriorities({
                       </div>
                     </div>
 
-                    <Button
+                    <button
                       onClick={() => onSelectCampaign(c.id)}
-                      variant="primary"
-                      style={{ width: '100%' }}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        padding: '12px 24px',
+                        background: 'hsl(var(--primary))',
+                        color: '#fff',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 800,
+                        fontSize: 13,
+                        border: 'none',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                      }}
                     >
                       Direct capital{' '}
                       <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                         arrow_forward
                       </span>
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>
