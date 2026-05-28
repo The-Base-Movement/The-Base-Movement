@@ -328,47 +328,47 @@ export default function AdminModeration() {
           </button>
         </div>
 
-        {/* Row: search — full width */}
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 16,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            placeholder={
-              tab === 'comments'
-                ? 'Search author, content, post…'
-                : 'Search author, content, product…'
-            }
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ ...inputSt, width: '100%', paddingLeft: 34 }}
-          />
-        </div>
-
-        {/* Row: flagged filter — full width, comments tab only */}
-        {tab === 'comments' && (
-          <button
-            className={`btn btn-sm ${flaggedOnly ? 'btn-active-tab' : 'btn-inactive-tab'}`}
-            style={{ width: '100%' }}
-            onClick={() => setFlaggedOnly((v) => !v)}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              flag
+        {/* Search + flag — same row on desktop, stacked full-width on mobile */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: '1 1 240px', minWidth: 0 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 16,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
             </span>
-            Flagged only
-          </button>
-        )}
+            <input
+              placeholder={
+                tab === 'comments'
+                  ? 'Search author, content, post…'
+                  : 'Search author, content, product…'
+              }
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ ...inputSt, width: '100%', paddingLeft: 34 }}
+            />
+          </div>
+          {tab === 'comments' && (
+            <button
+              className={`btn btn-sm ${flaggedOnly ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+              style={{ flex: '1 1 140px', minWidth: 0 }}
+              onClick={() => setFlaggedOnly((v) => !v)}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                flag
+              </span>
+              Flagged only
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Table */}
