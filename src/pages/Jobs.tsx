@@ -130,102 +130,153 @@ export default function Jobs() {
         <h1
           style={{
             fontSize: 26,
-            fontWeight: 'var(--font-weight-semibold, 600)',
+            fontWeight: 'var(--font-weight-medium, 500)',
             color: 'hsl(var(--on-surface))',
             margin: '0 0 4px',
           }}
         >
           Jobs Board
         </h1>
-        <p style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+        <p
+          style={{
+            fontSize: 14,
+            fontWeight: 'var(--font-weight-normal, 400)',
+            color: 'hsl(var(--on-surface-muted))',
+            margin: 0,
+          }}
+        >
           Opportunities within The Base Movement network
         </p>
       </div>
 
       {/* Filter bar */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 24 }}>
-        <input
-          placeholder="Search title or organisation..."
-          value={filters.search}
-          onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-          style={{
-            flex: '1 1 200px',
-            minWidth: 160,
-            height: 36,
-            padding: '0 12px',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 'var(--radius-sm)',
-            fontFamily: font,
-            fontSize: 13,
-            boxSizing: 'border-box',
-            color: 'hsl(var(--on-surface))',
-          }}
-        />
-        <select
-          value={filters.category}
-          onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
-          style={{
-            height: 36,
-            padding: '0 10px',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 'var(--radius-sm)',
-            fontFamily: font,
-            fontSize: 13,
-            color: 'hsl(var(--on-surface))',
-            background: 'hsl(var(--background))',
-          }}
-        >
-          <option value="">All Categories</option>
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        <select
-          value={filters.job_type}
-          onChange={(e) => setFilters((f) => ({ ...f, job_type: e.target.value as JobType | '' }))}
-          style={{
-            height: 36,
-            padding: '0 10px',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 'var(--radius-sm)',
-            fontFamily: font,
-            fontSize: 13,
-            color: 'hsl(var(--on-surface))',
-            background: 'hsl(var(--background))',
-          }}
-        >
-          <option value="">All Types</option>
-          {JOB_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {TYPE_LABELS[t]}
-            </option>
-          ))}
-        </select>
-        <select
-          value={filters.platform_filter}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, platform_filter: e.target.value as PlatformFilter | '' }))
-          }
-          style={{
-            height: 36,
-            padding: '0 10px',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 'var(--radius-sm)',
-            fontFamily: font,
-            fontSize: 13,
-            color: 'hsl(var(--on-surface))',
-            background: 'hsl(var(--background))',
-          }}
-        >
-          <option value="">All Networks</option>
-          {PLATFORMS.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </select>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+        {/* Row 1 — search, full width */}
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 16,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            placeholder="Search title or organisation..."
+            value={filters.search}
+            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+            style={{
+              width: '100%',
+              height: 38,
+              paddingLeft: 34,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: font,
+              fontSize: 13,
+              fontWeight: 'var(--font-weight-normal, 400)',
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+              boxSizing: 'border-box',
+            }}
+          />
+        </div>
+        {/* Row 2 — filters, wrap on mobile */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            className={`btn btn-sm ${!filters.category && !filters.job_type && !filters.platform_filter ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+            onClick={() =>
+              setFilters((f) => ({ ...f, category: '', job_type: '', platform_filter: '' }))
+            }
+          >
+            All
+          </button>
+          <select
+            value={filters.category}
+            onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
+            style={{
+              flex: '1 1 0',
+              minWidth: 0,
+              height: 36,
+              padding: '0 10px',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: font,
+              fontSize: 13,
+              fontWeight: 'var(--font-weight-normal, 400)',
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+            }}
+          >
+            <option value="">All Categories</option>
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filters.job_type}
+            onChange={(e) =>
+              setFilters((f) => ({ ...f, job_type: e.target.value as JobType | '' }))
+            }
+            style={{
+              flex: '1 1 0',
+              minWidth: 0,
+              height: 36,
+              padding: '0 10px',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: font,
+              fontSize: 13,
+              fontWeight: 'var(--font-weight-normal, 400)',
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+            }}
+          >
+            <option value="">All Types</option>
+            {JOB_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {TYPE_LABELS[t]}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filters.platform_filter}
+            onChange={(e) =>
+              setFilters((f) => ({
+                ...f,
+                platform_filter: e.target.value as PlatformFilter | '',
+              }))
+            }
+            style={{
+              flex: '1 1 0',
+              minWidth: 0,
+              height: 36,
+              padding: '0 10px',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: font,
+              fontSize: 13,
+              fontWeight: 'var(--font-weight-normal, 400)',
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+            }}
+          >
+            <option value="">All Networks</option>
+            {PLATFORMS.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Job cards grid */}
@@ -265,102 +316,123 @@ export default function Jobs() {
               className="panel"
               onClick={() => openJobDetail(job)}
               style={{
-                padding: '18px 20px',
+                padding: 0,
                 cursor: 'pointer',
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'box-shadow 0.15s',
               }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 3,
-                  background: 'hsl(var(--primary))',
-                }}
-              />
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  gap: 8,
-                  marginBottom: 8,
-                }}
-              >
-                <p
+              {job.banner_url ? (
+                <img
+                  src={job.banner_url}
+                  alt={job.title}
                   style={{
-                    margin: 0,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 15,
-                    color: 'hsl(var(--on-surface))',
+                    display: 'block',
+                    width: '100%',
+                    height: 130,
+                    objectFit: 'cover',
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 3,
+                    background: 'hsl(var(--primary))',
+                  }}
+                />
+              )}
+              <div style={{ padding: '14px 18px 16px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: 8,
+                    marginBottom: 8,
                   }}
                 >
-                  {job.title}
-                </p>
-                {appliedJobIds.has(job.id) && (
-                  <span className="pill pill-ok" style={{ fontSize: 10, whiteSpace: 'nowrap' }}>
-                    Applied
-                  </span>
-                )}
-              </div>
-              <p
-                style={{ margin: '0 0 10px', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}
-              >
-                {job.organization}
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
-                <span className={`pill ${PILL_COLORS[job.job_type]}`} style={{ fontSize: 11 }}>
-                  {TYPE_LABELS[job.job_type]}
-                </span>
-                <span className="pill pill-mute" style={{ fontSize: 11 }}>
-                  {job.category}
-                </span>
-                {job.platform_filter !== 'ALL' && (
-                  <span
-                    className="pill"
+                  <p
                     style={{
-                      fontSize: 11,
-                      background: 'hsl(var(--accent) / 0.15)',
-                      color: 'hsl(var(--accent))',
+                      margin: 0,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 15,
+                      color: 'hsl(var(--on-surface))',
                     }}
                   >
-                    {job.platform_filter}
+                    {job.title}
+                  </p>
+                  {appliedJobIds.has(job.id) && (
+                    <span className="pill pill-ok" style={{ fontSize: 10, whiteSpace: 'nowrap' }}>
+                      Applied
+                    </span>
+                  )}
+                </div>
+                <p
+                  style={{
+                    margin: '0 0 10px',
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  {job.organization}
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                  <span className={`pill ${PILL_COLORS[job.job_type]}`} style={{ fontSize: 11 }}>
+                    {TYPE_LABELS[job.job_type]}
                   </span>
-                )}
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                {job.location && (
-                  <span>
+                  <span className="pill pill-mute" style={{ fontSize: 11 }}>
+                    {job.category}
+                  </span>
+                  {job.platform_filter !== 'ALL' && (
                     <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: 13, verticalAlign: 'middle' }}
+                      className="pill"
+                      style={{
+                        fontSize: 11,
+                        background: 'hsl(var(--accent) / 0.15)',
+                        color: 'hsl(var(--accent))',
+                      }}
                     >
-                      location_on
-                    </span>{' '}
-                    {job.location}
-                  </span>
-                )}
-                {job.deadline && (
-                  <span>
-                    Closes{' '}
-                    {new Date(job.deadline).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </span>
-                )}
+                      {job.platform_filter}
+                    </span>
+                  )}
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  {job.location && (
+                    <span>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 13, verticalAlign: 'middle' }}
+                      >
+                        location_on
+                      </span>{' '}
+                      {job.location}
+                    </span>
+                  )}
+                  {job.deadline && (
+                    <span>
+                      Closes{' '}
+                      {new Date(job.deadline).toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -394,6 +466,22 @@ export default function Jobs() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
+            {selectedJob.banner_url && (
+              <img
+                src={selectedJob.banner_url}
+                alt={selectedJob.title}
+                style={{
+                  display: 'block',
+                  width: 'calc(100% + 56px)',
+                  marginLeft: -28,
+                  marginTop: -28,
+                  marginBottom: 20,
+                  height: 180,
+                  objectFit: 'cover',
+                  borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
+                }}
+              />
+            )}
             <div
               style={{
                 display: 'flex',
@@ -407,13 +495,20 @@ export default function Jobs() {
                   style={{
                     margin: '0 0 4px',
                     fontSize: 20,
-                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface))',
                   }}
                 >
                   {selectedJob.title}
                 </h2>
-                <p style={{ margin: 0, fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 14,
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
                   {selectedJob.organization}
                 </p>
               </div>
@@ -464,17 +559,41 @@ export default function Jobs() {
 
             {selectedJob.salary_range && (
               <p
-                style={{ margin: '0 0 12px', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}
+                style={{
+                  margin: '0 0 12px',
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
               >
-                <strong style={{ color: 'hsl(var(--on-surface))' }}>Salary:</strong>{' '}
+                <span
+                  style={{
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  Salary:
+                </span>{' '}
                 {selectedJob.salary_range}
               </p>
             )}
             {selectedJob.deadline && (
               <p
-                style={{ margin: '0 0 16px', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}
+                style={{
+                  margin: '0 0 16px',
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
               >
-                <strong style={{ color: 'hsl(var(--on-surface))' }}>Deadline:</strong>{' '}
+                <span
+                  style={{
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  Deadline:
+                </span>{' '}
                 {new Date(selectedJob.deadline).toLocaleDateString('en-GB', {
                   day: 'numeric',
                   month: 'long',
@@ -498,6 +617,7 @@ export default function Jobs() {
                 style={{
                   margin: 0,
                   fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
                   color: 'hsl(var(--on-surface-muted))',
                   lineHeight: 1.6,
                   whiteSpace: 'pre-wrap',
@@ -523,6 +643,7 @@ export default function Jobs() {
                   style={{
                     margin: 0,
                     fontSize: 13,
+                    fontWeight: 'var(--font-weight-normal, 400)',
                     color: 'hsl(var(--on-surface-muted))',
                     lineHeight: 1.6,
                     whiteSpace: 'pre-wrap',
@@ -581,13 +702,20 @@ export default function Jobs() {
               style={{
                 margin: '0 0 4px',
                 fontSize: 17,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontWeight: 'var(--font-weight-medium, 500)',
                 color: 'hsl(var(--on-surface))',
               }}
             >
               Apply — {selectedJob.title}
             </h3>
-            <p style={{ margin: '0 0 20px', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
+            <p
+              style={{
+                margin: '0 0 20px',
+                fontSize: 13,
+                fontWeight: 'var(--font-weight-normal, 400)',
+                color: 'hsl(var(--on-surface-muted))',
+              }}
+            >
               {selectedJob.organization}
             </p>
 
@@ -616,6 +744,7 @@ export default function Jobs() {
                 borderRadius: 'var(--radius-sm)',
                 fontFamily: font,
                 fontSize: 13,
+                fontWeight: 'var(--font-weight-normal, 400)',
                 color: 'hsl(var(--on-surface))',
                 resize: 'vertical',
                 boxSizing: 'border-box',

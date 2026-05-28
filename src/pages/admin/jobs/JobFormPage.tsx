@@ -30,6 +30,7 @@ const BLANK: Omit<Job, 'id' | 'created_at' | 'updated_at' | 'application_count'>
   salary_range: '',
   platform_filter: 'ALL',
   deadline: '',
+  banner_url: '',
   status: 'draft',
   posted_by: undefined,
 }
@@ -42,6 +43,8 @@ export default function JobFormPage() {
   const [form, setForm] = useState(BLANK)
   const [loadingJob, setLoadingJob] = useState(isEdit)
   const [saving, setSaving] = useState(false)
+  const [bannerFile, setBannerFile] = useState<File | null>(null)
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -58,6 +61,7 @@ export default function JobFormPage() {
           salary_range: job.salary_range ?? '',
           platform_filter: job.platform_filter,
           deadline: job.deadline ?? '',
+          banner_url: job.banner_url ?? '',
           status: job.status,
           posted_by: job.posted_by,
         })
@@ -71,18 +75,44 @@ export default function JobFormPage() {
 
   const set = (field: string, value: string) => setForm((f) => ({ ...f, [field]: value }))
 
+  function handleBannerChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null
+    setBannerFile(file)
+    if (file) {
+      const url = URL.createObjectURL(file)
+      setBannerPreview(url)
+    }
+  }
+
+  function removeBanner() {
+    setBannerFile(null)
+    setBannerPreview(null)
+    setForm((f) => ({ ...f, banner_url: '' }))
+  }
+
   async function handleSave() {
     if (!form.title.trim() || !form.organization.trim() || !form.description.trim()) {
       toast.error('Title, organisation, and description are required.')
       return
     }
     setSaving(true)
+    let bannerUrl = form.banner_url || undefined
+    if (bannerFile) {
+      const uploaded = await jobService.uploadJobBanner(bannerFile)
+      if (!uploaded) {
+        toast.error('Banner upload failed. Please try again.')
+        setSaving(false)
+        return
+      }
+      bannerUrl = uploaded
+    }
     const payload = {
       ...form,
       deadline: form.deadline || undefined,
       requirements: form.requirements || undefined,
       location: form.location || undefined,
       salary_range: form.salary_range || undefined,
+      banner_url: bannerUrl,
     }
     const ok = isEdit
       ? await jobService.updateJob(id!, payload)
@@ -111,7 +141,7 @@ export default function JobFormPage() {
 
   const labelSt: React.CSSProperties = {
     display: 'block',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: 'var(--font-weight-medium, 500)' as string,
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
@@ -153,7 +183,14 @@ export default function JobFormPage() {
 
       <div className="panel" style={{ maxWidth: 720, padding: 28 }}>
         {/* Row 1: Title + Organisation */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 0 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+            gap: 16,
+            marginBottom: 0,
+          }}
+        >
           <div style={fieldWrap}>
             <label style={labelSt}>
               Job Title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
@@ -217,7 +254,13 @@ export default function JobFormPage() {
         </div>
 
         {/* Row: Type + Category + Network */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+            gap: 16,
+          }}
+        >
           <div style={fieldWrap}>
             <label style={labelSt}>Job Type</label>
             <select
@@ -263,7 +306,13 @@ export default function JobFormPage() {
         </div>
 
         {/* Row: Location + Salary + Deadline */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+            gap: 16,
+          }}
+        >
           <div style={fieldWrap}>
             <label style={labelSt}>Location</label>
             <input
@@ -293,6 +342,61 @@ export default function JobFormPage() {
               style={inputSt}
             />
           </div>
+        </div>
+
+        {/* Banner Image */}
+        <div style={fieldWrap}>
+          <label style={labelSt}>Job Banner / Image</label>
+          {(bannerPreview || form.banner_url) && (
+            <div style={{ marginBottom: 10, position: 'relative', display: 'inline-block' }}>
+              <img
+                src={bannerPreview ?? form.banner_url}
+                alt="Job banner preview"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  maxWidth: 480,
+                  height: 160,
+                  objectFit: 'cover',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid hsl(var(--border))',
+                }}
+              />
+              <button
+                type="button"
+                onClick={removeBanner}
+                style={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  background: 'rgba(0,0,0,0.55)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '2px 6px',
+                  fontSize: 12,
+                  gap: 4,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  close
+                </span>
+                Remove
+              </button>
+            </div>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleBannerChange}
+            style={{ fontSize: 13, color: 'hsl(var(--on-surface))' }}
+          />
+          <p style={{ margin: '4px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+            Recommended: 1200 × 400px, JPG or PNG
+          </p>
         </div>
 
         {/* Status */}

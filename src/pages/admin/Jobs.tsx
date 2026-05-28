@@ -127,32 +127,54 @@ export default function AdminJobs() {
       </div>
 
       {/* Filter bar */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
-        <input
-          placeholder="Search title or organisation..."
-          value={filters.search}
-          onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-          style={{
-            flex: '1 1 180px',
-            height: 34,
-            padding: '0 10px',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 'var(--radius-sm)',
-            fontSize: 13,
-            fontFamily: "'Public Sans', sans-serif",
-            color: 'hsl(var(--on-surface))',
-            boxSizing: 'border-box',
-          }}
-        />
-        {(['', 'draft', 'published', 'closed'] as const).map((s) => (
-          <button
-            key={s}
-            className={`btn btn-sm ${filters.status === s ? 'btn-active-tab' : 'btn-inactive-tab'}`}
-            onClick={() => setFilters((f) => ({ ...f, status: s }))}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+        {/* Row 1 — search, full width */}
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 16,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
           >
-            {s === '' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
-          </button>
-        ))}
+            search
+          </span>
+          <input
+            placeholder="Search title or organisation..."
+            value={filters.search}
+            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+            style={{
+              width: '100%',
+              height: 34,
+              paddingLeft: 34,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: 13,
+              fontFamily: "'Public Sans', sans-serif",
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+              boxSizing: 'border-box',
+            }}
+          />
+        </div>
+        {/* Row 2 — status tabs */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {(['', 'draft', 'published', 'closed'] as const).map((s) => (
+            <button
+              key={s}
+              className={`btn btn-sm ${filters.status === s ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+              onClick={() => setFilters((f) => ({ ...f, status: s }))}
+            >
+              {s === '' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Table */}

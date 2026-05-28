@@ -165,6 +165,20 @@ class JobService {
     return true
   }
 
+  async uploadJobBanner(file: File): Promise<string | null> {
+    const ext = file.name.split('.').pop()
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { error } = await supabase.storage
+      .from('job-banners')
+      .upload(path, file, { upsert: false })
+    if (error) {
+      console.warn('[jobService] uploadJobBanner:', error)
+      return null
+    }
+    const { data } = supabase.storage.from('job-banners').getPublicUrl(path)
+    return data.publicUrl
+  }
+
   async uploadResume(file: File): Promise<string | null> {
     const ext = file.name.split('.').pop()
     const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`

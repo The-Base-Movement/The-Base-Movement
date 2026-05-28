@@ -15,6 +15,7 @@ export interface Job {
   salary_range?: string
   platform_filter: PlatformFilter
   deadline?: string
+  banner_url?: string
   status: JobStatus
   posted_by?: string
   created_at: string
