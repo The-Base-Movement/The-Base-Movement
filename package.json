@@ -57,6 +57,7 @@
     "@supabase/supabase-js": "^2.105.1",
     "@tanstack/react-query": "^5.100.9",
     "@tinymce/tinymce-react": "^6.3.0",
+    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "claude-flow": "github:ruvnet/ruflo",
     "clsx": "^2.1.1",
@@ -133,6 +134,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
+    "vite-plugin-image-optimizer": "^2.0.3",
     "vite-react-ssg": "^0.9.1-beta.1",
     "vite-ssg": "^28.3.0",
     "vitest": "^4.1.6"
