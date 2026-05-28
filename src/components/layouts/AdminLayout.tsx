@@ -335,6 +335,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
         },
         {
+          to: '/admin/moderation',
+          icon: 'shield_person',
+          label: 'Moderation',
+          permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+        },
+        {
           to: '/admin/plan-manager',
           icon: 'route',
           label: 'Mission plan',
