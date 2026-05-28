@@ -11,6 +11,7 @@
 - [x] **Blog Comments** — `blog_comments` table with RLS, `CommentSection` wired to Supabase (load, post, reply, flag), `BlogPost.tsx` passes `post.id`
 - [x] **Product Reviews** — `Reviews.tsx` wired to `reviews` table; interactive star picker + submit form; optimistic append
 - [x] **Admin Moderation Page** — `/admin/moderation` with Blog Comments + Product Reviews tabs, flagged filter, clear-flag, delete, KPI tiles, sidebar nav entry
+- [x] **Frontend Design System Audit (P1)** — Blog, BlogPost, OurAgenda, Contact, Donate scanned; NeonButton removed from StrategicPriorities.tsx; hover:text-red-700 removed from Store.tsx
 
 ---
 
@@ -90,11 +91,11 @@ Pages still using Lucide icons, Tailwind colour classes, or neon-button — need
 
 ### Priority 1 — High Traffic
 
-- [ ] `src/pages/Blog.tsx`
-- [ ] `src/pages/BlogPost.tsx`
-- [ ] `src/pages/OurAgenda.tsx`
-- [ ] `src/pages/Contact.tsx`
-- [ ] `src/pages/Donate.tsx` + `src/pages/donate/components/`
+- [x] `src/pages/Blog.tsx` — no violations
+- [x] `src/pages/BlogPost.tsx` — no violations
+- [x] `src/pages/OurAgenda.tsx` — no violations
+- [x] `src/pages/Contact.tsx` — no violations
+- [x] `src/pages/Donate.tsx` + `src/pages/donate/components/` — NeonButton removed from StrategicPriorities.tsx
 
 ### Priority 2
 
@@ -108,7 +109,7 @@ Pages still using Lucide icons, Tailwind colour classes, or neon-button — need
 
 ### Priority 3 — Store
 
-- [ ] `src/pages/Store.tsx`
+- [x] `src/pages/Store.tsx` — hover:text-red-700 Tailwind class removed
 - [ ] `src/pages/ProductDetails.tsx`
 - [ ] `src/pages/Cart.tsx`
 - [ ] `src/pages/Checkout.tsx`
