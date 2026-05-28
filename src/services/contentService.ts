@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { BlogPost, MediaAsset, Author, PressRelease, MediaKitAsset } from '@/types/admin'
 import { adminService } from '@/services/adminService'
+import { compressForUpload } from '@/lib/imageUtils'
 import mediaManifest from '@/data/media-manifest.json'
 
 class ContentService {
@@ -243,13 +244,15 @@ class ContentService {
 
   async uploadImage(file: File, path: string): Promise<string | null> {
     try {
-      // Create a unique filename
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`
+      const compressed = await compressForUpload(file)
+      const baseName = `${Math.random().toString(36).substring(2)}-${Date.now()}`
+      const fileName = `${baseName}.webp`
       const filePath = `${path}/${fileName}`
 
       // Upload the file to the 'media' bucket
-      const { error: uploadError } = await supabase.storage.from('media').upload(filePath, file)
+      const { error: uploadError } = await supabase.storage
+        .from('media')
+        .upload(filePath, compressed)
 
       if (uploadError) {
         console.error('[STORAGE] Upload failed:', uploadError)
@@ -258,11 +261,11 @@ class ContentService {
 
       // Track in media_library table
       await supabase.from('media_library').insert({
-        filename: file.name,
+        filename: fileName,
         url: `${supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl}`,
         folder: path,
-        size_bytes: file.size,
-        mime_type: file.type,
+        size_bytes: compressed.size,
+        mime_type: 'image/webp',
       })
 
       // Get the public URL
