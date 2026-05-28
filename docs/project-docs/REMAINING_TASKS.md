@@ -99,13 +99,13 @@ Pages still using Lucide icons, Tailwind colour classes, or neon-button — need
 
 ### Priority 2
 
-- [ ] `src/pages/Impact.tsx`
-- [ ] `src/pages/Chapters.tsx`
-- [ ] `src/pages/ChapterDetails.tsx`
-- [ ] `src/pages/Members.tsx`
-- [ ] `src/pages/Press.tsx`
-- [ ] `src/pages/Login.tsx`
-- [ ] `src/pages/Register.tsx`
+- [x] `src/pages/Impact.tsx` — no violations
+- [x] `src/pages/Chapters.tsx` — stone-200/50 → border-border, hover:opacity-80
+- [x] `src/pages/ChapterDetails.tsx` — no violations
+- [x] `src/pages/Members.tsx` — no violations
+- [x] `src/pages/Press.tsx` — stone/slate color classes → CSS vars
+- [x] `src/pages/Login.tsx` — no violations
+- [x] `src/pages/Register.tsx` — no violations
 
 ### Priority 3 — Store
 
