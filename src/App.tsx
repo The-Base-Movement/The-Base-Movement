@@ -13,6 +13,7 @@ import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/buttons/ui/toaster'
 import { useIsClient } from '@/hooks/useIsClient'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import TawkChat from './components/TawkChat'
 
 export default function App() {
   const content = useRoutes(routes)
@@ -25,6 +26,7 @@ export default function App() {
           <AuthProvider>
             <ChaptersProvider>
               <StoreProvider>
+                <TawkChat />
                 <ScrollToTop />
                 <ReadingProgressBar />
                 <Toaster />
