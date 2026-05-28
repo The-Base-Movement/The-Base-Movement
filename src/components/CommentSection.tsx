@@ -14,6 +14,16 @@ interface Comment {
   flagged?: boolean
 }
 
+interface DBComment {
+  id: string
+  author_name: string
+  author_avatar: string | null
+  content: string
+  reply_to_name: string | null
+  flagged: boolean
+  created_at: string
+}
+
 function getInitials(name: string): string {
   return name
     .split(' ')
@@ -39,6 +49,19 @@ async function notifyAdmins(title: string, message: string, type: 'Info' | 'Aler
     await supabase.from('notifications').insert(rows)
   } catch {
     // non-critical
+  }
+}
+
+function dbToComment(row: DBComment): Comment {
+  return {
+    id: row.id,
+    author: row.author_name,
+    createdAt: new Date(row.created_at),
+    content: row.content,
+    avatar: row.author_avatar ?? undefined,
+    initials: getInitials(row.author_name),
+    replyTo: row.reply_to_name ?? undefined,
+    flagged: row.flagged,
   }
 }
 
@@ -89,34 +112,19 @@ function CommentAvatar({ avatar, initials }: { avatar?: string; initials?: strin
   )
 }
 
-export function CommentSection() {
-  const now = new Date()
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: '1',
-      author: 'Kwame Asante',
-      createdAt: new Date(now.getTime() - 2 * 3600_000),
-      content:
-        'This industrialization roadmap is exactly what we need. Focusing on regional hubs will ensure that development is not just centered in Accra.',
-      initials: 'KA',
-    },
-    {
-      id: '2',
-      author: 'Efua Mansah',
-      createdAt: new Date(now.getTime() - 5 * 3600_000),
-      content:
-        'I particularly like the emphasis on vocational training. We need skilled hands to run these factories.',
-      initials: 'EM',
-    },
-  ])
+export function CommentSection({ postId }: { postId: string }) {
+  const [comments, setComments] = useState<Comment[]>([])
+  const [loadingComments, setLoadingComments] = useState(true)
   const [newComment, setNewComment] = useState('')
+  const [saving, setSaving] = useState(false)
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyText, setReplyText] = useState('')
   const [flagged, setFlagged] = useState<Set<string>>(new Set())
-  const [currentUser] = useState<{ name: string; avatar?: string } | null>(() => {
+  const [currentUser] = useState<{ id: string; name: string; avatar?: string } | null>(() => {
     const user = authService.getUser()
     if (!user) return null
     return {
+      id: user.id,
       name: user.user_metadata?.full_name || 'Member',
       avatar: user.user_metadata?.avatar_url,
     }
@@ -124,53 +132,90 @@ export function CommentSection() {
   const [, setTick] = useState(0)
 
   useEffect(() => {
-    // Re-render every 60s so relative timestamps stay fresh
     const interval = setInterval(() => setTick((t) => t + 1), 60_000)
     return () => clearInterval(interval)
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!postId) return
+    void (async () => {
+      setLoadingComments(true)
+      const { data, error } = await supabase
+        .from('blog_comments')
+        .select('id, author_name, author_avatar, content, reply_to_name, flagged, created_at')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true })
+      if (!error && data) {
+        setComments((data as DBComment[]).map(dbToComment))
+        const flaggedIds = (data as DBComment[]).filter((r) => r.flagged).map((r) => r.id)
+        if (flaggedIds.length) setFlagged(new Set(flaggedIds))
+      }
+      setLoadingComments(false)
+    })()
+  }, [postId])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newComment.trim()) return
-    const comment: Comment = {
-      id: Date.now().toString(),
-      author: currentUser?.name || 'Member',
-      createdAt: new Date(),
-      content: newComment,
-      avatar: currentUser?.avatar,
-      initials: getInitials(currentUser?.name || 'M'),
+    if (!newComment.trim() || !currentUser) return
+    setSaving(true)
+    const { data, error } = await supabase
+      .from('blog_comments')
+      .insert({
+        post_id: postId,
+        member_id: currentUser.id,
+        author_name: currentUser.name,
+        author_avatar: currentUser.avatar ?? null,
+        content: newComment.trim(),
+      })
+      .select('id, author_name, author_avatar, content, reply_to_name, flagged, created_at')
+      .single()
+    setSaving(false)
+    if (error || !data) {
+      toast.error('Failed to post comment.')
+      return
     }
-    setComments([comment, ...comments])
+    setComments((prev) => [dbToComment(data as DBComment), ...prev])
     setNewComment('')
-    notifyAdmins(
+    void notifyAdmins(
       'New comment posted',
-      `${comment.author} commented: "${newComment.slice(0, 100)}"`,
+      `${currentUser.name} commented: "${newComment.slice(0, 100)}"`,
       'Info'
     )
   }
 
-  const handleReplySubmit = (parentId: string, parentAuthor: string) => {
-    if (!replyText.trim()) return
-    const comment: Comment = {
-      id: Date.now().toString(),
-      author: currentUser?.name || 'Member',
-      createdAt: new Date(),
-      content: replyText,
-      avatar: currentUser?.avatar,
-      initials: getInitials(currentUser?.name || 'M'),
-      replyTo: parentAuthor,
+  const handleReplySubmit = async (parentId: string, parentAuthor: string) => {
+    if (!replyText.trim() || !currentUser) return
+    setSaving(true)
+    const { data, error } = await supabase
+      .from('blog_comments')
+      .insert({
+        post_id: postId,
+        member_id: currentUser.id,
+        author_name: currentUser.name,
+        author_avatar: currentUser.avatar ?? null,
+        content: replyText.trim(),
+        parent_id: parentId,
+        reply_to_name: parentAuthor,
+      })
+      .select('id, author_name, author_avatar, content, reply_to_name, flagged, created_at')
+      .single()
+    setSaving(false)
+    if (error || !data) {
+      toast.error('Failed to post reply.')
+      return
     }
+    const newReply = dbToComment(data as DBComment)
     setComments((prev) => {
       const idx = prev.findIndex((c) => c.id === parentId)
       const next = [...prev]
-      next.splice(idx + 1, 0, comment)
+      next.splice(idx + 1, 0, newReply)
       return next
     })
     setReplyText('')
     setReplyingTo(null)
-    notifyAdmins(
+    void notifyAdmins(
       'Reply posted',
-      `${comment.author} replied to ${parentAuthor}: "${replyText.slice(0, 100)}"`,
+      `${currentUser.name} replied to ${parentAuthor}: "${replyText.slice(0, 100)}"`,
       'Info'
     )
     toast.success('Reply posted.')
@@ -179,6 +224,7 @@ export function CommentSection() {
   const handleFlag = async (comment: Comment) => {
     if (flagged.has(comment.id)) return
     setFlagged((prev) => new Set([...prev, comment.id]))
+    await supabase.from('blog_comments').update({ flagged: true }).eq('id', comment.id)
     await notifyAdmins(
       'Comment flagged',
       `A comment by "${comment.author}" was flagged for review: "${comment.content.slice(0, 100)}"`,
@@ -228,245 +274,267 @@ export function CommentSection() {
             borderRadius: 2,
           }}
         >
-          {comments.length} comments
+          {loadingComments ? '…' : `${comments.length} comments`}
         </span>
       </div>
 
       {/* Comment Form */}
-      <div
-        style={{
-          marginBottom: 48,
-          background: '#fafafa',
-          border: '1px solid #e7e7e7',
-          padding: '20px',
-        }}
-      >
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
-            <CommentAvatar
-              avatar={currentUser?.avatar}
-              initials={currentUser ? getInitials(currentUser.name) : undefined}
-            />
-            <textarea
-              name="newComment"
-              id="textarea-comment"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Join the conversation..."
-              style={{
-                flex: 1,
-                minWidth: 0,
-                background: '#fff',
-                border: '1px solid #e2e2e2',
-                padding: '12px 14px',
-                fontSize: 13,
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 500,
-                color: '#374151',
-                outline: 'none',
-                minHeight: 96,
-                resize: 'vertical',
-                boxSizing: 'border-box',
-                lineHeight: 1.5,
-              }}
-            />
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button
-              type="submit"
-              disabled={!newComment.trim()}
-              style={{
-                background: 'var(--brand-green)',
-                color: '#fff',
-                border: 'none',
-                height: 38,
-                padding: '0 24px',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 11,
-                letterSpacing: '0.04em',
-                cursor: newComment.trim() ? 'pointer' : 'default',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                opacity: newComment.trim() ? 1 : 0.5,
-              }}
-            >
-              Post comment
-              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                send
-              </span>
-            </button>
-          </div>
-        </form>
-      </div>
+      {currentUser ? (
+        <div
+          style={{
+            marginBottom: 48,
+            background: '#fafafa',
+            border: '1px solid #e7e7e7',
+            padding: '20px',
+          }}
+        >
+          <form onSubmit={(e) => void handleSubmit(e)}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+              <CommentAvatar avatar={currentUser.avatar} initials={getInitials(currentUser.name)} />
+              <textarea
+                name="newComment"
+                id="textarea-comment"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Join the conversation..."
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  background: '#fff',
+                  border: '1px solid #e2e2e2',
+                  padding: '12px 14px',
+                  fontSize: 13,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 500,
+                  color: '#374151',
+                  outline: 'none',
+                  minHeight: 96,
+                  resize: 'vertical',
+                  boxSizing: 'border-box',
+                  lineHeight: 1.5,
+                }}
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="submit"
+                disabled={!newComment.trim() || saving}
+                style={{
+                  background: 'var(--brand-green)',
+                  color: '#fff',
+                  border: 'none',
+                  height: 38,
+                  padding: '0 24px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 11,
+                  letterSpacing: '0.04em',
+                  cursor: newComment.trim() && !saving ? 'pointer' : 'default',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  opacity: newComment.trim() && !saving ? 1 : 0.5,
+                }}
+              >
+                {saving ? 'Posting…' : 'Post comment'}
+                {!saving && (
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                    send
+                  </span>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <p
+          style={{
+            marginBottom: 48,
+            fontSize: 13,
+            color: '#6b7280',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
+          Sign in to join the discussion.
+        </p>
+      )}
 
       {/* Comments List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-        {comments.map((comment) => (
-          <div key={comment.id}>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-              <CommentAvatar avatar={comment.avatar} initials={comment.initials} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 8,
-                    marginBottom: 6,
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+      {loadingComments ? (
+        <p style={{ fontSize: 13, color: '#9ca3af', fontFamily: "'Public Sans', sans-serif" }}>
+          Loading comments…
+        </p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+          {comments.map((comment) => (
+            <div key={comment.id}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <CommentAvatar avatar={comment.avatar} initials={comment.initials} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 8,
+                      marginBottom: 6,
+                    }}
+                  >
+                    <div
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontSize: 13,
+                          color: '#1c1c1c',
+                          letterSpacing: '-0.01em',
+                        }}
+                      >
+                        {comment.author}
+                      </span>
+                      {comment.replyTo && (
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 11,
+                            color: '#9ca3af',
+                          }}
+                        >
+                          ↩ {comment.replyTo}
+                        </span>
+                      )}
+                    </div>
                     <span
                       style={{
                         fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-semibold, 600)',
-                        fontSize: 13,
-                        color: '#1c1c1c',
-                        letterSpacing: '-0.01em',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 11,
+                        color: '#9ca3af',
+                        flexShrink: 0,
                       }}
                     >
-                      {comment.author}
+                      {relativeTime(comment.createdAt)}
                     </span>
-                    {comment.replyTo && (
-                      <span
+                  </div>
+                  <p
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 500,
+                      fontSize: 13,
+                      color: '#4b5563',
+                      lineHeight: 1.6,
+                      margin: '0 0 8px',
+                    }}
+                  >
+                    {comment.content}
+                  </p>
+                  <div style={{ display: 'flex', gap: 16 }}>
+                    {currentUser && (
+                      <button
+                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
                           fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 11,
-                          color: '#9ca3af',
+                          color: replyingTo === comment.id ? 'var(--brand-green)' : '#6b7280',
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          cursor: 'pointer',
                         }}
                       >
-                        ↩ {comment.replyTo}
-                      </span>
+                        {replyingTo === comment.id ? 'Cancel' : 'Reply'}
+                      </button>
                     )}
+                    <button
+                      onClick={() => void handleFlag(comment)}
+                      disabled={flagged.has(comment.id)}
+                      style={{
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 11,
+                        color: flagged.has(comment.id) ? '#9ca3af' : '#6b7280',
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        cursor: flagged.has(comment.id) ? 'default' : 'pointer',
+                      }}
+                    >
+                      {flagged.has(comment.id) ? 'Flagged' : 'Flag'}
+                    </button>
                   </div>
-                  <span
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 11,
-                      color: '#9ca3af',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {relativeTime(comment.createdAt)}
-                  </span>
                 </div>
-                <p
+              </div>
+
+              {/* Inline reply form */}
+              {replyingTo === comment.id && currentUser && (
+                <div
                   style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 13,
-                    color: '#4b5563',
-                    lineHeight: 1.6,
-                    margin: '0 0 8px',
+                    marginLeft: 52,
+                    marginTop: 12,
+                    background: '#fafafa',
+                    border: '1px solid #e7e7e7',
+                    padding: '14px',
                   }}
                 >
-                  {comment.content}
-                </p>
-                <div style={{ display: 'flex', gap: 16 }}>
-                  <button
-                    onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 11,
-                      color: replyingTo === comment.id ? 'var(--brand-green)' : '#6b7280',
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {replyingTo === comment.id ? 'Cancel' : 'Reply'}
-                  </button>
-                  <button
-                    onClick={() => handleFlag(comment)}
-                    disabled={flagged.has(comment.id)}
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 11,
-                      color: flagged.has(comment.id) ? '#9ca3af' : '#6b7280',
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      cursor: flagged.has(comment.id) ? 'default' : 'pointer',
-                    }}
-                  >
-                    {flagged.has(comment.id) ? 'Flagged' : 'Flag'}
-                  </button>
+                  <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+                    <CommentAvatar
+                      avatar={currentUser.avatar}
+                      initials={getInitials(currentUser.name)}
+                    />
+                    <textarea
+                      autoFocus
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder={`Reply to ${comment.author}…`}
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        background: '#fff',
+                        border: '1px solid #e2e2e2',
+                        padding: '10px 12px',
+                        fontSize: 12,
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 500,
+                        color: '#374151',
+                        outline: 'none',
+                        minHeight: 72,
+                        resize: 'vertical',
+                        boxSizing: 'border-box',
+                        lineHeight: 1.5,
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                      onClick={() => void handleReplySubmit(comment.id, comment.author)}
+                      disabled={!replyText.trim() || saving}
+                      style={{
+                        background: 'var(--brand-green)',
+                        color: '#fff',
+                        border: 'none',
+                        height: 34,
+                        padding: '0 20px',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 11,
+                        letterSpacing: '0.04em',
+                        cursor: replyText.trim() && !saving ? 'pointer' : 'default',
+                        opacity: replyText.trim() && !saving ? 1 : 0.5,
+                      }}
+                    >
+                      {saving ? 'Posting…' : 'Post reply'}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-
-            {/* Inline reply form */}
-            {replyingTo === comment.id && (
-              <div
-                style={{
-                  marginLeft: 52,
-                  marginTop: 12,
-                  background: '#fafafa',
-                  border: '1px solid #e7e7e7',
-                  padding: '14px',
-                }}
-              >
-                <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-                  <CommentAvatar
-                    avatar={currentUser?.avatar}
-                    initials={currentUser ? getInitials(currentUser.name) : undefined}
-                  />
-                  <textarea
-                    autoFocus
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder={`Reply to ${comment.author}…`}
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                      background: '#fff',
-                      border: '1px solid #e2e2e2',
-                      padding: '10px 12px',
-                      fontSize: 12,
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 500,
-                      color: '#374151',
-                      outline: 'none',
-                      minHeight: 72,
-                      resize: 'vertical',
-                      boxSizing: 'border-box',
-                      lineHeight: 1.5,
-                    }}
-                  />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <button
-                    onClick={() => handleReplySubmit(comment.id, comment.author)}
-                    disabled={!replyText.trim()}
-                    style={{
-                      background: 'var(--brand-green)',
-                      color: '#fff',
-                      border: 'none',
-                      height: 34,
-                      padding: '0 20px',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 11,
-                      letterSpacing: '0.04em',
-                      cursor: replyText.trim() ? 'pointer' : 'default',
-                      opacity: replyText.trim() ? 1 : 0.5,
-                    }}
-                  >
-                    Post reply
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

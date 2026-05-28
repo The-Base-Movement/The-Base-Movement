@@ -208,7 +208,7 @@ export default function BlogPost() {
                 ))}
               </div>
 
-              <CommentSection />
+              {post.id && <CommentSection postId={post.id} />}
 
               {/* CTA — dark gradient matching page hero */}
               <div
