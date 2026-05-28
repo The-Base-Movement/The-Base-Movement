@@ -921,7 +921,12 @@ class AdminService {
     fileName: string,
     blob: Blob
   ): Promise<{ data: { path: string } | null; error: Error | null }> {
-    return supabase.storage.from('branding').upload(fileName, blob, { upsert: true })
+    const compressed = await compressForUpload(blob, fileName)
+    const ext = compressed.name.split('.').pop()
+    const path = fileName.replace(/\.[^.]+$/, `.${ext}`)
+    return supabase.storage
+      .from('branding')
+      .upload(path, compressed, { upsert: true, contentType: compressed.type || 'image/webp' })
   }
 
   getBrandingAssetUrl(fileName: string): string {
@@ -1892,6 +1897,14 @@ class AdminService {
 
   async getLogisticsAudit(limit?: number): Promise<LogisticsAuditEntry[]> {
     return logisticsService.getLogisticsAudit(limit)
+  }
+
+  async getActiveRoutes(): Promise<{ region: string; count: number }[]> {
+    return logisticsService.getActiveRoutes()
+  }
+
+  async getRegionalInventory(): Promise<{ region: string; total_stock: number }[]> {
+    return logisticsService.getRegionalInventory()
   }
 
   async getFieldActions(): Promise<FieldAction[]> {

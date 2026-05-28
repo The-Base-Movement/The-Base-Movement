@@ -1,27 +1,4 @@
-/**
- * AttendanceTable.tsx
- * ─────────────────────────────────────────────────────────────────
- * Full attendance manifest table for the currently selected field action.
- *
- * Columns:
- *  - Member       — Avatar initial + full name
- *  - Signal time  — Check-in timestamp formatted as HH:mm:ss
- *  - Status       — "Verified" (green) or "Pending" (amber) badge
- *  - Actions      — "Manual Verify" button for unverified entries
- *
- * The search input is currently UI-only (no filter logic wired yet).
- * To enable filtering, lift `searchQuery` state up or manage locally.
- *
- * Props:
- *  attendance     — Array of attendance records for the selected action
- *  selectedAction — The active FieldAction (used for context/display)
- *  verifying      — ID of the record currently being verified (drives loading state)
- *  onVerify       — Callback to trigger manual verification for a record by ID
- *
- * Data source: public.rally_attendance (via adminService.getFieldActionAttendance)
- * Mutation:    adminService.verifyRallyAttendance → sets is_verified = true
- */
-
+import { useState } from 'react'
 import type { FieldAction, RallyAttendance } from '@/types/admin'
 import { format } from 'date-fns'
 
@@ -32,7 +9,6 @@ interface AttendanceTableProps {
   onVerify: (id: string) => void
 }
 
-/** Shared th cell style to avoid repetition across column headers */
 const thStyle: React.CSSProperties = {
   padding: '14px 24px',
   textAlign: 'left',
@@ -43,6 +19,12 @@ const thStyle: React.CSSProperties = {
 }
 
 export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceTableProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filtered = searchQuery.trim()
+    ? attendance.filter((e) => e.user_name?.toLowerCase().includes(searchQuery.toLowerCase()))
+    : attendance
+
   return (
     <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
       {/* Table header: title, description, and search input */}
@@ -79,7 +61,6 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
           </p>
         </div>
 
-        {/* Search input — TODO: wire up filter logic to filter attendance rows */}
         <div style={{ position: 'relative' }}>
           <span
             className="material-symbols-outlined"
@@ -96,8 +77,8 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
           </span>
           <input
             aria-label="Search member"
-            name="name-66c057"
-            id="input-66c057"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               height: 38,
               width: 240,
@@ -128,13 +109,11 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
             <th style={thStyle}>Member</th>
             <th style={thStyle}>Signal time</th>
             <th style={thStyle}>Status</th>
-            {/* Right-aligned for the action button */}
             <th style={{ ...thStyle, textAlign: 'right' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {/* Empty state — shown when no check-ins exist for this action */}
-          {attendance.length === 0 ? (
+          {filtered.length === 0 ? (
             <tr>
               <td
                 colSpan={4}
@@ -147,16 +126,17 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
-                No signals detected for this action
+                {searchQuery
+                  ? `No results for "${searchQuery}"`
+                  : 'No signals detected for this action'}
               </td>
             </tr>
           ) : (
-            attendance.map((entry) => (
+            filtered.map((entry) => (
               <tr key={entry.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                 {/* Member column: avatar initial + name */}
                 <td style={{ padding: '14px 24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    {/* Avatar: first letter of user_name as initials placeholder */}
                     <div
                       style={{
                         width: 32,
@@ -193,7 +173,6 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
                 {/* Verification status badge */}
                 <td style={{ padding: '14px 24px' }}>
                   {entry.is_verified ? (
-                    // Verified: green icon + label
                     <div
                       style={{
                         display: 'flex',
@@ -210,7 +189,6 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
                       </span>
                     </div>
                   ) : (
-                    // Pending: amber hourglass + label
                     <div
                       style={{
                         display: 'flex',
@@ -220,7 +198,7 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
                       }}
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                        hourglass_empty
+                        pending
                       </span>
                       <span style={{ fontSize: 9, fontWeight: 'var(--font-weight-medium, 500)' }}>
                         Pending
@@ -229,15 +207,15 @@ export function AttendanceTable({ attendance, verifying, onVerify }: AttendanceT
                   )}
                 </td>
 
-                {/* Manual verify CTA — only shown for unverified entries */}
+                {/* Manual verify action */}
                 <td style={{ padding: '14px 24px', textAlign: 'right' }}>
                   {!entry.is_verified && (
                     <button
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-sm btn-outline"
+                      disabled={verifying === entry.id}
                       onClick={() => onVerify(entry.id)}
-                      disabled={verifying === entry.id} // Disable while this specific row is being verified
                     >
-                      {verifying === entry.id ? 'Verifying...' : 'Manual Verify'}
+                      {verifying === entry.id ? 'Verifying…' : 'Manual Verify'}
                     </button>
                   )}
                 </td>

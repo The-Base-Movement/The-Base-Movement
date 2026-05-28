@@ -8,6 +8,7 @@ import {
 } from '@/utils/mapUtils'
 import Map, { Marker, NavigationControl, ScaleControl, Source, Layer } from 'react-map-gl/mapbox'
 import type { MapMouseEvent, MapRef } from 'react-map-gl/mapbox'
+import type { FillPaint, LinePaint } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 interface ChaptersMapProps {
@@ -143,7 +144,7 @@ export function ChaptersMap({
     }
   }
 
-  const fillPaint = {
+  const fillPaint: FillPaint = {
     'fill-color': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -151,7 +152,7 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       '#DAA520',
       '#2a2a2a',
-    ],
+    ] as FillPaint['fill-color'],
     'fill-opacity': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -159,10 +160,10 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       0.6,
       0.3,
-    ],
+    ] as FillPaint['fill-opacity'],
   }
 
-  const linePaint = {
+  const linePaint: LinePaint = {
     'line-color': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -170,7 +171,7 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       '#DAA520',
       'rgba(255,255,255,0.1)',
-    ],
+    ] as LinePaint['line-color'],
     'line-width': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -178,7 +179,7 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       2,
       0.5,
-    ],
+    ] as LinePaint['line-width'],
   }
 
   const title =
@@ -272,18 +273,8 @@ export function ChaptersMap({
                 onMouseLeave={() => setHoveredRegion(null)}
               >
                 <Source id="ghana-regions" type="geojson" data="/data/ghana_regions.geojson">
-                  <Layer
-                    id="ghana-regions-fill"
-                    type="fill"
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    paint={fillPaint as any}
-                  />
-                  <Layer
-                    id="ghana-regions-line"
-                    type="line"
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    paint={linePaint as any}
-                  />
+                  <Layer id="ghana-regions-fill" type="fill" paint={fillPaint} />
+                  <Layer id="ghana-regions-line" type="line" paint={linePaint} />
                 </Source>
 
                 <NavigationControl position="top-right" />

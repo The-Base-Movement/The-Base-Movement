@@ -1,18 +1,5 @@
-/**
- * polls/EngagementBanner.tsx
- * ─────────────────────────────────────────────────────────────────
- * Bottom section of the Polls page with two side-by-side panels:
- *
- * 1. "Maximize engagement" — Dark promotional panel with a CTA
- *    to open the Analytics Guide modal.
- *
- * 2. "Recent feedback highlights" — A quote card from a member with
- *    a CTA to open the Feedback Vault modal.
- *
- * Props:
- *  onOpenAnalytics — Opens the AnalyticsGuideModal
- *  onOpenFeedback  — Opens the FeedbackVaultModal
- */
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
 interface EngagementBannerProps {
   onOpenAnalytics: () => void
@@ -20,6 +7,20 @@ interface EngagementBannerProps {
 }
 
 export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: EngagementBannerProps) {
+  const [quote, setQuote] = useState<{ content: string; category: string } | null>(null)
+
+  useEffect(() => {
+    supabase
+      .from('member_feedback')
+      .select('content, category')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setQuote(data)
+      })
+  }, [])
+
   return (
     <div className="settings-form-grid" style={{ alignItems: 'stretch' }}>
       {/* Dark "Maximize engagement" promotional panel */}
@@ -59,7 +60,6 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
           Use regional-specific polls to gather more precise data. Our research shows chapters with
           localized campaigns see 40% higher member participation.
         </p>
-        {/* CTA to open Analytics Guide modal */}
         <button
           className="btn btn-sm"
           style={{
@@ -72,7 +72,6 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
         >
           Scan Analytics Guide
         </button>
-        {/* Decorative background icon */}
         <span
           className="material-symbols-outlined"
           style={{
@@ -115,55 +114,68 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
         <div
           style={{ padding: '16px 18px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}
         >
-          {/* Sample quote — TODO: replace with live feedback from DB */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-            <div
-              style={{
-                width: 38,
-                height: 38,
-                border: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-                borderRadius: 4,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+          {quote ? (
+            <>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <div
+                  style={{
+                    width: 38,
+                    height: 38,
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--container-low))',
+                    borderRadius: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+                  >
+                    forum
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface))',
+                    lineHeight: 1.7,
+                    fontStyle: 'italic',
+                    margin: 0,
+                  }}
+                >
+                  "{quote.content}"
+                </p>
+              </div>
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                  margin: 0,
+                }}
               >
-                forum
-              </span>
-            </div>
+                — {quote.category} feedback
+              </p>
+            </>
+          ) : (
             <p
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
-                color: 'hsl(var(--on-surface))',
-                lineHeight: 1.7,
-                fontStyle: 'italic',
+                color: 'hsl(var(--on-surface-muted))',
                 margin: 0,
+                fontStyle: 'italic',
               }}
             >
-              "The new regional chapter meetings have significantly improved communication between
-              constituency leads…"
+              No feedback submitted yet.
             </p>
-          </div>
-          <p
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 11,
-              color: 'hsl(var(--on-surface-muted))',
-              margin: 0,
-            }}
-          >
-            — Member feedback from Ashanti Region
-          </p>
-          {/* CTA to open Feedback Vault modal */}
+          )}
           <button
             style={{
               background: 'none',

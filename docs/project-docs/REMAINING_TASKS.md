@@ -1,7 +1,7 @@
 # The Base — Remaining Tasks (Master)
 
 > Single source of truth for all outstanding work. Update this file as tasks are completed.
-> Last updated: 2026-05-28
+> Last updated: 2026-05-29
 
 ---
 
@@ -11,7 +11,8 @@
 - [x] **Blog Comments** — `blog_comments` table with RLS, `CommentSection` wired to Supabase (load, post, reply, flag), `BlogPost.tsx` passes `post.id`
 - [x] **Product Reviews** — `Reviews.tsx` wired to `reviews` table; interactive star picker + submit form; optimistic append
 - [x] **Admin Moderation Page** — `/admin/moderation` with Blog Comments + Product Reviews tabs, flagged filter, clear-flag, delete, KPI tiles, sidebar nav entry
-- [x] **Frontend Design System Audit (P1)** — Blog, BlogPost, OurAgenda, Contact, Donate scanned; NeonButton removed from StrategicPriorities.tsx; hover:text-red-700 removed from Store.tsx
+- [x] **Frontend Design System Audit (P1–P3)** — All public pages scanned and migrated; Tailwind colour classes → CSS vars; page-container utility added; breadcrumb overflow + double-title bugs fixed
+- [x] **Production RLS Audit** — 7 data-exposure bugs patched; `is_admin()` SECURITY DEFINER function created; all 78 inline `EXISTS (SELECT 1 FROM admins...)` policies migrated to `is_admin()`; admins table locked to admin-only SELECT
 
 ---
 
@@ -50,15 +51,17 @@
 
 ---
 
-## 🔒 3. Production RLS Audit
+## ✅ 3. Production RLS Audit — COMPLETE (2026-05-29)
 
-- [ ] Review all `SELECT` policies — confirm no unintended public data exposure
-- [ ] Review all `INSERT`/`UPDATE`/`DELETE` policies — confirm `auth.uid()` checks are correct
-- [ ] Verify `blog_comments` RLS (just created — priority)
-- [ ] Verify `reviews` RLS (existing — confirm insert WITH CHECK is safe)
-- [ ] Verify `job_applications` RLS
-- [ ] Verify `store_orders` RLS
-- [ ] Document any policy gaps and patch before national launch
+- [x] Review all `SELECT` policies — 4 public/over-broad exposures found and patched
+- [x] Review all `INSERT`/`UPDATE`/`DELETE` policies — `users` INSERT and `admins` UPDATE WITH CHECK fixed
+- [x] Verify `blog_comments` RLS — sound
+- [x] Verify `reviews` RLS — sound
+- [x] Verify `job_applications` RLS — overly broad ALL policy removed
+- [x] Verify `store_orders` RLS — sound
+- [x] Created `public.is_admin()` SECURITY DEFINER function
+- [x] Migrated all 78 inline admin EXISTS checks to `is_admin()` across 57 tables
+- [x] Locked `admins` table SELECT to admin-only (was world-readable, exposed roles/permissions)
 
 ---
 
@@ -71,10 +74,10 @@
 
 ---
 
-## 🗺️ 5. GIS Logistics (Remaining)
+## ✅ 5. GIS Logistics — COMPLETE (2026-05-29)
 
-- [ ] Live warehouse inventory markers on Mapbox logistics map
-- [ ] Real-time fulfillment transport route plotting across regions
+- [x] Live warehouse inventory markers on Mapbox logistics map
+- [x] Real-time fulfillment transport route plotting across regions
 
 ---
 
@@ -85,9 +88,9 @@
 
 ---
 
-## 📱 7. Frontend Mobile Responsiveness
+## ✅ 7. Frontend Mobile Responsiveness — COMPLETE (2026-05-29)
 
-Pages still using Lucide icons, Tailwind colour classes, or neon-button — need design-system migration + mobile layout fixes.
+All P1–P3 pages migrated to design system. Lucide icons removed, Tailwind colour classes replaced with CSS vars, NeonButton removed.
 
 ### Priority 1 — High Traffic
 
@@ -134,7 +137,7 @@ Pages still using Lucide icons, Tailwind colour classes, or neon-button — need
 | 1   | Paystack Integration       | 🔴 Critical — enables real transactions | Medium |
 | 2   | Frontend Mobile (P1 pages) | 🔴 High — user-facing quality           | Medium |
 | 3   | SMS Gateway                | 🟡 High — mobilization core             | Medium |
-| 4   | Production RLS Audit       | 🔴 Critical — security before launch    | Low    |
+| 4   | ~~Production RLS Audit~~   | ✅ Done                                 | —      |
 | 5   | Frontend Mobile (P2 + P3)  | 🟡 Medium                               | High   |
 | 6   | Push Notifications + Email | 🟡 Medium                               | Medium |
 | 7   | Analytics                  | 🟢 Low — observability                  | Low    |

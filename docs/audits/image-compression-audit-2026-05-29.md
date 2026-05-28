@@ -91,15 +91,15 @@ Canvas output changed from `image/jpeg` to `image/webp` at quality `0.85`. Avata
 
 ### Upload paths covered
 
-| Path                               | Covered                                               |
-| ---------------------------------- | ----------------------------------------------------- |
-| Blog/media library upload (admin)  | ✅ `contentService.uploadImage`                       |
-| Avatar — registration flow         | ✅ `adminService.uploadAvatar` + `getCroppedImg` WebP |
-| Avatar — profile settings (member) | ✅ `adminService.uploadAvatar`                        |
-| Avatar — admin Settings page       | ✅ `adminService.uploadAvatar` + `.webp` path         |
-| Avatar — member actions (admin)    | ✅ `adminService.uploadAvatar`                        |
-| `uploadBrandingAsset`              | ⚠️ Not wired — no active callers in codebase          |
-| Job banner upload                  | ⚠️ Not wired — out of scope for this work             |
+| Path                               | Covered                                                  |
+| ---------------------------------- | -------------------------------------------------------- |
+| Blog/media library upload (admin)  | ✅ `contentService.uploadImage`                          |
+| Avatar — registration flow         | ✅ `adminService.uploadAvatar` + `getCroppedImg` WebP    |
+| Avatar — profile settings (member) | ✅ `adminService.uploadAvatar`                           |
+| Avatar — admin Settings page       | ✅ `adminService.uploadAvatar` + `.webp` path            |
+| Avatar — member actions (admin)    | ✅ `adminService.uploadAvatar`                           |
+| `uploadBrandingAsset`              | ✅ `adminService.uploadBrandingAsset` — wired 2026-05-29 |
+| Job banner upload                  | ✅ `jobService.uploadJobBanner` — wired 2026-05-29       |
 
 ---
 
@@ -119,5 +119,6 @@ Canvas output changed from `image/jpeg` to `image/webp` at quality `0.85`. Avata
 
 ## Known Gaps (Future Work)
 
+None — all upload paths are now covered.
+
 - **`uploadBrandingAsset`** (`adminService.ts`) — has no active callers; wire compression when a branding upload UI is added
-- **`jobService.uploadJobBanner`** — job banner images are user-uploaded and can be large; compress when job feature is prioritised

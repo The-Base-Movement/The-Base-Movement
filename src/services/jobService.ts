@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { compressForUpload } from '@/lib/imageUtils'
 import type { Job, JobApplication, JobFilters, ApplicationStatus } from '@/types/jobs'
 
 class JobService {
@@ -166,11 +167,12 @@ class JobService {
   }
 
   async uploadJobBanner(file: File): Promise<string | null> {
-    const ext = file.name.split('.').pop()
+    const compressed = await compressForUpload(file)
+    const ext = compressed.name.split('.').pop()
     const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const { error } = await supabase.storage
       .from('job-banners')
-      .upload(path, file, { upsert: false })
+      .upload(path, compressed, { upsert: false, contentType: compressed.type || 'image/webp' })
     if (error) {
       console.warn('[jobService] uploadJobBanner:', error)
       return null

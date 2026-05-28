@@ -31,6 +31,10 @@ export default function LogisticsIntelligence() {
   const [velocity, setVelocity] = useState<LogisticsStats[]>([])
   const [alerts, setAlerts] = useState<InventoryAlert[]>([])
   const [auditLogs, setAuditLogs] = useState<LogisticsAuditEntry[]>([])
+  const [activeRoutes, setActiveRoutes] = useState<{ region: string; count: number }[]>([])
+  const [regionalInventory, setRegionalInventory] = useState<
+    { region: string; total_stock: number }[]
+  >([])
   const [loading, setLoading] = useState(true)
   const [isReplenishing, setIsReplenishing] = useState(false)
   const [isOptimizing, setIsOptimizing] = useState(false)
@@ -41,14 +45,18 @@ export default function LogisticsIntelligence() {
     const fetchLogisticsData = async () => {
       setLoading(true)
       try {
-        const [velocityData, alertsData, auditData] = await Promise.all([
+        const [velocityData, alertsData, auditData, routesData, inventoryData] = await Promise.all([
           adminService.getLogisticsVelocity(),
           adminService.getInventoryAlerts(),
           adminService.getLogisticsAudit(15),
+          adminService.getActiveRoutes(),
+          adminService.getRegionalInventory(),
         ])
         setVelocity(velocityData)
         setAlerts(alertsData)
         setAuditLogs(auditData)
+        setActiveRoutes(routesData)
+        setRegionalInventory(inventoryData)
       } catch (error) {
         console.error('[LOGISTICS] Failed to synchronize supply chain telemetry:', error)
         toast.error('Failed to synchronize supply chain telemetry.')
@@ -423,6 +431,8 @@ export default function LogisticsIntelligence() {
       {/* National Map */}
       <NationalSupplyChainMap
         data={velocity}
+        routes={activeRoutes}
+        inventory={regionalInventory}
         onEnterpriseView={() => toast.success('Initializing enterprise visualization protocol…')}
       />
 

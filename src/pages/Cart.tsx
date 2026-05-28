@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
 import SEO from '@/components/SEO'
 import { EmptyState } from '@/components/states'
 
 export default function Cart() {
+  const location = useLocation()
+  const isDashboard = location.pathname.includes('/dashboard')
   const { cart, removeFromCart, updateCartQuantity } = useStore()
 
   const subtotal = cart.reduce((sum, item) => {
@@ -16,9 +18,7 @@ export default function Cart() {
   const discount = cart.length > 0 ? 25 : 0
   const total = Math.max(0, subtotal + shipping - discount)
 
-  const checkoutPath = window.location.pathname.includes('/dashboard')
-    ? '/dashboard/store/checkout'
-    : '/store/checkout'
+  const checkoutPath = isDashboard ? '/dashboard/store/checkout' : '/store/checkout'
 
   return (
     <div style={{ background: 'hsl(var(--background))', minHeight: '100vh' }}>
@@ -135,7 +135,7 @@ export default function Cart() {
                       >
                         <Link
                           to={
-                            window.location.pathname.includes('/dashboard')
+                            isDashboard
                               ? `/dashboard/store/product/${item.slug}`
                               : `/store/product/${item.slug}`
                           }

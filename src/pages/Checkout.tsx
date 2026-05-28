@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
@@ -14,6 +14,8 @@ import { PaymentMethodSelector } from './checkout/PaymentMethodSelector'
 
 export default function Checkout() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const isDashboard = location.pathname.includes('/dashboard')
   const { cart, clearCart } = useStore()
   const { session } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -149,9 +151,7 @@ export default function Checkout() {
       }
       toast.success('Order placed successfully! Check your email for details.')
       clearCart()
-      const path = window.location.pathname.includes('/dashboard')
-        ? '/dashboard/store/summary'
-        : '/store/summary'
+      const path = isDashboard ? '/dashboard/store/summary' : '/store/summary'
       navigate(path, { state: { orderId: order.id } })
     } catch (err: unknown) {
       console.error('Checkout failed:', err)
@@ -175,11 +175,7 @@ export default function Checkout() {
         <Breadcrumbs />
         <header className="mb-12">
           <Link
-            to={
-              window.location.pathname.includes('/dashboard')
-                ? '/dashboard/store/cart'
-                : '/store/cart'
-            }
+            to={isDashboard ? '/dashboard/store/cart' : '/store/cart'}
             className="inline-flex items-center gap-2 hover:text-[var(--brand-green)] transition-colors mb-4 group"
             style={{ color: 'hsl(var(--on-surface-muted))' }}
           >

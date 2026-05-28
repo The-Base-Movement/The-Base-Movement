@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
+import SEO from '@/components/SEO'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { ShareModal } from '@/components/ShareModal'
@@ -297,6 +298,11 @@ export default function ChapterDetails() {
 
   return (
     <div className="main">
+      <SEO
+        title={`${chapter.name} Chapter`}
+        description={`Learn about The Base Movement's ${chapter.name} chapter — leadership, activities, and how to get involved.`}
+        canonical={`/chapters/${slug}`}
+      />
       {isLeader && <LeaderBanner chapterSlug={chapterSlug} />}
 
       <ChapterHeader

@@ -2,10 +2,17 @@ import { LogisticsMap } from '@/components/admin/LogisticsMap'
 
 interface NationalSupplyChainMapProps {
   data: { region: string; fulfillment_rate: number }[]
+  routes: { region: string; count: number }[]
+  inventory: { region: string; total_stock: number }[]
   onEnterpriseView: () => void
 }
 
-export function NationalSupplyChainMap({ data, onEnterpriseView }: NationalSupplyChainMapProps) {
+export function NationalSupplyChainMap({
+  data,
+  routes,
+  inventory,
+  onEnterpriseView,
+}: NationalSupplyChainMapProps) {
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
 
   return (
@@ -45,25 +52,50 @@ export function NationalSupplyChainMap({ data, onEnterpriseView }: NationalSuppl
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 12,
               color: 'rgba(255,255,255,0.4)',
+              margin: 0,
             }}
           >
-            Real-time visualization of material flow across the 16 regions.
+            Live dispatch routes and regional inventory across all 16 regions.
           </p>
         </div>
-        <button
-          className="btn btn-outline"
-          style={{
-            color: '#fff',
-            borderColor: 'rgba(255,255,255,0.2)',
-            background: 'transparent',
-          }}
-          onClick={onEnterpriseView}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-            public
-          </span>
-          Enterprise view
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          {routes.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: 'hsl(var(--primary))',
+                  animation: 'pulse 1.4s infinite',
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 11,
+                  color: 'rgba(255,255,255,0.5)',
+                }}
+              >
+                {routes.length} active route{routes.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
+          <button
+            className="btn btn-outline"
+            style={{
+              color: '#fff',
+              borderColor: 'rgba(255,255,255,0.2)',
+              background: 'transparent',
+            }}
+            onClick={onEnterpriseView}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              public
+            </span>
+            Enterprise view
+          </button>
+        </div>
       </div>
       <div
         style={{
@@ -73,7 +105,7 @@ export function NationalSupplyChainMap({ data, onEnterpriseView }: NationalSuppl
           position: 'relative',
         }}
       >
-        <LogisticsMap data={data} token={mapboxToken} />
+        <LogisticsMap data={data} token={mapboxToken} routes={routes} inventory={inventory} />
       </div>
     </div>
   )

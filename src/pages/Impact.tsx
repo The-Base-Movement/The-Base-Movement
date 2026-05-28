@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import SEO from '@/components/SEO'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { chapterService } from '@/services/chapterService'
@@ -253,20 +254,29 @@ export default function Impact() {
   }
 
   return (
-    <PublicImpactView
-      stats={stats}
-      isLoading={isLoading}
-      regions={regions}
-      activeFilter={activeFilter}
-      filteredActivity={filteredActivity}
-      allActivity={allActivity}
-      showFullActivity={showFullActivity}
-      onFilterChange={(t) => {
-        setActiveFilter(t)
-        setShowDatePicker(false)
-      }}
-      onViewFullLog={() => setShowFullActivity(true)}
-      onCloseFullLog={() => setShowFullActivity(false)}
-    />
+    <>
+      {!isDashboard && (
+        <SEO
+          title="Our Impact"
+          description="See how The Base Movement is driving real change — from donations raised to chapters active across Ghana and the diaspora."
+          canonical="/impact"
+        />
+      )}
+      <PublicImpactView
+        stats={stats}
+        isLoading={isLoading}
+        regions={regions}
+        activeFilter={activeFilter}
+        filteredActivity={filteredActivity}
+        allActivity={allActivity}
+        showFullActivity={showFullActivity}
+        onFilterChange={(t) => {
+          setActiveFilter(t)
+          setShowDatePicker(false)
+        }}
+        onViewFullLog={() => setShowFullActivity(true)}
+        onCloseFullLog={() => setShowFullActivity(false)}
+      />
+    </>
   )
 }

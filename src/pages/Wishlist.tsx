@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SEO from '@/components/SEO'
 import { Skeleton } from '@/components/states'
@@ -7,6 +7,8 @@ import { useStore } from '@/hooks/useStore'
 import type { Product } from '@/types/product'
 
 export default function Wishlist() {
+  const location = useLocation()
+  const isDashboard = location.pathname.includes('/dashboard')
   const { wishlist, cart, removeFromWishlist } = useStore()
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0)
 
@@ -41,11 +43,7 @@ export default function Wishlist() {
 
             <div className="flex items-center gap-3">
               <Link
-                to={
-                  typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')
-                    ? '/dashboard/store/cart'
-                    : '/store/cart'
-                }
+                to={isDashboard ? '/dashboard/store/cart' : '/store/cart'}
                 className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
               >
                 <span
@@ -142,14 +140,7 @@ export default function Wishlist() {
                 Start curating your movement collection. Explore our store and save items you'd love
                 to own.
               </p>
-              <Link
-                to={
-                  typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')
-                    ? '/dashboard/store'
-                    : '/store'
-                }
-                className="btn btn-primary"
-              >
+              <Link to={isDashboard ? '/dashboard/store' : '/store'} className="btn btn-primary">
                 Explore Store
               </Link>
             </div>

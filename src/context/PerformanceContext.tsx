@@ -20,7 +20,11 @@ export function PerformanceProvider({ children }: { children: ReactNode }) {
           setLowBandwidthMode(true)
         } else if (saved === null) {
           // Auto-detect slow connection on first visit
-          const conn = (navigator as any).connection
+          interface NetworkInformation {
+            saveData: boolean
+            effectiveType: string
+          }
+          const conn = (navigator as Navigator & { connection?: NetworkInformation }).connection
           if (conn && (conn.saveData || /2g|3g/.test(conn.effectiveType))) {
             console.warn('[PERFORMANCE] Slow connection detected. Activating Low-Bandwidth Mode.')
             setLowBandwidthMode(true)
@@ -34,7 +38,7 @@ export function PerformanceProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('low_bandwidth_mode', String(lowBandwidthMode))
-      
+
       // Global CSS Hook
       if (lowBandwidthMode) {
         document.body.classList.add('low-bandwidth')
