@@ -277,7 +277,7 @@ export default function Chapters() {
         <div className="lg:hidden mb-8 flex gap-4">
           <button
             onClick={() => setShowMobileFilters(true)}
-            className="flex-1 h-12 gap-2 font-medium text-xs border border-stone-200 bg-white cursor-pointer hover:bg-stone-50 flex items-center justify-center"
+            className="flex-1 h-12 gap-2 font-medium text-xs border border-border bg-white cursor-pointer hover:opacity-80 flex items-center justify-center"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               filter_list

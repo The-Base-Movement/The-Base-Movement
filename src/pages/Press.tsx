@@ -30,7 +30,7 @@ export default function Press() {
     fetchData()
   }, [])
   return (
-    <main className="bg-stone-50/50 min-h-screen pb-24">
+    <main className="min-h-screen pb-24" style={{ background: 'hsl(var(--container-low))' }}>
       <SEO
         title="Press Center"
         description="Authoritative updates, media assets, and official statements from The Base Movement's communication desk."
@@ -47,7 +47,7 @@ export default function Press() {
           <h1 className="font-meta font-medium text-4xl md:text-5xl tracking-tight leading-tight mb-4">
             Press <span className="text-brand-green">center</span>
           </h1>
-          <p className="text-lg text-slate-300 max-w-2xl font-body-md">
+          <p className="text-lg max-w-2xl font-body-md" style={{ color: 'rgba(255,255,255,0.65)' }}>
             Authoritative updates, media assets, and official statements from The Base Movement's
             communication desk.
           </p>
@@ -86,13 +86,16 @@ export default function Press() {
                   releases.map((pr) => (
                     <div
                       key={pr.id}
-                      className="bg-white p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all group"
+                      className="bg-white p-8 border border-border shadow-sm hover:shadow-md transition-all group"
                     >
                       <div className="flex items-center gap-3 mb-4">
                         <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-micro font-medium tracking-tight rounded-sm">
                           {pr.category}
                         </span>
-                        <span className="text-tiny text-slate-400 font-medium tracking-tight">
+                        <span
+                          className="text-tiny font-medium tracking-tight"
+                          style={{ color: 'hsl(var(--on-surface-muted))' }}
+                        >
                           {new Date(pr.publishedAt).toLocaleDateString('en-GB', {
                             day: 'numeric',
                             month: 'long',
@@ -103,7 +106,10 @@ export default function Press() {
                       <h3 className="text-xl font-medium text-charcoal-dark mb-4 group-hover:text-brand-green transition-colors">
                         {pr.title}
                       </h3>
-                      <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                      <p
+                        className="text-sm leading-relaxed mb-6 line-clamp-2"
+                        style={{ color: 'hsl(var(--on-surface-muted))' }}
+                      >
                         {pr.excerpt}
                       </p>
                       <button
