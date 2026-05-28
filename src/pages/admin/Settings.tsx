@@ -219,8 +219,7 @@ export default function AdminSettings() {
     try {
       const user = authService.getUser()
       if (!user) throw new Error('Not authenticated')
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`
+      const fileName = `${user.id}/${Date.now()}.webp`
       const { error } = await adminService.uploadAvatar(fileName, file)
       if (error) throw error
       const publicUrl = adminService.getAvatarPublicUrl(fileName)
