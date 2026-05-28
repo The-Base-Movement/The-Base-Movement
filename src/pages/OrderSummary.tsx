@@ -87,7 +87,7 @@ export default function OrderSummary() {
   return (
     <main className="bg-off-white min-h-screen">
       <SEO title={`Order Confirmed #${orderNumber}`} noindex />
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+      <div className="page-container py-12">
         <Breadcrumbs />
         <div className="max-w-3xl mx-auto">
           <div className="bg-white border border-stone-200 rounded-sm shadow-xl overflow-hidden">

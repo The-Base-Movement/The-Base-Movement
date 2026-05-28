@@ -77,7 +77,7 @@ export default function BlogPost() {
 
   if (loading) {
     return (
-      <div className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12 pb-20">
+      <div className="page-container pt-12 pb-20">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <Skeleton variant="chip" width={80} />
           <Skeleton variant="text-xl" width="60%" />
@@ -164,7 +164,7 @@ export default function BlogPost() {
         ogType="article"
         jsonLd={articleSchema}
       />
-      <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
+      <main className="page-container pt-12">
         <PostToolbar title={post.title} onShare={handleShare} />
 
         <article className="space-y-12">

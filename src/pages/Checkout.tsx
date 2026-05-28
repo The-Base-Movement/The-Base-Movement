@@ -171,7 +171,7 @@ export default function Checkout() {
         canonical="/store/checkout"
         noindex
       />
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+      <div className="page-container py-12">
         <Breadcrumbs />
         <header className="mb-12">
           <Link

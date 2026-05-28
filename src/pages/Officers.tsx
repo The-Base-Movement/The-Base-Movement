@@ -86,7 +86,7 @@ export default function Officers() {
             }}
           />
         )}
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 relative z-10 text-center">
+        <div className="page-container relative z-10 text-center">
           <Breadcrumbs variant="dark" />
           <ScrollReveal direction="down" duration={1000}>
             <h1 className="font-meta font-medium text-4xl md:text-6xl mb-6 tracking-tight">
@@ -102,7 +102,7 @@ export default function Officers() {
         </div>
       </section>
 
-      <section className="py-20 md:py-24 max-w-[1280px] mx-auto px-5 sm:px-8">
+      <section className="page-container py-20 md:py-24">
         {!loading && (
           <div style={{ maxWidth: 480, margin: '0 auto 48px' }}>
             <SearchBar

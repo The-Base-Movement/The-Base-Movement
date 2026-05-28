@@ -55,7 +55,7 @@ export default function Contact() {
       {/* Header */}
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
+        <div className="page-container relative z-10 text-center">
           <Breadcrumbs variant="dark" />
           <h1 className="text-white text-5xl md:text-7xl font-medium tracking-tighter mb-4">
             Get in touch
@@ -72,7 +72,7 @@ export default function Contact() {
         </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 mt-12 md:mt-16">
+      <div className="page-container mt-12 md:mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
           {/* Contact Info */}
           <ContactInfoPanel

@@ -39,7 +39,7 @@ export default function Press() {
       {/* Hero */}
       <header className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10">
+        <div className="page-container relative z-10">
           <Breadcrumbs />
           <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">
             Media & communications
@@ -54,7 +54,7 @@ export default function Press() {
         </div>
       </header>
 
-      <div className="max-w-[1280px] mx-auto px-8 py-16">
+      <div className="page-container py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Feed */}
           <div className="lg:col-span-2 space-y-12">

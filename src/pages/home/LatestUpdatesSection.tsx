@@ -16,7 +16,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
       aria-labelledby="updates-heading"
       className="pt-16 md:pt-24 pb-16 md:pb-32 bg-background"
     >
-      <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
+      <div className="page-container">
         <div className="flex justify-between items-end mb-10 md:mb-12" data-fade>
           <div>
             <span className="text-primary font-medium tracking-tight text-micro mb-3 block">

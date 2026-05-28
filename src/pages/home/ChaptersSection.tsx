@@ -211,7 +211,7 @@ export function ChaptersSection({ chapters }: ChaptersSectionProps) {
       aria-labelledby="chapters-heading"
       className="py-16 md:py-24 bg-background border-y border-border/40"
     >
-      <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
+      <div className="page-container">
         <div className="flex items-end justify-between mb-8 md:mb-10" data-fade>
           <div>
             <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">

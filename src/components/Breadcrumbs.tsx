@@ -88,30 +88,37 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
   const isDark = variant === 'dark'
 
   const navClass = isDark
-    ? 'flex items-center gap-2 mb-6 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/15 w-fit max-w-full overflow-hidden'
-    : 'flex items-center gap-2 mb-8 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-stone-200/50 w-fit max-w-full overflow-hidden'
+    ? 'breadcrumb-nav flex items-center gap-2 mb-6 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/15'
+    : 'breadcrumb-nav flex items-center gap-2 mb-8 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50'
 
   const mutedClass = isDark
-    ? 'text-white/50 hover:text-white transition-colors flex items-center gap-1.5'
-    : 'text-stone-400 hover:text-[var(--brand-green)] transition-colors flex items-center gap-1.5'
+    ? 'text-white/50 hover:text-white transition-colors flex items-center gap-1.5 shrink-0'
+    : 'hover:text-[var(--brand-green)] transition-colors flex items-center gap-1.5 shrink-0'
 
-  const chevronClass = isDark ? 'text-white/30' : 'text-stone-300'
+  const mutedStyle = isDark ? undefined : { color: 'hsl(var(--on-surface-muted))' }
+
+  const chevronClass = isDark ? 'text-white/30 shrink-0' : 'shrink-0'
+  const chevronStyle = isDark ? undefined : { color: 'hsl(var(--border))' }
 
   const activeClass = isDark
-    ? 'text-xs font-medium text-white font-meta max-w-[120px] sm:max-w-[200px] truncate'
-    : 'text-xs font-medium text-[var(--brand-green)] font-meta max-w-[120px] sm:max-w-[200px] truncate'
+    ? 'text-xs font-medium text-white font-meta max-w-[140px] truncate shrink-0'
+    : 'text-xs font-medium font-meta max-w-[140px] truncate shrink-0'
+
+  const activeStyle = isDark ? undefined : { color: 'hsl(var(--primary))' }
 
   const inactiveLinkClass = isDark
-    ? 'text-white/50 hover:text-white transition-colors text-xs font-medium font-meta'
-    : 'text-stone-400 hover:text-[var(--brand-green)] transition-colors text-xs font-medium font-meta'
+    ? 'text-white/50 hover:text-white transition-colors text-xs font-medium font-meta shrink-0'
+    : 'hover:text-[var(--brand-green)] transition-colors text-xs font-medium font-meta shrink-0'
+
+  const inactiveLinkStyle = isDark ? undefined : { color: 'hsl(var(--on-surface-muted))' }
 
   return (
     <nav aria-label="Breadcrumb" className={navClass}>
-      <Link to={root.to} className={mutedClass}>
-        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+      <Link to={root.to} className={mutedClass} style={mutedStyle}>
+        <span className="material-symbols-outlined shrink-0" style={{ fontSize: 14 }}>
           home
         </span>
-        <span className="text-xs font-medium font-meta">{root.label}</span>
+        <span className="text-xs font-medium font-meta shrink-0">{root.label}</span>
       </Link>
 
       {pathnames.map((value, index) => {
@@ -127,26 +134,33 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
 
         return (
           <React.Fragment key={to}>
-            <span className={`material-symbols-outlined ${chevronClass}`} style={{ fontSize: 12 }}>
+            <span
+              className={`material-symbols-outlined ${chevronClass}`}
+              style={{ fontSize: 12, ...chevronStyle }}
+            >
               chevron_right
             </span>
             {last && currentLabel && !isIdSegment ? (
               <>
-                <Link to={to} className={inactiveLinkClass}>
+                <Link to={to} className={inactiveLinkClass} style={inactiveLinkStyle}>
                   {segmentLabel}
                 </Link>
                 <span
                   className={`material-symbols-outlined ${chevronClass}`}
-                  style={{ fontSize: 12 }}
+                  style={{ fontSize: 12, ...chevronStyle }}
                 >
                   chevron_right
                 </span>
-                <span className={activeClass}>{currentLabel}</span>
+                <span className={activeClass} style={activeStyle}>
+                  {currentLabel}
+                </span>
               </>
             ) : last ? (
-              <span className={activeClass}>{currentLabel || segmentLabel}</span>
+              <span className={activeClass} style={activeStyle}>
+                {currentLabel || segmentLabel}
+              </span>
             ) : (
-              <Link to={to} className={inactiveLinkClass}>
+              <Link to={to} className={inactiveLinkClass} style={inactiveLinkStyle}>
                 {segmentLabel}
               </Link>
             )}

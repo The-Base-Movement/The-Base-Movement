@@ -17,7 +17,7 @@ export function RoadmapSection({ roadmapItems }: RoadmapSectionProps) {
       aria-labelledby="roadmap-heading"
       className="py-16 md:py-24 bg-background border-b border-border/30"
     >
-      <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
+      <div className="page-container">
         <div className="mb-10 md:mb-12" data-fade>
           <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
             Movement roadmap

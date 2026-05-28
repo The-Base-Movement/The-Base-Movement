@@ -18,7 +18,7 @@ export default function Wishlist() {
         canonical="/store/wishlist"
         noindex
       />
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+      <div className="page-container py-12">
         <Breadcrumbs />
 
         <header className="mb-12 mt-6">

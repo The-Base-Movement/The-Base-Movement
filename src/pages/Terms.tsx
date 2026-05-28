@@ -13,7 +13,7 @@ export default function Terms() {
       {/* Hero */}
       <div className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10">
+        <div className="page-container relative z-10">
           <Breadcrumbs />
           <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">
             Member Governance
@@ -28,7 +28,7 @@ export default function Terms() {
         </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-8 py-16">
+      <div className="page-container py-16">
         <div className="max-w-4xl">
           <div className="flow" style={{ '--flow-space': '3rem' } as React.CSSProperties}>
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">

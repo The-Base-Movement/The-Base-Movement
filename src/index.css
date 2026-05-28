@@ -547,6 +547,31 @@
   }
 }
 
+/* ── Public page container ─────────────────────────────────────────────── */
+/* Standard horizontal padding + max-width for all public page sections.    */
+/* Replaces ad-hoc px-4/px-6/px-8/px-12 combinations on individual pages.  */
+.page-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(16px, 4vw, 48px);
+  padding-right: clamp(16px, 4vw, 48px);
+}
+
+/* ── Breadcrumb nav ─────────────────────────────────────────────────────── */
+/* Scrolls horizontally on narrow viewports; hides scrollbar across engines */
+.breadcrumb-nav {
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  flex-wrap: nowrap;
+}
+.breadcrumb-nav::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
 /* Admin Global Spacing Refinements */
 .admin-page-container {
   @apply space-y-8 animate-in fade-in duration-500;

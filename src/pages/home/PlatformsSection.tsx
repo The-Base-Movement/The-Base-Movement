@@ -5,7 +5,7 @@ import { ButtonAccent } from '@/components/buttons/ButtonAccent'
 export function PlatformsSection() {
   return (
     <section aria-labelledby="platforms-heading" className="py-16 md:py-24 bg-background">
-      <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
+      <div className="page-container">
         <h2 id="platforms-heading" className="sr-only">
           Our Platforms
         </h2>

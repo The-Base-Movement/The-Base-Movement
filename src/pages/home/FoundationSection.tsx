@@ -6,7 +6,7 @@ export function FoundationSection() {
       aria-labelledby="foundation-heading"
       className="py-16 md:py-24 bg-on-surface text-white border-t border-white/5"
     >
-      <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
+      <div className="page-container">
         <div className="mb-10 md:mb-16" data-fade>
           <h2
             id="foundation-heading"

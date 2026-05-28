@@ -48,7 +48,7 @@ export function HeroSection({
 
       <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent" />
 
-      <div className="max-w-[1280px] mx-auto px-5 sm:px-8 py-14 md:py-[80px] relative z-10 flex flex-col md:flex-row items-center md:items-center justify-end md:justify-center gap-8 md:gap-12 w-full h-full">
+      <div className="page-container py-14 md:py-[80px] relative z-10 flex flex-col md:flex-row items-center md:items-center justify-end md:justify-center gap-8 md:gap-12 w-full h-full">
         <div className="flex-1 text-center md:text-left mt-auto md:mt-0">
           <h1
             id="hero-heading"

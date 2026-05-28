@@ -105,7 +105,7 @@ export default function ProductDetails() {
   if (loading) {
     return (
       <div className="bg-off-white min-h-screen">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+        <div className="page-container py-12">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <Skeleton variant="text-sm" width={120} />
             <div className="grid md:grid-cols-2 gap-12">
@@ -132,7 +132,7 @@ export default function ProductDetails() {
     return (
       <div className="bg-off-white min-h-screen">
         <SEO title="Product Not Found" noindex />
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 text-center">
+        <div className="page-container py-12 text-center">
           <h2 className="text-2xl font-medium mb-4" style={{ color: 'hsl(var(--on-surface))' }}>
             Product not found
           </h2>
@@ -178,7 +178,7 @@ export default function ProductDetails() {
         canonical={`/store/product/${product.slug}`}
         jsonLd={productSchema}
       />
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+      <div className="page-container py-12">
         <Breadcrumbs currentLabel={product.name} />
         <div className="flex items-center justify-between mb-10 gap-4 flex-wrap">
           <Link

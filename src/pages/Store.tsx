@@ -189,7 +189,7 @@ export default function Store() {
         canonical="/store"
       />
 
-      <div className="max-w-[1280px] mx-auto px-4 md:px-8 pt-8">
+      <div className="page-container pt-8">
         <Breadcrumbs />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
