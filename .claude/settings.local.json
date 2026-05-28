@@ -50,7 +50,8 @@
       "PowerShell(head -20)",
       "PowerShell(Remove-Item -Path \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\docs\\\\The Base Movement Design System-handoff\" -Recurse -Force -Confirm:$false)",
       "Bash(git check-ignore *)",
-      "Bash(claude plugin *)"
+      "Bash(claude plugin *)",
+      "Skill(update-config)"
     ]
   },
   "enableAllProjectMcpServers": true,
