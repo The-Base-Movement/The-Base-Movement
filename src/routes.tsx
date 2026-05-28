@@ -40,6 +40,7 @@ const OfficerDetail = lazy(() => import('./pages/OfficerDetail'))
 const About = lazy(() => import('./pages/About'))
 
 // Dashboard components
+const Activity = lazy(() => import('./pages/Activity'))
 const ChapterHub = lazy(() => import('./pages/ChapterHub'))
 const ProfileSettings = lazy(() => import('./pages/ProfileSettings'))
 const Polls = lazy(() => import('./pages/Polls'))
@@ -150,6 +151,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/privacy', element: <Privacy /> },
           { path: '/dashboard/terms', element: <Terms /> },
           { path: '/dashboard/settings', element: <ProfileSettings /> },
+          { path: '/dashboard/activity', element: <Activity /> },
         ],
       },
     ],

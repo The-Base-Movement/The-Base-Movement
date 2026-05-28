@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
+import { userActivityService } from '@/services/userActivityService'
 import { dataURLtoBlob } from '@/lib/imageUtils'
 import { toast } from 'sonner'
 import { usePerformance } from '@/context/PerformanceContext'
@@ -188,6 +190,16 @@ export default function ProfileSettings() {
     setLoading(false)
 
     if (success) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        await userActivityService.logActivity(
+          user.id,
+          'profile_update',
+          'Updated profile information'
+        )
+      }
       toast.success('Official Profile Synchronized')
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)

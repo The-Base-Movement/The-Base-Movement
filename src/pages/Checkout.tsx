@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
+import { userActivityService } from '@/services/userActivityService'
 import type { Region } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
@@ -138,6 +139,14 @@ export default function Checkout() {
         })
       }
 
+      if (session?.user?.id) {
+        await userActivityService.logActivity(
+          session.user.id,
+          'store_order',
+          `Placed an order (${cart.length} item${cart.length === 1 ? '' : 's'})`,
+          { order_id: order.id }
+        )
+      }
       toast.success('Order placed successfully! Check your email for details.')
       clearCart()
       const path = window.location.pathname.includes('/dashboard')

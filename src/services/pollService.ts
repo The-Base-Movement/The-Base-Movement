@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { Poll, PollStats } from '@/types/admin'
+import { userActivityService } from '@/services/userActivityService'
 
 class PollService {
   private static instance: PollService
@@ -14,15 +15,19 @@ class PollService {
   }
 
   async getPolls(): Promise<Poll[]> {
-    const { data: { user } } = await supabase.auth.getUser()
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
     // Fetch polls with options
     const { data, error } = await supabase
       .from('polls')
-      .select(`
+      .select(
+        `
         *,
         poll_options (*)
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -37,7 +42,7 @@ class PollService {
         .from('poll_votes')
         .select('poll_id, option_id')
         .eq('user_id', user.id)
-      
+
       if (votesData) {
         userVotes = votesData.reduce((acc, v) => ({ ...acc, [v.poll_id]: v.option_id }), {})
       }
@@ -59,13 +64,19 @@ class PollService {
         options: rawOptions.map((o: Record<string, unknown>) => ({
           id: o.id as string,
           label: o.label as string,
-          votes: (o.votes as number) || 0
-        }))
+          votes: (o.votes as number) || 0,
+        })),
       }
     })
   }
 
-  async createPoll(poll: { question: string, region: string, status: string, endDate: string, options: string[] }): Promise<string | null> {
+  async createPoll(poll: {
+    question: string
+    region: string
+    status: string
+    endDate: string
+    options: string[]
+  }): Promise<string | null> {
     try {
       const { data: pollData, error: pollError } = await supabase
         .from('polls')
@@ -74,22 +85,20 @@ class PollService {
           region: poll.region,
           status: poll.status,
           end_date: poll.endDate,
-          total_votes: 0
+          total_votes: 0,
         })
         .select()
         .single()
 
       if (pollError) throw pollError
 
-      const optionInserts = poll.options.map(opt => ({
+      const optionInserts = poll.options.map((opt) => ({
         poll_id: pollData.id,
         label: opt,
-        votes: 0
+        votes: 0,
       }))
 
-      const { error: optionsError } = await supabase
-        .from('poll_options')
-        .insert(optionInserts)
+      const { error: optionsError } = await supabase.from('poll_options').insert(optionInserts)
 
       if (optionsError) throw optionsError
 
@@ -101,10 +110,7 @@ class PollService {
   }
 
   async deletePoll(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('polls')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('polls').delete().eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Failed to delete poll:', error)
@@ -115,18 +121,18 @@ class PollService {
 
   async voteInPoll(pollId: string, optionId: string): Promise<boolean> {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (!user) throw new Error('User must be logged in to vote')
 
       // 1. Record the vote in the junction table
       // Database triggers handle incrementing poll_options.votes and polls.total_votes
-      const { error: voteError } = await supabase
-        .from('poll_votes')
-        .insert({
-          poll_id: pollId,
-          option_id: optionId,
-          user_id: user.id
-        })
+      const { error: voteError } = await supabase.from('poll_votes').insert({
+        poll_id: pollId,
+        option_id: optionId,
+        user_id: user.id,
+      })
 
       if (voteError) {
         // Handle unique constraint violation (user already voted)
@@ -137,6 +143,10 @@ class PollService {
         throw voteError
       }
 
+      await userActivityService.logActivity(user.id, 'poll_vote', 'Voted in a poll', {
+        poll_id: pollId,
+        option_id: optionId,
+      })
       return true
     } catch (err) {
       console.error('[DATABASE] Vote submission failed:', err)
@@ -148,32 +158,35 @@ class PollService {
     const [pollsRes, usersRes, sentimentRes] = await Promise.all([
       supabase.from('polls').select('total_votes, status'),
       supabase.from('users').select('id', { count: 'exact', head: true }),
-      supabase.from('national_sentiment_intelligence').select('avg_sentiment')
+      supabase.from('national_sentiment_intelligence').select('avg_sentiment'),
     ])
 
     const pollsData = pollsRes.data || []
     const totalUsers = usersRes.count || 1
     const sentimentData = sentimentRes.data || []
-    
+
     const totalVotes = pollsData.reduce((sum, p) => sum + (p.total_votes || 0), 0)
-    const activeCount = pollsData.filter(p => p.status === 'Active').length
+    const activeCount = pollsData.filter((p) => p.status === 'Active').length
     const feedbackRate = Math.round((totalVotes / (totalUsers || 1)) * 10) / 10
 
     // Average sentiment across all regions
-    const avgScore = sentimentData.length > 0 
-      ? sentimentData.reduce((sum, s) => sum + (Number(s.avg_sentiment) || 0), 0) / sentimentData.length
-      : 0.78 // High-fidelity fallback
+    const avgScore =
+      sentimentData.length > 0
+        ? sentimentData.reduce((sum, s) => sum + (Number(s.avg_sentiment) || 0), 0) /
+          sentimentData.length
+        : 0.78 // High-fidelity fallback
 
     return {
-      totalEngagements: totalVotes > 1000 ? `${(totalVotes / 1000).toFixed(1)}k` : totalVotes.toString(),
+      totalEngagements:
+        totalVotes > 1000 ? `${(totalVotes / 1000).toFixed(1)}k` : totalVotes.toString(),
       activePolls: activeCount,
       avgResponseTime: '4.2m',
       feedbackRate: `${Math.min(feedbackRate * 10, 100)}%`,
-      nationalSentimentScore: Math.round((avgScore + 1) * 50) // Scale -1.0..1.0 to 0..100
+      nationalSentimentScore: Math.round((avgScore + 1) * 50), // Scale -1.0..1.0 to 0..100
     }
   }
 
-  async getGhanaRegions(): Promise<{ id: string, name: string }[]> {
+  async getGhanaRegions(): Promise<{ id: string; name: string }[]> {
     const { data, error } = await supabase
       .from('ghana_regions')
       .select('id, name')
@@ -186,7 +199,7 @@ class PollService {
     return data || []
   }
 
-  async getCountries(): Promise<{ id: string, name: string }[]> {
+  async getCountries(): Promise<{ id: string; name: string }[]> {
     const { data, error } = await supabase
       .from('countries')
       .select('id, name')
@@ -199,6 +212,5 @@ class PollService {
     return data || []
   }
 }
-
 
 export const pollService = PollService.getInstance()

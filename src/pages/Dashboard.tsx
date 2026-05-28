@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { DotLoader } from '@/components/states'
 import { adminService } from '@/services/adminService'
+import { useAuth } from '@/context/AuthContext'
+import { RecentActivityPanel } from './dashboard/components/RecentActivityPanel'
 import { StatCards } from './dashboard/components/StatCards'
 import MembershipCard from '@/components/MembershipCard'
 import { QuickActions } from './dashboard/components/QuickActions'
@@ -23,6 +25,7 @@ interface DashboardMember {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth()
   const [member, setMember] = useState<DashboardMember | null>(null)
   const [loading, setLoading] = useState(true)
   const [contributionStats, setContributionStats] = useState({ total: 0, lastMonth: 0 })
@@ -210,6 +213,12 @@ export default function Dashboard() {
             <MovementJourney />
           </div>
         </div>
+
+        {user && (
+          <div style={{ marginTop: 20 }}>
+            <RecentActivityPanel userId={user.id} />
+          </div>
+        )}
       </div>
 
       <style
