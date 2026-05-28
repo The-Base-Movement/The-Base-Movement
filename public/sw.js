@@ -1,4 +1,4 @@
-const CACHE = 'tbm-v1'
+const CACHE = 'tbm-v2'
 
 const PRECACHE = [
   '/',
@@ -32,6 +32,9 @@ self.addEventListener('fetch', (event) => {
 
   // Only handle http/https — chrome-extension:// and others will throw on cache.put
   if (!url.protocol.startsWith('http')) return
+
+  // Only handle same-origin requests — never proxy third-party widgets (Tawk.to, etc.)
+  if (url.hostname !== self.location.hostname) return
 
   // Never intercept Supabase API calls — always need fresh auth/data
   if (url.hostname.includes('supabase.co')) return
