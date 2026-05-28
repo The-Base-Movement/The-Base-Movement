@@ -1,4 +1,5 @@
 import type { Area } from 'react-easy-crop'
+import imageCompression from 'browser-image-compression'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -9,10 +10,7 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
     image.src = url
   })
 
-export async function getCroppedImg(
-  imageSrc: string,
-  pixelCrop: Area
-): Promise<Blob | null> {
+export async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<Blob | null> {
   const image = await createImage(imageSrc)
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
@@ -40,10 +38,37 @@ export async function getCroppedImg(
 
   // As a blob
   return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      resolve(blob)
-    }, 'image/jpeg')
+    canvas.toBlob(
+      (blob) => {
+        resolve(blob)
+      },
+      'image/webp',
+      0.85
+    )
   })
+}
+
+export async function compressForUpload(input: File | Blob, name?: string): Promise<File> {
+  const fileName = name ?? (input instanceof File ? input.name : 'image')
+  const file = input instanceof File ? input : new File([input], fileName, { type: input.type })
+  try {
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/webp',
+      initialQuality: 0.85,
+    })
+    const webpName = /\.[^.]+$/.test(fileName)
+      ? fileName.replace(/\.[^.]+$/, '.webp')
+      : fileName + '.webp'
+    return new File([compressed], webpName, {
+      type: 'image/webp',
+    })
+  } catch (err) {
+    console.error('[imageUtils] Compression failed, uploading original:', err)
+    return file
+  }
 }
 
 export function dataURLtoBlob(dataurl: string) {
