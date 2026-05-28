@@ -85,6 +85,7 @@ const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPrior
 const AdminRolesManager = lazy(() => import('./pages/admin/RolesManager'))
 const Jobs = lazy(() => import('./pages/Jobs'))
 const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
+const AdminJobForm = lazy(() => import('./pages/admin/jobs/JobFormPage'))
 
 export const routes: RouteObject[] = [
   {
@@ -201,6 +202,8 @@ export const routes: RouteObject[] = [
       { path: '/admin/orders', element: <AdminOrders /> },
       { path: '/admin/roadmap', element: <AdminRoadmap /> },
       { path: '/admin/jobs', element: <AdminJobs /> },
+      { path: '/admin/jobs/new', element: <AdminJobForm /> },
+      { path: '/admin/jobs/:id/edit', element: <AdminJobForm /> },
       { path: '/admin/trash', element: <AdminTrash /> },
       { path: '/admin/roles', element: <AdminRolesManager /> },
     ],

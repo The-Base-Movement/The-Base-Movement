@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { jobService } from '@/services/jobService'
 import type { Job, JobFilters } from '@/types/jobs'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
-import { JobFormModal } from './jobs/JobFormModal'
 import { ApplicationsDrawer } from './jobs/ApplicationsDrawer'
 import { toast } from 'sonner'
 
@@ -13,6 +13,7 @@ const STATUS_PILL: Record<string, string> = {
 }
 
 export default function AdminJobs() {
+  const navigate = useNavigate()
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState<JobFilters>({
@@ -21,9 +22,6 @@ export default function AdminJobs() {
     category: '',
     job_type: '',
   })
-
-  const [showFormModal, setShowFormModal] = useState(false)
-  const [editJob, setEditJob] = useState<Job | null>(null)
   const [drawerJob, setDrawerJob] = useState<Job | null>(null)
 
   const load = useCallback(() => {
@@ -75,13 +73,7 @@ export default function AdminJobs() {
         icon="work"
         description="Post opportunities and manage member applications."
         actions={
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              setEditJob(null)
-              setShowFormModal(true)
-            }}
-          >
+          <button className="btn btn-primary" onClick={() => navigate('/admin/jobs/new')}>
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               add
             </span>
@@ -277,10 +269,7 @@ export default function AdminJobs() {
                     <div style={{ display: 'flex', gap: 6 }}>
                       <button
                         className="btn btn-outline btn-sm"
-                        onClick={() => {
-                          setEditJob(job)
-                          setShowFormModal(true)
-                        }}
+                        onClick={() => navigate(`/admin/jobs/${job.id}/edit`)}
                       >
                         Edit
                       </button>
@@ -303,21 +292,6 @@ export default function AdminJobs() {
           </table>
         )}
       </div>
-
-      {showFormModal && (
-        <JobFormModal
-          job={editJob}
-          onClose={() => {
-            setShowFormModal(false)
-            setEditJob(null)
-          }}
-          onSaved={() => {
-            setShowFormModal(false)
-            setEditJob(null)
-            load()
-          }}
-        />
-      )}
 
       {drawerJob && <ApplicationsDrawer job={drawerJob} onClose={() => setDrawerJob(null)} />}
     </div>

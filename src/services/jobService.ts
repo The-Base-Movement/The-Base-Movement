@@ -44,6 +44,12 @@ class JobService {
     return data as Job
   }
 
+  async getJobByIdAdmin(id: string): Promise<Job | null> {
+    const { data, error } = await supabase.from('jobs').select('*').eq('id', id).single()
+    if (error) return null
+    return data as Job
+  }
+
   async getAllJobsAdmin(filters: JobFilters = {}): Promise<Job[]> {
     let query = supabase
       .from('jobs')
