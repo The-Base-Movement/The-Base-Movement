@@ -1,0 +1,141 @@
+# The Base — Remaining Tasks (Master)
+
+> Single source of truth for all outstanding work. Update this file as tasks are completed.
+> Last updated: 2026-05-28
+
+---
+
+## ✅ Recently Completed (This Session)
+
+- [x] **Jobs Board** — DB migration, jobService, admin CRUD page, public/dashboard listing, job detail modal, job form with banner upload, applications drawer
+- [x] **Blog Comments** — `blog_comments` table with RLS, `CommentSection` wired to Supabase (load, post, reply, flag), `BlogPost.tsx` passes `post.id`
+- [x] **Product Reviews** — `Reviews.tsx` wired to `reviews` table; interactive star picker + submit form; optimistic append
+- [x] **Admin Moderation Page** — `/admin/moderation` with Blog Comments + Product Reviews tabs, flagged filter, clear-flag, delete, KPI tiles, sidebar nav entry
+
+---
+
+## 💳 1. Paystack Payment Integration
+
+> File: `docs/project-docs/todo_payment.md`
+
+- [ ] Create Paystack account, complete Ghana compliance form
+- [ ] Add `VITE_PAYSTACK_PUBLIC_KEY` to `.env`
+- [ ] Install `react-paystack`, build reusable `PaystackButton` in `src/components/Payment/PaystackAction.tsx`
+- [ ] **Donations** (`Donate.tsx`) — replace manual receipt upload (Step 3) with live Paystack modal
+  - [ ] Show success screen immediately on payment approval
+  - [ ] Auto-update member to "Verified Donor" status
+- [ ] **Store checkout** — replace WhatsApp/manual flow with Paystack checkout
+  - [ ] Only deduct inventory after webhook confirms `charge.success`
+- [ ] Supabase Edge Function webhook handler — verify `x-paystack-signature`, update order/donation status
+- [ ] Transaction history tab on member dashboard
+- [ ] Fallback manual support link for failed payments
+
+---
+
+## 📱 2. SMS Gateway Integration
+
+> File: `docs/project-docs/sms_implementation_todo.md`
+
+- [ ] Choose provider: Twilio / Arkesel / Hubtel
+- [ ] Register "THEBASE" alpha-numeric Sender ID
+- [ ] Add `SMS_PROVIDER_API_KEY` + `SMS_SENDER_ID` to Supabase Vault
+- [ ] Build `sendSms` helper in `supabase/functions/shared/sms.ts`
+- [ ] Update `broadcast-dispatcher` Edge Function to call real SMS API
+- [ ] Update `notify-leads` Edge Function for chapter lead SMS alerts
+- [ ] Regional routing (Ghana local vs Diaspora international prefixes)
+- [ ] Opt-out mechanism on all automated blasts
+- [ ] Rate limiting / queueing for high-volume dispatches
+- [ ] Delivery status webhooks + admin failure alerting (>5% failure rate)
+
+---
+
+## 🔒 3. Production RLS Audit
+
+- [ ] Review all `SELECT` policies — confirm no unintended public data exposure
+- [ ] Review all `INSERT`/`UPDATE`/`DELETE` policies — confirm `auth.uid()` checks are correct
+- [ ] Verify `blog_comments` RLS (just created — priority)
+- [ ] Verify `reviews` RLS (existing — confirm insert WITH CHECK is safe)
+- [ ] Verify `job_applications` RLS
+- [ ] Verify `store_orders` RLS
+- [ ] Document any policy gaps and patch before national launch
+
+---
+
+## 📊 4. Analytics & Tracking
+
+- [ ] Choose provider: Plausible (recommended — privacy-first, GDPR) or Matomo
+- [ ] Install tracking script (env-gated — only active in production)
+- [ ] Track key events: registration, donation, job application, store purchase
+- [ ] Expose traffic dashboard to super-admin
+
+---
+
+## 🗺️ 5. GIS Logistics (Remaining)
+
+- [ ] Live warehouse inventory markers on Mapbox logistics map
+- [ ] Real-time fulfillment transport route plotting across regions
+
+---
+
+## 📧 6. Communication & Notifications
+
+- [ ] **Push Notifications** — Supabase Edge Function for real-time mobile push (Web Push API)
+- [ ] **Mailing List Sync** — Bridge registration data with SendGrid or Mailchimp for transactional email
+
+---
+
+## 📱 7. Frontend Mobile Responsiveness
+
+Pages still using Lucide icons, Tailwind colour classes, or neon-button — need design-system migration + mobile layout fixes.
+
+### Priority 1 — High Traffic
+
+- [ ] `src/pages/Blog.tsx`
+- [ ] `src/pages/BlogPost.tsx`
+- [ ] `src/pages/OurAgenda.tsx`
+- [ ] `src/pages/Contact.tsx`
+- [ ] `src/pages/Donate.tsx` + `src/pages/donate/components/`
+
+### Priority 2
+
+- [ ] `src/pages/Impact.tsx`
+- [ ] `src/pages/Chapters.tsx`
+- [ ] `src/pages/ChapterDetails.tsx`
+- [ ] `src/pages/Members.tsx`
+- [ ] `src/pages/Press.tsx`
+- [ ] `src/pages/Login.tsx`
+- [ ] `src/pages/Register.tsx`
+
+### Priority 3 — Store
+
+- [ ] `src/pages/Store.tsx`
+- [ ] `src/pages/ProductDetails.tsx`
+- [ ] `src/pages/Cart.tsx`
+- [ ] `src/pages/Checkout.tsx`
+- [ ] `src/pages/Polls.tsx`
+
+> Reference: `docs/audits/frontend_mobile_guide.md` — full Lucide → Material Symbols mapping + per-page checklist
+
+---
+
+## 🤖 8. ML Intelligence (Future / Post-Launch)
+
+- [ ] Python / FastAPI microservice connected to Supabase data
+- [ ] Propensity modelling for donors
+- [ ] Sentiment-based mobilization forecasting
+
+---
+
+## Priority Order
+
+| #   | Task                       | Impact                                  | Effort |
+| --- | -------------------------- | --------------------------------------- | ------ |
+| 1   | Paystack Integration       | 🔴 Critical — enables real transactions | Medium |
+| 2   | Frontend Mobile (P1 pages) | 🔴 High — user-facing quality           | Medium |
+| 3   | SMS Gateway                | 🟡 High — mobilization core             | Medium |
+| 4   | Production RLS Audit       | 🔴 Critical — security before launch    | Low    |
+| 5   | Frontend Mobile (P2 + P3)  | 🟡 Medium                               | High   |
+| 6   | Push Notifications + Email | 🟡 Medium                               | Medium |
+| 7   | Analytics                  | 🟢 Low — observability                  | Low    |
+| 8   | GIS remaining              | 🟢 Low — logistics ops                  | Medium |
+| 9   | ML Intelligence            | 🟢 Post-launch                          | High   |
