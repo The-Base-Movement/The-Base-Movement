@@ -130,7 +130,6 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
 
         const to = `/${pathnames.slice(0, index + 1).join('/')}`
         const segmentLabel = getLabel(value, location.pathname)
-        const isIdSegment = /^[0-9a-f-]{8,}$/i.test(value) || !isNaN(Number(value))
 
         return (
           <React.Fragment key={to}>
@@ -140,22 +139,7 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
             >
               chevron_right
             </span>
-            {last && currentLabel && !isIdSegment ? (
-              <>
-                <Link to={to} className={inactiveLinkClass} style={inactiveLinkStyle}>
-                  {segmentLabel}
-                </Link>
-                <span
-                  className={`material-symbols-outlined ${chevronClass}`}
-                  style={{ fontSize: 12, ...chevronStyle }}
-                >
-                  chevron_right
-                </span>
-                <span className={activeClass} style={activeStyle}>
-                  {currentLabel}
-                </span>
-              </>
-            ) : last ? (
+            {last ? (
               <span className={activeClass} style={activeStyle}>
                 {currentLabel || segmentLabel}
               </span>
