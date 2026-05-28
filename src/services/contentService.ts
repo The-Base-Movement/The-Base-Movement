@@ -245,8 +245,9 @@ class ContentService {
   async uploadImage(file: File, path: string): Promise<string | null> {
     try {
       const compressed = await compressForUpload(file)
+      const ext = compressed.name.split('.').pop() ?? 'webp'
       const baseName = `${Math.random().toString(36).substring(2)}-${Date.now()}`
-      const fileName = `${baseName}.webp`
+      const fileName = `${baseName}.${ext}`
       const filePath = `${path}/${fileName}`
 
       // Upload the file to the 'media' bucket
@@ -265,7 +266,7 @@ class ContentService {
         url: `${supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl}`,
         folder: path,
         size_bytes: compressed.size,
-        mime_type: 'image/webp',
+        mime_type: compressed.type || 'image/webp',
       })
 
       // Get the public URL
