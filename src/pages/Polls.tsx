@@ -241,7 +241,10 @@ export default function Polls() {
   }
 
   return (
-    <main className="bg-stone-50/50 min-h-screen font-meta pb-20">
+    <main
+      className="min-h-screen font-meta pb-20"
+      style={{ background: 'hsl(var(--container-low))' }}
+    >
       <SEO
         title="Polls & Feedback"
         description="Your voice shapes movement strategy. Participate in active polls and see how other members think."

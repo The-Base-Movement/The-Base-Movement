@@ -133,7 +133,9 @@ export default function ProductDetails() {
       <div className="bg-off-white min-h-screen">
         <SEO title="Product Not Found" noindex />
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 text-center">
-          <h2 className="text-2xl font-medium text-stone-900 mb-4">Product not found</h2>
+          <h2 className="text-2xl font-medium mb-4" style={{ color: 'hsl(var(--on-surface))' }}>
+            Product not found
+          </h2>
           <Link to="/store" className="text-brand-green font-medium hover:underline">
             Back to store
           </Link>
@@ -181,7 +183,8 @@ export default function ProductDetails() {
         <div className="flex items-center justify-between mb-10 gap-4 flex-wrap">
           <Link
             to={storeUrl}
-            className="flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors text-xs font-medium font-meta shrink-0"
+            className="flex items-center gap-2 hover:text-[var(--brand-green)] transition-colors text-xs font-medium font-meta shrink-0"
+            style={{ color: 'hsl(var(--on-surface-muted))' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               arrow_back
@@ -191,15 +194,19 @@ export default function ProductDetails() {
           <div className="flex items-center gap-3">
             <Link
               to={isDashboard ? '/dashboard/store/wishlist' : '/store/wishlist'}
-              className="relative group flex items-center gap-2 px-3 py-2 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
+              className="relative group flex items-center gap-2 px-3 py-2 border border-border hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
             >
               <span
-                className="material-symbols-outlined text-stone-500 group-hover:text-brand-red transition-all"
+                className="material-symbols-outlined group-hover:text-brand-red transition-all"
+                style={{ color: 'hsl(var(--on-surface-muted))' }}
                 style={{ fontSize: 16 }}
               >
                 favorite
               </span>
-              <span className="font-meta text-micro font-medium tracking-tight text-stone-600 group-hover:text-brand-red hidden sm:inline">
+              <span
+                className="font-meta text-micro font-medium tracking-tight group-hover:text-brand-red hidden sm:inline"
+                style={{ color: 'hsl(var(--on-surface-muted))' }}
+              >
                 Wishlist
               </span>
               {wishlistCount > 0 && (
@@ -210,15 +217,19 @@ export default function ProductDetails() {
             </Link>
             <Link
               to={isDashboard ? '/dashboard/store/cart' : '/store/cart'}
-              className="relative group flex items-center gap-2 px-3 py-2 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
+              className="relative group flex items-center gap-2 px-3 py-2 border border-border hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
             >
               <span
-                className="material-symbols-outlined text-stone-500 group-hover:text-brand-green transition-all"
+                className="material-symbols-outlined group-hover:text-brand-green transition-all"
+                style={{ color: 'hsl(var(--on-surface-muted))' }}
                 style={{ fontSize: 16 }}
               >
                 shopping_bag
               </span>
-              <span className="font-meta text-micro font-medium tracking-tight text-stone-600 group-hover:text-brand-green hidden sm:inline">
+              <span
+                className="font-meta text-micro font-medium tracking-tight group-hover:text-brand-green hidden sm:inline"
+                style={{ color: 'hsl(var(--on-surface-muted))' }}
+              >
                 Bag
               </span>
               {cartCount > 0 && (

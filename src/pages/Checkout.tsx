@@ -180,7 +180,8 @@ export default function Checkout() {
                 ? '/dashboard/store/cart'
                 : '/store/cart'
             }
-            className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mb-4 group"
+            className="inline-flex items-center gap-2 hover:text-[var(--brand-green)] transition-colors mb-4 group"
+            style={{ color: 'hsl(var(--on-surface-muted))' }}
           >
             <span
               className="material-symbols-outlined group-hover:-translate-x-1 transition-transform"
@@ -190,7 +191,10 @@ export default function Checkout() {
             </span>
             <span className="font-meta text-micro font-bold tracking-tight">Back to bag</span>
           </Link>
-          <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 flex items-center gap-3">
+          <h1
+            className="font-h1 text-2xl sm:text-h2 flex items-center gap-3"
+            style={{ color: 'hsl(var(--on-surface))' }}
+          >
             <span
               className="material-symbols-outlined shrink-0"
               style={{ fontSize: 32, color: 'var(--brand-green)' }}
@@ -214,8 +218,11 @@ export default function Checkout() {
           </div>
 
           <div className="lg:col-span-4">
-            <div className="bg-white border border-stone-200 p-8 rounded-sm shadow-sm sticky top-24">
-              <h2 className="font-h3 text-xl text-stone-900 mb-6 pb-4 border-b border-stone-100">
+            <div className="bg-white border border-border p-8 rounded-sm shadow-sm sticky top-24">
+              <h2
+                className="font-h3 text-xl mb-6 pb-4 border-b border-border"
+                style={{ color: 'hsl(var(--on-surface))' }}
+              >
                 Order Summary
               </h2>
 
@@ -226,12 +233,20 @@ export default function Checkout() {
                     className="flex justify-between items-start gap-4"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-stone-900 line-clamp-1">{item.name}</p>
-                      <p className="text-micro text-stone-500 tracking-tight">
+                      <p
+                        className="text-xs font-bold line-clamp-1"
+                        style={{ color: 'hsl(var(--on-surface))' }}
+                      >
+                        {item.name}
+                      </p>
+                      <p
+                        className="text-micro tracking-tight"
+                        style={{ color: 'hsl(var(--on-surface-muted))' }}
+                      >
                         Qty: {item.quantity} | {item.selectedSize}
                       </p>
                     </div>
-                    <p className="text-xs font-bold text-stone-900">
+                    <p className="text-xs font-bold" style={{ color: 'hsl(var(--on-surface))' }}>
                       ₵
                       {(
                         item.quantity *
@@ -244,18 +259,28 @@ export default function Checkout() {
                 ))}
               </div>
 
-              <div className="space-y-4 pt-6 border-t border-stone-100 mb-8">
-                <div className="flex justify-between text-xs text-stone-600 tracking-tight">
+              <div className="space-y-4 pt-6 border-t border-border mb-8">
+                <div
+                  className="flex justify-between text-xs tracking-tight"
+                  style={{ color: 'hsl(var(--on-surface-muted))' }}
+                >
                   <span>Subtotal</span>
-                  <span className="font-bold text-stone-900">₵{subtotal.toFixed(2)}</span>
+                  <span className="font-bold" style={{ color: 'hsl(var(--on-surface))' }}>
+                    ₵{subtotal.toFixed(2)}
+                  </span>
                 </div>
-                <div className="flex justify-between text-xs text-stone-600 tracking-tight">
+                <div
+                  className="flex justify-between text-xs tracking-tight"
+                  style={{ color: 'hsl(var(--on-surface-muted))' }}
+                >
                   <span>Shipping</span>
-                  <span className="font-bold text-stone-900">₵{shipping.toFixed(2)}</span>
+                  <span className="font-bold" style={{ color: 'hsl(var(--on-surface))' }}>
+                    ₵{shipping.toFixed(2)}
+                  </span>
                 </div>
 
                 {userPoints > 100 && (
-                  <div className="pt-4 border-t border-stone-50">
+                  <div className="pt-4 border-t border-border">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <input
@@ -264,11 +289,12 @@ export default function Checkout() {
                           id="usePoints"
                           checked={usePoints}
                           onChange={(e) => setUsePoints(e.target.checked)}
-                          className="w-4 h-4 rounded border-stone-300 text-[var(--brand-green)] focus:ring-[var(--brand-green)]"
+                          className="w-4 h-4 rounded border-border text-[var(--brand-green)] focus:ring-[var(--brand-green)]"
                         />
                         <label
                           htmlFor="usePoints"
-                          className="text-micro font-bold text-stone-900 tracking-tight cursor-pointer"
+                          className="text-micro font-bold tracking-tight cursor-pointer"
+                          style={{ color: 'hsl(var(--on-surface))' }}
                         >
                           Redeem Points
                         </label>
@@ -286,8 +312,10 @@ export default function Checkout() {
                   </div>
                 )}
 
-                <div className="pt-4 border-t border-stone-200 flex justify-between items-center">
-                  <span className="font-h3 text-lg text-stone-900">Total</span>
+                <div className="pt-4 border-t border-border flex justify-between items-center">
+                  <span className="font-h3 text-lg" style={{ color: 'hsl(var(--on-surface))' }}>
+                    Total
+                  </span>
                   <span className="font-h3 text-xl text-[var(--brand-green)]">
                     ₵{total.toFixed(2)}
                   </span>
@@ -304,13 +332,19 @@ export default function Checkout() {
               </button>
 
               <div className="mt-8 space-y-4">
-                <div className="flex items-center gap-3 text-stone-500">
+                <div
+                  className="flex items-center gap-3"
+                  style={{ color: 'hsl(var(--on-surface-muted))' }}
+                >
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                     verified_user
                   </span>
                   <span className="text-micro font-bold tracking-tight">Encrypted checkout</span>
                 </div>
-                <div className="flex items-center gap-3 text-stone-500">
+                <div
+                  className="flex items-center gap-3"
+                  style={{ color: 'hsl(var(--on-surface-muted))' }}
+                >
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                     public
                   </span>
