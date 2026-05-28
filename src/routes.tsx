@@ -83,6 +83,8 @@ const AdminTrash = lazy(() => import('./pages/admin/Trash'))
 const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
 const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPriorities'))
 const AdminRolesManager = lazy(() => import('./pages/admin/RolesManager'))
+const Jobs = lazy(() => import('./pages/Jobs'))
+const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
 
 export const routes: RouteObject[] = [
   {
@@ -152,6 +154,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/terms', element: <Terms /> },
           { path: '/dashboard/settings', element: <ProfileSettings /> },
           { path: '/dashboard/activity', element: <Activity /> },
+          { path: '/dashboard/jobs', element: <Jobs /> },
         ],
       },
     ],
@@ -197,6 +200,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/party-officials', element: <AdminPartyOfficials /> },
       { path: '/admin/orders', element: <AdminOrders /> },
       { path: '/admin/roadmap', element: <AdminRoadmap /> },
+      { path: '/admin/jobs', element: <AdminJobs /> },
       { path: '/admin/trash', element: <AdminTrash /> },
       { path: '/admin/roles', element: <AdminRolesManager /> },
     ],
@@ -221,6 +225,7 @@ export const routes: RouteObject[] = [
       { path: '/store/summary', element: <OrderSummary /> },
       { path: '/impact', element: <Impact /> },
       { path: '/polls', element: <Polls /> },
+      { path: '/jobs', element: <Jobs /> },
       { element: <WithChapters />, children: [{ path: '/chapters', element: <Chapters /> }] },
       { path: '/privacy', element: <Privacy /> },
       { path: '/terms', element: <Terms /> },
