@@ -359,6 +359,7 @@ export default function AdminModeration() {
           {tab === 'comments' && (
             <button
               className={`btn btn-sm ${flaggedOnly ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+              style={{ flex: '1 1 0', minWidth: 0 }}
               onClick={() => setFlaggedOnly((v) => !v)}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
