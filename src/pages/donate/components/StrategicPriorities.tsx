@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import type { DonationCampaign } from '@/types/admin'
 import { usePerformance } from '@/context/PerformanceContext'
+
+const PAGE_SIZE = 4
 
 interface StrategicPrioritiesProps {
   loading: boolean
@@ -13,6 +16,11 @@ export function StrategicPriorities({
   onSelectCampaign,
 }: StrategicPrioritiesProps) {
   const { lowBandwidthMode } = usePerformance()
+  const [page, setPage] = useState(0)
+
+  const totalPages = Math.max(1, Math.ceil(campaigns.length / PAGE_SIZE))
+  const paginated = campaigns.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
+
   return (
     <section style={{ marginTop: 80 }}>
       <div style={{ marginBottom: 48 }}>
@@ -44,7 +52,7 @@ export function StrategicPriorities({
 
       <div className="campaign-grid">
         {loading
-          ? Array.from({ length: 3 }).map((_, i) => (
+          ? Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
                 style={{
@@ -55,7 +63,7 @@ export function StrategicPriorities({
                 }}
               />
             ))
-          : campaigns.map((c) => (
+          : paginated.map((c) => (
               <div
                 key={c.id}
                 style={{
@@ -230,6 +238,89 @@ export function StrategicPriorities({
               </div>
             ))}
       </div>
+
+      {/* Pagination — only shown when there's more than one page */}
+      {!loading && totalPages > 1 && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            marginTop: 40,
+          }}
+        >
+          <button
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 36,
+              height: 36,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              background: '#fff',
+              cursor: page === 0 ? 'not-allowed' : 'pointer',
+              opacity: page === 0 ? 0.4 : 1,
+              color: 'hsl(var(--on-surface))',
+            }}
+            aria-label="Previous page"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              chevron_left
+            </span>
+          </button>
+
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i)}
+              style={{
+                width: 36,
+                height: 36,
+                border: `1px solid ${i === page ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
+                borderRadius: 'var(--radius-sm)',
+                background: i === page ? 'hsl(var(--primary))' : '#fff',
+                color: i === page ? '#fff' : 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 13,
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+              aria-label={`Page ${i + 1}`}
+              aria-current={i === page ? 'page' : undefined}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page === totalPages - 1}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 36,
+              height: 36,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              background: '#fff',
+              cursor: page === totalPages - 1 ? 'not-allowed' : 'pointer',
+              opacity: page === totalPages - 1 ? 0.4 : 1,
+              color: 'hsl(var(--on-surface))',
+            }}
+            aria-label="Next page"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              chevron_right
+            </span>
+          </button>
+        </div>
+      )}
     </section>
   )
 }
