@@ -49,7 +49,7 @@ export function ChapterHubKPIs({ totalMembers, activeCount, pendingCount, totalD
           </p>
           <p
             style={{
-              fontSize: 26,
+              fontSize: 'var(--kpi-num-size)',
               fontWeight: 'var(--font-weight-medium, 500)',
               color: 'hsl(var(--on-surface))',
               margin: 0,

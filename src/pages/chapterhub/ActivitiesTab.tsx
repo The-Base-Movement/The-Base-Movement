@@ -23,7 +23,7 @@ const inp: CSSProperties = {
   width: '100%',
   height: 40,
   border: '1px solid hsl(var(--border))',
-  borderRadius: 4,
+  borderRadius: 'var(--radius-sm)',
   padding: '0 12px',
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-medium, 500)',
@@ -116,7 +116,7 @@ export function ActivitiesTab({
                 onClick={() => onFilterChange('All')}
                 style={{
                   padding: '6px 14px',
-                  borderRadius: 20,
+                  borderRadius: 'var(--radius-pill)',
                   border: `1px solid ${actFilter === 'All' ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
                   background: actFilter === 'All' ? 'hsl(var(--primary))' : 'transparent',
                   color: actFilter === 'All' ? '#fff' : 'hsl(var(--on-surface-muted))',
@@ -137,7 +137,7 @@ export function ActivitiesTab({
                 onChange={(e) => onFilterChange(e.target.value || 'All')}
                 style={{
                   padding: '5px 24px 5px 10px',
-                  borderRadius: 20,
+                  borderRadius: 'var(--radius-pill)',
                   border: `1px solid ${actFilter !== 'All' ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
                   background: actFilter !== 'All' ? 'hsl(var(--primary) / 0.08)' : '#fff',
                   color:
@@ -175,7 +175,7 @@ export function ActivitiesTab({
                     onClick={() => onFilterChange(f)}
                     style={{
                       padding: '5px 12px',
-                      borderRadius: 20,
+                      borderRadius: 'var(--radius-pill)',
                       border: `1px solid ${isActive ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
                       background: isActive ? 'hsl(var(--primary))' : 'transparent',
                       color: isActive ? '#fff' : 'hsl(var(--on-surface-muted))',
@@ -307,7 +307,7 @@ export function ActivitiesTab({
                 style={{
                   width: '100%',
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: 4,
+                  borderRadius: 'var(--radius-sm)',
                   padding: '10px 12px',
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: 'var(--font-weight-medium, 500)',
@@ -382,7 +382,7 @@ export function ActivitiesTab({
                   style={{
                     width: 48,
                     height: 48,
-                    borderRadius: 6,
+                    borderRadius: 'var(--radius-md)',
                     background: 'hsl(var(--primary) / 0.08)',
                     border: '1px solid hsl(var(--primary) / 0.2)',
                     display: 'flex',
@@ -442,7 +442,7 @@ export function ActivitiesTab({
                         fontSize: 10,
                         fontWeight: 'var(--font-weight-medium, 500)',
                         padding: '2px 8px',
-                        borderRadius: 20,
+                        borderRadius: 'var(--radius-pill)',
                         background: 'hsl(var(--container-low))',
                         color: 'hsl(var(--on-surface-muted))',
                         textTransform: 'uppercase',
@@ -486,7 +486,7 @@ export function ActivitiesTab({
                     border: 'none',
                     cursor: 'pointer',
                     padding: 6,
-                    borderRadius: 4,
+                    borderRadius: 'var(--radius-sm)',
                     color: 'hsl(var(--on-surface-muted))',
                     flexShrink: 0,
                   }}

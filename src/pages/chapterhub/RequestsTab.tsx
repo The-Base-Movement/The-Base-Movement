@@ -23,7 +23,7 @@ export function RequestsTab({ joinRequests, processingRequestId, onApprove, onRe
             padding: '48px 0',
             textAlign: 'center',
             border: '1px dashed hsl(var(--border))',
-            borderRadius: 6,
+            borderRadius: 'var(--radius-sm)',
           }}
         >
           <span
@@ -68,7 +68,7 @@ export function RequestsTab({ joinRequests, processingRequestId, onApprove, onRe
                 style={{
                   width: 40,
                   height: 40,
-                  borderRadius: 4,
+                  borderRadius: 'var(--radius-sm)',
                   background: 'hsl(var(--container-low))',
                   border: '1px solid hsl(var(--border))',
                   flexShrink: 0,

@@ -67,7 +67,7 @@ export function BoardTab({
           style={{
             width: '100%',
             border: '1px solid hsl(var(--border))',
-            borderRadius: 4,
+            borderRadius: 'var(--radius-sm)',
             padding: '10px 12px',
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
@@ -130,7 +130,7 @@ export function BoardTab({
                     style={{
                       width: 32,
                       height: 32,
-                      borderRadius: '50%',
+                      borderRadius: 'var(--radius-pill)',
                       background: 'hsl(var(--primary) / 0.1)',
                       display: 'flex',
                       alignItems: 'center',
@@ -198,7 +198,7 @@ export function BoardTab({
                     border: 'none',
                     cursor: 'pointer',
                     padding: 6,
-                    borderRadius: 4,
+                    borderRadius: 'var(--radius-sm)',
                     color: 'hsl(var(--on-surface-muted))',
                   }}
                   title="Delete update"

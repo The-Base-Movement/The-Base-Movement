@@ -30,7 +30,7 @@ function MemberAvatar({ member, size = 34 }: { member: ChapterMember; size?: num
       style={{
         width: size,
         height: size,
-        borderRadius: 4,
+        borderRadius: 'var(--radius-sm)',
         background: 'hsl(var(--container-low))',
         border: '1px solid hsl(var(--border))',
         display: 'flex',
@@ -90,7 +90,7 @@ function ProfileCard({ member, onClose }: { member: ChapterMember; onClose: () =
           bottom: 0,
           zIndex: 101,
           background: '#fff',
-          borderRadius: '14px 14px 0 0',
+          borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
           padding: '24px 20px 36px',
           boxShadow: '0 -8px 40px rgba(0,0,0,0.18)',
           animation: 'slideUp 0.22s ease',
@@ -101,7 +101,7 @@ function ProfileCard({ member, onClose }: { member: ChapterMember; onClose: () =
           style={{
             width: 36,
             height: 4,
-            borderRadius: 99,
+            borderRadius: 'var(--radius-pill)',
             background: 'hsl(var(--border))',
             margin: '0 auto 20px',
           }}
@@ -143,7 +143,7 @@ function ProfileCard({ member, onClose }: { member: ChapterMember; onClose: () =
             flexDirection: 'column',
             gap: 0,
             border: '1px solid hsl(var(--border))',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-md)',
             overflow: 'hidden',
             marginBottom: 20,
           }}
@@ -199,7 +199,7 @@ function ProfileCard({ member, onClose }: { member: ChapterMember; onClose: () =
             padding: '12px',
             background: 'hsl(var(--container-low))',
             border: '1px solid hsl(var(--border))',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-md)',
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
@@ -270,7 +270,7 @@ export function MembersTab({ members, filteredMembers, memberSearch, onSearchCha
           paddingRight: 12,
           background: 'hsl(var(--container-low))',
           border: '1px solid hsl(var(--border))',
-          borderRadius: 4,
+          borderRadius: 'var(--radius-sm)',
           fontSize: 13,
           fontFamily: "'Public Sans', sans-serif",
           fontWeight: 'var(--font-weight-medium, 500)',
@@ -339,7 +339,7 @@ export function MembersTab({ members, filteredMembers, memberSearch, onSearchCha
                   onClick={() => setSelectedMember(m)}
                   style={{
                     padding: '5px 12px',
-                    borderRadius: 4,
+                    borderRadius: 'var(--radius-sm)',
                     border: '1px solid hsl(var(--border))',
                     background: 'hsl(var(--container-low))',
                     fontFamily: "'Public Sans', sans-serif",
