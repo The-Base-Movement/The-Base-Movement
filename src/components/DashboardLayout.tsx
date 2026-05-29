@@ -54,38 +54,29 @@ export default function DashboardLayout() {
       try {
         if (!session?.user) return
 
-        // Fetch everything in parallel so we have all data in one round-trip
-        const [chapters, dbChapter, isLeader] = await Promise.all([
-          adminService.getChapters(),
+        // Fetch lead chapter and member chapter in parallel
+        const [leadChapter, dbChapter] = await Promise.all([
+          adminService.getLeadChapter(session.user.id),
           adminService.getUserChapter(session.user.id),
-          adminService.isChapterLeader(session.user.id),
         ])
 
-        // Priority 1: user is a chapter leader (by leader_id OR leader_name match)
-        if (isLeader) {
-          // Find the chapter they lead — first by leader_id, then by member assignment
-          const ownedById = chapters.find((c) => c.leader_id === session.user.id)
-          const chapterName = ownedById?.name ?? dbChapter
-          if (chapterName) {
-            const slug = toSlug(chapterName)
-            setMyChapterLink({
-              to: `/dashboard/chapters/${slug}`,
-              icon: 'manage_accounts',
-              subLinkTo: `/dashboard/chapter-hub/${slug}`,
-            })
-            return
-          }
+        // Priority 1: user leads a chapter — show manage_accounts icon + Chapter Dashboard sublink
+        if (leadChapter) {
+          const slug = toSlug(leadChapter)
+          setMyChapterLink({
+            to: `/dashboard/chapters/${slug}`,
+            icon: 'manage_accounts',
+            subLinkTo: `/dashboard/chapter-hub/${slug}`,
+          })
+          return
         }
 
         // Priority 2: regular member assigned to a chapter
         if (dbChapter) {
-          const matched = chapters.find((c) => c.name.toLowerCase() === dbChapter.toLowerCase())
-          if (matched) {
-            setMyChapterLink({
-              to: `/dashboard/chapters/${toSlug(matched.name)}`,
-              icon: 'group',
-            })
-          }
+          setMyChapterLink({
+            to: `/dashboard/chapters/${toSlug(dbChapter)}`,
+            icon: 'group',
+          })
         }
       } catch {
         /* non-critical */

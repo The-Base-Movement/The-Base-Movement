@@ -582,29 +582,60 @@ class AdminService {
     return null
   }
 
-  async isChapterLeader(authId: string): Promise<boolean> {
+  /**
+   * Returns the name of the chapter this user leads, or null if they're not a leader.
+   * Tries three strategies in order:
+   *   1. chapters.leader_id = authId
+   *   2. chapters.leader_name case-insensitive match on users.full_name
+   *   3. chapter_leaders row ilike match (handles chapters with separate leadership rows)
+   */
+  async getLeadChapter(authId: string): Promise<string | null> {
     // 1. Direct leader_id match
     const { data: byId } = await supabase
       .from('chapters')
-      .select('id')
+      .select('name')
       .eq('leader_id', authId)
       .maybeSingle()
-    if (byId) return true
+    if (byId?.name) return byId.name
 
-    // 2. Name match — for chapters where leader_id was never set
+    // Fetch user's full name once for the remaining checks
     const { data: user } = await supabase
       .from('users')
       .select('full_name')
       .eq('id', authId)
       .maybeSingle()
-    if (!user?.full_name) return false
+    if (!user?.full_name) return null
+    const fullName = user.full_name.trim()
 
+    // 2. leader_name column match (case-insensitive)
     const { data: byName } = await supabase
       .from('chapters')
-      .select('id')
-      .eq('leader_name', user.full_name)
+      .select('name')
+      .ilike('leader_name', fullName)
       .maybeSingle()
-    return !!byName
+    if (byName?.name) return byName.name
+
+    // 3. chapter_leaders table — matches any leadership role (secretary, treasurer, etc.)
+    const { data: leaderRow } = await supabase
+      .from('chapter_leaders')
+      .select('chapter_id')
+      .ilike('name', fullName)
+      .maybeSingle()
+    if (leaderRow?.chapter_id) {
+      const { data: ch } = await supabase
+        .from('chapters')
+        .select('name')
+        .eq('id', leaderRow.chapter_id)
+        .maybeSingle()
+      if (ch?.name) return ch.name
+    }
+
+    return null
+  }
+
+  async isChapterLeader(authId: string): Promise<boolean> {
+    const chapterName = await this.getLeadChapter(authId)
+    return chapterName !== null
   }
 
   async joinChapter(chapterName: string): Promise<boolean> {

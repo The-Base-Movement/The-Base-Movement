@@ -395,23 +395,36 @@ class ChapterService {
     return true
   }
 
-  async requestToJoin(chapterId: string): Promise<{ success: boolean; alreadyRequested: boolean }> {
+  async requestToJoin(
+    chapterId: string
+  ): Promise<{ success: boolean; alreadyRequested: boolean; alreadyInChapter: boolean }> {
     const {
       data: { session },
     } = await supabase.auth.getSession()
-    if (!session?.user) return { success: false, alreadyRequested: false }
+    if (!session?.user) return { success: false, alreadyRequested: false, alreadyInChapter: false }
+
+    // Enforce one-chapter-per-user: block if the user is already assigned to any chapter
+    const { data: existing } = await supabase
+      .from('users')
+      .select('chapter')
+      .eq('id', session.user.id)
+      .maybeSingle()
+    if (existing?.chapter) {
+      return { success: false, alreadyRequested: false, alreadyInChapter: true }
+    }
 
     const { error } = await supabase
       .from('chapter_requests')
       .insert({ member_id: session.user.id, chapter_id: chapterId, status: 'pending' })
 
     if (error) {
-      if (error.code === '23505') return { success: false, alreadyRequested: true }
+      if (error.code === '23505')
+        return { success: false, alreadyRequested: true, alreadyInChapter: false }
       console.error('[DATABASE] Chapter request failed:', error)
-      return { success: false, alreadyRequested: false }
+      return { success: false, alreadyRequested: false, alreadyInChapter: false }
     }
 
-    return { success: true, alreadyRequested: false }
+    return { success: true, alreadyRequested: false, alreadyInChapter: false }
   }
 
   async getMyJoinRequest(chapterId: string): Promise<'pending' | 'approved' | 'rejected' | null> {

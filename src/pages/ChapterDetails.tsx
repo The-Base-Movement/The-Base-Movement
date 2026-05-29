@@ -214,9 +214,15 @@ export default function ChapterDetails() {
       return
     }
     setIsJoining(true)
-    const { success, alreadyRequested } = await chapterService.requestToJoin(chapter.id)
+    const { success, alreadyRequested, alreadyInChapter } = await chapterService.requestToJoin(
+      chapter.id
+    )
     setIsJoining(false)
-    if (alreadyRequested) {
+    if (alreadyInChapter) {
+      toast.error(
+        'You are already a member of another chapter. You must leave or be removed from your current chapter before joining a new one.'
+      )
+    } else if (alreadyRequested) {
       setJoinRequestStatus('pending')
       toast('Your join request is already pending.')
     } else if (success) {
