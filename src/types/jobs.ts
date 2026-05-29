@@ -47,3 +47,7 @@ export interface JobFilters {
   platform_filter?: PlatformFilter | ''
   status?: JobStatus | ''
 }
+
+export interface ApplicationWithJob extends JobApplication {
+  job?: Pick<Job, 'title' | 'organization' | 'status'>
+}
