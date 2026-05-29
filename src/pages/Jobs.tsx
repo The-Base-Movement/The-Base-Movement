@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { trackEvent } from '@/lib/analytics'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { jobService } from '@/services/jobService'
@@ -239,6 +240,8 @@ export default function Jobs() {
         description="Browse job opportunities within The Base Movement network."
       />
 
+      {isDashboard && <Breadcrumbs />}
+
       <div style={{ marginBottom: 28 }}>
         <h1
           style={{
@@ -351,13 +354,14 @@ export default function Jobs() {
                 }}
               />
             </div>
-            {/* Row 2 — filters, wrap on mobile */}
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {/* Row 2 — All button + Category */}
+            <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className={`btn btn-sm ${!filters.category && !filters.job_type && !filters.platform_filter ? 'btn-active-tab' : 'btn-inactive-tab'}`}
                 onClick={() =>
                   setFilters((f) => ({ ...f, category: '', job_type: '', platform_filter: '' }))
                 }
+                style={{ flexShrink: 0 }}
               >
                 All
               </button>
@@ -365,7 +369,7 @@ export default function Jobs() {
                 value={filters.category}
                 onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
                 style={{
-                  flex: '1 1 0',
+                  flex: 1,
                   minWidth: 0,
                   height: 36,
                   padding: '0 10px',
@@ -385,13 +389,16 @@ export default function Jobs() {
                   </option>
                 ))}
               </select>
+            </div>
+            {/* Row 3 — Type + Network */}
+            <div style={{ display: 'flex', gap: 8 }}>
               <select
                 value={filters.job_type}
                 onChange={(e) =>
                   setFilters((f) => ({ ...f, job_type: e.target.value as JobType | '' }))
                 }
                 style={{
-                  flex: '1 1 0',
+                  flex: 1,
                   minWidth: 0,
                   height: 36,
                   padding: '0 10px',
@@ -420,7 +427,7 @@ export default function Jobs() {
                   }))
                 }
                 style={{
-                  flex: '1 1 0',
+                  flex: 1,
                   minWidth: 0,
                   height: 36,
                   padding: '0 10px',
