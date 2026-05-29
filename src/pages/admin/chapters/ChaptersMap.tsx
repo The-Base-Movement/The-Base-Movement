@@ -144,7 +144,7 @@ export function ChaptersMap({
     }
   }
 
-  const fillPaint: FillPaint = {
+  const fillPaint = {
     'fill-color': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -152,7 +152,7 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       '#DAA520',
       '#2a2a2a',
-    ] as FillPaint['fill-color'],
+    ],
     'fill-opacity': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -160,10 +160,10 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       0.6,
       0.3,
-    ] as FillPaint['fill-opacity'],
+    ],
   }
 
-  const linePaint: LinePaint = {
+  const linePaint = {
     'line-color': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -171,7 +171,7 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       '#DAA520',
       'rgba(255,255,255,0.1)',
-    ] as LinePaint['line-color'],
+    ],
     'line-width': [
       'case',
       ['==', ['get', 'region'], regionFilter || ''],
@@ -179,7 +179,7 @@ export function ChaptersMap({
       ['==', ['get', 'region'], hoveredRegion || ''],
       2,
       0.5,
-    ] as LinePaint['line-width'],
+    ],
   }
 
   const title =
@@ -273,8 +273,16 @@ export function ChaptersMap({
                 onMouseLeave={() => setHoveredRegion(null)}
               >
                 <Source id="ghana-regions" type="geojson" data="/data/ghana_regions.geojson">
-                  <Layer id="ghana-regions-fill" type="fill" paint={fillPaint} />
-                  <Layer id="ghana-regions-line" type="line" paint={linePaint} />
+                  <Layer
+                    id="ghana-regions-fill"
+                    type="fill"
+                    paint={fillPaint as unknown as FillPaint}
+                  />
+                  <Layer
+                    id="ghana-regions-line"
+                    type="line"
+                    paint={linePaint as unknown as LinePaint}
+                  />
                 </Source>
 
                 <NavigationControl position="top-right" />

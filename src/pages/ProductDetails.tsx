@@ -198,8 +198,7 @@ export default function ProductDetails() {
             >
               <span
                 className="material-symbols-outlined group-hover:text-brand-red transition-all"
-                style={{ color: 'hsl(var(--on-surface-muted))' }}
-                style={{ fontSize: 16 }}
+                style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 16 }}
               >
                 favorite
               </span>
@@ -221,8 +220,7 @@ export default function ProductDetails() {
             >
               <span
                 className="material-symbols-outlined group-hover:text-brand-green transition-all"
-                style={{ color: 'hsl(var(--on-surface-muted))' }}
-                style={{ fontSize: 16 }}
+                style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 16 }}
               >
                 shopping_bag
               </span>

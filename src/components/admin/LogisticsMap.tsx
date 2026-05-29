@@ -84,11 +84,11 @@ export function LogisticsMap({ data, token, routes = [], inventory = [] }: Logis
     [routes]
   )
 
-  const routeLinePaint: LinePaint = {
+  const routeLinePaint = {
     'line-color': '#DAA520',
     'line-width': 1.5,
     'line-opacity': 0.55,
-    'line-dasharray': [3, 2] as unknown as LinePaint['line-dasharray'],
+    'line-dasharray': [3, 2],
   }
 
   if (!token) {
@@ -160,7 +160,11 @@ export function LogisticsMap({ data, token, routes = [], inventory = [] }: Logis
         {/* Active dispatch routes */}
         {routes.length > 0 && (
           <Source id="dispatch-routes" type="geojson" data={routeGeoJSON}>
-            <Layer id="dispatch-route-lines" type="line" paint={routeLinePaint} />
+            <Layer
+              id="dispatch-route-lines"
+              type="line"
+              paint={routeLinePaint as unknown as LinePaint}
+            />
           </Source>
         )}
 
