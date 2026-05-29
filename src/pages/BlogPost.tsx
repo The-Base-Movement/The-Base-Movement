@@ -13,6 +13,7 @@ import { PostHeader } from './blogpost/PostHeader'
 import { PostHeroImage } from './blogpost/PostHeroImage'
 import { PostSidebar } from './blogpost/PostSidebar'
 import { Skeleton } from '@/components/states'
+import { contentService } from '@/services/contentService'
 
 export default function BlogPost() {
   const { settings } = useBranding()
@@ -25,6 +26,8 @@ export default function BlogPost() {
   const [post, setPost] = useState<BlogPostType | null>(null)
   const [relatedPosts, setRelatedPosts] = useState<BlogPostType[]>([])
   const [loading, setLoading] = useState(true)
+  const [isLiked, setIsLiked] = useState(false)
+  const [likeLoading, setLikeLoading] = useState(false)
 
   useEffect(() => {
     async function fetchPost() {
@@ -32,7 +35,13 @@ export default function BlogPost() {
       setLoading(true)
       try {
         const data = await adminService.getBlogPostBySlug(slug)
-        if (data) setPost(data)
+        if (data) {
+          setPost(data)
+          if (isDashboard) {
+            const liked = await contentService.isPostLiked(data.id)
+            setIsLiked(liked)
+          }
+        }
         const allPosts = await adminService.getBlogPosts()
         setRelatedPosts(allPosts.filter((p) => p.slug !== slug).slice(0, 3))
       } finally {
@@ -40,7 +49,23 @@ export default function BlogPost() {
       }
     }
     fetchPost()
-  }, [slug])
+  }, [slug, isDashboard])
+
+  const handleLikeToggle = async () => {
+    if (!post || likeLoading) return
+    setLikeLoading(true)
+    try {
+      if (isLiked) {
+        await contentService.unlikePost(post.id)
+        setIsLiked(false)
+      } else {
+        await contentService.likePost(post.id)
+        setIsLiked(true)
+      }
+    } finally {
+      setLikeLoading(false)
+    }
+  }
 
   const handleShare = (platform?: string) => {
     if (!post) return
@@ -165,7 +190,14 @@ export default function BlogPost() {
         jsonLd={articleSchema}
       />
       <main className="page-container pt-12">
-        <PostToolbar title={post.title} onShare={handleShare} />
+        <PostToolbar
+          title={post.title}
+          onShare={handleShare}
+          isDashboard={isDashboard}
+          isLiked={isLiked}
+          likeLoading={likeLoading}
+          onLikeToggle={handleLikeToggle}
+        />
 
         <article className="space-y-12">
           <PostHeader

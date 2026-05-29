@@ -65,7 +65,10 @@ export default function DashboardLayout() {
         }
 
         // Regular member — check DB directly (null = never joined)
-        const dbChapter = await adminService.getUserChapter(session.user.id)
+        const [dbChapter, isLeader] = await Promise.all([
+          adminService.getUserChapter(session.user.id),
+          adminService.isChapterLeader(session.user.id),
+        ])
         if (dbChapter) {
           const matched = chapters.find((c) => c.name.toLowerCase() === dbChapter.toLowerCase())
           if (matched) {
@@ -73,7 +76,15 @@ export default function DashboardLayout() {
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, '-')
               .replace(/(^-|-$)+/g, '')
-            setMyChapterLink({ to: `/dashboard/chapters/${slug}`, icon: 'group' })
+            if (isLeader) {
+              setMyChapterLink({
+                to: `/dashboard/chapters/${slug}`,
+                icon: 'manage_accounts',
+                subLinkTo: `/dashboard/chapter-hub/${slug}`,
+              })
+            } else {
+              setMyChapterLink({ to: `/dashboard/chapters/${slug}`, icon: 'group' })
+            }
           }
         }
       } catch {
@@ -185,6 +196,7 @@ export default function DashboardLayout() {
       return 'My Chapter'
     if (path === '/dashboard/contact') return 'Support'
     if (path === '/dashboard/settings') return 'Profile'
+    if (path === '/dashboard/liked') return 'Liked Posts'
     if (path === '/dashboard/wishlist') return 'Wishlist'
     if (path === '/dashboard/cart') return 'Cart'
     if (path === '/dashboard/checkout') return 'Checkout'
@@ -390,7 +402,10 @@ export default function DashboardLayout() {
             },
             {
               label: 'Personal',
-              items: [{ to: '/dashboard/settings', icon: 'settings', label: 'Settings' }],
+              items: [
+                { to: '/dashboard/liked', icon: 'favorite', label: 'Liked Posts' },
+                { to: '/dashboard/settings', icon: 'settings', label: 'Settings' },
+              ],
             },
           ].map((group) => (
             <div key={group.label} className="nav-sec mt-2">

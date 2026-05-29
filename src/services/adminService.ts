@@ -582,6 +582,31 @@ class AdminService {
     return null
   }
 
+  async isChapterLeader(authId: string): Promise<boolean> {
+    // 1. Direct leader_id match
+    const { data: byId } = await supabase
+      .from('chapters')
+      .select('id')
+      .eq('leader_id', authId)
+      .maybeSingle()
+    if (byId) return true
+
+    // 2. Name match — for chapters where leader_id was never set
+    const { data: user } = await supabase
+      .from('users')
+      .select('full_name')
+      .eq('id', authId)
+      .maybeSingle()
+    if (!user?.full_name) return false
+
+    const { data: byName } = await supabase
+      .from('chapters')
+      .select('id')
+      .eq('leader_name', user.full_name)
+      .maybeSingle()
+    return !!byName
+  }
+
   async joinChapter(chapterName: string): Promise<boolean> {
     const success = await chapterService.joinChapter(chapterName)
     if (success) {

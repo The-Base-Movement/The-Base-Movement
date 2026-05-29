@@ -88,6 +88,7 @@ const Jobs = lazy(() => import('./pages/Jobs'))
 const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
 const AdminJobForm = lazy(() => import('./pages/admin/jobs/JobFormPage'))
 const AdminModeration = lazy(() => import('./pages/admin/Moderation'))
+const LikedPosts = lazy(() => import('./pages/LikedPosts'))
 
 export const routes: RouteObject[] = [
   {
@@ -158,6 +159,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/settings', element: <ProfileSettings /> },
           { path: '/dashboard/activity', element: <Activity /> },
           { path: '/dashboard/jobs', element: <Jobs /> },
+          { path: '/dashboard/liked', element: <LikedPosts /> },
         ],
       },
     ],

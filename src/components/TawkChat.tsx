@@ -13,6 +13,7 @@ declare global {
 export default function TawkChat() {
   useEffect(() => {
     if (!PROPERTY_ID || !WIDGET_ID) return
+    if (window.location.hostname === 'localhost') return
     if (window.Tawk_API) return
 
     window.Tawk_API = {}
