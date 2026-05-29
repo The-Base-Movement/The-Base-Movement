@@ -203,6 +203,7 @@ export default function DashboardLayout() {
     if (path === '/dashboard/contact') return 'Support'
     if (path === '/dashboard/settings') return 'Profile'
     if (path === '/dashboard/liked') return 'Liked Posts'
+    if (path === '/dashboard/my-donations') return 'My Donations'
     if (path === '/dashboard/wishlist') return 'Wishlist'
     if (path === '/dashboard/cart') return 'Cart'
     if (path === '/dashboard/checkout') return 'Checkout'
@@ -414,6 +415,11 @@ export default function DashboardLayout() {
               label: 'Personal',
               items: [
                 { to: '/dashboard/liked', icon: 'favorite', label: 'Liked Posts' },
+                {
+                  to: '/dashboard/my-donations',
+                  icon: 'volunteer_activism',
+                  label: 'My Donations',
+                },
                 { to: '/dashboard/settings', icon: 'settings', label: 'Settings' },
               ],
             },
