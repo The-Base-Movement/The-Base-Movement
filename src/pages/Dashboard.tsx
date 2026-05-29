@@ -226,7 +226,8 @@ export default function Dashboard() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        .main { min-width: 0; padding-bottom: 40px; }
+        .main { padding-bottom: 40px; }
+
         .feed h3 { font-family: 'Public Sans', sans-serif; }
 
         .dash-hero {
