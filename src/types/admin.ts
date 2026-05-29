@@ -91,6 +91,7 @@ export interface Chapter {
   local_focus?: string
   email?: string
   phone_number?: string
+  leader_avatar_url?: string
   leadership?: ChapterLeader[]
   activities?: ChapterActivity[]
   latitude?: number

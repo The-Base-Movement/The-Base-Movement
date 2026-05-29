@@ -14,6 +14,7 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
   const leader = chapter.leadership?.[0]
   const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
   const leaderInitial = leaderName.charAt(0).toUpperCase()
+  const leaderImage = leader?.imageUrl || chapter.leader_avatar_url
   const isFeatured = chapter.status === 'Active' && chapter.member_count > 500
   return (
     <div
@@ -151,9 +152,9 @@ function ChapterCard({ chapter }: { chapter: Chapter }) {
               overflow: 'hidden',
             }}
           >
-            {leader?.imageUrl ? (
+            {leaderImage ? (
               <img
-                src={leader.imageUrl}
+                src={leaderImage}
                 alt={leaderName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 onError={(e) => {

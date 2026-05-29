@@ -28,6 +28,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
   const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
   const leaderRole = leader?.role || (isDiaspora ? 'Hub coordinator' : 'Branch chair')
   const leaderInitial = leaderName.charAt(0).toUpperCase()
+  const leaderImage = leader?.imageUrl || chapter.leader_avatar_url
 
   const eventsCount = chapter.activities?.length ?? 0
   const programsCount = Math.max(0, Math.floor(eventsCount / 3))
@@ -196,9 +197,9 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
               justifyContent: 'center',
             }}
           >
-            {leader?.imageUrl ? (
+            {leaderImage ? (
               <img
-                src={leader.imageUrl}
+                src={leaderImage}
                 alt={leaderName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 onError={(e) => {

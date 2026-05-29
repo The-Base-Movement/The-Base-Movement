@@ -111,6 +111,7 @@ class ChapterService {
         flag_url: dbFlag || undefined,
         leader_name: c.leader_name || 'Unassigned',
         leader_id: c.leader_id || undefined,
+        leader_avatar_url: (c.leader_id && leaderAvatarMap[c.leader_id]) || undefined,
         member_count: liveCounts[(c.name || '').toLowerCase()] ?? 0,
         status: c.status || 'Pending',
         region: c.region || undefined,
@@ -170,6 +171,18 @@ class ChapterService {
       .eq('name', data.country)
       .single()
 
+    let leaderAvatarUrl: string | undefined = undefined
+    if (data.leader_id) {
+      const { data: userData } = await supabase
+        .from('users')
+        .select('avatar_url')
+        .eq('id', data.leader_id)
+        .maybeSingle()
+      if (userData?.avatar_url) {
+        leaderAvatarUrl = userData.avatar_url
+      }
+    }
+
     return {
       id: data.id,
       name: data.name,
@@ -177,6 +190,8 @@ class ChapterService {
       country: data.country || 'Ghana',
       flag_url: countryData?.flag_url || data.flag_url,
       leader_name: data.leader_name || 'Unassigned',
+      leader_id: data.leader_id || undefined,
+      leader_avatar_url: leaderAvatarUrl,
       member_count: data.member_count || 0,
       status: data.status,
       region: data.region || undefined,
