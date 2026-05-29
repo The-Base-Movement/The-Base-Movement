@@ -126,6 +126,7 @@ class JobService {
     const msg = (error.message ?? '').toLowerCase()
     if (msg.includes('monthly_limit_reached')) return { ok: false, reason: 'limit_reached' }
     if (msg.includes('already_applied')) return { ok: false, reason: 'already_applied' }
+    if (msg.includes('not_authenticated')) return { ok: false, reason: 'error' }
     console.warn('[jobService] applyToJob:', error)
     return { ok: false, reason: 'error' }
   }
@@ -148,9 +149,8 @@ class JobService {
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) return 0
-    const startOfMonth = new Date()
-    startOfMonth.setDate(1)
-    startOfMonth.setHours(0, 0, 0, 0)
+    const now = new Date()
+    const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
     const { count, error } = await supabase
       .from('job_applications')
       .select('id', { count: 'exact', head: true })
