@@ -65,12 +65,12 @@
 
 ---
 
-## 📊 4. Analytics & Tracking
+## ✅ 4. Analytics & Tracking — COMPLETE (2026-05-29)
 
-- [ ] Choose provider: Plausible (recommended — privacy-first, GDPR) or Matomo
-- [ ] Install tracking script (env-gated — only active in production)
-- [ ] Track key events: registration, donation, job application, store purchase
-- [ ] Expose traffic dashboard to super-admin
+- [x] Chose Umami Cloud (privacy-first, GDPR, free tier)
+- [x] Install tracking script (env-gated — only active in production via `import.meta.env.PROD`)
+- [x] Track key events: `registration_complete`, `donation_submitted`, `store_purchase`, `job_application`
+- [x] Admin dashboard at `/admin/analytics` — Umami iframe embed + tracked-events legend
 
 ---
 
@@ -81,9 +81,15 @@
 
 ---
 
-## 📧 6. Communication & Notifications
+## ✅ 6. Communication & Notifications — Push Notifications COMPLETE (2026-05-29)
 
-- [ ] **Push Notifications** — Supabase Edge Function for real-time mobile push (Web Push API)
+- [x] **Push Notifications** — Web Push API + VAPID + Supabase Edge Function `send-push-notification`
+  - [x] `push_subscriptions` table + RLS policy
+  - [x] `public/sw.js` push + notificationclick handlers
+  - [x] `usePushNotifications` hook (subscribe/unsubscribe/isSubscribed/isSupported)
+  - [x] `PushPromptBanner` opt-in banner on `/dashboard`
+  - [x] `NotificationsPanel` toggle in `/dashboard/settings`
+  - [x] 6 trigger wires: urgent broadcast, new poll, blog publish, poll-closing, chapter member join, chapter announcement
 - [ ] **Mailing List Sync** — Bridge registration data with SendGrid or Mailchimp for transactional email
 
 ---

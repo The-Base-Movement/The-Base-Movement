@@ -6,20 +6,6 @@ export function PushPromptBanner() {
   const [dismissed, setDismissed] = useState(() => localStorage.getItem('push_prompted') !== null)
   const [confirmed, setConfirmed] = useState(false)
 
-  if (!isSupported || isSubscribed || dismissed || loading) return null
-
-  const handleEnable = async () => {
-    await subscribe()
-    localStorage.setItem('push_prompted', 'accepted')
-    setConfirmed(true)
-    setTimeout(() => setDismissed(true), 2500)
-  }
-
-  const handleDismiss = () => {
-    localStorage.setItem('push_prompted', 'dismissed')
-    setDismissed(true)
-  }
-
   if (confirmed) {
     return (
       <div
@@ -52,6 +38,20 @@ export function PushPromptBanner() {
         </p>
       </div>
     )
+  }
+
+  if (!isSupported || isSubscribed || dismissed || loading) return null
+
+  const handleEnable = async () => {
+    await subscribe()
+    localStorage.setItem('push_prompted', 'accepted')
+    setConfirmed(true)
+    setTimeout(() => setDismissed(true), 2500)
+  }
+
+  const handleDismiss = () => {
+    localStorage.setItem('push_prompted', 'dismissed')
+    setDismissed(true)
   }
 
   return (

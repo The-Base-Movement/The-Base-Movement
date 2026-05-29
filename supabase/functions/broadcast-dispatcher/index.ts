@@ -30,7 +30,7 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    let userQuery = supabaseAdmin.from('users').select('full_name, phone_number, email')
+    let userQuery = supabaseAdmin.from('users').select('id, full_name, phone_number, email')
     if (targetType === 'REGION') userQuery = userQuery.eq('region', targetValue)
     else if (targetType === 'CONSTITUENCY') userQuery = userQuery.eq('constituency', targetValue)
 
@@ -38,6 +38,7 @@ Deno.serve(async (req: Request) => {
     if (userError) throw userError
 
     interface Patriot {
+      id: string
       full_name: string
       phone_number: string | null
       email: string | null
@@ -86,6 +87,28 @@ Deno.serve(async (req: Request) => {
     console.warn(
       `[URGENT DISPATCH] ${broadcastId} — ${emailRecipients.length} email / ${phoneRecipients.length} SMS recipients`
     )
+
+    // Push notifications — fire and forget
+    const userIds = (users as Patriot[])?.map((u) => u.id) ?? []
+    if (userIds.length > 0) {
+      // @ts-expect-error: Deno global
+      const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''
+      // @ts-expect-error: Deno global
+      const serviceKey: string = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      fetch(`${supabaseUrl}/functions/v1/send-push-notification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+        },
+        body: JSON.stringify({
+          userIds,
+          title: subject ?? 'Urgent broadcast',
+          body: body ?? '',
+          url: '/dashboard',
+        }),
+      }).catch((err: unknown) => console.error('[PUSH]', err))
+    }
 
     return new Response(JSON.stringify({ success: true, recipientCount: recipients.length }), {
       headers: { 'Content-Type': 'application/json' },

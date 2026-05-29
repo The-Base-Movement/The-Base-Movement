@@ -323,6 +323,21 @@ export default function ChapterHub() {
     setAnnouncements(data || [])
     setAnnounceDraft('')
     toast.success('Update posted to members.')
+
+    // Push notification to all chapter members — fire and forget
+    const memberIds = members.map((m) => m.authId).filter(Boolean)
+    if (memberIds.length > 0) {
+      supabase.functions
+        .invoke('send-push-notification', {
+          body: {
+            userIds: memberIds,
+            title: `${chapter.name} — new announcement`,
+            body: announceDraft.trim().slice(0, 100),
+            url: '/dashboard/chapter-hub',
+          },
+        })
+        .catch(console.error)
+    }
   }
 
   const handleDeleteAnnouncement = async (id: string) => {

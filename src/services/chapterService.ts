@@ -495,6 +495,29 @@ class ChapterService {
     }
 
     await this.incrementChapterMemberCount(chapterName)
+
+    // Notify chapter leader via push — fire and forget
+    supabase
+      .from('chapters')
+      .select('leader_id')
+      .eq('name', chapterName)
+      .maybeSingle()
+      .then(({ data: chapterRow }) => {
+        const leaderId = (chapterRow as { leader_id?: string | null } | null)?.leader_id
+        if (!leaderId) return
+        supabase.functions
+          .invoke('send-push-notification', {
+            body: {
+              userIds: [leaderId],
+              title: 'New chapter member',
+              body: 'A new patriot has joined your chapter.',
+              url: '/dashboard/chapter-hub',
+            },
+          })
+          .catch(console.error)
+      })
+      .catch(console.error)
+
     return true
   }
 

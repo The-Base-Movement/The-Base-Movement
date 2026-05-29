@@ -52,11 +52,15 @@ Deno.serve(async (req: Request) => {
     const region = targetRegion ?? row.region ?? 'All regions'
 
     // Fetch members in the target region who haven't voted
-    let memberQuery = supabaseAdmin.from('users').select('full_name, email').eq('status', 'Active')
+    let memberQuery = supabaseAdmin
+      .from('users')
+      .select('id, full_name, email')
+      .eq('status', 'Active')
     if (row.region) memberQuery = memberQuery.eq('region', row.region)
 
     const { data: members } = await memberQuery
     interface Member {
+      id: string
       full_name: string
       email: string | null
     }
@@ -106,6 +110,28 @@ Deno.serve(async (req: Request) => {
       console.warn(
         `[POLL-NOTIFY] RESEND_API_KEY not set — would send to ${recipients.length} members`
       )
+    }
+
+    // Push notifications for all matching members — fire and forget
+    const memberIds = ((members ?? []) as Member[]).map((m) => m.id)
+    if (memberIds.length > 0) {
+      // @ts-expect-error: Deno global
+      const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''
+      // @ts-expect-error: Deno global
+      const serviceKey: string = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      fetch(`${supabaseUrl}/functions/v1/send-push-notification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+        },
+        body: JSON.stringify({
+          userIds: memberIds,
+          title: `Poll closing in ${hoursRemaining}h — vote now`,
+          body: row.title.slice(0, 100),
+          url: '/dashboard/polls',
+        }),
+      }).catch((err: unknown) => console.error('[PUSH]', err))
     }
 
     return new Response(

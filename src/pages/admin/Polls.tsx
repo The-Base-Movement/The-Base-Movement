@@ -27,6 +27,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
 
@@ -134,6 +135,16 @@ export default function PollsManagement() {
         setShowCreateModal(false)
         setNewPoll(DEFAULT_POLL)
         fetchData()
+        supabase.functions
+          .invoke('send-push-notification', {
+            body: {
+              userIds: 'all',
+              title: 'New poll — your voice matters',
+              body: newPoll.title.slice(0, 100),
+              url: '/dashboard/polls',
+            },
+          })
+          .catch(console.error)
       } else {
         toast.error('Failed to create poll.')
       }
