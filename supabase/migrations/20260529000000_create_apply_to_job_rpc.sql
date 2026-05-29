@@ -18,6 +18,10 @@ BEGIN
     RAISE EXCEPTION 'not_authenticated';
   END IF;
 
+  IF p_cover_letter IS NULL OR trim(p_cover_letter) = '' THEN
+    RAISE EXCEPTION 'cover_letter_required';
+  END IF;
+
   SELECT COUNT(*) INTO v_count
   FROM job_applications
   WHERE member_id = v_user_id
