@@ -9,6 +9,7 @@ import { adminService } from '@/services/adminService'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { useStore } from '@/hooks/useStore'
+import { contentService } from '@/services/contentService'
 
 export default function DashboardLayout() {
   const { settings } = useBranding()
@@ -33,6 +34,7 @@ export default function DashboardLayout() {
     subLinkTo?: string
   } | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [likedCount, setLikedCount] = useState(0)
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -136,6 +138,19 @@ export default function DashboardLayout() {
     window.addEventListener('storage', readProfile)
     return () => window.removeEventListener('storage', readProfile)
   }, [session])
+
+  // Sync liked posts count in sidebar on mount and route transitions
+  useEffect(() => {
+    const fetchLikedCount = async () => {
+      try {
+        const posts = await contentService.getLikedPosts()
+        setLikedCount(posts.length)
+      } catch (err) {
+        console.warn('[DASHBOARD] Failed to sync liked posts count:', err)
+      }
+    }
+    fetchLikedCount()
+  }, [location.pathname])
 
   // Close sidebar on route change
   useEffect(() => {
@@ -413,7 +428,7 @@ export default function DashboardLayout() {
                 {group.items.map((item) => (
                   <div key={item.to}>
                     <Link
-                      className={`flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
+                      className={`relative flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                       to={item.to}
                     >
                       <span
@@ -424,7 +439,55 @@ export default function DashboardLayout() {
                       >
                         {item.icon}
                       </span>
-                      {!isSidebarCollapsed && item.label}
+                      {!isSidebarCollapsed && (
+                        <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                          <span style={{ flex: 1 }}>{item.label}</span>
+                          {item.to === '/dashboard/liked' && likedCount > 0 && (
+                            <span
+                              style={{
+                                background: 'hsl(var(--accent))',
+                                color: '#181d19',
+                                fontSize: 10,
+                                fontWeight: 600,
+                                minWidth: 18,
+                                height: 18,
+                                borderRadius: 9,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '0 5px',
+                                marginLeft: 8,
+                                fontFamily: "'Public Sans', sans-serif",
+                              }}
+                            >
+                              {likedCount}
+                            </span>
+                          )}
+                        </span>
+                      )}
+                      {item.to === '/dashboard/liked' && likedCount > 0 && isSidebarCollapsed && (
+                        <span
+                          style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 18,
+                            background: 'hsl(var(--accent))',
+                            color: '#181d19',
+                            fontSize: 9,
+                            fontWeight: 'bold',
+                            minWidth: 14,
+                            height: 14,
+                            borderRadius: 7,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '0 3px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          }}
+                        >
+                          {likedCount}
+                        </span>
+                      )}
                     </Link>
                     {'subItems' in item &&
                       item.subItems &&
