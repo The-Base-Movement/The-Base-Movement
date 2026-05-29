@@ -225,7 +225,14 @@ export default function Jobs() {
   }
 
   return (
-    <div style={{ fontFamily: font, maxWidth: 1100, margin: '0 auto', padding: '32px 24px' }}>
+    <div
+      className={isDashboard ? 'main' : undefined}
+      style={
+        isDashboard
+          ? { fontFamily: font }
+          : { fontFamily: font, maxWidth: 1100, margin: '0 auto', padding: '32px 24px' }
+      }
+    >
       <SEO
         title="Jobs Board | The Base Movement"
         description="Browse job opportunities within The Base Movement network."
