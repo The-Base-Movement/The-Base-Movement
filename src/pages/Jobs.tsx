@@ -153,6 +153,15 @@ export default function Jobs() {
     setHasApplied(applied)
   }
 
+  async function handleViewJobFromApp(jobId: string) {
+    const job = await jobService.getJobById(jobId)
+    if (!job) {
+      toast.error('This job is no longer available.')
+      return
+    }
+    openJobDetail(job)
+  }
+
   function handleApplyClick() {
     if (!isDashboard) {
       navigate('/login')
@@ -597,6 +606,7 @@ export default function Jobs() {
           applications={applications}
           loading={applicationsLoading}
           onBrowse={() => setActiveTab('browse')}
+          onViewJob={handleViewJobFromApp}
         />
       )}
 

@@ -4,6 +4,7 @@ interface Props {
   applications: ApplicationWithJob[]
   loading: boolean
   onBrowse: () => void
+  onViewJob?: (jobId: string) => void
 }
 
 const STATUS_LABELS: Record<ApplicationStatus, string> = {
@@ -94,7 +95,7 @@ function SkeletonCard() {
   )
 }
 
-export default function MyApplicationsTab({ applications, loading, onBrowse }: Props) {
+export default function MyApplicationsTab({ applications, loading, onBrowse, onViewJob }: Props) {
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -156,8 +157,18 @@ export default function MyApplicationsTab({ applications, loading, onBrowse }: P
           year: 'numeric',
           timeZone: 'UTC',
         })
+        const clickable = !isRemoved && !!onViewJob
         return (
-          <div key={app.id} className="panel" style={{ padding: '16px 20px' }}>
+          <div
+            key={app.id}
+            className="panel"
+            style={{
+              padding: '16px 20px',
+              cursor: clickable ? 'pointer' : 'default',
+              transition: 'border-color 0.15s',
+            }}
+            onClick={clickable ? () => onViewJob!(app.job_id) : undefined}
+          >
             <div
               style={{
                 display: 'flex',
@@ -192,16 +203,42 @@ export default function MyApplicationsTab({ applications, loading, onBrowse }: P
                 {org}
               </p>
             )}
-            <p
+            <div
               style={{
-                margin: 0,
-                fontSize: 12,
-                fontWeight: 'var(--font-weight-normal, 400)',
-                color: 'hsl(var(--on-surface-muted))',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: 2,
               }}
             >
-              Applied {date}
-            </p>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                Applied {date}
+              </p>
+              {clickable && (
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--primary))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                  }}
+                >
+                  View job
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    arrow_forward
+                  </span>
+                </span>
+              )}
+            </div>
           </div>
         )
       })}
