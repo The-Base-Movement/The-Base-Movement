@@ -73,6 +73,7 @@ const AdminChapterHub = lazy(() => import('./pages/admin/ChapterLeadHub'))
 const AdminFieldDirectives = lazy(() => import('./pages/admin/FieldDirectives'))
 const AdminMobilizationMetrics = lazy(() => import('./pages/admin/MobilizationMetrics'))
 const AdminLogisticsIntelligence = lazy(() => import('./pages/admin/LogisticsIntelligence'))
+const AdminAnalytics = lazy(() => import('./pages/admin/AdminAnalytics'))
 const AdminRallyCommand = lazy(() => import('./pages/admin/RallyCommand'))
 const AdminSentimentIntelligence = lazy(() => import('./pages/admin/SentimentIntelligence'))
 const AdminWarRoomCommand = lazy(() => import('./pages/admin/WarRoomCommand'))
@@ -172,6 +173,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/directives', element: <AdminFieldDirectives /> },
       { path: '/admin/mobilization-metrics', element: <AdminMobilizationMetrics /> },
       { path: '/admin/logistics-intelligence', element: <AdminLogisticsIntelligence /> },
+      { path: '/admin/analytics', element: <AdminAnalytics /> },
       { path: '/admin/rally-command', element: <AdminRallyCommand /> },
       { path: '/admin/sentiment-intelligence', element: <AdminSentimentIntelligence /> },
       { path: '/admin/war-room', element: <AdminWarRoomCommand /> },

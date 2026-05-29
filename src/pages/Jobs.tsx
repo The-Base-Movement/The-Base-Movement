@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { trackEvent } from '@/lib/analytics'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { jobService } from '@/services/jobService'
 import type { Job, JobFilters, JobType, PlatformFilter } from '@/types/jobs'
@@ -107,6 +108,7 @@ export default function Jobs() {
     }
     const ok = await jobService.applyToJob(selectedJob.id, { coverLetter, resumeUrl })
     if (ok) {
+      trackEvent('job_application', { job_title: selectedJob.title })
       toast.success('Application submitted successfully!')
       setHasApplied(true)
       setAppliedJobIds((prev) => new Set([...prev, selectedJob.id]))

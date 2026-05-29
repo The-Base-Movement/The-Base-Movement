@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { trackEvent } from '@/lib/analytics'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
@@ -149,6 +150,7 @@ export default function Checkout() {
           { order_id: order.id }
         )
       }
+      trackEvent('store_purchase', { total: total, items: cart.length })
       toast.success('Order placed successfully! Check your email for details.')
       clearCart()
       const path = isDashboard ? '/dashboard/store/summary' : '/store/summary'

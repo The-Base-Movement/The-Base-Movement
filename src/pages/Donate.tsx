@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { trackEvent } from '@/lib/analytics'
 import {
   adminService,
   type Country,
@@ -123,6 +124,7 @@ export default function PublicDonate() {
       })
       if (success) {
         setSubmitted(true)
+        trackEvent('donation_submitted', { amount: parseFloat(formData.amount) })
         toast.success('Contribution sequence initialized.')
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
