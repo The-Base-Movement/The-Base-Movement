@@ -518,6 +518,15 @@
   border-radius: var(--radius-pill);
 }
 
+/* Hide scrollbar for horizontal tab bars */
+.tab-bar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Sidebar Specific Gradient Scrollbar */
 .sidebar-scroll::-webkit-scrollbar {
   width: 5px;

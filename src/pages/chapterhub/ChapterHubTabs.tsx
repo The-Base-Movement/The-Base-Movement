@@ -14,7 +14,7 @@ interface Props {
 export function ChapterHubTabs({ tabs, activeTab, onTabChange }: Props) {
   return (
     <div
-      className="sidebar-scroll"
+      className="tab-bar"
       style={{
         display: 'flex',
         borderBottom: '1px solid hsl(var(--border))',
@@ -29,7 +29,7 @@ export function ChapterHubTabs({ tabs, activeTab, onTabChange }: Props) {
           onClick={() => onTabChange(tab.key)}
           style={{
             flexShrink: 0,
-            padding: '10px 16px',
+            padding: '10px 16px 13px',
             background: 'none',
             border: 'none',
             cursor: 'pointer',
