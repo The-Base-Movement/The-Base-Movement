@@ -219,12 +219,22 @@ export default function LeadershipHub() {
     }
     setIsAppointing(true)
     try {
+      const appointedChapter = appointChapters.find((c) => c.id === selectedChapterId)
+      const chapterName = appointedChapter?.name
+
       const success = await adminService.updateChapter(selectedChapterId, {
         leader_name: selectedMember.name,
         leader_id: selectedMember.authId,
         ...(appointRole === 'Chapter Leader' ? { status: 'Active' } : {}),
       })
       if (success) {
+        // Automatically assign the newly appointed leader as a member of this chapter so they appear in counts
+        if (chapterName) {
+          await supabase
+            .from('users')
+            .update({ chapter: chapterName })
+            .eq('id', selectedMember.authId)
+        }
         await supabase.from('chapter_leaders').insert({
           chapter_id: selectedChapterId,
           name: selectedMember.name,

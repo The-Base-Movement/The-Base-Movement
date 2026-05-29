@@ -566,7 +566,20 @@ class AdminService {
       .eq('id', authId)
       .maybeSingle()
     if (data?.chapter) return data.chapter
-    // Fall back: check if this user is the named leader of a chapter
+
+    // Fallback 1: check if this user is the leader of a chapter by leader_id UUID match
+    const { data: ledById } = await supabase
+      .from('chapters')
+      .select('name')
+      .eq('leader_id', authId)
+      .maybeSingle()
+    if (ledById?.name) {
+      // Persist so the user appears in their own chapter directory going forward
+      await supabase.from('users').update({ chapter: ledById.name }).eq('id', authId)
+      return ledById.name
+    }
+
+    // Fallback 2: check if this user is the named leader of a chapter by leader_name
     if (data?.full_name) {
       const { data: led } = await supabase
         .from('chapters')
@@ -575,7 +588,7 @@ class AdminService {
         .maybeSingle()
       if (led?.name) {
         // Persist so the user appears in their own chapter directory going forward
-        supabase.from('users').update({ chapter: led.name }).eq('id', authId)
+        await supabase.from('users').update({ chapter: led.name }).eq('id', authId)
         return led.name
       }
     }

@@ -72,20 +72,26 @@ class ChapterService {
     // Collect leader_ids to fetch their real avatars
     const leaderIds = (data || []).map((c) => c.leader_id).filter(Boolean) as string[]
 
-    // Fetch countries, live member counts, and leader avatars in parallel
+    // Fetch countries, live member counts, and leader avatars + chapters in parallel
     const [{ data: countriesData }, { data: memberRows }, { data: leaderAvatarRows }] =
       await Promise.all([
         supabase.from('countries').select('name, flag_url'),
         supabase.from('users').select('chapter').not('chapter', 'is', null),
         leaderIds.length > 0
-          ? supabase.from('users').select('id, avatar_url').in('id', leaderIds)
+          ? supabase.from('users').select('id, avatar_url, chapter').in('id', leaderIds)
           : Promise.resolve({ data: [] }),
       ])
 
     const leaderAvatarMap: Record<string, string> = {}
-    ;(leaderAvatarRows || []).forEach((u: { id: string; avatar_url: string | null }) => {
-      if (u.id && u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
-    })
+    const leaderChapterMap: Record<string, string> = {}
+    ;(leaderAvatarRows || []).forEach(
+      (u: { id: string; avatar_url: string | null; chapter: string | null }) => {
+        if (u.id) {
+          if (u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
+          if (u.chapter) leaderChapterMap[u.id] = u.chapter
+        }
+      }
+    )
 
     const countryFlagsMap = (countriesData || []).reduce((acc: Record<string, string>, curr) => {
       if (curr.name && curr.flag_url) acc[curr.name.toLowerCase()] = curr.flag_url
@@ -112,7 +118,19 @@ class ChapterService {
         leader_name: c.leader_name || 'Unassigned',
         leader_id: c.leader_id || undefined,
         leader_avatar_url: (c.leader_id && leaderAvatarMap[c.leader_id]) || undefined,
-        member_count: liveCounts[(c.name || '').toLowerCase()] ?? 0,
+        member_count: (() => {
+          let count = liveCounts[(c.name || '').toLowerCase()] ?? 0
+          if (c.leader_id) {
+            const leaderRegChapter = leaderChapterMap[c.leader_id]
+            if (
+              !leaderRegChapter ||
+              leaderRegChapter.toLowerCase() !== (c.name || '').toLowerCase()
+            ) {
+              count += 1
+            }
+          }
+          return count
+        })(),
         status: c.status || 'Pending',
         region: c.region || undefined,
         description: c.description || undefined,
@@ -171,17 +189,38 @@ class ChapterService {
       .eq('name', data.country)
       .single()
 
+    // Fetch live member count from users table manually
+    const { count: liveCount } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .ilike('chapter', data.name)
+
     let leaderAvatarUrl: string | undefined = undefined
+    let leaderRegisteredChapter: string | undefined = undefined
     if (data.leader_id) {
       const { data: userData } = await supabase
         .from('users')
-        .select('avatar_url')
+        .select('avatar_url, chapter')
         .eq('id', data.leader_id)
         .maybeSingle()
-      if (userData?.avatar_url) {
-        leaderAvatarUrl = userData.avatar_url
+      if (userData) {
+        if (userData.avatar_url) leaderAvatarUrl = userData.avatar_url
+        if (userData.chapter) leaderRegisteredChapter = userData.chapter
       }
     }
+
+    const calculatedMemberCount = (() => {
+      let count = liveCount || 0
+      if (data.leader_id) {
+        if (
+          !leaderRegisteredChapter ||
+          leaderRegisteredChapter.toLowerCase() !== data.name.toLowerCase()
+        ) {
+          count += 1
+        }
+      }
+      return count
+    })()
 
     return {
       id: data.id,
@@ -192,7 +231,7 @@ class ChapterService {
       leader_name: data.leader_name || 'Unassigned',
       leader_id: data.leader_id || undefined,
       leader_avatar_url: leaderAvatarUrl,
-      member_count: data.member_count || 0,
+      member_count: calculatedMemberCount,
       status: data.status,
       region: data.region || undefined,
       description: data.description || undefined,
