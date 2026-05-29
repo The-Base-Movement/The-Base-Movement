@@ -227,7 +227,21 @@ class AdminService {
     role: AdminRole,
     permissions: AdminPermission[]
   ): Promise<boolean> {
-    const { error } = await supabase.from('admins').insert([{ id, role, permissions }])
+    const dbPermissions: Record<string, boolean> = {}
+    permissions.forEach((p) => {
+      if (p.action === 'VERIFY_MEMBER') dbPermissions.can_manage_members = true
+      if (p.action === 'DELETE_MEMBER') dbPermissions.can_delete_members = true
+      if (p.action === 'MANAGE_CHAPTER') dbPermissions.can_manage_chapters = true
+      if (p.action === 'APPOINT_LEAD') dbPermissions.can_appoint_lead = true
+      if (p.action === 'MANAGE_POLLS') dbPermissions.can_manage_polls = true
+      if (p.action === 'MANAGE_INVENTORY') dbPermissions.can_manage_store = true
+      if (p.action === 'VIEW_AUDIT_LOGS') dbPermissions.can_view_audit_logs = true
+      if (p.action === 'MANAGE_BLOGS') dbPermissions.can_post_blog = true
+      if (p.action === 'MANAGE_DONATIONS') dbPermissions.can_manage_donations = true
+    })
+    const { error } = await supabase
+      .from('admins')
+      .insert([{ id, role, permissions: dbPermissions }])
 
     if (error) {
       console.error('[ADMIN SERVICE] Provisioning failed:', error)
