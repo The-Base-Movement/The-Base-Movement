@@ -10,6 +10,7 @@ import { ActivityFeed } from './dashboard/components/ActivityFeed'
 import { MovementJourney } from './dashboard/components/MovementJourney'
 import { donationService } from '@/services/donationService'
 import { gamificationService } from '@/services/gamificationService'
+import { PushPromptBanner } from '@/components/PushPromptBanner'
 
 interface DashboardMember {
   full_name: string
@@ -103,6 +104,7 @@ export default function Dashboard() {
 
   return (
     <div className="main">
+      <PushPromptBanner />
       {/* Welcome */}
       <div style={{ marginBottom: 'var(--stack-md, 24px)' }}>
         <span
