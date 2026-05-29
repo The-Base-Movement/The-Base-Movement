@@ -127,16 +127,17 @@ export default function Administrators() {
 
   const handleProvision = async () => {
     if (!selectedMember) return
+    const memberId = selectedMember.authId ?? selectedMember.id
     setIsProvisioning(true)
     try {
       const ok = await adminService.provisionAdministrator(
-        selectedMember.id,
+        memberId,
         provisionRole as AdminRole,
         getPermsForRole(provisionRole)
       )
       if (!ok) throw new Error('Provision failed')
       if (provisionRegion && REGIONAL_ROLES.includes(provisionRole)) {
-        await adminService.updateAdminData(selectedMember.id, { assigned_region: provisionRegion })
+        await adminService.updateAdminData(memberId, { assigned_region: provisionRegion })
       }
       toast.success(`${selectedMember.name} provisioned as ${formatRole(provisionRole)}`)
       setShowProvision(false)
