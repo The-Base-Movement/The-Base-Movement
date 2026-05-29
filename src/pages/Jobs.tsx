@@ -651,13 +651,11 @@ export default function Jobs() {
             >
               {/* Banner */}
               {selectedJob.banner_url && (
-                <div style={{ height: 180, flexShrink: 0 }}>
-                  <img
-                    src={selectedJob.banner_url}
-                    alt={selectedJob.title}
-                    style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
+                <img
+                  src={selectedJob.banner_url}
+                  alt={selectedJob.title}
+                  style={{ display: 'block', width: '100%', height: 'auto', flexShrink: 0 }}
+                />
               )}
 
               {/* Header */}
