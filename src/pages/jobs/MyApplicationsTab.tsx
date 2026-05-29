@@ -149,7 +149,7 @@ export default function MyApplicationsTab({ applications, loading, onBrowse, onV
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {applications.map((app) => {
         const isRemoved = app.job == null
-        const title = isRemoved ? '[Position removed]' : app.job.title
+        const title = app.job == null ? '[Position removed]' : app.job.title
         const org = app.job?.organization ?? ''
         const date = new Date(app.created_at).toLocaleDateString('en-GB', {
           day: 'numeric',
