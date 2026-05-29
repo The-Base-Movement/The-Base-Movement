@@ -469,7 +469,7 @@ export function ActivitiesTab({
                       style={{
                         margin: '6px 0 0',
                         fontSize: 12,
-                        fontWeight: 500,
+                        fontWeight: 'var(--font-weight-medium, 500)',
                         color: 'hsl(var(--on-surface))',
                         fontFamily: "'Public Sans', sans-serif",
                         lineHeight: 1.6,

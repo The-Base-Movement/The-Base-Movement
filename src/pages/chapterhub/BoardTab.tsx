@@ -212,7 +212,7 @@ export function BoardTab({
                 style={{
                   margin: 0,
                   fontSize: 13,
-                  fontWeight: 500,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface))',
                   fontFamily: "'Public Sans', sans-serif",
                   lineHeight: 1.65,
