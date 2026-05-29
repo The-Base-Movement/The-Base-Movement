@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 
 type Activity = {
   id: string
@@ -85,6 +85,15 @@ export function ActivitiesTab({
   onAddActivity,
   onDeleteActivity,
 }: Props) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const filtered = actFilter === 'All' ? activities : activities.filter((a) => a.type === actFilter)
 
   return (
@@ -97,36 +106,94 @@ export function ActivitiesTab({
             justifyContent: 'space-between',
             gap: 12,
             flexWrap: 'wrap',
+            width: '100%',
           }}
         >
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {FILTER_OPTIONS.map((f) => {
-              const count =
-                f === 'All' ? activities.length : activities.filter((a) => a.type === f).length
-              const isActive = actFilter === f
-              return (
-                <button
-                  key={f}
-                  onClick={() => onFilterChange(f)}
-                  style={{
-                    padding: '5px 12px',
-                    borderRadius: 20,
-                    border: `1px solid ${isActive ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
-                    background: isActive ? 'hsl(var(--primary))' : 'transparent',
-                    color: isActive ? '#fff' : 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 11,
-                    cursor: 'pointer',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {f}
-                  {count > 0 ? ` (${count})` : ''}
-                </button>
-              )
-            })}
-          </div>
+          {isMobile ? (
+            /* Mobile Filter Pill + Dropdown select */
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button
+                onClick={() => onFilterChange('All')}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 20,
+                  border: `1px solid ${actFilter === 'All' ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
+                  background: actFilter === 'All' ? 'hsl(var(--primary))' : 'transparent',
+                  color: actFilter === 'All' ? '#fff' : 'hsl(var(--on-surface-muted))',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 11,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  flexShrink: 0,
+                }}
+              >
+                All ({activities.length})
+              </button>
+
+              <select
+                aria-label="Filter activities by type"
+                value={actFilter === 'All' ? '' : actFilter}
+                onChange={(e) => onFilterChange(e.target.value || 'All')}
+                style={{
+                  padding: '5px 24px 5px 10px',
+                  borderRadius: 20,
+                  border: `1px solid ${actFilter !== 'All' ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
+                  background: actFilter !== 'All' ? 'hsl(var(--primary) / 0.08)' : '#fff',
+                  color:
+                    actFilter !== 'All' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 11,
+                  cursor: 'pointer',
+                  outline: 'none',
+                  height: 28,
+                  boxSizing: 'border-box',
+                }}
+              >
+                <option value="">Filter Type...</option>
+                {FILTER_OPTIONS.filter((f) => f !== 'All').map((f) => {
+                  const count = activities.filter((a) => a.type === f).length
+                  return (
+                    <option key={f} value={f}>
+                      {f} {count > 0 ? `(${count})` : ''}
+                    </option>
+                  )
+                })}
+              </select>
+            </div>
+          ) : (
+            /* Desktop Filter Pills */
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {FILTER_OPTIONS.map((f) => {
+                const count =
+                  f === 'All' ? activities.length : activities.filter((a) => a.type === f).length
+                const isActive = actFilter === f
+                return (
+                  <button
+                    key={f}
+                    onClick={() => onFilterChange(f)}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: 20,
+                      border: `1px solid ${isActive ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
+                      background: isActive ? 'hsl(var(--primary))' : 'transparent',
+                      color: isActive ? '#fff' : 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 11,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {f}
+                    {count > 0 ? ` (${count})` : ''}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
           <button className="btn btn-primary btn-sm" onClick={onShowForm}>
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add

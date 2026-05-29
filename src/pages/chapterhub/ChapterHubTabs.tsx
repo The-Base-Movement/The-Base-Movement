@@ -14,15 +14,22 @@ interface Props {
 export function ChapterHubTabs({ tabs, activeTab, onTabChange }: Props) {
   return (
     <div
-      style={{ display: 'flex', borderBottom: '1px solid hsl(var(--border))', marginBottom: 20 }}
+      className="sidebar-scroll"
+      style={{
+        display: 'flex',
+        borderBottom: '1px solid hsl(var(--border))',
+        marginBottom: 20,
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+      }}
     >
       {tabs.map((tab) => (
         <button
           key={tab.key}
           onClick={() => onTabChange(tab.key)}
           style={{
-            flex: 1,
-            padding: '10px 8px',
+            flexShrink: 0,
+            padding: '10px 16px',
             background: 'none',
             border: 'none',
             cursor: 'pointer',
