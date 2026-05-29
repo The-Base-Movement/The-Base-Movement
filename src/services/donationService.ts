@@ -323,21 +323,40 @@ class DonationService {
       return []
     }
 
-    return (data || []).map((d) => ({
-      id: d.id,
-      date: d.created_at,
-      amount: d.amount.toString(),
-      method: d.payment_method,
-      status: d.status,
-      reference: (d.reference as string | null) ?? d.id.substring(0, 8).toUpperCase(),
-      campaignTitle: d.donation_campaigns?.title,
-      fullName: d.full_name,
-      phone: d.phone,
-      country: d.country,
-      receiptUrl: d.receipt_url,
-      campaignId: d.campaign_id,
-      memberId: d.member_id,
-    }))
+    return (data || []).map((d) => this._mapDonation(d))
+  }
+
+  async getMemberDonationsById(userId: string): Promise<DonationDetail[]> {
+    const { data, error } = await supabase
+      .from('donations')
+      .select('*, donation_campaigns(title)')
+      .eq('member_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch member donations by id:', error)
+      return []
+    }
+
+    return (data || []).map((d) => this._mapDonation(d))
+  }
+
+  private _mapDonation(d: Record<string, unknown>): DonationDetail {
+    return {
+      id: d.id as string,
+      date: d.created_at as string,
+      amount: String(d.amount),
+      method: d.payment_method as string,
+      status: d.status as string,
+      reference: (d.reference as string | null) ?? (d.id as string).substring(0, 8).toUpperCase(),
+      campaignTitle: (d.donation_campaigns as { title?: string } | null)?.title,
+      fullName: d.full_name as string,
+      phone: d.phone as string,
+      country: d.country as string,
+      receiptUrl: d.receipt_url as string | null,
+      campaignId: d.campaign_id as string | null,
+      memberId: d.member_id as string | null,
+    }
   }
 
   subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {

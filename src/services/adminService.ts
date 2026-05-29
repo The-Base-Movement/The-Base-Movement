@@ -1407,15 +1407,17 @@ class AdminService {
   }
 
   async getPersonalDonationHistory(userId: string): Promise<DonationDetail[]> {
-    // Note: This expects userId which is linked to member record, but donationService.getMemberDonations expects phone.
-    // For now, we'll try to find the phone from the user metadata if available, or just return empty.
-    const { data: user } = await supabase
-      .from('users')
-      .select('phone_number')
-      .eq('id', userId)
-      .single()
-    if (!user?.phone_number) return []
-    return donationService.getMemberDonations(user.phone_number)
+    const [byId, user] = await Promise.all([
+      donationService.getMemberDonationsById(userId),
+      supabase.from('users').select('phone_number').eq('id', userId).single(),
+    ])
+
+    const byPhone = user.data?.phone_number
+      ? await donationService.getMemberDonations(user.data.phone_number)
+      : []
+
+    const seen = new Set<string>()
+    return [...byId, ...byPhone].filter((d) => !seen.has(d.id) && seen.add(d.id))
   }
 
   async getMovementSpendingHistory(): Promise<MobilizationLedger[]> {
