@@ -160,6 +160,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     icon: string
     label: string
     pill?: string
+    superAdminOnly?: boolean
     permission?: {
       action: AdminPermission['action']
       resource: AdminPermission['resource']
@@ -363,6 +364,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           to: '/admin/roles',
           icon: 'manage_accounts',
           label: 'Roles manager',
+          superAdminOnly: true,
           permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
         },
         {
@@ -397,6 +399,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => {
+        if (item.superAdminOnly) {
+          const role = user?.role
+          if (role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
+        }
         if (!item.permission) return true
         return adminService.can(item.permission.action, item.permission.resource)
       }),
@@ -651,11 +657,13 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           ? 'Strategic Organizer'
                           : user?.role === 'SUPER_ADMIN'
                             ? 'System Admin'
-                            : user?.role === 'REGIONAL_DIRECTOR'
-                              ? 'Regional Director'
-                              : user?.role === 'CONSTITUENCY_LEAD'
-                                ? 'Constituency Lead'
-                                : 'Staff'}
+                            : user?.role === 'ADMIN'
+                              ? 'Administrator'
+                              : user?.role === 'REGIONAL_DIRECTOR'
+                                ? 'Regional Director'
+                                : user?.role === 'CONSTITUENCY_LEAD'
+                                  ? 'Constituency Lead'
+                                  : 'Staff'}
                     </div>
                   </div>
                 </div>
@@ -1296,11 +1304,13 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                         ? 'Strategic Organizer'
                         : user?.role === 'SUPER_ADMIN'
                           ? 'System Admin'
-                          : user?.role === 'REGIONAL_DIRECTOR'
-                            ? 'Regional Director'
-                            : user?.role === 'CONSTITUENCY_LEAD'
-                              ? 'Constituency Lead'
-                              : 'Staff Verifier'}
+                          : user?.role === 'ADMIN'
+                            ? 'Administrator'
+                            : user?.role === 'REGIONAL_DIRECTOR'
+                              ? 'Regional Director'
+                              : user?.role === 'CONSTITUENCY_LEAD'
+                                ? 'Constituency Lead'
+                                : 'Staff Verifier'}
                   </div>
                 </div>
                 {/* Avatar */}

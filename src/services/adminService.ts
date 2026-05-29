@@ -1504,6 +1504,7 @@ class AdminService {
     if (dbRole.includes('FOUNDER')) role = 'FOUNDER'
     else if (dbRole.includes('ORGANIZER')) role = 'ORGANIZER'
     else if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN'
+    else if (dbRole === 'ADMIN') role = 'ADMIN'
     else if (dbRole.includes('CHIEF_EDITOR')) role = 'CHIEF_EDITOR'
     else if (dbRole.includes('SENIOR_EDITOR')) role = 'SENIOR_EDITOR'
     else if (dbRole.includes('REGIONAL')) role = 'REGIONAL_DIRECTOR'
