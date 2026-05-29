@@ -617,6 +617,11 @@
   min-width: 0;
   animation: mainFadeIn 0.35s ease both;
 }
+.dashboard-body {
+  flex: 1;
+  min-width: 0;
+  padding: 28px 32px 60px;
+}
 @keyframes mainFadeIn {
   from {
     opacity: 0;
@@ -881,6 +886,9 @@ td.leadership-col-secondary {
   .main,
   .admin-page-container {
     padding: 10px 14px 40px;
+  }
+  .dashboard-body {
+    padding: 0;
   }
   .top {
     flex-direction: column;

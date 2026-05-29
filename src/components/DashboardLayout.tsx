@@ -1126,8 +1126,8 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        <div className="flex-1 main-content-wrapper px-4 md:px-[32px] py-[28px] pb-[60px]">
-          <div className="max-w-[1440px] mx-auto w-full">
+        <div className="dashboard-body">
+          <div style={{ maxWidth: 1440, margin: '0 auto', width: '100%' }}>
             <Outlet />
           </div>
         </div>
