@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 import { useChapters } from '@/context/ChaptersContext'
+import { useAuth } from '@/context/AuthContext'
 
 import { DashboardRequestModal } from './chapters/DashboardRequestModal'
 import { DashboardMobileFilterDrawer } from './chapters/DashboardMobileFilterDrawer'
@@ -74,6 +74,7 @@ export default function Chapters() {
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
   const { chapters } = useChapters()
+  const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'ghana' | 'diaspora'>('ghana')
   const [selectedRegion, setSelectedRegion] = useState('All Regions')
@@ -94,20 +95,19 @@ export default function Chapters() {
   useEffect(() => {
     setRegions(['All Regions', ...GHANA_REGIONS_LIST.slice().sort()])
     const fetchUserChapter = async () => {
+      if (!user) {
+        setUserChapterName(null)
+        return
+      }
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (user) {
-          const chapterName = await adminService.getUserChapter(user.id)
-          setUserChapterName(chapterName)
-        }
+        const chapterName = await adminService.getUserChapter(user.id)
+        setUserChapterName(chapterName)
       } catch (err) {
         console.warn('[CHAPTERS] Failed to sync user chapter:', err)
       }
     }
     fetchUserChapter()
-  }, [])
+  }, [user])
 
   useEffect(() => {
     setCurrentPage(1)
