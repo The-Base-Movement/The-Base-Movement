@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import type { CSSProperties } from 'react'
 
 const lbl: CSSProperties = {
@@ -61,14 +62,26 @@ export function SettingsTab({
   onPhoneChange,
   onSaveContact,
 }: Props) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* ── Chapter profile panel ── */}
       <div className="panel" style={{ padding: '20px 22px' }}>
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'flex-start' : 'center',
             justifyContent: 'space-between',
+            gap: isMobile ? 12 : 0,
             marginBottom: 16,
             paddingBottom: 12,
             borderBottom: '1px solid hsl(var(--border))',
@@ -98,10 +111,12 @@ export function SettingsTab({
             className="btn btn-primary btn-sm"
             onClick={onSaveDetails}
             disabled={isSavingDetails}
+            style={isMobile ? { width: '100%' } : undefined}
           >
             {isSavingDetails ? 'Saving…' : 'Save changes'}
           </button>
         </div>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label style={lbl}>About this chapter</label>
@@ -129,6 +144,7 @@ export function SettingsTab({
               }}
             />
           </div>
+
           <div>
             <label style={lbl}>Local focus areas</label>
             {focusTags.length > 0 && (
@@ -173,7 +189,13 @@ export function SettingsTab({
                 ))}
               </div>
             )}
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: 8,
+              }}
+            >
               <input
                 name="focusInput"
                 id="input-9b4d88"
@@ -187,12 +209,12 @@ export function SettingsTab({
                   }
                 }}
                 placeholder="e.g. Voter registration"
-                style={{ ...inp, flex: 1 }}
+                style={{ ...inp, flex: isMobile ? undefined : 1 }}
               />
               <button
                 className="btn btn-outline btn-sm"
                 onClick={onAddFocusTag}
-                style={{ height: 40, whiteSpace: 'nowrap' }}
+                style={{ height: 40, whiteSpace: 'nowrap', width: isMobile ? '100%' : 'auto' }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                   add
@@ -215,12 +237,15 @@ export function SettingsTab({
         </div>
       </div>
 
+      {/* ── Contact info panel ── */}
       <div className="panel" style={{ padding: '20px 22px' }}>
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'flex-start' : 'center',
             justifyContent: 'space-between',
+            gap: isMobile ? 12 : 0,
             marginBottom: 16,
             paddingBottom: 12,
             borderBottom: '1px solid hsl(var(--border))',
@@ -250,6 +275,7 @@ export function SettingsTab({
             className="btn btn-primary btn-sm"
             onClick={onSaveContact}
             disabled={isSavingContact}
+            style={isMobile ? { width: '100%' } : undefined}
           >
             {isSavingContact ? 'Saving…' : 'Save changes'}
           </button>
