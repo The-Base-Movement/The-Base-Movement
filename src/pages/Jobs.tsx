@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { trackEvent } from '@/lib/analytics'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { jobService } from '@/services/jobService'
@@ -618,229 +619,200 @@ export default function Jobs() {
       )}
 
       {/* Job detail modal */}
-      {selectedJob && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.5)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 16,
-          }}
-          onClick={() => setSelectedJob(null)}
-        >
+      {selectedJob &&
+        createPortal(
           <div
             style={{
-              background: 'hsl(var(--background))',
-              borderRadius: 'var(--radius-lg)',
-              border: '1px solid hsl(var(--border))',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-              width: '100%',
-              maxWidth: 640,
-              maxHeight: '90vh',
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.5)',
+              zIndex: 100,
               display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 16,
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => setSelectedJob(null)}
           >
-            {/* Banner */}
-            {selectedJob.banner_url && (
-              <div style={{ height: 180, flexShrink: 0 }}>
-                <img
-                  src={selectedJob.banner_url}
-                  alt={selectedJob.title}
-                  style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            )}
-
-            {/* Header */}
             <div
               style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid hsl(var(--border))',
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 12,
-                flexShrink: 0,
                 background: 'hsl(var(--background))',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid hsl(var(--border))',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+                width: '100%',
+                maxWidth: 640,
+                maxHeight: '90vh',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
               }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h2
-                  style={{
-                    margin: '0 0 2px',
-                    fontSize: 17,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface))',
-                    lineHeight: 1.3,
-                    fontFamily: font,
-                  }}
-                >
-                  {selectedJob.title}
-                </h2>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 13,
-                    fontWeight: 'var(--font-weight-normal, 400)',
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: font,
-                  }}
-                >
-                  {selectedJob.organization}
-                </p>
-              </div>
-              <button
-                aria-label="Close"
-                onClick={() => setSelectedJob(null)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'hsl(var(--on-surface-muted))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: 4,
-                  borderRadius: 'var(--radius-sm)',
-                  flexShrink: 0,
-                }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                  close
-                </span>
-              </button>
-            </div>
-
-            {/* Scrollable body */}
-            <div style={{ overflowY: 'auto', flex: 1, padding: '20px' }}>
-              {/* Pills */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
-                <span
-                  className={`pill ${PILL_COLORS[selectedJob.job_type]}`}
-                  style={{ fontSize: 11 }}
-                >
-                  {TYPE_LABELS[selectedJob.job_type]}
-                </span>
-                <span className="pill pill-mute" style={{ fontSize: 11 }}>
-                  {selectedJob.category}
-                </span>
-                {selectedJob.platform_filter !== 'ALL' && (
-                  <span
-                    className="pill"
-                    style={{
-                      fontSize: 11,
-                      background: 'hsl(var(--accent) / 0.15)',
-                      color: 'hsl(var(--accent))',
-                    }}
-                  >
-                    {selectedJob.platform_filter}
-                  </span>
-                )}
-                {selectedJob.location && (
-                  <span className="pill pill-mute" style={{ fontSize: 11 }}>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: 11, verticalAlign: 'middle', marginRight: 2 }}
-                    >
-                      location_on
-                    </span>
-                    {selectedJob.location}
-                  </span>
-                )}
-              </div>
-
-              {/* Meta strip */}
-              {(selectedJob.salary_range || selectedJob.deadline) && (
-                <div
-                  style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 16,
-                    padding: '10px 14px',
-                    background: 'hsl(var(--container-low))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 'var(--radius-sm)',
-                    marginBottom: 20,
-                    fontSize: 13,
-                    fontFamily: font,
-                  }}
-                >
-                  {selectedJob.salary_range && (
-                    <span>
-                      <span
-                        style={{
-                          fontWeight: 'var(--font-weight-medium, 500)',
-                          color: 'hsl(var(--on-surface))',
-                        }}
-                      >
-                        Salary:
-                      </span>{' '}
-                      <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
-                        {selectedJob.salary_range}
-                      </span>
-                    </span>
-                  )}
-                  {selectedJob.deadline && (
-                    <span>
-                      <span
-                        style={{
-                          fontWeight: 'var(--font-weight-medium, 500)',
-                          color: 'hsl(var(--on-surface))',
-                        }}
-                      >
-                        Deadline:
-                      </span>{' '}
-                      <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
-                        {new Date(selectedJob.deadline).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                      </span>
-                    </span>
-                  )}
+              {/* Banner */}
+              {selectedJob.banner_url && (
+                <div style={{ height: 180, flexShrink: 0 }}>
+                  <img
+                    src={selectedJob.banner_url}
+                    alt={selectedJob.title}
+                    style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
                 </div>
               )}
 
-              {/* Description */}
-              <div style={{ marginBottom: selectedJob.requirements ? 20 : 0 }}>
-                <p
+              {/* Header */}
+              <div
+                style={{
+                  padding: '16px 20px',
+                  borderBottom: '1px solid hsl(var(--border))',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                  flexShrink: 0,
+                  background: 'hsl(var(--background))',
+                }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h2
+                    style={{
+                      margin: '0 0 2px',
+                      fontSize: 17,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface))',
+                      lineHeight: 1.3,
+                      fontFamily: font,
+                    }}
+                  >
+                    {selectedJob.title}
+                  </h2>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 13,
+                      fontWeight: 'var(--font-weight-normal, 400)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: font,
+                    }}
+                  >
+                    {selectedJob.organization}
+                  </p>
+                </div>
+                <button
+                  aria-label="Close"
+                  onClick={() => setSelectedJob(null)}
                   style={{
-                    margin: '0 0 8px',
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 11,
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
                     color: 'hsl(var(--on-surface-muted))',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    fontFamily: font,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 4,
+                    borderRadius: 'var(--radius-sm)',
+                    flexShrink: 0,
                   }}
                 >
-                  Description
-                </p>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 13,
-                    fontWeight: 'var(--font-weight-normal, 400)',
-                    color: 'hsl(var(--on-surface))',
-                    lineHeight: 1.7,
-                    whiteSpace: 'pre-wrap',
-                    fontFamily: font,
-                  }}
-                >
-                  {selectedJob.description}
-                </p>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                    close
+                  </span>
+                </button>
               </div>
 
-              {selectedJob.requirements && (
-                <div>
+              {/* Scrollable body */}
+              <div style={{ overflowY: 'auto', flex: 1, padding: '20px' }}>
+                {/* Pills */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
+                  <span
+                    className={`pill ${PILL_COLORS[selectedJob.job_type]}`}
+                    style={{ fontSize: 11 }}
+                  >
+                    {TYPE_LABELS[selectedJob.job_type]}
+                  </span>
+                  <span className="pill pill-mute" style={{ fontSize: 11 }}>
+                    {selectedJob.category}
+                  </span>
+                  {selectedJob.platform_filter !== 'ALL' && (
+                    <span
+                      className="pill"
+                      style={{
+                        fontSize: 11,
+                        background: 'hsl(var(--accent) / 0.15)',
+                        color: 'hsl(var(--accent))',
+                      }}
+                    >
+                      {selectedJob.platform_filter}
+                    </span>
+                  )}
+                  {selectedJob.location && (
+                    <span className="pill pill-mute" style={{ fontSize: 11 }}>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 11, verticalAlign: 'middle', marginRight: 2 }}
+                      >
+                        location_on
+                      </span>
+                      {selectedJob.location}
+                    </span>
+                  )}
+                </div>
+
+                {/* Meta strip */}
+                {(selectedJob.salary_range || selectedJob.deadline) && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: 16,
+                      padding: '10px 14px',
+                      background: 'hsl(var(--container-low))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      marginBottom: 20,
+                      fontSize: 13,
+                      fontFamily: font,
+                    }}
+                  >
+                    {selectedJob.salary_range && (
+                      <span>
+                        <span
+                          style={{
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
+                          Salary:
+                        </span>{' '}
+                        <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
+                          {selectedJob.salary_range}
+                        </span>
+                      </span>
+                    )}
+                    {selectedJob.deadline && (
+                      <span>
+                        <span
+                          style={{
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
+                          Deadline:
+                        </span>{' '}
+                        <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
+                          {new Date(selectedJob.deadline).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Description */}
+                <div style={{ marginBottom: selectedJob.requirements ? 20 : 0 }}>
                   <p
                     style={{
                       margin: '0 0 8px',
@@ -852,7 +824,7 @@ export default function Jobs() {
                       fontFamily: font,
                     }}
                   >
-                    Requirements
+                    Description
                   </p>
                   <p
                     style={{
@@ -865,173 +837,208 @@ export default function Jobs() {
                       fontFamily: font,
                     }}
                   >
-                    {selectedJob.requirements}
+                    {selectedJob.description}
                   </p>
                 </div>
-              )}
-            </div>
 
-            {/* Footer */}
-            <div
-              style={{
-                padding: '14px 20px',
-                borderTop: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                gap: 10,
-                flexShrink: 0,
-              }}
-            >
-              <button className="btn btn-outline btn-sm" onClick={() => setSelectedJob(null)}>
-                Close
-              </button>
-              {hasApplied ? (
-                <button
-                  className="btn btn-primary btn-sm"
-                  disabled
-                  style={{ opacity: 0.6, cursor: 'not-allowed' }}
-                >
-                  Applied ✓
+                {selectedJob.requirements && (
+                  <div>
+                    <p
+                      style={{
+                        margin: '0 0 8px',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        fontFamily: font,
+                      }}
+                    >
+                      Requirements
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                        color: 'hsl(var(--on-surface))',
+                        lineHeight: 1.7,
+                        whiteSpace: 'pre-wrap',
+                        fontFamily: font,
+                      }}
+                    >
+                      {selectedJob.requirements}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div
+                style={{
+                  padding: '14px 20px',
+                  borderTop: '1px solid hsl(var(--border))',
+                  background: 'hsl(var(--container-low))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  gap: 10,
+                  flexShrink: 0,
+                }}
+              >
+                <button className="btn btn-outline btn-sm" onClick={() => setSelectedJob(null)}>
+                  Close
                 </button>
-              ) : monthlyCount >= 3 ? (
-                <button
-                  className="btn btn-primary btn-sm"
-                  disabled
-                  style={{ opacity: 0.6, cursor: 'not-allowed' }}
-                >
-                  Limit reached
-                </button>
-              ) : (
-                <button className="btn btn-primary btn-sm" onClick={handleApplyClick}>
-                  Apply Now
-                </button>
-              )}
+                {hasApplied ? (
+                  <button
+                    className="btn btn-primary btn-sm"
+                    disabled
+                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                  >
+                    Applied ✓
+                  </button>
+                ) : monthlyCount >= 3 ? (
+                  <button
+                    className="btn btn-primary btn-sm"
+                    disabled
+                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                  >
+                    Limit reached
+                  </button>
+                ) : (
+                  <button className="btn btn-primary btn-sm" onClick={handleApplyClick}>
+                    Apply Now
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* Application form modal */}
-      {showApplyModal && selectedJob && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.55)',
-            zIndex: 110,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 16,
-          }}
-          onClick={() => setShowApplyModal(false)}
-        >
+      {showApplyModal &&
+        selectedJob &&
+        createPortal(
           <div
             style={{
-              background: 'hsl(var(--background))',
-              borderRadius: 'var(--radius-lg)',
-              width: '100%',
-              maxWidth: 540,
-              padding: 28,
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.55)',
+              zIndex: 110,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 16,
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => setShowApplyModal(false)}
           >
-            <h3
+            <div
               style={{
-                margin: '0 0 4px',
-                fontSize: 17,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-              }}
-            >
-              Apply — {selectedJob.title}
-            </h3>
-            <p
-              style={{
-                margin: '0 0 20px',
-                fontSize: 13,
-                fontWeight: 'var(--font-weight-normal, 400)',
-                color: 'hsl(var(--on-surface-muted))',
-              }}
-            >
-              {selectedJob.organization}
-            </p>
-
-            <label
-              style={{
-                display: 'block',
-                fontSize: 12,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                marginBottom: 6,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-              }}
-            >
-              Cover Letter <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-            </label>
-            <textarea
-              value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
-              rows={6}
-              placeholder="Introduce yourself and explain why you're a great fit..."
-              style={{
+                background: 'hsl(var(--background))',
+                borderRadius: 'var(--radius-lg)',
                 width: '100%',
-                padding: '10px 12px',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-sm)',
-                fontFamily: font,
-                fontSize: 13,
-                fontWeight: 'var(--font-weight-normal, 400)',
-                color: 'hsl(var(--on-surface))',
-                resize: 'vertical',
-                boxSizing: 'border-box',
-                marginBottom: 16,
+                maxWidth: 540,
+                padding: 28,
               }}
-            />
-
-            <label
-              style={{
-                display: 'block',
-                fontSize: 12,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                marginBottom: 6,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-              }}
+              onClick={(e) => e.stopPropagation()}
             >
-              Resume / CV <span style={{ color: 'hsl(var(--on-surface-muted))' }}>(optional)</span>
-            </label>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
-              style={{
-                display: 'block',
-                marginBottom: 24,
-                fontSize: 13,
-                color: 'hsl(var(--on-surface))',
-              }}
-            />
-
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-              <button className="btn btn-outline" onClick={() => setShowApplyModal(false)}>
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                disabled={!coverLetter.trim() || submitting}
-                onClick={handleSubmitApplication}
+              <h3
+                style={{
+                  margin: '0 0 4px',
+                  fontSize: 17,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                }}
               >
-                {submitting ? 'Submitting...' : 'Submit Application'}
-              </button>
+                Apply — {selectedJob.title}
+              </h3>
+              <p
+                style={{
+                  margin: '0 0 20px',
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {selectedJob.organization}
+              </p>
+
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 12,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                  marginBottom: 6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Cover Letter <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+              </label>
+              <textarea
+                value={coverLetter}
+                onChange={(e) => setCoverLetter(e.target.value)}
+                rows={6}
+                placeholder="Introduce yourself and explain why you're a great fit..."
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: font,
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface))',
+                  resize: 'vertical',
+                  boxSizing: 'border-box',
+                  marginBottom: 16,
+                }}
+              />
+
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 12,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                  marginBottom: 6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Resume / CV{' '}
+                <span style={{ color: 'hsl(var(--on-surface-muted))' }}>(optional)</span>
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
+                style={{
+                  display: 'block',
+                  marginBottom: 24,
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface))',
+                }}
+              />
+
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                <button className="btn btn-outline" onClick={() => setShowApplyModal(false)}>
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary"
+                  disabled={!coverLetter.trim() || submitting}
+                  onClick={handleSubmitApplication}
+                >
+                  {submitting ? 'Submitting...' : 'Submit Application'}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }
