@@ -147,7 +147,7 @@ export default function TrashPage() {
   }
 
   const formatDaysRemaining = (deletedAt: string) => {
-    const expiryDate = new Date(new Date(deletedAt).getTime() + 30 * 24 * 60 * 60 * 1000)
+    const expiryDate = new Date(new Date(deletedAt).getTime() + 90 * 24 * 60 * 60 * 1000)
     return Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
   }
 
@@ -215,7 +215,7 @@ export default function TrashPage() {
       <AdminPageHeader
         title="Trash"
         icon="delete"
-        description="Deleted items are kept for 30 days, then removed forever."
+        description="Deleted items are kept for 90 days, then removed forever."
       />
 
       {/* KPI row */}
@@ -229,7 +229,7 @@ export default function TrashPage() {
           },
           {
             label: 'Kept for',
-            value: '30 days',
+            value: '90 days',
             icon: 'schedule',
             bar: 'hsl(var(--destructive))',
           },
@@ -574,7 +574,7 @@ export default function TrashPage() {
                     margin: 0,
                   }}
                 >
-                  Items are permanently deleted after 30 days and cannot be recovered.
+                  Items are permanently deleted after 90 days and cannot be recovered.
                 </p>
               </div>
             </div>
