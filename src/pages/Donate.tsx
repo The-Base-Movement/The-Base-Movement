@@ -7,7 +7,7 @@ import {
   type DonationDetail,
   type MobilizationLedger,
 } from '@/services/adminService'
-import { authService } from '@/services/authService'
+import { supabase } from '@/lib/supabase'
 import { memberService } from '@/services/memberService'
 import type { Member } from '@/types/admin'
 import { toast } from 'sonner'
@@ -57,7 +57,14 @@ export default function PublicDonate() {
   useEffect(() => {
     async function load() {
       setLoading(true)
-      const user = authService.getUser()
+      let user = null
+      try {
+        const { data } = await supabase.auth.getUser()
+        user = data.user
+      } catch (err) {
+        console.warn('Failed to retrieve user session on mount:', err)
+      }
+
       setIsLoggedIn(!!user)
 
       let profile: Member | null = null

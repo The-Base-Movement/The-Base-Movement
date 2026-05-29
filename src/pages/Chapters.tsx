@@ -1,7 +1,7 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
-import { authService } from '@/services/authService'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 import { useChapters } from '@/context/ChaptersContext'
@@ -93,8 +93,20 @@ export default function Chapters() {
 
   useEffect(() => {
     setRegions(['All Regions', ...GHANA_REGIONS_LIST.slice().sort()])
-    const user = authService.getUser()
-    if (user) adminService.getUserChapter(user.id).then(setUserChapterName)
+    const fetchUserChapter = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (user) {
+          const chapterName = await adminService.getUserChapter(user.id)
+          setUserChapterName(chapterName)
+        }
+      } catch (err) {
+        console.warn('[CHAPTERS] Failed to sync user chapter:', err)
+      }
+    }
+    fetchUserChapter()
   }, [])
 
   useEffect(() => {
