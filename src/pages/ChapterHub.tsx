@@ -115,27 +115,31 @@ export default function ChapterHub() {
           )
         }
       }
-      if (!mine) mine = chapters.find((c) => c.leader_id === userId)
 
+      // Fallback 1: Chapter user leads (direct, name, or custom role match)
       if (!mine) {
-        const { data: ud } = await supabase
-          .from('users')
-          .select('chapter, full_name, avatar_url')
-          .eq('id', userId)
-          .maybeSingle()
-        if (ud?.chapter)
-          mine = chapters.find((c) => c.name.toLowerCase() === ud.chapter.toLowerCase())
-        if (ud?.full_name) setLeaderName(ud.full_name)
-        if (ud?.avatar_url) setLeaderAvatarUrl(ud.avatar_url)
-      } else {
-        const { data: ud } = await supabase
-          .from('users')
-          .select('full_name, avatar_url')
-          .eq('id', userId)
-          .maybeSingle()
-        if (ud?.full_name) setLeaderName(ud.full_name)
-        if (ud?.avatar_url) setLeaderAvatarUrl(ud.avatar_url)
+        const leadChapterName = await adminService.getLeadChapter(userId)
+        if (leadChapterName) {
+          mine = chapters.find((c) => c.name.toLowerCase() === leadChapterName.toLowerCase())
+        }
       }
+
+      // Fallback 2: Chapter user joined as a member
+      if (!mine) {
+        const userChapterName = await adminService.getUserChapter(userId)
+        if (userChapterName) {
+          mine = chapters.find((c) => c.name.toLowerCase() === userChapterName.toLowerCase())
+        }
+      }
+
+      // Fetch logged-in user profile info for posts/announcements
+      const { data: ud } = await supabase
+        .from('users')
+        .select('full_name, avatar_url')
+        .eq('id', userId)
+        .maybeSingle()
+      if (ud?.full_name) setLeaderName(ud.full_name)
+      if (ud?.avatar_url) setLeaderAvatarUrl(ud.avatar_url)
 
       if (!mine) {
         setIsLoading(false)
