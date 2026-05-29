@@ -12,6 +12,7 @@ import { PersonalInfoForm } from './settings/PersonalInfoForm'
 import { PerformancePrefsPanel } from './settings/PerformancePrefsPanel'
 import { ProfileSettingsHeader } from './settings/ProfileSettingsHeader'
 import { DangerZonePanel } from './settings/DangerZonePanel'
+import { NotificationsPanel } from './settings/NotificationsPanel'
 
 interface FormState {
   fullName: string
@@ -280,6 +281,8 @@ export default function ProfileSettings() {
             lowBandwidthMode={lowBandwidthMode}
             onToggle={() => setLowBandwidthMode(!lowBandwidthMode)}
           />
+
+          <NotificationsPanel />
 
           {/* Save action */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
