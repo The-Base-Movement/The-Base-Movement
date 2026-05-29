@@ -140,7 +140,7 @@ export default function PollsManagement() {
             body: {
               userIds: 'all',
               title: 'New poll — your voice matters',
-              body: newPoll.title.slice(0, 100),
+              body: newPoll.question.slice(0, 100),
               url: '/dashboard/polls',
             },
           })
