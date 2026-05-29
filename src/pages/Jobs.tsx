@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { trackEvent } from '@/lib/analytics'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { jobService } from '@/services/jobService'
-import type { Job, JobFilters, JobType, PlatformFilter } from '@/types/jobs'
+import type { Job, JobFilters, JobType, PlatformFilter, ApplicationWithJob } from '@/types/jobs'
+import MyApplicationsTab from './jobs/MyApplicationsTab'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 
@@ -58,6 +59,14 @@ export default function Jobs() {
   const [submitting, setSubmitting] = useState(false)
   const [appliedJobIds, setAppliedJobIds] = useState<Set<string>>(new Set())
 
+  // Tabs + monthly limit (dashboard only)
+  const [activeTab, setActiveTab] = useState<'browse' | 'applications'>('browse')
+  const [applications, setApplications] = useState<ApplicationWithJob[]>([])
+  const [applicationsLoaded, setApplicationsLoaded] = useState(false)
+  const [applicationsLoading, setApplicationsLoading] = useState(false)
+  const [monthlyCount, setMonthlyCount] = useState(0)
+  const [monthlyCountLoading, setMonthlyCountLoading] = useState(true)
+
   useEffect(() => {
     let cancelled = false
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -78,6 +87,65 @@ export default function Jobs() {
       setAppliedJobIds(new Set(apps.map((a) => a.job_id)))
     })
   }, [])
+
+  useEffect(() => {
+    if (!isDashboard) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMonthlyCountLoading(true)
+    jobService.getMonthlyApplicationCount().then((n) => {
+      setMonthlyCount(n)
+      setMonthlyCountLoading(false)
+    })
+  }, [isDashboard])
+
+  async function loadApplications() {
+    if (applicationsLoaded || applicationsLoading) return
+    setApplicationsLoading(true)
+    const data = await jobService.getMemberApplicationsFull()
+    setApplications(data)
+    setApplicationsLoaded(true)
+    setApplicationsLoading(false)
+  }
+
+  function switchToApplications() {
+    setActiveTab('applications')
+    loadApplications()
+  }
+
+  function nextMonthName() {
+    const d = new Date()
+    d.setMonth(d.getMonth() + 1)
+    return d.toLocaleString('default', { month: 'long' })
+  }
+
+  function counterChip() {
+    if (monthlyCountLoading) {
+      return (
+        <span className="pill pill-mute" style={{ fontSize: 12 }}>
+          — / 3 used this month
+        </span>
+      )
+    }
+    if (monthlyCount >= 3) {
+      return (
+        <span className="pill pill-err" style={{ fontSize: 12 }}>
+          3 / 3 — resets 1 {nextMonthName()}
+        </span>
+      )
+    }
+    if (monthlyCount >= 1) {
+      return (
+        <span className="pill pill-warn" style={{ fontSize: 12 }}>
+          {monthlyCount} / 3 used this month
+        </span>
+      )
+    }
+    return (
+      <span className="pill pill-mute" style={{ fontSize: 12 }}>
+        0 / 3 used this month
+      </span>
+    )
+  }
 
   async function openJobDetail(job: Job) {
     setSelectedJob(job)
@@ -106,17 +174,44 @@ export default function Jobs() {
       }
       resumeUrl = url
     }
-    const ok = await jobService.applyToJob(selectedJob.id, { coverLetter, resumeUrl })
-    if (ok) {
+    const result = await jobService.applyToJob(selectedJob.id, { coverLetter, resumeUrl })
+    if (result.ok) {
       trackEvent('job_application', { job_title: selectedJob.title })
       toast.success('Application submitted successfully!')
       setHasApplied(true)
       setAppliedJobIds((prev) => new Set([...prev, selectedJob.id]))
+      setMonthlyCount((n) => n + 1)
+      // Optimistic update: prepend new card without a re-fetch
+      const optimistic: ApplicationWithJob = {
+        id: crypto.randomUUID(),
+        job_id: selectedJob.id,
+        member_id: '',
+        cover_letter: coverLetter,
+        resume_url: resumeUrl,
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        job: {
+          title: selectedJob.title,
+          organization: selectedJob.organization,
+          status: selectedJob.status,
+        },
+      }
+      setApplications((prev) => [optimistic, ...prev])
+      setApplicationsLoaded(true)
       setShowApplyModal(false)
       setCoverLetter('')
       setResumeFile(null)
+    } else if (result.reason === 'limit_reached') {
+      toast.error(
+        `You've reached your 3-application limit for this month. Resets on 1 ${nextMonthName()}.`
+      )
+      setMonthlyCount(3)
+    } else if (result.reason === 'already_applied') {
+      toast.error("You've already applied for this position.")
+      setHasApplied(true)
     } else {
-      toast.error('Failed to submit application. You may have already applied.')
+      toast.error('Application failed. Please try again.')
     }
     setSubmitting(false)
   }
@@ -151,294 +246,359 @@ export default function Jobs() {
         </p>
       </div>
 
-      {/* Filter bar */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
-        {/* Row 1 — search, full width */}
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 16,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            placeholder="Search title or organisation..."
-            value={filters.search}
-            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-            style={{
-              width: '100%',
-              height: 38,
-              paddingLeft: 34,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontFamily: font,
-              fontSize: 13,
-              fontWeight: 'var(--font-weight-normal, 400)',
-              color: 'hsl(var(--on-surface))',
-              background: 'hsl(var(--background))',
-              boxSizing: 'border-box',
-            }}
-          />
+      {/* Tab bar — dashboard only */}
+      {isDashboard && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 20,
+            flexWrap: 'wrap',
+            gap: 8,
+          }}
+        >
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              className={`btn btn-sm ${activeTab === 'browse' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+              onClick={() => setActiveTab('browse')}
+            >
+              Browse Jobs
+            </button>
+            <button
+              className={`btn btn-sm ${activeTab === 'applications' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+              onClick={switchToApplications}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              My Applications
+              {applicationsLoaded && applications.length > 0 && (
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 18,
+                    height: 18,
+                    padding: '0 4px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: 'hsl(var(--on-surface) / 0.15)',
+                    fontSize: 11,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
+                  {applications.length}
+                </span>
+              )}
+            </button>
+          </div>
+          {counterChip()}
         </div>
-        {/* Row 2 — filters, wrap on mobile */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button
-            className={`btn btn-sm ${!filters.category && !filters.job_type && !filters.platform_filter ? 'btn-active-tab' : 'btn-inactive-tab'}`}
-            onClick={() =>
-              setFilters((f) => ({ ...f, category: '', job_type: '', platform_filter: '' }))
-            }
-          >
-            All
-          </button>
-          <select
-            value={filters.category}
-            onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
-            style={{
-              flex: '1 1 0',
-              minWidth: 0,
-              height: 36,
-              padding: '0 10px',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontFamily: font,
-              fontSize: 13,
-              fontWeight: 'var(--font-weight-normal, 400)',
-              color: 'hsl(var(--on-surface))',
-              background: 'hsl(var(--background))',
-            }}
-          >
-            <option value="">All Categories</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filters.job_type}
-            onChange={(e) =>
-              setFilters((f) => ({ ...f, job_type: e.target.value as JobType | '' }))
-            }
-            style={{
-              flex: '1 1 0',
-              minWidth: 0,
-              height: 36,
-              padding: '0 10px',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontFamily: font,
-              fontSize: 13,
-              fontWeight: 'var(--font-weight-normal, 400)',
-              color: 'hsl(var(--on-surface))',
-              background: 'hsl(var(--background))',
-            }}
-          >
-            <option value="">All Types</option>
-            {JOB_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {TYPE_LABELS[t]}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filters.platform_filter}
-            onChange={(e) =>
-              setFilters((f) => ({
-                ...f,
-                platform_filter: e.target.value as PlatformFilter | '',
-              }))
-            }
-            style={{
-              flex: '1 1 0',
-              minWidth: 0,
-              height: 36,
-              padding: '0 10px',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontFamily: font,
-              fontSize: 13,
-              fontWeight: 'var(--font-weight-normal, 400)',
-              color: 'hsl(var(--on-surface))',
-              background: 'hsl(var(--background))',
-            }}
-          >
-            <option value="">All Networks</option>
-            {PLATFORMS.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+      )}
 
-      {/* Job cards grid */}
-      {loading ? (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: 48,
-            color: 'hsl(var(--on-surface-muted))',
-            fontSize: 14,
-          }}
-        >
-          Loading jobs...
-        </div>
-      ) : jobs.length === 0 ? (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: 48,
-            color: 'hsl(var(--on-surface-muted))',
-            fontSize: 14,
-          }}
-        >
-          No jobs found.
-        </div>
-      ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: 16,
-          }}
-        >
-          {jobs.map((job) => (
+      {activeTab === 'browse' ? (
+        <>
+          {/* Filter bar */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+            {/* Row 1 — search, full width */}
+            <div style={{ position: 'relative' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 16,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                search
+              </span>
+              <input
+                placeholder="Search title or organisation..."
+                value={filters.search}
+                onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+                style={{
+                  width: '100%',
+                  height: 38,
+                  paddingLeft: 34,
+                  paddingRight: 12,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: font,
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface))',
+                  background: 'hsl(var(--background))',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+            {/* Row 2 — filters, wrap on mobile */}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button
+                className={`btn btn-sm ${!filters.category && !filters.job_type && !filters.platform_filter ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                onClick={() =>
+                  setFilters((f) => ({ ...f, category: '', job_type: '', platform_filter: '' }))
+                }
+              >
+                All
+              </button>
+              <select
+                value={filters.category}
+                onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
+                style={{
+                  flex: '1 1 0',
+                  minWidth: 0,
+                  height: 36,
+                  padding: '0 10px',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: font,
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface))',
+                  background: 'hsl(var(--background))',
+                }}
+              >
+                <option value="">All Categories</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={filters.job_type}
+                onChange={(e) =>
+                  setFilters((f) => ({ ...f, job_type: e.target.value as JobType | '' }))
+                }
+                style={{
+                  flex: '1 1 0',
+                  minWidth: 0,
+                  height: 36,
+                  padding: '0 10px',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: font,
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface))',
+                  background: 'hsl(var(--background))',
+                }}
+              >
+                <option value="">All Types</option>
+                {JOB_TYPES.map((t) => (
+                  <option key={t} value={t}>
+                    {TYPE_LABELS[t]}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={filters.platform_filter}
+                onChange={(e) =>
+                  setFilters((f) => ({
+                    ...f,
+                    platform_filter: e.target.value as PlatformFilter | '',
+                  }))
+                }
+                style={{
+                  flex: '1 1 0',
+                  minWidth: 0,
+                  height: 36,
+                  padding: '0 10px',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: font,
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  color: 'hsl(var(--on-surface))',
+                  background: 'hsl(var(--background))',
+                }}
+              >
+                <option value="">All Networks</option>
+                {PLATFORMS.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Job cards grid */}
+          {loading ? (
             <div
-              key={job.id}
-              className="panel"
-              onClick={() => openJobDetail(job)}
               style={{
-                padding: 0,
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'box-shadow 0.15s',
+                textAlign: 'center',
+                padding: 48,
+                color: 'hsl(var(--on-surface-muted))',
+                fontSize: 14,
               }}
             >
-              {job.banner_url ? (
-                <img
-                  src={job.banner_url}
-                  alt={job.title}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    height: 130,
-                    objectFit: 'cover',
-                  }}
-                />
-              ) : (
+              Loading jobs...
+            </div>
+          ) : jobs.length === 0 ? (
+            <div
+              style={{
+                textAlign: 'center',
+                padding: 48,
+                color: 'hsl(var(--on-surface-muted))',
+                fontSize: 14,
+              }}
+            >
+              No jobs found.
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                gap: 16,
+              }}
+            >
+              {jobs.map((job) => (
                 <div
+                  key={job.id}
+                  className="panel"
+                  onClick={() => openJobDetail(job)}
                   style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: 3,
-                    background: 'hsl(var(--primary))',
-                  }}
-                />
-              )}
-              <div style={{ padding: '14px 18px 16px' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: 8,
-                    marginBottom: 8,
+                    padding: 0,
+                    cursor: 'pointer',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'box-shadow 0.15s',
                   }}
                 >
-                  <p
-                    style={{
-                      margin: 0,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 15,
-                      color: 'hsl(var(--on-surface))',
-                    }}
-                  >
-                    {job.title}
-                  </p>
-                  {appliedJobIds.has(job.id) && (
-                    <span className="pill pill-ok" style={{ fontSize: 10, whiteSpace: 'nowrap' }}>
-                      Applied
-                    </span>
-                  )}
-                </div>
-                <p
-                  style={{
-                    margin: '0 0 10px',
-                    fontSize: 13,
-                    fontWeight: 'var(--font-weight-normal, 400)',
-                    color: 'hsl(var(--on-surface-muted))',
-                  }}
-                >
-                  {job.organization}
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
-                  <span className={`pill ${PILL_COLORS[job.job_type]}`} style={{ fontSize: 11 }}>
-                    {TYPE_LABELS[job.job_type]}
-                  </span>
-                  <span className="pill pill-mute" style={{ fontSize: 11 }}>
-                    {job.category}
-                  </span>
-                  {job.platform_filter !== 'ALL' && (
-                    <span
-                      className="pill"
+                  {job.banner_url ? (
+                    <img
+                      src={job.banner_url}
+                      alt={job.title}
                       style={{
-                        fontSize: 11,
-                        background: 'hsl(var(--accent) / 0.15)',
-                        color: 'hsl(var(--accent))',
+                        display: 'block',
+                        width: '100%',
+                        height: 130,
+                        objectFit: 'cover',
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: 3,
+                        background: 'hsl(var(--primary))',
+                      }}
+                    />
+                  )}
+                  <div style={{ padding: '14px 18px 16px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        gap: 8,
+                        marginBottom: 8,
                       }}
                     >
-                      {job.platform_filter}
-                    </span>
-                  )}
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: 12,
-                    fontWeight: 'var(--font-weight-normal, 400)',
-                    color: 'hsl(var(--on-surface-muted))',
-                  }}
-                >
-                  {job.location && (
-                    <span>
-                      <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: 13, verticalAlign: 'middle' }}
+                      <p
+                        style={{
+                          margin: 0,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 15,
+                          color: 'hsl(var(--on-surface))',
+                        }}
                       >
-                        location_on
-                      </span>{' '}
-                      {job.location}
-                    </span>
-                  )}
-                  {job.deadline && (
-                    <span>
-                      Closes{' '}
-                      {new Date(job.deadline).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  )}
+                        {job.title}
+                      </p>
+                      {appliedJobIds.has(job.id) && (
+                        <span
+                          className="pill pill-ok"
+                          style={{ fontSize: 10, whiteSpace: 'nowrap' }}
+                        >
+                          Applied
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      style={{
+                        margin: '0 0 10px',
+                        fontSize: 13,
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {job.organization}
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                      <span
+                        className={`pill ${PILL_COLORS[job.job_type]}`}
+                        style={{ fontSize: 11 }}
+                      >
+                        {TYPE_LABELS[job.job_type]}
+                      </span>
+                      <span className="pill pill-mute" style={{ fontSize: 11 }}>
+                        {job.category}
+                      </span>
+                      {job.platform_filter !== 'ALL' && (
+                        <span
+                          className="pill"
+                          style={{
+                            fontSize: 11,
+                            background: 'hsl(var(--accent) / 0.15)',
+                            color: 'hsl(var(--accent))',
+                          }}
+                        >
+                          {job.platform_filter}
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {job.location && (
+                        <span>
+                          <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: 13, verticalAlign: 'middle' }}
+                          >
+                            location_on
+                          </span>{' '}
+                          {job.location}
+                        </span>
+                      )}
+                      {job.deadline && (
+                        <span>
+                          Closes{' '}
+                          {new Date(job.deadline).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
+      ) : (
+        <MyApplicationsTab
+          applications={applications}
+          loading={applicationsLoading}
+          onBrowse={() => setActiveTab('browse')}
+        />
       )}
 
       {/* Job detail modal */}
@@ -664,6 +824,14 @@ export default function Jobs() {
                   style={{ opacity: 0.6, cursor: 'not-allowed' }}
                 >
                   Applied ✓
+                </button>
+              ) : monthlyCount >= 3 ? (
+                <button
+                  className="btn btn-primary"
+                  disabled
+                  style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                >
+                  Limit reached — resets 1 {nextMonthName()}
                 </button>
               ) : (
                 <button className="btn btn-primary" onClick={handleApplyClick}>
