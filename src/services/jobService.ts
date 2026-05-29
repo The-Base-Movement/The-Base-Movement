@@ -1,6 +1,12 @@
 import { supabase } from '@/lib/supabase'
 import { compressForUpload } from '@/lib/imageUtils'
-import type { Job, JobApplication, JobFilters, ApplicationStatus } from '@/types/jobs'
+import type {
+  Job,
+  JobApplication,
+  ApplicationWithJob,
+  JobFilters,
+  ApplicationStatus,
+} from '@/types/jobs'
 
 class JobService {
   private static instance: JobService
@@ -110,22 +116,18 @@ class JobService {
   async applyToJob(
     jobId: string,
     payload: { coverLetter: string; resumeUrl?: string }
-  ): Promise<boolean> {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) return false
-    const { error } = await supabase.from('job_applications').insert({
-      job_id: jobId,
-      member_id: user.id,
-      cover_letter: payload.coverLetter,
-      resume_url: payload.resumeUrl ?? null,
+  ): Promise<{ ok: boolean; reason?: 'limit_reached' | 'already_applied' | 'error' }> {
+    const { error } = await supabase.rpc('apply_to_job', {
+      p_job_id: jobId,
+      p_cover_letter: payload.coverLetter,
+      p_resume_url: payload.resumeUrl ?? null,
     })
-    if (error) {
-      console.warn('[jobService] applyToJob:', error)
-      return false
-    }
-    return true
+    if (!error) return { ok: true }
+    const msg = (error.message ?? '').toLowerCase()
+    if (msg.includes('monthly_limit_reached')) return { ok: false, reason: 'limit_reached' }
+    if (msg.includes('already_applied')) return { ok: false, reason: 'already_applied' }
+    console.warn('[jobService] applyToJob:', error)
+    return { ok: false, reason: 'error' }
   }
 
   async getMemberApplications(): Promise<JobApplication[]> {
@@ -139,6 +141,43 @@ class JobService {
       .eq('member_id', user.id)
     if (error) return []
     return (data || []) as JobApplication[]
+  }
+
+  async getMonthlyApplicationCount(): Promise<number> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return 0
+    const startOfMonth = new Date()
+    startOfMonth.setDate(1)
+    startOfMonth.setHours(0, 0, 0, 0)
+    const { count, error } = await supabase
+      .from('job_applications')
+      .select('id', { count: 'exact', head: true })
+      .eq('member_id', user.id)
+      .gte('created_at', startOfMonth.toISOString())
+    if (error) {
+      console.warn('[jobService] getMonthlyApplicationCount:', error)
+      return 0
+    }
+    return count ?? 0
+  }
+
+  async getMemberApplicationsFull(): Promise<ApplicationWithJob[]> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return []
+    const { data, error } = await supabase
+      .from('job_applications')
+      .select('*, job:jobs(title, organization, status)')
+      .eq('member_id', user.id)
+      .order('created_at', { ascending: false })
+    if (error) {
+      console.warn('[jobService] getMemberApplicationsFull:', error)
+      return []
+    }
+    return (data || []) as ApplicationWithJob[]
   }
 
   async getApplicationsForJob(jobId: string): Promise<JobApplication[]> {
