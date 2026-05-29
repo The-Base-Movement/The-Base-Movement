@@ -8,6 +8,7 @@ import { tacticalService } from './tacticalService'
 import { chapterService } from './chapterService'
 import { donationService } from './donationService'
 import { contentService } from './contentService'
+import { discordService } from './discordService'
 import { gamificationService } from './gamificationService'
 import { intelligenceService } from './intelligenceService'
 import { pollService } from './pollService'
@@ -456,6 +457,8 @@ class AdminService {
   ): Promise<boolean> {
     const success = await memberService.verifyMember(id, approve, reason, chapterName)
     if (success) {
+      const profile = await this.getMemberProfile(id)
+      discordService.memberVerified(id, profile?.name || id, approve, chapterName)
       await this.logAction(
         approve ? 'VERIFY_MEMBER_APPROVE' : 'VERIFY_MEMBER_REJECT',
         `MEMBERS/${id}`,
@@ -783,6 +786,12 @@ class AdminService {
       console.error('[DATABASE] Donation submission failed:', error)
       return false
     }
+    discordService.donationSubmitted(
+      donationData.fullName,
+      donationData.amount,
+      donationData.paymentMethod || 'MTN MoMo',
+      donationData.country
+    )
     return true
   }
 

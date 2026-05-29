@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { getCroppedImg } from '@/lib/imageUtils'
 import { adminService } from '@/services/adminService'
+import { discordService } from '@/services/discordService'
 import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
 
@@ -101,6 +102,13 @@ export const registrationService = {
     })
 
     if (dbError) throw dbError
+
+    discordService.memberRegistered(
+      formData.fullName,
+      platform,
+      platform === 'GHANA' ? formData.region || '' : formData.country || '',
+      regNo
+    )
 
     // 4. Store session details in localStorage
     localStorage.setItem('isLoggedIn', 'true')

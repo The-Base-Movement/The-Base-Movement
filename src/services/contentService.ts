@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import type { BlogPost, MediaAsset, Author, PressRelease, MediaKitAsset } from '@/types/admin'
 import { adminService } from '@/services/adminService'
 import { compressForUpload } from '@/lib/imageUtils'
+import { discordService } from '@/services/discordService'
 import mediaManifest from '@/data/media-manifest.json'
 
 class ContentService {
@@ -144,6 +145,14 @@ class ContentService {
       console.error('[DATABASE] Blog post creation failed:', error)
       return false
     }
+    if (post.status === 'Published') {
+      discordService.blogPostPublished(
+        post.title,
+        post.category || '',
+        post.authorName || 'Admin',
+        post.slug
+      )
+    }
     return true
   }
 
@@ -172,6 +181,14 @@ class ContentService {
     if (error) {
       console.error('[DATABASE] Blog post update failed:', error)
       return false
+    }
+    if (post.status === 'Published' && post.title && post.slug) {
+      discordService.blogPostPublished(
+        post.title,
+        post.category || '',
+        post.authorName || 'Admin',
+        post.slug
+      )
     }
     return true
   }
