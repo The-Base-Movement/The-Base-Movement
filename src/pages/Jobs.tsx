@@ -494,8 +494,8 @@ export default function Jobs() {
                       style={{
                         display: 'block',
                         width: '100%',
-                        height: 130,
-                        objectFit: 'cover',
+                        height: 'auto',
+                        objectFit: 'contain',
                       }}
                     />
                   ) : (
