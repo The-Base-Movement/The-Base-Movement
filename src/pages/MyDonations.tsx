@@ -23,11 +23,32 @@ function fmtAmount(amount: string) {
   return isNaN(n) ? amount : `₵ ${n.toLocaleString()}`
 }
 
+function downloadCSV(donations: DonationDetail[], name: string) {
+  const headers = ['Date', 'Campaign', 'Amount', 'Method', 'Reference', 'Status']
+  const rows = donations.map((d) => [
+    fmt(d.date),
+    d.campaignTitle || 'Strategic Fund',
+    parseFloat(d.amount || '0').toFixed(2),
+    d.method || '',
+    d.reference,
+    d.status,
+  ])
+  const csv = [headers, ...rows]
+    .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+    .join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `the-base-donations-${name.replace(/\s+/g, '-').toLowerCase()}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function MyDonations() {
   const { session } = useAuth()
   const [donations, setDonations] = useState<DonationDetail[]>([])
   const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     if (!session?.user) return
     adminService.getPersonalDonationHistory(session.user.id).then((data) => {
@@ -101,6 +122,17 @@ export default function MyDonations() {
             </p>
           </div>
           <div className="actions">
+            {donations.length > 0 && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => downloadCSV(donations, localStorage.getItem('userName') || 'member')}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  download
+                </span>
+                Export CSV
+              </button>
+            )}
             <Link
               to="/dashboard/donate"
               className="btn btn-primary btn-sm"
