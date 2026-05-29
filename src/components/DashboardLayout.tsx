@@ -44,47 +44,47 @@ export default function DashboardLayout() {
   }, [session])
 
   useEffect(() => {
+    const toSlug = (name: string) =>
+      name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '')
+
     const checkChapterRole = async () => {
       try {
         if (!session?.user) return
-        const chapters = await adminService.getChapters()
 
-        // Leader takes priority
-        const leaderChapter = chapters.find((c) => c.leader_id === session.user.id)
-        if (leaderChapter) {
-          const slug = leaderChapter.name
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)+/g, '')
-          setMyChapterLink({
-            to: `/dashboard/chapters/${slug}`,
-            icon: 'manage_accounts',
-            subLinkTo: `/dashboard/chapter-hub/${slug}`,
-          })
-          return
-        }
-
-        // Regular member — check DB directly (null = never joined)
-        const [dbChapter, isLeader] = await Promise.all([
+        // Fetch everything in parallel so we have all data in one round-trip
+        const [chapters, dbChapter, isLeader] = await Promise.all([
+          adminService.getChapters(),
           adminService.getUserChapter(session.user.id),
           adminService.isChapterLeader(session.user.id),
         ])
+
+        // Priority 1: user is a chapter leader (by leader_id OR leader_name match)
+        if (isLeader) {
+          // Find the chapter they lead — first by leader_id, then by member assignment
+          const ownedById = chapters.find((c) => c.leader_id === session.user.id)
+          const chapterName = ownedById?.name ?? dbChapter
+          if (chapterName) {
+            const slug = toSlug(chapterName)
+            setMyChapterLink({
+              to: `/dashboard/chapters/${slug}`,
+              icon: 'manage_accounts',
+              subLinkTo: `/dashboard/chapter-hub/${slug}`,
+            })
+            return
+          }
+        }
+
+        // Priority 2: regular member assigned to a chapter
         if (dbChapter) {
           const matched = chapters.find((c) => c.name.toLowerCase() === dbChapter.toLowerCase())
           if (matched) {
-            const slug = matched.name
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/(^-|-$)+/g, '')
-            if (isLeader) {
-              setMyChapterLink({
-                to: `/dashboard/chapters/${slug}`,
-                icon: 'manage_accounts',
-                subLinkTo: `/dashboard/chapter-hub/${slug}`,
-              })
-            } else {
-              setMyChapterLink({ to: `/dashboard/chapters/${slug}`, icon: 'group' })
-            }
+            setMyChapterLink({
+              to: `/dashboard/chapters/${toSlug(matched.name)}`,
+              icon: 'group',
+            })
           }
         }
       } catch {
@@ -361,13 +361,19 @@ export default function DashboardLayout() {
         <div className="flex-1 overflow-y-auto sidebar-scroll">
           {[
             {
-              label: 'Navigation',
+              label: 'Movement',
               items: [
                 { to: '/dashboard', icon: 'dashboard', label: 'Overview' },
                 { to: '/dashboard/blog', icon: 'article', label: 'Updates' },
                 { to: '/dashboard/agenda', icon: 'event_note', label: 'The Plan' },
                 { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
-                { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
+                { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Polls' },
+              ],
+            },
+            {
+              label: 'Community',
+              items: [
+                { to: '/dashboard/members', icon: 'groups', label: 'Members' },
                 { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
                 { to: '/dashboard/leadership', icon: 'groups_3', label: 'Leadership' },
                 ...(myChapterLink
@@ -380,7 +386,7 @@ export default function DashboardLayout() {
                           ? [
                               {
                                 to: myChapterLink.subLinkTo,
-                                icon: 'dashboard',
+                                icon: 'manage_accounts',
                                 label: 'Chapter Dashboard',
                               },
                             ]
@@ -391,13 +397,11 @@ export default function DashboardLayout() {
               ],
             },
             {
-              label: 'Mobilization',
+              label: 'Get Involved',
               items: [
                 { to: '/dashboard/jobs', icon: 'work', label: 'Jobs' },
                 { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
                 { to: '/dashboard/store', icon: 'storefront', label: 'Store' },
-                { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback Hub' },
-                { to: '/dashboard/members', icon: 'groups', label: 'Verified Members' },
               ],
             },
             {
