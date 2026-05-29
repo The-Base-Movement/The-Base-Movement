@@ -27,7 +27,11 @@ export default function DashboardLayout() {
   const [openUserMenu, setOpenUserMenu] = useState(false)
   const [openNotifications, setOpenNotifications] = useState(false)
   const [notifications, setNotifications] = useState<import('@/types/admin').Notification[]>([])
-  const [myChapterLink, setMyChapterLink] = useState<{ to: string; icon: string } | null>(null)
+  const [myChapterLink, setMyChapterLink] = useState<{
+    to: string
+    icon: string
+    subLinkTo?: string
+  } | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
@@ -52,7 +56,11 @@ export default function DashboardLayout() {
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/(^-|-$)+/g, '')
-          setMyChapterLink({ to: `/dashboard/chapter-hub/${slug}`, icon: 'manage_accounts' })
+          setMyChapterLink({
+            to: `/dashboard/chapters/${slug}`,
+            icon: 'manage_accounts',
+            subLinkTo: `/dashboard/chapter-hub/${slug}`,
+          })
           return
         }
 
@@ -351,7 +359,22 @@ export default function DashboardLayout() {
                 { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
                 { to: '/dashboard/leadership', icon: 'groups_3', label: 'Leadership' },
                 ...(myChapterLink
-                  ? [{ to: myChapterLink.to, icon: myChapterLink.icon, label: 'My Chapter' }]
+                  ? [
+                      {
+                        to: myChapterLink.to,
+                        icon: myChapterLink.icon,
+                        label: 'My Chapter',
+                        subItems: myChapterLink.subLinkTo
+                          ? [
+                              {
+                                to: myChapterLink.subLinkTo,
+                                icon: 'dashboard',
+                                label: 'Chapter Dashboard',
+                              },
+                            ]
+                          : undefined,
+                      },
+                    ]
                   : []),
               ],
             },
@@ -378,19 +401,49 @@ export default function DashboardLayout() {
               )}
               <div className="space-y-0.5 px-4">
                 {group.items.map((item) => (
-                  <Link
-                    key={item.to}
-                    className={`flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
-                    to={item.to}
-                  >
-                    <span
-                      className={`material-symbols-outlined text-[18px] ${isSidebarCollapsed ? 'mr-0' : 'mr-[10px]'}`}
-                      style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
+                  <div key={item.to}>
+                    <Link
+                      className={`flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
+                      to={item.to}
                     >
-                      {item.icon}
-                    </span>
-                    {!isSidebarCollapsed && item.label}
-                  </Link>
+                      <span
+                        className={`material-symbols-outlined text-[18px] ${isSidebarCollapsed ? 'mr-0' : 'mr-[10px]'}`}
+                        style={{
+                          fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                        }}
+                      >
+                        {item.icon}
+                      </span>
+                      {!isSidebarCollapsed && item.label}
+                    </Link>
+                    {'subItems' in item &&
+                      item.subItems &&
+                      !isSidebarCollapsed &&
+                      item.subItems.map((sub) => (
+                        <Link
+                          key={sub.to}
+                          to={sub.to}
+                          className={`flex items-center transition-all font-meta text-[11px] font-medium tracking-tight rounded-[4px] px-[12px] py-[7px] ${
+                            isActive(sub.to) || location.pathname.startsWith(sub.to)
+                              ? 'bg-white/10 text-white'
+                              : 'text-white/45 hover:bg-white/5 hover:text-white/80'
+                          }`}
+                          style={{ paddingLeft: 36 }}
+                        >
+                          <span
+                            className="material-symbols-outlined"
+                            style={{
+                              fontSize: 14,
+                              marginRight: 7,
+                              fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                            }}
+                          >
+                            {sub.icon}
+                          </span>
+                          {sub.label}
+                        </Link>
+                      ))}
+                  </div>
                 ))}
               </div>
             </div>
