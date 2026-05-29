@@ -30,15 +30,21 @@ export function usePushNotifications() {
       setLoading(false)
       return
     }
+    let active = true
     supabase
       .from('push_subscriptions')
       .select('id')
       .eq('user_id', user.id)
       .maybeSingle()
       .then(({ data }) => {
-        setIsSubscribed(!!data)
-        setLoading(false)
+        if (active) {
+          setIsSubscribed(!!data)
+          setLoading(false)
+        }
       })
+    return () => {
+      active = false
+    }
   }, [user, isSupported])
 
   const subscribe = useCallback(async () => {
@@ -54,9 +60,10 @@ export function usePushNotifications() {
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       })
 
-      await supabase
+      const { error: upsertError } = await supabase
         .from('push_subscriptions')
         .upsert({ user_id: user.id, subscription: sub.toJSON() }, { onConflict: 'user_id' })
+      if (upsertError) throw upsertError
 
       setIsSubscribed(true)
     } finally {
@@ -65,18 +72,22 @@ export function usePushNotifications() {
   }, [user, isSupported])
 
   const unsubscribe = useCallback(async () => {
-    if (!user) return
+    if (!isSupported || !user) return
     setLoading(true)
     try {
       const reg = await navigator.serviceWorker.getRegistration('/sw.js')
       const sub = await reg?.pushManager.getSubscription()
       await sub?.unsubscribe()
-      await supabase.from('push_subscriptions').delete().eq('user_id', user.id)
+      const { error: deleteError } = await supabase
+        .from('push_subscriptions')
+        .delete()
+        .eq('user_id', user.id)
+      if (deleteError) throw deleteError
       setIsSubscribed(false)
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [user, isSupported])
 
   return { isSupported, isSubscribed, loading, subscribe, unsubscribe }
 }
