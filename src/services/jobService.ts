@@ -144,14 +144,24 @@ class JobService {
   async getApplicationsForJob(jobId: string): Promise<JobApplication[]> {
     const { data, error } = await supabase
       .from('job_applications')
-      .select(`*, member:profiles(full_name, registration_number, email, avatar_url)`)
+      .select('*')
       .eq('job_id', jobId)
       .order('created_at', { ascending: false })
     if (error) {
       console.warn('[jobService] getApplicationsForJob:', error)
       return []
     }
-    return (data || []) as JobApplication[]
+    if (!data?.length) return []
+
+    // member_id FK points to auth.users; profile fields live in public.users
+    const memberIds = [...new Set(data.map((a) => a.member_id as string))]
+    const { data: users } = await supabase
+      .from('users')
+      .select('id, full_name, registration_number, email, avatar_url')
+      .in('id', memberIds)
+    const userMap = Object.fromEntries((users || []).map((u) => [u.id, u]))
+
+    return data.map((a) => ({ ...a, member: userMap[a.member_id] ?? null })) as JobApplication[]
   }
 
   async updateApplicationStatus(id: string, status: ApplicationStatus): Promise<boolean> {
