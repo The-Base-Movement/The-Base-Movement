@@ -239,9 +239,11 @@ class AdminService {
       if (p.action === 'MANAGE_BLOGS') dbPermissions.can_post_blog = true
       if (p.action === 'MANAGE_DONATIONS') dbPermissions.can_manage_donations = true
     })
-    const { error } = await supabase
-      .from('admins')
-      .insert([{ id, role, permissions: dbPermissions }])
+    const { error } = await supabase.rpc('provision_administrator', {
+      target_id: id,
+      admin_role: role,
+      permissions: dbPermissions,
+    })
 
     if (error) {
       console.error('[ADMIN SERVICE] Provisioning failed:', error)
@@ -253,7 +255,7 @@ class AdminService {
   }
 
   async revokeAdministrator(id: string): Promise<boolean> {
-    const { error } = await supabase.from('admins').delete().eq('id', id)
+    const { error } = await supabase.rpc('revoke_administrator', { target_id: id })
 
     if (error) {
       console.error('[ADMIN SERVICE] Revocation failed:', error)
