@@ -354,8 +354,8 @@ export default function Jobs() {
                 }}
               />
             </div>
-            {/* Row 2 — All button + Category */}
-            <div style={{ display: 'flex', gap: 8 }}>
+            {/* Row 2 — filters (one row desktop, two rows mobile) */}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
               <button
                 className={`btn btn-sm ${!filters.category && !filters.job_type && !filters.platform_filter ? 'btn-active-tab' : 'btn-inactive-tab'}`}
                 onClick={() =>
@@ -370,7 +370,7 @@ export default function Jobs() {
                 onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
                 style={{
                   flex: 1,
-                  minWidth: 0,
+                  minWidth: 100,
                   height: 36,
                   padding: '0 10px',
                   border: '1px solid hsl(var(--border))',
@@ -389,9 +389,8 @@ export default function Jobs() {
                   </option>
                 ))}
               </select>
-            </div>
-            {/* Row 3 — Type + Network */}
-            <div style={{ display: 'flex', gap: 8 }}>
+              {/* forces a line break between category and type/network on mobile only */}
+              <div className="jobs-filter-break" />
               <select
                 value={filters.job_type}
                 onChange={(e) =>
