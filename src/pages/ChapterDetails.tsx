@@ -319,7 +319,7 @@ export default function ChapterDetails() {
         country={chapter.country}
         member_count={chapter.member_count}
         isJoining={isJoining}
-        hasJoined={hasJoined}
+        hasJoined={hasJoined || isLeader}
         joinRequestStatus={joinRequestStatus}
         onShare={() => setIsShareModalOpen(true)}
         onJoin={handleJoin}

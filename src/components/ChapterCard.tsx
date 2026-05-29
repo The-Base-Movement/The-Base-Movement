@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { type Chapter } from '@/types/admin'
+import { useAuth } from '@/context/AuthContext'
 
 interface ChapterCardProps {
   chapter: Chapter
@@ -7,8 +8,10 @@ interface ChapterCardProps {
 }
 
 export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
+  const { user } = useAuth()
   if (!chapter) return null
 
+  const authUserId = user?.id ?? null
   const isActive =
     (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member'
   const isDiaspora = chapter.country !== 'Ghana'
@@ -40,8 +43,9 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '')
 
+  const isLeader = !!(authUserId && chapter.leader_id === authUserId)
   const isUserChapter =
-    userChapterName && chapter.name.toLowerCase() === userChapterName.toLowerCase()
+    isLeader || !!(userChapterName && chapter.name.toLowerCase() === userChapterName.toLowerCase())
 
   return (
     <div
