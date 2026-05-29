@@ -198,7 +198,6 @@ export default function Jobs() {
         },
       }
       setApplications((prev) => [optimistic, ...prev])
-      setApplicationsLoaded(true)
       setShowApplyModal(false)
       setCoverLetter('')
       setResumeFile(null)
