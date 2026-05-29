@@ -246,7 +246,14 @@ class AdminService {
     })
 
     if (error) {
-      console.error('[ADMIN SERVICE] Provisioning failed:', error)
+      console.error(
+        '[ADMIN SERVICE] Provisioning failed:',
+        error.message,
+        '|',
+        error.code,
+        '|',
+        error.details
+      )
       return false
     }
 
