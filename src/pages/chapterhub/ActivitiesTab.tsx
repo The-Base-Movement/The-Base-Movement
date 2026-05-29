@@ -88,10 +88,10 @@ export function ActivitiesTab({
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
   }, [])
 
   const filtered = actFilter === 'All' ? activities : activities.filter((a) => a.type === actFilter)
@@ -102,15 +102,15 @@ export function ActivitiesTab({
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'stretch' : 'center',
             justifyContent: 'space-between',
-            gap: 12,
-            flexWrap: 'wrap',
+            gap: 10,
             width: '100%',
           }}
         >
           {isMobile ? (
-            /* Mobile Filter Pill + Dropdown select */
+            /* Mobile: All pill + type select filling remaining space */
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
                 onClick={() => onFilterChange('All')}
@@ -126,6 +126,7 @@ export function ActivitiesTab({
                   cursor: 'pointer',
                   transition: 'all 0.15s',
                   flexShrink: 0,
+                  whiteSpace: 'nowrap',
                 }}
               >
                 All ({activities.length})
@@ -136,7 +137,8 @@ export function ActivitiesTab({
                 value={actFilter === 'All' ? '' : actFilter}
                 onChange={(e) => onFilterChange(e.target.value || 'All')}
                 style={{
-                  padding: '5px 24px 5px 10px',
+                  flex: 1,
+                  padding: '5px 10px',
                   borderRadius: 'var(--radius-pill)',
                   border: `1px solid ${actFilter !== 'All' ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
                   background: actFilter !== 'All' ? 'hsl(var(--primary) / 0.08)' : '#fff',
@@ -147,23 +149,24 @@ export function ActivitiesTab({
                   fontSize: 11,
                   cursor: 'pointer',
                   outline: 'none',
-                  height: 28,
+                  height: 30,
                   boxSizing: 'border-box',
                 }}
               >
-                <option value="">Filter Type...</option>
+                <option value="">Filter type…</option>
                 {FILTER_OPTIONS.filter((f) => f !== 'All').map((f) => {
                   const count = activities.filter((a) => a.type === f).length
                   return (
                     <option key={f} value={f}>
-                      {f} {count > 0 ? `(${count})` : ''}
+                      {f}
+                      {count > 0 ? ` (${count})` : ''}
                     </option>
                   )
                 })}
               </select>
             </div>
           ) : (
-            /* Desktop Filter Pills */
+            /* Desktop: pill buttons */
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {FILTER_OPTIONS.map((f) => {
                 const count =
@@ -194,7 +197,11 @@ export function ActivitiesTab({
             </div>
           )}
 
-          <button className="btn btn-primary btn-sm" onClick={onShowForm}>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={onShowForm}
+            style={isMobile ? { width: '100%' } : undefined}
+          >
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add
             </span>
@@ -205,11 +212,14 @@ export function ActivitiesTab({
 
       {showActivityForm && (
         <div className="panel" style={{ padding: '20px 22px' }}>
+          {/* Form header — stacks on mobile */}
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
+              flexDirection: isMobile ? 'column' : 'row',
+              alignItems: isMobile ? 'flex-start' : 'center',
               justifyContent: 'space-between',
+              gap: isMobile ? 12 : 0,
               marginBottom: 16,
               paddingBottom: 12,
               borderBottom: '1px solid hsl(var(--border))',
@@ -235,10 +245,15 @@ export function ActivitiesTab({
                 New activity
               </span>
             </div>
-            <button className="btn btn-outline btn-sm" onClick={onHideForm}>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={onHideForm}
+              style={isMobile ? { width: '100%' } : undefined}
+            >
               Cancel
             </button>
           </div>
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div>
               <label htmlFor="act-title" style={lbl}>
@@ -321,15 +336,14 @@ export function ActivitiesTab({
                 }}
               />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 4 }}>
-              <button
-                className="btn btn-primary"
-                onClick={onAddActivity}
-                disabled={isSavingActivity}
-              >
-                {isSavingActivity ? 'Saving…' : 'Add activity'}
-              </button>
-            </div>
+            <button
+              className="btn btn-primary"
+              onClick={onAddActivity}
+              disabled={isSavingActivity}
+              style={isMobile ? { width: '100%' } : { alignSelf: 'flex-end' }}
+            >
+              {isSavingActivity ? 'Saving…' : 'Add activity'}
+            </button>
           </div>
         </div>
       )}
