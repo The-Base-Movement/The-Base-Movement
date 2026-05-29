@@ -127,6 +127,7 @@ class JobService {
     if (msg.includes('monthly_limit_reached')) return { ok: false, reason: 'limit_reached' }
     if (msg.includes('already_applied')) return { ok: false, reason: 'already_applied' }
     if (msg.includes('not_authenticated')) return { ok: false, reason: 'error' }
+    if (msg.includes('cover_letter_required')) return { ok: false, reason: 'error' }
     console.warn('[jobService] applyToJob:', error)
     return { ok: false, reason: 'error' }
   }

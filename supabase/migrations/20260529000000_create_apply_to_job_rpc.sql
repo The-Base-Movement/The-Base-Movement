@@ -22,10 +22,11 @@ BEGIN
     RAISE EXCEPTION 'cover_letter_required';
   END IF;
 
+  -- Monthly limit check anchored to UTC calendar month
   SELECT COUNT(*) INTO v_count
   FROM job_applications
   WHERE member_id = v_user_id
-    AND created_at >= date_trunc('month', now());
+    AND created_at >= date_trunc('month', now() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';
 
   IF v_count >= 3 THEN
     RAISE EXCEPTION 'monthly_limit_reached';
