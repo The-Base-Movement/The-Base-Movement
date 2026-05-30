@@ -164,14 +164,14 @@ class PollService {
   }
 
   async getPollStats(): Promise<PollStats> {
-    const [pollsRes, usersRes, sentimentRes] = await Promise.all([
+    const [pollsRes, usersCountRes, sentimentRes] = await Promise.all([
       supabase.from('polls').select('total_votes, status'),
-      supabase.from('users').select('id', { count: 'exact', head: true }),
+      supabase.rpc('get_member_count'),
       supabase.from('national_sentiment_intelligence').select('avg_sentiment'),
     ])
 
     const pollsData = pollsRes.data || []
-    const totalUsers = usersRes.count || 1
+    const totalUsers = Number(usersCountRes.data) || 1
     const sentimentData = sentimentRes.data || []
 
     const totalVotes = pollsData.reduce((sum, p) => sum + (p.total_votes || 0), 0)

@@ -525,7 +525,7 @@ class MemberService {
     let supabaseQuery = supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,city,residential_address'
       )
       .is('deleted_at', null)
 

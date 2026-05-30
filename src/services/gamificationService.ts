@@ -15,9 +15,7 @@ class GamificationService {
 
   async getAchievements(): Promise<Achievement[]> {
     try {
-      const { data, error } = await supabase
-        .from('achievements')
-        .select('*')
+      const { data, error } = await supabase.from('achievements').select('*')
       if (error) throw error
       return data || []
     } catch (error) {
@@ -28,7 +26,9 @@ class GamificationService {
 
   async getMemberAchievements(userId: string): Promise<Achievement[]> {
     if (userId.startsWith('TBM-')) {
-      console.warn(`[GAMIFICATION] getMemberAchievements called with registration number (${userId}) instead of UUID. This will fail in the database.`);
+      console.warn(
+        `[GAMIFICATION] getMemberAchievements called with registration number (${userId}) instead of UUID. This will fail in the database.`
+      )
     }
     try {
       const { data, error } = await supabase
@@ -36,7 +36,7 @@ class GamificationService {
         .select('achievement_id, achievements(*)')
         .eq('user_id', userId)
       if (error) throw error
-      return (data || []).map(item => item.achievements) as unknown as Achievement[]
+      return (data || []).map((item) => item.achievements) as unknown as Achievement[]
     } catch (error) {
       console.error('[DATABASE] Failed to fetch member achievements:', error)
       return []
@@ -45,7 +45,9 @@ class GamificationService {
 
   async getMemberPoints(userId: string): Promise<number> {
     if (userId.startsWith('TBM-')) {
-      console.warn(`[GAMIFICATION] getMemberPoints called with registration number (${userId}) instead of UUID. This will fail in the database.`);
+      console.warn(
+        `[GAMIFICATION] getMemberPoints called with registration number (${userId}) instead of UUID. This will fail in the database.`
+      )
     }
     try {
       const { data, error } = await supabase
@@ -64,7 +66,7 @@ class GamificationService {
     try {
       let query = supabase.from('mobilization_ledger').select('*')
       if (chapterName) query = query.eq('chapter', chapterName)
-      
+
       const { data, error } = await query.order('timestamp', { ascending: false })
       if (error) throw error
       return data || []
@@ -74,23 +76,26 @@ class GamificationService {
     }
   }
 
-  async getMemberRank(userId: string): Promise<{ rank: number; totalMembers: number; delta: string }> {
+  async getMemberRank(
+    userId: string
+  ): Promise<{ rank: number; totalMembers: number; delta: string }> {
     try {
-      const { count: totalMembers } = await supabase.from('users').select('*', { count: 'exact', head: true })
+      const { data: totalMembersCount } = await supabase.rpc('get_member_count')
+      const totalMembers = Number(totalMembersCount) || 1000
       const points = await this.getMemberPoints(userId)
-      
+
       // Deterministic rank calculation based on points
       // In a production environment, this would be a real SQL rank() query
-      const rank = Math.max(1, (totalMembers || 100) - Math.floor(points / 100))
-      
+      const rank = Math.max(1, totalMembers - Math.floor(points / 100))
+
       return {
         rank,
-        totalMembers: totalMembers || 1000,
-        delta: points > 1000 ? "Up 3 this week" : "Stable this week"
+        totalMembers,
+        delta: points > 1000 ? 'Up 3 this week' : 'Stable this week',
       }
     } catch (error) {
       console.error('[SERVICE] Rank calculation failed:', error)
-      return { rank: 99, totalMembers: 1000, delta: "Stable" }
+      return { rank: 99, totalMembers: 1000, delta: 'Stable' }
     }
   }
 }
