@@ -643,7 +643,7 @@ export interface Notification {
   broadcast_id?: string
   title: string
   message: string
-  type: 'Info' | 'Alert' | 'Action'
+  type: 'Info' | 'Alert' | 'Action' | 'Direct Message'
   is_read: boolean
   created_at: string
 }
