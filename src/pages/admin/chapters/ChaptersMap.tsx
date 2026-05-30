@@ -367,11 +367,9 @@ export function ChaptersMap({
           {gridLocations.map((loc) => {
             const regionChapters = chapters.filter((c) => {
               if (loc.type === 'diaspora') {
-                return (
-                  c.country !== 'Ghana' && (c.city_or_region === loc.id || c.country === loc.id)
-                )
+                return c.city_or_region === loc.id || c.country === loc.id
               }
-              return getChapterRegion(c) === loc.id
+              return false
             })
             const activeCount = regionChapters.filter((c) => c.status === 'Active').length
             const pendingCount = regionChapters.filter((c) => c.status === 'Pending').length
@@ -413,8 +411,8 @@ export function ChaptersMap({
                       ? '1px solid hsl(var(--primary))'
                       : '1px solid transparent',
                 }}
-                onMouseEnter={() => loc.type === 'ghana' && setHoveredRegion(loc.id)}
-                onMouseLeave={() => loc.type === 'ghana' && setHoveredRegion(null)}
+                onMouseEnter={() => setHoveredRegion(loc.id)}
+                onMouseLeave={() => setHoveredRegion(null)}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <div
