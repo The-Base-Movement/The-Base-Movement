@@ -196,6 +196,23 @@ interface Member {
 }
 ```
 
+## Database — Security Notes
+
+### `users` table column-level SELECT grant (⚠️ maintenance required on schema changes)
+
+`authenticated` and `anon` do **not** have table-level SELECT on `public.users`. They have column-level grants on every column **except `national_id`** (which stores pgcrypto ciphertext). This was set in migration `20260530000203`.
+
+**Rule:** Every new column added to `public.users` must also be granted in that migration (or a new one):
+
+```sql
+GRANT SELECT (new_column) ON TABLE public.users TO authenticated;
+GRANT SELECT (new_column) ON TABLE public.users TO anon;
+```
+
+Without this, the column is invisible to all client queries. See `docs/database/users-column-security.md` for full details.
+
+`national_id` is decrypted only via the `admin_get_national_id(reg_no)` RPC (admin-gated SECURITY DEFINER). Never read it directly from the `users` table in application code.
+
 ## Conventions
 
 - Inline styles preferred over Tailwind in migrated components (avoids purge/class conflicts)
