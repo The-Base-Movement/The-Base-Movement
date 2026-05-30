@@ -62,6 +62,8 @@ class ChapterService {
         activities:chapter_activities(*)
       `
       )
+      .not('country', 'is', null)
+      .neq('country', 'Ghana')
       .order('name', { ascending: true })
 
     if (error) {
