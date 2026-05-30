@@ -79,9 +79,12 @@ export default function Login() {
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-1.5">
-                <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                <label
+                  htmlFor="input-80a9bc"
+                  className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                >
                   Email or Phone
-                </span>
+                </label>
                 <input
                   name="email"
                   id="input-80a9bc"
@@ -97,9 +100,12 @@ export default function Login() {
 
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                  <label
+                    htmlFor="input-936899"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                  >
                     Password
-                  </span>
+                  </label>
                   <Link to="#" className="text-primary text-[11.5px] font-semibold hover:underline">
                     Forgot password?
                   </Link>

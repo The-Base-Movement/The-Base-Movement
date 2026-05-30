@@ -130,12 +130,15 @@ export function RegistrationForm(props: RegistrationFormProps) {
             {formStep === 1 && (
               <div className="space-y-4 animate-in fade-in duration-500">
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1">
+                  <label
+                    htmlFor="input-72ee96"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
+                  >
                     Full name{' '}
                     <span className="text-primary normal-case tracking-normal ml-1">
                       (Must match ID Card exactly)
                     </span>
-                  </span>
+                  </label>
                   <input
                     name="name-72ee96"
                     id="input-72ee96"
@@ -146,16 +149,20 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     onChange={(e) => onInputChange('fullName', e.target.value)}
                     className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                     placeholder="Kwesi Owusu"
+                    autoComplete="name"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1">
+                  <label
+                    htmlFor="input-b6d09f"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
+                  >
                     Email address{' '}
                     <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
                       (Optional - You can register with phone number instead)
                     </span>
-                  </span>
+                  </label>
                   <input
                     name="name-b6d09f"
                     id="input-b6d09f"
@@ -233,9 +240,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 {platform === 'GHANA' ? (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="select-64ff20"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         Region
-                      </span>
+                      </label>
                       <select
                         name="name-64ff20"
                         id="select-64ff20"
@@ -253,9 +263,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="select-c9e1d3"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         Constituency
-                      </span>
+                      </label>
                       <select
                         name="name-c9e1d3"
                         id="select-c9e1d3"
@@ -284,9 +297,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 ) : (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="select-933eb2"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         Country
-                      </span>
+                      </label>
                       <select
                         name="name-933eb2"
                         id="select-933eb2"
@@ -304,9 +320,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="input-0bccd3"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         City
-                      </span>
+                      </label>
                       <input
                         name="name-0bccd3"
                         id="input-0bccd3"
@@ -315,15 +334,19 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         onChange={(e) => onInputChange('city', e.target.value)}
                         className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium focus:border-primary transition-colors outline-none"
                         placeholder="London / New York"
+                        autoComplete="address-level2"
                       />
                     </div>
                   </div>
                 )}
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                  <label
+                    htmlFor="input-fbfe65"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                  >
                     Mobile Number
-                  </span>
+                  </label>
                   <div className="flex">
                     <div className="flex items-center justify-center h-[46px] px-3 bg-muted/10 border border-border border-r-0 text-sm font-medium text-on-surface-muted min-w-[60px]">
                       {formData.countryCode || '+233'}
@@ -336,15 +359,19 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       onChange={(e) => onInputChange('contactNumber', e.target.value)}
                       className="flex-1 h-[46px] bg-transparent border border-border px-3 text-sm font-medium focus:border-primary transition-colors outline-none"
                       placeholder="24 412 8890"
+                      autoComplete="tel"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                    <label
+                      htmlFor="select-3d4664"
+                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                    >
                       Gender
-                    </span>
+                    </label>
                     <select
                       name="name-3d4664"
                       id="select-3d4664"
@@ -359,9 +386,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                    <label
+                      htmlFor="select-33e7c0"
+                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                    >
                       Age Range
-                    </span>
+                    </label>
                     <select
                       name="name-33e7c0"
                       id="select-33e7c0"
@@ -381,9 +411,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                  <label
+                    htmlFor="select-fdd2f4"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                  >
                     Chapter
-                  </span>
+                  </label>
                   <select
                     name="name-fdd2f4"
                     id="select-fdd2f4"
@@ -401,9 +434,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                  <label
+                    htmlFor="input-7e320f"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                  >
                     Set password
-                  </span>
+                  </label>
                   <div className="relative">
                     <input
                       name="name-7e320f"
@@ -630,9 +666,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 <div className="space-y-4 animate-in fade-in duration-0">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="input-2f7edd"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         Profession
-                      </span>
+                      </label>
                       <input
                         name="name-2f7edd"
                         id="input-2f7edd"
@@ -640,12 +679,16 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         onChange={(e) => onInputChange('profession', e.target.value)}
                         className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                         placeholder="e.g. Teacher"
+                        autoComplete="organization-title"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="select-231c1b"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         Education Level
-                      </span>
+                      </label>
                       <select
                         name="name-231c1b"
                         id="select-231c1b"
@@ -668,9 +711,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="input-f84a60"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         No. of Children
-                      </span>
+                      </label>
                       <input
                         name="name-f84a60"
                         id="input-f84a60"
@@ -683,12 +729,15 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      <label
+                        htmlFor="input-36e963"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
                         Residential Address{' '}
                         {platform === 'DIASPORA' && (
                           <span className="opacity-50 lowercase">(Optional)</span>
                         )}
-                      </span>
+                      </label>
                       <input
                         name="name-36e963"
                         id="input-36e963"
@@ -701,6 +750,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                             ? 'House no., street, area'
                             : 'City address (optional)'
                         }
+                        autoComplete="street-address"
                       />
                     </div>
                   </div>
@@ -712,9 +762,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                          <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                          <label
+                            htmlFor="input-8dd936"
+                            className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                          >
                             Full Name
-                          </span>
+                          </label>
                           <input
                             name="name-8dd936"
                             id="input-8dd936"
@@ -722,12 +775,16 @@ export function RegistrationForm(props: RegistrationFormProps) {
                             onChange={(e) => onInputChange('emergencyContactName', e.target.value)}
                             className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                             placeholder="Contact name"
+                            autoComplete="name"
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                          <label
+                            htmlFor="select-893075"
+                            className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                          >
                             Relationship
-                          </span>
+                          </label>
                           <select
                             name="name-893075"
                             id="select-893075"
@@ -746,9 +803,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                        <label
+                          htmlFor="input-b705ad"
+                          className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                        >
                           Phone Number
-                        </span>
+                        </label>
                         <input
                           name="name-b705ad"
                           id="input-b705ad"
@@ -756,6 +816,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           onChange={(e) => onInputChange('emergencyNumber', e.target.value)}
                           className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                           placeholder="+233 24 000 0000"
+                          autoComplete="tel"
                         />
                       </div>
                     </div>
@@ -771,7 +832,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     onChange={(e) => onAgreedChange(e.target.checked)}
                     className="mt-1 w-4 h-4 accent-primary"
                   />
-                  <label className="text-sm font-medium leading-relaxed">
+                  <label htmlFor="input-4810a4" className="text-sm font-medium leading-relaxed">
                     I solemnly declare that all information provided is true and I agree to the The
                     Base Movement privacy policy.
                   </label>

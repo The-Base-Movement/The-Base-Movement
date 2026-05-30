@@ -710,6 +710,7 @@ export default function RegistrationForm({
 
                   <div className="space-y-2">
                     <label
+                      htmlFor="input-efc762"
                       style={{
                         fontSize: '10px',
                         fontWeight: 'var(--font-weight-medium, 500)',
@@ -805,6 +806,7 @@ export default function RegistrationForm({
                     {platform === 'DIASPORA' && (
                       <div className="space-y-2">
                         <label
+                          htmlFor="select-ea007f"
                           style={{
                             fontSize: '10px',
                             fontWeight: 'var(--font-weight-medium, 500)',
@@ -844,6 +846,7 @@ export default function RegistrationForm({
 
                     <div className="space-y-2">
                       <label
+                        htmlFor="input-109f3c"
                         style={{
                           fontSize: '10px',
                           fontWeight: 'var(--font-weight-medium, 500)',
@@ -909,6 +912,7 @@ export default function RegistrationForm({
 
                   <div className="space-y-2">
                     <label
+                      htmlFor="input-ec50d2"
                       style={{
                         fontSize: '10px',
                         fontWeight: 'var(--font-weight-medium, 500)',
@@ -1119,6 +1123,7 @@ export default function RegistrationForm({
 
                   <div className="space-y-2">
                     <label
+                      htmlFor="input-f8cc39"
                       style={{
                         fontSize: '10px',
                         fontWeight: 'var(--font-weight-medium, 500)',
@@ -1162,6 +1167,7 @@ export default function RegistrationForm({
                       <>
                         <div className="space-y-2">
                           <label
+                            htmlFor="select-0e9706"
                             style={{
                               fontSize: '10px',
                               fontWeight: 'var(--font-weight-medium, 500)',
@@ -1199,6 +1205,7 @@ export default function RegistrationForm({
                         </div>
                         <div className="space-y-2">
                           <label
+                            htmlFor="select-3ce1cd"
                             style={{
                               fontSize: '10px',
                               fontWeight: 'var(--font-weight-medium, 500)',
@@ -1241,6 +1248,7 @@ export default function RegistrationForm({
                     ) : (
                       <div className="space-y-2">
                         <label
+                          htmlFor="input-4d1480"
                           style={{
                             fontSize: '10px',
                             fontWeight: 'var(--font-weight-medium, 500)',
@@ -1308,6 +1316,7 @@ export default function RegistrationForm({
 
                   <div className="space-y-2">
                     <label
+                      htmlFor="input-6a8f94"
                       style={{
                         fontSize: '10px',
                         fontWeight: 'var(--font-weight-medium, 500)',
@@ -1349,6 +1358,7 @@ export default function RegistrationForm({
                   >
                     <div className="space-y-2">
                       <label
+                        htmlFor="input-6df3eb"
                         style={{
                           fontSize: '10px',
                           fontWeight: 'var(--font-weight-medium, 500)',
@@ -1381,6 +1391,7 @@ export default function RegistrationForm({
                     </div>
                     <div className="space-y-2">
                       <label
+                        htmlFor="input-434c82"
                         style={{
                           fontSize: '10px',
                           fontWeight: 'var(--font-weight-medium, 500)',
@@ -1424,6 +1435,7 @@ export default function RegistrationForm({
                   >
                     <div className="space-y-2">
                       <label
+                        htmlFor="input-fcf881"
                         style={{
                           fontSize: '10px',
                           fontWeight: 'var(--font-weight-medium, 500)',
@@ -1457,6 +1469,7 @@ export default function RegistrationForm({
                     </div>
                     <div className="space-y-2">
                       <label
+                        htmlFor="select-b50420"
                         style={{
                           fontSize: '10px',
                           fontWeight: 'var(--font-weight-medium, 500)',
