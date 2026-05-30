@@ -318,9 +318,9 @@ export default function ConstituencyDetails() {
       </div>
 
       {/* Main Split Layout */}
-      <div className="sidebar-main" style={{ alignItems: 'start' }}>
+      <div className="main-sidebar" style={{ alignItems: 'start' }}>
         {/* Main Column (2/3 width) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20, flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
           {/* About panel */}
           <div className="panel" style={{ padding: '20px 22px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
@@ -860,11 +860,8 @@ export default function ConstituencyDetails() {
           </div>
         </div>
 
-        {/* Sidebar Column (1/3 width) */}
-        <div
-          className="desktop-only"
-          style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 320, flexShrink: 0 }}
-        >
+        {/* Sidebar Column */}
+        <div className="desktop-only" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Leadership Widget (Coordinator Info) */}
           <div className="panel" style={{ padding: '20px 22px' }}>
             <h3
