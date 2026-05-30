@@ -78,7 +78,7 @@ export default function Referrals() {
   const [loading, setLoading] = useState(true)
   const [shareOpen, setShareOpen] = useState(false)
 
-  const userRegNo = localStorage.getItem('userRegNo') ?? ''
+  const [userRegNo] = useState(() => localStorage.getItem('userRegNo') ?? '')
   const shareUrl = userRegNo
     ? `https://thebasemovement.com/register?ref=${userRegNo}`
     : 'https://thebasemovement.com/register'

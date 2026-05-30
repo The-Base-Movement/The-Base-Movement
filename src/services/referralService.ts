@@ -1,6 +1,6 @@
 // src/services/referralService.ts
 import { supabase } from '@/lib/supabase'
-import type { ReferredMember, ReferralStats, ReferralLeaderboardEntry } from '@/types/referrals'
+import type { ReferredMember, ReferralLeaderboardEntry } from '@/types/referrals'
 
 export const referralService = {
   async getMyReferrals(): Promise<ReferredMember[]> {
@@ -60,26 +60,6 @@ export const referralService = {
       joinedAt: u.joined_at,
       verificationBonusAwarded: awardedSet.has(u.id),
     }))
-  },
-
-  async getMyReferralStats(): Promise<ReferralStats> {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) return { total: 0, active: 0, pending: 0, pointsEarned: 0 }
-
-    const referrals = await this.getMyReferrals()
-    const total = referrals.length
-    const active = referrals.filter((r) => r.status === 'Active' || r.status === 'Approved').length
-    const pending = referrals.filter((r) => r.status === 'Pending').length
-
-    const { data: awards } = await supabase
-      .from('referral_awards')
-      .select('points')
-      .eq('referrer_id', user.id)
-    const pointsEarned = awards?.reduce((sum, a) => sum + (a.points ?? 0), 0) ?? 0
-
-    return { total, active, pending, pointsEarned }
   },
 
   async getPointsEarned(): Promise<number> {
