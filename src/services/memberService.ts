@@ -54,11 +54,11 @@ class MemberService {
         authId: u.id,
         name: u.full_name,
         email: stripMarkdownEmail(u.email),
-        phone: u.phone_number || 'N/A',
+        phone: u.phone_number || '',
         region: u.region || '',
         constituency: u.constituency || '',
         status: u.status,
-        joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
+        joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : '',
         platform: u.platform || 'GHANA',
         type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
         avatarUrl: u.avatar_url || undefined,
@@ -133,7 +133,7 @@ class MemberService {
       authId: data.id,
       name: data.full_name,
       email: stripMarkdownEmail(data.email),
-      phone: data.phone_number || 'N/A',
+      phone: data.phone_number || '',
       region: data.region || 'Unknown',
       constituency: data.constituency || 'Unknown',
       status: data.status,
@@ -163,7 +163,7 @@ class MemberService {
       authId: data.id,
       name: data.full_name,
       email: stripMarkdownEmail(data.email),
-      phone: data.phone_number || 'N/A',
+      phone: data.phone_number || '',
       region: data.region || 'Unknown',
       constituency: data.constituency || 'Unknown',
       status: data.status,
@@ -177,6 +177,29 @@ class MemberService {
       profession: data.profession || 'Patriot',
       ageRange: data.age_range || undefined,
     }
+  }
+
+  async ensureRegistrationNumber(authId: string): Promise<string | null> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, registration_number, platform')
+      .eq('id', authId)
+      .maybeSingle()
+
+    if (error || !data) return null
+
+    const existing = data.registration_number as string | null
+    const isTbmFormat = existing && /^TBM-(GH|DI)-\d{6}$/.test(existing)
+    if (isTbmFormat) return existing
+
+    const yearStr = new Date().getFullYear().toString().slice(-2)
+    const randomNum = String(Math.floor(100000 + Math.random() * 900000))
+    const platform = (data.platform as string) || 'GHANA'
+    const newRegNo = `TBM-${platform === 'DIASPORA' ? 'DI' : 'GH'}-${yearStr}${randomNum}`
+
+    await supabase.from('users').update({ registration_number: newRegNo }).eq('id', authId)
+
+    return newRegNo
   }
 
   async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
@@ -274,7 +297,7 @@ class MemberService {
     const updateData: Record<string, string | null | undefined> = {}
     if (profile.name) updateData.full_name = profile.name
     if (profile.email) updateData.email = profile.email
-    if (profile.phone) updateData.phone_number = profile.phone
+    if (profile.phone && profile.phone !== 'N/A') updateData.phone_number = profile.phone
     if (profile.region) updateData.region = profile.region
     if (profile.constituency) updateData.constituency = profile.constituency
     if (profile.avatarUrl !== undefined) updateData.avatar_url = profile.avatarUrl
@@ -381,22 +404,23 @@ class MemberService {
 
     // Award verification bonus to the referrer — fire-and-forget
     if (approve) {
-      supabase
-        .from('users')
-        .select('id')
-        .eq('registration_number', id)
-        .single()
-        .then(({ data: member }) => {
+      ;(async () => {
+        try {
+          const { data: member } = await supabase
+            .from('users')
+            .select('id')
+            .eq('registration_number', id)
+            .single()
           if (member?.id) {
-            supabase
-              .rpc('award_referral_verification_bonus', { p_member_id: member.id })
-              .then(({ error: rpcErr }) => {
-                if (rpcErr) console.warn('[referral] verification bonus RPC failed:', rpcErr)
-              })
-              .catch(() => {})
+            const { error: rpcErr } = await supabase.rpc('award_referral_verification_bonus', {
+              p_member_id: member.id,
+            })
+            if (rpcErr) console.warn('[referral] verification bonus RPC failed:', rpcErr)
           }
-        })
-        .catch(() => {})
+        } catch {
+          // non-critical — verification already succeeded
+        }
+      })()
     }
 
     return true
