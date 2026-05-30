@@ -20,20 +20,18 @@ class ConstituencyService {
   }
 
   async getConstituencies(): Promise<Constituency[]> {
-    const { data, error } = await supabase
-      .from('ghana_constituencies')
-      .select('*, region:ghana_regions(name)')
-      .order('name', { ascending: true })
+    const [{ data, error }, { data: memberRows }] = await Promise.all([
+      supabase
+        .from('ghana_constituencies')
+        .select('*, region:ghana_regions(name)')
+        .order('name', { ascending: true }),
+      supabase.from('users').select('constituency').not('constituency', 'is', null),
+    ])
 
     if (error) {
       console.error('[CONSTITUENCY] Fetch failed:', error)
       return []
     }
-
-    const { data: memberRows } = await supabase
-      .from('users')
-      .select('constituency')
-      .not('constituency', 'is', null)
 
     const liveCounts: Record<string, number> = {}
     ;(memberRows || []).forEach((u: { constituency: string | null }) => {
@@ -86,20 +84,24 @@ class ConstituencyService {
     const row = data.find((c) => constituencySlug(c.name as string) === slug)
     if (!row) return null
 
-    const { count } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .ilike('constituency', row.name as string)
-
-    let leaderAvatarUrl: string | undefined
-    if (row.leader_id) {
-      const { data: ld } = await supabase
+    const [{ count }, leaderAvatarResult] = await Promise.all([
+      supabase
         .from('users')
-        .select('avatar_url')
-        .eq('id', row.leader_id as string)
-        .maybeSingle()
-      if (ld?.avatar_url) leaderAvatarUrl = ld.avatar_url as string
-    }
+        .select('*', { count: 'exact', head: true })
+        .ilike('constituency', row.name as string),
+      row.leader_id
+        ? supabase
+            .from('users')
+            .select('avatar_url')
+            .eq('id', row.leader_id as string)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ])
+    const leaderAvatarUrl =
+      ((leaderAvatarResult.data as { avatar_url?: string | null } | null)?.avatar_url as
+        | string
+        | null
+        | undefined) || undefined
 
     return {
       id: row.id as number,
@@ -128,20 +130,24 @@ class ConstituencyService {
 
     if (error || !data) return null
 
-    const { count } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .ilike('constituency', data.name as string)
-
-    let leaderAvatarUrl: string | undefined
-    if (data.leader_id) {
-      const { data: ld } = await supabase
+    const [{ count }, leaderAvatarResult] = await Promise.all([
+      supabase
         .from('users')
-        .select('avatar_url')
-        .eq('id', data.leader_id as string)
-        .maybeSingle()
-      if (ld?.avatar_url) leaderAvatarUrl = ld.avatar_url as string
-    }
+        .select('*', { count: 'exact', head: true })
+        .ilike('constituency', data.name as string),
+      data.leader_id
+        ? supabase
+            .from('users')
+            .select('avatar_url')
+            .eq('id', data.leader_id as string)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ])
+    const leaderAvatarUrl =
+      ((leaderAvatarResult.data as { avatar_url?: string | null } | null)?.avatar_url as
+        | string
+        | null
+        | undefined) || undefined
 
     return {
       id: data.id as number,
@@ -168,7 +174,10 @@ class ConstituencyService {
       .eq('constituency_id', id)
       .order('activity_date', { ascending: false })
 
-    if (error) return []
+    if (error) {
+      console.error('[CONSTITUENCY] Fetch activities failed:', error)
+      return []
+    }
 
     return (data || []).map((a) => ({
       id: a.id as string,
