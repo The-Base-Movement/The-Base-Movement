@@ -191,7 +191,7 @@ class TacticalService {
     try {
       const [leaderboardRes, chaptersRes, velocityRes] = await Promise.all([
         supabase.from('movement_leaderboard').select('total_points, region'),
-        supabase.from('chapter_performance').select('*'),
+        supabase.from('chapter_performance_telemetry').select('*'),
         supabase.from('logistics_velocity').select('fulfillment_rate'),
       ])
 
