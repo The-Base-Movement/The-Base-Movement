@@ -91,6 +91,10 @@ const AdminModeration = lazy(() => import('./pages/admin/Moderation'))
 const LikedPosts = lazy(() => import('./pages/LikedPosts'))
 const MyDonations = lazy(() => import('./pages/MyDonations'))
 const Referrals = lazy(() => import('./pages/dashboard/Referrals'))
+const Constituencies = lazy(() => import('./pages/Constituencies'))
+const ConstituencyDetails = lazy(() => import('./pages/ConstituencyDetails'))
+const AdminConstituencies = lazy(() => import('./pages/admin/Constituencies'))
+const AdminConstituencyLeadHub = lazy(() => import('./pages/admin/ConstituencyLeadHub'))
 
 export const routes: RouteObject[] = [
   {
@@ -143,6 +147,8 @@ export const routes: RouteObject[] = [
               { path: '/dashboard/chapters/:slug', element: <ChapterDetails /> },
             ],
           },
+          { path: '/dashboard/constituencies', element: <Constituencies /> },
+          { path: '/dashboard/constituencies/:slug', element: <ConstituencyDetails /> },
           { path: '/dashboard/store', element: <Store /> },
           { path: '/dashboard/store/product/:slug', element: <ProductDetails /> },
           { path: '/dashboard/store/cart', element: <Cart /> },
@@ -196,6 +202,8 @@ export const routes: RouteObject[] = [
         element: <WithChapters />,
         children: [{ path: '/admin/chapters', element: <AdminChapters /> }],
       },
+      { path: '/admin/constituencies', element: <AdminConstituencies /> },
+      { path: '/admin/constituencies/:id', element: <AdminConstituencyLeadHub /> },
       { path: '/admin/polls', element: <AdminPolls /> },
       { path: '/admin/store', element: <AdminStore /> },
       { path: '/admin/settings', element: <AdminSettings /> },
