@@ -75,10 +75,13 @@ BEGIN
     RAISE EXCEPTION 'national_id encryption key not found in Vault';
   END IF;
 
-  RETURN pgp_sym_decrypt(
-    decode(substring(p_ciphertext FROM 5), 'base64'),
-    v_key
-  )::text;
+  RETURN convert_from(
+    pgp_sym_decrypt(
+      decode(substring(p_ciphertext FROM 5), 'base64'),
+      v_key
+    )::bytea,
+    'UTF8'
+  );
 END;
 $$;
 

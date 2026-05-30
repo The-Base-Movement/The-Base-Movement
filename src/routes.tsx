@@ -95,6 +95,7 @@ const Constituencies = lazy(() => import('./pages/Constituencies'))
 const ConstituencyDetails = lazy(() => import('./pages/ConstituencyDetails'))
 const AdminConstituencies = lazy(() => import('./pages/admin/Constituencies'))
 const AdminConstituencyLeadHub = lazy(() => import('./pages/admin/ConstituencyLeadHub'))
+const ConstituencyHub = lazy(() => import('./pages/ConstituencyHub'))
 
 export const routes: RouteObject[] = [
   {
@@ -159,6 +160,8 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/canvass', element: <CanvasserClipboard /> },
           { path: '/dashboard/chapter-hub', element: <ChapterHub /> },
           { path: '/dashboard/chapter-hub/:chapterId', element: <ChapterHub /> },
+          { path: '/dashboard/constituency-hub', element: <ConstituencyHub /> },
+          { path: '/dashboard/constituency-hub/:constituencyId', element: <ConstituencyHub /> },
           { path: '/dashboard/donate', element: <Donate /> },
           { path: '/dashboard/contact', element: <Contact /> },
           { path: '/dashboard/leadership', element: <Officers /> },

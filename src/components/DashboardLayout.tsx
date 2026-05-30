@@ -35,6 +35,10 @@ export default function DashboardLayout() {
     icon: string
     subLinkTo?: string
   } | null>(null)
+  const [myConstituencyLink, setMyConstituencyLink] = useState<{
+    to: string
+    icon: string
+  } | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [userPlatform, setUserPlatform] = useState<'GHANA' | 'DIASPORA' | null>(null)
   const [likedCount, setLikedCount] = useState(0)
@@ -69,6 +73,22 @@ export default function DashboardLayout() {
 
         if (platformResult.data) {
           setUserPlatform(platformResult.data.platform as 'GHANA' | 'DIASPORA')
+        }
+
+        // For Ghana Network members, check if they are a constituency coordinator
+        if (platformResult.data?.platform === 'GHANA') {
+          const { data: coordData } = await supabase
+            .from('ghana_constituencies')
+            .select('id, name')
+            .eq('leader_id', session.user.id)
+            .maybeSingle()
+          if (coordData) {
+            await import('@/services/constituencyService')
+            setMyConstituencyLink({
+              to: '/dashboard/constituency-hub',
+              icon: 'manage_accounts',
+            })
+          }
         }
 
         // Priority 1: user leads a chapter — show manage_accounts icon + Chapter Dashboard sublink
@@ -216,6 +236,8 @@ export default function DashboardLayout() {
     if (path.startsWith('/dashboard/constituencies/')) return 'Constituency'
     if (path === '/dashboard/chapter-hub' || path.startsWith('/dashboard/chapter-hub/'))
       return 'My Chapter'
+    if (path === '/dashboard/constituency-hub') return 'Constituency Hub'
+    if (path.startsWith('/dashboard/constituency-hub/')) return 'Constituency Hub'
     if (path === '/dashboard/contact') return 'Support'
     if (path === '/dashboard/settings') return 'Profile'
     if (path === '/dashboard/liked') return 'Liked Posts'
@@ -421,6 +443,15 @@ export default function DashboardLayout() {
                               },
                             ]
                           : undefined,
+                      },
+                    ]
+                  : []),
+                ...(userPlatform === 'GHANA' && myConstituencyLink
+                  ? [
+                      {
+                        to: myConstituencyLink.to,
+                        icon: myConstituencyLink.icon,
+                        label: 'Constituency Hub',
                       },
                     ]
                   : []),
