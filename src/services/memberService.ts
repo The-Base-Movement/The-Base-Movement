@@ -120,7 +120,9 @@ class MemberService {
   async getMemberProfile(regNo: string): Promise<Member | null> {
     const { data, error } = await supabase
       .from('users')
-      .select('*')
+      .select(
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range'
+      )
       .eq('registration_number', regNo)
       .single()
 
@@ -153,7 +155,13 @@ class MemberService {
   }
 
   async getMemberProfileByAuthId(authId: string): Promise<Member | null> {
-    const { data, error } = await supabase.from('users').select('*').eq('id', authId).maybeSingle()
+    const { data, error } = await supabase
+      .from('users')
+      .select(
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range'
+      )
+      .eq('id', authId)
+      .maybeSingle()
 
     if (error || !data) {
       return null
@@ -348,7 +356,9 @@ class MemberService {
   async getPendingVerifications(): Promise<PendingVerification[]> {
     const { data, error } = await supabase
       .from('users')
-      .select('*')
+      .select(
+        'id,registration_number,full_name,region,constituency,platform,country,phone_number,gender,age_range,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status'
+      )
       .in('verification_status', ['In Review', 'Processing', 'Flagged'])
       .order('joined_at', { ascending: false })
 
@@ -512,7 +522,12 @@ class MemberService {
   ): Promise<Member[]> {
     if (!query || query.length < 2) return []
 
-    let supabaseQuery = supabase.from('users').select('*').is('deleted_at', null)
+    let supabaseQuery = supabase
+      .from('users')
+      .select(
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range'
+      )
+      .is('deleted_at', null)
 
     if (searchType === 'id') {
       supabaseQuery = supabaseQuery.ilike('registration_number', `%${query}%`)
