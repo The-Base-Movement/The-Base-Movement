@@ -35,6 +35,7 @@ export default function DashboardLayout() {
   } | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [likedCount, setLikedCount] = useState(0)
+  const [referralCount, setReferralCount] = useState(0)
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -150,6 +151,16 @@ export default function DashboardLayout() {
       }
     }
     fetchLikedCount()
+    const fetchReferralCount = async () => {
+      try {
+        const { referralService } = await import('@/services/referralService')
+        const refs = await referralService.getMyReferrals()
+        setReferralCount(refs.length)
+      } catch {
+        /* non-critical */
+      }
+    }
+    fetchReferralCount()
   }, [location.pathname])
 
   // Close sidebar on route change
@@ -203,6 +214,7 @@ export default function DashboardLayout() {
     if (path === '/dashboard/contact') return 'Support'
     if (path === '/dashboard/settings') return 'Profile'
     if (path === '/dashboard/liked') return 'Liked Posts'
+    if (path === '/dashboard/referrals') return 'Referrals'
     if (path === '/dashboard/my-donations') return 'My Donations'
     if (path === '/dashboard/wishlist') return 'Wishlist'
     if (path === '/dashboard/cart') return 'Cart'
@@ -415,6 +427,7 @@ export default function DashboardLayout() {
               label: 'Personal',
               items: [
                 { to: '/dashboard/liked', icon: 'favorite', label: 'Liked Posts' },
+                { to: '/dashboard/referrals', icon: 'group_add', label: 'Referrals' },
                 {
                   to: '/dashboard/my-donations',
                   icon: 'volunteer_activism',
@@ -469,6 +482,27 @@ export default function DashboardLayout() {
                               {likedCount}
                             </span>
                           )}
+                          {item.to === '/dashboard/referrals' && referralCount > 0 && (
+                            <span
+                              style={{
+                                background: 'hsl(var(--accent))',
+                                color: '#181d19',
+                                fontSize: 10,
+                                fontWeight: 600,
+                                minWidth: 18,
+                                height: 18,
+                                borderRadius: 9,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '0 5px',
+                                marginLeft: 8,
+                                fontFamily: "'Public Sans', sans-serif",
+                              }}
+                            >
+                              {referralCount}
+                            </span>
+                          )}
                         </span>
                       )}
                       {item.to === '/dashboard/liked' && likedCount > 0 && isSidebarCollapsed && (
@@ -494,6 +528,31 @@ export default function DashboardLayout() {
                           {likedCount}
                         </span>
                       )}
+                      {item.to === '/dashboard/referrals' &&
+                        referralCount > 0 &&
+                        isSidebarCollapsed && (
+                          <span
+                            style={{
+                              position: 'absolute',
+                              top: 10,
+                              right: 18,
+                              background: 'hsl(var(--accent))',
+                              color: '#181d19',
+                              fontSize: 9,
+                              fontWeight: 'bold',
+                              minWidth: 14,
+                              height: 14,
+                              borderRadius: 7,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '0 3px',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            }}
+                          >
+                            {referralCount}
+                          </span>
+                        )}
                     </Link>
                     {'subItems' in item &&
                       item.subItems &&
