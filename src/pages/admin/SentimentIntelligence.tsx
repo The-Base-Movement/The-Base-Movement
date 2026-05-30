@@ -104,20 +104,23 @@ export default function SentimentIntelligence() {
         projectedReach={projectedReach}
       />
 
-      {/* Prominent, full-width Forecasts/Charts Section at the top */}
-      <div style={{ marginBottom: 20 }}>
+      {/* 2/3 + 1/3 layout: forecasts main, aside for metrics & feedback */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr',
+          gap: 20,
+          alignItems: 'start',
+        }}
+      >
+        {/* Main: Impact Forecasts */}
         <SentimentImpactForecasts projections={projections} />
-      </div>
 
-      {/* Lower grid area */}
-      <div className="sidebar-main" style={{ alignItems: 'start' }}>
-        {/* Regional Metrics */}
-        <div style={{ flex: 1.2 }}>
+        {/* Aside: Regional Metrics + Live Feedback stacked */}
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <SentimentRegionalMetrics sentimentMetrics={sentimentMetrics} />
-        </div>
-
-        {/* Live Feedback Stream */}
-        <SentimentLiveFeedback feedback={feedback} />
+          <SentimentLiveFeedback feedback={feedback} />
+        </aside>
       </div>
     </div>
   )
