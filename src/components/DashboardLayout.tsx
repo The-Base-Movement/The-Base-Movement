@@ -903,7 +903,7 @@ export default function DashboardLayout() {
                           {notifications.length} total
                         </span>
                       </div>
-                      <div style={{ overflowY: 'auto', flex: 1 }}>
+                      <div style={{ overflowY: 'auto', flex: 1, maxHeight: 340 }}>
                         {notifications.length === 0 ? (
                           <div style={{ padding: '32px 14px', textAlign: 'center' }}>
                             <span
@@ -1004,6 +1004,23 @@ export default function DashboardLayout() {
                             </div>
                           ))
                         )}
+                      </div>
+                      <div
+                        style={{
+                          borderTop: '1px solid hsl(var(--border))',
+                          padding: '8px 14px',
+                        }}
+                      >
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          style={{ width: '100%', justifyContent: 'center', fontSize: 12 }}
+                          onClick={() => {
+                            setOpenNotifications(false)
+                            navigate('/dashboard/notifications')
+                          }}
+                        >
+                          View all notifications
+                        </button>
                       </div>
                     </div>
                   </>

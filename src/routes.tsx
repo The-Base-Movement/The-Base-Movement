@@ -84,6 +84,7 @@ const AdminTrash = lazy(() => import('./pages/admin/Trash'))
 const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
 const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPriorities'))
 const AdminRolesManager = lazy(() => import('./pages/admin/RolesManager'))
+const AdminNotifications = lazy(() => import('./pages/admin/Notifications'))
 const Jobs = lazy(() => import('./pages/Jobs'))
 const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
 const AdminJobForm = lazy(() => import('./pages/admin/jobs/JobFormPage'))
@@ -96,6 +97,7 @@ const ConstituencyDetails = lazy(() => import('./pages/ConstituencyDetails'))
 const AdminConstituencies = lazy(() => import('./pages/admin/Constituencies'))
 const AdminConstituencyLeadHub = lazy(() => import('./pages/admin/ConstituencyLeadHub'))
 const ConstituencyHub = lazy(() => import('./pages/ConstituencyHub'))
+const NotificationsPage = lazy(() => import('./pages/Notifications'))
 
 export const routes: RouteObject[] = [
   {
@@ -173,6 +175,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/liked', element: <LikedPosts /> },
           { path: '/dashboard/my-donations', element: <MyDonations /> },
           { path: '/dashboard/referrals', element: <Referrals /> },
+          { path: '/dashboard/notifications', element: <NotificationsPage /> },
         ],
       },
     ],
@@ -227,6 +230,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/moderation', element: <AdminModeration /> },
       { path: '/admin/trash', element: <AdminTrash /> },
       { path: '/admin/roles', element: <AdminRolesManager /> },
+      { path: '/admin/notifications', element: <AdminNotifications /> },
     ],
   },
   {
