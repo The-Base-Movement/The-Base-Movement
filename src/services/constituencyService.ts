@@ -87,7 +87,7 @@ class ConstituencyService {
     const [{ count }, leaderAvatarResult] = await Promise.all([
       supabase
         .from('users')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .ilike('constituency', row.name as string),
       row.leader_id
         ? supabase
@@ -133,7 +133,7 @@ class ConstituencyService {
     const [{ count }, leaderAvatarResult] = await Promise.all([
       supabase
         .from('users')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .ilike('constituency', data.name as string),
       data.leader_id
         ? supabase

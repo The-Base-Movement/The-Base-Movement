@@ -194,7 +194,7 @@ class ChapterService {
     // Fetch live member count from users table manually
     const { count: liveCount } = await supabase
       .from('users')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .ilike('chapter', data.name)
 
     let leaderAvatarUrl: string | undefined = undefined
