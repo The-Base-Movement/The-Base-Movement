@@ -30,6 +30,7 @@ export default function AdminConstituencies() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [regionFilter, setRegionFilter] = useState('All Regions')
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     constituencyService.getConstituencies().then((data) => {
@@ -45,6 +46,10 @@ export default function AdminConstituencies() {
     const matchRegion = regionFilter === 'All Regions' || c.regionName === regionFilter
     return matchSearch && matchRegion
   })
+
+  const ITEMS_PER_PAGE = 10
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   const total = constituencies.length
   const activeCount = constituencies.filter((c) => c.status === 'Active').length
@@ -225,7 +230,10 @@ export default function AdminConstituencies() {
           </span>
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setCurrentPage(1)
+            }}
             placeholder="Search constituencies or regions..."
             style={{
               width: '100%',
@@ -244,7 +252,10 @@ export default function AdminConstituencies() {
         </div>
         <select
           value={regionFilter}
-          onChange={(e) => setRegionFilter(e.target.value)}
+          onChange={(e) => {
+            setRegionFilter(e.target.value)
+            setCurrentPage(1)
+          }}
           style={{
             height: 40,
             padding: '0 12px',
@@ -297,7 +308,7 @@ export default function AdminConstituencies() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c) => (
+              {paginated.map((c) => (
                 <tr
                   key={c.id}
                   style={{ borderBottom: '1px solid hsl(var(--border))' }}
@@ -361,9 +372,103 @@ export default function AdminConstituencies() {
       </div>
 
       {!loading && filtered.length > 0 && (
-        <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 12 }}>
-          Showing {filtered.length} of {total} constituencies
-        </p>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 16,
+            flexWrap: 'wrap',
+            gap: 12,
+          }}
+        >
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              margin: 0,
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            Showing {Math.min(filtered.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} to{' '}
+            {Math.min(filtered.length, currentPage * ITEMS_PER_PAGE)} of {filtered.length}{' '}
+            constituencies
+          </p>
+
+          {totalPages > 1 && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                style={{ justifyContent: 'center' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  chevron_left
+                </span>
+              </button>
+              {(() => {
+                const range: (number | string)[] = []
+                const delta = 1
+                for (let i = 1; i <= totalPages; i++) {
+                  if (
+                    i === 1 ||
+                    i === totalPages ||
+                    (i >= currentPage - delta && i <= currentPage + delta)
+                  ) {
+                    range.push(i)
+                  } else if (range[range.length - 1] !== '...') {
+                    range.push('...')
+                  }
+                }
+                return range.map((p, idx) => {
+                  if (p === '...') {
+                    return (
+                      <span
+                        key={`ellipsis-${idx}`}
+                        style={{
+                          padding: '0 8px',
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontSize: 13,
+                        }}
+                      >
+                        ...
+                      </span>
+                    )
+                  }
+                  return (
+                    <button
+                      key={p}
+                      onClick={() => setCurrentPage(p as number)}
+                      className={
+                        currentPage === p ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
+                      }
+                      style={{ minWidth: 32, height: 32, justifyContent: 'center', padding: 0 }}
+                    >
+                      {p}
+                    </button>
+                  )
+                })
+              })()}
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                style={{ justifyContent: 'center' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  chevron_right
+                </span>
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )
