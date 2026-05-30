@@ -71,7 +71,7 @@ export default function ReferralCard({ member }: Props) {
           ) : (
             <span
               style={{
-                color: '#fff',
+                color: 'hsl(var(--background))',
                 fontSize: 13,
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontFamily: "'Public Sans', sans-serif",
@@ -152,7 +152,7 @@ export default function ReferralCard({ member }: Props) {
                     color: 'hsl(var(--accent))',
                   }}
                 >
-                  +25 bonus ✓
+                  +25 bonus
                 </span>
               )}
             </div>

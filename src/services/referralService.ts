@@ -82,6 +82,19 @@ export const referralService = {
     return { total, active, pending, pointsEarned }
   },
 
+  async getPointsEarned(): Promise<number> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return 0
+
+    const { data: awards } = await supabase
+      .from('referral_awards')
+      .select('points')
+      .eq('referrer_id', user.id)
+    return awards?.reduce((sum, a) => sum + (a.points ?? 0), 0) ?? 0
+  },
+
   async getReferralLeaderboard(currentUserRegNo: string): Promise<ReferralLeaderboardEntry[]> {
     const { data, error } = await supabase.rpc('get_referral_leaderboard')
     if (error || !data) {

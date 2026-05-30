@@ -87,13 +87,18 @@ export default function Referrals() {
     let cancelled = false
     Promise.all([
       referralService.getMyReferrals(),
-      referralService.getMyReferralStats(),
       referralService.getReferralLeaderboard(userRegNo),
+      referralService.getPointsEarned(),
     ])
-      .then(([refs, s, lb]) => {
+      .then(([refs, lb, pointsEarned]) => {
         if (cancelled) return
         setReferrals(refs)
-        setStats(s)
+        setStats({
+          total: refs.length,
+          active: refs.filter((r) => r.status === 'Active' || r.status === 'Approved').length,
+          pending: refs.filter((r) => r.status === 'Pending').length,
+          pointsEarned,
+        })
         setLeaderboard(lb)
         setLoading(false)
       })
@@ -328,7 +333,7 @@ export default function Referrals() {
                   style={{
                     width: 28,
                     height: 28,
-                    borderRadius: '50%',
+                    borderRadius: 'var(--radius-pill)',
                     background: 'hsl(var(--primary))',
                     flexShrink: 0,
                     display: 'flex',
@@ -346,7 +351,7 @@ export default function Referrals() {
                   ) : (
                     <span
                       style={{
-                        color: '#fff',
+                        color: 'hsl(var(--background))',
                         fontSize: 10,
                         fontWeight: 'var(--font-weight-medium, 500)',
                         fontFamily: "'Public Sans', sans-serif",
