@@ -1,12 +1,18 @@
 -- Migration: national_id encryption setup
 -- Vault key, encrypt/decrypt helpers, and BEFORE INSERT/UPDATE trigger
 
--- 1. Create encryption key in Vault (generated at runtime, never hardcoded)
-SELECT vault.create_secret(
-  encode(gen_random_bytes(32), 'base64'),
-  'national_id_enc_key',
-  'AES passphrase for users.national_id column encryption'
-);
+-- 1. Create encryption key in Vault (idempotent: skip if key already exists)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM vault.secrets WHERE name = 'national_id_enc_key') THEN
+    PERFORM vault.create_secret(
+      encode(gen_random_bytes(32), 'base64'),
+      'national_id_enc_key',
+      'AES passphrase for users.national_id column encryption'
+    );
+  END IF;
+END;
+$$;
 
 -- 2. encrypt_national_id helper
 CREATE OR REPLACE FUNCTION public.encrypt_national_id(p_plaintext text)
@@ -27,6 +33,10 @@ BEGIN
     FROM vault.decrypted_secrets
    WHERE name = 'national_id_enc_key'
    LIMIT 1;
+
+  IF v_key IS NULL THEN
+    RAISE EXCEPTION 'national_id encryption key not found in Vault';
+  END IF;
 
   RETURN 'ENC:' || encode(pgp_sym_encrypt(p_plaintext, v_key), 'base64');
 END;
@@ -60,6 +70,10 @@ BEGIN
     FROM vault.decrypted_secrets
    WHERE name = 'national_id_enc_key'
    LIMIT 1;
+
+  IF v_key IS NULL THEN
+    RAISE EXCEPTION 'national_id encryption key not found in Vault';
+  END IF;
 
   RETURN pgp_sym_decrypt(
     decode(substring(p_ciphertext FROM 5), 'base64'),
