@@ -2791,6 +2791,17 @@ class AdminService {
       return []
     }
   }
+
+  async getNationalId(regNo: string): Promise<string | null> {
+    const { data, error } = await supabase.rpc('admin_get_national_id', {
+      p_reg_no: regNo,
+    })
+    if (error) {
+      console.error('[adminService] getNationalId failed:', error)
+      return null
+    }
+    return data as string | null
+  }
 }
 
 export const adminService = AdminService.getInstance()
