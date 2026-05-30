@@ -4,6 +4,7 @@ import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/adm
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { supabase } from '@/lib/supabase'
 
 // Modular imports
 import { MetricsFilters } from './mobilizationmetrics/MetricsFilters'
@@ -18,26 +19,50 @@ export default function MobilizationMetrics() {
   const [regionFilter, setRegionFilter] = useState('All')
   const [isFilterVisible, setIsFilterVisible] = useState(false)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      try {
-        const [leaderboardData, achievementsData, pulseData] = await Promise.all([
-          adminService.getRegionalLeaderboard(),
-          adminService.getAchievements(),
-          adminService.getMovementPulse(),
-        ])
-        setLeaderboard(leaderboardData)
-        setAchievements(achievementsData)
-        setPulse(pulseData)
-      } catch (error) {
-        console.error('[METRICS] Failed to synchronize mobilization operational metrics:', error)
+  const fetchData = async (isBackground = false) => {
+    if (!isBackground) setLoading(true)
+    try {
+      const [leaderboardData, achievementsData, pulseData] = await Promise.all([
+        adminService.getRegionalLeaderboard(),
+        adminService.getAchievements(),
+        adminService.getMovementPulse(),
+      ])
+      setLeaderboard(leaderboardData)
+      setAchievements(achievementsData)
+      setPulse(pulseData)
+    } catch (error) {
+      console.error('[METRICS] Failed to synchronize mobilization operational metrics:', error)
+      if (!isBackground) {
         toast.error('Failed to synchronize mobilization operational metrics.')
-      } finally {
-        setLoading(false)
       }
+    } finally {
+      if (!isBackground) setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchData()
+
+    const channel = supabase
+      .channel('mobilization-metrics-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'achievements' }, () => {
+        fetchData(true)
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'member_points' }, () => {
+        fetchData(true)
+      })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'member_achievements' },
+        () => {
+          fetchData(true)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   const handleExport = () => {
