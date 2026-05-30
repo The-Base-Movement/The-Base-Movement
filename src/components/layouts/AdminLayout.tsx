@@ -259,6 +259,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
         },
         {
+          to: '/admin/constituencies',
+          icon: 'map',
+          label: 'Constituency management',
+          permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
+        },
+        {
           to: '/admin/regional-hub',
           icon: 'shield',
           label: 'Regional hub',
