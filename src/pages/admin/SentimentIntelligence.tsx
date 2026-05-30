@@ -48,20 +48,9 @@ export default function SentimentIntelligence() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'member_feedback' }, () => {
         fetchIntelligence(true)
       })
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'national_sentiment_intelligence' },
-        () => {
-          fetchIntelligence(true)
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'predictive_impact_projections' },
-        () => {
-          fetchIntelligence(true)
-        }
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+        fetchIntelligence(true)
+      })
       .subscribe()
 
     return () => {

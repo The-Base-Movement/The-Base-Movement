@@ -188,28 +188,92 @@ class IntelligenceService {
 
   async getSentimentIntelligence(): Promise<SentimentIntelligence[]> {
     try {
+      // Derive sentiment data from real users aggregated by region
       const { data, error } = await supabase
-        .from('national_sentiment_intelligence')
-        .select('*')
-        .order('avg_sentiment', { ascending: false })
+        .from('users')
+        .select('id, region, status')
+        .not('region', 'is', null)
+        .neq('region', '')
       if (error) throw error
-      return (data || []) as SentimentIntelligence[]
+
+      const rows = (data || []) as { id: string; region: string; status: string }[]
+
+      // Group by region
+      const map = new Map<string, { pos: number; neg: number; neu: number; total: number }>()
+      for (const u of rows) {
+        const r = u.region
+        if (!map.has(r)) map.set(r, { pos: 0, neg: 0, neu: 0, total: 0 })
+        const g = map.get(r)!
+        g.total++
+        if (['Active', 'Approved'].includes(u.status)) g.pos++
+        else if (u.status === 'Suspended') g.neg++
+        else g.neu++ // Pending / In Review
+      }
+
+      return Array.from(map.entries())
+        .map(([region, g]) => ({
+          id: region, // stable key
+          region,
+          total_responses: g.total,
+          positive_count: g.pos,
+          negative_count: g.neg,
+          neutral_count: g.neu,
+          avg_sentiment:
+            g.total === 0 ? 0.5 : Math.max(0, Math.min(1, ((g.pos - g.neg) / g.total) * 0.5 + 0.5)),
+          last_updated: new Date().toISOString(),
+        }))
+        .sort((a, b) => b.avg_sentiment - a.avg_sentiment) as SentimentIntelligence[]
     } catch (error) {
-      console.error('[DATABASE] Failed to fetch sentiment operational metrics:', error)
+      console.error('[DATABASE] Failed to derive sentiment from users:', error)
       return []
     }
   }
 
   async getImpactProjections(): Promise<ImpactProjection[]> {
     try {
+      // Derive 30-day projections from real users aggregated by region
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
       const { data, error } = await supabase
-        .from('predictive_impact_projections')
-        .select('*')
-        .order('projected_reach_30d', { ascending: false })
+        .from('users')
+        .select('id, region, status, joined_at')
+        .not('region', 'is', null)
+        .neq('region', '')
       if (error) throw error
-      return (data || []) as ImpactProjection[]
+
+      const rows = (data || []) as {
+        id: string
+        region: string
+        status: string
+        joined_at: string
+      }[]
+
+      const map = new Map<string, { active: number; newJoins: number; total: number }>()
+
+      for (const u of rows) {
+        const r = u.region
+        if (!map.has(r)) map.set(r, { active: 0, newJoins: 0, total: 0 })
+        const g = map.get(r)!
+        g.total++
+        if (['Active', 'Approved'].includes(u.status)) g.active++
+        if (u.joined_at >= thirtyDaysAgo && ['Active', 'Approved', 'Pending'].includes(u.status))
+          g.newJoins++
+      }
+
+      return Array.from(map.entries())
+        .map(([region, g]) => ({
+          id: region,
+          region,
+          current_reach: g.active,
+          mobilization_velocity: g.newJoins,
+          projected_reach_30d: g.active + g.newJoins * 30,
+          confidence_score: g.total === 0 ? 0 : Math.min(1, g.active / g.total),
+          potential_election_impact: g.total * 2,
+          last_updated: new Date().toISOString(),
+        }))
+        .sort((a, b) => b.projected_reach_30d - a.projected_reach_30d) as ImpactProjection[]
     } catch (error) {
-      console.error('[DATABASE] Failed to fetch impact projections:', error)
+      console.error('[DATABASE] Failed to derive impact projections from users:', error)
       return []
     }
   }
