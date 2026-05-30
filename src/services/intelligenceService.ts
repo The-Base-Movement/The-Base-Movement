@@ -188,31 +188,38 @@ class IntelligenceService {
 
   async getSentimentIntelligence(): Promise<SentimentIntelligence[]> {
     try {
-      // Derive sentiment data from real users aggregated by region
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, region, status')
-        .not('region', 'is', null)
-        .neq('region', '')
-      if (error) throw error
+      // Fetch all 16 canonical regions as the spine, then left-join user data
+      const [regionsRes, usersRes] = await Promise.all([
+        supabase.from('ghana_regions').select('name').order('name'),
+        supabase
+          .from('users')
+          .select('id, region, status')
+          .not('region', 'is', null)
+          .neq('region', ''),
+      ])
+      if (regionsRes.error) throw regionsRes.error
+      if (usersRes.error) throw usersRes.error
 
-      const rows = (data || []) as { id: string; region: string; status: string }[]
+      const allRegions = (regionsRes.data || []).map((r: { name: string }) => r.name)
+      const users = (usersRes.data || []) as { id: string; region: string; status: string }[]
 
-      // Group by region
+      // Seed every region with zero counts
       const map = new Map<string, { pos: number; neg: number; neu: number; total: number }>()
-      for (const u of rows) {
-        const r = u.region
-        if (!map.has(r)) map.set(r, { pos: 0, neg: 0, neu: 0, total: 0 })
-        const g = map.get(r)!
+      for (const name of allRegions) map.set(name, { pos: 0, neg: 0, neu: 0, total: 0 })
+
+      // Populate from real user data
+      for (const u of users) {
+        if (!map.has(u.region)) map.set(u.region, { pos: 0, neg: 0, neu: 0, total: 0 })
+        const g = map.get(u.region)!
         g.total++
         if (['Active', 'Approved'].includes(u.status)) g.pos++
         else if (u.status === 'Suspended') g.neg++
-        else g.neu++ // Pending / In Review
+        else g.neu++
       }
 
       return Array.from(map.entries())
         .map(([region, g]) => ({
-          id: region, // stable key
+          id: region,
           region,
           total_responses: g.total,
           positive_count: g.pos,
@@ -231,29 +238,36 @@ class IntelligenceService {
 
   async getImpactProjections(): Promise<ImpactProjection[]> {
     try {
-      // Derive 30-day projections from real users aggregated by region
+      // Fetch all 16 canonical regions as the spine, then left-join user data
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, region, status, joined_at')
-        .not('region', 'is', null)
-        .neq('region', '')
-      if (error) throw error
+      const [regionsRes, usersRes] = await Promise.all([
+        supabase.from('ghana_regions').select('name').order('name'),
+        supabase
+          .from('users')
+          .select('id, region, status, joined_at')
+          .not('region', 'is', null)
+          .neq('region', ''),
+      ])
+      if (regionsRes.error) throw regionsRes.error
+      if (usersRes.error) throw usersRes.error
 
-      const rows = (data || []) as {
+      const allRegions = (regionsRes.data || []).map((r: { name: string }) => r.name)
+      const users = (usersRes.data || []) as {
         id: string
         region: string
         status: string
         joined_at: string
       }[]
 
+      // Seed every region with zero counts
       const map = new Map<string, { active: number; newJoins: number; total: number }>()
+      for (const name of allRegions) map.set(name, { active: 0, newJoins: 0, total: 0 })
 
-      for (const u of rows) {
-        const r = u.region
-        if (!map.has(r)) map.set(r, { active: 0, newJoins: 0, total: 0 })
-        const g = map.get(r)!
+      // Populate from real user data
+      for (const u of users) {
+        if (!map.has(u.region)) map.set(u.region, { active: 0, newJoins: 0, total: 0 })
+        const g = map.get(u.region)!
         g.total++
         if (['Active', 'Approved'].includes(u.status)) g.active++
         if (u.joined_at >= thirtyDaysAgo && ['Active', 'Approved', 'Pending'].includes(u.status))
