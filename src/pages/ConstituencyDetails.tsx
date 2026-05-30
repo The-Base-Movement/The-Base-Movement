@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { constituencyService } from '@/services/constituencyService'
 import { supabase } from '@/lib/supabase'
-import type { Constituency, ConstituencyActivity, Member } from '@/types/admin'
+import type { Constituency, ConstituencyActivity, Member, ConstituencyLeader } from '@/types/admin'
 import SEO from '@/components/SEO'
 import { ShareModal } from '@/components/ShareModal'
 import { useAuth } from '@/context/AuthContext'
@@ -35,6 +35,7 @@ export default function ConstituencyDetails() {
   const [members, setMembers] = useState<ConstituencyMember[]>([])
   const [activities, setActivities] = useState<ConstituencyActivity[]>([])
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
+  const [committee, setCommittee] = useState<ConstituencyLeader[]>([])
   const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -56,7 +57,7 @@ export default function ConstituencyDetails() {
       }
       setConstituency(c)
 
-      const [{ data: membersData }, acts, { data: announceData }] = await Promise.all([
+      const [{ data: membersData }, acts, { data: announceData }, comm] = await Promise.all([
         supabase
           .from('users')
           .select('id, full_name, avatar_url, status, profession, registration_number')
@@ -69,11 +70,13 @@ export default function ConstituencyDetails() {
           .eq('constituency_id', c.id)
           .order('created_at', { ascending: false })
           .limit(10),
+        constituencyService.getCommittee(c.id),
       ])
 
       setMembers(membersData ?? [])
       setActivities(acts)
       setAnnouncements(announceData ?? [])
+      setCommittee(comm)
       setLoading(false)
     }
     load()
@@ -1047,6 +1050,111 @@ export default function ConstituencyDetails() {
               </div>
             </div>
           </div>
+
+          {/* Committee Panel */}
+          {committee.length > 0 && (
+            <div className="panel" style={{ padding: '20px 22px' }}>
+              <h3
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: 14,
+                  paddingBottom: 12,
+                  borderBottom: '1px solid hsl(var(--border))',
+                  marginTop: 0,
+                }}
+              >
+                Constituency Committee
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {(['Secretary', 'Deputy Secretary', 'Treasurer'] as const).map((role) => {
+                  const cl = committee.find((c) => c.role === role)
+                  if (!cl) return null
+                  return (
+                    <div
+                      key={role}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        padding: '10px 12px',
+                        background: 'hsl(var(--container-low))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 4,
+                      }}
+                    >
+                      {cl.imageUrl ? (
+                        <img
+                          src={cl.imageUrl}
+                          alt={cl.name}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 'var(--radius-pill)',
+                            objectFit: 'cover',
+                            flexShrink: 0,
+                          }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 'var(--radius-pill)',
+                            background: 'hsl(var(--background))',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
+                          >
+                            person
+                          </span>
+                        </div>
+                      )}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 13,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface))',
+                            fontFamily: "'Public Sans', sans-serif",
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {cl.name}
+                        </p>
+                        <p
+                          style={{
+                            margin: '2px 0 0',
+                            fontSize: 10,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--primary))',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            fontFamily: "'Public Sans', sans-serif",
+                          }}
+                        >
+                          {role}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Official Verification widget */}
           <div

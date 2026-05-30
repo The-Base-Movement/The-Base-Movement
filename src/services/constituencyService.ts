@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { Constituency, ConstituencyActivity } from '@/types/admin'
+import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
 
 export function constituencySlug(name: string): string {
   return name
@@ -246,6 +246,60 @@ class ConstituencyService {
 
     if (error) {
       console.error('[CONSTITUENCY] Update failed:', error)
+      return false
+    }
+    return true
+  }
+
+  // --- Committee (Secretary, Deputy Secretary, Treasurer) ---
+
+  async getCommittee(constituencyId: number): Promise<ConstituencyLeader[]> {
+    const { data, error } = await supabase
+      .from('constituency_leaders')
+      .select('*')
+      .eq('constituency_id', constituencyId)
+      .order('created_at', { ascending: true })
+
+    if (error) {
+      console.error('[CONSTITUENCY] Fetch committee failed:', error)
+      return []
+    }
+
+    return (data || []).map((r) => ({
+      id: r.id as string,
+      constituencyId: r.constituency_id as number,
+      memberId: (r.member_id as string | null) || undefined,
+      name: r.name as string,
+      role: r.role as ConstituencyLeader['role'],
+      imageUrl: (r.image_url as string | null) || undefined,
+      createdAt: r.created_at as string,
+    }))
+  }
+
+  async addCommitteeMember(
+    constituencyId: number,
+    member: { memberId?: string; name: string; role: ConstituencyLeader['role']; imageUrl?: string }
+  ): Promise<boolean> {
+    const { error } = await supabase.from('constituency_leaders').insert({
+      constituency_id: constituencyId,
+      member_id: member.memberId || null,
+      name: member.name,
+      role: member.role,
+      image_url: member.imageUrl || null,
+    })
+
+    if (error) {
+      console.error('[CONSTITUENCY] Add committee member failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async removeCommitteeMember(memberId: string): Promise<boolean> {
+    const { error } = await supabase.from('constituency_leaders').delete().eq('id', memberId)
+
+    if (error) {
+      console.error('[CONSTITUENCY] Remove committee member failed:', error)
       return false
     }
     return true

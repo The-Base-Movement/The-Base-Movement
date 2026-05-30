@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { constituencyService, constituencySlug } from '@/services/constituencyService'
-import type { Constituency } from '@/types/admin'
+import type { Constituency, ConstituencyLeader } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'
 import { Skeleton } from '@/components/states'
 
@@ -49,6 +49,7 @@ export default function ConstituencyHub() {
   const [members, setMembers] = useState<ConstituencyMember[]>([])
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [donations, setDonations] = useState<ConstituencyDonation[]>([])
+  const [committee, setCommittee] = useState<ConstituencyLeader[]>([])
   const [activities, setActivities] = useState<
     { id: string; title: string; description: string | null; type: string; activity_date: string }[]
   >([])
@@ -168,8 +169,8 @@ export default function ConstituencyHub() {
           : []
       )
 
-      // Load members, announcements, activities in parallel
-      const [{ data: memberData }, { data: announceData }, { data: actData }] = await Promise.all([
+      // Load members, announcements, activities, and committee in parallel
+      const [{ data: memberData }, { data: announceData }, { data: actData }, committeeData] = await Promise.all([
         supabase
           .from('users')
           .select(
@@ -187,6 +188,7 @@ export default function ConstituencyHub() {
           .select('id, title, description, type, activity_date')
           .eq('constituency_id', c.id)
           .order('activity_date', { ascending: false }),
+        constituencyService.getCommittee(c.id),
       ])
 
       const mappedMembers = (memberData ?? []).map((u) => ({
@@ -202,6 +204,7 @@ export default function ConstituencyHub() {
       setMembers(mappedMembers)
       setAnnouncements(announceData ?? [])
       setActivities(actData ?? [])
+      setCommittee(committeeData)
 
       // Load member donations
       const memberIds = mappedMembers.map((m) => m.authId).filter(Boolean)
@@ -1021,6 +1024,115 @@ export default function ConstituencyHub() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Committee Panel (read-only for coordinator) */}
+          {committee.length > 0 && (
+            <div className="panel" style={{ padding: '20px 24px', marginTop: 20 }}>
+              <p
+                style={{
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                  margin: '0 0 14px',
+                  paddingBottom: 12,
+                  borderBottom: '1px solid hsl(var(--border))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontSize: 11,
+                }}
+              >
+                Constituency Committee
+              </p>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: 12,
+                }}
+              >
+                {(['Secretary', 'Deputy Secretary', 'Treasurer'] as const).map((role) => {
+                  const cl = committee.find((c) => c.role === role)
+                  if (!cl) return null
+                  return (
+                    <div
+                      key={role}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        padding: '10px 14px',
+                        background: 'hsl(var(--container-low))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 4,
+                      }}
+                    >
+                      {cl.imageUrl ? (
+                        <img
+                          src={cl.imageUrl}
+                          alt={cl.name}
+                          style={{
+                            width: 30,
+                            height: 30,
+                            borderRadius: 'var(--radius-pill)',
+                            objectFit: 'cover',
+                            flexShrink: 0,
+                          }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: 30,
+                            height: 30,
+                            borderRadius: 'var(--radius-pill)',
+                            background: 'hsl(var(--background))',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
+                          >
+                            person
+                          </span>
+                        </div>
+                      )}
+                      <div style={{ minWidth: 0 }}>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 13,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface))',
+                            fontFamily: "'Public Sans', sans-serif",
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {cl.name}
+                        </p>
+                        <p
+                          style={{
+                            margin: '2px 0 0',
+                            fontSize: 10,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--primary))',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            fontFamily: "'Public Sans', sans-serif",
+                          }}
+                        >
+                          {role}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
         </div>

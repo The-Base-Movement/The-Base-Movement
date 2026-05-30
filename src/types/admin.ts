@@ -830,6 +830,16 @@ export interface MemberNote {
   isSystem: boolean
 }
 
+export interface ConstituencyLeader {
+  id: string
+  constituencyId: number
+  memberId?: string
+  name: string
+  role: 'Secretary' | 'Deputy Secretary' | 'Treasurer'
+  imageUrl?: string
+  createdAt: string
+}
+
 export interface Constituency {
   id: number
   name: string
@@ -846,6 +856,7 @@ export interface Constituency {
   email?: string
   phoneNumber?: string
   activities?: ConstituencyActivity[]
+  committee?: ConstituencyLeader[]
 }
 
 export interface ConstituencyActivity {
