@@ -1085,10 +1085,9 @@ export default function ConstituencyHub() {
                   }}
                 />
                 <div style={{ display: 'flex', gap: 12 }}>
-                  <input
+                  <select
                     value={actType}
                     onChange={(e) => setActType(e.target.value)}
-                    placeholder="Type (e.g. Meeting)"
                     style={{
                       flex: 1,
                       height: 40,
@@ -1098,8 +1097,25 @@ export default function ConstituencyHub() {
                       fontSize: 14,
                       fontFamily: "'Public Sans', sans-serif",
                       boxSizing: 'border-box',
+                      background: '#fff',
+                      color: 'hsl(var(--on-surface))',
+                      cursor: 'pointer',
                     }}
-                  />
+                  >
+                    {[
+                      'Event',
+                      'Action',
+                      'Onboarding',
+                      'Meeting',
+                      'Outreach',
+                      'Rally',
+                      'Workshop',
+                    ].map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
                   <input
                     type="date"
                     value={actDate}
