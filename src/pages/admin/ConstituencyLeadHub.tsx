@@ -12,7 +12,7 @@ type Member = {
   avatar_url?: string
   status?: string
   profession?: string
-  reg_no?: string
+  registration_number?: string
 }
 
 type UserOption = {
@@ -59,7 +59,7 @@ export default function AdminConstituencyLeadHub() {
       const [{ data: membersData }, acts] = await Promise.all([
         supabase
           .from('users')
-          .select('id, full_name, avatar_url, status, profession, reg_no')
+          .select('id, full_name, avatar_url, status, profession, registration_number')
           .eq('constituency', c.name)
           .order('full_name', { ascending: true }),
         constituencyService.getConstituencyActivities(numericId),
@@ -466,7 +466,7 @@ export default function AdminConstituencyLeadHub() {
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
-                      {m.reg_no ?? '—'}
+                      {m.registration_number ?? '—'}
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <span

@@ -10,7 +10,7 @@ type Member = {
   avatar_url?: string
   status?: string
   profession?: string
-  reg_no?: string
+  registration_number?: string
 }
 
 export default function ConstituencyDetails() {
@@ -35,7 +35,7 @@ export default function ConstituencyDetails() {
       const [{ data: membersData }, acts] = await Promise.all([
         supabase
           .from('users')
-          .select('id, full_name, avatar_url, status, profession, reg_no')
+          .select('id, full_name, avatar_url, status, profession, registration_number')
           .eq('constituency', c.name)
           .order('full_name', { ascending: true }),
         constituencyService.getConstituencyActivities(c.id),
@@ -301,9 +301,9 @@ export default function ConstituencyDetails() {
                       </p>
                     )}
                   </div>
-                  {m.reg_no && (
+                  {m.registration_number && (
                     <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-                      {m.reg_no}
+                      {m.registration_number}
                     </span>
                   )}
                   <span
