@@ -34,8 +34,11 @@ function isUIKey(key: string): key is UIKey {
   return (UI_KEYS as readonly string[]).includes(key)
 }
 
+const isBrowser = typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined'
+
 export const sessionStore = {
   getItem(key: string): string | null {
+    if (!isBrowser) return null
     const fromSession = sessionStorage.getItem(key)
     if (fromSession !== null) return fromSession
 
@@ -53,18 +56,21 @@ export const sessionStore = {
   },
 
   setItem(key: string, value: string): void {
+    if (!isBrowser) return
     sessionStorage.setItem(key, value)
     // Ensure the same key in localStorage is removed so nothing reads stale data
     if (isUIKey(key)) localStorage.removeItem(key)
   },
 
   removeItem(key: string): void {
+    if (!isBrowser) return
     sessionStorage.removeItem(key)
     if (isUIKey(key)) localStorage.removeItem(key)
   },
 
   /** Call on logout to scrub all UI keys from both stores. */
   clearAll(): void {
+    if (!isBrowser) return
     UI_KEYS.forEach((key) => {
       sessionStorage.removeItem(key)
       localStorage.removeItem(key)

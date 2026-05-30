@@ -22,10 +22,13 @@ declare global {
 // and is automatically cleared when the browser session ends.
 // Trade-off: users must re-login after closing the tab. If persistent login is
 // required, revert to the default (localStorage) storage.
+const isBrowser = typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined'
+
 const sessionStorageAdapter = {
-  getItem: (key: string) => sessionStorage.getItem(key),
-  setItem: (key: string, value: string) => sessionStorage.setItem(key, value),
-  removeItem: (key: string) => sessionStorage.removeItem(key),
+  getItem: (key: string) => (isBrowser ? sessionStorage.getItem(key) : null),
+  setItem: (key: string, value: string) =>
+    isBrowser ? sessionStorage.setItem(key, value) : undefined,
+  removeItem: (key: string) => (isBrowser ? sessionStorage.removeItem(key) : undefined),
 }
 
 export const supabase = (globalThis.__supabase_singleton__ ??= createClient(

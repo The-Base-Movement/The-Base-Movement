@@ -60,19 +60,23 @@ export default function AdminBlogs() {
   const editorRef = useRef<{ getContent: () => string } | null>(null)
 
   /* ── View routing — persisted across page refreshes via sessionStorage ── */
-  const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(
-    () => (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
+  const isBrowser = typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined'
+
+  const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() =>
+    isBrowser
+      ? (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
+      : 'list'
   )
   const [editingPost, setEditPost] = useState<BlogPost | null>(() => {
-    const saved = sessionStorage.getItem('blogs_editingPost')
+    const saved = isBrowser ? sessionStorage.getItem('blogs_editingPost') : null
     return saved ? JSON.parse(saved) : null
   })
   const [viewPost, setViewPost] = useState<BlogPost | null>(() => {
-    const saved = sessionStorage.getItem('blogs_viewPost')
+    const saved = isBrowser ? sessionStorage.getItem('blogs_viewPost') : null
     return saved ? JSON.parse(saved) : null
   })
   const [formData, setFormData] = useState<FormData>(() => {
-    const saved = sessionStorage.getItem('blogs_formData')
+    const saved = isBrowser ? sessionStorage.getItem('blogs_formData') : null
     return saved ? JSON.parse(saved) : EMPTY_FORM
   })
 
@@ -82,7 +86,7 @@ export default function AdminBlogs() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [menuAnchor, setMenuAnchor] = useState<{ top: number; right: number } | null>(null)
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
+  const [isMobile, setIsMobile] = useState(() => (isBrowser ? window.innerWidth <= 640 : false))
   const [showMobileFilter, setShowMobileFilter] = useState(false)
 
   /* ── Editor state ───────────────────────────────────────────── */
@@ -110,19 +114,23 @@ export default function AdminBlogs() {
 
   /* ── Session-storage sync ───────────────────────────────────── */
   useEffect(() => {
-    sessionStorage.setItem('blogs_currentView', currentView)
-  }, [currentView])
+    if (isBrowser) sessionStorage.setItem('blogs_currentView', currentView)
+  }, [currentView, isBrowser])
   useEffect(() => {
-    if (editingPost) sessionStorage.setItem('blogs_editingPost', JSON.stringify(editingPost))
-    else sessionStorage.removeItem('blogs_editingPost')
-  }, [editingPost])
+    if (isBrowser) {
+      if (editingPost) sessionStorage.setItem('blogs_editingPost', JSON.stringify(editingPost))
+      else sessionStorage.removeItem('blogs_editingPost')
+    }
+  }, [editingPost, isBrowser])
   useEffect(() => {
-    if (viewPost) sessionStorage.setItem('blogs_viewPost', JSON.stringify(viewPost))
-    else sessionStorage.removeItem('blogs_viewPost')
-  }, [viewPost])
+    if (isBrowser) {
+      if (viewPost) sessionStorage.setItem('blogs_viewPost', JSON.stringify(viewPost))
+      else sessionStorage.removeItem('blogs_viewPost')
+    }
+  }, [viewPost, isBrowser])
   useEffect(() => {
-    sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
-  }, [formData])
+    if (isBrowser) sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
+  }, [formData, isBrowser])
 
   /* ── Data fetching ──────────────────────────────────────────── */
   const fetchMedia = useCallback(async () => {

@@ -3,7 +3,9 @@ import { usePushNotifications } from '@/hooks/usePushNotifications'
 
 export function PushPromptBanner() {
   const { isSupported, isSubscribed, loading, subscribe } = usePushNotifications()
-  const [dismissed, setDismissed] = useState(() => localStorage.getItem('push_prompted') !== null)
+  const [dismissed, setDismissed] = useState(() =>
+    typeof localStorage !== 'undefined' ? localStorage.getItem('push_prompted') !== null : true
+  )
   const [confirmed, setConfirmed] = useState(false)
 
   if (confirmed) {
@@ -44,13 +46,13 @@ export function PushPromptBanner() {
 
   const handleEnable = async () => {
     await subscribe()
-    localStorage.setItem('push_prompted', 'accepted')
+    if (typeof localStorage !== 'undefined') localStorage.setItem('push_prompted', 'accepted')
     setConfirmed(true)
     setTimeout(() => setDismissed(true), 2500)
   }
 
   const handleDismiss = () => {
-    localStorage.setItem('push_prompted', 'dismissed')
+    if (typeof localStorage !== 'undefined') localStorage.setItem('push_prompted', 'dismissed')
     setDismissed(true)
   }
 
