@@ -19,66 +19,12 @@ import { PublicMobileFilterDrawer } from './chapters/PublicMobileFilterDrawer'
 import { PublicChapterGrid } from './chapters/PublicChapterGrid'
 import { PublicRequestModal } from './chapters/PublicRequestModal'
 
-// Using dynamic database assets via flag_url and country mapping
-
-const GHANA_REGIONS_LIST = [
-  'Ahafo',
-  'Ashanti',
-  'Bono',
-  'Bono East',
-  'Central',
-  'Eastern',
-  'Greater Accra',
-  'North East',
-  'Northern',
-  'Oti',
-  'Savannah',
-  'Upper East',
-  'Upper West',
-  'Volta',
-  'Western',
-  'Western North',
-]
-
-/**
- * Robustly determines which Ghana region a chapter belongs to.
- */
-const getChapterRegion = (c: { region?: string | null; city_or_region: string }) => {
-  if (c.region && GHANA_REGIONS_LIST.includes(c.region)) return c.region
-
-  const city = (c.city_or_region || '').toLowerCase()
-  if (!city || city === 'ghana') return null
-
-  const matched = GHANA_REGIONS_LIST.find(
-    (r) =>
-      city === r.toLowerCase() || city.includes(r.toLowerCase()) || r.toLowerCase().includes(city)
-  )
-  if (matched) return matched
-
-  if (city.includes('accra') || city.includes('tema')) return 'Greater Accra'
-  if (city.includes('kumasi') || city.includes('obuasi')) return 'Ashanti'
-  if (city.includes('takoradi') || city.includes('sekondi')) return 'Western'
-  if (city.includes('tamale')) return 'Northern'
-  if (city.includes('cape coast') || city.includes('winneba')) return 'Central'
-  if (city.includes('koforidua')) return 'Eastern'
-  if (city.includes('ho')) return 'Volta'
-  if (city.includes('sunyani')) return 'Bono'
-  if (city.includes('techiman')) return 'Bono East'
-  if (city.includes('wa')) return 'Upper West'
-  if (city.includes('bolgatanga')) return 'Upper East'
-
-  return null
-}
-
 export default function Chapters() {
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
   const { chapters } = useChapters()
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
-  const [activeTab, setActiveTab] = useState<'ghana' | 'diaspora'>('ghana')
-  const [selectedRegion, setSelectedRegion] = useState('All Regions')
-  const [regions, setRegions] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [userChapterName, setUserChapterName] = useState<string | null>(null)
@@ -93,7 +39,6 @@ export default function Chapters() {
   const [submissionSuccess, setSubmissionSuccess] = useState(false)
 
   useEffect(() => {
-    setRegions(['All Regions', ...GHANA_REGIONS_LIST.slice().sort()])
     const fetchUserChapter = async () => {
       if (!user) {
         setUserChapterName(null)
@@ -111,24 +56,16 @@ export default function Chapters() {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchTerm, selectedRegion, activeTab, sortOrder, showActiveOnly])
+  }, [searchTerm, sortOrder, showActiveOnly])
 
-  const ghanaChapters = chapters.filter((c) => c.country === 'Ghana')
-  const diasporaChapters = chapters.filter((c) => c.country !== 'Ghana')
-  const activeChapters = activeTab === 'ghana' ? ghanaChapters : diasporaChapters
-  const filteredChapters = activeChapters
+  const filteredChapters = chapters
     .filter((c) => {
       const matchSearch =
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.city_or_region.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.country.toLowerCase().includes(searchTerm.toLowerCase())
-      let matchRegion = true
-      if (activeTab === 'ghana' && selectedRegion !== 'All Regions') {
-        const derived = getChapterRegion(c)
-        matchRegion = derived === selectedRegion
-      }
       const matchStatus = showActiveOnly ? c.status === 'Active' : true
-      return matchSearch && matchRegion && matchStatus
+      return matchSearch && matchStatus
     })
     .sort((a, b) => {
       if (sortOrder === 'az') return a.name.localeCompare(b.name)
@@ -173,14 +110,17 @@ export default function Chapters() {
     }
   }
 
+  // Child components still accept activeTab/selectedRegion/regions in their interfaces;
+  // pass fixed stubs so we don't need to modify them.
+  const noop = () => {}
   const sharedFilterProps = {
     searchTerm,
     setSearchTerm,
-    activeTab,
-    setActiveTab,
-    selectedRegion,
-    setSelectedRegion,
-    regions,
+    activeTab: 'diaspora' as const,
+    setActiveTab: noop as (v: 'ghana' | 'diaspora') => void,
+    selectedRegion: 'All Regions',
+    setSelectedRegion: noop as (v: string) => void,
+    regions: [] as string[],
     chapters,
     sortOrder,
     setSortOrder,
@@ -219,8 +159,8 @@ export default function Chapters() {
         <DashboardPageHeader totalChapters={chapters.length} />
 
         <DashboardKpiRow
-          ghanaCount={ghanaChapters.length}
-          diasporaCount={diasporaChapters.length}
+          ghanaCount={0}
+          diasporaCount={chapters.length}
           totalCount={chapters.length}
           countryCount={new Set(chapters.map((c) => c.country)).size}
         />
@@ -258,11 +198,11 @@ export default function Chapters() {
   const publicFilterProps = {
     searchTerm,
     setSearchTerm,
-    activeTab,
-    setActiveTab,
-    selectedRegion,
-    setSelectedRegion,
-    regions,
+    activeTab: 'diaspora' as const,
+    setActiveTab: noop as (v: 'ghana' | 'diaspora') => void,
+    selectedRegion: 'All Regions',
+    setSelectedRegion: noop as (v: string) => void,
+    regions: [] as string[],
     totalChapters: chapters.length,
     countryCount: new Set(chapters.map((c) => c.country)).size,
     onRequestChapter: () => setIsRequestModalOpen(true),
