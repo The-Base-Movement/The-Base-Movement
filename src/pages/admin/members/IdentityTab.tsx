@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { type Member, adminService } from '@/services/adminService'
 
 interface IdentityTabProps {
@@ -8,6 +8,21 @@ interface IdentityTabProps {
 }
 
 export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
+  const [nationalId, setNationalId] = useState<string | null>(null)
+  const [revealing, setRevealing] = useState(false)
+
+  async function handleReveal() {
+    setRevealing(true)
+    try {
+      const plain = await adminService.getNationalId(member.id)
+      setNationalId(plain !== null ? plain : '—')
+    } catch {
+      setNationalId('—')
+    } finally {
+      setRevealing(false)
+    }
+  }
+
   return (
     <div className="panel-twocol">
       <div>
@@ -96,6 +111,76 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                   </dd>
                 </Fragment>
               ))}
+              <dt
+                style={{
+                  fontSize: 9.5,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  letterSpacing: '.06em',
+                  textTransform: 'uppercase',
+                  fontFamily: "'Public Sans', sans-serif",
+                  alignSelf: 'center',
+                }}
+              >
+                National ID
+              </dt>
+              <dd
+                style={{
+                  margin: 0,
+                  fontSize: 12.5,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                {nationalId !== null ? (
+                  nationalId !== '—' ? (
+                    <>
+                      <span style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                        {nationalId}
+                      </span>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          fontSize: 14,
+                          color: 'hsl(var(--on-surface-muted))',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => navigator.clipboard.writeText(nationalId)}
+                      >
+                        content_copy
+                      </span>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          fontSize: 14,
+                          color: 'hsl(var(--on-surface-muted))',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => setNationalId(null)}
+                      >
+                        visibility_off
+                      </span>
+                    </>
+                  ) : (
+                    <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
+                  )
+                ) : (
+                  <button
+                    className="btn btn-sm btn-outline"
+                    style={{ padding: '2px 10px', fontSize: 11 }}
+                    onClick={handleReveal}
+                    disabled={revealing}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                      {revealing ? 'hourglass_empty' : 'visibility'}
+                    </span>
+                    {revealing ? 'Loading…' : 'Reveal'}
+                  </button>
+                )}
+              </dd>
             </dl>
           </div>
         </div>
