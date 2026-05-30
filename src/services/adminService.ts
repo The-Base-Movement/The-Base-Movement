@@ -845,6 +845,10 @@ class AdminService {
     return success
   }
 
+  async updatePollStatus(id: string, status: 'Active' | 'Closed'): Promise<boolean> {
+    return pollService.updatePollStatus(id, status)
+  }
+
   async voteInPoll(pollId: string, optionId: string): Promise<boolean> {
     return pollService.voteInPoll(pollId, optionId)
   }

@@ -119,6 +119,15 @@ class PollService {
     return true
   }
 
+  async updatePollStatus(id: string, status: 'Active' | 'Closed'): Promise<boolean> {
+    const { error } = await supabase.from('polls').update({ status }).eq('id', id)
+    if (error) {
+      console.error('[DATABASE] Failed to update poll status:', error)
+      return false
+    }
+    return true
+  }
+
   async voteInPoll(pollId: string, optionId: string): Promise<boolean> {
     try {
       const {

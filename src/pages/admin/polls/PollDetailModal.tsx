@@ -20,7 +20,9 @@
 
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import type { Poll } from '@/services/adminService'
+import { adminService, type Poll } from '@/services/adminService'
+import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
 import { modalBackdrop, modalBox, modalCloseBtn } from './styles'
 import { statusPill } from './statusPill'
 
@@ -28,18 +30,47 @@ interface PollDetailModalProps {
   poll: Poll
   onClose: () => void
   onDelete: (poll: Poll) => void
+  onStatusChange: () => void
 }
 
-export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProps) {
+export function PollDetailModal({ poll, onClose, onDelete, onStatusChange }: PollDetailModalProps) {
   // Sort options by votes descending so #1 is always the leader
   const sorted = [...poll.options].sort((a, b) => b.votes - a.votes)
   const leadId = sorted[0]?.id
+
+  const [closingPoll, setClosingPoll] = useState(false)
 
   // useState lazy initializer runs once on mount (not during render),
   // which is the correct way to capture Date.now() without breaking React's
   // purity rules. useMemo is still flagged because its callback CAN run
   // during render; useState's initializer is guaranteed to run only once.
   const [now] = useState<number>(() => Date.now())
+
+  const handleClosePoll = async () => {
+    setClosingPoll(true)
+    try {
+      const ok = await adminService.updatePollStatus(poll.id, 'Closed')
+      if (!ok) {
+        toast.error('Failed to close poll.')
+        return
+      }
+      supabase.functions
+        .invoke('send-push-notification', {
+          body: {
+            userIds: 'all',
+            title: 'Poll closed — results are in',
+            body: poll.question.slice(0, 100),
+            url: '/dashboard/polls',
+          },
+        })
+        .catch(console.error)
+      toast.success('Poll closed.')
+      onStatusChange()
+      onClose()
+    } finally {
+      setClosingPoll(false)
+    }
+  }
   const days = Math.max(0, Math.ceil((new Date(poll.endDate).getTime() - now) / 86400000))
 
   return createPortal(
@@ -316,12 +347,25 @@ export function PollDetailModal({ poll, onClose, onDelete }: PollDetailModalProp
             </span>
             Delete Poll
           </button>
+          {poll.status === 'Active' && (
+            <button
+              className="btn btn-outline-dest btn-sm"
+              style={{ justifyContent: 'center' }}
+              onClick={handleClosePoll}
+              disabled={closingPoll}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                lock
+              </span>
+              {closingPoll ? 'Closing…' : 'Close Poll'}
+            </button>
+          )}
           <button
             className="btn btn-outline btn-sm"
             style={{ flex: 1, justifyContent: 'center' }}
             onClick={onClose}
           >
-            Close
+            Dismiss
           </button>
         </div>
       </div>

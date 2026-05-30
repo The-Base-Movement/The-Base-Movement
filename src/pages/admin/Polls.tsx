@@ -236,6 +236,10 @@ export default function PollsManagement() {
           poll={viewPoll}
           onClose={() => setViewPoll(null)}
           onDelete={handleDeletePoll}
+          onStatusChange={() => {
+            setViewPoll(null)
+            fetchData()
+          }}
         />
       )}
 
