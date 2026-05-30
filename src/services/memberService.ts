@@ -666,32 +666,25 @@ class MemberService {
   }
 
   async getTotalMemberCount(): Promise<number> {
-    const { count, error } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .is('deleted_at', null)
-      .eq('verification_status', 'Verified')
+    const { data, error } = await supabase.rpc('get_verified_member_count')
 
     if (error) {
       console.warn('[DATABASE] Failed to fetch total member count:', error)
       return 0
     }
 
-    return count || 0
+    return Number(data) || 0
   }
 
   async getTotalRegisteredCount(): Promise<number> {
-    const { count, error } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .is('deleted_at', null)
+    const { data, error } = await supabase.rpc('get_registered_member_count')
 
     if (error) {
       console.warn('[DATABASE] Failed to fetch registered member count:', error)
       return 0
     }
 
-    return count || 0
+    return Number(data) || 0
   }
 }
 
