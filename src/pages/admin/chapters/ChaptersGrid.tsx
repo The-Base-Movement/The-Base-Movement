@@ -24,12 +24,10 @@ interface ChaptersGridProps {
   itemsPerPage: number
   search: string
   statusFilter: 'All' | 'Active' | 'Pending'
-  networkFilter: 'All' | 'Ghana' | 'Diaspora'
   regionFilter: string
   availableRegions: string[]
   onSearchChange: (val: string) => void
   onStatusFilterChange: (val: 'All' | 'Active' | 'Pending') => void
-  onNetworkFilterChange: (val: 'All' | 'Ghana' | 'Diaspora') => void
   onRegionFilterChange: (val: string) => void
   onPageChange: (page: number) => void
   onOpenAddModal: () => void
@@ -47,12 +45,10 @@ export function ChaptersGrid({
   itemsPerPage,
   search,
   statusFilter,
-  networkFilter,
   regionFilter,
   availableRegions,
   onSearchChange,
   onStatusFilterChange,
-  onNetworkFilterChange,
   onRegionFilterChange,
   onPageChange,
   onOpenAddModal,
@@ -105,43 +101,23 @@ export function ChaptersGrid({
           <option value="Active">Active</option>
           <option value="Pending">Pending</option>
         </select>
-        <label htmlFor="select-network" style={{ display: 'none' }}>
-          Filter by network
+        <label htmlFor="select-region" style={{ display: 'none' }}>
+          Filter by region
         </label>
         <select
-          name="networkFilter"
-          id="select-network"
-          value={networkFilter}
-          onChange={(e) => {
-            onNetworkFilterChange(e.target.value as 'All' | 'Ghana' | 'Diaspora')
-          }}
+          name="regionFilter"
+          id="select-region"
+          value={regionFilter}
+          onChange={(e) => onRegionFilterChange(e.target.value)}
           style={{ ...fieldStyle, width: 175, appearance: 'none' as const }}
         >
-          <option value="All">All networks</option>
-          <option value="Ghana">Ghana Network</option>
-          <option value="Diaspora">Diaspora Network</option>
+          <option value="">All regions</option>
+          {availableRegions.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
         </select>
-        {networkFilter === 'Ghana' && (
-          <>
-            <label htmlFor="select-region" style={{ display: 'none' }}>
-              Filter by region
-            </label>
-            <select
-              name="regionFilter"
-              id="select-region"
-              value={regionFilter}
-              onChange={(e) => onRegionFilterChange(e.target.value)}
-              style={{ ...fieldStyle, width: 175, appearance: 'none' as const }}
-            >
-              <option value="">All regions</option>
-              {availableRegions.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
       </div>
 
       {/* Search + filter - Mobile */}
@@ -200,16 +176,14 @@ export function ChaptersGrid({
           ))}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          <label htmlFor="select-network-mob" style={{ display: 'none' }}>
-            Filter by network
+          <label htmlFor="select-region-mob" style={{ display: 'none' }}>
+            Filter by region
           </label>
           <select
-            name="networkFilter-mob"
-            id="select-network-mob"
-            value={networkFilter}
-            onChange={(e) => {
-              onNetworkFilterChange(e.target.value as 'All' | 'Ghana' | 'Diaspora')
-            }}
+            name="regionFilter-mob"
+            id="select-region-mob"
+            value={regionFilter}
+            onChange={(e) => onRegionFilterChange(e.target.value)}
             style={{
               ...fieldStyle,
               flex: 1,
@@ -218,37 +192,13 @@ export function ChaptersGrid({
               height: 36,
             }}
           >
-            <option value="All">All networks</option>
-            <option value="Ghana">Ghana Network</option>
-            <option value="Diaspora">Diaspora Network</option>
+            <option value="">All regions</option>
+            {availableRegions.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
           </select>
-          {networkFilter === 'Ghana' && (
-            <>
-              <label htmlFor="select-region-mob" style={{ display: 'none' }}>
-                Filter by region
-              </label>
-              <select
-                name="regionFilter-mob"
-                id="select-region-mob"
-                value={regionFilter}
-                onChange={(e) => onRegionFilterChange(e.target.value)}
-                style={{
-                  ...fieldStyle,
-                  flex: 1,
-                  appearance: 'none' as const,
-                  fontSize: 12,
-                  height: 36,
-                }}
-              >
-                <option value="">All regions</option>
-                {availableRegions.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-            </>
-          )}
         </div>
       </div>
 

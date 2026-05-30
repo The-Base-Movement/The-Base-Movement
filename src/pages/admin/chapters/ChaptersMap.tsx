@@ -1,11 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import type { Chapter } from '@/services/adminService'
-import {
-  REGION_PATHS,
-  GHANA_REGION_COORDS,
-  getChapterRegion,
-  getDiasporaCoords,
-} from '@/utils/mapUtils'
+import { getDiasporaCoords } from '@/utils/mapUtils'
 import Map, { Marker, NavigationControl, ScaleControl, Source, Layer } from 'react-map-gl/mapbox'
 import type { MapMouseEvent, MapRef } from 'react-map-gl/mapbox'
 import type { FillPaint, LinePaint } from 'mapbox-gl'
@@ -15,8 +10,6 @@ interface ChaptersMapProps {
   chapters: Chapter[]
   regionFilter: string
   onRegionFilterChange: (region: string) => void
-  networkFilter: 'All' | 'Ghana' | 'Diaspora'
-  onNetworkFilterChange: (network: 'All' | 'Ghana' | 'Diaspora') => void
   onPageChange: (page: number) => void
 }
 
@@ -24,8 +17,6 @@ export function ChaptersMap({
   chapters,
   regionFilter,
   onRegionFilterChange,
-  networkFilter,
-  onNetworkFilterChange,
   onPageChange,
 }: ChaptersMapProps) {
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null)
@@ -41,19 +32,11 @@ export function ChaptersMap({
 
   useEffect(() => {
     if (regionFilter) {
-      const ghanaCoords = GHANA_REGION_COORDS[regionFilter]
       const diasporaCoords = getDiasporaCoords({
         city_or_region: regionFilter,
         country: regionFilter,
       })
-
-      if (ghanaCoords) {
-        mapRef.current?.flyTo({
-          center: [ghanaCoords.lng, ghanaCoords.lat],
-          zoom: 7.5,
-          duration: 1500,
-        })
-      } else if (diasporaCoords) {
+      if (diasporaCoords) {
         mapRef.current?.flyTo({
           center: [diasporaCoords.lng, diasporaCoords.lat],
           zoom: 6,
@@ -61,13 +44,9 @@ export function ChaptersMap({
         })
       }
     } else {
-      if (networkFilter === 'Diaspora' || networkFilter === 'All') {
-        mapRef.current?.flyTo({ center: [10, 20], zoom: 1.5, duration: 1500 })
-      } else {
-        mapRef.current?.flyTo({ center: [-1.0232, 7.9465], zoom: 5.5, duration: 1500 })
-      }
+      mapRef.current?.flyTo({ center: [10, 20], zoom: 1.5, duration: 1500 })
     }
-  }, [networkFilter, regionFilter])
+  }, [regionFilter])
 
   const chapterMarkers = useMemo(() => {
     return chapters
@@ -77,23 +56,10 @@ export function ChaptersMap({
         if (chapter.latitude !== undefined && chapter.longitude !== undefined) {
           baseCoords = { lat: chapter.latitude, lng: chapter.longitude }
         } else {
-          if (chapter.country === 'Ghana') {
-            const derivedReg = getChapterRegion(chapter)
-            if (derivedReg) {
-              baseCoords = GHANA_REGION_COORDS[derivedReg]
-            }
-          } else {
-            baseCoords = getDiasporaCoords(chapter)
-          }
+          baseCoords = getDiasporaCoords(chapter)
         }
 
         if (!baseCoords) return null
-
-        if (
-          networkFilter !== 'All' &&
-          networkFilter !== (chapter.country === 'Ghana' ? 'Ghana' : 'Diaspora')
-        )
-          return null
 
         const jitterLng = (i % 6) * 0.08 - 0.2
         const jitterLat = (Math.floor(i / 4) % 6) * 0.08 - 0.2
@@ -105,22 +71,14 @@ export function ChaptersMap({
         }
       })
       .filter(Boolean)
-  }, [chapters, networkFilter])
+  }, [chapters])
 
   const gridLocations = useMemo(() => {
-    const ghanaLocs = REGION_PATHS.map((r) => ({ id: r.id, label: r.id, type: 'ghana' }))
-    const diasporaChapters = chapters.filter((c) => c.country !== 'Ghana')
-    const uniqueDiaspora = Array.from(
-      new Set(diasporaChapters.map((c) => c.city_or_region || c.country))
-    )
+    const uniqueLocs = Array.from(new Set(chapters.map((c) => c.city_or_region || c.country)))
       .filter(Boolean)
       .sort()
-    const diasporaLocs = uniqueDiaspora.map((loc) => ({ id: loc, label: loc, type: 'diaspora' }))
-
-    if (networkFilter === 'Diaspora') return diasporaLocs
-    if (networkFilter === 'Ghana') return ghanaLocs
-    return [...ghanaLocs, ...diasporaLocs]
-  }, [chapters, networkFilter])
+    return uniqueLocs.map((loc) => ({ id: loc, label: loc, type: 'diaspora' }))
+  }, [chapters])
 
   const onMouseMove = (event: MapMouseEvent) => {
     const feature = event.features && event.features[0]
@@ -138,9 +96,6 @@ export function ChaptersMap({
       const isCurrentlySelected = regionFilter.toLowerCase() === targetId.toLowerCase()
       onRegionFilterChange(isCurrentlySelected ? '' : targetId)
       onPageChange(1)
-      if (!isCurrentlySelected) {
-        onNetworkFilterChange('Ghana')
-      }
     }
   }
 
@@ -182,12 +137,7 @@ export function ChaptersMap({
     ],
   }
 
-  const title =
-    networkFilter === 'Diaspora'
-      ? 'Diaspora chapter coverage'
-      : networkFilter === 'Ghana'
-        ? 'Regional chapter coverage'
-        : 'Global chapter coverage'
+  const title = 'Diaspora chapter coverage'
 
   return (
     <div className="panel" style={{ marginBottom: 14 }}>

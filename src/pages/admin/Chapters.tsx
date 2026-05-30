@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
-import type { RegionalStat, Country, Region } from '@/services/adminService'
+import type { RegionalStat, Country } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
@@ -11,7 +11,6 @@ import { PollCreateEditModal } from './chapters/PollCreateEditModal'
 import { ChapterDetailModal } from './chapters/ChapterDetailModal'
 import { ChaptersStats } from './chapters/ChaptersStats'
 import { ChaptersMap } from './chapters/ChaptersMap'
-import { GHANA_REGIONS_LIST, getChapterRegion } from '@/utils/mapUtils'
 import { useChapterForm } from './chapters/useChapterForm'
 import { usePollManagement } from './chapters/usePollManagement'
 
@@ -20,27 +19,22 @@ export default function ChaptersManagement() {
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
-  const [networkFilter, setNetworkFilter] = useState<'All' | 'Ghana' | 'Diaspora'>('All')
   const [regionFilter, setRegionFilter] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [countries, setCountries] = useState<Country[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [ghanaRegions, setGhanaRegions] = useState<Region[]>([])
 
   const chapterForm = useChapterForm()
   const pollMgmt = usePollManagement()
 
   useEffect(() => {
-    Promise.all([
-      adminService.getRegionalStats(),
-      adminService.getCountries(),
-      adminService.getRegions(),
-    ]).then(([stats, c, regions]) => {
-      setRegionalStats(stats)
-      setCountries(c)
-      setGhanaRegions(regions)
-      setIsLoading(false)
-    })
+    Promise.all([adminService.getRegionalStats(), adminService.getCountries()]).then(
+      ([stats, c]) => {
+        setRegionalStats(stats)
+        setCountries(c)
+        setIsLoading(false)
+      }
+    )
   }, [])
 
   useEffect(() => {
@@ -60,10 +54,9 @@ export default function ChaptersManagement() {
   }, [chapters, chapterForm])
 
   const availableRegions = useMemo(() => {
-    if (networkFilter === 'Ghana') return GHANA_REGIONS_LIST.slice().sort()
     const set = new Set(chapters.filter((c) => c.region).map((c) => c.region!))
     return Array.from(set).sort()
-  }, [chapters, networkFilter])
+  }, [chapters])
 
   const filteredChapters = useMemo(
     () =>
@@ -72,30 +65,17 @@ export default function ChaptersManagement() {
           c.name.toLowerCase().includes(search.toLowerCase()) ||
           c.city_or_region.toLowerCase().includes(search.toLowerCase())
         const normalized = c.status === 'Active' ? 'Active' : 'Pending'
-        const isGhana = (c.country || 'Ghana') === 'Ghana'
-        const matchesNetwork =
-          networkFilter === 'All' || (networkFilter === 'Ghana' ? isGhana : !isGhana)
         let matchesRegion = true
         if (regionFilter) {
-          if (isGhana) {
-            const derived = getChapterRegion(c)
-            matchesRegion =
-              derived?.toLowerCase() === regionFilter.toLowerCase() ||
-              (c.region || '').toLowerCase() === regionFilter.toLowerCase()
-          } else {
-            matchesRegion =
-              (c.city_or_region || '').toLowerCase() === regionFilter.toLowerCase() ||
-              (c.country || '').toLowerCase() === regionFilter.toLowerCase()
-          }
+          matchesRegion =
+            (c.city_or_region || '').toLowerCase() === regionFilter.toLowerCase() ||
+            (c.country || '').toLowerCase() === regionFilter.toLowerCase()
         }
         return (
-          matchesSearch &&
-          (statusFilter === 'All' || normalized === statusFilter) &&
-          matchesNetwork &&
-          matchesRegion
+          matchesSearch && (statusFilter === 'All' || normalized === statusFilter) && matchesRegion
         )
       }),
-    [chapters, search, statusFilter, networkFilter, regionFilter]
+    [chapters, search, statusFilter, regionFilter]
   )
 
   const totalMembers = useMemo(
@@ -211,8 +191,6 @@ export default function ChaptersManagement() {
         chapters={chapters}
         regionFilter={regionFilter}
         onRegionFilterChange={setRegionFilter}
-        networkFilter={networkFilter}
-        onNetworkFilterChange={setNetworkFilter}
         onPageChange={setCurrentPage}
       />
 
@@ -224,12 +202,10 @@ export default function ChaptersManagement() {
         itemsPerPage={itemsPerPage}
         search={search}
         statusFilter={statusFilter}
-        networkFilter={networkFilter}
         regionFilter={regionFilter}
         availableRegions={availableRegions}
         onSearchChange={setSearch}
         onStatusFilterChange={setStatusFilter}
-        onNetworkFilterChange={setNetworkFilter}
         onRegionFilterChange={(val) => {
           setRegionFilter(val)
           setCurrentPage(1)
@@ -306,7 +282,6 @@ export default function ChaptersManagement() {
           leaderSearch={chapterForm.leaderSearch}
           showLeaderList={chapterForm.showLeaderList}
           countries={countries}
-          ghanaRegions={ghanaRegions}
           onFormChange={(field, value) =>
             chapterForm.setFormData((prev) => ({ ...prev, [field]: value }))
           }

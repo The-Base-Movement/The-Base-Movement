@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import type { Country, Region } from '@/services/adminService'
+import type { Country } from '@/services/adminService'
 import { getCountryFlag } from '@/lib/utils'
 
 const fieldStyle: React.CSSProperties = {
@@ -39,7 +39,6 @@ interface ChapterDetailModalProps {
   leaderSearch: string
   showLeaderList: boolean
   countries: Country[]
-  ghanaRegions: Region[]
   onFormChange: (field: string, value: string) => void
   onLeaderSearchChange: (val: string) => void
   onLeaderSelect: (name: string) => void
@@ -56,7 +55,6 @@ export function ChapterDetailModal({
   leaderSearch,
   showLeaderList,
   countries,
-  ghanaRegions,
   onFormChange,
   onLeaderSearchChange,
   onLeaderSelect,
@@ -151,29 +149,20 @@ export function ChapterDetailModal({
                 />
               </div>
               <div>
-                <label htmlFor="select-city-region" style={labelStyle}>
+                <label htmlFor="input-city-region" style={labelStyle}>
                   City / region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
-                <select
-                  aria-label="Select region"
+                <input
+                  aria-label="e.g. London"
                   name="city_or_region"
-                  id="select-city-region"
+                  id="input-city-region"
+                  type="text"
                   required
-                  style={{ ...fieldStyle, appearance: 'none' }}
+                  placeholder="e.g. London"
+                  style={{ ...fieldStyle, boxSizing: 'border-box' }}
                   value={formData.city_or_region}
                   onChange={(e) => onFormChange('city_or_region', e.target.value)}
-                >
-                  <option value="">Select region...</option>
-                  {ghanaRegions.map((r) => (
-                    <option key={r.id} value={r.name}>
-                      {r.name}
-                    </option>
-                  ))}
-                  {!ghanaRegions.some((r) => r.name === formData.city_or_region) &&
-                    formData.city_or_region && (
-                      <option value={formData.city_or_region}>{formData.city_or_region}</option>
-                    )}
-                </select>
+                />
               </div>
             </div>
             <div
