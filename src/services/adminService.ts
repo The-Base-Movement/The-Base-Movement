@@ -964,7 +964,7 @@ class AdminService {
 
   async getGlobalStats(): Promise<{ label: string; value: string; change: string }[]> {
     const [usersRes, chaptersRes, ordersRes] = await Promise.all([
-      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('users').select('id', { count: 'exact', head: true }),
       supabase.from('chapters').select('*', { count: 'exact', head: true }),
       supabase.from('store_orders').select('*', { count: 'exact', head: true }),
     ])
@@ -1401,7 +1401,7 @@ class AdminService {
   async getGlobalMobilizationStats(): Promise<{ totalRaised: number; totalMembers: number }> {
     const [donationStats, { count }] = await Promise.all([
       donationService.getDonationStats(),
-      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('users').select('id', { count: 'exact', head: true }),
     ])
 
     return {
@@ -1738,7 +1738,7 @@ class AdminService {
   async getRoadmapForecast(): Promise<Milestone[]> {
     const milestones = await tacticalService.getMilestones()
     const growth = await this.getGrowthStats()
-    const { count } = await supabase.from('users').select('*', { count: 'exact', head: true })
+    const { count } = await supabase.from('users').select('id', { count: 'exact', head: true })
     const totalMembers = count || 0
     const avgDailyGrowth = Math.max(1, growth.joined_last_7d / 7)
 
@@ -1772,10 +1772,10 @@ class AdminService {
 
     try {
       // 1. Fetch Member Metrics
-      let membersQuery = supabase.from('users').select('*', { count: 'exact', head: true })
+      let membersQuery = supabase.from('users').select('id', { count: 'exact', head: true })
       let approvedQuery = supabase
         .from('users')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .eq('verification_status', 'Approved')
 
       if (region !== 'National') {

@@ -279,15 +279,15 @@ class MemberService {
       const [hourRes, dayRes, weekRes] = await Promise.all([
         supabase
           .from('users')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .gte('joined_at', oneHourAgo),
         supabase
           .from('users')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .gte('joined_at', oneDayAgo),
         supabase
           .from('users')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .gte('joined_at', sevenDaysAgo),
       ])
 
