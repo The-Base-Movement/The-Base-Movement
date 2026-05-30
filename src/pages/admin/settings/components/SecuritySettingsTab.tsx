@@ -81,7 +81,15 @@ export function SecuritySettingsTab({
           <span>Security Credentials</span>
         </div>
         <div style={{ padding: 24 }}>
-          <div style={{ maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (!isSaving && passwordForm.newPassword) {
+                handleUpdatePassword()
+              }
+            }}
+            style={{ maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 16 }}
+          >
             <div>
               <label htmlFor="input-577d4f" style={labelSt}>
                 New password
@@ -90,6 +98,7 @@ export function SecuritySettingsTab({
                 name="name-577d4f"
                 id="input-577d4f"
                 type="password"
+                autoComplete="new-password"
                 style={inputSt}
                 value={passwordForm.newPassword}
                 onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
@@ -104,6 +113,7 @@ export function SecuritySettingsTab({
                 name="name-5fe6aa"
                 id="input-5fe6aa"
                 type="password"
+                autoComplete="new-password"
                 style={inputSt}
                 value={passwordForm.confirmPassword}
                 onChange={(e) =>
@@ -113,14 +123,14 @@ export function SecuritySettingsTab({
               />
             </div>
             <button
+              type="submit"
               className="btn btn-primary"
               style={{ width: '100%', justifyContent: 'center' }}
-              onClick={handleUpdatePassword}
               disabled={isSaving || !passwordForm.newPassword}
             >
               {isSaving ? 'Hardening…' : 'Harden Security Credentials'}
             </button>
-          </div>
+          </form>
         </div>
       </div>
 

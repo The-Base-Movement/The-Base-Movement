@@ -829,3 +829,29 @@ export interface MemberNote {
   date: string
   isSystem: boolean
 }
+
+export interface Constituency {
+  id: number
+  name: string
+  regionId: number
+  regionName: string
+  memberCount: number
+  leaderId?: string
+  leaderName?: string
+  leaderAvatarUrl?: string
+  description?: string
+  status: string
+  meetingSchedule?: string
+  localFocus?: string
+  email?: string
+  phoneNumber?: string
+  activities?: ConstituencyActivity[]
+}
+
+export interface ConstituencyActivity {
+  id: string
+  title: string
+  description?: string
+  type: string
+  activityDate: string
+}
