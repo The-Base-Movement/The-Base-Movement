@@ -38,6 +38,7 @@ export default function DashboardLayout() {
   const [myConstituencyLink, setMyConstituencyLink] = useState<{
     to: string
     icon: string
+    subLinkTo?: string
   } | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [userPlatform, setUserPlatform] = useState<'GHANA' | 'DIASPORA' | null>(null)
@@ -64,32 +65,53 @@ export default function DashboardLayout() {
       try {
         if (!session?.user) return
 
-        // Fetch platform, lead chapter and member chapter in parallel
-        const [platformResult, leadChapter, dbChapter] = await Promise.all([
-          supabase.from('users').select('platform').eq('id', session.user.id).single(),
+        // Fetch platform, constituency, lead chapter and member chapter in parallel
+        const [userResult, leadChapter, dbChapter] = await Promise.all([
+          supabase
+            .from('users')
+            .select('platform, constituency')
+            .eq('id', session.user.id)
+            .single(),
           adminService.getLeadChapter(session.user.id),
           adminService.getUserChapter(session.user.id),
         ])
 
-        if (platformResult.data) {
-          setUserPlatform(platformResult.data.platform as 'GHANA' | 'DIASPORA')
+        const userRow = userResult.data
+        const platform = (userRow?.platform as 'GHANA' | 'DIASPORA') || 'GHANA'
+        setUserPlatform(platform)
+
+        if (platform === 'GHANA') {
+          setMyChapterLink(null)
+          const constituencyName = userRow?.constituency as string | null
+          if (constituencyName) {
+            const slug = toSlug(constituencyName)
+            // Check if user is a coordinator/leader of this constituency
+            const { data: coordData } = await supabase
+              .from('ghana_constituencies')
+              .select('id')
+              .eq('leader_id', session.user.id)
+              .maybeSingle()
+
+            if (coordData) {
+              setMyConstituencyLink({
+                to: `/dashboard/constituencies/${slug}`,
+                icon: 'manage_accounts',
+                subLinkTo: '/dashboard/constituency-hub',
+              })
+            } else {
+              setMyConstituencyLink({
+                to: `/dashboard/constituencies/${slug}`,
+                icon: 'my_location',
+              })
+            }
+          } else {
+            setMyConstituencyLink(null)
+          }
+          return
         }
 
-        // For Ghana Network members, check if they are a constituency coordinator
-        if (platformResult.data?.platform === 'GHANA') {
-          const { data: coordData } = await supabase
-            .from('ghana_constituencies')
-            .select('id, name')
-            .eq('leader_id', session.user.id)
-            .maybeSingle()
-          if (coordData) {
-            await import('@/services/constituencyService')
-            setMyConstituencyLink({
-              to: '/dashboard/constituency-hub',
-              icon: 'manage_accounts',
-            })
-          }
-        }
+        // DIASPORA logic
+        setMyConstituencyLink(null)
 
         // Priority 1: user leads a chapter — show manage_accounts icon + Chapter Dashboard sublink
         if (leadChapter) {
@@ -108,6 +130,8 @@ export default function DashboardLayout() {
             to: `/dashboard/chapters/${toSlug(dbChapter)}`,
             icon: 'group',
           })
+        } else {
+          setMyChapterLink(null)
         }
       } catch {
         /* non-critical */
@@ -420,41 +444,54 @@ export default function DashboardLayout() {
               label: 'Community',
               items: [
                 { to: '/dashboard/members', icon: 'groups', label: 'Members' },
-                userPlatform === 'GHANA'
-                  ? {
-                      to: '/dashboard/constituencies',
-                      icon: 'location_city',
-                      label: 'Constituencies',
-                    }
-                  : { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+                ...(userPlatform === 'GHANA'
+                  ? [
+                      {
+                        to: '/dashboard/constituencies',
+                        icon: 'location_city',
+                        label: 'Constituencies',
+                      },
+                      ...(myConstituencyLink
+                        ? [
+                            {
+                              to: myConstituencyLink.to,
+                              icon: myConstituencyLink.icon,
+                              label: 'My Constituency',
+                              subItems: myConstituencyLink.subLinkTo
+                                ? [
+                                    {
+                                      to: myConstituencyLink.subLinkTo,
+                                      icon: 'manage_accounts',
+                                      label: 'Constituency Hub',
+                                    },
+                                  ]
+                                : undefined,
+                            },
+                          ]
+                        : []),
+                    ]
+                  : [
+                      { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+                      ...(myChapterLink
+                        ? [
+                            {
+                              to: myChapterLink.to,
+                              icon: myChapterLink.icon,
+                              label: 'My Chapter',
+                              subItems: myChapterLink.subLinkTo
+                                ? [
+                                    {
+                                      to: myChapterLink.subLinkTo,
+                                      icon: 'manage_accounts',
+                                      label: 'Chapter Dashboard',
+                                    },
+                                  ]
+                                : undefined,
+                            },
+                          ]
+                        : []),
+                    ]),
                 { to: '/dashboard/leadership', icon: 'groups_3', label: 'Leadership' },
-                ...(myChapterLink
-                  ? [
-                      {
-                        to: myChapterLink.to,
-                        icon: myChapterLink.icon,
-                        label: 'My Chapter',
-                        subItems: myChapterLink.subLinkTo
-                          ? [
-                              {
-                                to: myChapterLink.subLinkTo,
-                                icon: 'manage_accounts',
-                                label: 'Chapter Dashboard',
-                              },
-                            ]
-                          : undefined,
-                      },
-                    ]
-                  : []),
-                ...(userPlatform === 'GHANA' && myConstituencyLink
-                  ? [
-                      {
-                        to: myConstituencyLink.to,
-                        icon: myConstituencyLink.icon,
-                        label: 'Constituency Hub',
-                      },
-                    ]
-                  : []),
               ],
             },
             {
