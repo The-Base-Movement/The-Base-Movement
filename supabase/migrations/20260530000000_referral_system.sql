@@ -123,4 +123,13 @@ AS $$
 $$;
 
 REVOKE EXECUTE ON FUNCTION public.get_referral_leaderboard() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_referral_leaderboard() FROM anon;
 GRANT  EXECUTE ON FUNCTION public.get_referral_leaderboard() TO authenticated;
+
+-- ── 5. Performance indexes ───────────────────────────────────────
+-- Functions look up referrers by registration_number
+CREATE INDEX IF NOT EXISTS idx_users_registration_number
+  ON public.users (registration_number);
+
+CREATE INDEX IF NOT EXISTS idx_referral_awards_referrer
+  ON public.referral_awards (referrer_id);
