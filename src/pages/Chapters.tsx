@@ -110,17 +110,9 @@ export default function Chapters() {
     }
   }
 
-  // Child components still accept activeTab/selectedRegion/regions in their interfaces;
-  // pass fixed stubs so we don't need to modify them.
-  const noop = () => {}
   const sharedFilterProps = {
     searchTerm,
     setSearchTerm,
-    activeTab: 'diaspora' as const,
-    setActiveTab: noop as (v: 'ghana' | 'diaspora') => void,
-    selectedRegion: 'All Regions',
-    setSelectedRegion: noop as (v: string) => void,
-    regions: [] as string[],
     chapters,
     sortOrder,
     setSortOrder,
@@ -159,7 +151,6 @@ export default function Chapters() {
         <DashboardPageHeader totalChapters={chapters.length} />
 
         <DashboardKpiRow
-          ghanaCount={0}
           diasporaCount={chapters.length}
           totalCount={chapters.length}
           countryCount={new Set(chapters.map((c) => c.country)).size}
@@ -198,11 +189,6 @@ export default function Chapters() {
   const publicFilterProps = {
     searchTerm,
     setSearchTerm,
-    activeTab: 'diaspora' as const,
-    setActiveTab: noop as (v: 'ghana' | 'diaspora') => void,
-    selectedRegion: 'All Regions',
-    setSelectedRegion: noop as (v: string) => void,
-    regions: [] as string[],
     totalChapters: chapters.length,
     countryCount: new Set(chapters.map((c) => c.country)).size,
     onRequestChapter: () => setIsRequestModalOpen(true),

@@ -3,11 +3,6 @@ import React from 'react'
 export interface DashboardFilterControlsProps {
   searchTerm: string
   setSearchTerm: (v: string) => void
-  activeTab: 'ghana' | 'diaspora'
-  setActiveTab: (v: 'ghana' | 'diaspora') => void
-  selectedRegion: string
-  setSelectedRegion: (v: string) => void
-  regions: string[]
   chapters: { country: string }[]
   sortOrder: 'az' | 'za' | 'members-desc' | 'members-asc'
   setSortOrder: (v: 'az' | 'za' | 'members-desc' | 'members-asc') => void
@@ -19,11 +14,6 @@ export interface DashboardFilterControlsProps {
 export function DashboardFilterControls({
   searchTerm,
   setSearchTerm,
-  activeTab,
-  setActiveTab,
-  selectedRegion,
-  setSelectedRegion,
-  regions,
   chapters,
   sortOrder,
   setSortOrder,
@@ -86,95 +76,6 @@ export function DashboardFilterControls({
           }}
         />
       </div>
-
-      {/* Network */}
-      <div style={sectionSt}>
-        <div style={headSt}>
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-            public
-          </span>
-          Network
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-          {[
-            { v: 'ghana' as const, icon: 'flag', label: 'Ghana' },
-            { v: 'diaspora' as const, icon: 'public', label: 'Diaspora' },
-          ].map((t) => (
-            <button
-              key={t.v}
-              onClick={() => {
-                setActiveTab(t.v)
-                setSelectedRegion('All Regions')
-              }}
-              className={activeTab === t.v ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-              style={{ justifyContent: 'center', gap: 6 }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                {t.icon}
-              </span>
-              <span style={{ fontSize: 11, fontWeight: 'var(--font-weight-medium, 500)' }}>
-                {t.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Region (Ghana only) */}
-      {activeTab === 'ghana' && regions.length > 0 && (
-        <div style={sectionSt}>
-          <div style={headSt}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              location_on
-            </span>
-            Region
-          </div>
-          <div style={{ position: 'relative' }}>
-            <select
-              name="selectedRegion"
-              id="select-3eb288"
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              style={{
-                width: '100%',
-                height: 40,
-                padding: '0 32px 0 12px',
-                border: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-                outline: 'none',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 12,
-                borderRadius: 4,
-                color: 'hsl(var(--on-surface))',
-                boxSizing: 'border-box',
-                appearance: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              {regions.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-            <span
-              className="material-symbols-outlined"
-              style={{
-                position: 'absolute',
-                right: 8,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: 16,
-                color: 'hsl(var(--on-surface-muted))',
-                pointerEvents: 'none',
-              }}
-            >
-              expand_more
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Sort */}
       <div style={sectionSt}>

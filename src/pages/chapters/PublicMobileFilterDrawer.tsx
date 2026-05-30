@@ -4,11 +4,6 @@ interface PublicMobileFilterDrawerProps {
   onClose: () => void
   searchTerm: string
   setSearchTerm: (v: string) => void
-  activeTab: 'ghana' | 'diaspora'
-  setActiveTab: (v: 'ghana' | 'diaspora') => void
-  selectedRegion: string
-  setSelectedRegion: (v: string) => void
-  regions: string[]
   totalChapters: number
   countryCount: number
   onRequestChapter: () => void

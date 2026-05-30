@@ -4,11 +4,6 @@ interface PublicFilterSectionProps {
   isMobile?: boolean
   searchTerm: string
   setSearchTerm: (v: string) => void
-  activeTab: 'ghana' | 'diaspora'
-  setActiveTab: (v: 'ghana' | 'diaspora') => void
-  selectedRegion: string
-  setSelectedRegion: (v: string) => void
-  regions: string[]
   totalChapters: number
   countryCount: number
   onRequestChapter: () => void
@@ -18,11 +13,6 @@ export function PublicFilterSection({
   isMobile = false,
   searchTerm,
   setSearchTerm,
-  activeTab,
-  setActiveTab,
-  selectedRegion,
-  setSelectedRegion,
-  regions,
   totalChapters,
   countryCount,
   onRequestChapter,
@@ -49,62 +39,6 @@ export function PublicFilterSection({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-          </div>
-          <div>
-            <label className="text-[10px] font-medium text-stone-900 mb-3 block">
-              Region filter
-            </label>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setActiveTab('ghana')
-                  setSelectedRegion('All Regions')
-                }}
-                className={cn(
-                  'w-full flex items-center justify-between font-medium tracking-tight text-xs h-11 px-4 border cursor-pointer transition-colors',
-                  activeTab === 'ghana'
-                    ? 'bg-brand-green text-white border-brand-green'
-                    : 'bg-white text-stone-500 border-stone-200 hover:border-brand-green'
-                )}
-              >
-                Ghana regions{' '}
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                  location_on
-                </span>
-              </button>
-              {activeTab === 'ghana' && regions.length > 0 && (
-                <select
-                  name="selectedRegion"
-                  id="select-6d5c40"
-                  value={selectedRegion}
-                  onChange={(e) => setSelectedRegion(e.target.value)}
-                  className="w-full h-11 bg-stone-100 border border-stone-200 text-stone-900 font-medium text-[10px] px-3 outline-none appearance-none cursor-pointer"
-                >
-                  {regions.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              )}
-              <button
-                onClick={() => {
-                  setActiveTab('diaspora')
-                  setSelectedRegion('All Regions')
-                }}
-                className={cn(
-                  'w-full flex items-center justify-between font-medium tracking-tight text-xs h-11 px-4 border cursor-pointer transition-colors',
-                  activeTab === 'diaspora'
-                    ? 'border-brand-green text-brand-green'
-                    : 'border-stone-200 text-stone-500 hover:border-brand-green'
-                )}
-              >
-                Global diaspora{' '}
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                  public
-                </span>
-              </button>
             </div>
           </div>
           <div className="pt-4 border-t border-stone-100">

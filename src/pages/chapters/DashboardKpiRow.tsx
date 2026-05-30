@@ -1,24 +1,11 @@
 interface DashboardKpiRowProps {
-  ghanaCount: number
   diasporaCount: number
   totalCount: number
   countryCount: number
 }
 
-export function DashboardKpiRow({
-  ghanaCount,
-  diasporaCount,
-  totalCount,
-  countryCount,
-}: DashboardKpiRowProps) {
+export function DashboardKpiRow({ diasporaCount, totalCount, countryCount }: DashboardKpiRowProps) {
   const kpis = [
-    {
-      label: 'Ghana chapters',
-      value: ghanaCount,
-      sub: 'Regional hubs',
-      bar: 'hsl(var(--primary))',
-      icon: 'flag',
-    },
     {
       label: 'Diaspora chapters',
       value: diasporaCount,
@@ -37,7 +24,7 @@ export function DashboardKpiRow({
       label: 'Countries',
       value: countryCount,
       sub: 'Global presence',
-      bar: 'hsl(var(--destructive))',
+      bar: 'hsl(var(--primary))',
       icon: 'travel_explore',
     },
   ]
