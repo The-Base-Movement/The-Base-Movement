@@ -347,15 +347,15 @@ class DonationService {
       date: d.created_at as string,
       amount: String(d.amount),
       method: d.payment_method as string,
-      status: d.status as string,
+      status: d.status as string as 'Pending' | 'Verified' | 'Rejected',
       reference: (d.reference as string | null) ?? (d.id as string).substring(0, 8).toUpperCase(),
       campaignTitle: (d.donation_campaigns as { title?: string } | null)?.title,
       fullName: d.full_name as string,
       phone: d.phone as string,
       country: d.country as string,
-      receiptUrl: d.receipt_url as string | null,
-      campaignId: d.campaign_id as string | null,
-      memberId: d.member_id as string | null,
+      receiptUrl: (d.receipt_url as string | null) ?? undefined,
+      campaignId: (d.campaign_id as string | null) ?? '',
+      memberId: (d.member_id as string | null) ?? undefined,
     }
   }
 
