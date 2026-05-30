@@ -80,7 +80,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
               </tr>
             ) : (
               filteredLeaderboard.map((entry, index) => (
-                <tr key={entry.chapter}>
+                <tr key={`${entry.chapter}_${entry.region}`}>
                   <td>
                     <div
                       style={{
@@ -180,7 +180,11 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
           </div>
         ) : (
           filteredLeaderboard.map((entry, index) => (
-            <MobilizationLeaderboardCard key={entry.chapter} entry={entry} index={index} />
+            <MobilizationLeaderboardCard
+              key={`${entry.chapter}_${entry.region}`}
+              entry={entry}
+              index={index}
+            />
           ))
         )}
       </div>
