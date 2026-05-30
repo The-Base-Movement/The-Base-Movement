@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import MobilizationLeaderboardCard from '@/components/admin/MobilizationLeaderboardCard'
 import { pillBase, rankStyle } from './utils'
 import type { ChapterLeaderboard } from '@/types/admin'
@@ -7,6 +8,21 @@ interface LeaderboardTableProps {
 }
 
 export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps) {
+  const [prevLeaderboard, setPrevLeaderboard] = useState(filteredLeaderboard)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Reset page to 1 synchronously during rendering if filtered leaderboard changes
+  if (filteredLeaderboard !== prevLeaderboard) {
+    setPrevLeaderboard(filteredLeaderboard)
+    setCurrentPage(1)
+  }
+
+  const totalItems = filteredLeaderboard.length
+  const totalPages = Math.ceil(totalItems / 10)
+  const startIndex = (currentPage - 1) * 10
+  const endIndex = startIndex + 10
+  const paginatedLeaderboard = filteredLeaderboard.slice(startIndex, endIndex)
+
   return (
     <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
       <div
@@ -49,6 +65,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
           trending_up
         </span>
       </div>
+
       {/* Desktop table */}
       <div className="desktop-only" style={{ overflowX: 'auto' }}>
         <table className="table">
@@ -79,7 +96,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
                 </td>
               </tr>
             ) : (
-              filteredLeaderboard.map((entry, index) => (
+              paginatedLeaderboard.map((entry, index) => (
                 <tr key={`${entry.chapter}_${entry.region}`}>
                   <td>
                     <div
@@ -93,10 +110,10 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 'var(--font-weight-semibold, 600)',
                         fontSize: 12,
-                        ...rankStyle(index),
+                        ...rankStyle(startIndex + index),
                       }}
                     >
-                      {index + 1}
+                      {startIndex + index + 1}
                     </div>
                   </td>
                   <td>
@@ -163,6 +180,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
           </tbody>
         </table>
       </div>
+
       {/* Mobile card list */}
       <div className="mobile-only" style={{ borderTop: '1px solid hsl(var(--border))' }}>
         {filteredLeaderboard.length === 0 ? (
@@ -179,15 +197,99 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
             No regional data found.
           </div>
         ) : (
-          filteredLeaderboard.map((entry, index) => (
+          paginatedLeaderboard.map((entry, index) => (
             <MobilizationLeaderboardCard
               key={`${entry.chapter}_${entry.region}`}
               entry={entry}
-              index={index}
+              index={startIndex + index}
             />
           ))
         )}
       </div>
+
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div
+          style={{
+            padding: '12px 20px',
+            borderTop: '1px solid hsl(var(--border))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'hsl(var(--container-low))',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} chapters
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button
+              className="btn btn-outline btn-sm"
+              style={{
+                height: 28,
+                padding: '0 8px',
+                minWidth: 28,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                chevron_left
+              </span>
+            </button>
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNum = i + 1
+              const isActive = pageNum === currentPage
+              return (
+                <button
+                  key={pageNum}
+                  className={isActive ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+                  style={{
+                    height: 28,
+                    width: 28,
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: isActive ? '600' : '400',
+                    fontSize: 11,
+                  }}
+                  onClick={() => setCurrentPage(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              )
+            })}
+            <button
+              className="btn btn-outline btn-sm"
+              style={{
+                height: 28,
+                padding: '0 8px',
+                minWidth: 28,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                chevron_right
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
