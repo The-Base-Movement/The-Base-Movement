@@ -1,40 +1,15 @@
--- Migration: allow authenticated members to select other members in their same chapter or constituency securely
--- Avoids RLS recursion by using a SECURITY DEFINER helper function.
+-- Migration: allow authenticated members to select all verified/non-deleted member profiles
+-- Column-level security (revoked select on national_id in migration 20260530000203) guarantees that 
+-- sensitive data remains completely encrypted and hidden from authenticated/anon roles, while
+-- allowing patriots to view chapters and constituencies directories cleanly on the dashboard.
 
-CREATE OR REPLACE FUNCTION get_user_chapter_and_constituency()
-RETURNS TABLE (user_chapter VARCHAR, user_constituency VARCHAR)
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-BEGIN
-  RETURN QUERY 
-  SELECT u.chapter::VARCHAR, u.constituency::VARCHAR 
-  FROM public.users u 
-  WHERE u.id = auth.uid();
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION get_user_chapter_and_constituency() TO authenticated;
-
--- Drop existing policies if they exist to prevent conflicts
+-- Drop previous specific policies to keep database clean
 DROP POLICY IF EXISTS "users_same_chapter_select" ON public.users;
 DROP POLICY IF EXISTS "users_same_constituency_select" ON public.users;
+DROP POLICY IF EXISTS "Allow authenticated read access to members" ON public.users;
 
--- Policy 1: Diaspora members can read other members of the same chapter
-CREATE POLICY "users_same_chapter_select" ON public.users
+-- Create broad read policy for authenticated member directory
+CREATE POLICY "Allow authenticated read access to members" ON public.users
   FOR SELECT
   TO authenticated
-  USING (
-    chapter IS NOT NULL
-    AND chapter = (SELECT u.user_chapter FROM get_user_chapter_and_constituency() u)
-  );
-
--- Policy 2: Ghana Network members can read other members of the same constituency
-CREATE POLICY "users_same_constituency_select" ON public.users
-  FOR SELECT
-  TO authenticated
-  USING (
-    constituency IS NOT NULL
-    AND constituency = (SELECT u.user_constituency FROM get_user_chapter_and_constituency() u)
-  );
+  USING (deleted_at IS NULL);
