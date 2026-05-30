@@ -39,7 +39,7 @@ export function NotificationsPanel() {
             }}
           >
             <div>
-              <label
+              <span
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: 'var(--font-weight-medium, 500)',
@@ -52,7 +52,7 @@ export function NotificationsPanel() {
                 }}
               >
                 Push notifications
-              </label>
+              </span>
               <p
                 style={{
                   margin: 0,

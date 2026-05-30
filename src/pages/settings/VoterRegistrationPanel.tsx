@@ -124,6 +124,8 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                   search
                 </span>
                 <input
+                  name="voter-ps-search"
+                  id="voter-ps-search"
                   aria-label="Search polling station by name or code"
                   type="text"
                   placeholder={

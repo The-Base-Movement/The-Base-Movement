@@ -20,7 +20,7 @@ export function PerformancePrefsPanel({ lowBandwidthMode, onToggle }: Props) {
           }}
         >
           <div>
-            <label
+            <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
@@ -33,7 +33,7 @@ export function PerformancePrefsPanel({ lowBandwidthMode, onToggle }: Props) {
               }}
             >
               Low-bandwidth mode
-            </label>
+            </span>
             <p
               style={{
                 margin: 0,

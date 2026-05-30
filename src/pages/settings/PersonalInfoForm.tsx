@@ -52,7 +52,7 @@ export function PersonalInfoForm({
         <div className="profile-form-grid">
           {/* Registration number */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>
+            <span style={labelStyle}>
               Registration Number{' '}
               <span
                 style={{
@@ -64,7 +64,7 @@ export function PersonalInfoForm({
               >
                 (Permanent)
               </span>
-            </label>
+            </span>
             <div
               style={{
                 ...inputStyle,
@@ -81,7 +81,7 @@ export function PersonalInfoForm({
 
           {/* Full name */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>
+            <label htmlFor="input-43d16b" style={labelStyle}>
               Full Name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
             <input
@@ -97,7 +97,9 @@ export function PersonalInfoForm({
 
           {/* Email */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>Email address</label>
+            <label htmlFor="input-eaefbf" style={labelStyle}>
+              Email address
+            </label>
             <input
               name="name-eaefbf"
               id="input-eaefbf"
@@ -111,7 +113,9 @@ export function PersonalInfoForm({
 
           {/* Phone */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>Phone number</label>
+            <label htmlFor="input-7b1c95" style={labelStyle}>
+              Phone number
+            </label>
             <div style={{ display: 'flex', gap: 8 }}>
               <div style={{ position: 'relative', width: 110, flexShrink: 0 }}>
                 <select
@@ -144,7 +148,9 @@ export function PersonalInfoForm({
 
           {/* Gender */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>Gender & age group</label>
+            <label htmlFor="select-2e1d40" style={labelStyle}>
+              Gender & age group
+            </label>
             <div style={{ position: 'relative' }}>
               <select
                 name="name-2e1d40"
@@ -166,7 +172,9 @@ export function PersonalInfoForm({
 
           {/* Profession */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>Profession</label>
+            <label htmlFor="input-281364" style={labelStyle}>
+              Profession
+            </label>
             <input
               name="name-281364"
               id="input-281364"
@@ -179,7 +187,9 @@ export function PersonalInfoForm({
 
           {/* Chapter */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>Assigned chapter</label>
+            <label htmlFor="select-d8a77b" style={labelStyle}>
+              Assigned chapter
+            </label>
             <div style={{ position: 'relative' }}>
               <select
                 name="name-d8a77b"
@@ -203,7 +213,9 @@ export function PersonalInfoForm({
           {userPlatform === 'GHANA' ? (
             <>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label style={labelStyle}>Region</label>
+                <label htmlFor="select-c13da3" style={labelStyle}>
+                  Region
+                </label>
                 <div style={{ position: 'relative' }}>
                   <select
                     name="name-c13da3"
@@ -226,7 +238,9 @@ export function PersonalInfoForm({
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label style={labelStyle}>Constituency</label>
+                <label htmlFor="select-767782" style={labelStyle}>
+                  Constituency
+                </label>
                 <div style={{ position: 'relative' }}>
                   <select
                     name="name-767782"
@@ -255,7 +269,9 @@ export function PersonalInfoForm({
           ) : (
             <>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label style={labelStyle}>Country of residence</label>
+                <label htmlFor="select-38f885" style={labelStyle}>
+                  Country of residence
+                </label>
                 <div style={{ position: 'relative' }}>
                   <select
                     name="name-38f885"
@@ -286,7 +302,9 @@ export function PersonalInfoForm({
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label style={labelStyle}>City / Locality</label>
+                <label htmlFor="input-d8d448" style={labelStyle}>
+                  City / Locality
+                </label>
                 <input
                   name="name-d8d448"
                   id="input-d8d448"
@@ -300,7 +318,9 @@ export function PersonalInfoForm({
               {form.country === 'Ghana' && (
                 <>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <label style={labelStyle}>Region</label>
+                    <label htmlFor="select-25c44b" style={labelStyle}>
+                      Region
+                    </label>
                     <div style={{ position: 'relative' }}>
                       <select
                         name="name-25c44b"
@@ -327,7 +347,9 @@ export function PersonalInfoForm({
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <label style={labelStyle}>Constituency</label>
+                    <label htmlFor="select-dede8f" style={labelStyle}>
+                      Constituency
+                    </label>
                     <div style={{ position: 'relative' }}>
                       <select
                         name="name-dede8f"
@@ -358,7 +380,7 @@ export function PersonalInfoForm({
 
           {/* Residential address — full width */}
           <div className="profile-form-full" style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>
+            <label htmlFor="input-048091" style={labelStyle}>
               Residential Address{' '}
               {userPlatform === 'GHANA' && (
                 <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
@@ -377,7 +399,9 @@ export function PersonalInfoForm({
 
           {/* Bio — full width */}
           <div className="profile-form-full" style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>Short bio</label>
+            <label htmlFor="textarea-956004" style={labelStyle}>
+              Short bio
+            </label>
             <textarea
               name="name-956004"
               id="textarea-956004"
