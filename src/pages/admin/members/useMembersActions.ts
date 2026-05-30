@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useChapters } from '@/context/ChaptersContext'
 import { adminService, type AuditLogEntry, type Member } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -14,7 +13,6 @@ export function useMembersActions(
   setSelectedMember: (m: Member | null) => void,
   fetchMembers: () => void
 ) {
-  const navigate = useNavigate()
   const { chapters } = useChapters()
   const cardRef = useRef<HTMLDivElement>(null)
 
@@ -316,7 +314,7 @@ export function useMembersActions(
     setSelectedIds(new Set())
     if (selectedMember && selectedIds.has(selectedMember.id)) setSelectedMember(null)
     toast.success(`${successCount} member${successCount !== 1 ? 's' : ''} moved to trash.`)
-    navigate('/admin/trash')
+    fetchMembers()
   }
 
   const handleOpenAssign = () => {

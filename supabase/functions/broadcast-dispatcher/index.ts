@@ -83,7 +83,52 @@ Deno.serve(async (req: Request) => {
     }
 
     const phoneRecipients = recipients.filter((u) => u.phone_number)
-    // TODO: Integrate with SMS provider (e.g. Twilio) for phoneRecipients
+
+    // Africa's Talking SMS dispatch
+    // @ts-expect-error: Deno global
+    const atApiKey: string | undefined = Deno.env.get('AT_API_KEY')
+    // @ts-expect-error: Deno global
+    const atUsername: string | undefined = Deno.env.get('AT_USERNAME')
+
+    if (atApiKey && atUsername && phoneRecipients.length > 0) {
+      const normalizePhone = (raw: string): string => {
+        const digits = raw.replace(/\D/g, '')
+        if (digits.startsWith('233')) return `+${digits}`
+        if (digits.startsWith('0')) return `+233${digits.slice(1)}`
+        return `+${digits}`
+      }
+
+      const numbers = phoneRecipients
+        .map((u) => normalizePhone(u.phone_number as string))
+        .filter(Boolean)
+
+      // Africa's Talking accepts up to 100 recipients per request
+      const AT_BATCH = 100
+      for (let i = 0; i < numbers.length; i += AT_BATCH) {
+        const batch = numbers.slice(i, i + AT_BATCH)
+        const params = new URLSearchParams({
+          username: atUsername,
+          to: batch.join(','),
+          message: body ?? subject ?? 'An urgent update from The Base Movement.',
+        })
+        const res = await fetch('https://api.africastalking.com/version1/messaging', {
+          method: 'POST',
+          headers: {
+            apiKey: atApiKey,
+            Accept: 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: params.toString(),
+        })
+        const data = await res.json()
+        console.warn(`[SMS] Batch ${i / AT_BATCH + 1}:`, JSON.stringify(data))
+      }
+    } else {
+      console.warn(
+        `[SMS] AT_API_KEY/AT_USERNAME not set — would send to ${phoneRecipients.length} numbers`
+      )
+    }
+
     console.warn(
       `[URGENT DISPATCH] ${broadcastId} — ${emailRecipients.length} email / ${phoneRecipients.length} SMS recipients`
     )

@@ -72,7 +72,13 @@
       "Bash(supabase secrets *)",
       "mcp__supabase__get_project_url",
       "PowerShell(Start-Process -FilePath \"powershell\" -ArgumentList \"-NoExit\", \"-Command\", \"cd 'C:\\\\MAMP\\\\htdocs\\\\The-Base'; npm run dev\" -WindowStyle Normal)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(git -C \"C:/MAMP/htdocs/The-Base\" log --oneline -1)",
+      "Bash(Get-Command supabase *)",
+      "Bash(scoop which *)",
+      "Bash(choco list *)",
+      "Bash(winget list *)",
+      "PowerShell(Get-Command *)"
     ]
   },
   "enableAllProjectMcpServers": true,
