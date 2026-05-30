@@ -5,6 +5,7 @@ import type {
   SentimentIntelligence as SentimentMetrics,
   ImpactProjection,
 } from '@/types/admin'
+import { supabase } from '@/lib/supabase'
 
 // Modular imports
 import { SentimentHeader } from './sentimentintelligence/SentimentHeader'
@@ -20,25 +21,52 @@ export default function SentimentIntelligence() {
   const [projections, setProjections] = useState<ImpactProjection[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function fetchIntelligence() {
-      setLoading(true)
-      try {
-        const [fbData, telData, projData] = await Promise.all([
-          adminService.getMemberFeedback(),
-          adminService.getSentimentIntelligence(),
-          adminService.getImpactProjections(),
-        ])
-        setFeedback(fbData)
-        setSentimentMetrics(telData)
-        setProjections(projData)
-      } catch (error) {
-        console.error('[INTELLIGENCE] Failed to fetch sentiment data:', error)
-      } finally {
-        setLoading(false)
-      }
+  const fetchIntelligence = async (isBackground = false) => {
+    if (!isBackground) setLoading(true)
+    try {
+      const [fbData, telData, projData] = await Promise.all([
+        adminService.getMemberFeedback(),
+        adminService.getSentimentIntelligence(),
+        adminService.getImpactProjections(),
+      ])
+      setFeedback(fbData)
+      setSentimentMetrics(telData)
+      setProjections(projData)
+    } catch (error) {
+      console.error('[INTELLIGENCE] Failed to fetch sentiment data:', error)
+    } finally {
+      if (!isBackground) setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchIntelligence()
+
+    // Establish live websocket logical replication subscription
+    const channel = supabase
+      .channel('sentiment-intelligence-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'member_feedback' }, () => {
+        fetchIntelligence(true)
+      })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'national_sentiment_intelligence' },
+        () => {
+          fetchIntelligence(true)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'predictive_impact_projections' },
+        () => {
+          fetchIntelligence(true)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   const nationalScore =
@@ -76,12 +104,15 @@ export default function SentimentIntelligence() {
         projectedReach={projectedReach}
       />
 
-      <div className="sidebar-main" style={{ alignItems: 'start' }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Impact Forecasts */}
-          <SentimentImpactForecasts projections={projections} />
+      {/* Prominent, full-width Forecasts/Charts Section at the top */}
+      <div style={{ marginBottom: 20 }}>
+        <SentimentImpactForecasts projections={projections} />
+      </div>
 
-          {/* Regional Metrics */}
+      {/* Lower grid area */}
+      <div className="sidebar-main" style={{ alignItems: 'start' }}>
+        {/* Regional Metrics */}
+        <div style={{ flex: 1.2 }}>
           <SentimentRegionalMetrics sentimentMetrics={sentimentMetrics} />
         </div>
 

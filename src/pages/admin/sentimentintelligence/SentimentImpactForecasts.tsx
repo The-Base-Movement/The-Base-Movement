@@ -46,7 +46,14 @@ export function SentimentImpactForecasts({ projections }: SentimentImpactForecas
           target
         </span>
       </div>
-      <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <div
+        style={{
+          padding: '24px 32px 32px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '32px 48px',
+        }}
+      >
         {projections.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <span
