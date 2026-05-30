@@ -7,6 +7,7 @@ import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { sessionStore } from '@/lib/sessionStore'
+import { supabase } from '@/lib/supabase'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { useStore } from '@/hooks/useStore'
@@ -35,6 +36,7 @@ export default function DashboardLayout() {
     subLinkTo?: string
   } | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [userPlatform, setUserPlatform] = useState<'GHANA' | 'DIASPORA' | null>(null)
   const [likedCount, setLikedCount] = useState(0)
   const [referralCount, setReferralCount] = useState(0)
 
@@ -58,11 +60,16 @@ export default function DashboardLayout() {
       try {
         if (!session?.user) return
 
-        // Fetch lead chapter and member chapter in parallel
-        const [leadChapter, dbChapter] = await Promise.all([
+        // Fetch platform, lead chapter and member chapter in parallel
+        const [platformResult, leadChapter, dbChapter] = await Promise.all([
+          supabase.from('users').select('platform').eq('id', session.user.id).single(),
           adminService.getLeadChapter(session.user.id),
           adminService.getUserChapter(session.user.id),
         ])
+
+        if (platformResult.data) {
+          setUserPlatform(platformResult.data.platform as 'GHANA' | 'DIASPORA')
+        }
 
         // Priority 1: user leads a chapter — show manage_accounts icon + Chapter Dashboard sublink
         if (leadChapter) {
@@ -205,6 +212,8 @@ export default function DashboardLayout() {
     if (path === '/dashboard/leadership') return 'Leadership'
     if (path === '/dashboard/chapters') return 'Chapters'
     if (path.startsWith('/dashboard/chapters/')) return 'Chapter Details'
+    if (path === '/dashboard/constituencies') return 'Constituencies'
+    if (path.startsWith('/dashboard/constituencies/')) return 'Constituency'
     if (path === '/dashboard/chapter-hub' || path.startsWith('/dashboard/chapter-hub/'))
       return 'My Chapter'
     if (path === '/dashboard/contact') return 'Support'
@@ -389,7 +398,13 @@ export default function DashboardLayout() {
               label: 'Community',
               items: [
                 { to: '/dashboard/members', icon: 'groups', label: 'Members' },
-                { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+                userPlatform === 'GHANA'
+                  ? {
+                      to: '/dashboard/constituencies',
+                      icon: 'location_city',
+                      label: 'Constituencies',
+                    }
+                  : { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
                 { to: '/dashboard/leadership', icon: 'groups_3', label: 'Leadership' },
                 ...(myChapterLink
                   ? [
