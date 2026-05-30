@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { constituencyService, constituencySlug } from '@/services/constituencyService'
@@ -28,21 +28,34 @@ interface Announcement {
   created_at: string
 }
 
+interface ConstituencyDonation {
+  id: string
+  full_name: string
+  phone: string
+  amount: number
+  payment_method: string
+  status: string
+  created_at: string
+  reference: string | null
+}
+
 // ── component ────────────────────────────────────────────────────────────────
 
 export default function ConstituencyHub() {
+  const { constituencyId } = useParams<{ constituencyId?: string }>()
   const { session } = useAuth()
 
   const [constituency, setConstituency] = useState<Constituency | null>(null)
   const [members, setMembers] = useState<ConstituencyMember[]>([])
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
+  const [donations, setDonations] = useState<ConstituencyDonation[]>([])
   const [activities, setActivities] = useState<
     { id: string; title: string; description: string | null; type: string; activity_date: string }[]
   >([])
   const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'members' | 'board' | 'activities' | 'settings'>(
-    'members'
-  )
+  const [activeTab, setActiveTab] = useState<
+    'members' | 'donations' | 'board' | 'activities' | 'settings'
+  >('members')
 
   const [memberSearch, setMemberSearch] = useState('')
 
@@ -50,6 +63,7 @@ export default function ConstituencyHub() {
   const [announceDraft, setAnnounceDraft] = useState('')
   const [isPostingAnnounce, setIsPostingAnnounce] = useState(false)
   const [leaderName, setLeaderName] = useState('')
+  const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
 
   // Activities
   const [showActivityForm, setShowActivityForm] = useState(false)
@@ -78,20 +92,47 @@ export default function ConstituencyHub() {
       }
       const userId = session.user.id
 
-      // Find which constituency this user coordinates
-      const { data: gc } = await supabase
-        .from('ghana_constituencies')
-        .select('*, region:ghana_regions(name)')
-        .eq('leader_id', userId)
-        .maybeSingle()
-
-      // Fetch logged-in user's display name
+      // Fetch logged-in user profile info for posts/announcements
       const { data: ud } = await supabase
         .from('users')
-        .select('full_name')
+        .select('full_name, avatar_url')
         .eq('id', userId)
         .maybeSingle()
       if (ud?.full_name) setLeaderName(ud.full_name)
+      if (ud?.avatar_url) setLeaderAvatarUrl(ud.avatar_url)
+
+      // Find all constituencies from the DB
+      const { data: allGc } = await supabase
+        .from('ghana_constituencies')
+        .select('*, region:ghana_regions(name)')
+
+      if (!allGc || allGc.length === 0) {
+        setIsLoading(false)
+        return
+      }
+
+      // Match which constituency this coordinator should view
+      let gc = null
+      if (constituencyId) {
+        gc = allGc.find(
+          (c) => c.id.toString() === constituencyId || constituencySlug(c.name) === constituencyId
+        )
+      }
+      // Fallback: constituency user leads directly
+      if (!gc) {
+        gc = allGc.find((c) => c.leader_id === userId)
+      }
+      // Fallback 2: constituency user is registered in
+      if (!gc) {
+        const { data: userRow } = await supabase
+          .from('users')
+          .select('constituency')
+          .eq('id', userId)
+          .maybeSingle()
+        if (userRow?.constituency) {
+          gc = allGc.find((c) => c.name.toLowerCase() === userRow.constituency!.toLowerCase())
+        }
+      }
 
       if (!gc) {
         setIsLoading(false)
@@ -148,24 +189,35 @@ export default function ConstituencyHub() {
           .order('activity_date', { ascending: false }),
       ])
 
-      setMembers(
-        (memberData ?? []).map((u) => ({
-          authId: u.id,
-          regNo: u.registration_number ?? '',
-          name: u.full_name,
-          phone: u.phone_number ?? 'N/A',
-          region: u.region ?? 'N/A',
-          status: u.status,
-          joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString('en-GB') : 'N/A',
-          avatarUrl: u.avatar_url ?? undefined,
-        }))
-      )
+      const mappedMembers = (memberData ?? []).map((u) => ({
+        authId: u.id,
+        regNo: u.registration_number ?? '',
+        name: u.full_name,
+        phone: u.phone_number ?? 'N/A',
+        region: u.region ?? 'N/A',
+        status: u.status,
+        joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString('en-GB') : 'N/A',
+        avatarUrl: u.avatar_url ?? undefined,
+      }))
+      setMembers(mappedMembers)
       setAnnouncements(announceData ?? [])
       setActivities(actData ?? [])
+
+      // Load member donations
+      const memberIds = mappedMembers.map((m) => m.authId).filter(Boolean)
+      if (memberIds.length > 0) {
+        const { data: donationData } = await supabase
+          .from('donations')
+          .select('id, full_name, phone, amount, payment_method, status, created_at, reference')
+          .in('member_id', memberIds)
+          .order('created_at', { ascending: false })
+        setDonations(donationData ?? [])
+      }
+
       setIsLoading(false)
     }
     load()
-  }, [session])
+  }, [constituencyId, session])
 
   // ── board ─────────────────────────────────────────────────────────────────
 
@@ -175,7 +227,7 @@ export default function ConstituencyHub() {
     const { error } = await supabase.from('constituency_announcements').insert({
       constituency_id: constituency.id,
       content: announceDraft.trim(),
-      author_name: leaderName,
+      author_name: leaderName || constituency.leaderName,
     })
     setIsPostingAnnounce(false)
     if (error) {
@@ -190,6 +242,21 @@ export default function ConstituencyHub() {
     setAnnouncements(data ?? [])
     setAnnounceDraft('')
     toast.success('Update posted.')
+
+    // Push notification to all members of constituency — fire and forget
+    const memberIds = members.map((m) => m.authId).filter(Boolean)
+    if (memberIds.length > 0) {
+      supabase.functions
+        .invoke('send-push-notification', {
+          body: {
+            userIds: memberIds,
+            title: `${constituency.name} — new announcement`,
+            body: announceDraft.trim().slice(0, 100),
+            url: `/dashboard/constituencies/${constituencySlug(constituency.name)}`,
+          },
+        })
+        .catch(console.error)
+    }
   }
 
   const handleDeleteAnnouncement = async (id: string) => {
@@ -278,10 +345,16 @@ export default function ConstituencyHub() {
   // ── derived ───────────────────────────────────────────────────────────────
 
   const activeCount = members.filter((m) => m.status === 'Active' || m.status === 'Approved').length
-  const pendingCount = members.filter((m) => m.status === 'Pending').length
+  const totalDonated = donations.reduce((s, d) => s + Number(d.amount), 0)
+
   const filteredMembers = members.filter((m) => {
     const q = memberSearch.toLowerCase()
-    return !q || m.name.toLowerCase().includes(q) || m.regNo.toLowerCase().includes(q)
+    return (
+      !q ||
+      m.name.toLowerCase().includes(q) ||
+      m.regNo.toLowerCase().includes(q) ||
+      m.phone.includes(q)
+    )
   })
   const slug = constituency ? constituencySlug(constituency.name) : ''
 
@@ -363,6 +436,7 @@ export default function ConstituencyHub() {
 
   const TABS = [
     { key: 'members' as const, label: `Members (${members.length})` },
+    { key: 'donations' as const, label: `Donations (${donations.length})` },
     { key: 'board' as const, label: `Board (${announcements.length})` },
     { key: 'activities' as const, label: `Activities (${activities.length})` },
     { key: 'settings' as const, label: 'Settings' },
@@ -411,7 +485,11 @@ export default function ConstituencyHub() {
               {constituency.regionName} Region · Constituency Hub
             </p>
           </div>
-          <Link to={`/dashboard/constituencies/${slug}`} className="btn btn-outline btn-sm">
+          <Link
+            to={`/dashboard/constituencies/${slug}`}
+            className="btn btn-outline btn-sm"
+            style={{ textDecoration: 'none' }}
+          >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               open_in_new
             </span>
@@ -425,7 +503,11 @@ export default function ConstituencyHub() {
         {[
           { label: 'Total Members', value: members.length, bar: 'hsl(var(--primary))' },
           { label: 'Verified', value: activeCount, bar: 'hsl(var(--accent))' },
-          { label: 'Pending', value: pendingCount, bar: 'hsl(var(--on-surface-muted))' },
+          {
+            label: 'Total Donated',
+            value: `GH₵ ${totalDonated.toLocaleString()}`,
+            bar: 'hsl(var(--primary))',
+          },
           { label: 'Activities', value: activities.length, bar: 'hsl(var(--on-surface))' },
         ].map((kpi) => (
           <div
@@ -489,7 +571,7 @@ export default function ConstituencyHub() {
             <input
               value={memberSearch}
               onChange={(e) => setMemberSearch(e.target.value)}
-              placeholder="Search by name or reg no..."
+              placeholder="Search by name, reg no or phone..."
               style={{
                 height: 40,
                 width: '100%',
@@ -620,7 +702,11 @@ export default function ConstituencyHub() {
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <span
-                          className={`pill ${m.status === 'Active' || m.status === 'Approved' ? 'pill-ok' : 'pill-warn'}`}
+                          className={`pill ${
+                            m.status === 'Active' || m.status === 'Approved'
+                              ? 'pill-ok'
+                              : 'pill-warn'
+                          }`}
                         >
                           {m.status}
                         </span>
@@ -631,6 +717,158 @@ export default function ConstituencyHub() {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── Donations Tab ───────────────────────────────────────────────────── */}
+      {activeTab === 'donations' && (
+        <div className="panel" style={{ overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead
+                style={{
+                  background: 'hsl(var(--container-low))',
+                  borderBottom: '1px solid hsl(var(--border))',
+                }}
+              >
+                <tr>
+                  {['Donor', 'Amount', 'Method', 'Reference', 'Date', 'Status'].map((h) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '11px 18px',
+                        textAlign: 'left',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 9,
+                        textTransform: 'uppercase',
+                        color: 'hsl(var(--on-surface-muted))',
+                        letterSpacing: '0.05em',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {donations.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ padding: '48px 18px', textAlign: 'center' }}>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          fontSize: 40,
+                          color: 'hsl(var(--on-surface-muted))',
+                          opacity: 0.2,
+                        }}
+                      >
+                        volunteer_activism
+                      </span>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          marginTop: 12,
+                        }}
+                      >
+                        No donations from constituency members yet.
+                      </p>
+                    </td>
+                  </tr>
+                ) : (
+                  donations.map((d) => (
+                    <tr key={d.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                      <td style={{ padding: '12px 18px' }}>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 13,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface))',
+                            fontFamily: "'Public Sans', sans-serif",
+                          }}
+                        >
+                          {d.full_name}
+                        </p>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 10,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          {d.phone}
+                        </p>
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 15,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--primary))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        GH₵ {Number(d.amount).toLocaleString()}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 11,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface-muted))',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
+                        {d.payment_method}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 11,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontFamily: 'monospace',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {d.reference || '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 12,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface-muted))',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {new Date(d.created_at).toLocaleDateString('en-GB')}
+                      </td>
+                      <td style={{ padding: '12px 18px' }}>
+                        <span
+                          className={`pill ${
+                            d.status === 'Verified'
+                              ? 'pill-ok'
+                              : d.status === 'Pending'
+                                ? 'pill-warn'
+                                : 'pill-mute'
+                          }`}
+                        >
+                          {d.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -689,31 +927,88 @@ export default function ConstituencyHub() {
                       gap: 12,
                     }}
                   >
-                    <div style={{ flex: 1 }}>
-                      <p
+                    <div style={{ flex: 1, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                      <div
                         style={{
-                          fontSize: 14,
-                          color: 'hsl(var(--on-surface))',
-                          margin: 0,
-                          lineHeight: 1.6,
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          background: 'hsl(var(--primary) / 0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: '500',
+                          fontSize: 12,
+                          color: 'hsl(var(--primary))',
+                          flexShrink: 0,
+                          overflow: 'hidden',
+                          border: '1px solid hsl(var(--border))',
                         }}
                       >
-                        {a.content}
-                      </p>
-                      <p
-                        style={{
-                          fontSize: 11,
-                          color: 'hsl(var(--on-surface-muted))',
-                          margin: '8px 0 0',
-                        }}
-                      >
-                        {a.author_name} ·{' '}
-                        {new Date(a.created_at).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
-                      </p>
+                        {leaderAvatarUrl ? (
+                          <img
+                            src={leaderAvatarUrl}
+                            alt={a.author_name}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        ) : (
+                          a.author_name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')
+                            .slice(0, 2)
+                        )}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}
+                        >
+                          <span
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              color: 'hsl(var(--on-surface))',
+                            }}
+                          >
+                            {a.author_name}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 9,
+                              color: 'hsl(var(--primary))',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                              fontWeight: '500',
+                            }}
+                          >
+                            Coordinator
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            fontSize: 14,
+                            color: 'hsl(var(--on-surface))',
+                            margin: 0,
+                            lineHeight: 1.6,
+                            whiteSpace: 'pre-wrap',
+                          }}
+                        >
+                          {a.content}
+                        </p>
+                        <p
+                          style={{
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                            margin: '8px 0 0',
+                          }}
+                        >
+                          {new Date(a.created_at).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </p>
+                      </div>
                     </div>
                     <button
                       className="btn btn-ghost btn-sm"
