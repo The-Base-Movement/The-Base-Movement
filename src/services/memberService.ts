@@ -302,7 +302,16 @@ class MemberService {
 
     if (error) {
       console.error('[DATABASE] Failed to update member profile:', error)
-      return false
+      if (error.code === '23505') {
+        if (error.message.includes('phone')) {
+          throw new Error('That phone number is already registered to another member.')
+        }
+        if (error.message.includes('email')) {
+          throw new Error('That email address is already registered to another member.')
+        }
+        throw new Error('A profile with those details already exists.')
+      }
+      throw new Error('Failed to save profile. Please try again.')
     }
 
     if (profile.name) localStorage.setItem('userName', profile.name)
@@ -368,6 +377,26 @@ class MemberService {
     if (error) {
       console.error('[DATABASE] Member verification failed:', error)
       return false
+    }
+
+    // Award verification bonus to the referrer — fire-and-forget
+    if (approve) {
+      supabase
+        .from('users')
+        .select('id')
+        .eq('registration_number', id)
+        .single()
+        .then(({ data: member }) => {
+          if (member?.id) {
+            supabase
+              .rpc('award_referral_verification_bonus', { p_member_id: member.id })
+              .then(({ error: rpcErr }) => {
+                if (rpcErr) console.warn('[referral] verification bonus RPC failed:', rpcErr)
+              })
+              .catch(() => {})
+          }
+        })
+        .catch(() => {})
     }
 
     return true

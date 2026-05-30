@@ -103,6 +103,16 @@ export const registrationService = {
 
     if (dbError) throw dbError
 
+    // Award referral points to the referrer — fire-and-forget, must not block registration
+    if (refParam && authData.user?.id) {
+      supabase
+        .rpc('award_referral_points', { p_new_member_id: authData.user.id })
+        .then(({ error }) => {
+          if (error) console.warn('[referral] registration points RPC failed:', error)
+        })
+        .catch(() => {})
+    }
+
     discordService.memberRegistered(
       formData.fullName,
       platform,
