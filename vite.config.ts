@@ -68,6 +68,12 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 3000,
+      headers: {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+      },
     },
     resolve: {
       alias: {

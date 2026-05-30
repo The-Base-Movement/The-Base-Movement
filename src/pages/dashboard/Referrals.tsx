@@ -1,5 +1,6 @@
 // src/pages/dashboard/Referrals.tsx
 import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { referralService } from '@/services/referralService'
 import { ShareModal } from '@/components/ShareModal'
 import type { ReferredMember, ReferralStats, ReferralLeaderboardEntry } from '@/types/referrals'
@@ -78,7 +79,7 @@ export default function Referrals() {
   const [loading, setLoading] = useState(true)
   const [shareOpen, setShareOpen] = useState(false)
 
-  const [userRegNo] = useState(() => localStorage.getItem('userRegNo') ?? '')
+  const [userRegNo] = useState(() => sessionStore.getItem('userRegNo') ?? '')
   const shareUrl = userRegNo
     ? `https://thebasemovement.com/register?ref=${userRegNo}`
     : 'https://thebasemovement.com/register'

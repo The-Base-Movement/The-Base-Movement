@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { DotLoader } from '@/components/states'
 import { useIsClient } from '@/hooks/useIsClient'
 import SEO from '@/components/SEO'
@@ -16,7 +17,7 @@ export default function OurAgenda() {
   const [isLoading, setIsLoading] = useState(true)
   const [activeSection, setActiveSection] = useState(agendaPillars[0]?.id || '')
   const isClient = useIsClient()
-  const isLoggedIn = isClient && !!localStorage.getItem('userName')
+  const isLoggedIn = isClient && !!sessionStore.getItem('userName')
 
   const activeIndex = pillars.findIndex((p) => p.id === activeSection)
   const progress = pillars.length > 0 ? Math.round(((activeIndex + 1) / pillars.length) * 100) : 0

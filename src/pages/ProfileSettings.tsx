@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { userActivityService } from '@/services/userActivityService'
@@ -35,10 +36,10 @@ interface FormState {
 export default function ProfileSettings() {
   const { lowBandwidthMode, setLowBandwidthMode } = usePerformance()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(() =>
-    localStorage.getItem('userAvatar')
+    sessionStore.getItem('userAvatar')
   )
-  const [userPlatform] = useState(() => localStorage.getItem('userPlatform') || '')
-  const [userRegNo] = useState(() => localStorage.getItem('userRegNo') || '')
+  const [userPlatform] = useState(() => sessionStore.getItem('userPlatform') || '')
+  const [userRegNo] = useState(() => sessionStore.getItem('userRegNo') || '')
   const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
 
@@ -92,7 +93,7 @@ export default function ProfileSettings() {
       )
       setDbConstituencies(uniqueConstituencies)
 
-      const regNo = localStorage.getItem('userRegNo')
+      const regNo = sessionStore.getItem('userRegNo')
       if (!regNo) {
         setLoading(false)
         return
@@ -122,7 +123,7 @@ export default function ProfileSettings() {
         })
         if (profile.avatarUrl) {
           setAvatarUrl(profile.avatarUrl)
-          localStorage.setItem('userAvatar', profile.avatarUrl)
+          sessionStore.setItem('userAvatar', profile.avatarUrl)
         }
       }
 
@@ -137,7 +138,7 @@ export default function ProfileSettings() {
       reader.addEventListener('load', () => {
         const result = reader.result?.toString() || null
         setAvatarUrl(result)
-        if (result) localStorage.setItem('userAvatar', result)
+        if (result) sessionStore.setItem('userAvatar', result)
         window.dispatchEvent(new Event('storage'))
       })
       reader.readAsDataURL(e.target.files[0])
@@ -150,7 +151,7 @@ export default function ProfileSettings() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    const regNo = localStorage.getItem('userRegNo')
+    const regNo = sessionStore.getItem('userRegNo')
     if (!regNo) return
 
     setLoading(true)
@@ -174,23 +175,21 @@ export default function ProfileSettings() {
       }
     }
 
-    const success = await adminService.updateMemberProfile(regNo, {
-      name: form.fullName,
-      email: form.email,
-      phone: form.phone,
-      region: form.region,
-      constituency: form.constituency,
-      gender: form.gender,
-      chapter: form.chapter,
-      avatarUrl: finalAvatarUrl || undefined,
-      profession: form.profession,
-      city: form.city,
-      residentialAddress: form.residentialAddress,
-    })
+    try {
+      await adminService.updateMemberProfile(regNo, {
+        name: form.fullName,
+        email: form.email,
+        phone: form.phone,
+        region: form.region,
+        constituency: form.constituency,
+        gender: form.gender,
+        chapter: form.chapter,
+        avatarUrl: finalAvatarUrl || undefined,
+        profession: form.profession,
+        city: form.city,
+        residentialAddress: form.residentialAddress,
+      })
 
-    setLoading(false)
-
-    if (success) {
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -204,8 +203,10 @@ export default function ProfileSettings() {
       toast.success('Official Profile Synchronized')
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
-    } else {
-      toast.error('Failed to sync profile. Check your connection.')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to sync profile. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 

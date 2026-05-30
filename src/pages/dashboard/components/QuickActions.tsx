@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { sessionStore } from '@/lib/sessionStore'
 import { toast } from 'sonner'
 
 const linkActions = [
@@ -14,7 +15,7 @@ const linkActions = [
 
 export function QuickActions() {
   function handleReferral() {
-    const regNo = localStorage.getItem('userRegNo')
+    const regNo = sessionStore.getItem('userRegNo')
     if (!regNo) {
       toast.error('Could not get your registration number')
       return

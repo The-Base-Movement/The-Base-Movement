@@ -18,11 +18,22 @@ declare global {
   var __supabase_singleton__: SupabaseClient | undefined
 }
 
+// Use sessionStorage for auth tokens so the JWT is not accessible across tabs
+// and is automatically cleared when the browser session ends.
+// Trade-off: users must re-login after closing the tab. If persistent login is
+// required, revert to the default (localStorage) storage.
+const sessionStorageAdapter = {
+  getItem: (key: string) => sessionStorage.getItem(key),
+  setItem: (key: string, value: string) => sessionStorage.setItem(key, value),
+  removeItem: (key: string) => sessionStorage.removeItem(key),
+}
+
 export const supabase = (globalThis.__supabase_singleton__ ??= createClient(
   supabaseUrl,
   supabaseAnonKey,
   {
     auth: {
+      storage: sessionStorageAdapter,
       // Some browsers (Brave, Firefox private mode) return null from
       // navigator.locks.request() — violating the LockManager spec and
       // causing a console warning from gotrue-js. Use ifAvailable so we

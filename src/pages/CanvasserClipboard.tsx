@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
@@ -59,7 +60,7 @@ export default function CanvasserClipboard() {
 
     setSubmitting(true)
     try {
-      const regNo = localStorage.getItem('userRegNo')
+      const regNo = sessionStore.getItem('userRegNo')
       if (!regNo) throw new Error('Authentication required')
 
       const profile = await adminService.getMemberProfile(regNo)

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { EmptyState } from '@/components/states'
 import { useLocation } from 'react-router-dom'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
@@ -26,7 +27,7 @@ export default function Polls() {
   const [searchQuery, setSearchQuery] = useState('')
   const isClient = useIsClient()
   const isLoggedIn =
-    isClient && typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true'
+    isClient && typeof window !== 'undefined' && sessionStore.getItem('isLoggedIn') === 'true'
 
   useEffect(() => {
     async function loadPolls() {

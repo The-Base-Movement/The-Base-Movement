@@ -6,6 +6,7 @@ import TawkChat from './TawkChat'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
+import { sessionStore } from '@/lib/sessionStore'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { useStore } from '@/hooks/useStore'
@@ -88,7 +89,7 @@ export default function DashboardLayout() {
 
     const readProfile = async () => {
       // 1. Try to get the specific member profile from DB first (via regNo in storage)
-      const storedRegNo = localStorage.getItem('userRegNo')
+      const storedRegNo = sessionStore.getItem('userRegNo')
       if (storedRegNo) {
         try {
           const profile = await adminService.getMemberProfile(storedRegNo)
@@ -113,12 +114,12 @@ export default function DashboardLayout() {
         setAvatarUrl(user.user_metadata?.avatar_url || null)
       } else {
         // 3. Last resort: Local storage raw values
-        setAvatarUrl(localStorage.getItem('userAvatar'))
-        resolvedName = localStorage.getItem('userName') || 'Member'
+        setAvatarUrl(sessionStore.getItem('userAvatar'))
+        resolvedName = sessionStore.getItem('userName') || 'Member'
         setUserName(resolvedName)
       }
 
-      setUserRegNo(localStorage.getItem('userRegNo') || '')
+      setUserRegNo(sessionStore.getItem('userRegNo') || '')
       checkChapterRole()
     }
 
@@ -179,12 +180,7 @@ export default function DashboardLayout() {
   const handleLogout = async () => {
     try {
       await authService.logout()
-      localStorage.removeItem('userToken')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('userEmail')
-      localStorage.removeItem('userAvatar')
-      localStorage.removeItem('userPlatform')
-      localStorage.removeItem('userRegNo')
+      sessionStore.clearAll()
       navigate('/login')
     } catch (error) {
       console.error('[AUTH] Sign out sequence failed:', error)

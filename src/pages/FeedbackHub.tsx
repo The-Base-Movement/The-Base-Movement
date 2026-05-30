@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
@@ -63,7 +64,7 @@ export default function FeedbackHub() {
     if (!feedback.trim()) return
     setSubmitting(true)
     try {
-      const regNo = localStorage.getItem('userRegNo')
+      const regNo = sessionStore.getItem('userRegNo')
       if (!regNo) throw new Error('User not authenticated')
       const profile = await adminService.getMemberProfile(regNo)
       if (!profile) throw new Error('Profile not found')

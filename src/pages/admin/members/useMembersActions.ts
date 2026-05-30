@@ -371,17 +371,13 @@ export function useMembersActions(
     if (!selectedMember) return
     setIsSavingEdit(true)
     try {
-      const success = await adminService.updateMemberProfile(selectedMember.id, editForm)
-      if (success) {
-        toast.success('Member profile updated.')
-        setIsEditModalOpen(false)
-        setSelectedMember({ ...selectedMember, ...editForm } as Member)
-        fetchMembers()
-      } else {
-        toast.error('Failed to update member profile.')
-      }
-    } catch {
-      toast.error('An error occurred while updating.')
+      await adminService.updateMemberProfile(selectedMember.id, editForm)
+      toast.success('Member profile updated.')
+      setIsEditModalOpen(false)
+      setSelectedMember({ ...selectedMember, ...editForm } as Member)
+      fetchMembers()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'An error occurred while updating.')
     } finally {
       setIsSavingEdit(false)
     }

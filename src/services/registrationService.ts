@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { getCroppedImg } from '@/lib/imageUtils'
 import { adminService } from '@/services/adminService'
 import { discordService } from '@/services/discordService'
+import { sessionStore } from '@/lib/sessionStore'
 import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
 
@@ -125,13 +126,13 @@ export const registrationService = {
       regNo
     )
 
-    // 4. Store session details in localStorage
-    localStorage.setItem('isLoggedIn', 'true')
-    localStorage.setItem('userRegNo', regNo)
-    localStorage.setItem('userName', formData.fullName)
-    localStorage.setItem('userPlatform', platform)
+    // 4. Store session details in sessionStorage (tab-scoped, not persisted cross-session)
+    sessionStore.setItem('isLoggedIn', 'true')
+    sessionStore.setItem('userRegNo', regNo)
+    sessionStore.setItem('userName', formData.fullName)
+    sessionStore.setItem('userPlatform', platform)
     if (finalAvatarUrl) {
-      localStorage.setItem('userAvatar', finalAvatarUrl)
+      sessionStore.setItem('userAvatar', finalAvatarUrl)
     }
     window.dispatchEvent(new Event('storage'))
 

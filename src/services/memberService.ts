@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { sessionStore } from '@/lib/sessionStore'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type {
   Member,
@@ -337,8 +338,8 @@ class MemberService {
       throw new Error('Failed to save profile. Please try again.')
     }
 
-    if (profile.name) localStorage.setItem('userName', profile.name)
-    if (profile.avatarUrl) localStorage.setItem('userAvatar', profile.avatarUrl)
+    if (profile.name) sessionStore.setItem('userName', profile.name)
+    if (profile.avatarUrl) sessionStore.setItem('userAvatar', profile.avatarUrl)
     window.dispatchEvent(new Event('storage'))
 
     return true

@@ -13,6 +13,7 @@
  *  onDelete   — triggers delete confirmation for this post
  */
 
+import DOMPurify from 'dompurify'
 import type { BlogPost, AdminUser } from '@/types/admin'
 import { statusPill } from './statusPill'
 import { metaSt } from './styles'
@@ -236,7 +237,7 @@ export function BlogViewPage({ viewPost, onBack, onEdit, onDelete }: BlogViewPag
             {/* Body HTML from TinyMCE */}
             <div
               className="prose prose-on-surface max-w-none prose-p:text-on-surface/70 prose-p:leading-relaxed prose-p:text-[16px] prose-headings:text-on-surface prose-headings:font-bold prose-headings:tracking-tight"
-              dangerouslySetInnerHTML={{ __html: viewPost.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(viewPost.content) }}
             />
 
             {/* Tags */}

@@ -297,6 +297,10 @@ class AdminService {
     return memberService.updateMemberProfile(regNo, profile)
   }
 
+  async ensureRegistrationNumber(authId: string): Promise<string | null> {
+    return memberService.ensureRegistrationNumber(authId)
+  }
+
   async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
     const result = await memberService.registerMember(data)
     if (!result.error) {

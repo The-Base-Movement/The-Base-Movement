@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { DotLoader } from '@/components/states'
 import { adminService } from '@/services/adminService'
 import { useAuth } from '@/context/AuthContext'
@@ -35,7 +36,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
-      const regNo = localStorage.getItem('userRegNo')
+      const regNo = sessionStore.getItem('userRegNo')
       let liveMember = null
 
       if (regNo) {
@@ -51,7 +52,7 @@ export default function Dashboard() {
 
       if (liveMember) {
         // Save regNo for next time
-        localStorage.setItem('userRegNo', liveMember.id)
+        sessionStore.setItem('userRegNo', liveMember.id)
 
         setMember({
           full_name: liveMember.name,

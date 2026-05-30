@@ -5,6 +5,7 @@ import { Pagination, Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { CommentSection } from '@/components/CommentSection'
+import DOMPurify from 'dompurify'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
@@ -226,7 +227,7 @@ export default function BlogPost() {
                   prose-p:text-stone-600 prose-p:leading-relaxed prose-p:mb-8
                   prose-blockquote:border-l-brand-green prose-blockquote:bg-stone-50 prose-blockquote:p-8 prose-blockquote:font-medium prose-blockquote:text-stone-900 prose-blockquote:italic
                   prose-strong:text-stone-900 prose-strong:font-medium"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
               />
 
               <div className="mt-16 pt-8 border-t border-stone-100 flex flex-wrap gap-2">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/types/admin'
@@ -125,7 +126,7 @@ export default function MyDonations() {
             {donations.length > 0 && (
               <button
                 className="btn btn-outline btn-sm"
-                onClick={() => downloadCSV(donations, localStorage.getItem('userName') || 'member')}
+                onClick={() => downloadCSV(donations, sessionStore.getItem('userName') || 'member')}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                   download

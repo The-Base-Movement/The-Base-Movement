@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { authService } from '@/services/authService'
+import { sessionStore } from '@/lib/sessionStore'
 import { Button } from '@/components/buttons/ui/neon-button'
 
 const NAV_LINKS = [
@@ -35,9 +36,9 @@ export default function Navbar() {
     if (session?.user) {
       const meta = session.user.user_metadata
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUserName(meta?.full_name || localStorage.getItem('userName') || 'Member')
+      setUserName(meta?.full_name || sessionStore.getItem('userName') || 'Member')
 
-      setUserAvatar(meta?.avatar_url || localStorage.getItem('userAvatar') || '')
+      setUserAvatar(meta?.avatar_url || sessionStore.getItem('userAvatar') || '')
     } else {
       setUserName('')
 
@@ -63,12 +64,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await authService.logout()
-    localStorage.removeItem('isLoggedIn')
-    localStorage.removeItem('userAvatar')
-    localStorage.removeItem('userName')
-    localStorage.removeItem('userRegNo')
-    localStorage.removeItem('userToken')
-    localStorage.removeItem('userPlatform')
+    sessionStore.clearAll()
     setIsDropdownOpen(false)
     navigate('/')
   }

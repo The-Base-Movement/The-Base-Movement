@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { sessionStore } from '@/lib/sessionStore'
 import { adminService } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
@@ -19,7 +20,7 @@ export function MovementJourney() {
   useEffect(() => {
     async function fetchJourney() {
       try {
-        const regNo = localStorage.getItem('userRegNo')
+        const regNo = sessionStore.getItem('userRegNo')
         if (!regNo) {
           setLoading(false)
           return

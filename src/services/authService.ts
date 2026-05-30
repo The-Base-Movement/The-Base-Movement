@@ -7,84 +7,82 @@ import { supabase } from '@/lib/supabase'
 import type { Session, User, AuthResponse } from '@supabase/supabase-js'
 
 export interface AuthSession {
-  session: Session | null;
-  user: User | null;
+  session: Session | null
+  user: User | null
 }
 
 class AuthService {
-  private static instance: AuthService;
-  private currentSession: Session | null = null;
+  private static instance: AuthService
+  private currentSession: Session | null = null
 
   private constructor() {
     // Initialize session state
     supabase.auth.getSession().then(({ data: { session } }) => {
-      this.currentSession = session;
-    });
+      this.currentSession = session
+    })
 
     // Listen for auth changes
     supabase.auth.onAuthStateChange((_event, session) => {
-      this.currentSession = session;
-      if (typeof window !== 'undefined' && window.localStorage) {
-        if (session) {
-          localStorage.setItem('supabase_session_active', 'true');
-        } else {
-          localStorage.removeItem('supabase_session_active');
-        }
-      }
-    });
+      this.currentSession = session
+    })
   }
 
   public static getInstance(): AuthService {
     if (!AuthService.instance) {
-      AuthService.instance = new AuthService();
+      AuthService.instance = new AuthService()
     }
-    return AuthService.instance;
+    return AuthService.instance
   }
 
   async login(identifier: string, password: string): Promise<AuthResponse['data']> {
-    const isPhone = /^\+?[0-9]+$/.test(identifier.replace(/\s+/g, ''));
-    
-    let signInPromise;
+    const isPhone = /^\+?[0-9]+$/.test(identifier.replace(/\s+/g, ''))
+
+    let signInPromise
 
     if (isPhone) {
-      let formattedPhone = identifier.replace(/\s+/g, '');
+      let formattedPhone = identifier.replace(/\s+/g, '')
       if (formattedPhone.startsWith('0')) {
-        formattedPhone = '+233' + formattedPhone.substring(1);
+        formattedPhone = '+233' + formattedPhone.substring(1)
       } else if (!formattedPhone.startsWith('+')) {
-        formattedPhone = '+' + formattedPhone;
+        formattedPhone = '+' + formattedPhone
       }
-      
+
       // Since native Phone Auth is disabled, we translate the phone number into the generated dummy email
-      const dummyEmail = `${formattedPhone.replace('+', '')}@thebase.org`;
-      signInPromise = supabase.auth.signInWithPassword({ email: dummyEmail, password });
+      const dummyEmail = `${formattedPhone.replace('+', '')}@thebase.org`
+      signInPromise = supabase.auth.signInWithPassword({ email: dummyEmail, password })
     } else {
-      signInPromise = supabase.auth.signInWithPassword({ email: identifier, password });
+      signInPromise = supabase.auth.signInWithPassword({ email: identifier, password })
     }
 
-    const { data, error } = await signInPromise;
+    const { data, error } = await signInPromise
 
     if (error) {
-      throw new Error(error.message || 'Login failed');
+      throw new Error(error.message || 'Login failed')
     }
 
-    this.currentSession = data.session;
-    return data;
+    this.currentSession = data.session
+    return data
   }
 
   async signInWithGoogle(): Promise<void> {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: (typeof window !== 'undefined' ? window.location.origin : '') + '/dashboard'
-      }
-    });
+        redirectTo: (typeof window !== 'undefined' ? window.location.origin : '') + '/dashboard',
+      },
+    })
 
     if (error) {
-      throw new Error(error.message || 'Google Sign-In failed');
+      throw new Error(error.message || 'Google Sign-In failed')
     }
   }
 
-  async signUp(email: string, password: string, name: string, image?: string): Promise<AuthResponse['data']> {
+  async signUp(
+    email: string,
+    password: string,
+    name: string,
+    image?: string
+  ): Promise<AuthResponse['data']> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -94,57 +92,56 @@ class AuthService {
           avatar_url: image,
         },
       },
-    });
+    })
 
     if (error) {
-      throw new Error(error.message || 'Registration failed');
+      throw new Error(error.message || 'Registration failed')
     }
 
-    this.currentSession = data.session;
-    return data;
+    this.currentSession = data.session
+    return data
   }
 
   async logout() {
-    this.currentSession = null;
-    await supabase.auth.signOut();
+    this.currentSession = null
+    await supabase.auth.signOut()
   }
 
   getToken(): string | null {
-    return this.currentSession?.access_token || null;
+    return this.currentSession?.access_token || null
   }
 
   isAuthenticated(): boolean {
-    if (this.currentSession) return true;
-    if (typeof window !== 'undefined' && window.localStorage) {
-      return localStorage.getItem('supabase_session_active') === 'true';
-    }
-    return false;
+    return this.currentSession !== null
   }
 
   getUser() {
-    return this.currentSession?.user || null;
+    return this.currentSession?.user || null
   }
 
   async updatePassword(newPassword: string): Promise<void> {
     const { error } = await supabase.auth.updateUser({
-      password: newPassword
-    });
+      password: newPassword,
+    })
 
     if (error) {
-      throw new Error(error.message || 'Failed to update password');
+      throw new Error(error.message || 'Failed to update password')
     }
   }
 
-  async updateProfile(updates: { full_name?: string; avatar_url?: string; phone?: string }): Promise<void> {
-
+  async updateProfile(updates: {
+    full_name?: string
+    avatar_url?: string
+    phone?: string
+  }): Promise<void> {
     const { error } = await supabase.auth.updateUser({
-      data: updates
-    });
+      data: updates,
+    })
 
     if (error) {
-      throw new Error(error.message || 'Failed to update profile');
+      throw new Error(error.message || 'Failed to update profile')
     }
   }
 }
 
-export const authService = AuthService.getInstance();
+export const authService = AuthService.getInstance()
