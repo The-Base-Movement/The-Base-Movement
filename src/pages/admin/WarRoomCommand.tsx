@@ -255,7 +255,7 @@ export default function WarRoomCommand() {
 
   return (
     <div className="war-room-page" style={{ paddingBottom: 96, minHeight: 'calc(100vh - 3.5rem)' }}>
-      <div style={{ padding: '20px 24px 0' }}>
+      <div style={{ padding: '24px 28px 0' }}>
         <AdminPageHeader
           title="War Room — live mobilization"
           icon="sensors"

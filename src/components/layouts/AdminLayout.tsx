@@ -1467,7 +1467,6 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         <main
           className="flex-1 overflow-y-auto transition-all duration-300 ease-in-out admin-content-area"
           style={{
-            padding: '24px 28px 60px',
             fontSize: `calc(1rem * var(--admin-font-scale, 1))`,
           }}
         >

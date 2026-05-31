@@ -583,6 +583,7 @@
 
 /* Admin Global Spacing Refinements */
 .admin-page-container {
+  padding: 24px 28px 60px;
   @apply space-y-8 animate-in fade-in duration-500;
 }
 
@@ -613,7 +614,7 @@
 }
 
 .main {
-  padding: 0;
+  padding: 24px 28px 60px;
   min-width: 0;
   animation: mainFadeIn 0.35s ease both;
 }
