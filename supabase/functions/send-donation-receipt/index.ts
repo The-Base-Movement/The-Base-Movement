@@ -1,6 +1,6 @@
 // THE BASE: DONATION RECEIPT EMAIL
 // Called after a donation is verified by an admin.
-// Set RESEND_API_KEY in Supabase secrets to activate sending.
+// Set SENDGRID_API_KEY in Supabase secrets to activate sending.
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -70,23 +70,22 @@ Deno.serve(async (req: Request) => {
     })
 
     // @ts-expect-error: Deno global
-    const resendKey: string | undefined = Deno.env.get('RESEND_API_KEY')
+    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
 
-    if (resendKey) {
-      const res = await fetch('https://api.resend.com/emails', {
+    if (sgKey) {
+      const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
         body: JSON.stringify({
-          from: 'The Base Movement <noreply@thebasemovement.com>',
-          to: [memberEmail],
+          personalizations: [{ to: [{ email: memberEmail }] }],
+          from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
           subject: `Your ${amountStr} contribution is confirmed — Receipt ${row.reference}`,
-          html,
+          content: [{ type: 'text/html', value: html }],
         }),
       })
-      const data = await res.json()
-      console.warn('[RECEIPT] Sent to', memberEmail, data)
+      console.warn('[RECEIPT] Sent to', memberEmail, res.status)
     } else {
-      console.warn('[RECEIPT] RESEND_API_KEY not set — would send to', memberEmail)
+      console.warn('[RECEIPT] SENDGRID_API_KEY not set — would send to', memberEmail)
     }
 
     return new Response(JSON.stringify({ success: true }), {

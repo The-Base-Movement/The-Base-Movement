@@ -1,6 +1,6 @@
 // THE BASE: MULTI-CHANNEL BROADCAST DISPATCHER
 // Handles SMS/email dispatch for Urgent broadcasts.
-// Set RESEND_API_KEY in Supabase secrets to activate email sending.
+// Set SENDGRID_API_KEY in Supabase secrets to activate email sending.
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -55,30 +55,29 @@ Deno.serve(async (req: Request) => {
     })
 
     // @ts-expect-error: Deno global
-    const resendKey: string | undefined = Deno.env.get('RESEND_API_KEY')
+    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     const emailRecipients = recipients.filter((u) => u.email).map((u) => u.email as string)
 
-    if (resendKey && emailRecipients.length > 0) {
-      // Resend supports up to 50 recipients per call; batch for larger lists
-      const BATCH = 50
+    if (sgKey && emailRecipients.length > 0) {
+      // SendGrid supports up to 1000 personalizations per call
+      const BATCH = 1000
       for (let i = 0; i < emailRecipients.length; i += BATCH) {
         const batch = emailRecipients.slice(i, i + BATCH)
-        const res = await fetch('https://api.resend.com/emails', {
+        const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
           body: JSON.stringify({
-            from: 'The Base Movement <noreply@thebasemovement.com>',
-            to: batch,
+            personalizations: batch.map((email) => ({ to: [{ email }] })),
+            from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
             subject: subject ?? 'Movement update',
-            html,
+            content: [{ type: 'text/html', value: html }],
           }),
         })
-        const data = await res.json()
-        console.warn(`[EMAIL] Broadcast batch ${i / BATCH + 1}:`, data)
+        console.warn(`[EMAIL] Broadcast batch ${i / BATCH + 1}:`, res.status)
       }
     } else {
       console.warn(
-        `[EMAIL] RESEND_API_KEY not set — would send to ${emailRecipients.length} addresses`
+        `[EMAIL] SENDGRID_API_KEY not set — would send to ${emailRecipients.length} addresses`
       )
     }
 

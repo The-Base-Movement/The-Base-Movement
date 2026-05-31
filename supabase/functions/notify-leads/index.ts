@@ -1,6 +1,6 @@
 // THE BASE: MOBILIZATION NOTIFICATION EDGE FUNCTION
-// Sends a welcome email to new verified members via Resend.
-// Set RESEND_API_KEY in Supabase secrets to activate sending.
+// Sends a welcome email to new verified members via SendGrid.
+// Set SENDGRID_API_KEY in Supabase secrets to activate sending.
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -50,23 +50,22 @@ Deno.serve(async (req: Request) => {
     })
 
     // @ts-expect-error: Deno global
-    const resendKey: string | undefined = Deno.env.get('RESEND_API_KEY')
+    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
 
-    if (resendKey && memberEmail) {
-      const res = await fetch('https://api.resend.com/emails', {
+    if (sgKey && memberEmail) {
+      const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
         body: JSON.stringify({
-          from: 'The Base Movement <noreply@thebasemovement.com>',
-          to: [memberEmail],
+          personalizations: [{ to: [{ email: memberEmail }] }],
+          from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
           subject: 'You are now a verified member of The Base.',
-          html,
+          content: [{ type: 'text/html', value: html }],
         }),
       })
-      const data = await res.json()
-      console.warn('[EMAIL] Sent welcome to', memberEmail, data)
+      console.warn('[EMAIL] Sent welcome to', memberEmail, res.status)
     } else {
-      console.warn('[EMAIL] RESEND_API_KEY not set — skipping send to', memberEmail)
+      console.warn('[EMAIL] SENDGRID_API_KEY not set — skipping send to', memberEmail)
     }
 
     // Lead notification (SMS placeholder)

@@ -1,6 +1,6 @@
 // THE BASE: POLL CLOSING NOTIFICATION EMAIL
 // Called manually or via a scheduled job when a poll is 24h from closing.
-// Set RESEND_API_KEY in Supabase secrets to activate sending.
+// Set SENDGRID_API_KEY in Supabase secrets to activate sending.
 // Invoke with: { pollId, targetRegion? }
 
 // @ts-expect-error: Deno supports URL imports
@@ -67,38 +67,46 @@ Deno.serve(async (req: Request) => {
     const recipients = ((members ?? []) as Member[]).filter((m) => m.email)
 
     // @ts-expect-error: Deno global
-    const resendKey: string | undefined = Deno.env.get('RESEND_API_KEY')
+    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
 
     let sentCount = 0
-    const BATCH = 50
+    const BATCH = 100
 
     for (let i = 0; i < recipients.length; i += BATCH) {
       const batch = recipients.slice(i, i + BATCH)
 
-      for (const member of batch) {
-        if (!member.email) continue
-        const firstName = (member.full_name ?? '').split(' ')[0] || 'Patriot'
-        const html = pollClosingEmail({
-          name: firstName,
-          pollTitle: row.title,
-          preheader: `The ${region} poll closes in ${hoursRemaining} hours. ${row.response_count.toLocaleString()} members have voted. You haven't yet.`,
-          region,
-          voteCount: row.response_count,
-          voteTarget: row.target_count ?? 5000,
-          hoursRemaining,
-          options: pollOptions,
-          voteUrl: `https://thebasemovement.com/dashboard/polls/${row.id}`,
-        })
+      if (sgKey) {
+        const personalizations = batch
+          .filter((m) => m.email)
+          .map((member) => {
+            const firstName = (member.full_name ?? '').split(' ')[0] || 'Patriot'
+            const html = pollClosingEmail({
+              name: firstName,
+              pollTitle: row.title,
+              preheader: `The ${region} poll closes in ${hoursRemaining} hours. ${row.response_count.toLocaleString()} members have voted. You haven't yet.`,
+              region,
+              voteCount: row.response_count,
+              voteTarget: row.target_count ?? 5000,
+              hoursRemaining,
+              options: pollOptions,
+              voteUrl: `https://thebasemovement.com/dashboard/polls/${row.id}`,
+            })
+            return {
+              to: [{ email: member.email as string }],
+              dynamic_template_data: {},
+              substitutions: { html },
+            }
+          })
 
-        if (resendKey) {
-          await fetch('https://api.resend.com/emails', {
+        for (const p of personalizations) {
+          await fetch('https://api.sendgrid.com/v3/mail/send', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
             body: JSON.stringify({
-              from: 'The Base Movement <noreply@thebasemovement.com>',
-              to: [member.email],
+              personalizations: [{ to: p.to }],
+              from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
               subject: `This poll closes in ${hoursRemaining} hours. Your vote counts.`,
-              html,
+              content: [{ type: 'text/html', value: p.substitutions.html }],
             }),
           })
           sentCount++
@@ -106,9 +114,9 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    if (!resendKey) {
+    if (!sgKey) {
       console.warn(
-        `[POLL-NOTIFY] RESEND_API_KEY not set — would send to ${recipients.length} members`
+        `[POLL-NOTIFY] SENDGRID_API_KEY not set — would send to ${recipients.length} members`
       )
     }
 
