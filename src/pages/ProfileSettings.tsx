@@ -169,7 +169,8 @@ export default function ProfileSettings() {
         email: form.email,
         phone: form.phone,
         gender: form.gender,
-        chapter: form.chapter,
+        // Chapter is Diaspora-only; Ghana Network members are organised by constituency
+        ...(userPlatform !== 'GHANA' && { chapter: form.chapter }),
         avatarUrl: finalAvatarUrl || undefined,
         profession: form.profession,
         city: form.city,

@@ -181,29 +181,31 @@ export function PersonalInfoForm({
             />
           </div>
 
-          {/* Chapter */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="select-d8a77b" style={labelStyle}>
-              Assigned chapter
-            </label>
-            <div style={{ position: 'relative' }}>
-              <select
-                name="name-d8a77b"
-                id="select-d8a77b"
-                value={form.chapter}
-                onChange={(e) => onChange('chapter', e.target.value)}
-                style={selectStyle}
-              >
-                <option value="">Select Chapter</option>
-                {availableChapters.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-              <SelIcon />
+          {/* Chapter — Diaspora only; Ghana Network is organised by constituency */}
+          {userPlatform !== 'GHANA' && (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label htmlFor="select-d8a77b" style={labelStyle}>
+                Assigned chapter
+              </label>
+              <div style={{ position: 'relative' }}>
+                <select
+                  name="name-d8a77b"
+                  id="select-d8a77b"
+                  value={form.chapter}
+                  onChange={(e) => onChange('chapter', e.target.value)}
+                  style={selectStyle}
+                >
+                  <option value="">Select Chapter</option>
+                  {availableChapters.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+                <SelIcon />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Region / Country fields — conditional on platform */}
           {userPlatform === 'GHANA' ? (
