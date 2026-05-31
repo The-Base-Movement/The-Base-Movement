@@ -441,13 +441,13 @@ export default function AdminConstituencyLeadHub() {
 
       {/* Members tab */}
       {activeTab === 'members' && (
-        <div className="panel" style={{ overflow: 'hidden' }}>
+        <div className="panel" style={{ overflowX: 'auto' }}>
           {members.length === 0 ? (
             <p style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>
               No members in this constituency.
             </p>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 480 }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   {['Member', 'Profession', 'Reg No', 'Status'].map((h) => (
@@ -644,7 +644,9 @@ export default function AdminConstituencyLeadHub() {
         <div>
           <div style={{ marginBottom: 16 }}>
             <button className="btn btn-primary btn-sm" onClick={() => setModal('assign-committee')}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                add
+              </span>
               Assign Committee Member
             </button>
           </div>
@@ -677,11 +679,12 @@ export default function AdminConstituencyLeadHub() {
                       top: 0,
                       bottom: 0,
                       width: 3,
-                      background: role === 'Secretary'
-                        ? 'hsl(var(--primary))'
-                        : role === 'Deputy Secretary'
-                        ? 'hsl(var(--accent))'
-                        : 'hsl(var(--on-surface))',
+                      background:
+                        role === 'Secretary'
+                          ? 'hsl(var(--primary))'
+                          : role === 'Deputy Secretary'
+                            ? 'hsl(var(--accent))'
+                            : 'hsl(var(--on-surface))',
                     }}
                   />
                   <p
@@ -723,7 +726,10 @@ export default function AdminConstituencyLeadHub() {
                             flexShrink: 0,
                           }}
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>
+                          <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+                          >
                             person
                           </span>
                         </div>
@@ -751,7 +757,8 @@ export default function AdminConstituencyLeadHub() {
                             fontFamily: "'Public Sans', sans-serif",
                           }}
                         >
-                          Assigned {new Date(cl.createdAt).toLocaleDateString('en-GB', {
+                          Assigned{' '}
+                          {new Date(cl.createdAt).toLocaleDateString('en-GB', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',
@@ -775,8 +782,16 @@ export default function AdminConstituencyLeadHub() {
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
-                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>person_add</span>
-                      <span style={{ fontSize: 13, fontStyle: 'italic', fontFamily: "'Public Sans', sans-serif" }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                        person_add
+                      </span>
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontStyle: 'italic',
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         Unassigned
                       </span>
                     </div>
@@ -917,12 +932,14 @@ export default function AdminConstituencyLeadHub() {
                         width: '100%',
                         borderRadius: 0,
                         borderBottom: '1px solid hsl(var(--border))',
-                        background: committeeSelectedMember?.id === u.id
-                          ? 'hsl(var(--primary) / 0.06)'
-                          : undefined,
-                        borderLeft: committeeSelectedMember?.id === u.id
-                          ? '3px solid hsl(var(--primary))'
-                          : '3px solid transparent',
+                        background:
+                          committeeSelectedMember?.id === u.id
+                            ? 'hsl(var(--primary) / 0.06)'
+                            : undefined,
+                        borderLeft:
+                          committeeSelectedMember?.id === u.id
+                            ? '3px solid hsl(var(--primary))'
+                            : '3px solid transparent',
                       }}
                       onClick={() => setCommitteeSelectedMember(u)}
                     >
@@ -951,12 +968,21 @@ export default function AdminConstituencyLeadHub() {
                             flexShrink: 0,
                           }}
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>
+                          <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}
+                          >
                             person
                           </span>
                         </div>
                       )}
-                      <span style={{ fontSize: 14, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          color: 'hsl(var(--on-surface))',
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         {u.full_name}
                       </span>
                     </button>
@@ -984,11 +1010,22 @@ export default function AdminConstituencyLeadHub() {
                   marginBottom: 20,
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 16, color: 'hsl(var(--primary))' }}
+                >
                   check_circle
                 </span>
-                <p style={{ margin: 0, fontSize: 13, fontFamily: "'Public Sans', sans-serif", color: 'hsl(var(--on-surface))' }}>
-                  <strong>{committeeSelectedMember.full_name}</strong> will be assigned as <strong>{committeeRole}</strong>.
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 13,
+                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  <strong>{committeeSelectedMember.full_name}</strong> will be assigned as{' '}
+                  <strong>{committeeRole}</strong>.
                 </p>
               </div>
             )}

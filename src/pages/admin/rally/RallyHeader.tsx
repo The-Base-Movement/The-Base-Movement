@@ -23,14 +23,14 @@ export function RallyHeader() {
       description="Real-time attendance operational metrics and geo-fenced verification for field actions."
       actions={
         <>
-          <button className="btn btn-outline">
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+          <button className="btn btn-outline btn-sm">
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               assignment
             </span>
             Global Manifest
           </button>
-          <button className="btn btn-primary">
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+          <button className="btn btn-primary btn-sm">
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add_circle
             </span>
             Schedule Action

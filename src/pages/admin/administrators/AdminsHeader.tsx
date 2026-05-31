@@ -11,8 +11,8 @@ export function AdminsHeader({ onProvision }: AdminsHeaderProps) {
       icon="shield"
       description="Authorized personnel with leadership credentials and platform oversight."
       actions={
-        <button className="btn btn-primary" onClick={onProvision}>
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+        <button className="btn btn-primary btn-sm" onClick={onProvision}>
+          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
             person_add
           </span>
           Provision Credentials

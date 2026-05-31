@@ -275,8 +275,8 @@ export default function AdminConstituencies() {
         </select>
       </div>
 
-      {/* Table */}
-      <div className="panel" style={{ overflow: 'hidden' }}>
+      {/* Table — desktop */}
+      <div className="panel desktop-only" style={{ overflowX: 'auto' }}>
         {loading ? (
           <p style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>
             Loading...
@@ -368,6 +368,83 @@ export default function AdminConstituencies() {
               ))}
             </tbody>
           </table>
+        )}
+      </div>
+
+      {/* Mobile cards */}
+      <div className="panel mobile-only" style={{ overflow: 'hidden' }}>
+        {loading ? (
+          <p style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>
+            Loading...
+          </p>
+        ) : filtered.length === 0 ? (
+          <p style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>
+            No constituencies found.
+          </p>
+        ) : (
+          paginated.map((c) => (
+            <div
+              key={c.id}
+              style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 8,
+                  marginBottom: 4,
+                }}
+              >
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface))',
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  {c.name}
+                </p>
+                <span
+                  className={`pill ${c.status === 'Active' ? 'pill-ok' : 'pill-mute'}`}
+                  style={{ fontSize: 11, flexShrink: 0 }}
+                >
+                  {c.status}
+                </span>
+              </div>
+              <p
+                style={{
+                  margin: '0 0 4px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {c.regionName} · {c.memberCount} member{c.memberCount !== 1 ? 's' : ''}
+              </p>
+              <p
+                style={{
+                  margin: '0 0 10px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {c.leaderName ?? <span style={{ fontStyle: 'italic' }}>No coordinator</span>}
+              </p>
+              <button
+                className="btn btn-outline btn-sm"
+                style={{ width: '100%' }}
+                onClick={() => navigate(`/admin/constituencies/${c.id}`)}
+              >
+                View Hub
+              </button>
+            </div>
+          ))
         )}
       </div>
 

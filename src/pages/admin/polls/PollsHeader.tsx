@@ -22,8 +22,8 @@ export function PollsHeader({ onCreateClick }: PollsHeaderProps) {
       icon="bar_chart"
       description="Direct interaction with citizens through polling, feedback loops, and mobilization pulse checks."
       actions={
-        <button className="btn btn-primary" onClick={onCreateClick}>
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+        <button className="btn btn-primary btn-sm" onClick={onCreateClick}>
+          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
             add
           </span>
           Create Campaign

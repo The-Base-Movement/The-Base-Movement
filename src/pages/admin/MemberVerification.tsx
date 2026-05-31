@@ -187,8 +187,8 @@ export default function MemberVerification() {
                 </div>
               </div>
             )}
-            <button className="btn btn-primary" onClick={() => setShowRegForm(true)}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            <button className="btn btn-primary btn-sm" onClick={() => setShowRegForm(true)}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 person_add
               </span>
               Add member
