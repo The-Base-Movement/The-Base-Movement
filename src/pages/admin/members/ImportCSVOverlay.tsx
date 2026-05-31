@@ -536,6 +536,8 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
             >
               <input
                 type="file"
+                id="csv-file-upload"
+                name="csv-file-upload"
                 accept=".csv"
                 ref={fileInputRef}
                 onChange={handleFileChange}
