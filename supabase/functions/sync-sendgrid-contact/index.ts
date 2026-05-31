@@ -7,15 +7,15 @@
 // Invocation: POST with JSON body:
 //   { email, first_name, last_name, reg_no, region, constituency, platform, status }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 // @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'authorization, content-type',
-      },
-    })
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
@@ -33,7 +33,7 @@ Deno.serve(async (req: Request) => {
 
     if (!email) {
       return new Response(JSON.stringify({ error: 'email is required' }), {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
       })
     }
@@ -46,7 +46,7 @@ Deno.serve(async (req: Request) => {
     if (!sgKey) {
       console.warn('[SENDGRID] SENDGRID_API_KEY not set — skipping contact sync for', email)
       return new Response(JSON.stringify({ skipped: true, reason: 'no api key' }), {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
@@ -98,14 +98,14 @@ Deno.serve(async (req: Request) => {
       const data = await res.json()
       console.warn('[SENDGRID] Contact sync accepted for', email, '— job_id:', data.job_id)
       return new Response(JSON.stringify({ success: true, job_id: data.job_id }), {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     } else {
       const errText = await res.text()
       console.error('[SENDGRID] Contact sync failed for', email, res.status, errText)
       return new Response(JSON.stringify({ error: errText }), {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       })
     }
@@ -113,7 +113,7 @@ Deno.serve(async (req: Request) => {
     const message = err instanceof Error ? err.message : String(err)
     console.error('[SENDGRID-CONTACT-ERROR]', message)
     return new Response(JSON.stringify({ error: message }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     })
   }

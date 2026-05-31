@@ -60,15 +60,15 @@ async function syncBatch(
   throw new Error(`SendGrid batch failed: ${res.status} ${errText}`)
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 // @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'authorization, content-type',
-      },
-    })
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
@@ -79,7 +79,7 @@ Deno.serve(async (req: Request) => {
 
     if (!sgKey) {
       return new Response(JSON.stringify({ skipped: true, reason: 'SENDGRID_API_KEY not set' }), {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
@@ -104,7 +104,7 @@ Deno.serve(async (req: Request) => {
 
     if (total === 0) {
       return new Response(JSON.stringify({ total: 0, batches: 0, job_ids: [] }), {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
@@ -138,14 +138,14 @@ Deno.serve(async (req: Request) => {
     }
 
     return new Response(JSON.stringify({ total, batches: jobIds.length, job_ids: jobIds }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     console.error('[SENDGRID-BULK-ERROR]', message)
     return new Response(JSON.stringify({ error: message }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     })
   }
