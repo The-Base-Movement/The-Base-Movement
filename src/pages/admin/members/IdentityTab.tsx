@@ -15,6 +15,8 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
   // Polling station state
   const [psCode, setPsCode] = useState<string | null>(null)
   const [psStatus, setPsStatus] = useState<string | null>(null)
+  const [psLoaded, setPsLoaded] = useState(false)
+  const [psReassigning, setPsReassigning] = useState(false)
   const [psSearch, setPsSearch] = useState('')
   const [psResults, setPsResults] = useState<
     { code: string; name: string; constituency: string }[]
@@ -29,10 +31,9 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
   useEffect(() => {
     if (!member.authId) return
     adminService.getMemberVoterRegistration(member.authId).then((reg) => {
-      if (reg) {
-        setPsCode(reg.polling_station_id || null)
-        setPsStatus(reg.registration_status || null)
-      }
+      setPsCode(reg?.polling_station_id || null)
+      setPsStatus(reg?.registration_status || null)
+      setPsLoaded(true)
     })
   }, [member.authId])
 
@@ -63,6 +64,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
     if (ok) {
       setPsCode(selectedCode)
       setPsStatus('VERIFIED_VOTER')
+      setPsReassigning(false)
       setPsSearch('')
       setPsResults([])
       setSelectedCode('')
@@ -303,10 +305,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                         cursor: 'pointer',
                       }}
                       title="Reassign station"
-                      onClick={() => {
-                        setPsCode(null)
-                        setPsStatus(null)
-                      }}
+                      onClick={() => setPsReassigning(true)}
                     >
                       edit
                     </span>
@@ -317,8 +316,8 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
               </dd>
             </dl>
 
-            {/* Admin polling station assignment — shown when no verified station */}
-            {member.platform === 'GHANA' && (!psCode || psStatus !== 'VERIFIED_VOTER') && (
+            {/* Admin polling station assignment — shown when no verified station or admin clicks reassign */}
+            {psLoaded && (psReassigning || !psCode || psStatus !== 'VERIFIED_VOTER') && (
               <div
                 style={{
                   marginTop: 14,
@@ -328,19 +327,46 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                   border: '1px solid hsl(var(--border))',
                 }}
               >
-                <p
+                <div
                   style={{
-                    margin: '0 0 8px',
-                    fontSize: 11,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
                   }}
                 >
-                  Assign polling station
-                </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                    }}
+                  >
+                    {psReassigning
+                      ? `Reassign station (current: ${psCode ?? '—'})`
+                      : 'Assign polling station'}
+                  </p>
+                  {psReassigning && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      style={{ fontSize: 11, padding: '2px 8px' }}
+                      onClick={() => {
+                        setPsReassigning(false)
+                        setPsSearch('')
+                        setPsResults([])
+                        setSelectedCode('')
+                        setSelectedName('')
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
                 <div style={{ position: 'relative', marginBottom: 8 }}>
                   <span
                     className="material-symbols-outlined"
