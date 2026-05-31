@@ -608,7 +608,8 @@ class MemberService {
     page: number,
     pageSize: number,
     searchTerm?: string,
-    registrationSource?: string
+    registrationSource?: string,
+    searchType: 'default' | 'constituency' | 'polling_station' = 'default'
   ): Promise<{ data: Member[]; totalCount: number }> {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
@@ -622,9 +623,23 @@ class MemberService {
       .is('deleted_at', null)
 
     if (searchTerm) {
-      query = query.or(
-        `full_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,registration_number.ilike.%${searchTerm}%`
-      )
+      if (searchType === 'constituency') {
+        query = query.ilike('constituency', `%${searchTerm}%`)
+      } else if (searchType === 'polling_station') {
+        const { data: agentRows } = await supabase
+          .from('polling_station_agents')
+          .select('member_id')
+          .ilike('polling_station_id', `%${searchTerm}%`)
+        const memberIds = (agentRows ?? []).map((r: { member_id: string }) => r.member_id)
+        if (memberIds.length === 0) {
+          return { data: [], totalCount: 0 }
+        }
+        query = query.in('id', memberIds)
+      } else {
+        query = query.or(
+          `full_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,registration_number.ilike.%${searchTerm}%`
+        )
+      }
     }
 
     if (registrationSource && registrationSource !== 'all') {

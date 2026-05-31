@@ -26,10 +26,12 @@ export default function MembersList() {
     itemsPerPage,
     totalPages,
     searchTerm,
+    searchType,
     sourceFilter,
     stats,
     fetchMembers,
     handleSearchChange,
+    handleSearchTypeChange,
     handleSourceFilterChange,
     handleClearSearch,
     handleNextPage,
@@ -95,8 +97,10 @@ export default function MembersList() {
 
       <MembersFilterBar
         searchTerm={searchTerm}
+        searchType={searchType}
         sourceFilter={sourceFilter}
         onSearchChange={handleSearchChange}
+        onSearchTypeChange={handleSearchTypeChange}
         onSourceFilterChange={handleSourceFilterChange}
         onClearSearch={handleClearSearch}
       />

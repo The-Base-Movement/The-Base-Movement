@@ -206,9 +206,16 @@ class AdminService {
     page: number,
     pageSize: number,
     searchTerm?: string,
-    registrationSource?: string
+    registrationSource?: string,
+    searchType: 'default' | 'constituency' | 'polling_station' = 'default'
   ): Promise<{ data: Member[]; totalCount: number }> {
-    return memberService.getMembersPaginated(page, pageSize, searchTerm, registrationSource)
+    return memberService.getMembersPaginated(
+      page,
+      pageSize,
+      searchTerm,
+      registrationSource,
+      searchType
+    )
   }
 
   async searchMembers(

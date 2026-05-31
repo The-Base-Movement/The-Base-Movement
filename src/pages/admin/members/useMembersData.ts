@@ -14,18 +14,21 @@ export function useMembersData() {
     return ''
   })
   const [sourceFilter, setSourceFilter] = useState<'all' | 'digital' | 'scan' | 'admin'>('all')
+  const [searchType, setSearchType] = useState<'default' | 'constituency' | 'polling_station'>(
+    'default'
+  )
   const itemsPerPage = 8
 
   const fetchMembers = useCallback(() => {
     setIsLoading(true)
     adminService
-      .getMembersPaginated(currentPage, itemsPerPage, searchTerm, sourceFilter)
+      .getMembersPaginated(currentPage, itemsPerPage, searchTerm, sourceFilter, searchType)
       .then(({ data, totalCount: total }) => {
         setMembers(data)
         setTotalMembers(total)
         setIsLoading(false)
       })
-  }, [currentPage, searchTerm, sourceFilter])
+  }, [currentPage, searchTerm, sourceFilter, searchType])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -41,6 +44,11 @@ export function useMembersData() {
     setCurrentPage(1)
   }
   const handleClearSearch = () => {
+    setSearchTerm('')
+    setCurrentPage(1)
+  }
+  const handleSearchTypeChange = (val: 'default' | 'constituency' | 'polling_station') => {
+    setSearchType(val)
     setSearchTerm('')
     setCurrentPage(1)
   }
@@ -68,10 +76,12 @@ export function useMembersData() {
     itemsPerPage,
     totalPages,
     searchTerm,
+    searchType,
     sourceFilter,
     stats,
     fetchMembers,
     handleSearchChange,
+    handleSearchTypeChange,
     handleSourceFilterChange,
     handleClearSearch,
     handleNextPage,

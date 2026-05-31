@@ -1,10 +1,40 @@
+type SearchType = 'default' | 'constituency' | 'polling_station'
+
 interface MembersFilterBarProps {
   searchTerm: string
+  searchType: SearchType
   sourceFilter: 'all' | 'digital' | 'scan' | 'admin'
   onSearchChange: (val: string) => void
+  onSearchTypeChange: (val: SearchType) => void
   onSourceFilterChange: (val: 'all' | 'digital' | 'scan' | 'admin') => void
   onClearSearch: () => void
 }
+
+const SEARCH_TYPE_OPTIONS: {
+  value: SearchType
+  label: string
+  placeholder: string
+  icon: string
+}[] = [
+  {
+    value: 'default',
+    label: 'Name / ID / Phone',
+    placeholder: 'Search by name, ID or phone…',
+    icon: 'person_search',
+  },
+  {
+    value: 'constituency',
+    label: 'Constituency',
+    placeholder: 'Search by constituency…',
+    icon: 'location_city',
+  },
+  {
+    value: 'polling_station',
+    label: 'Polling Station',
+    placeholder: 'Search by polling station code…',
+    icon: 'how_to_vote',
+  },
+]
 
 const SOURCE_OPTIONS = [
   { value: 'all', label: 'All', icon: 'group' },
@@ -15,16 +45,59 @@ const SOURCE_OPTIONS = [
 
 export function MembersFilterBar({
   searchTerm,
+  searchType,
   sourceFilter,
   onSearchChange,
+  onSearchTypeChange,
   onSourceFilterChange,
   onClearSearch,
 }: MembersFilterBarProps) {
+  const activeOption =
+    SEARCH_TYPE_OPTIONS.find((o) => o.value === searchType) ?? SEARCH_TYPE_OPTIONS[0]
+
   return (
     <div className="panel" style={{ marginBottom: 20 }}>
+      {/* Search type selector */}
       <div
         style={{
-          padding: '10px 14px',
+          padding: '10px 14px 0',
+          display: 'flex',
+          gap: 4,
+          flexWrap: 'wrap',
+        }}
+      >
+        {SEARCH_TYPE_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onSearchTypeChange(opt.value)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              height: 28,
+              padding: '0 10px',
+              borderRadius: 4,
+              border: '1px solid',
+              cursor: 'pointer',
+              fontSize: 11,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              background: searchType === opt.value ? 'hsl(var(--primary))' : 'transparent',
+              borderColor: searchType === opt.value ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+              color: searchType === opt.value ? '#fff' : 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+              {opt.icon}
+            </span>
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      <div
+        style={{
+          padding: '8px 14px 10px',
           display: 'flex',
           gap: 10,
           alignItems: 'center',
@@ -46,11 +119,11 @@ export function MembersFilterBar({
             search
           </span>
           <input
-            aria-label="Search by name, ID, phone, profession, region…"
-            name="searchTerm"
-            id="input-0acdd0"
+            aria-label={activeOption.placeholder}
+            name="member-search"
+            id="member-search"
             type="text"
-            placeholder="Search by name, ID, phone, profession, region…"
+            placeholder={activeOption.placeholder}
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             style={{
