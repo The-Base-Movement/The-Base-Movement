@@ -958,12 +958,7 @@ td.leadership-col-secondary {
   .war-room-page {
     padding: 10px 14px 0;
   }
-  /* Leaderboard pagination — count label stacks above buttons on mobile */
-  .leaderboard-pagination {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 8px;
-  }
+
   /* War Room map — shorter on mobile so it doesn't eat the full screen */
   .war-room-map-body {
     min-height: 280px !important;

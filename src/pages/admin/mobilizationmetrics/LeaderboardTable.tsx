@@ -210,26 +210,27 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
       {/* Pagination Footer */}
       {totalPages > 1 && (
         <div
-          className="leaderboard-pagination"
           style={{
             padding: '12px 20px',
             borderTop: '1px solid hsl(var(--border))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
             background: 'hsl(var(--container-low))',
           }}
         >
+          {/* Count label — always on its own line */}
           <span
             style={{
+              display: 'block',
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 11,
               color: 'hsl(var(--on-surface-muted))',
+              marginBottom: 8,
             }}
           >
             Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} regions
           </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+
+          {/* Desktop: numbered page buttons */}
+          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <button
               className="btn btn-outline btn-sm"
               style={{
@@ -284,6 +285,56 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
             >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                chevron_right
+              </span>
+            </button>
+          </div>
+
+          {/* Mobile: Prev · X / Y · Next */}
+          <div className="mobile-only" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              className="btn btn-outline btn-sm"
+              style={{
+                height: 32,
+                padding: '0 12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                chevron_left
+              </span>
+              Prev
+            </button>
+            <span
+              style={{
+                flex: 1,
+                textAlign: 'center',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              className="btn btn-outline btn-sm"
+              style={{
+                height: 32,
+                padding: '0 12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                 chevron_right
               </span>
