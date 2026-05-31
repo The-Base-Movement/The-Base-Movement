@@ -94,7 +94,7 @@ export function ChoiceStep({ settings, onSelect, isScanning = false }: ChoiceSte
               <label className={isScanning ? 'cursor-not-allowed' : 'cursor-pointer'}>
                 <input
                   type="file"
-                  accept=".pdf,image/*"
+                  accept=".pdf,image/*,.heic,.heif,.jpg,.jpeg,.png,.csv,.doc,.docx"
                   className="hidden"
                   disabled={isScanning}
                   onChange={(e) => {
