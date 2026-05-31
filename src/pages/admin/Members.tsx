@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { usePerformance } from '@/context/PerformanceContext'
-import { MemberDetailPanel } from './members/MemberDetailPanel'
 import { AuditModal } from './members/AuditModal'
 import { AssignmentModal } from './members/AssignmentModal'
 import { DeleteModal } from './members/DeleteModal'
 import { VerifyModal } from './members/VerifyModal'
-import { EditModal } from './members/EditModal'
 import { MembersTable } from './members/MembersTable'
 import { MembersHeader } from './members/MembersHeader'
 import { MembersKPIs } from './members/MembersKPIs'
@@ -14,7 +12,6 @@ import { MembersBulkBar } from './members/MembersBulkBar'
 import { RegistrationOverlay } from './members/RegistrationOverlay'
 import { ImportCSVOverlay } from './members/ImportCSVOverlay'
 import { useMembersData } from './members/useMembersData'
-import { useMemberDetail } from './members/useMemberDetail'
 import { useMembersActions } from './members/useMembersActions'
 
 export default function MembersList() {
@@ -40,23 +37,6 @@ export default function MembersList() {
   } = useMembersData()
 
   const {
-    selectedMember,
-    setSelectedMember,
-    activeDetailTab,
-    setActiveDetailTab,
-    detailLogs,
-    memberDonations,
-    memberPollVotes,
-    memberSessions,
-    memberNotes,
-    newNoteContent,
-    setNewNoteContent,
-    isSubmittingNote,
-    handleAddNote,
-  } = useMemberDetail()
-
-  const {
-    cardRef,
     isExporting,
     isAdding,
     setIsAdding,
@@ -68,11 +48,6 @@ export default function MembersList() {
     assignmentData,
     setAssignmentData,
     isSubmittingAssignment,
-    isEditModalOpen,
-    setIsEditModalOpen,
-    editForm,
-    setEditForm,
-    isSavingEdit,
     isDeleteModalOpen,
     setIsDeleteModalOpen,
     isDeletingMembers,
@@ -89,8 +64,6 @@ export default function MembersList() {
     handleConfirmVerify,
     handleViewAudit,
     handleSubmitRegistration,
-    handlePrint,
-    handleDownload,
     handleExport,
     handleToggleSelectAll,
     handleToggleSelect,
@@ -99,10 +72,8 @@ export default function MembersList() {
     handleConfirmDelete,
     handleOpenAssign,
     handleConfirmAssignment,
-    openEditModal,
-    handleSaveEdit,
     clearSelection,
-  } = useMembersActions(members, selectedMember, setSelectedMember, fetchMembers)
+  } = useMembersActions(members, fetchMembers)
 
   return (
     <div className="main">
@@ -150,7 +121,6 @@ export default function MembersList() {
         totalPages={totalPages}
         onToggleSelectAll={() => handleToggleSelectAll(members)}
         onToggleSelect={handleToggleSelect}
-        onViewMember={setSelectedMember}
         onViewAudit={handleViewAudit}
         onVerify={handleVerify}
         onPrevPage={handlePrevPage}
@@ -167,29 +137,6 @@ export default function MembersList() {
 
       {isImportingCSV && (
         <ImportCSVOverlay onClose={() => setIsImportingCSV(false)} onSuccess={fetchMembers} />
-      )}
-
-      {selectedMember && (
-        <MemberDetailPanel
-          member={selectedMember}
-          activeTab={activeDetailTab}
-          onTabChange={setActiveDetailTab}
-          onClose={() => setSelectedMember(null)}
-          logs={detailLogs}
-          donations={memberDonations}
-          pollVotes={memberPollVotes}
-          sessions={memberSessions}
-          notes={memberNotes}
-          noteContent={newNoteContent}
-          onNoteChange={setNewNoteContent}
-          onAddNote={handleAddNote}
-          isSubmittingNote={isSubmittingNote}
-          cardRef={cardRef}
-          onPrint={handlePrint}
-          onDownload={handleDownload}
-          onEdit={openEditModal}
-          onVerify={handleVerify}
-        />
       )}
 
       <AuditModal
@@ -225,17 +172,6 @@ export default function MembersList() {
         isDeleting={isDeletingMembers}
         onConfirm={handleConfirmDelete}
         onClose={() => setIsDeleteModalOpen(false)}
-      />
-
-      <EditModal
-        isOpen={isEditModalOpen}
-        member={selectedMember}
-        form={editForm}
-        onChange={(field, value) => setEditForm((f) => ({ ...f, [field]: value }))}
-        onSave={handleSaveEdit}
-        onClose={() => setIsEditModalOpen(false)}
-        isSaving={isSavingEdit}
-        chapters={chapters.map((c) => c.name)}
       />
     </div>
   )

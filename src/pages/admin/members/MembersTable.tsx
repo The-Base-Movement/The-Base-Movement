@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { type Member, adminService } from '@/services/adminService'
 import MemberListCard from '@/components/admin/MemberListCard'
 
@@ -29,7 +30,6 @@ interface MembersTableProps {
   totalPages: number
   onToggleSelectAll: () => void
   onToggleSelect: (id: string) => void
-  onViewMember: (m: Member) => void
   onViewAudit: (m: Member) => void
   onVerify: (id: string, name: string) => void
   onPrevPage: () => void
@@ -48,12 +48,12 @@ export function MembersTable({
   totalPages,
   onToggleSelectAll,
   onToggleSelect,
-  onViewMember,
   onViewAudit,
   onVerify,
   onPrevPage,
   onNextPage,
 }: MembersTableProps) {
+  const navigate = useNavigate()
   const startIndex = (currentPage - 1) * itemsPerPage
 
   return (
@@ -377,7 +377,7 @@ export function MembersTable({
                       <button
                         className="btn btn-ghost btn-sm"
                         title="View profile"
-                        onClick={() => onViewMember(member)}
+                        onClick={() => navigate(`/admin/members/${member.id}`)}
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                           open_in_new
@@ -471,7 +471,7 @@ export function MembersTable({
               member={member}
               isSelected={selectedIds.has(member.id)}
               onToggleSelect={onToggleSelect}
-              onView={onViewMember}
+              onView={(m) => navigate(`/admin/members/${m.id}`)}
               onAudit={onViewAudit}
             />
           ))

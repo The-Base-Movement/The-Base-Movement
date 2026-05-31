@@ -1,20 +1,12 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useChapters } from '@/context/ChaptersContext'
 import { adminService, type AuditLogEntry, type Member } from '@/services/adminService'
 import { toast } from 'sonner'
 import { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import { getCroppedImg } from '@/lib/imageUtils'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 
-export function useMembersActions(
-  members: Member[],
-  selectedMember: Member | null,
-  setSelectedMember: (m: Member | null) => void,
-  fetchMembers: () => void
-) {
+export function useMembersActions(members: Member[], fetchMembers: () => void) {
   const { chapters } = useChapters()
-  const cardRef = useRef<HTMLDivElement>(null)
 
   const [isExporting, setIsExporting] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
@@ -28,10 +20,6 @@ export function useMembersActions(
     role: 'Chapter Coordinator',
   })
   const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false)
-
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editForm, setEditForm] = useState<Partial<Member>>({})
-  const [isSavingEdit, setIsSavingEdit] = useState(false)
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isDeletingMembers, setIsDeletingMembers] = useState(false)
@@ -64,7 +52,7 @@ export function useMembersActions(
       toast.error('You do not have authorization to verify members.')
       return
     }
-    const member = members.find((m) => m.id === id) ?? selectedMember
+    const member = members.find((m) => m.id === id)
     if (member) {
       const missing = getMissingRequiredFields(member)
       if (missing.length > 0) {
@@ -161,53 +149,6 @@ export function useMembersActions(
       toast.error(error instanceof Error ? error.message : 'An error occurred during registration.')
     } finally {
       setIsSubmittingRegistration(false)
-    }
-  }
-
-  const handlePrint = async () => {
-    if (!cardRef.current) return
-    try {
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 4,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: document.documentElement.offsetWidth,
-        windowHeight: document.documentElement.offsetHeight,
-      })
-      const imgData = canvas.toDataURL('image/png')
-      const iframe = document.createElement('iframe')
-      iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:none'
-      document.body.appendChild(iframe)
-      const iframeDoc = iframe.contentWindow?.document
-      if (!iframeDoc) return
-      iframeDoc.write(
-        `<html><head><title>THE BASE - Official Membership Card</title><style>@page{size:85.6mm 54mm;margin:0}body{margin:0;padding:0;display:flex;align-items:center;justify-content:center;width:85.6mm;height:54mm;overflow:hidden;background:#fff;-webkit-print-color-adjust:exact;color-adjust:exact}img{width:85.6mm;height:54mm;display:block;object-fit:contain}</style></head><body><img src="${imgData}" onload="setTimeout(()=>{window.print();},200);"/></body></html>`
-      )
-      iframeDoc.close()
-      setTimeout(() => {
-        if (document.body.contains(iframe)) document.body.removeChild(iframe)
-      }, 60000)
-    } catch (error) {
-      console.error('Error printing card:', error)
-    }
-  }
-
-  const handleDownload = async () => {
-    if (!cardRef.current || !selectedMember) return
-    try {
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-      })
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [85.6, 54] })
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 85.6, 54)
-      pdf.save(`THE-BASE-CARD-${selectedMember.id}.pdf`)
-    } catch (error) {
-      console.error('Error generating PDF:', error)
     }
   }
 
@@ -312,7 +253,6 @@ export function useMembersActions(
     setIsDeletingMembers(false)
     setIsDeleteModalOpen(false)
     setSelectedIds(new Set())
-    if (selectedMember && selectedIds.has(selectedMember.id)) setSelectedMember(null)
     toast.success(`${successCount} member${successCount !== 1 ? 's' : ''} moved to trash.`)
     fetchMembers()
   }
@@ -320,9 +260,6 @@ export function useMembersActions(
   const handleOpenAssign = () => {
     if (selectedIds.size > 0) {
       setAssigningMembers(members.filter((m) => selectedIds.has(m.id)))
-      setIsAssignModalOpen(true)
-    } else if (selectedMember) {
-      setAssigningMembers([selectedMember])
       setIsAssignModalOpen(true)
     }
   }
@@ -350,41 +287,7 @@ export function useMembersActions(
     }
   }
 
-  const openEditModal = (m: Member) => {
-    setEditForm({
-      name: m.name,
-      email: m.email,
-      phone: m.phone,
-      gender: m.gender,
-      region: m.region,
-      constituency: m.constituency,
-      country: m.country,
-      chapter: m.chapter,
-      profession: m.profession,
-      city: m.city,
-      residentialAddress: m.residentialAddress,
-    })
-    setIsEditModalOpen(true)
-  }
-
-  const handleSaveEdit = async () => {
-    if (!selectedMember) return
-    setIsSavingEdit(true)
-    try {
-      await adminService.updateMemberProfile(selectedMember.id, editForm)
-      toast.success('Member profile updated.')
-      setIsEditModalOpen(false)
-      setSelectedMember({ ...selectedMember, ...editForm } as Member)
-      fetchMembers()
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'An error occurred while updating.')
-    } finally {
-      setIsSavingEdit(false)
-    }
-  }
-
   return {
-    cardRef,
     isExporting,
     isAdding,
     setIsAdding,
@@ -396,11 +299,6 @@ export function useMembersActions(
     assignmentData,
     setAssignmentData,
     isSubmittingAssignment,
-    isEditModalOpen,
-    setIsEditModalOpen,
-    editForm,
-    setEditForm,
-    isSavingEdit,
     isDeleteModalOpen,
     setIsDeleteModalOpen,
     isDeletingMembers,
@@ -417,8 +315,6 @@ export function useMembersActions(
     handleConfirmVerify,
     handleViewAudit,
     handleSubmitRegistration,
-    handlePrint,
-    handleDownload,
     handleExport,
     handleToggleSelectAll,
     handleToggleSelect,
@@ -427,8 +323,6 @@ export function useMembersActions(
     handleConfirmDelete,
     handleOpenAssign,
     handleConfirmAssignment,
-    openEditModal,
-    handleSaveEdit,
     clearSelection: () => setSelectedIds(new Set()),
   }
 }

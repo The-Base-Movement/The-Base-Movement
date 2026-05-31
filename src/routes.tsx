@@ -51,6 +51,7 @@ const CanvasserClipboard = lazy(() => import('./pages/CanvasserClipboard'))
 const AdminLayout = lazy(() => import('./components/layouts/AdminLayout'))
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
 const AdminMembers = lazy(() => import('./pages/admin/Members'))
+const AdminMemberDetail = lazy(() => import('./pages/admin/MemberDetail'))
 const AdminChapters = lazy(() => import('./pages/admin/Chapters'))
 const AdminPolls = lazy(() => import('./pages/admin/Polls'))
 const AdminStore = lazy(() => import('./pages/admin/Store'))
@@ -203,6 +204,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/spending-ledger', element: <AdminSpendingLedger /> },
       { path: '/admin/priorities', element: <AdminStrategicPriorities /> },
       { path: '/admin/members', element: <AdminMembers /> },
+      { path: '/admin/members/:memberId', element: <AdminMemberDetail /> },
       { path: '/admin/verification', element: <AdminMemberVerification /> },
       {
         element: <WithChapters />,
