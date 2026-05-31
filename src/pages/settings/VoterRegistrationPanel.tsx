@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { inputStyle } from './shared'
@@ -21,7 +22,9 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
   >([])
   const [psOpen, setPsOpen] = useState(false)
   const [psLoading, setPsLoading] = useState(false)
+  const [dropdownRect, setDropdownRect] = useState<DOMRect | null>(null)
   const psDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const inputWrapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     adminService.getMyVoterRegistration().then((voterReg) => {
@@ -31,6 +34,13 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
       }
     })
   }, [])
+
+  // Reposition portal dropdown whenever it opens
+  useEffect(() => {
+    if (psOpen && inputWrapRef.current) {
+      setDropdownRect(inputWrapRef.current.getBoundingClientRect())
+    }
+  }, [psOpen])
 
   const searchStations = useCallback((q: string, reg: string, con: string) => {
     if (psDebounce.current) clearTimeout(psDebounce.current)
@@ -107,76 +117,84 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ position: 'relative' }}>
-              <div style={{ position: 'relative' }}>
+            {/* Search input — ref'd for portal positioning */}
+            <div ref={inputWrapRef} style={{ position: 'relative' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 15,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                search
+              </span>
+              <input
+                name="voter-ps-search"
+                id="voter-ps-search"
+                aria-label="Search polling station by name or code"
+                type="text"
+                placeholder={
+                  region ? 'Search by station name or code…' : 'Update your region first'
+                }
+                value={psSearch}
+                disabled={!region}
+                onChange={(e) => {
+                  setPsSearch(e.target.value)
+                  searchStations(e.target.value, region, constituency)
+                }}
+                onFocus={() => {
+                  if (psResults.length > 0) {
+                    setDropdownRect(inputWrapRef.current?.getBoundingClientRect() ?? null)
+                    setPsOpen(true)
+                  }
+                }}
+                style={{ ...inputStyle, paddingLeft: 32 }}
+              />
+              {psLoading && (
                 <span
                   className="material-symbols-outlined"
                   style={{
                     position: 'absolute',
-                    left: 10,
+                    right: 10,
                     top: '50%',
                     transform: 'translateY(-50%)',
                     fontSize: 15,
                     color: 'hsl(var(--on-surface-muted))',
-                    pointerEvents: 'none',
+                    animation: 'spin 1s linear infinite',
                   }}
                 >
-                  search
+                  progress_activity
                 </span>
-                <input
-                  name="voter-ps-search"
-                  id="voter-ps-search"
-                  aria-label="Search polling station by name or code"
-                  type="text"
-                  placeholder={
-                    region ? 'Search by station name or code…' : 'Update your region first'
-                  }
-                  value={psSearch}
-                  disabled={!region}
-                  onChange={(e) => {
-                    setPsSearch(e.target.value)
-                    searchStations(e.target.value, region, constituency)
-                  }}
-                  onFocus={() => {
-                    if (psResults.length > 0) setPsOpen(true)
-                  }}
-                  style={{ ...inputStyle, paddingLeft: 32 }}
-                />
-                {psLoading && (
-                  <span
-                    className="material-symbols-outlined"
-                    style={{
-                      position: 'absolute',
-                      right: 10,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      fontSize: 15,
-                      color: 'hsl(var(--on-surface-muted))',
-                      animation: 'spin 1s linear infinite',
-                    }}
-                  >
-                    progress_activity
-                  </span>
-                )}
-              </div>
-              {psOpen && psResults.length > 0 && (
+              )}
+            </div>
+
+            {/* Portal dropdown — rendered at body level to escape panel overflow */}
+            {psOpen &&
+              psResults.length > 0 &&
+              dropdownRect &&
+              createPortal(
                 <>
                   <div
-                    style={{ position: 'fixed', inset: 0, zIndex: 10 }}
+                    style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
                     onClick={() => setPsOpen(false)}
                   />
                   <div
                     style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 4px)',
-                      left: 0,
-                      right: 0,
+                      position: 'fixed',
+                      top: dropdownRect.bottom + 4,
+                      left: dropdownRect.left,
+                      width: dropdownRect.width,
                       background: '#fff',
                       border: '1px solid hsl(var(--border))',
-                      borderRadius: 4,
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                      zIndex: 20,
-                      maxHeight: 220,
+                      borderRadius: 'var(--radius-sm)',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                      zIndex: 9999,
+                      maxHeight: 240,
                       overflowY: 'auto',
                     }}
                   >
@@ -226,9 +244,9 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                       </button>
                     ))}
                   </div>
-                </>
+                </>,
+                document.body
               )}
-            </div>
 
             {pollingStationCode && (
               <div
