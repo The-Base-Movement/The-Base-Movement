@@ -255,153 +255,151 @@ export default function WarRoomCommand() {
 
   return (
     <div className="war-room-page" style={{ paddingBottom: 96, minHeight: 'calc(100vh - 3.5rem)' }}>
-      <div style={{ padding: '24px 28px 0' }}>
-        <AdminPageHeader
-          title="War Room — live mobilization"
-          icon="sensors"
-          description="Real-time strategic oversight, crisis management, and rapid response coordination across all regional sectors."
-          actions={
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
-              {/* Status group: pill + clock always stay together */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+      <AdminPageHeader
+        title="War Room — live mobilization"
+        icon="sensors"
+        description="Real-time strategic oversight, crisis management, and rapid response coordination across all regional sectors."
+        actions={
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+            {/* Status group: pill + clock always stay together */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 10,
+                  padding: '4px 10px',
+                  borderRadius: 99,
+                  border: '1px solid rgba(206,17,38,.3)',
+                  color: 'hsl(var(--destructive))',
+                  background: 'rgba(206,17,38,.12)',
+                }}
+              >
                 <span
+                  className="animate-pulse"
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 10,
-                    padding: '4px 10px',
-                    borderRadius: 99,
-                    border: '1px solid rgba(206,17,38,.3)',
-                    color: 'hsl(var(--destructive))',
-                    background: 'rgba(206,17,38,.12)',
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: 'hsl(var(--destructive))',
+                    display: 'inline-block',
+                    flexShrink: 0,
                   }}
-                >
-                  <span
-                    className="animate-pulse"
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: '50%',
-                      background: 'hsl(var(--destructive))',
-                      display: 'inline-block',
-                      flexShrink: 0,
-                    }}
-                  />
-                  Live · updating
-                </span>
-                <LiveClock />
-              </div>
-
-              {/* Action buttons group: always stay on same line */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={handleGenerateReport}
-                  disabled={reportLoading}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    analytics
-                  </span>
-                  {reportLoading ? 'Generating...' : 'Compliance Report'}
-                </button>
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={() => (window.location.href = '/admin/broadcasts/new')}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    send
-                  </span>
-                  Broadcast
-                </button>
-              </div>
+                />
+                Live · updating
+              </span>
+              <LiveClock />
             </div>
+
+            {/* Action buttons group: always stay on same line */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={handleGenerateReport}
+                disabled={reportLoading}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  analytics
+                </span>
+                {reportLoading ? 'Generating...' : 'Compliance Report'}
+              </button>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => (window.location.href = '/admin/broadcasts/new')}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  send
+                </span>
+                Broadcast
+              </button>
+            </div>
+          </div>
+        }
+      />
+
+      <div className="kpis" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+        <TacticalKPI
+          label="Sign-ups · today"
+          value={pulse ? pulse.nationalGrowth.toLocaleString() : '...'}
+          description="National growth"
+          variant="green"
+          trend={
+            pulse?.nationalGrowth
+              ? { direction: 'up', value: 'Active' }
+              : { direction: 'neutral', value: 'Live' }
           }
         />
+        <TacticalKPI
+          label="MoMo donations"
+          value={donationStats ? `₵${(donationStats.approvedAmount / 1000).toFixed(1)}K` : '...'}
+          description={`${donationStats?.totalContributions || 0} contributions`}
+          variant="gold"
+          trend={{ direction: 'up', value: 'Elite' }}
+        />
+        <TacticalKPI
+          label="Field sectors"
+          value={directives.length}
+          description={`${directives.filter((d) => d.priority === 'CRITICAL').length} critical`}
+          variant="black"
+          trend={{ direction: 'neutral', value: 'Sync' }}
+        />
+        <TacticalKPI
+          label="Verified patriots"
+          value={memberCount.toLocaleString()}
+          description={`${chapterCount} active chapters`}
+          variant="green"
+          trend={{ direction: 'up', value: 'Optimal' }}
+        />
+        <TacticalKPI
+          label="Active incidents"
+          value={incidents.length}
+          description={incidents.length > 0 ? 'Rapid response' : 'Sectors clear'}
+          variant={incidents.length > 0 ? 'red' : 'green'}
+          trend={
+            incidents.length > 0
+              ? { direction: 'down', value: 'Alert' }
+              : { direction: 'up', value: 'Elite' }
+          }
+        />
+      </div>
 
-        <div className="kpis" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
-          <TacticalKPI
-            label="Sign-ups · today"
-            value={pulse ? pulse.nationalGrowth.toLocaleString() : '...'}
-            description="National growth"
-            variant="green"
-            trend={
-              pulse?.nationalGrowth
-                ? { direction: 'up', value: 'Active' }
-                : { direction: 'neutral', value: 'Live' }
-            }
-          />
-          <TacticalKPI
-            label="MoMo donations"
-            value={donationStats ? `₵${(donationStats.approvedAmount / 1000).toFixed(1)}K` : '...'}
-            description={`${donationStats?.totalContributions || 0} contributions`}
-            variant="gold"
-            trend={{ direction: 'up', value: 'Elite' }}
-          />
-          <TacticalKPI
-            label="Field sectors"
-            value={directives.length}
-            description={`${directives.filter((d) => d.priority === 'CRITICAL').length} critical`}
-            variant="black"
-            trend={{ direction: 'neutral', value: 'Sync' }}
-          />
-          <TacticalKPI
-            label="Verified patriots"
-            value={memberCount.toLocaleString()}
-            description={`${chapterCount} active chapters`}
-            variant="green"
-            trend={{ direction: 'up', value: 'Optimal' }}
-          />
-          <TacticalKPI
-            label="Active incidents"
-            value={incidents.length}
-            description={incidents.length > 0 ? 'Rapid response' : 'Sectors clear'}
-            variant={incidents.length > 0 ? 'red' : 'green'}
-            trend={
-              incidents.length > 0
-                ? { direction: 'down', value: 'Alert' }
-                : { direction: 'up', value: 'Elite' }
-            }
-          />
-        </div>
+      {/* ── 3-column grid: Map · Table · Feed ── */}
+      <div className="war-room-main-grid" style={{ marginBottom: 12 }}>
+        {/* Map panel */}
+        <WarRoomMap regionalStats={regionalStats} />
 
-        {/* ── 3-column grid: Map · Table · Feed ── */}
-        <div className="war-room-main-grid" style={{ marginBottom: 12 }}>
-          {/* Map panel */}
-          <WarRoomMap regionalStats={regionalStats} />
+        {/* Regional table */}
+        <RegionalPaceTable regionalStats={regionalStats} />
 
-          {/* Regional table */}
-          <RegionalPaceTable regionalStats={regionalStats} />
+        {/* Activity stream */}
+        <ActivityStreamPanel
+          directives={directives}
+          broadcasts={broadcasts}
+          incidents={incidents}
+          narratives={narratives}
+          onUpdateIncidentStatus={handleUpdateIncidentStatus}
+          onDispatchNarrative={handleDispatchNarrative}
+        />
+      </div>
 
-          {/* Activity stream */}
-          <ActivityStreamPanel
-            directives={directives}
-            broadcasts={broadcasts}
-            incidents={incidents}
-            narratives={narratives}
-            onUpdateIncidentStatus={handleUpdateIncidentStatus}
-            onDispatchNarrative={handleDispatchNarrative}
-          />
-        </div>
+      {/* ── Trend Charts ── */}
+      <TrendChartsPanel growthTrends={growthTrends} />
 
-        {/* ── Trend Charts ── */}
-        <TrendChartsPanel growthTrends={growthTrends} />
+      {/* ── Lower row: Incidents detail + Narratives ── */}
+      <div className="war-room-lower">
+        {/* Active crisis incidents */}
+        <CrisisIncidentsPanel
+          incidents={incidents}
+          onUpdateIncidentStatus={handleUpdateIncidentStatus}
+        />
 
-        {/* ── Lower row: Incidents detail + Narratives ── */}
-        <div className="war-room-lower">
-          {/* Active crisis incidents */}
-          <CrisisIncidentsPanel
-            incidents={incidents}
-            onUpdateIncidentStatus={handleUpdateIncidentStatus}
-          />
-
-          {/* Media counter-narratives / Digital strike directives */}
-          <DigitalDirectivesPanel
-            narratives={narratives}
-            onDispatchNarrative={handleDispatchNarrative}
-          />
-        </div>
+        {/* Media counter-narratives / Digital strike directives */}
+        <DigitalDirectivesPanel
+          narratives={narratives}
+          onDispatchNarrative={handleDispatchNarrative}
+        />
       </div>
 
       {/* ── Compliance Report Modal ── */}

@@ -858,9 +858,10 @@ td.leadership-col-secondary {
   gap: 24px;
 }
 
-/* War Room page — no margin needed since outer <main> carries no padding */
+/* War Room page — padding mirrors .main (28px desktop, 14px mobile via breakpoint) */
 .war-room-page {
   margin: 0;
+  padding: 24px 28px 0;
 }
 .war-room-lower {
   display: grid;
@@ -952,6 +953,10 @@ td.leadership-col-secondary {
   /* War Room lower 2-col → 1-col on mobile */
   .war-room-lower {
     grid-template-columns: 1fr !important;
+  }
+  /* War Room page — match .main mobile padding so .kpis bleeds correctly */
+  .war-room-page {
+    padding: 10px 14px 0;
   }
   /* War Room map — shorter on mobile so it doesn't eat the full screen */
   .war-room-map-body {
