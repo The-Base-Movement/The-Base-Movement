@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
       method: row.payment_method ?? 'N/A',
       reference: row.reference,
       date: dateStr,
-      monthlyUrl: 'https://thebasemovement.com/dashboard/donate',
+      monthlyUrl: 'https://nevermind-beta.vercel.app/dashboard/donate',
     })
 
     // @ts-expect-error: Deno global
@@ -78,7 +78,7 @@ Deno.serve(async (req: Request) => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
         body: JSON.stringify({
           personalizations: [{ to: [{ email: memberEmail }] }],
-          from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
+          from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
           subject: `Your ${amountStr} contribution is confirmed — Receipt ${row.reference}`,
           content: [{ type: 'text/html', value: html }],
         }),

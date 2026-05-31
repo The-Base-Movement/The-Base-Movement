@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { usePerformance } from '@/context/PerformanceContext'
+import { supabase } from '@/lib/supabase'
 import { AuditModal } from './members/AuditModal'
 import { AssignmentModal } from './members/AssignmentModal'
 import { DeleteModal } from './members/DeleteModal'
@@ -17,6 +18,26 @@ import { useMembersActions } from './members/useMembersActions'
 export default function MembersList() {
   const { lowBandwidthMode } = usePerformance()
   const [isImportingCSV, setIsImportingCSV] = useState(false)
+  const [isSyncingSendGrid, setIsSyncingSendGrid] = useState(false)
+  const [syncResult, setSyncResult] = useState<string | null>(null)
+
+  async function handleSyncSendGrid() {
+    setIsSyncingSendGrid(true)
+    setSyncResult(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('sync-sendgrid-bulk')
+      if (error) throw error
+      const { total, batches } = data as { total: number; batches: number }
+      setSyncResult(
+        `✓ ${total.toLocaleString()} members synced across ${batches} batch${batches !== 1 ? 'es' : ''}.`
+      )
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      setSyncResult(`✗ Sync failed: ${msg}`)
+    } finally {
+      setIsSyncingSendGrid(false)
+    }
+  }
 
   const {
     members,
@@ -81,11 +102,50 @@ export default function MembersList() {
     <div className="main">
       <MembersHeader
         isExporting={isExporting}
+        isSyncingSendGrid={isSyncingSendGrid}
         membersCount={members.length}
         onExport={handleExport}
         onAddMember={() => setIsAdding(true)}
         onImportCSV={() => setIsImportingCSV(true)}
+        onSyncSendGrid={handleSyncSendGrid}
       />
+
+      {syncResult && (
+        <div
+          style={{
+            padding: '8px 14px',
+            marginBottom: 14,
+            borderRadius: 'var(--radius-sm)',
+            fontFamily: "'Public Sans', sans-serif",
+            fontSize: 12,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            background: syncResult.startsWith('✓')
+              ? 'rgba(34,197,94,0.08)'
+              : 'rgba(239,68,68,0.08)',
+            color: syncResult.startsWith('✓') ? 'hsl(var(--primary))' : 'hsl(var(--destructive))',
+            border: `1px solid ${syncResult.startsWith('✓') ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span>{syncResult}</span>
+          <button
+            onClick={() => setSyncResult(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0 4px',
+              color: 'inherit',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              close
+            </span>
+          </button>
+        </div>
+      )}
 
       <MembersKPIs
         isLoading={isLoading}

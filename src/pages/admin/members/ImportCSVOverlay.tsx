@@ -340,10 +340,13 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
               'CSV profiles imported, but automatic account provisioning failed. Please reset passwords manually.'
             )
           } else if (authResult) {
-            const { created, skipped, failed } = authResult
+            const { created, skipped, failed, failedUsers } = authResult
             console.warn(
               `[CSV-IMPORT-AUTH-SUCCESS] Accounts: ${created} created, ${skipped} skipped, ${failed} failed.`
             )
+            if (failedUsers && failedUsers.length > 0) {
+              console.error('[CSV-IMPORT-FAILURES] Details:', failedUsers)
+            }
           }
         } catch (authErr) {
           console.warn('[CSV-IMPORT-AUTH-EXCEPTION] Failed to call Edge Function:', authErr)

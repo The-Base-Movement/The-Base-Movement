@@ -22,7 +22,8 @@ This list tracks the final engineering and integration requirements to transitio
 - [x] **Push Notification Deployment**: Supabase Edge Function `send-push-notification` deployed. `push_subscriptions` table live with RLS. Frontend wired via `usePushNotifications` hook, `PushPromptBanner`, and `NotificationsPanel`. Active in ChapterHub announcements and the broadcast dispatcher.
   - VAPID keys (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`) are being configured in Supabase secrets — activation imminent.
 - [x] **Transactional Email**: Resend integrated across four edge functions — welcome emails (`notify-leads`), donation receipts (`send-donation-receipt`), urgent broadcast dispatch (`broadcast-dispatcher`), poll notifications (`send-poll-notification`).
-  - [ ] **Newsletter / Mailing List Sync**: Syncing registration data to a newsletter platform (Mailchimp / ConvertKit) for campaign list management is not yet implemented.
+  - [x] **Newsletter / Mailing List Sync**: SendGrid Contacts API integrated. `sync-sendgrid-contact` edge fn fires on every new registration (via `notify-leads`). `sync-sendgrid-bulk` edge fn batch-syncs all members on-demand from the admin Members page. See `docs/audits/sendgrid-newsletter-sync-audit-2026-06-01.md`.
+    - Requires: `SENDGRID_API_KEY` + optionally `SENDGRID_LIST_ID` set in Supabase secrets, and 5 custom fields created in SendGrid dashboard. Pending initial bulk sync run.
 
 ## 3. Automation & Optimization
 

@@ -64,9 +64,11 @@ serve(async (req: Request) => {
       const tempPassword = generateTempPassword()
 
       try {
-        // 1. Create auth.users account using service role client
+        // 1. Generate a standard dummy email fallback if missing to bypass Phone-Auth signup restrictions
+        const finalEmail = member.email || `${normalizedPhone.replace('+', '')}@thebase.org`
+
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-          email: member.email || undefined,
+          email: finalEmail,
           phone: normalizedPhone,
           password: tempPassword,
           email_confirm: true,
@@ -128,7 +130,7 @@ serve(async (req: Request) => {
               body: new URLSearchParams({
                 username: atUsername,
                 to: normalizedPhone,
-                message: `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at thebasemovement.com/login and change your password.\n- The Base`,
+                message: `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at nevermind-beta.vercel.app/login and change your password.\n- The Base`,
                 from: 'THEBASE',
               }),
             })
@@ -156,14 +158,14 @@ serve(async (req: Request) => {
               regNo: member.reg_no,
               phone: normalizedPhone,
               tempPassword,
-              loginUrl: 'https://thebasemovement.com/login',
+              loginUrl: 'https://nevermind-beta.vercel.app/login',
             })
             const emailRes = await fetch('https://api.sendgrid.com/v3/mail/send', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
               body: JSON.stringify({
                 personalizations: [{ to: [{ email: member.email }] }],
-                from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
+                from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
                 subject: 'Your Base Movement account is ready',
                 content: [{ type: 'text/html', value: html }],
               }),

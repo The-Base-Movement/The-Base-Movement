@@ -90,6 +90,9 @@ class TacticalService {
               priority: broadcast.priority,
               targetType: broadcast.target_type,
               targetValue: broadcast.target_value,
+              subject: broadcast.title,
+              body: broadcast.content,
+              region: broadcast.target_type === 'REGION' ? broadcast.target_value : null,
             },
           })
           .catch((err) => console.error('[EDGE] Dispatch trigger failed:', err))

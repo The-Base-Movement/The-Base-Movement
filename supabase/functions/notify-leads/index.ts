@@ -1,6 +1,7 @@
 // THE BASE: MOBILIZATION NOTIFICATION EDGE FUNCTION
-// Sends a welcome email to new verified members via SendGrid.
-// Set SENDGRID_API_KEY in Supabase secrets to activate sending.
+// Sends a welcome email to new verified members via SendGrid,
+// then syncs the member into the SendGrid marketing contacts list.
+// Set SENDGRID_API_KEY (+ optionally SENDGRID_LIST_ID) in Supabase secrets.
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -45,8 +46,8 @@ Deno.serve(async (req: Request) => {
       name: (record.full_name ?? '').split(' ')[0] || 'Patriot',
       regNo: record.registration_number ?? '',
       chapter: record.chapter ?? '',
-      dashboardUrl: 'https://thebasemovement.com/dashboard',
-      cardDownloadUrl: 'https://thebasemovement.com/dashboard/membership-card',
+      dashboardUrl: 'https://nevermind-beta.vercel.app/dashboard',
+      cardDownloadUrl: 'https://nevermind-beta.vercel.app/dashboard/membership-card',
     })
 
     // @ts-expect-error: Deno global
@@ -58,14 +59,50 @@ Deno.serve(async (req: Request) => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
         body: JSON.stringify({
           personalizations: [{ to: [{ email: memberEmail }] }],
-          from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
+          from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
           subject: 'You are now a verified member of The Base.',
           content: [{ type: 'text/html', value: html }],
         }),
       })
-      console.warn('[EMAIL] Sent welcome to', memberEmail, res.status)
+      if (res.ok) {
+        console.warn('[EMAIL] Accepted by SendGrid for', memberEmail, res.status)
+      } else {
+        const errBody = await res.text()
+        console.error('[EMAIL] SendGrid rejected email to', memberEmail, res.status, errBody)
+      }
     } else {
       console.warn('[EMAIL] SENDGRID_API_KEY not set — skipping send to', memberEmail)
+    }
+
+    // Sync new member into SendGrid marketing contacts list (fire-and-forget)
+    if (memberEmail) {
+      const nameParts = (record.full_name ?? '').trim().split(/\s+/)
+      const contactPayload = {
+        email: memberEmail,
+        first_name: nameParts[0] ?? '',
+        last_name: nameParts.slice(1).join(' '),
+        reg_no: record.registration_number ?? record.reg_no ?? '',
+        region: record.region ?? '',
+        constituency: record.constituency ?? '',
+        platform: record.platform ?? '',
+        status: record.status ?? '',
+      }
+
+      // @ts-expect-error: Deno global
+      const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''
+      // @ts-expect-error: Deno global
+      const serviceKey: string = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+
+      fetch(`${supabaseUrl}/functions/v1/sync-sendgrid-contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+        },
+        body: JSON.stringify(contactPayload),
+      })
+        .then((r) => console.warn('[SENDGRID-SYNC] contact sync dispatched, status', r.status))
+        .catch((e) => console.error('[SENDGRID-SYNC] dispatch error', e))
     }
 
     // Lead notification (SMS placeholder)

@@ -51,7 +51,7 @@ Deno.serve(async (req: Request) => {
       body: body ? `<p style="line-height:1.65;color:#444;margin-bottom:14px">${body}</p>` : '',
       region: region ?? targetValue,
       ctaLabel: 'Read the full update →',
-      ctaUrl: 'https://thebasemovement.com/dashboard',
+      ctaUrl: 'https://nevermind-beta.vercel.app/dashboard',
     })
 
     // @ts-expect-error: Deno global
@@ -68,7 +68,7 @@ Deno.serve(async (req: Request) => {
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
           body: JSON.stringify({
             personalizations: batch.map((email) => ({ to: [{ email }] })),
-            from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
+            from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
             subject: subject ?? 'Movement update',
             content: [{ type: 'text/html', value: html }],
           }),

@@ -89,7 +89,7 @@ Deno.serve(async (req: Request) => {
               voteTarget: row.target_count ?? 5000,
               hoursRemaining,
               options: pollOptions,
-              voteUrl: `https://thebasemovement.com/dashboard/polls/${row.id}`,
+              voteUrl: `https://nevermind-beta.vercel.app/dashboard/polls/${row.id}`,
             })
             return {
               to: [{ email: member.email as string }],
@@ -104,7 +104,7 @@ Deno.serve(async (req: Request) => {
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
             body: JSON.stringify({
               personalizations: [{ to: p.to }],
-              from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
+              from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
               subject: `This poll closes in ${hoursRemaining} hours. Your vote counts.`,
               content: [{ type: 'text/html', value: p.substitutions.html }],
             }),
