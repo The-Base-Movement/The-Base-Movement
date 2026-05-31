@@ -34,6 +34,10 @@ class UserActivityService {
     description: string,
     metadata?: Record<string, unknown>
   ): Promise<void> {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session) return
     const { error } = await supabase.from('user_activity_logs').insert({
       user_id: userId,
       action_type,

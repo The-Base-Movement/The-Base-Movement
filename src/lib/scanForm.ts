@@ -9,9 +9,22 @@ import type { RegistrationFormData } from '@/types/registration'
 
 // ── Ghana regions for matching ────────────────────────────────────────────────
 const GHANA_REGIONS = [
-  'Greater Accra', 'Ashanti', 'Western', 'Central', 'Eastern', 'Volta',
-  'Northern', 'Upper East', 'Upper West', 'Brong-Ahafo', 'Savannah',
-  'Bono East', 'Ahafo', 'Western North', 'Oti', 'North East',
+  'Greater Accra',
+  'Ashanti',
+  'Western',
+  'Central',
+  'Eastern',
+  'Volta',
+  'Northern',
+  'Upper East',
+  'Upper West',
+  'Brong-Ahafo',
+  'Savannah',
+  'Bono East',
+  'Ahafo',
+  'Western North',
+  'Oti',
+  'North East',
 ]
 
 // ── Extract text from a File using Tesseract ──────────────────────────────────
@@ -19,7 +32,9 @@ async function ocrImage(source: File | HTMLCanvasElement): Promise<string> {
   const worker = await createWorker('eng', 1, {
     logger: () => {}, // silence progress logs
   })
-  const { data: { text } } = await worker.recognize(source)
+  const {
+    data: { text },
+  } = await worker.recognize(source)
   await worker.terminate()
   return text
 }
@@ -29,7 +44,7 @@ async function ocrPdf(file: File): Promise<string> {
   const pdfjsLib = await import('pdfjs-dist')
   pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.mjs',
-    import.meta.url,
+    import.meta.url
   ).toString()
 
   const arrayBuffer = await file.arrayBuffer()
@@ -58,7 +73,8 @@ async function ocrPdf(file: File): Promise<string> {
     canvas.width = viewport.width
     canvas.height = viewport.height
     const ctx = canvas.getContext('2d')!
-    await page.render({ canvasContext: ctx, canvas, viewport } as Parameters<typeof page.render>[0]).promise
+    await page.render({ canvasContext: ctx, canvas, viewport } as Parameters<typeof page.render>[0])
+      .promise
     const text = await ocrImage(canvas)
     pageTexts.push(text)
   }
@@ -96,7 +112,10 @@ function extractAgeRange(text: string): string | null {
   const ranges = ['18-25', '26-35', '36-45', '46-60', '60+']
   for (const r of ranges) {
     // Check if the range appears near a checkmark or 'x'
-    const pattern = new RegExp(`(x|✓|✗|\\[x\\])\\s*${r.replace('+', '\\+')}|${r.replace('+', '\\+')}\\s*(x|✓|✗|\\[x\\])`, 'i')
+    const pattern = new RegExp(
+      `(x|✓|✗|\\[x\\])\\s*${r.replace('+', '\\+')}|${r.replace('+', '\\+')}\\s*(x|✓|✗|\\[x\\])`,
+      'i'
+    )
     if (pattern.test(text)) return r
   }
   // Fall back to just finding a range mentioned near "age"
@@ -106,7 +125,7 @@ function extractAgeRange(text: string): string | null {
 }
 
 function extractEmail(text: string): string | null {
-  const m = text.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/)
+  const m = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)
   return m ? m[0] : null
 }
 
@@ -135,20 +154,47 @@ function extractEducation(text: string): string | null {
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
+const SCANNABLE_IMAGE_TYPES = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/bmp',
+  'image/tiff',
+  'image/gif',
+  'image/webp',
+])
+const SCANNABLE_EXTENSIONS = new Set([
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.bmp',
+  '.tiff',
+  '.tif',
+  '.gif',
+  '.webp',
+])
+
 export async function scanFormFile(file: File): Promise<{
   platform: 'GHANA' | 'DIASPORA'
   fields: Partial<RegistrationFormData>
 }> {
-  const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+  const name = file.name.toLowerCase()
+  const ext = name.includes('.') ? `.${name.split('.').pop()}` : ''
+  const isPdf = file.type === 'application/pdf' || ext === '.pdf'
+  const isImage = SCANNABLE_IMAGE_TYPES.has(file.type) || SCANNABLE_EXTENSIONS.has(ext)
+
+  if (!isPdf && !isImage) {
+    throw new Error(
+      `"${file.name}" cannot be scanned. Please upload a JPEG, PNG, or PDF photo of your completed form.`
+    )
+  }
+
   const text = isPdf ? await ocrPdf(file) : await ocrImage(file)
 
   const platform = detectPlatform(text)
 
   const fields: Partial<RegistrationFormData> = {
-    fullName:
-      after(text, /full\s*name[:\s]*/i) ??
-      after(text, /name[:\s]*/i) ??
-      undefined,
+    fullName: after(text, /full\s*name[:\s]*/i) ?? after(text, /name[:\s]*/i) ?? undefined,
 
     gender: extractGender(text) ?? undefined,
     ageRange: extractAgeRange(text) ?? undefined,
@@ -156,26 +202,16 @@ export async function scanFormFile(file: File): Promise<{
     contactNumber: extractPhone(text) ?? undefined,
 
     residentialAddress:
-      after(text, /residential\s*address[:\s]*/i) ??
-      after(text, /address[:\s]*/i) ??
-      undefined,
+      after(text, /residential\s*address[:\s]*/i) ?? after(text, /address[:\s]*/i) ?? undefined,
 
     region: platform === 'GHANA' ? (extractRegion(text) ?? undefined) : undefined,
 
     constituency:
-      platform === 'GHANA'
-        ? (after(text, /constituency[:\s]*/i) ?? undefined)
-        : undefined,
+      platform === 'GHANA' ? (after(text, /constituency[:\s]*/i) ?? undefined) : undefined,
 
-    country:
-      platform === 'DIASPORA'
-        ? (after(text, /country[:\s]*/i) ?? undefined)
-        : 'Ghana',
+    country: platform === 'DIASPORA' ? (after(text, /country[:\s]*/i) ?? undefined) : 'Ghana',
 
-    profession:
-      after(text, /profession[:\s]*/i) ??
-      after(text, /occupation[:\s]*/i) ??
-      undefined,
+    profession: after(text, /profession[:\s]*/i) ?? after(text, /occupation[:\s]*/i) ?? undefined,
 
     educationLevel: extractEducation(text) ?? undefined,
 
@@ -184,8 +220,7 @@ export async function scanFormFile(file: File): Promise<{
       after(text, /next\s*of\s*kin[:\s]*/i) ??
       undefined,
 
-    emergencyRelationship:
-      after(text, /relationship[:\s]*/i) ?? undefined,
+    emergencyRelationship: after(text, /relationship[:\s]*/i) ?? undefined,
 
     emergencyNumber:
       after(text, /emergency\s*(contact\s*)?number[:\s]*/i) ??
@@ -194,7 +229,7 @@ export async function scanFormFile(file: File): Promise<{
   }
 
   // Sanitize extracted values
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
   const cleanPhone = (v: string | undefined) => {
     if (!v) return undefined
     const digits = v.replace(/[^\d]/g, '')
@@ -206,7 +241,7 @@ export async function scanFormFile(file: File): Promise<{
   if (fields.email && !emailRegex.test(fields.email)) delete fields.email
 
   // Trim whitespace from all string fields and drop empty strings
-  Object.keys(fields).forEach(k => {
+  Object.keys(fields).forEach((k) => {
     const val = (fields as Record<string, unknown>)[k]
     if (val === undefined || val === null) {
       delete (fields as Record<string, unknown>)[k]
