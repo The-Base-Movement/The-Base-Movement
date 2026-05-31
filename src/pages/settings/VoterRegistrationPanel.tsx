@@ -25,6 +25,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
   const [dropdownRect, setDropdownRect] = useState<DOMRect | null>(null)
   const psDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
   const inputWrapRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     adminService.getMyVoterRegistration().then((voterReg) => {
@@ -42,10 +43,14 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
     }
   }, [psOpen])
 
-  // Close on any scroll so the fixed dropdown never detaches from the input
+  // Close on scroll outside the dropdown (so the fixed portal never detaches from input)
+  // but allow scrolling within the dropdown list itself
   useEffect(() => {
     if (!psOpen) return
-    const close = () => setPsOpen(false)
+    const close = (e: Event) => {
+      if (dropdownRef.current?.contains(e.target as Node)) return
+      setPsOpen(false)
+    }
     window.addEventListener('scroll', close, { passive: true, capture: true })
     return () => window.removeEventListener('scroll', close, { capture: true })
   }, [psOpen])
@@ -192,6 +197,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                     onClick={() => setPsOpen(false)}
                   />
                   <div
+                    ref={dropdownRef}
                     style={{
                       position: 'fixed',
                       top: dropdownRect.bottom + 4,
