@@ -297,22 +297,20 @@ export default function WarRoomCommand() {
               {/* Action buttons group: always stay on same line */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                 <button
-                  className="btn btn-outline"
-                  style={{ height: 32, fontSize: 11, padding: '0 12px' }}
+                  className="btn btn-outline btn-sm"
                   onClick={handleGenerateReport}
                   disabled={reportLoading}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                     analytics
                   </span>
                   {reportLoading ? 'Generating...' : 'Compliance Report'}
                 </button>
                 <button
-                  className="btn btn-outline"
-                  style={{ height: 32, fontSize: 11, padding: '0 12px' }}
+                  className="btn btn-outline btn-sm"
                   onClick={() => (window.location.href = '/admin/broadcasts/new')}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                     send
                   </span>
                   Broadcast

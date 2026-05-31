@@ -189,7 +189,7 @@ export default function StrategicPriorities() {
         description="Manage movement-wide mobilization goals, financial targets, and operational milestones."
         actions={
           <button
-            className="btn btn-primary"
+            className="btn btn-primary btn-sm"
             onClick={() => {
               setFormData({
                 title: '',
@@ -202,7 +202,7 @@ export default function StrategicPriorities() {
               setIsCreating(true)
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add
             </span>
             Add Priority

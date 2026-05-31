@@ -233,8 +233,8 @@ export default function AdminStore() {
         actions={
           <>
             {activeTab === 'inventory' && (
-              <button className="btn btn-primary" onClick={() => handleOpenModal()}>
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              <button className="btn btn-primary btn-sm" onClick={() => handleOpenModal()}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                   add
                 </span>
                 Add item
