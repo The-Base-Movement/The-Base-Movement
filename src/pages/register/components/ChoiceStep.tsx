@@ -7,9 +7,15 @@ interface ChoiceStepProps {
   settings: BrandingSettings
   onSelect: (platform: string, file?: File) => void
   isScanning?: boolean
+  scanStatus?: string
 }
 
-export function ChoiceStep({ settings, onSelect, isScanning = false }: ChoiceStepProps) {
+export function ChoiceStep({
+  settings,
+  onSelect,
+  isScanning = false,
+  scanStatus,
+}: ChoiceStepProps) {
   return (
     <div className="max-w-[840px] w-full mx-auto auth-frame">
       <div className="auth-header-label">
@@ -110,7 +116,7 @@ export function ChoiceStep({ settings, onSelect, isScanning = false }: ChoiceSte
                       >
                         progress_activity
                       </span>
-                      Scanning form…
+                      {scanStatus ?? 'Scanning form…'}
                     </>
                   ) : (
                     <>

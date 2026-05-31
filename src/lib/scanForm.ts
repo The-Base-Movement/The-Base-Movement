@@ -27,10 +27,22 @@ const GHANA_REGIONS = [
   'North East',
 ]
 
+type ProgressFn = (status: string) => void
+
 // ── Extract text from a File using Tesseract ──────────────────────────────────
-async function ocrImage(source: File | HTMLCanvasElement): Promise<string> {
+async function ocrImage(
+  source: File | HTMLCanvasElement,
+  onProgress?: ProgressFn
+): Promise<string> {
   const worker = await createWorker('eng', 1, {
-    logger: () => {}, // silence progress logs
+    logger: (m: { status: string; progress?: number }) => {
+      if (m.status === 'loading tesseract core') onProgress?.('Loading OCR engine…')
+      else if (m.status === 'loading language traineddata')
+        onProgress?.('Downloading language data…')
+      else if (m.status === 'initializing api') onProgress?.('Initializing…')
+      else if (m.status === 'recognizing text')
+        onProgress?.(`Scanning… ${Math.round((m.progress ?? 0) * 100)}%`)
+    },
   })
   const {
     data: { text },
@@ -40,7 +52,7 @@ async function ocrImage(source: File | HTMLCanvasElement): Promise<string> {
 }
 
 // ── Render PDF pages to canvas and OCR each ───────────────────────────────────
-async function ocrPdf(file: File): Promise<string> {
+async function ocrPdf(file: File, onProgress?: ProgressFn): Promise<string> {
   const pdfjsLib = await import('pdfjs-dist')
   pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.mjs',
@@ -68,6 +80,7 @@ async function ocrPdf(file: File): Promise<string> {
     }
 
     // Fall back to rendering → Tesseract for scanned pages
+    onProgress?.(`Scanning page ${i} of ${pdf.numPages}…`)
     const viewport = page.getViewport({ scale: 2.0 })
     const canvas = document.createElement('canvas')
     canvas.width = viewport.width
@@ -75,7 +88,7 @@ async function ocrPdf(file: File): Promise<string> {
     const ctx = canvas.getContext('2d')!
     await page.render({ canvasContext: ctx, canvas, viewport } as Parameters<typeof page.render>[0])
       .promise
-    const text = await ocrImage(canvas)
+    const text = await ocrImage(canvas, onProgress)
     pageTexts.push(text)
   }
 
@@ -174,7 +187,12 @@ const SCANNABLE_EXTENSIONS = new Set([
   '.webp',
 ])
 
-export async function scanFormFile(file: File): Promise<{
+const SCAN_TIMEOUT_MS = 90_000
+
+export async function scanFormFile(
+  file: File,
+  onProgress?: ProgressFn
+): Promise<{
   platform: 'GHANA' | 'DIASPORA'
   fields: Partial<RegistrationFormData>
 }> {
@@ -189,7 +207,24 @@ export async function scanFormFile(file: File): Promise<{
     )
   }
 
-  const text = isPdf ? await ocrPdf(file) : await ocrImage(file)
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(
+      () => reject(new Error('Scan timed out — please fill in your details manually.')),
+      SCAN_TIMEOUT_MS
+    )
+  )
+
+  return Promise.race([doScan(file, isPdf, onProgress), timeout])
+}
+
+async function doScan(
+  file: File,
+  isPdf: boolean,
+  onProgress?: ProgressFn
+): Promise<{ platform: 'GHANA' | 'DIASPORA'; fields: Partial<RegistrationFormData> }> {
+  onProgress?.('Preparing…')
+  const text = isPdf ? await ocrPdf(file, onProgress) : await ocrImage(file, onProgress)
+  onProgress?.('Extracting fields…')
 
   const platform = detectPlatform(text)
 

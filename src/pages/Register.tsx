@@ -32,6 +32,7 @@ export default function Register() {
   const [usedScan, setUsedScan] = useState(false)
   const [isScanningId, setIsScanningId] = useState(false)
   const [isScanningForm, setIsScanningForm] = useState(false)
+  const [scanStatus, setScanStatus] = useState('Scanning form…')
   const [isVerifyingKyc, setIsVerifyingKyc] = useState(false)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [selfieUrl, setSelfieUrl] = useState<string | null>(null)
@@ -163,8 +164,9 @@ export default function Register() {
 
   const handleFormScan = async (file: File) => {
     setIsScanningForm(true)
+    setScanStatus('Preparing…')
     try {
-      const { platform: detectedPlatform, fields } = await scanFormFile(file)
+      const { platform: detectedPlatform, fields } = await scanFormFile(file, setScanStatus)
       handlePlatformChange(detectedPlatform)
       setFormData((prev) => ({ ...prev, ...fields }))
       setStep('form')
@@ -335,6 +337,7 @@ export default function Register() {
         <ChoiceStep
           settings={settings}
           isScanning={isScanningForm}
+          scanStatus={scanStatus}
           onSelect={(p, file) => {
             if (p === 'PHYSICAL' && file) {
               handleFormScan(file)
