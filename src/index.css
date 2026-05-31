@@ -858,9 +858,9 @@ td.leadership-col-secondary {
   gap: 24px;
 }
 
-/* War Room page breakout (escape admin content padding on desktop only) */
+/* War Room page — no margin needed since outer <main> carries no padding */
 .war-room-page {
-  margin: -24px -28px;
+  margin: 0;
 }
 .war-room-lower {
   display: grid;
@@ -949,13 +949,13 @@ td.leadership-col-secondary {
     gap: 8px;
     width: 100%;
   }
-  /* War Room — remove breakout margins on mobile */
-  .war-room-page {
-    margin: 0 !important;
-  }
   /* War Room lower 2-col → 1-col on mobile */
   .war-room-lower {
     grid-template-columns: 1fr !important;
+  }
+  /* War Room map — shorter on mobile so it doesn't eat the full screen */
+  .war-room-map-body {
+    min-height: 280px !important;
   }
   /* Logistics / Mobilization main grids — single column on mobile */
   .logistics-main-grid,

@@ -71,6 +71,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
         </span>
       </div>
       <div
+        className="war-room-map-body"
         style={{
           position: 'relative',
           flex: 1,
