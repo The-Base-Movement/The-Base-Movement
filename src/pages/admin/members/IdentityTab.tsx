@@ -1,4 +1,5 @@
 import { Fragment, useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { type Member, adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 
@@ -26,7 +27,10 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
   const [psAssigning, setPsAssigning] = useState(false)
   const [selectedCode, setSelectedCode] = useState('')
   const [selectedName, setSelectedName] = useState('')
+  const [dropdownRect, setDropdownRect] = useState<DOMRect | null>(null)
   const psDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const psInputWrapRef = useRef<HTMLDivElement>(null)
+  const psDropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!member.authId) return
@@ -36,6 +40,22 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
       setPsLoaded(true)
     })
   }, [member.authId])
+
+  useEffect(() => {
+    if (psOpen && psInputWrapRef.current) {
+      setDropdownRect(psInputWrapRef.current.getBoundingClientRect())
+    }
+  }, [psOpen])
+
+  useEffect(() => {
+    if (!psOpen) return
+    const close = (e: Event) => {
+      if (psDropdownRef.current?.contains(e.target as Node)) return
+      setPsOpen(false)
+    }
+    window.addEventListener('scroll', close, { passive: true, capture: true })
+    return () => window.removeEventListener('scroll', close, { capture: true })
+  }, [psOpen])
 
   const searchStations = useCallback(
     (q: string) => {
@@ -367,7 +387,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                     </button>
                   )}
                 </div>
-                <div style={{ position: 'relative', marginBottom: 8 }}>
+                <div ref={psInputWrapRef} style={{ position: 'relative', marginBottom: 8 }}>
                   <span
                     className="material-symbols-outlined"
                     style={{
@@ -383,6 +403,8 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                     search
                   </span>
                   <input
+                    id="admin-ps-search"
+                    name="admin-ps-search"
                     type="text"
                     placeholder="Search by station name or code…"
                     value={psSearch}
@@ -391,7 +413,10 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                       searchStations(e.target.value)
                     }}
                     onFocus={() => {
-                      if (psResults.length > 0) setPsOpen(true)
+                      if (psResults.length > 0) {
+                        setDropdownRect(psInputWrapRef.current?.getBoundingClientRect() ?? null)
+                        setPsOpen(true)
+                      }
                     }}
                     style={{
                       width: '100%',
@@ -422,74 +447,79 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                       progress_activity
                     </span>
                   )}
-                  {psOpen && psResults.length > 0 && (
-                    <>
-                      <div
-                        style={{ position: 'fixed', inset: 0, zIndex: 40 }}
-                        onClick={() => setPsOpen(false)}
-                      />
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 'calc(100% + 4px)',
-                          left: 0,
-                          right: 0,
-                          background: '#fff',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: 'var(--radius-sm)',
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                          zIndex: 50,
-                          maxHeight: 200,
-                          overflowY: 'auto',
-                        }}
-                      >
-                        {psResults.map((s) => (
-                          <button
-                            key={s.code}
-                            type="button"
-                            onClick={() => {
-                              setSelectedCode(s.code)
-                              setSelectedName(s.name)
-                              setPsSearch(`${s.code} — ${s.name}`)
-                              setPsOpen(false)
-                            }}
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              width: '100%',
-                              padding: '8px 12px',
-                              textAlign: 'left',
-                              background: 'none',
-                              border: 'none',
-                              borderBottom: '1px solid hsl(var(--border))',
-                              cursor: 'pointer',
-                              gap: 2,
-                            }}
-                          >
-                            <span
+                  {psOpen &&
+                    psResults.length > 0 &&
+                    dropdownRect &&
+                    createPortal(
+                      <>
+                        <div
+                          style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
+                          onClick={() => setPsOpen(false)}
+                        />
+                        <div
+                          ref={psDropdownRef}
+                          style={{
+                            position: 'fixed',
+                            top: dropdownRect.bottom + 4,
+                            left: dropdownRect.left,
+                            width: dropdownRect.width,
+                            background: '#fff',
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: 'var(--radius-sm)',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                            zIndex: 9999,
+                            maxHeight: 220,
+                            overflowY: 'auto',
+                          }}
+                        >
+                          {psResults.map((s) => (
+                            <button
+                              key={s.code}
+                              type="button"
+                              onClick={() => {
+                                setSelectedCode(s.code)
+                                setSelectedName(s.name)
+                                setPsSearch(`${s.code} — ${s.name}`)
+                                setPsOpen(false)
+                              }}
                               style={{
-                                fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 'var(--font-weight-medium, 500)',
-                                fontSize: 11.5,
-                                color: 'hsl(var(--on-surface))',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                width: '100%',
+                                padding: '8px 12px',
+                                textAlign: 'left',
+                                background: 'none',
+                                border: 'none',
+                                borderBottom: '1px solid hsl(var(--border))',
+                                cursor: 'pointer',
+                                gap: 2,
                               }}
                             >
-                              {s.code}
-                            </span>
-                            <span
-                              style={{
-                                fontFamily: "'Public Sans', sans-serif",
-                                fontSize: 11,
-                                color: 'hsl(var(--on-surface-muted))',
-                              }}
-                            >
-                              {s.name} · {s.constituency}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  )}
+                              <span
+                                style={{
+                                  fontFamily: "'Public Sans', sans-serif",
+                                  fontWeight: 'var(--font-weight-medium, 500)',
+                                  fontSize: 11.5,
+                                  color: 'hsl(var(--on-surface))',
+                                }}
+                              >
+                                {s.code}
+                              </span>
+                              <span
+                                style={{
+                                  fontFamily: "'Public Sans', sans-serif",
+                                  fontSize: 11,
+                                  color: 'hsl(var(--on-surface-muted))',
+                                }}
+                              >
+                                {s.name} · {s.constituency}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </>,
+                      document.body
+                    )}
                 </div>
                 {selectedCode && (
                   <p
