@@ -23,8 +23,6 @@ interface Props {
   form: FormState
   userRegNo: string
   userPlatform: string
-  dbRegions: { id: number; name: string }[]
-  dbConstituencies: { region_id: number; name: string }[]
   dbCountries: { name: string; dialing_code: string; is_diaspora: boolean }[]
   availableChapters: string[]
   onChange: (field: string, value: string) => void
@@ -35,8 +33,6 @@ export function PersonalInfoForm({
   form,
   userRegNo,
   userPlatform,
-  dbRegions,
-  dbConstituencies,
   dbCountries,
   availableChapters,
   onChange,
@@ -212,57 +208,69 @@ export function PersonalInfoForm({
           {/* Region / Country fields — conditional on platform */}
           {userPlatform === 'GHANA' ? (
             <>
+              {/* Region — locked at registration, read-only */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label htmlFor="select-c13da3" style={labelStyle}>
-                  Region
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <select
-                    name="name-c13da3"
-                    id="select-c13da3"
-                    value={form.region}
-                    onChange={(e) =>
-                      onFormSet((prev) => ({ ...prev, region: e.target.value, constituency: '' }))
-                    }
-                    style={selectStyle}
+                <span style={labelStyle}>
+                  Region{' '}
+                  <span
+                    style={{
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      letterSpacing: 0,
+                      textTransform: 'none',
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
                   >
-                    <option value="">Select Region</option>
-                    {dbRegions.map((reg) => (
-                      <option key={reg.id} value={reg.name}>
-                        {reg.name}
-                      </option>
-                    ))}
-                  </select>
-                  <SelIcon />
+                    (Locked)
+                  </span>
+                </span>
+                <div
+                  style={{
+                    ...inputStyle,
+                    background: 'hsl(var(--container-low))',
+                    color: 'hsl(var(--on-surface-muted))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    cursor: 'not-allowed',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    lock
+                  </span>
+                  {form.region || 'Not set'}
                 </div>
               </div>
 
+              {/* Constituency — locked at registration, read-only */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label htmlFor="select-767782" style={labelStyle}>
-                  Constituency
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <select
-                    name="name-767782"
-                    id="select-767782"
-                    value={form.constituency}
-                    disabled={!form.region}
-                    onChange={(e) => onChange('constituency', e.target.value)}
-                    style={{ ...selectStyle, opacity: !form.region ? 0.5 : 1 }}
+                <span style={labelStyle}>
+                  Constituency{' '}
+                  <span
+                    style={{
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      letterSpacing: 0,
+                      textTransform: 'none',
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
                   >
-                    <option value="">Select Constituency</option>
-                    {form.region &&
-                      dbConstituencies
-                        .filter(
-                          (c) => c.region_id === dbRegions.find((r) => r.name === form.region)?.id
-                        )
-                        .map((con) => (
-                          <option key={con.name} value={con.name}>
-                            {con.name}
-                          </option>
-                        ))}
-                  </select>
-                  <SelIcon />
+                    (Locked)
+                  </span>
+                </span>
+                <div
+                  style={{
+                    ...inputStyle,
+                    background: 'hsl(var(--container-low))',
+                    color: 'hsl(var(--on-surface-muted))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    cursor: 'not-allowed',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    lock
+                  </span>
+                  {form.constituency || 'Not set'}
                 </div>
               </div>
             </>
@@ -317,60 +325,69 @@ export function PersonalInfoForm({
 
               {form.country === 'Ghana' && (
                 <>
+                  {/* Region — locked at registration, read-only */}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <label htmlFor="select-25c44b" style={labelStyle}>
-                      Region
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <select
-                        name="name-25c44b"
-                        id="select-25c44b"
-                        value={form.region}
-                        onChange={(e) =>
-                          onFormSet((prev) => ({
-                            ...prev,
-                            region: e.target.value,
-                            constituency: '',
-                          }))
-                        }
-                        style={selectStyle}
+                    <span style={labelStyle}>
+                      Region{' '}
+                      <span
+                        style={{
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          letterSpacing: 0,
+                          textTransform: 'none',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
                       >
-                        <option value="">Select Region</option>
-                        {dbRegions.map((reg) => (
-                          <option key={reg.id} value={reg.name}>
-                            {reg.name}
-                          </option>
-                        ))}
-                      </select>
-                      <SelIcon />
+                        (Locked)
+                      </span>
+                    </span>
+                    <div
+                      style={{
+                        ...inputStyle,
+                        background: 'hsl(var(--container-low))',
+                        color: 'hsl(var(--on-surface-muted))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        cursor: 'not-allowed',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        lock
+                      </span>
+                      {form.region || 'Not set'}
                     </div>
                   </div>
 
+                  {/* Constituency — locked at registration, read-only */}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <label htmlFor="select-dede8f" style={labelStyle}>
-                      Constituency
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <select
-                        name="name-dede8f"
-                        id="select-dede8f"
-                        value={form.constituency}
-                        disabled={!form.region}
-                        onChange={(e) => onChange('constituency', e.target.value)}
-                        style={{ ...selectStyle, opacity: !form.region ? 0.5 : 1 }}
+                    <span style={labelStyle}>
+                      Constituency{' '}
+                      <span
+                        style={{
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          letterSpacing: 0,
+                          textTransform: 'none',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
                       >
-                        <option value="">Select Constituency</option>
-                        {dbConstituencies
-                          .filter(
-                            (c) => c.region_id === dbRegions.find((r) => r.name === form.region)?.id
-                          )
-                          .map((con) => (
-                            <option key={con.name} value={con.name}>
-                              {con.name}
-                            </option>
-                          ))}
-                      </select>
-                      <SelIcon />
+                        (Locked)
+                      </span>
+                    </span>
+                    <div
+                      style={{
+                        ...inputStyle,
+                        background: 'hsl(var(--container-low))',
+                        color: 'hsl(var(--on-surface-muted))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        cursor: 'not-allowed',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        lock
+                      </span>
+                      {form.constituency || 'Not set'}
                     </div>
                   </div>
                 </>

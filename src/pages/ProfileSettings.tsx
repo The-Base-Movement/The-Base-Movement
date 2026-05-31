@@ -69,29 +69,17 @@ export default function ProfileSettings() {
   const [dbCountries, setDbCountries] = useState<
     { name: string; dialing_code: string; is_diaspora: boolean }[]
   >([])
-  const [dbRegions, setDbRegions] = useState<{ id: number; name: string }[]>([])
-  const [dbConstituencies, setDbConstituencies] = useState<{ region_id: number; name: string }[]>(
-    []
-  )
 
   useEffect(() => {
     async function loadProfile() {
-      const [chapters, countries, regions] = await Promise.all([
+      const [chapters, countries] = await Promise.all([
         adminService.getChapters(),
         adminService.getCountries(),
-        adminService.getRegions(),
       ])
 
       setAvailableChapters(chapters.map((c) => c.name))
       const uniqueCountries = Array.from(new Map(countries.map((c) => [c.name, c])).values())
       setDbCountries(uniqueCountries)
-      setDbRegions(regions)
-
-      const { data: conData } = await adminService.getConstituencies()
-      const uniqueConstituencies = Array.from(
-        new Map((conData || []).map((c) => [`${c.region_id}-${c.name}`, c])).values()
-      )
-      setDbConstituencies(uniqueConstituencies)
 
       const regNo = sessionStore.getItem('userRegNo')
       if (!regNo) {
@@ -180,8 +168,6 @@ export default function ProfileSettings() {
         name: form.fullName,
         email: form.email,
         phone: form.phone,
-        region: form.region,
-        constituency: form.constituency,
         gender: form.gender,
         chapter: form.chapter,
         avatarUrl: finalAvatarUrl || undefined,
@@ -270,8 +256,6 @@ export default function ProfileSettings() {
             form={form}
             userRegNo={userRegNo}
             userPlatform={userPlatform}
-            dbRegions={dbRegions}
-            dbConstituencies={dbConstituencies}
             dbCountries={dbCountries}
             availableChapters={availableChapters}
             onChange={handleChange}
