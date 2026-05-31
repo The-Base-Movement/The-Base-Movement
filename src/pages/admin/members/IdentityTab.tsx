@@ -288,7 +288,10 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                         color: 'hsl(var(--on-surface-muted))',
                         cursor: 'pointer',
                       }}
-                      onClick={() => navigator.clipboard.writeText(psCode)}
+                      onClick={() => {
+                        navigator.clipboard.writeText(psCode)
+                        toast.success('Copied to clipboard')
+                      }}
                     >
                       content_copy
                     </span>

@@ -9,6 +9,7 @@ interface EditModalProps {
   onSave: () => void
   onClose: () => void
   isSaving: boolean
+  chapters?: string[]
 }
 
 export function EditModal({
@@ -19,6 +20,7 @@ export function EditModal({
   onSave,
   onClose,
   isSaving,
+  chapters,
 }: EditModalProps) {
   if (!isOpen || !member) return null
   return createPortal(
@@ -140,7 +142,35 @@ export function EditModal({
               >
                 {field.label}
               </label>
-              {field.type === 'select' ? (
+              {field.key === 'chapter' ? (
+                <select
+                  name={field.key}
+                  id={`input-edit-${field.key}`}
+                  value={(form[field.key as keyof typeof form] as string) ?? ''}
+                  onChange={(e) => onChange(field.key, e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: 42,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    padding: '0 12px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    fontSize: 13,
+                    background: '#fff',
+                    color: 'hsl(var(--on-surface))',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <option value="">— select chapter —</option>
+                  {(chapters ?? []).map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === 'select' ? (
                 <select
                   name={field.key}
                   id={`input-edit-${field.key}`}

@@ -235,6 +235,7 @@ export default function MembersList() {
         onSave={handleSaveEdit}
         onClose={() => setIsEditModalOpen(false)}
         isSaving={isSavingEdit}
+        chapters={chapters.map((c) => c.name)}
       />
     </div>
   )
