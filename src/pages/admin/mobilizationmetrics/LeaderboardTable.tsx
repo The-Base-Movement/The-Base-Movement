@@ -72,7 +72,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
           <thead>
             <tr>
               <th style={{ width: 60 }}>Rank</th>
-              <th>Chapter / Region</th>
+              <th>Region</th>
               <th style={{ textAlign: 'center' }}>Members</th>
               <th style={{ textAlign: 'center' }}>Badges</th>
               <th style={{ textAlign: 'right' }}>Impact points</th>
@@ -210,6 +210,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
       {/* Pagination Footer */}
       {totalPages > 1 && (
         <div
+          className="leaderboard-pagination"
           style={{
             padding: '12px 20px',
             borderTop: '1px solid hsl(var(--border))',
@@ -226,7 +227,7 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
               color: 'hsl(var(--on-surface-muted))',
             }}
           >
-            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} chapters
+            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} regions
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <button
