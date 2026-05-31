@@ -50,9 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signOut = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
     if (user) {
       await userActivityService.logActivity(user.id, 'logout', 'Signed out of account')
     }

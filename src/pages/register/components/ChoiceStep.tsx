@@ -100,7 +100,7 @@ export function ChoiceStep({
               <label className={isScanning ? 'cursor-not-allowed' : 'cursor-pointer'}>
                 <input
                   type="file"
-                  accept=".pdf,image/*,.heic,.heif,.jpg,.jpeg,.png,.csv,.doc,.docx"
+                  accept=".pdf,image/*,.heic,.heif,.jpg,.jpeg,.png,.doc,.docx"
                   className="hidden"
                   disabled={isScanning}
                   onChange={(e) => {
