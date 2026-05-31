@@ -1476,17 +1476,55 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               {children || <Outlet />}
 
               {/* Movement Slogan Footer */}
-              <footer className="mt-20 py-12 border-t border-border/10 flex flex-col items-center justify-center gap-4 opacity-50 hover:opacity-100 transition-opacity duration-500">
-                <div className="flex items-center gap-0">
-                  <div className="h-1 w-10 bg-[hsl(var(--destructive))]" />
-                  <div className="h-1 w-10 bg-[hsl(var(--accent))]" />
-                  <div className="h-1 w-10 bg-[hsl(var(--primary))]" />
+              <footer
+                style={{
+                  marginTop: 40,
+                  paddingTop: 24,
+                  paddingBottom: 24,
+                  borderTop: '1px solid hsl(var(--border) / 0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                  opacity: 0.5,
+                  transition: 'opacity 0.5s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.5')}
+              >
+                <div style={{ display: 'flex' }}>
+                  <div style={{ height: 3, width: 32, background: 'hsl(var(--destructive))' }} />
+                  <div style={{ height: 3, width: 32, background: 'hsl(var(--accent))' }} />
+                  <div style={{ height: 3, width: 32, background: 'hsl(var(--primary))' }} />
                 </div>
-                <div className="text-center space-y-1">
-                  <p className="text-micro font-medium text-on-surface/60 uppercase tracking-[.06em]">
+                <div
+                  style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 4 }}
+                >
+                  <p
+                    style={{
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 9,
+                      color: 'hsl(var(--on-surface))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                    }}
+                  >
                     Ghana First, Jobs for the Youth!
                   </p>
-                  <p className="text-[9px] font-medium text-muted-foreground/40 uppercase tracking-[.06em]">
+                  <p
+                    style={{
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 9,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                    }}
+                  >
                     © {new Date().getFullYear()} The Base Movement · Operational Command Center
                   </p>
                 </div>
