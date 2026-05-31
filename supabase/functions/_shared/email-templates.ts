@@ -284,3 +284,49 @@ export function pollClosingEmail(d: PollClosingEmailData): string {
   </div>
 ${SHELL_CLOSE}`
 }
+
+// ---------------------------------------------------------------------------
+// 05 · CSV import — account credentials
+// ---------------------------------------------------------------------------
+
+export interface CsvImportWelcomeEmailData {
+  name: string
+  regNo: string
+  phone: string
+  tempPassword: string
+  loginUrl: string
+}
+
+export function csvImportWelcomeEmail(d: CsvImportWelcomeEmailData): string {
+  return `${SHELL_OPEN}
+  <div style="background:#fff;border-radius:4px;overflow:hidden">
+    ${TOP_BAR}
+    ${emailHeader('Account setup')}
+    <div style="padding:28px 28px 24px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Welcome, ${d.name} 🇬🇭</div>
+      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1.2;color:#181d19;margin:0 0 14px">Your Base Movement account is ready.</h1>
+      <p style="line-height:1.65;color:#444;margin-bottom:20px">An administrator has set up your account. Use the credentials below to log in for the first time — you will be asked to set a new password immediately.</p>
+      <div style="background:#f6fbf4;border:1px solid #d4edda;border-radius:4px;padding:18px 20px;margin-bottom:20px">
+        <div style="font-family:'Public Sans',Arial;font-weight:800;font-size:10px;color:#006B3F;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">Your login credentials</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e8f5e9">
+          <span style="font-size:12px;color:#888;font-family:'Public Sans',Arial;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Phone</span>
+          <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:14px;color:#181d19">${d.phone}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e8f5e9">
+          <span style="font-size:12px;color:#888;font-family:'Public Sans',Arial;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Reg. No.</span>
+          <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:14px;color:#181d19">${d.regNo}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+          <span style="font-size:12px;color:#888;font-family:'Public Sans',Arial;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Temp password</span>
+          <span style="font-family:monospace;font-weight:800;font-size:15px;color:#CE1126;letter-spacing:.06em">${d.tempPassword}</span>
+        </div>
+      </div>
+      <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:4px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#7a5800;font-family:'Public Sans',Arial;font-weight:700">
+        ⚠ You must change this password after your first login. Do not share it with anyone.
+      </div>
+      ${ctaButton('Log in to The Base →', d.loginUrl)}
+    </div>
+    ${emailFooter(`You're receiving this because an administrator created your account. · thebasemovement.com`)}
+  </div>
+${SHELL_CLOSE}`
+}

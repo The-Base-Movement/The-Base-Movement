@@ -2,6 +2,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { csvImportWelcomeEmail } from '../_shared/email-templates.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,6 +42,8 @@ serve(async (req: Request) => {
     const atApiKey = Deno.env.get('AT_API_KEY')
     // @ts-expect-error: Deno global
     const atUsername = Deno.env.get('AT_USERNAME')
+    // @ts-expect-error: Deno global
+    const resendKey = Deno.env.get('RESEND_API_KEY')
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -143,6 +146,37 @@ serve(async (req: Request) => {
           console.warn(
             `[CSV-IMPORT] AT_API_KEY or AT_USERNAME not set. Generated credentials for ${member.name} (${member.reg_no}):\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}`
           )
+        }
+
+        // 4. Send email via Resend if member has an email address
+        if (resendKey && member.email) {
+          try {
+            const html = csvImportWelcomeEmail({
+              name: member.name,
+              regNo: member.reg_no,
+              phone: normalizedPhone,
+              tempPassword,
+              loginUrl: 'https://thebasemovement.com/login',
+            })
+            const emailRes = await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
+              body: JSON.stringify({
+                from: 'The Base Movement <noreply@thebasemovement.com>',
+                to: [member.email],
+                subject: 'Your Base Movement account is ready',
+                html,
+              }),
+            })
+            if (!emailRes.ok) {
+              const emailErr = await emailRes.text()
+              console.error(`[CSV-IMPORT] Resend email failed for ${member.reg_no}:`, emailErr)
+            }
+          } catch (emailErr) {
+            console.error(`[CSV-IMPORT] Email dispatch error for ${member.reg_no}:`, emailErr)
+          }
+        } else if (!resendKey) {
+          console.warn(`[CSV-IMPORT] RESEND_API_KEY not set — skipping email for ${member.reg_no}`)
         }
 
         createdUsers.push({ reg_no: member.reg_no, phone: normalizedPhone, tempPassword })
