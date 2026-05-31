@@ -16,7 +16,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
         flexDirection: 'column',
         background: '#fff',
         border: '1px solid hsl(var(--border))',
-        borderRadius: 6,
+        borderRadius: 'var(--radius-md)',
         padding: '16px',
         cursor: 'pointer',
         textAlign: 'left',
@@ -47,7 +47,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
           style={{
             width: 44,
             height: 44,
-            borderRadius: 4,
+            borderRadius: 'var(--radius-sm)',
             background: 'hsl(var(--container-low))',
             display: 'flex',
             alignItems: 'center',

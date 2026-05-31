@@ -221,6 +221,15 @@ export default function DashboardLayout() {
     closeSidebar()
   }, [location.pathname])
 
+  // Redirect to Change Password page if must_change_password is true in user metadata
+  useEffect(() => {
+    if (session?.user?.user_metadata?.must_change_password) {
+      if (location.pathname !== '/dashboard/change-password') {
+        navigate('/dashboard/change-password', { replace: true })
+      }
+    }
+  }, [session, location.pathname, navigate])
+
   // Derive initials from the stored name
   const initials = (userName || 'Member')
     .split(' ')

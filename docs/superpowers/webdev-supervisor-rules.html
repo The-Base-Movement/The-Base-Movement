@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Dev Supervisor — Rules of Engagement</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0e;
+    --surface: #0d1117;
+    --border: #1e2530;
+    --accent: #00e5ff;
+    --warn: #ff4d4d;
+    --gold: #f0b429;
+    --green: #00ff88;
+    --text: #c9d1d9;
+    --dim: #586069;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,255,0.015) 2px,
+      rgba(0,229,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 48px 64px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: 'v1.0';
+    position: absolute;
+    right: 64px;
+    top: 48px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.1s forwards;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    max-width: 520px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.2s forwards;
+  }
+
+  .manifesto-bar {
+    background: var(--accent);
+    color: #000;
+    padding: 12px 64px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    display: flex;
+    gap: 48px;
+    overflow: hidden;
+  }
+
+  .manifesto-bar span { white-space: nowrap; }
+
+  main {
+    padding: 64px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 64px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 36px;
+    position: relative;
+    transition: border-color 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--border);
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  .card:hover .card-num { color: rgba(0,229,255,0.12); }
+
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .icon-blue { background: rgba(0,229,255,0.1); }
+  .icon-red { background: rgba(255,77,77,0.1); }
+  .icon-gold { background: rgba(240,180,41,0.1); }
+  .icon-green { background: rgba(0,255,136,0.1); }
+
+  .card h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .card p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .card ul {
+    list-style: none;
+    margin-top: 12px;
+  }
+
+  .card ul li {
+    font-size: 12px;
+    line-height: 2;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .card ul li::before {
+    content: '→';
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  /* Priority cards */
+  .priority-card {
+    border-left: 3px solid transparent;
+    padding-left: 33px;
+  }
+
+  .priority-card.critical { border-left-color: var(--warn); }
+  .priority-card.high { border-left-color: var(--gold); }
+  .priority-card.standard { border-left-color: var(--accent); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .badge-red { background: rgba(255,77,77,0.15); color: var(--warn); border: 1px solid rgba(255,77,77,0.3); }
+  .badge-gold { background: rgba(240,180,41,0.15); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
+  .badge-blue { background: rgba(0,229,255,0.1); color: var(--accent); border: 1px solid rgba(0,229,255,0.3); }
+  .badge-green { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+
+  /* The Laws — full width */
+  .law-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 24px;
+    align-items: start;
+    transition: border-color 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  .law-block:hover { border-color: var(--accent); }
+
+  .law-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--accent);
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .law-content h3 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .law-content p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  /* Checklist */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+  }
+
+  .check-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    transition: border-color 0.2s;
+    cursor: default;
+    opacity: 0;
+    animation: fadeUp 0.3s ease forwards;
+  }
+
+  .check-item:hover { border-color: var(--green); }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--dim);
+    border-radius: 3px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    transition: all 0.2s;
+  }
+
+  .check-item:hover .check-box {
+    border-color: var(--green);
+    background: rgba(0,255,136,0.1);
+    color: var(--green);
+  }
+
+  /* Security table */
+  .sec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+  }
+
+  .sec-table th {
+    text-align: left;
+    padding: 12px 20px;
+    background: rgba(0,229,255,0.05);
+    color: var(--accent);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .sec-table tr:last-child td { border-bottom: none; }
+  .sec-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+
+  .dot-red { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+  .dot-gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+  .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+  /* Quote */
+  .elon-quote {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    padding: 32px 40px;
+    background: var(--surface);
+    position: relative;
+  }
+
+  .elon-quote blockquote {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: #fff;
+    font-style: italic;
+  }
+
+  .elon-quote cite {
+    display: block;
+    margin-top: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    font-style: normal;
+    letter-spacing: 2px;
+  }
+
+  .big-quote-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 120px;
+    color: rgba(0,229,255,0.06);
+    position: absolute;
+    top: -20px;
+    left: 30px;
+    line-height: 1;
+    user-select: none;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-top: 64px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stagger cards */
+  .card:nth-child(1), .law-block:nth-child(1), .check-item:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2), .law-block:nth-child(2), .check-item:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3), .law-block:nth-child(3), .check-item:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4), .law-block:nth-child(4), .check-item:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5), .law-block:nth-child(5), .check-item:nth-child(5) { animation-delay: 0.25s; }
+  .card:nth-child(6), .law-block:nth-child(6), .check-item:nth-child(6) { animation-delay: 0.3s; }
+  .card:nth-child(7), .check-item:nth-child(7) { animation-delay: 0.35s; }
+  .card:nth-child(8), .check-item:nth-child(8) { animation-delay: 0.4s; }
+  .check-item:nth-child(9) { animation-delay: 0.45s; }
+  .check-item:nth-child(10) { animation-delay: 0.5s; }
+  .check-item:nth-child(11) { animation-delay: 0.55s; }
+  .check-item:nth-child(12) { animation-delay: 0.6s; }
+
+  @media (max-width: 768px) {
+    header, main, footer { padding: 32px 24px; }
+    .manifesto-bar { padding: 12px 24px; }
+    h1 { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">// Web Dev Supervisor Protocol</div>
+  <h1>Rules of<br><span>Engagement</span></h1>
+  <p class="subtitle">A no-nonsense operating system for building, shipping, and owning web products. Move fast. Think first. Break nothing critical.</p>
+</header>
+
+<div class="manifesto-bar">
+  <span>SHIP > PERFECT</span>
+  <span>|</span>
+  <span>DELETE UNNECESSARY STEPS</span>
+  <span>|</span>
+  <span>SECURITY IS NOT OPTIONAL</span>
+  <span>|</span>
+  <span>MEASURE EVERYTHING</span>
+  <span>|</span>
+  <span>OWN YOUR DECISIONS</span>
+</div>
+
+<main>
+
+  <!-- Elon quote -->
+  <div class="elon-quote" style="opacity:0; animation: fadeUp 0.5s ease 0.3s forwards;">
+    <div class="big-quote-mark">"</div>
+    <blockquote>"The best part is no part. The best process is no process. It weighs nothing, costs nothing, can't go wrong."</blockquote>
+    <cite>— ELON MUSK · FIRST PRINCIPLES THINKING</cite>
+  </div>
+
+  <!-- AIMS -->
+  <div class="section-label">01 // Core Aims</div>
+  <div class="grid-3">
+
+    <div class="card">
+      <div class="card-num">01</div>
+      <div class="card-icon icon-blue">🎯</div>
+      <h3>Ship Working Product</h3>
+      <p>A deployed imperfect product beats a perfect repo that never goes live. Set weekly ship targets. Nothing ships without a working URL.</p>
+      <ul>
+        <li>Define "done" before you start building</li>
+        <li>Every feature must have a clear user value</li>
+        <li>Kill features that delay core launch</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-num">02</div>
+      <div class="card-icon icon-gold">⚡</div>
+      <h3>Ruthless Simplicity</h3>
+      <p>Every line of code is a liability. Every dependency is a risk. Remove before you add. Complexity is the enemy of speed.</p>
+      <ul>
+        <li>Question every npm package install</li>
+        <li>Prefer native browser APIs over libraries</li>
+        <li>No abstraction without 3 use cases to justify it</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-num">03</div>
+      <div class="card-icon icon-green">📐</div>
+      <h3>Performance Is a Feature</h3>
+      <p>Sub-2s load time is a non-negotiable target. Users don't care about your architecture; they care about speed.</p>
+      <ul>
+        <li>Lighthouse score ≥ 90 before any launch</li>
+        <li>Core Web Vitals in green on every PR</li>
+        <li>Image optimization is mandatory, not optional</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-num">04</div>
+      <div class="card-icon icon-red">💰</div>
+      <h3>Revenue-Linked Goals</h3>
+      <p>Technical decisions must map to business outcomes. Every sprint goal must answer: how does this make or save money?</p>
+      <ul>
+        <li>Track conversions, not just traffic</li>
+        <li>Monetization layer planned before build starts</li>
+        <li>Hosting/infra costs reviewed monthly</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-num">05</div>
+      <div class="card-icon icon-blue">🔁</div>
+      <h3>Iterate Fast, Break Nothing Critical</h3>
+      <p>Speed without stability is chaos. Rapid iteration is the goal — but core flows (auth, payment, data) need full regression before each push.</p>
+      <ul>
+        <li>Feature flags for risky rollouts</li>
+        <li>Rollback plan exists before every deploy</li>
+        <li>Staging environment mirrors production</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-num">06</div>
+      <div class="card-icon icon-gold">🧠</div>
+      <h3>Own the Decision</h3>
+      <p>No hiding behind "it's just how the framework works." You chose the stack. You own the consequences. Document architectural decisions.</p>
+      <ul>
+        <li>ADRs written for every major tech choice</li>
+        <li>No "I assumed" — verify and confirm</li>
+        <li>Post-mortems within 48hrs of any failure</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- LAWS -->
+  <div class="section-label">02 // The 6 Iron Laws</div>
+  <div style="display:flex; flex-direction:column; gap:2px;">
+
+    <div class="law-block">
+      <div class="law-num">I</div>
+      <div class="law-content">
+        <h3>No Deploy on Friday After 3PM</h3>
+        <p>Production changes on Friday afternoons are how you ruin weekends. Emergency hotfixes are the only exception. If it can wait until Monday, it waits.</p>
+      </div>
+    </div>
+
+    <div class="law-block">
+      <div class="law-num">II</div>
+      <div class="law-content">
+        <h3>Every Commit Must Be Reversible</h3>
+        <p>Use feature branches. Squash before merge. Tag releases. If you can't revert a change in under 5 minutes, you haven't engineered it correctly.</p>
+      </div>
+    </div>
+
+    <div class="law-block">
+      <div class="law-num">III</div>
+      <div class="law-content">
+        <h3>No Secret Config in Codebase</h3>
+        <p>API keys, DB credentials, and tokens live in environment variables only. Every .env file is in .gitignore from day zero. No exceptions, ever.</p>
+      </div>
+    </div>
+
+    <div class="law-block">
+      <div class="law-num">IV</div>
+      <div class="law-content">
+        <h3>Review Before Merge — Always</h3>
+        <p>No self-merging to main/production. At minimum, a 10-minute self-review against the checklist. On team projects, a second set of eyes is non-negotiable.</p>
+      </div>
+    </div>
+
+    <div class="law-block">
+      <div class="law-num">V</div>
+      <div class="law-content">
+        <h3>If It's Not Monitored, It Doesn't Exist</h3>
+        <p>Uptime monitoring, error tracking (Sentry or equivalent), and real user metrics must be live before any project is considered "launched." Blind deployments are amateur hour.</p>
+      </div>
+    </div>
+
+    <div class="law-block">
+      <div class="law-num">VI</div>
+      <div class="law-content">
+        <h3>Eliminate, Then Automate, Then Optimize</h3>
+        <p>Don't automate a broken process. First ask: does this step need to exist? If yes, automate it. Only then optimize. This is the Musk algorithm applied to web dev.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECURITY -->
+  <div class="section-label">03 // Security Measures</div>
+  <div style="background: var(--surface); border: 1px solid var(--border); overflow: hidden; opacity:0; animation: fadeUp 0.4s ease 0.1s forwards;">
+    <table class="sec-table">
+      <thead>
+        <tr>
+          <th>Severity</th>
+          <th>Area</th>
+          <th>Rule</th>
+          <th>Enforcement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="status-dot dot-red"></span>CRITICAL</td>
+          <td>Auth & Sessions</td>
+          <td>Never roll your own auth. Use proven providers (NextAuth, Clerk, Supabase Auth). HTTPOnly cookies, CSRF tokens mandatory.</td>
+          <td>Code review block</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-red"></span>CRITICAL</td>
+          <td>SQL / DB</td>
+          <td>Parameterized queries only. Zero raw string interpolation in SQL. ORM used or manual escaping reviewed.</td>
+          <td>Automated lint rule</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-red"></span>CRITICAL</td>
+          <td>Secrets</td>
+          <td>Secrets in .env only. git-secrets or trufflehog scan on every commit. Rotate on any suspected exposure immediately.</td>
+          <td>Pre-commit hook</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-gold"></span>HIGH</td>
+          <td>Input Validation</td>
+          <td>All user inputs validated server-side. Zod / Yup schemas on every form and API endpoint. Never trust client data.</td>
+          <td>PR checklist item</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-gold"></span>HIGH</td>
+          <td>HTTPS / Headers</td>
+          <td>HTTPS everywhere. Set: CSP, X-Frame-Options, HSTS, X-Content-Type-Options. Use helmet.js or equivalent framework defaults.</td>
+          <td>Deployment check</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-gold"></span>HIGH</td>
+          <td>Dependencies</td>
+          <td>Run `npm audit` before every deploy. No packages with critical vulnerabilities ship. Dependabot or Renovate enabled on all repos.</td>
+          <td>CI/CD gate</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-green"></span>STANDARD</td>
+          <td>Rate Limiting</td>
+          <td>Rate limiting on all API routes. Auth endpoints get stricter limits. Use Upstash Redis or equivalent for distributed rate limiting.</td>
+          <td>Code review</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-green"></span>STANDARD</td>
+          <td>File Uploads</td>
+          <td>Validate file type server-side (not by extension). Enforce size limits. Store outside webroot. Never serve user files with execute permissions.</td>
+          <td>Feature review</td>
+        </tr>
+        <tr>
+          <td><span class="status-dot dot-green"></span>STANDARD</td>
+          <td>Error Handling</td>
+          <td>Never expose stack traces to users. Log errors internally (Sentry). Return generic user-facing messages. No server info in response headers.</td>
+          <td>Code review</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CHECKS & BALANCES -->
+  <div class="section-label">04 // Pre-Deploy Checklist</div>
+  <div class="checklist-grid">
+    <div class="check-item"><div class="check-box">✓</div> Feature tested in staging</div>
+    <div class="check-item"><div class="check-box">✓</div> No console.log left in prod code</div>
+    <div class="check-item"><div class="check-box">✓</div> npm audit passed (no critical)</div>
+    <div class="check-item"><div class="check-box">✓</div> Secrets not committed to Git</div>
+    <div class="check-item"><div class="check-box">✓</div> Lighthouse ≥ 90 on target pages</div>
+    <div class="check-item"><div class="check-box">✓</div> Mobile responsiveness verified</div>
+    <div class="check-item"><div class="check-box">✓</div> Database migrations reviewed</div>
+    <div class="check-item"><div class="check-box">✓</div> Rollback plan documented</div>
+    <div class="check-item"><div class="check-box">✓</div> Error monitoring active (Sentry)</div>
+    <div class="check-item"><div class="check-box">✓</div> Uptime monitor configured</div>
+    <div class="check-item"><div class="check-box">✓</div> DNS / SSL cert valid</div>
+    <div class="check-item"><div class="check-box">✓</div> Analytics tracking confirmed</div>
+  </div>
+
+  <!-- PRIORITY FRAMEWORK -->
+  <div class="section-label">05 // Priority Framework</div>
+  <div class="grid-3">
+
+    <div class="card priority-card critical" style="animation-delay:0.05s">
+      <div class="badge badge-red">P0 — Critical</div>
+      <h3>Fix Now. Nothing Else.</h3>
+      <p>Site down, data breach, broken auth, payment failure. Drop everything. No estimates given — just fixed. Alert all stakeholders immediately.</p>
+    </div>
+
+    <div class="card priority-card high" style="animation-delay:0.1s">
+      <div class="badge badge-gold">P1 — High</div>
+      <h3>Fix This Sprint</h3>
+      <p>Major UX breakage, security vulnerability (non-critical), significant performance regression. Addressed within current sprint. No new features until resolved.</p>
+    </div>
+
+    <div class="card priority-card standard" style="animation-delay:0.15s">
+      <div class="badge badge-blue">P2 — Standard</div>
+      <h3>Scheduled Work</h3>
+      <p>Feature builds, optimizations, minor bugs. Goes into the backlog. Prioritized by revenue impact and user value — not by what's fun to build.</p>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <span>WEB DEV SUPERVISOR PROTOCOL — STIFFLER</span>
+  <span>LAST UPDATED: MAY 2026</span>
+  <span>FIRST PRINCIPLES EDITION v1.0</span>
+</footer>
+
+</body>
+</html>

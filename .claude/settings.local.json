@@ -78,7 +78,15 @@
       "Bash(scoop which *)",
       "Bash(choco list *)",
       "Bash(winget list *)",
-      "PowerShell(Get-Command *)"
+      "PowerShell(Get-Command *)",
+      "Bash(grep -n \"emoji\\\\|✓\\\\|\\\\\\\\\\\\\\\\u\" src/pages/dashboard/referrals/ReferralCard.tsx)",
+      "PowerShell(Get-Content *)",
+      "Bash(supabase db *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\src\\\\pages\\\\admin\" -Recurse)",
+      "Bash(grep -rn \"select\\('\\\\*', { count: 'exact', head: true }\\)\" src/services/ --include=\"*.ts\" -l)",
+      "Bash(grep -n 'btn btn-primary\\\\|btn btn-outline\\\\|btn btn-dest\\\\|btn btn-accent' C:/MAMP/htdocs/The-Base/src/pages/admin/__TRACKED_VAR__.tsx)",
+      "Bash(grep -n 'btn btn-primary\\\\|btn btn-outline\\\\|btn btn-dest' C:/MAMP/htdocs/The-Base/src/pages/admin/__TRACKED_VAR__.tsx)",
+      "Bash(xargs grep -L \"desktop-only\\\\|overflowX.*auto\\\\|overflowX: 'auto'\\\\|overflow.*auto\\\\|po-table-wrap\\\\|SpendingLedgerMobileList\\\\|AdministratorsMobile\")"
     ]
   },
   "enableAllProjectMcpServers": true,

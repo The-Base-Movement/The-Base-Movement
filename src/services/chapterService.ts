@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { discordService } from './discordService'
 import type {
   ChapterApplication,
   ChapterLeaderboard,
@@ -446,6 +447,26 @@ class ChapterService {
       console.error('[DATABASE] Join chapter failed:', error)
       return false
     }
+
+    // Fetch user profile for Discord notification (fire-and-forget or non-blocking async)
+    Promise.resolve(
+      supabase
+        .from('users')
+        .select('full_name, registration_number, region, country')
+        .eq('id', session.user.id)
+        .maybeSingle()
+    )
+      .then(({ data: profile }) => {
+        if (profile) {
+          discordService.chapterJoined(
+            profile.full_name || 'Anonymous',
+            profile.registration_number || '—',
+            chapterName,
+            profile.region || profile.country || '—'
+          )
+        }
+      })
+      .catch(() => {})
 
     await this.incrementChapterMemberCount(chapterName)
     return true

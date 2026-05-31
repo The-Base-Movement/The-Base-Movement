@@ -543,7 +543,7 @@
     hsl(var(--accent)),
     hsl(var(--primary))
   );
-  border-radius: 10px;
+  border-radius: var(--radius-pill);
 }
 
 /* Elite Industrial Design Tokens */
@@ -729,7 +729,7 @@ td.leadership-col-secondary {
 .kpi {
   background: #fff;
   border: 1px solid hsl(var(--border));
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   padding: 14px 16px;
   position: relative;
   overflow: hidden;
@@ -1188,7 +1188,7 @@ td.leadership-col-secondary {
 .card {
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   padding: 22px 22px 20px;
   position: relative;
   overflow: hidden;
@@ -1371,7 +1371,7 @@ td.leadership-col-secondary {
 .panel {
   background: #fff;
   border: 1px solid hsl(var(--border));
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 .ph {
@@ -1570,7 +1570,7 @@ td.leadership-col-secondary {
   justify-content: space-between;
   align-items: center;
   background: hsl(var(--container-low));
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 .compose .toolbar .left {
   display: flex;

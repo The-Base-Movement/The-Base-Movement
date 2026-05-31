@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
+import { discordService } from '@/services/discordService'
 import { DeliveryForm } from './checkout/DeliveryForm'
 import { PaymentMethodSelector } from './checkout/PaymentMethodSelector'
 
@@ -150,6 +151,14 @@ export default function Checkout() {
           { order_id: order.id }
         )
       }
+      discordService.storeOrderPlaced(
+        order.id,
+        formData.fullName,
+        total,
+        cart.length,
+        paymentMethod === 'momo' ? 'Mobile Money (MoMo)' : 'Card',
+        isDiaspora ? formData.stateProvince : formData.region
+      )
       trackEvent('store_purchase', { total: total, items: cart.length })
       toast.success('Order placed successfully! Check your email for details.')
       clearCart()

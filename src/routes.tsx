@@ -9,6 +9,9 @@ import VerifiedRoute from './components/VerifiedRoute'
 
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const VerifyOTP = lazy(() => import('./pages/VerifyOTP'))
+const ChangePassword = lazy(() => import('./pages/ChangePassword'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AdminLogin = lazy(() => import('./pages/admin/Login'))
 
@@ -172,6 +175,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/privacy', element: <Privacy /> },
           { path: '/dashboard/terms', element: <Terms /> },
           { path: '/dashboard/settings', element: <ProfileSettings /> },
+          { path: '/dashboard/change-password', element: <ChangePassword /> },
           { path: '/dashboard/activity', element: <Activity /> },
           { path: '/dashboard/jobs', element: <Jobs /> },
           { path: '/dashboard/liked', element: <LikedPosts /> },
@@ -249,6 +253,8 @@ export const routes: RouteObject[] = [
       { path: '/contact', element: <Contact /> },
       { path: '/donate', element: <Donate /> },
       { path: '/login', element: <Login /> },
+      { path: '/forgot-password', element: <ForgotPassword /> },
+      { path: '/verify-otp', element: <VerifyOTP /> },
       { path: '/store', element: <Store /> },
       { path: '/store/product/:slug', element: <ProductDetails /> },
       { path: '/store/cart', element: <Cart /> },

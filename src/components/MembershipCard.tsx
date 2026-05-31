@@ -47,7 +47,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     borderRight: '3px solid hsl(var(--primary))',
     borderTop: '3px solid hsl(var(--destructive))',
     borderBottom: '3px solid hsl(var(--accent))',
-    borderRadius: 8,
+    borderRadius: 'var(--radius-md)',
     overflow: 'hidden',
     boxShadow: isForDownload ? 'none' : '0 24px 48px -12px rgba(0,0,0,.18)',
     position: 'relative',
@@ -81,7 +81,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     padding: '2px',
     background:
       'linear-gradient(to bottom, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)))',
-    borderRadius: 4,
+    borderRadius: 'var(--radius-sm)',
     flexShrink: 0,
     position: 'relative',
     zIndex: 10,
@@ -168,7 +168,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
               width: 32,
               height: 32,
               background: '#fff',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -230,7 +230,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
               height: '100%',
               padding: '2px',
               background: 'rgba(255,255,255,0.9)',
-              borderRadius: 3,
+              borderRadius: 'var(--radius-xs)',
               cursor: onPhotoClick ? 'pointer' : 'default',
               overflow: 'hidden',
               position: 'relative',
@@ -245,7 +245,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
                   backgroundImage: `url(${avatarUrl})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center top',
-                  borderRadius: 2,
+                  borderRadius: 'var(--radius-xs)',
                 }}
               />
             ) : (
@@ -421,7 +421,7 @@ const MembershipCard: React.FC<MembershipCardProps> = (props) => {
         height: (520 / 1.6) * scale,
         position: 'relative',
         overflow: 'hidden',
-        borderRadius: 8,
+        borderRadius: 'var(--radius-md)',
         margin: '0 auto',
       }}
     >

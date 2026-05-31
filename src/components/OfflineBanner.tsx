@@ -51,7 +51,7 @@ export function OfflineBanner() {
           backdropFilter: 'blur(12px)',
           border: `1px solid ${isOnline ? 'rgba(34, 197, 94, 0.3)' : 'rgba(234, 179, 8, 0.3)'}`,
           boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15)',
-          borderRadius: 8,
+          borderRadius: 'var(--radius-md)',
           position: 'relative',
           overflow: 'hidden',
           transition: 'all 0.5s ease',

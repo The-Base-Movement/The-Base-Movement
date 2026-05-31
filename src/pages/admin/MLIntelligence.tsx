@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import {
   mlService,
   type MLHealthStatus,
@@ -193,7 +193,7 @@ export default function MLIntelligence() {
     <div className="main">
       <AdminPageHeader
         title="ML Intelligence"
-        subtitle="Predictive analytics powered by the FastAPI microservice"
+        description="Predictive analytics powered by the FastAPI microservice"
         icon="auto_awesome"
       />
 

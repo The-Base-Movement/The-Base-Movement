@@ -38,14 +38,24 @@ export default function ConstituencyDetails() {
   const [committee, setCommittee] = useState<ConstituencyLeader[]>([])
   const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
 
-  const [activeTab, setActiveTab] = useState<'members' | 'activities'>('members')
+  const [activeTab, setActiveTab] = useState<'members' | 'activities'>('activities')
   const [memberSearch, setMemberSearch] = useState('')
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
 
   // Coordinator profile details modal
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [leaderProfile, setLeaderProfile] = useState<Member | null>(null)
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!authUserId) return
+      const { data } = await supabase.from('admins').select('id').eq('id', authUserId).maybeSingle()
+      if (data) setIsAdmin(true)
+    }
+    checkAdmin()
+  }, [authUserId])
 
   useEffect(() => {
     if (!slug) return
@@ -77,10 +87,26 @@ export default function ConstituencyDetails() {
       setActivities(acts)
       setAnnouncements(announceData ?? [])
       setCommittee(comm)
+
+      // Set default tab based on role
+      const isCommitteeMember = comm.some((m) => m.memberId === authUserId)
+      const isLeader = c.leaderId === authUserId
+      const { data: adminData } = await supabase
+        .from('admins')
+        .select('id')
+        .eq('id', authUserId ?? '')
+        .maybeSingle()
+
+      if (isLeader || isCommitteeMember || !!adminData) {
+        setActiveTab('members')
+      } else {
+        setActiveTab('activities')
+      }
+
       setLoading(false)
     }
     load()
-  }, [slug])
+  }, [slug, authUserId])
 
   // Fetch coordinator avatar
   useEffect(() => {
@@ -159,6 +185,8 @@ export default function ConstituencyDetails() {
   }
 
   const isLeader = constituency.leaderId === authUserId
+  const isCommitteeMember = committee.some((m) => m.memberId === authUserId)
+  const isAuthorized = isLeader || isCommitteeMember || isAdmin
   const isActive = constituency.status === 'Active'
   const filteredMembers = members.filter((m) =>
     m.full_name?.toLowerCase().includes(memberSearch.toLowerCase())
@@ -298,15 +326,17 @@ export default function ConstituencyDetails() {
                 </span>
                 {constituency.regionName} Region, Ghana
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 16, color: 'hsl(var(--primary))' }}
-                >
-                  group
+              {isAuthorized && (
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 16, color: 'hsl(var(--primary))' }}
+                  >
+                    group
+                  </span>
+                  {members.length} Registered Members
                 </span>
-                {members.length} Registered Members
-              </span>
+              )}
             </div>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -718,149 +748,153 @@ export default function ConstituencyDetails() {
           </div>
 
           {/* Tabs for detailed listings (Members list) */}
-          <div className="panel" style={{ padding: '20px 22px' }}>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-              <button
-                className={activeTab === 'members' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
-                onClick={() => setActiveTab('members')}
-              >
-                Members ({members.length})
-              </button>
-            </div>
+          {isAuthorized && (
+            <div className="panel" style={{ padding: '20px 22px' }}>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                <button
+                  className={
+                    activeTab === 'members' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'
+                  }
+                  onClick={() => setActiveTab('members')}
+                >
+                  Members ({members.length})
+                </button>
+              </div>
 
-            {activeTab === 'members' && (
-              <div>
-                <div style={{ marginBottom: 16 }}>
-                  <input
-                    value={memberSearch}
-                    onChange={(e) => setMemberSearch(e.target.value)}
-                    placeholder="Search constituency members..."
-                    style={{
-                      height: 38,
-                      width: '100%',
-                      maxWidth: 320,
-                      padding: '0 12px',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: 'var(--radius-sm)',
-                      fontSize: 13,
-                      fontFamily: "'Public Sans', sans-serif",
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {filteredMembers.length === 0 ? (
-                    <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
-                      No members found.
-                    </p>
-                  ) : (
-                    filteredMembers.map((m) => (
-                      <div
-                        key={m.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 12,
-                          padding: '10px 14px',
-                          background: 'hsl(var(--container-low))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: 4,
-                        }}
-                      >
-                        {m.avatar_url ? (
-                          <img
-                            src={m.avatar_url}
-                            alt=""
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 'var(--radius-pill)',
-                              objectFit: 'cover',
-                            }}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 'var(--radius-pill)',
-                              background: 'hsl(var(--background))',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0,
-                            }}
-                          >
-                            <span
-                              className="material-symbols-outlined"
-                              style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
+              {activeTab === 'members' && (
+                <div>
+                  <div style={{ marginBottom: 16 }}>
+                    <input
+                      value={memberSearch}
+                      onChange={(e) => setMemberSearch(e.target.value)}
+                      placeholder="Search constituency members..."
+                      style={{
+                        height: 38,
+                        width: '100%',
+                        maxWidth: 320,
+                        padding: '0 12px',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: 13,
+                        fontFamily: "'Public Sans', sans-serif",
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {filteredMembers.length === 0 ? (
+                      <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+                        No members found.
+                      </p>
+                    ) : (
+                      filteredMembers.map((m) => (
+                        <div
+                          key={m.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 12,
+                            padding: '10px 14px',
+                            background: 'hsl(var(--container-low))',
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: 4,
+                          }}
+                        >
+                          {m.avatar_url ? (
+                            <img
+                              src={m.avatar_url}
+                              alt=""
+                              style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: 'var(--radius-pill)',
+                                objectFit: 'cover',
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: 'var(--radius-pill)',
+                                background: 'hsl(var(--background))',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                              }}
                             >
-                              person
-                            </span>
-                          </div>
-                        )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p
-                            style={{
-                              fontSize: 13,
-                              fontWeight: 'var(--font-weight-medium, 500)',
-                              color: 'hsl(var(--on-surface))',
-                              margin: 0,
-                            }}
-                          >
-                            {m.full_name}
-                          </p>
-                          {m.profession && (
+                              <span
+                                className="material-symbols-outlined"
+                                style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
+                              >
+                                person
+                              </span>
+                            </div>
+                          )}
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <p
+                              style={{
+                                fontSize: 13,
+                                fontWeight: 'var(--font-weight-medium, 500)',
+                                color: 'hsl(var(--on-surface))',
+                                margin: 0,
+                              }}
+                            >
+                              {m.full_name}
+                            </p>
+                            {m.profession && (
+                              <p
+                                style={{
+                                  fontSize: 11,
+                                  color: 'hsl(var(--on-surface-muted))',
+                                  margin: '2px 0 0',
+                                }}
+                              >
+                                {m.profession}
+                              </p>
+                            )}
+                          </div>
+                          {m.registration_number && (
+                            <span
                               style={{
                                 fontSize: 11,
                                 color: 'hsl(var(--on-surface-muted))',
-                                margin: '2px 0 0',
+                                marginRight: 8,
                               }}
                             >
-                              {m.profession}
-                            </p>
+                              {m.registration_number}
+                            </span>
                           )}
-                        </div>
-                        {m.registration_number && (
                           <span
-                            style={{
-                              fontSize: 11,
-                              color: 'hsl(var(--on-surface-muted))',
-                              marginRight: 8,
-                            }}
+                            className={`pill ${
+                              m.status === 'Active' || m.status === 'Approved'
+                                ? 'pill-ok'
+                                : 'pill-warn'
+                            }`}
                           >
-                            {m.registration_number}
+                            {m.status ?? 'Pending'}
                           </span>
-                        )}
-                        <span
-                          className={`pill ${
-                            m.status === 'Active' || m.status === 'Approved'
-                              ? 'pill-ok'
-                              : 'pill-warn'
-                          }`}
-                        >
-                          {m.status ?? 'Pending'}
-                        </span>
-                      </div>
-                    ))
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {filteredMembers.length > 0 && (
+                    <p
+                      style={{
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        marginTop: 12,
+                        margin: '12px 0 0',
+                      }}
+                    >
+                      {verifiedCount} of {members.length} members verified active
+                    </p>
                   )}
                 </div>
-                {filteredMembers.length > 0 && (
-                  <p
-                    style={{
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      marginTop: 12,
-                      margin: '12px 0 0',
-                    }}
-                  >
-                    {verifiedCount} of {members.length} members verified active
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Sidebar Column */}

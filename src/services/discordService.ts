@@ -1,4 +1,4 @@
-const WEBHOOK = import.meta.env.VITE_DISCORD_WEBHOOK_URL as string | undefined
+import { supabase } from '@/lib/supabase'
 
 interface Field {
   name: string
@@ -16,12 +16,14 @@ interface Embed {
 }
 
 function post(embed: Embed): void {
-  if (!WEBHOOK) return
-  fetch(WEBHOOK, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ embeds: [embed] }),
-  }).catch(() => {})
+  // Fire-and-forget: route through the server-side proxy Edge Function
+  supabase.functions
+    .invoke('discord-notify', {
+      body: { embeds: [embed] },
+    })
+    .catch((err) => {
+      console.warn('[DISCORD SERVICE] Failed to send notification through proxy:', err)
+    })
 }
 
 export const discordService = {
@@ -94,6 +96,65 @@ export const discordService = {
         { name: 'Author', value: author || 'Admin', inline: true },
       ],
       footer: { text: `/blog/${slug}` },
+      timestamp: new Date().toISOString(),
+    })
+  },
+
+  storeOrderPlaced(
+    orderId: string,
+    name: string,
+    totalAmount: number,
+    itemCount: number,
+    method: string,
+    regionOrState: string
+  ): void {
+    post({
+      title: '🛒 New Store Order Placed',
+      color: 0x006b3f,
+      fields: [
+        { name: 'Order ID', value: `#${orderId.substring(0, 8).toUpperCase()}`, inline: true },
+        { name: 'Customer', value: name || 'Anonymous', inline: true },
+        { name: 'Total Amount', value: `₵ ${totalAmount.toFixed(2)}`, inline: true },
+        { name: 'Items', value: `${itemCount} item${itemCount === 1 ? '' : 's'}`, inline: true },
+        { name: 'Payment Method', value: method || 'N/A', inline: true },
+        { name: 'Region/State', value: regionOrState || '—', inline: true },
+      ],
+      timestamp: new Date().toISOString(),
+    })
+  },
+
+  chapterJoined(name: string, regNo: string, chapterName: string, regionOrCountry: string): void {
+    post({
+      title: '📍 Member Joined Chapter',
+      color: 0x006b3f,
+      fields: [
+        { name: 'Patriot', value: name || '—', inline: true },
+        { name: 'Reg No', value: regNo || '—', inline: true },
+        { name: 'Chapter', value: chapterName || '—', inline: true },
+        { name: 'Region/Country', value: regionOrCountry || '—', inline: true },
+      ],
+      timestamp: new Date().toISOString(),
+    })
+  },
+
+  donationVerified(
+    name: string,
+    amount: string,
+    method: string,
+    country: string,
+    reference: string
+  ): void {
+    post({
+      title: '💰 Donation Confirmed ✅',
+      color: 0xfcd116,
+      fields: [
+        { name: 'From', value: name || 'Anonymous', inline: true },
+        { name: 'Amount', value: `₵ ${Number(amount).toLocaleString()}`, inline: true },
+        { name: 'Method', value: method || 'MTN MoMo', inline: true },
+        { name: 'Country', value: country || '—', inline: true },
+        { name: 'Reference', value: reference || '—', inline: true },
+      ],
+      footer: { text: 'Receipt Sent & Dispatched' },
       timestamp: new Date().toISOString(),
     })
   },

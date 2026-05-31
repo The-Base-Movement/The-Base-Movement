@@ -1326,6 +1326,27 @@ class AdminService {
         supabase.functions.invoke('send-donation-receipt', { body: { donationId } }).catch(() => {
           // Fire-and-forget — receipt failure must not block the verification response
         })
+
+        // Fetch donation details to notify Discord
+        Promise.resolve(
+          supabase
+            .from('donations')
+            .select('full_name, amount, payment_method, country, reference')
+            .eq('id', donationId)
+            .maybeSingle()
+        )
+          .then(({ data }) => {
+            if (data) {
+              discordService.donationVerified(
+                data.full_name || 'Anonymous',
+                data.amount?.toString() || '0',
+                data.payment_method || 'MTN MoMo',
+                data.country || 'Ghana',
+                data.reference || donationId.substring(0, 8).toUpperCase()
+              )
+            }
+          })
+          .catch(() => {})
       }
     }
     return success
