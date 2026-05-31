@@ -178,6 +178,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         { to: '/admin/logistics-intelligence', icon: 'inventory_2', label: 'Logistics' },
         { to: '/admin/mobilization-metrics', icon: 'my_location', label: 'Deployment metrics' },
         { to: '/admin/sentiment-intelligence', icon: 'psychology', label: 'Sentiment AI' },
+        { to: '/admin/ml-intelligence', icon: 'auto_awesome', label: 'ML Intelligence' },
       ],
     },
     {

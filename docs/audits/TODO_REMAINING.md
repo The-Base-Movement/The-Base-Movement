@@ -8,11 +8,12 @@ This list tracks the final engineering and integration requirements to transitio
   - [x] Implement biometric face-match for registration.
   - [x] Connect automated Ghana Card / Voter ID validation.
 - [x] **GIS Logistics Layer**: Replace SVG placeholders with a dynamic map (Mapbox GL) (Chapters completed).
-  - [ ] Integrate live warehouse inventory markers.
-  - [ ] Plot real-time fulfillment transport routes across regions.
-- [ ] **ML Intelligence Microservice**: Connect Supabase data to a Python/FastAPI service for predictive analytics. ⬅️ **NEXT UP**
-  - [ ] Implement propensity modeling for donors.
-  - [ ] Deploy sentiment-based mobilization forecasting.
+  - [x] Integrate live warehouse inventory markers.
+  - [x] Plot real-time fulfillment transport routes across regions.
+- [x] **ML Intelligence Microservice**: `ml-service/` FastAPI service implemented. See `docs/audits/ml-microservice-audit-2026-05-31.md`.
+  - [x] Implement propensity modeling for donors — weighted 4-signal scoring (donation history, activity, membership, achievements). Tiers: High / Medium / Low with recommended actions.
+  - [x] Deploy sentiment-based mobilization forecasting — regional sentiment index + 30/60/90-day membership projections per region.
+  - [ ] **Deploy to production** — push `ml-service/` to Hostinger VPS or Railway; set `VITE_ML_SERVICE_URL` in build env. ⬅️ **NEXT STEP**
 
 ## 2. Mobilization & Communication
 
