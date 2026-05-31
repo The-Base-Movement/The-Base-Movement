@@ -1,5 +1,6 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect, useRef, useCallback } from 'react'
 import { type Member, adminService } from '@/services/adminService'
+import { toast } from 'sonner'
 
 interface IdentityTabProps {
   member: Member
@@ -10,6 +11,67 @@ interface IdentityTabProps {
 export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
   const [nationalId, setNationalId] = useState<string | null>(null)
   const [revealing, setRevealing] = useState(false)
+
+  // Polling station state
+  const [psCode, setPsCode] = useState<string | null>(null)
+  const [psStatus, setPsStatus] = useState<string | null>(null)
+  const [psSearch, setPsSearch] = useState('')
+  const [psResults, setPsResults] = useState<
+    { code: string; name: string; constituency: string }[]
+  >([])
+  const [psOpen, setPsOpen] = useState(false)
+  const [psLoading, setPsLoading] = useState(false)
+  const [psAssigning, setPsAssigning] = useState(false)
+  const [selectedCode, setSelectedCode] = useState('')
+  const [selectedName, setSelectedName] = useState('')
+  const psDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!member.authId) return
+    adminService.getMemberVoterRegistration(member.authId).then((reg) => {
+      if (reg) {
+        setPsCode(reg.polling_station_id || null)
+        setPsStatus(reg.registration_status || null)
+      }
+    })
+  }, [member.authId])
+
+  const searchStations = useCallback(
+    (q: string) => {
+      if (psDebounce.current) clearTimeout(psDebounce.current)
+      if (!q.trim()) {
+        setPsResults([])
+        setPsOpen(false)
+        return
+      }
+      psDebounce.current = setTimeout(async () => {
+        setPsLoading(true)
+        const results = await adminService.getPollingStations(member.region, member.constituency, q)
+        setPsResults(results)
+        setPsOpen(results.length > 0)
+        setPsLoading(false)
+      }, 300)
+    },
+    [member.region, member.constituency]
+  )
+
+  async function handleAssign() {
+    if (!selectedCode || !member.authId) return
+    setPsAssigning(true)
+    const ok = await adminService.setMemberPollingStation(member.authId, selectedCode)
+    setPsAssigning(false)
+    if (ok) {
+      setPsCode(selectedCode)
+      setPsStatus('VERIFIED_VOTER')
+      setPsSearch('')
+      setPsResults([])
+      setSelectedCode('')
+      setSelectedName('')
+      toast.success(`Polling station ${selectedCode} assigned`)
+    } else {
+      toast.error('Failed to assign polling station')
+    }
+  }
 
   async function handleReveal() {
     setRevealing(true)
@@ -181,7 +243,252 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                   </button>
                 )}
               </dd>
+
+              {/* Polling Station */}
+              <dt
+                style={{
+                  fontSize: 9.5,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  letterSpacing: '.06em',
+                  textTransform: 'uppercase',
+                  fontFamily: "'Public Sans', sans-serif",
+                  alignSelf: 'center',
+                }}
+              >
+                Polling Station
+              </dt>
+              <dd
+                style={{
+                  margin: 0,
+                  fontSize: 12.5,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  flexWrap: 'wrap',
+                }}
+              >
+                {psCode ? (
+                  <>
+                    <span style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                      {psCode}
+                    </span>
+                    <span
+                      className={`pill ${psStatus === 'VERIFIED_VOTER' ? 'pill-ok' : 'pill-warn'}`}
+                      style={{ fontSize: 9.5 }}
+                    >
+                      {psStatus === 'VERIFIED_VOTER' ? 'Verified' : 'Pending'}
+                    </span>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        fontSize: 14,
+                        color: 'hsl(var(--on-surface-muted))',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => navigator.clipboard.writeText(psCode)}
+                    >
+                      content_copy
+                    </span>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        fontSize: 14,
+                        color: 'hsl(var(--on-surface-muted))',
+                        cursor: 'pointer',
+                      }}
+                      title="Reassign station"
+                      onClick={() => {
+                        setPsCode(null)
+                        setPsStatus(null)
+                      }}
+                    >
+                      edit
+                    </span>
+                  </>
+                ) : (
+                  <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
+                )}
+              </dd>
             </dl>
+
+            {/* Admin polling station assignment — shown when no verified station */}
+            {member.platform === 'GHANA' && (!psCode || psStatus !== 'VERIFIED_VOTER') && (
+              <div
+                style={{
+                  marginTop: 14,
+                  padding: '12px 14px',
+                  background: 'hsl(var(--container-low))',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid hsl(var(--border))',
+                }}
+              >
+                <p
+                  style={{
+                    margin: '0 0 8px',
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                  }}
+                >
+                  Assign polling station
+                </p>
+                <div style={{ position: 'relative', marginBottom: 8 }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{
+                      position: 'absolute',
+                      left: 9,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      fontSize: 14,
+                      color: 'hsl(var(--on-surface-muted))',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    search
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search by station name or code…"
+                    value={psSearch}
+                    onChange={(e) => {
+                      setPsSearch(e.target.value)
+                      searchStations(e.target.value)
+                    }}
+                    onFocus={() => {
+                      if (psResults.length > 0) setPsOpen(true)
+                    }}
+                    style={{
+                      width: '100%',
+                      height: 36,
+                      padding: '0 12px 0 30px',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontSize: 12,
+                      background: '#fff',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                  {psLoading && (
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        position: 'absolute',
+                        right: 9,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        fontSize: 14,
+                        color: 'hsl(var(--on-surface-muted))',
+                        animation: 'spin 1s linear infinite',
+                      }}
+                    >
+                      progress_activity
+                    </span>
+                  )}
+                  {psOpen && psResults.length > 0 && (
+                    <>
+                      <div
+                        style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                        onClick={() => setPsOpen(false)}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 'calc(100% + 4px)',
+                          left: 0,
+                          right: 0,
+                          background: '#fff',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: 'var(--radius-sm)',
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                          zIndex: 50,
+                          maxHeight: 200,
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {psResults.map((s) => (
+                          <button
+                            key={s.code}
+                            type="button"
+                            onClick={() => {
+                              setSelectedCode(s.code)
+                              setSelectedName(s.name)
+                              setPsSearch(`${s.code} — ${s.name}`)
+                              setPsOpen(false)
+                            }}
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              width: '100%',
+                              padding: '8px 12px',
+                              textAlign: 'left',
+                              background: 'none',
+                              border: 'none',
+                              borderBottom: '1px solid hsl(var(--border))',
+                              cursor: 'pointer',
+                              gap: 2,
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontWeight: 'var(--font-weight-medium, 500)',
+                                fontSize: 11.5,
+                                color: 'hsl(var(--on-surface))',
+                              }}
+                            >
+                              {s.code}
+                            </span>
+                            <span
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontSize: 11,
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
+                              {s.name} · {s.constituency}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+                {selectedCode && (
+                  <p
+                    style={{
+                      margin: '0 0 8px',
+                      fontSize: 11,
+                      fontFamily: "'Public Sans', sans-serif",
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Selected:{' '}
+                    <strong style={{ color: 'hsl(var(--on-surface))' }}>{selectedCode}</strong> —{' '}
+                    {selectedName}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  disabled={!selectedCode || psAssigning}
+                  onClick={handleAssign}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                    {psAssigning ? 'hourglass_empty' : 'how_to_vote'}
+                  </span>
+                  {psAssigning ? 'Assigning…' : 'Assign & verify'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

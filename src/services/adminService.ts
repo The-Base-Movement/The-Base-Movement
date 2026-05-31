@@ -2802,6 +2802,38 @@ class AdminService {
     }
     return data as string | null
   }
+
+  async getMemberVoterRegistration(authId: string): Promise<VoterRegistration | null> {
+    const { data } = await supabase
+      .from('voter_registrations')
+      .select('*')
+      .eq('user_id', authId)
+      .maybeSingle()
+    return (data as VoterRegistration) || null
+  }
+
+  async setMemberPollingStation(authId: string, code: string): Promise<boolean> {
+    const { data: existing } = await supabase
+      .from('voter_registrations')
+      .select('id')
+      .eq('user_id', authId)
+      .maybeSingle()
+    const payload = {
+      polling_station_id: code.trim().toUpperCase(),
+      registration_status: 'VERIFIED_VOTER',
+    }
+    if (existing) {
+      const { error } = await supabase
+        .from('voter_registrations')
+        .update(payload)
+        .eq('id', existing.id)
+      return !error
+    }
+    const { error } = await supabase
+      .from('voter_registrations')
+      .insert({ user_id: authId, ...payload })
+    return !error
+  }
 }
 
 export const adminService = AdminService.getInstance()
