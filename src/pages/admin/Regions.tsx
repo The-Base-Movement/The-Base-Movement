@@ -185,13 +185,13 @@ export default function AdminRegions() {
         description="Manage administrative regions and electoral jurisdictions."
         actions={
           <button
-            className="btn btn-primary"
+            className="btn btn-primary btn-sm"
             onClick={() => {
               setInputValue('')
               setAddRegionModal(true)
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add
             </span>
             Define new region

@@ -73,8 +73,8 @@ export default function AdminJobs() {
         icon="work"
         description="Post opportunities and manage member applications."
         actions={
-          <button className="btn btn-primary" onClick={() => navigate('/admin/jobs/new')}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/admin/jobs/new')}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add
             </span>
             Post Job
@@ -177,8 +177,8 @@ export default function AdminJobs() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="panel" style={{ overflowX: 'auto' }}>
+      {/* Table — desktop */}
+      <div className="panel desktop-only" style={{ overflowX: 'auto' }}>
         {loading ? (
           <p
             style={{
@@ -312,6 +312,121 @@ export default function AdminJobs() {
               ))}
             </tbody>
           </table>
+        )}
+      </div>
+
+      {/* Mobile cards */}
+      <div className="panel mobile-only" style={{ overflow: 'hidden' }}>
+        {loading ? (
+          <p
+            style={{
+              padding: 32,
+              textAlign: 'center',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            Loading jobs...
+          </p>
+        ) : jobs.length === 0 ? (
+          <p
+            style={{
+              padding: 32,
+              textAlign: 'center',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            No jobs found.
+          </p>
+        ) : (
+          jobs.map((job) => (
+            <div
+              key={job.id}
+              style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 8,
+                  marginBottom: 6,
+                }}
+              >
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface))',
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  {job.title}
+                </p>
+                <span
+                  className={`pill ${STATUS_PILL[job.status] ?? 'pill-mute'}`}
+                  style={{ fontSize: 11, flexShrink: 0 }}
+                >
+                  {job.status}
+                </span>
+              </div>
+              <p
+                style={{
+                  margin: '0 0 4px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {job.organization} · {job.job_type}
+              </p>
+              <p
+                style={{
+                  margin: '0 0 10px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {job.deadline
+                  ? new Date(job.deadline).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })
+                  : 'No deadline'}{' '}
+                · {job.application_count ?? 0} application
+                {(job.application_count ?? 0) !== 1 ? 's' : ''}
+              </p>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button
+                  className="btn btn-outline btn-sm"
+                  style={{ flex: 1 }}
+                  onClick={() => setDrawerJob(job)}
+                >
+                  Applications
+                </button>
+                <button
+                  className="btn btn-outline btn-sm"
+                  style={{ flex: 1 }}
+                  onClick={() => navigate(`/admin/jobs/${job.id}/edit`)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn-outline-dest btn-sm"
+                  style={{ flex: 1 }}
+                  onClick={() => handleDelete(job)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
         )}
       </div>
 

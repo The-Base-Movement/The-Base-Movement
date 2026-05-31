@@ -23,14 +23,14 @@ export function BlogsHeader({ onWrite }: BlogsHeaderProps) {
       description="Curate and publish movement news, updates, and public articles."
       actions={
         <>
-          <button className="btn btn-outline">
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+          <button className="btn btn-outline btn-sm">
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               download
             </span>
             Export
           </button>
-          <button className="btn btn-primary" onClick={onWrite}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+          <button className="btn btn-primary btn-sm" onClick={onWrite}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add
             </span>
             Write article

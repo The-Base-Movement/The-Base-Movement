@@ -196,14 +196,14 @@ export default function PartyOfficials() {
         description="Manage movement leadership, regional representatives, and institutional authority figures across all operational tiers."
         actions={
           <>
-            <button className="btn btn-outline" onClick={() => setIsTiersModalOpen(true)}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            <button className="btn btn-outline btn-sm" onClick={() => setIsTiersModalOpen(true)}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 layers
               </span>
               Manage Tiers
             </button>
-            <button className="btn btn-primary" onClick={() => handleOpenModal()}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            <button className="btn btn-primary btn-sm" onClick={() => handleOpenModal()}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 add
               </span>
               Add Official

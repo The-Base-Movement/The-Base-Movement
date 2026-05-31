@@ -371,8 +371,8 @@ export default function AdminModeration() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="panel" style={{ overflowX: 'auto' }}>
+      {/* Table — desktop */}
+      <div className="panel desktop-only" style={{ overflowX: 'auto' }}>
         {loading ? (
           <p
             style={{
@@ -636,6 +636,225 @@ export default function AdminModeration() {
               ))}
             </tbody>
           </table>
+        )}
+      </div>
+
+      {/* Mobile cards */}
+      <div className="panel mobile-only" style={{ overflow: 'hidden' }}>
+        {loading ? (
+          <p
+            style={{
+              padding: 32,
+              textAlign: 'center',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            Loading…
+          </p>
+        ) : tab === 'comments' ? (
+          filteredComments.length === 0 ? (
+            <p
+              style={{
+                padding: 32,
+                textAlign: 'center',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+              }}
+            >
+              {flaggedOnly ? 'No flagged comments.' : 'No comments yet.'}
+            </p>
+          ) : (
+            filteredComments.map((c) => (
+              <div
+                key={c.id}
+                style={{
+                  padding: '14px 16px',
+                  borderBottom: '1px solid hsl(var(--border))',
+                  background: c.flagged ? 'hsl(var(--destructive) / 0.04)' : undefined,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: 8,
+                    marginBottom: 4,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 13,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {c.author_name}
+                  </span>
+                  {c.flagged ? (
+                    <span className="pill pill-err" style={{ fontSize: 10, flexShrink: 0 }}>
+                      Flagged
+                    </span>
+                  ) : (
+                    <span className="pill pill-ok" style={{ fontSize: 10, flexShrink: 0 }}>
+                      OK
+                    </span>
+                  )}
+                </div>
+                {c.post_title && (
+                  <p
+                    style={{
+                      margin: '0 0 4px',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    {c.post_title}
+                  </p>
+                )}
+                <p
+                  style={{
+                    margin: '0 0 8px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    lineHeight: 1.5,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {c.content}
+                </p>
+                <p
+                  style={{
+                    margin: '0 0 10px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  {new Date(c.created_at).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </p>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {c.flagged && (
+                    <button
+                      className="btn btn-outline btn-sm"
+                      style={{ flex: 1 }}
+                      onClick={() => void unflagComment(c.id)}
+                    >
+                      Clear flag
+                    </button>
+                  )}
+                  <button
+                    className="btn btn-outline-dest btn-sm"
+                    style={{ flex: 1 }}
+                    disabled={deleting === c.id}
+                    onClick={() => void deleteComment(c.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )
+        ) : filteredReviews.length === 0 ? (
+          <p
+            style={{
+              padding: 32,
+              textAlign: 'center',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            No reviews yet.
+          </p>
+        ) : (
+          filteredReviews.map((r) => (
+            <div
+              key={r.id}
+              style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  gap: 8,
+                  marginBottom: 4,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {r.author_name}
+                </span>
+                <StarDisplay rating={r.rating} />
+              </div>
+              <p
+                style={{
+                  margin: '0 0 4px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {r.product_name ?? '—'}
+              </p>
+              {r.content && (
+                <p
+                  style={{
+                    margin: '0 0 8px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    lineHeight: 1.5,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {r.content}
+                </p>
+              )}
+              <p
+                style={{
+                  margin: '0 0 10px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {new Date(r.created_at).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </p>
+              <button
+                className="btn btn-outline-dest btn-sm"
+                style={{ width: '100%' }}
+                disabled={deleting === r.id}
+                onClick={() => void deleteReview(r.id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))
         )}
       </div>
     </div>
