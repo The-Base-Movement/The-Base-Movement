@@ -35,11 +35,19 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
     })
   }, [])
 
-  // Reposition portal dropdown whenever it opens
+  // Snapshot position whenever the dropdown opens
   useEffect(() => {
     if (psOpen && inputWrapRef.current) {
       setDropdownRect(inputWrapRef.current.getBoundingClientRect())
     }
+  }, [psOpen])
+
+  // Close on any scroll so the fixed dropdown never detaches from the input
+  useEffect(() => {
+    if (!psOpen) return
+    const close = () => setPsOpen(false)
+    window.addEventListener('scroll', close, { passive: true, capture: true })
+    return () => window.removeEventListener('scroll', close, { capture: true })
   }, [psOpen])
 
   const searchStations = useCallback((q: string, reg: string, con: string) => {
