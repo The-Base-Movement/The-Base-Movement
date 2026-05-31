@@ -10,7 +10,7 @@ This list tracks the final engineering and integration requirements to transitio
 - [x] **GIS Logistics Layer**: Replace SVG placeholders with a dynamic map (Mapbox GL) (Chapters completed).
   - [ ] Integrate live warehouse inventory markers.
   - [ ] Plot real-time fulfillment transport routes across regions.
-- [ ] **ML Intelligence Microservice**: Connect Supabase data to a Python/FastAPI service for predictive analytics.
+- [ ] **ML Intelligence Microservice**: Connect Supabase data to a Python/FastAPI service for predictive analytics. ⬅️ **NEXT UP**
   - [ ] Implement propensity modeling for donors.
   - [ ] Deploy sentiment-based mobilization forecasting.
 
@@ -19,7 +19,7 @@ This list tracks the final engineering and integration requirements to transitio
 - [ ] **SMS Gateway Integration**: Hook up Twilio or Africa's Talking for "Urgent" priority broadcasts.
   - `broadcast-dispatcher` edge function has email (Resend) and push working; SMS has a `// TODO` stub awaiting provider credentials.
 - [x] **Push Notification Deployment**: Supabase Edge Function `send-push-notification` deployed. `push_subscriptions` table live with RLS. Frontend wired via `usePushNotifications` hook, `PushPromptBanner`, and `NotificationsPanel`. Active in ChapterHub announcements and the broadcast dispatcher.
-  - Requires `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` set in Supabase secrets to activate.
+  - VAPID keys (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`) are being configured in Supabase secrets — activation imminent.
 - [x] **Transactional Email**: Resend integrated across four edge functions — welcome emails (`notify-leads`), donation receipts (`send-donation-receipt`), urgent broadcast dispatch (`broadcast-dispatcher`), poll notifications (`send-poll-notification`).
   - [ ] **Newsletter / Mailing List Sync**: Syncing registration data to a newsletter platform (Mailchimp / ConvertKit) for campaign list management is not yet implemented.
 
@@ -34,7 +34,7 @@ This list tracks the final engineering and integration requirements to transitio
 
 - [x] **Membership Card UX**: Replaced raw verification URL on physical card footer with "If found, please contact..." statement.
 - [ ] **Production RLS Audit**: Full security review of all Row Level Security policies not yet conducted. Partial fix: duplicate `member_feedback` INSERT policy removed (health scan 2026-05-29).
-- [ ] **Analytics & Tracking**: Privacy-respecting usage tracking (Plausible or Matomo) not yet implemented.
+- [x] **Analytics & Tracking**: Umami integrated — `src/components/Analytics.tsx` loads the script in production via `VITE_UMAMI_WEBSITE_ID`, `src/lib/analytics.ts` exposes a `trackEvent()` wrapper used across key flows.
 
 ## 5. Recently Completed (2026-05-29)
 
@@ -55,4 +55,6 @@ This list tracks the final engineering and integration requirements to transitio
 
 ---
 
-**Status**: `STABILIZED` | **Integrations Remaining**: 4 Primary Modules (SMS, Newsletter Sync, ML Microservice, Analytics)
+**Status**: `STABILIZED` | **Integrations Remaining**: 3 Primary Modules (SMS, Newsletter Sync, ML Microservice)
+**Blocked / Pending external action**: Resend DNS verification, Production RLS Audit
+**Next active development**: ML Intelligence Microservice (Python/FastAPI)
