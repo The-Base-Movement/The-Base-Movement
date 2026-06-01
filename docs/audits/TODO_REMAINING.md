@@ -25,6 +25,7 @@ This list tracks the final engineering and integration requirements to transitio
 - [x] **Transactional Email**: Resend integrated across four edge functions — welcome emails (`notify-leads`), donation receipts (`send-donation-receipt`), urgent broadcast dispatch (`broadcast-dispatcher`), poll notifications (`send-poll-notification`).
   - [x] **Newsletter / Mailing List Sync**: SendGrid Contacts API integrated. `sync-sendgrid-contact` edge fn fires on every new registration (via `notify-leads`). `sync-sendgrid-bulk` edge fn batch-syncs all members on-demand from the admin Members page. See `docs/audits/sendgrid-newsletter-sync-audit-2026-06-01.md`.
     - Requires: `SENDGRID_API_KEY` + optionally `SENDGRID_LIST_ID` set in Supabase secrets, and 5 custom fields created in SendGrid dashboard. Pending initial bulk sync run.
+  - [x] **Newsletter Send**: Admin page at `/admin/newsletter` — compose with TinyMCE, audience targeting (all / region / constituency / chapter / role), recipient count preview, SendGrid send via `send-newsletter` edge function, history log with search and view modal. `newsletters` table with RLS.
 
 ## 3. Automation & Optimization
 
