@@ -50,6 +50,7 @@ export default function NewsletterPage() {
         audience_type: primaryType,
         audience_value: primaryValue,
         audience_filters: filters,
+        sent_by: currentUser?.id ?? null,
       })
       setSendResult(
         `✓ Newsletter sent to ${sent.toLocaleString()} recipient${sent !== 1 ? 's' : ''}.`

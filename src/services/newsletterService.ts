@@ -29,6 +29,7 @@ export interface SendNewsletterPayload {
   audience_type: AudienceType
   audience_value: string | null
   audience_filters: AudienceFilter[]
+  sent_by?: string | null
 }
 
 export function buildAudienceLabel(type: AudienceType, value: string | null): string {
@@ -191,6 +192,7 @@ export const newsletterService = {
         audience_type: payload.audience_type,
         audience_value: payload.audience_value,
         audience_filters: payload.audience_filters,
+        sent_by: payload.sent_by ?? null,
         status: 'sent',
         error_message: null,
       },
