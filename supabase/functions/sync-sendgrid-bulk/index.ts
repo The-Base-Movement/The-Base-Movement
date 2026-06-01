@@ -138,7 +138,12 @@ Deno.serve(async (req: Request) => {
       status: 200,
     })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err)
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === 'object' && err !== null
+          ? JSON.stringify(err)
+          : String(err)
     console.error('[SENDGRID-BULK-ERROR]', message)
     return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
