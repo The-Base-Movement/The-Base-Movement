@@ -291,7 +291,26 @@ export function HistoryPanel({
                       }}
                       onClick={() => setPreviewNewsletter(n)}
                     >
-                      {n.recipient_count.toLocaleString()}
+                      <span>{n.recipient_count.toLocaleString()}</span>
+                      {n.delivered_count > 0 && (
+                        <div
+                          style={{
+                            fontSize: 10,
+                            marginTop: 2,
+                            color: 'hsl(var(--on-surface-muted))',
+                            fontFamily: "'Public Sans', sans-serif",
+                          }}
+                        >
+                          <span style={{ color: 'hsl(var(--primary))' }}>
+                            ✓{n.delivered_count.toLocaleString()}
+                          </span>
+                          {n.bounce_count > 0 && (
+                            <span style={{ color: 'hsl(var(--destructive))', marginLeft: 5 }}>
+                              ✕{n.bounce_count.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </td>
                     <td
                       style={{ padding: '10px 8px', cursor: 'pointer' }}
@@ -454,7 +473,26 @@ export function HistoryPanel({
                 }}
               >
                 {audienceLabel(previewNewsletter)} ·{' '}
-                {previewNewsletter.recipient_count.toLocaleString()} recipients ·{' '}
+                {previewNewsletter.recipient_count.toLocaleString()} recipients
+                {previewNewsletter.delivered_count > 0 && (
+                  <>
+                    {' '}
+                    ·{' '}
+                    <span style={{ color: 'hsl(var(--primary))' }}>
+                      ✓{previewNewsletter.delivered_count.toLocaleString()} delivered
+                    </span>
+                    {previewNewsletter.bounce_count > 0 && (
+                      <span style={{ color: 'hsl(var(--destructive))' }}>
+                        {' '}
+                        · ✕{previewNewsletter.bounce_count.toLocaleString()} bounced
+                      </span>
+                    )}
+                    {previewNewsletter.open_count > 0 && (
+                      <span> · {previewNewsletter.open_count.toLocaleString()} opens</span>
+                    )}
+                  </>
+                )}{' '}
+                ·{' '}
                 {new Date(previewNewsletter.sent_at).toLocaleDateString('en-GB', {
                   day: 'numeric',
                   month: 'short',

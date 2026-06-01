@@ -299,6 +299,9 @@ Deno.serve(async (req) => {
             substitutions: {
               '%%UNSUB%%': `${supabaseUrl}/functions/v1/newsletter-unsubscribe?token=${encodeToken(id)}`,
             },
+            // custom_args are echoed back in SendGrid event webhooks — used to link
+            // delivery events to the correct newsletters row
+            custom_args: { newsletter_id },
           })),
           from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
           subject,

@@ -15,6 +15,9 @@ export interface Newsletter {
   audience_value: string | null
   audience_filters: AudienceFilter[] | null
   recipient_count: number
+  delivered_count: number
+  bounce_count: number
+  open_count: number
   status: 'sent' | 'failed'
   error_message: string | null
   sent_by: string | null
