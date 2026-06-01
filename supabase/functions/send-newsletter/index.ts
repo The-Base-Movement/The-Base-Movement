@@ -101,11 +101,52 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Fetch emails for a single audience filter
+async function fetchEmailsForFilter(
+  supabase: ReturnType<typeof createClient>,
+  type: string,
+  value: string | null
+): Promise<string[]> {
+  if (type === 'role') {
+    const { data, error } = await supabase
+      .from('admins')
+      .select('id')
+      .eq('role', value ?? '')
+    if (error) throw error
+    const ids = (data ?? []).map((r: { id: string }) => r.id)
+    if (ids.length === 0) return []
+    const { data: users, error: uErr } = await supabase
+      .from('users')
+      .select('email')
+      .in('id', ids)
+      .not('email', 'is', null)
+      .neq('email', '')
+    if (uErr) throw uErr
+    return (users ?? []).map((u: { email: string }) => u.email)
+  }
+
+  let query = supabase
+    .from('users')
+    .select('email')
+    .not('email', 'is', null)
+    .neq('email', '')
+    .is('deleted_at', null)
+
+  if (type !== 'all' && value) {
+    query = query.eq(type, value)
+  }
+
+  const { data, error } = await query
+  if (error) throw error
+  return (data ?? []).map((u: { email: string }) => u.email)
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    const { newsletter_id, subject, body_html, audience_type, audience_value } = await req.json()
+    const { newsletter_id, subject, body_html, audience_type, audience_value, audience_filters } =
+      await req.json()
 
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     if (!sgKey) {
@@ -120,42 +161,20 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Fetch recipient emails based on audience
-    let emails: string[] = []
+    // Collect unique emails across all audience filters (deduplication via Set)
+    const emailSet = new Set<string>()
 
-    if (audience_type === 'role') {
-      const { data, error } = await supabase
-        .from('admins')
-        .select('id')
-        .eq('role', audience_value ?? '')
-      if (error) throw error
-      const ids = (data ?? []).map((r: { id: string }) => r.id)
-      if (ids.length > 0) {
-        const { data: users, error: uErr } = await supabase
-          .from('users')
-          .select('email')
-          .in('id', ids)
-          .not('email', 'is', null)
-          .neq('email', '')
-        if (uErr) throw uErr
-        emails = (users ?? []).map((u: { email: string }) => u.email)
-      }
-    } else {
-      let query = supabase
-        .from('users')
-        .select('email')
-        .not('email', 'is', null)
-        .neq('email', '')
-        .is('deleted_at', null)
+    const filters: Array<{ type: string; value: string | null }> =
+      Array.isArray(audience_filters) && audience_filters.length > 0
+        ? audience_filters
+        : [{ type: audience_type ?? 'all', value: audience_value ?? null }]
 
-      if (audience_type !== 'all' && audience_value) {
-        query = query.eq(audience_type, audience_value)
-      }
-
-      const { data, error } = await query
-      if (error) throw error
-      emails = (data ?? []).map((u: { email: string }) => u.email)
+    for (const filter of filters) {
+      const batch = await fetchEmailsForFilter(supabase, filter.type, filter.value)
+      for (const email of batch) emailSet.add(email)
     }
+
+    const emails = Array.from(emailSet)
 
     if (emails.length === 0) {
       await supabase
