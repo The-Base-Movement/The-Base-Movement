@@ -17,8 +17,9 @@ This list tracks the final engineering and integration requirements to transitio
 
 ## 2. Mobilization & Communication
 
-- [ ] **SMS Gateway Integration**: Hook up Twilio or Africa's Talking for "Urgent" priority broadcasts.
-  - `broadcast-dispatcher` edge function has email (Resend) and push working; SMS has a `// TODO` stub awaiting provider credentials.
+- [x] **SMS Gateway Integration**: Africa's Talking integrated in `broadcast-dispatcher` edge function for "Urgent" priority broadcasts. See `docs/audits/sms-broadcast-audit-2026-06-01.md`.
+  - Phone number normalization for Ghana numbers (0XX → +233XX). Batches 100 recipients per AT request.
+  - Requires: `AT_API_KEY` + `AT_USERNAME` set in Supabase secrets to activate. Gracefully skips if not set.
 - [x] **Push Notification Deployment**: Supabase Edge Function `send-push-notification` deployed. `push_subscriptions` table live with RLS. Frontend wired via `usePushNotifications` hook, `PushPromptBanner`, and `NotificationsPanel`. Active in ChapterHub announcements and the broadcast dispatcher.
   - VAPID keys (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`) are being configured in Supabase secrets — activation imminent.
 - [x] **Transactional Email**: Resend integrated across four edge functions — welcome emails (`notify-leads`), donation receipts (`send-donation-receipt`), urgent broadcast dispatch (`broadcast-dispatcher`), poll notifications (`send-poll-notification`).
@@ -57,6 +58,6 @@ This list tracks the final engineering and integration requirements to transitio
 
 ---
 
-**Status**: `STABILIZED` | **Integrations Remaining**: 1 Primary Module (SMS Gateway)
-**Blocked / Pending external action**: Resend DNS verification, Production RLS Audit, ML service VPS deploy, SendGrid secrets + custom fields setup
-**Next active development**: SMS Gateway Integration (Twilio / Africa's Talking)
+**Status**: `STABILIZED` | **All 3 Primary Modules implemented**
+**Blocked / Pending external action**: Resend DNS verification, Production RLS Audit, ML service VPS deploy, SendGrid secrets + custom fields setup, Africa's Talking credentials
+**Next active development**: Production RLS Audit or ML service VPS deployment
