@@ -20,7 +20,7 @@ interface MemberRow {
   id: string
   email: string
   full_name: string | null
-  reg_no: string | null
+  registration_number: string | null
   region: string | null
   constituency: string | null
   platform: string | null
@@ -89,7 +89,7 @@ Deno.serve(async (req: Request) => {
     // Fetch all members with an email
     const { data, error } = await supabase
       .from('users')
-      .select('id, email, full_name, reg_no, region, constituency, platform, status')
+      .select('id, email, full_name, registration_number, region, constituency, platform, status')
       .not('email', 'is', null)
       .neq('email', '')
 
@@ -113,7 +113,7 @@ Deno.serve(async (req: Request) => {
         first_name,
         last_name,
         custom_fields: {
-          reg_no: m.reg_no ?? '',
+          reg_no: m.registration_number ?? '',
           region: m.region ?? '',
           constituency: m.constituency ?? '',
           platform: m.platform ?? '',
