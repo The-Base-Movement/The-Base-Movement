@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
       react(),
       mode === 'production' &&
         ViteImageOptimizer({
+          exclude: ['**/flags/**'],
           png: { compressionLevel: 9, adaptiveFiltering: true },
           jpeg: { quality: 90, mozjpeg: true },
           jpg: { quality: 90, mozjpeg: true },
@@ -25,7 +26,6 @@ export default defineConfig(({ mode }) => {
             plugins: [
               {
                 name: 'preset-default',
-                params: { overrides: { removeViewBox: false } },
               },
             ],
           } as SVGOConfig,
