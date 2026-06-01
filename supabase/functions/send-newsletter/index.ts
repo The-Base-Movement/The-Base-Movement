@@ -103,7 +103,7 @@ function broadcastEmail(d: BroadcastEmailData): string {
       ${d.body}
       ${ctaButton(d.ctaLabel, d.ctaUrl)}
     </div>
-    ${emailFooter(`You're receiving this because you are a verified member of The Base. · <a href="#" style="color:#aaa">Unsubscribe</a><br>The Base Movement · Accra, Ghana · nevermind-beta.vercel.app`)}
+    ${emailFooter(`You're receiving this because you are a verified member of The Base. · <a href="%%UNSUB%%" style="color:#aaa">Unsubscribe</a><br>The Base Movement · Accra, Ghana · nevermind-beta.vercel.app`)}
   </div>
 ${SHELL_CLOSE}`
 }
@@ -113,12 +113,17 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Fetch emails for a single audience filter
-async function fetchEmailsForFilter(
+interface Recipient {
+  email: string
+  id: string
+}
+
+// Fetch {email, id} pairs for a single audience filter, respecting opt-out
+async function fetchRecipientsForFilter(
   supabase: ReturnType<typeof createClient>,
   type: string,
   value: string | null
-): Promise<string[]> {
+): Promise<Recipient[]> {
   if (type === 'role') {
     const { data, error } = await supabase
       .from('admins')
@@ -129,20 +134,22 @@ async function fetchEmailsForFilter(
     if (ids.length === 0) return []
     const { data: users, error: uErr } = await supabase
       .from('users')
-      .select('email')
+      .select('id, email')
       .in('id', ids)
       .not('email', 'is', null)
       .neq('email', '')
+      .eq('newsletter_opt_out', false)
     if (uErr) throw uErr
-    return (users ?? []).map((u: { email: string }) => u.email)
+    return (users ?? []).map((u: { id: string; email: string }) => ({ id: u.id, email: u.email }))
   }
 
   let query = supabase
     .from('users')
-    .select('email')
+    .select('id, email')
     .not('email', 'is', null)
     .neq('email', '')
     .is('deleted_at', null)
+    .eq('newsletter_opt_out', false)
 
   if (type !== 'all' && value) {
     query = query.eq(type, value)
@@ -150,7 +157,7 @@ async function fetchEmailsForFilter(
 
   const { data, error } = await query
   if (error) throw error
-  return (data ?? []).map((u: { email: string }) => u.email)
+  return (data ?? []).map((u: { id: string; email: string }) => ({ id: u.id, email: u.email }))
 }
 
 Deno.serve(async (req) => {
@@ -173,40 +180,71 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Collect unique emails across all audience filters (deduplication via Set)
-    const emailSet = new Set<string>()
+    // Collect unique {email, id} pairs — deduplicated by email via Map
+    const recipientMap = new Map<string, string>() // email → id
 
     const filters: Array<{ type: string; value: string | null }> =
       Array.isArray(audience_filters) && audience_filters.length > 0
         ? audience_filters
         : [{ type: audience_type ?? 'all', value: audience_value ?? null }]
 
-    // Batch all constituency filters into one IN(...) query; run others individually
+    // Batch all constituency filters into one IN(...) query
     const constituencyValues = filters
       .filter((f) => f.type === 'constituency' && f.value)
       .map((f) => f.value as string)
-    const otherFilters = filters.filter((f) => f.type !== 'constituency')
+
+    // Batch all chapter filters into one IN(...) query
+    const chapterValues = filters
+      .filter((f) => f.type === 'chapter' && f.value)
+      .map((f) => f.value as string)
+
+    const otherFilters = filters.filter((f) => f.type !== 'constituency' && f.type !== 'chapter')
 
     if (constituencyValues.length > 0) {
       const { data, error } = await supabase
         .from('users')
-        .select('email')
+        .select('id, email')
         .not('email', 'is', null)
         .neq('email', '')
         .is('deleted_at', null)
+        .eq('newsletter_opt_out', false)
         .in('constituency', constituencyValues)
       if (error) throw error
-      for (const u of data ?? []) emailSet.add((u as { email: string }).email)
+      for (const u of data ?? []) {
+        const { id, email } = u as { id: string; email: string }
+        if (!recipientMap.has(email)) recipientMap.set(email, id)
+      }
+    }
+
+    if (chapterValues.length > 0) {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, email')
+        .not('email', 'is', null)
+        .neq('email', '')
+        .is('deleted_at', null)
+        .eq('newsletter_opt_out', false)
+        .in('chapter', chapterValues)
+      if (error) throw error
+      for (const u of data ?? []) {
+        const { id, email } = u as { id: string; email: string }
+        if (!recipientMap.has(email)) recipientMap.set(email, id)
+      }
     }
 
     for (const filter of otherFilters) {
-      const batch = await fetchEmailsForFilter(supabase, filter.type, filter.value)
-      for (const email of batch) emailSet.add(email)
+      const batch = await fetchRecipientsForFilter(supabase, filter.type, filter.value)
+      for (const r of batch) {
+        if (!recipientMap.has(r.email)) recipientMap.set(r.email, r.id)
+      }
     }
 
-    const emails = Array.from(emailSet)
+    const recipients: Recipient[] = Array.from(recipientMap.entries()).map(([email, id]) => ({
+      email,
+      id,
+    }))
 
-    if (emails.length === 0) {
+    if (recipients.length === 0) {
       await supabase
         .from('newsletters')
         .update({ recipient_count: 0, status: 'sent', sent_at: new Date().toISOString() })
@@ -217,7 +255,10 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Build branded HTML
+    // Build the base URL for unsubscribe links
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+
+    // Build branded HTML — footer uses %%UNSUB%% substitution tag
     const html = broadcastEmail({
       subject,
       preheader: subject,
@@ -226,10 +267,15 @@ Deno.serve(async (req) => {
       ctaUrl: 'https://nevermind-beta.vercel.app/dashboard',
     })
 
+    // Helper: URL-safe base64 encode a user UUID
+    function encodeToken(id: string): string {
+      return btoa(id).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+    }
+
     // Send in batches
     let batchCount = 0
-    for (let i = 0; i < emails.length; i += BATCH_SIZE) {
-      const batch = emails.slice(i, i + BATCH_SIZE)
+    for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+      const batch = recipients.slice(i, i + BATCH_SIZE)
       const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
@@ -237,7 +283,12 @@ Deno.serve(async (req) => {
           Authorization: `Bearer ${sgKey}`,
         },
         body: JSON.stringify({
-          personalizations: batch.map((email) => ({ to: [{ email }] })),
+          personalizations: batch.map(({ email, id }) => ({
+            to: [{ email }],
+            substitutions: {
+              '%%UNSUB%%': `${supabaseUrl}/functions/v1/newsletter-unsubscribe?token=${encodeToken(id)}`,
+            },
+          })),
           from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
           subject,
           content: [{ type: 'text/html', value: html }],
@@ -254,16 +305,20 @@ Deno.serve(async (req) => {
       }
 
       batchCount++
-      console.warn(`[NEWSLETTER] Batch ${batchCount} sent (${batch.length} emails)`)
+      console.warn(`[NEWSLETTER] Batch ${batchCount} sent (${batch.length} recipients)`)
     }
 
     // Update record with final counts
     await supabase
       .from('newsletters')
-      .update({ recipient_count: emails.length, status: 'sent', sent_at: new Date().toISOString() })
+      .update({
+        recipient_count: recipients.length,
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      })
       .eq('id', newsletter_id)
 
-    return new Response(JSON.stringify({ sent: emails.length, batches: batchCount }), {
+    return new Response(JSON.stringify({ sent: recipients.length, batches: batchCount }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })

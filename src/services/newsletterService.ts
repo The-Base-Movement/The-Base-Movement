@@ -110,6 +110,7 @@ export const newsletterService = {
       .not('email', 'is', null)
       .neq('email', '')
       .is('deleted_at', null)
+      .eq('newsletter_opt_out', false)
 
     if (type !== 'all' && value) {
       query = query.eq(type, value)
@@ -156,6 +157,7 @@ export const newsletterService = {
       .not('email', 'is', null)
       .neq('email', '')
       .is('deleted_at', null)
+      .eq('newsletter_opt_out', false)
       .in('constituency', constituencies)
     if (error) throw error
     return count ?? 0
@@ -169,6 +171,7 @@ export const newsletterService = {
       .not('email', 'is', null)
       .neq('email', '')
       .is('deleted_at', null)
+      .eq('newsletter_opt_out', false)
       .in('chapter', chapters)
     if (error) throw error
     return count ?? 0
