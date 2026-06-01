@@ -75,16 +75,28 @@ interface SimpleFilterRowProps {
   onChange: (f: AudienceFilter) => void
   onRemove: () => void
   showRemove: boolean
+  preloadedOptions?: string[]
 }
 
-function SimpleFilterRow({ filter, onChange, onRemove, showRemove }: SimpleFilterRowProps) {
+function SimpleFilterRow({
+  filter,
+  onChange,
+  onRemove,
+  showRemove,
+  preloadedOptions,
+}: SimpleFilterRowProps) {
   const [options, setOptions] = useState<string[]>([])
 
   useEffect(() => {
     if (filter.type === 'all') return
     let cancelled = false
-    newsletterService
-      .getAudienceOptions(filter.type as Exclude<AudienceType, 'all' | 'multi'>)
+    const resolve = (): Promise<string[]> =>
+      preloadedOptions && preloadedOptions.length > 0
+        ? Promise.resolve(preloadedOptions)
+        : newsletterService.getAudienceOptions(
+            filter.type as Exclude<AudienceType, 'all' | 'multi'>
+          )
+    resolve()
       .then((data) => {
         if (!cancelled) setOptions(data)
       })
@@ -92,7 +104,7 @@ function SimpleFilterRow({ filter, onChange, onRemove, showRemove }: SimpleFilte
     return () => {
       cancelled = true
     }
-  }, [filter.type])
+  }, [filter.type, preloadedOptions])
 
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
@@ -495,15 +507,21 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     { id: uid(), type: 'simple', filter: { type: 'all', value: null } },
   ])
   const [totalCount, setTotalCount] = useState<number | null>(null)
+  const [allRegions, setAllRegions] = useState<string[]>([])
   const [regionsData, setRegionsData] = useState<RegionsData | null>(null)
 
-  // Fetch regions + constituencies once
+  // Pre-fetch all regions (for SimpleFilterRow) + region→constituency map (for ConstituencySlotRow)
   useEffect(() => {
     let cancelled = false
-    newsletterService
-      .getRegionsWithConstituencies()
-      .then((data) => {
-        if (!cancelled) setRegionsData(data)
+    Promise.all([
+      newsletterService.getAudienceOptions('region'),
+      newsletterService.getRegionsWithConstituencies(),
+    ])
+      .then(([regions, rData]) => {
+        if (!cancelled) {
+          setAllRegions(regions)
+          setRegionsData(rData)
+        }
       })
       .catch(() => {})
     return () => {
@@ -683,11 +701,10 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
             <SimpleFilterRow
               key={slot.id}
               filter={slot.filter}
+              preloadedOptions={slot.filter.type === 'region' ? allRegions : undefined}
               onChange={(f) => updateSimpleSlot(slot.id, f)}
               onRemove={() => removeSlot(slot.id)}
-              showRemove={
-                slots.length > 1 || (slots.length === 1 && slot.type === 'simple' && false)
-              }
+              showRemove={slots.length > 1}
             />
           ) : (
             <ConstituencySlotRow
