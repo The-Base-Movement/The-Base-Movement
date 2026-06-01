@@ -53,7 +53,7 @@ export const newsletterService = {
       return [...new Set((data ?? []).map((r: { role: string }) => r.role))].sort()
     }
 
-    const col = type
+    const col = type as 'region' | 'constituency' | 'chapter'
     const { data, error } = await supabase
       .from('users')
       .select(col)
@@ -61,7 +61,9 @@ export const newsletterService = {
       .neq(col, '')
       .is('deleted_at', null)
     if (error) throw error
-    return [...new Set((data ?? []).map((r: Record<string, string>) => r[col]))].sort()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rows = (data ?? []) as any[]
+    return [...new Set(rows.map((r: Record<string, string>) => r[col]))].filter(Boolean).sort()
   },
 
   async getRecipientCount(type: AudienceType, value: string | null): Promise<number> {
