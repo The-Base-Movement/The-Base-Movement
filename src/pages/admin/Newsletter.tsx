@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { newsletterService } from '@/services/newsletterService'
 import type { AudienceType, Newsletter } from '@/services/newsletterService'
+import { adminService } from '@/services/adminService'
 import { ComposePanel } from './newsletter/ComposePanel'
 import { HistoryPanel } from './newsletter/HistoryPanel'
 
@@ -9,6 +10,9 @@ export default function NewsletterPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSending, setIsSending] = useState(false)
   const [sendResult, setSendResult] = useState<string | null>(null)
+
+  const currentUser = adminService.getCurrentUser()
+  const canDelete = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'FOUNDER'
 
   const fetchNewsletters = useCallback(async () => {
     setIsLoading(true)
@@ -207,7 +211,15 @@ export default function NewsletterPage() {
       <ComposePanel isSending={isSending} onSend={handleSend} />
 
       <div style={{ marginTop: 20 }}>
-        <HistoryPanel newsletters={newsletters} isLoading={isLoading} />
+        <HistoryPanel
+          newsletters={newsletters}
+          isLoading={isLoading}
+          canDelete={canDelete}
+          onDelete={async (ids) => {
+            await newsletterService.deleteNewsletters(ids)
+            await fetchNewsletters()
+          }}
+        />
       </div>
     </div>
   )
