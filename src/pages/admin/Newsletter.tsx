@@ -85,15 +85,68 @@ export default function NewsletterPage() {
     send(n.subject, n.body_html, filters as AudienceFilter[])
   }
 
-  // KPI derivations
-  const thisMonth = newsletters.filter((n) => {
+  async function handleSchedule(
+    subject: string,
+    bodyHtml: string,
+    filters: AudienceFilter[],
+    scheduledAt: string
+  ) {
+    setIsSending(true)
+    setSendResult(null)
+    const id = crypto.randomUUID()
+    const isMulti = filters.length > 1
+    const primaryType = isMulti ? 'multi' : (filters[0]?.type ?? 'all')
+    const primaryValue = isMulti ? null : (filters[0]?.value ?? null)
+    try {
+      await newsletterService.scheduleNewsletter({
+        newsletter_id: id,
+        subject,
+        body_html: bodyHtml,
+        audience_type: primaryType,
+        audience_value: primaryValue,
+        audience_filters: filters,
+        scheduled_at: scheduledAt,
+        sent_by: currentUser?.id ?? null,
+      })
+      setSendResult(
+        `✓ Newsletter scheduled for ${new Date(scheduledAt).toLocaleString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })}.`
+      )
+      fetchNewsletters()
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      setSendResult(`✗ Schedule failed: ${msg}`)
+    } finally {
+      setIsSending(false)
+    }
+  }
+
+  async function handleCancel(id: string) {
+    try {
+      await newsletterService.cancelScheduled(id)
+      fetchNewsletters()
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      setSendResult(`✗ Cancel failed: ${msg}`)
+    }
+  }
+
+  // KPI derivations — only count rows that actually sent
+  const sentNewsletters = newsletters.filter((n) => n.status === 'sent')
+  const thisMonth = sentNewsletters.filter((n) => {
+    if (!n.sent_at) return false
     const d = new Date(n.sent_at)
     const now = new Date()
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   }).length
-  const totalRecipients = newsletters.reduce((sum, n) => sum + n.recipient_count, 0)
-  const lastSent = newsletters[0]
-    ? new Date(newsletters[0].sent_at).toLocaleDateString('en-GB', {
+  const totalRecipients = sentNewsletters.reduce((sum, n) => sum + n.recipient_count, 0)
+  const lastSent = sentNewsletters[0]?.sent_at
+    ? new Date(sentNewsletters[0].sent_at).toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
@@ -103,7 +156,7 @@ export default function NewsletterPage() {
   const kpis = [
     {
       label: 'Total sent',
-      value: newsletters.length.toLocaleString(),
+      value: sentNewsletters.length.toLocaleString(),
       bar: 'hsl(var(--on-surface))',
     },
     { label: 'Sent this month', value: thisMonth.toLocaleString(), bar: 'hsl(var(--primary))' },
@@ -234,7 +287,7 @@ export default function NewsletterPage() {
         </div>
       )}
 
-      <ComposePanel isSending={isSending} onSend={handleSend} />
+      <ComposePanel isSending={isSending} onSend={handleSend} onSchedule={handleSchedule} />
 
       <div style={{ marginTop: 20 }}>
         <HistoryPanel
@@ -247,6 +300,7 @@ export default function NewsletterPage() {
           }}
           onResend={handleResend}
           onDuplicate={handleDuplicate}
+          onCancel={handleCancel}
         />
       </div>
     </div>

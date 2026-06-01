@@ -18,10 +18,11 @@ export interface Newsletter {
   delivered_count: number
   bounce_count: number
   open_count: number
-  status: 'sent' | 'failed'
+  status: 'sent' | 'failed' | 'scheduled'
   error_message: string | null
   sent_by: string | null
-  sent_at: string
+  sent_at: string | null
+  scheduled_at: string | null
   created_at: string
 }
 
@@ -32,6 +33,17 @@ export interface SendNewsletterPayload {
   audience_type: AudienceType
   audience_value: string | null
   audience_filters: AudienceFilter[]
+  sent_by?: string | null
+}
+
+export interface ScheduleNewsletterPayload {
+  newsletter_id: string
+  subject: string
+  body_html: string
+  audience_type: AudienceType
+  audience_value: string | null
+  audience_filters: AudienceFilter[]
+  scheduled_at: string // ISO 8601 UTC
   sent_by?: string | null
 }
 
@@ -57,7 +69,7 @@ export const newsletterService = {
     const { data, error } = await supabase
       .from('newsletters')
       .select('*')
-      .order('sent_at', { ascending: false })
+      .order('created_at', { ascending: false })
     if (error) throw error
     return (data ?? []) as Newsletter[]
   },
@@ -183,6 +195,34 @@ export const newsletterService = {
 
   async deleteNewsletters(ids: string[]): Promise<void> {
     const { error } = await supabase.from('newsletters').delete().in('id', ids)
+    if (error) throw error
+  },
+
+  async scheduleNewsletter(payload: ScheduleNewsletterPayload): Promise<void> {
+    const { error } = await supabase.from('newsletters').upsert(
+      {
+        id: payload.newsletter_id,
+        subject: payload.subject,
+        body_html: payload.body_html,
+        audience_type: payload.audience_type,
+        audience_value: payload.audience_value,
+        audience_filters: payload.audience_filters,
+        scheduled_at: payload.scheduled_at,
+        sent_by: payload.sent_by ?? null,
+        status: 'scheduled',
+        error_message: null,
+      },
+      { onConflict: 'id' }
+    )
+    if (error) throw error
+  },
+
+  async cancelScheduled(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('newsletters')
+      .delete()
+      .eq('id', id)
+      .eq('status', 'scheduled')
     if (error) throw error
   },
 

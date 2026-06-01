@@ -9,6 +9,7 @@ interface HistoryPanelProps {
   onDelete: (ids: string[]) => Promise<void>
   onResend: (newsletter: Newsletter) => void
   onDuplicate: (newsletter: Newsletter) => void
+  onCancel: (id: string) => Promise<void>
 }
 
 function audienceLabel(n: Newsletter): string {
@@ -25,6 +26,7 @@ export function HistoryPanel({
   onDelete,
   onResend,
   onDuplicate,
+  onCancel,
 }: HistoryPanelProps) {
   const [search, setSearch] = useState('')
   const [previewNewsletter, setPreviewNewsletter] = useState<Newsletter | null>(null)
@@ -102,7 +104,9 @@ export function HistoryPanel({
                 fontFamily: "'Public Sans', sans-serif",
               }}
             >
-              {newsletters.length} newsletter{newsletters.length !== 1 ? 's' : ''} sent
+              {newsletters.filter((n) => n.status === 'sent').length} sent
+              {newsletters.some((n) => n.status === 'scheduled') &&
+                ` · ${newsletters.filter((n) => n.status === 'scheduled').length} scheduled`}
             </p>
           </div>
 
@@ -251,11 +255,23 @@ export function HistoryPanel({
                       }}
                       onClick={() => setPreviewNewsletter(n)}
                     >
-                      {new Date(n.sent_at).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {n.status === 'scheduled' && n.scheduled_at ? (
+                        <span style={{ color: 'hsl(var(--accent))' }}>
+                          {new Date(n.scheduled_at).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      ) : n.sent_at ? (
+                        new Date(n.sent_at).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                      ) : (
+                        '—'
+                      )}
                     </td>
                     <td
                       style={{
@@ -316,7 +332,15 @@ export function HistoryPanel({
                       style={{ padding: '10px 8px', cursor: 'pointer' }}
                       onClick={() => setPreviewNewsletter(n)}
                     >
-                      <span className={n.status === 'sent' ? 'pill pill-ok' : 'pill pill-err'}>
+                      <span
+                        className={
+                          n.status === 'sent'
+                            ? 'pill pill-ok'
+                            : n.status === 'scheduled'
+                              ? 'pill pill-warn'
+                              : 'pill pill-err'
+                        }
+                      >
                         {n.status}
                       </span>
                     </td>
@@ -336,6 +360,21 @@ export function HistoryPanel({
                             refresh
                           </span>
                           Resend
+                        </button>
+                      ) : n.status === 'scheduled' ? (
+                        <button
+                          className="btn btn-outline-dest btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            void onCancel(n.id)
+                          }}
+                          title="Cancel scheduled send"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                            cancel
+                          </span>
+                          Cancel
                         </button>
                       ) : (
                         <button
@@ -472,42 +511,66 @@ export function HistoryPanel({
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                {audienceLabel(previewNewsletter)} ·{' '}
-                {previewNewsletter.recipient_count.toLocaleString()} recipients
-                {previewNewsletter.delivered_count > 0 && (
+                {audienceLabel(previewNewsletter)}
+                {previewNewsletter.status === 'scheduled' ? (
                   <>
                     {' '}
                     ·{' '}
-                    <span style={{ color: 'hsl(var(--primary))' }}>
-                      ✓{previewNewsletter.delivered_count.toLocaleString()} delivered
+                    <span style={{ color: 'hsl(var(--accent))' }}>
+                      Scheduled for{' '}
+                      {previewNewsletter.scheduled_at
+                        ? new Date(previewNewsletter.scheduled_at).toLocaleString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : '—'}
                     </span>
-                    {previewNewsletter.bounce_count > 0 && (
-                      <span style={{ color: 'hsl(var(--destructive))' }}>
+                  </>
+                ) : (
+                  <>
+                    {' '}
+                    · {previewNewsletter.recipient_count.toLocaleString()} recipients
+                    {previewNewsletter.delivered_count > 0 && (
+                      <>
                         {' '}
-                        · ✕{previewNewsletter.bounce_count.toLocaleString()} bounced
+                        ·{' '}
+                        <span style={{ color: 'hsl(var(--primary))' }}>
+                          ✓{previewNewsletter.delivered_count.toLocaleString()} delivered
+                        </span>
+                        {previewNewsletter.bounce_count > 0 && (
+                          <span style={{ color: 'hsl(var(--destructive))' }}>
+                            {' '}
+                            · ✕{previewNewsletter.bounce_count.toLocaleString()} bounced
+                          </span>
+                        )}
+                        {previewNewsletter.open_count > 0 && (
+                          <span> · {previewNewsletter.open_count.toLocaleString()} opens</span>
+                        )}
+                      </>
+                    )}{' '}
+                    ·{' '}
+                    {previewNewsletter.sent_at
+                      ? new Date(previewNewsletter.sent_at).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                      : '—'}
+                    {previewNewsletter.status === 'failed' && (
+                      <span
+                        style={{
+                          marginLeft: 8,
+                          color: 'hsl(var(--destructive))',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                        }}
+                      >
+                        · Failed
                       </span>
                     )}
-                    {previewNewsletter.open_count > 0 && (
-                      <span> · {previewNewsletter.open_count.toLocaleString()} opens</span>
-                    )}
                   </>
-                )}{' '}
-                ·{' '}
-                {new Date(previewNewsletter.sent_at).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                })}
-                {previewNewsletter.status === 'failed' && (
-                  <span
-                    style={{
-                      marginLeft: 8,
-                      color: 'hsl(var(--destructive))',
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                    }}
-                  >
-                    · Failed
-                  </span>
                 )}
               </p>
             </div>
@@ -525,6 +588,21 @@ export function HistoryPanel({
                     refresh
                   </span>
                   Resend
+                </button>
+              ) : previewNewsletter.status === 'scheduled' ? (
+                <button
+                  className="btn btn-outline-dest btn-sm"
+                  onClick={() => {
+                    void onCancel(previewNewsletter.id)
+                    setPreviewNewsletter(null)
+                  }}
+                  title="Cancel this scheduled newsletter"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                    cancel
+                  </span>
+                  Cancel scheduled
                 </button>
               ) : (
                 <button

@@ -798,9 +798,15 @@ function ChapterSlotRow({
 interface ComposePanelProps {
   isSending: boolean
   onSend: (subject: string, bodyHtml: string, filters: AudienceFilter[]) => void
+  onSchedule: (
+    subject: string,
+    bodyHtml: string,
+    filters: AudienceFilter[],
+    scheduledAt: string
+  ) => void
 }
 
-export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
+export function ComposePanel({ isSending, onSend, onSchedule }: ComposePanelProps) {
   const editorRef = useRef<{ getContent: () => string } | null>(null)
   const [subject, setSubject] = useState('')
   const [slots, setSlots] = useState<FilterSlot[]>([
@@ -810,6 +816,8 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
   const [allRegions, setAllRegions] = useState<string[]>([])
   const [regionsData, setRegionsData] = useState<RegionsData | null>(null)
   const [allChapters, setAllChapters] = useState<string[]>([])
+  const [scheduleMode, setScheduleMode] = useState(false)
+  const [scheduledAt, setScheduledAt] = useState('')
 
   // Pre-fetch reference data for slot pickers
   useEffect(() => {
@@ -928,12 +936,20 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     onSend(subject, body, filters)
   }
 
+  function handleSchedule() {
+    const body = editorRef.current?.getContent() ?? ''
+    onSchedule(subject, body, filters, new Date(scheduledAt).toISOString())
+  }
+
+  const scheduledAtValid = scheduleMode ? scheduledAt.length > 0 : true
+
   const canSend =
     !isSending &&
     subject.trim().length > 0 &&
     filtersComplete &&
     filters.length > 0 &&
-    (totalCount === null || totalCount > 0)
+    (totalCount === null || totalCount > 0) &&
+    scheduledAtValid
 
   const labelStyle: React.CSSProperties = {
     display: 'block',
@@ -1134,18 +1150,99 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
         />
       </div>
 
-      {/* Send button */}
-      <button
-        className="btn btn-primary"
-        onClick={handleSend}
-        disabled={!canSend}
-        style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-      >
-        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-          send
-        </span>
-        {isSending ? 'Sending…' : 'Send newsletter'}
-      </button>
+      {/* Send / Schedule row */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
+        {/* Mode toggle */}
+        <div
+          style={{
+            display: 'flex',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            overflow: 'hidden',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setScheduleMode(false)}
+            style={{
+              padding: '6px 12px',
+              fontSize: 12,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              border: 'none',
+              cursor: 'pointer',
+              background: !scheduleMode ? 'hsl(var(--primary))' : 'transparent',
+              color: !scheduleMode ? '#fff' : 'hsl(var(--on-surface))',
+            }}
+          >
+            Send now
+          </button>
+          <button
+            type="button"
+            onClick={() => setScheduleMode(true)}
+            style={{
+              padding: '6px 12px',
+              fontSize: 12,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              border: 'none',
+              borderLeft: '1px solid hsl(var(--border))',
+              cursor: 'pointer',
+              background: scheduleMode ? 'hsl(var(--accent))' : 'transparent',
+              color: scheduleMode ? '#fff' : 'hsl(var(--on-surface))',
+            }}
+          >
+            Schedule
+          </button>
+        </div>
+
+        {/* Datetime picker (schedule mode only) */}
+        {scheduleMode && (
+          <input
+            type="datetime-local"
+            value={scheduledAt}
+            onChange={(e) => setScheduledAt(e.target.value)}
+            style={{
+              padding: '6px 10px',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: 12,
+              fontFamily: "'Public Sans', sans-serif",
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
+        )}
+
+        {/* Action button */}
+        {scheduleMode ? (
+          <button
+            className="btn btn-accent"
+            onClick={handleSchedule}
+            disabled={!canSend}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              schedule_send
+            </span>
+            Schedule newsletter
+          </button>
+        ) : (
+          <button
+            className="btn btn-primary"
+            onClick={handleSend}
+            disabled={!canSend}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              send
+            </span>
+            {isSending ? 'Sending…' : 'Send newsletter'}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
