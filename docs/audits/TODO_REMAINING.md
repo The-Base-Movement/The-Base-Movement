@@ -57,6 +57,6 @@ This list tracks the final engineering and integration requirements to transitio
 
 ---
 
-**Status**: `STABILIZED` | **Integrations Remaining**: 3 Primary Modules (SMS, Newsletter Sync, ML Microservice)
-**Blocked / Pending external action**: Resend DNS verification, Production RLS Audit
-**Next active development**: ML Intelligence Microservice (Python/FastAPI)
+**Status**: `STABILIZED` | **Integrations Remaining**: 1 Primary Module (SMS Gateway)
+**Blocked / Pending external action**: Resend DNS verification, Production RLS Audit, ML service VPS deploy, SendGrid secrets + custom fields setup
+**Next active development**: SMS Gateway Integration (Twilio / Africa's Talking)
