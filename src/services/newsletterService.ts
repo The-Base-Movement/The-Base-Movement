@@ -1,6 +1,11 @@
 import { supabase } from '@/lib/supabase'
 
-export type AudienceType = 'all' | 'region' | 'constituency' | 'chapter' | 'role'
+export type AudienceType = 'all' | 'region' | 'constituency' | 'chapter' | 'role' | 'multi'
+
+export interface AudienceFilter {
+  type: Exclude<AudienceType, 'multi'>
+  value: string | null
+}
 
 export interface Newsletter {
   id: string
@@ -8,6 +13,7 @@ export interface Newsletter {
   body_html: string
   audience_type: AudienceType
   audience_value: string | null
+  audience_filters: AudienceFilter[] | null
   recipient_count: number
   status: 'sent' | 'failed'
   error_message: string | null
@@ -22,12 +28,20 @@ export interface SendNewsletterPayload {
   body_html: string
   audience_type: AudienceType
   audience_value: string | null
+  audience_filters: AudienceFilter[]
 }
 
 export function buildAudienceLabel(type: AudienceType, value: string | null): string {
   if (type === 'all') return 'All members'
+  if (type === 'multi') return 'Multiple audiences'
   const prefix = type.charAt(0).toUpperCase() + type.slice(1)
   return `${prefix}: ${value ?? ''}`
+}
+
+export function buildAudienceFiltersLabel(filters: AudienceFilter[]): string {
+  if (filters.length === 0) return 'No audience'
+  if (filters.length === 1) return buildAudienceLabel(filters[0].type, filters[0].value)
+  return filters.map((f) => buildAudienceLabel(f.type, f.value)).join(' + ')
 }
 
 export function formatRecipientCount(count: number): string {
@@ -44,9 +58,7 @@ export const newsletterService = {
     return (data ?? []) as Newsletter[]
   },
 
-  async getAudienceOptions(type: AudienceType): Promise<string[]> {
-    if (type === 'all') return []
-
+  async getAudienceOptions(type: Exclude<AudienceType, 'all' | 'multi'>): Promise<string[]> {
     if (type === 'role') {
       const { data, error } = await supabase.from('admins').select('role').not('role', 'is', null)
       if (error) throw error
@@ -66,7 +78,10 @@ export const newsletterService = {
     return [...new Set(rows.map((r: Record<string, string>) => r[col]))].filter(Boolean).sort()
   },
 
-  async getRecipientCount(type: AudienceType, value: string | null): Promise<number> {
+  async getRecipientCount(
+    type: Exclude<AudienceType, 'multi'>,
+    value: string | null
+  ): Promise<number> {
     if (type === 'role') {
       const { count, error } = await supabase
         .from('admins')
@@ -104,6 +119,7 @@ export const newsletterService = {
       body_html: payload.body_html,
       audience_type: payload.audience_type,
       audience_value: payload.audience_value,
+      audience_filters: payload.audience_filters,
       status: 'sent',
     })
     if (insertError) throw insertError

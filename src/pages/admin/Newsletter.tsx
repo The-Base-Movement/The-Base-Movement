@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { newsletterService } from '@/services/newsletterService'
-import type { AudienceType, Newsletter } from '@/services/newsletterService'
+import type { AudienceFilter, Newsletter } from '@/services/newsletterService'
 import { adminService } from '@/services/adminService'
 import { ComposePanel } from './newsletter/ComposePanel'
 import { HistoryPanel } from './newsletter/HistoryPanel'
@@ -30,22 +30,26 @@ export default function NewsletterPage() {
     fetchNewsletters()
   }, [fetchNewsletters])
 
-  async function handleSend(
+  async function send(
     subject: string,
     bodyHtml: string,
-    audienceType: AudienceType,
-    audienceValue: string | null
+    filters: AudienceFilter[],
+    newsletter_id?: string
   ) {
     setIsSending(true)
     setSendResult(null)
-    const newsletter_id = crypto.randomUUID()
+    const id = newsletter_id ?? crypto.randomUUID()
+    const isMulti = filters.length > 1
+    const primaryType = isMulti ? 'multi' : (filters[0]?.type ?? 'all')
+    const primaryValue = isMulti ? null : (filters[0]?.value ?? null)
     try {
       const { sent } = await newsletterService.createAndSend({
-        newsletter_id,
+        newsletter_id: id,
         subject,
         body_html: bodyHtml,
-        audience_type: audienceType,
-        audience_value: audienceValue,
+        audience_type: primaryType,
+        audience_value: primaryValue,
+        audience_filters: filters,
       })
       setSendResult(
         `✓ Newsletter sent to ${sent.toLocaleString()} recipient${sent !== 1 ? 's' : ''}.`
@@ -57,6 +61,18 @@ export default function NewsletterPage() {
     } finally {
       setIsSending(false)
     }
+  }
+
+  function handleSend(subject: string, bodyHtml: string, filters: AudienceFilter[]) {
+    send(subject, bodyHtml, filters)
+  }
+
+  function handleResend(n: Newsletter) {
+    const filters: AudienceFilter[] =
+      n.audience_filters && n.audience_filters.length > 0
+        ? n.audience_filters
+        : [{ type: n.audience_type === 'multi' ? 'all' : n.audience_type, value: n.audience_value }]
+    send(n.subject, n.body_html, filters as AudienceFilter[])
   }
 
   // KPI derivations
@@ -219,6 +235,7 @@ export default function NewsletterPage() {
             await newsletterService.deleteNewsletters(ids)
             await fetchNewsletters()
           }}
+          onResend={handleResend}
         />
       </div>
     </div>

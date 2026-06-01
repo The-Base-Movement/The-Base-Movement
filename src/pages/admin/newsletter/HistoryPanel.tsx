@@ -1,17 +1,31 @@
 import { useState } from 'react'
 import type { Newsletter } from '@/services/newsletterService'
-import { buildAudienceLabel } from '@/services/newsletterService'
+import { buildAudienceLabel, buildAudienceFiltersLabel } from '@/services/newsletterService'
 
 interface HistoryPanelProps {
   newsletters: Newsletter[]
   isLoading: boolean
   canDelete: boolean
   onDelete: (ids: string[]) => Promise<void>
+  onResend: (newsletter: Newsletter) => void
 }
 
-export function HistoryPanel({ newsletters, isLoading, canDelete, onDelete }: HistoryPanelProps) {
+function audienceLabel(n: Newsletter): string {
+  if (n.audience_filters && n.audience_filters.length > 0) {
+    return buildAudienceFiltersLabel(n.audience_filters)
+  }
+  return buildAudienceLabel(n.audience_type, n.audience_value)
+}
+
+export function HistoryPanel({
+  newsletters,
+  isLoading,
+  canDelete,
+  onDelete,
+  onResend,
+}: HistoryPanelProps) {
   const [search, setSearch] = useState('')
-  const [viewingBody, setViewingBody] = useState<Newsletter | null>(null)
+  const [previewNewsletter, setPreviewNewsletter] = useState<Newsletter | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [isDeleting, setIsDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -168,7 +182,7 @@ export function HistoryPanel({ newsletters, isLoading, canDelete, onDelete }: Hi
                     />
                   </th>
                 )}
-                {['Date', 'Subject', 'Audience', 'Recipients', 'Status'].map((h) => (
+                {['Date', 'Subject', 'Audience', 'Recipients', 'Status', ''].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -195,7 +209,6 @@ export function HistoryPanel({ newsletters, isLoading, canDelete, onDelete }: Hi
                     key={n.id}
                     style={{
                       borderBottom: '1px solid hsl(var(--border))',
-                      cursor: 'pointer',
                       background: isSelected ? 'rgba(239,68,68,0.04)' : 'transparent',
                     }}
                     onMouseEnter={(e) => {
@@ -231,8 +244,9 @@ export function HistoryPanel({ newsletters, isLoading, canDelete, onDelete }: Hi
                         padding: '10px 8px',
                         color: 'hsl(var(--on-surface-muted))',
                         whiteSpace: 'nowrap',
+                        cursor: 'pointer',
                       }}
-                      onClick={() => setViewingBody(n)}
+                      onClick={() => setPreviewNewsletter(n)}
                     >
                       {new Date(n.sent_at).toLocaleDateString('en-GB', {
                         day: 'numeric',
@@ -249,31 +263,59 @@ export function HistoryPanel({ newsletters, isLoading, canDelete, onDelete }: Hi
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
+                        cursor: 'pointer',
                       }}
-                      onClick={() => setViewingBody(n)}
+                      onClick={() => setPreviewNewsletter(n)}
                     >
                       {n.subject}
                     </td>
                     <td
-                      style={{ padding: '10px 8px', color: 'hsl(var(--on-surface-muted))' }}
-                      onClick={() => setViewingBody(n)}
+                      style={{
+                        padding: '10px 8px',
+                        color: 'hsl(var(--on-surface-muted))',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => setPreviewNewsletter(n)}
                     >
-                      {buildAudienceLabel(n.audience_type, n.audience_value)}
+                      {audienceLabel(n)}
                     </td>
                     <td
                       style={{
                         padding: '10px 8px',
                         color: 'hsl(var(--on-surface))',
                         textAlign: 'right',
+                        cursor: 'pointer',
                       }}
-                      onClick={() => setViewingBody(n)}
+                      onClick={() => setPreviewNewsletter(n)}
                     >
                       {n.recipient_count.toLocaleString()}
                     </td>
-                    <td style={{ padding: '10px 8px' }} onClick={() => setViewingBody(n)}>
+                    <td
+                      style={{ padding: '10px 8px', cursor: 'pointer' }}
+                      onClick={() => setPreviewNewsletter(n)}
+                    >
                       <span className={n.status === 'sent' ? 'pill pill-ok' : 'pill pill-err'}>
                         {n.status}
                       </span>
+                    </td>
+                    {/* Actions */}
+                    <td style={{ padding: '10px 8px', whiteSpace: 'nowrap' }}>
+                      {n.status === 'failed' && (
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onResend(n)
+                          }}
+                          title="Resend"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                            refresh
+                          </span>
+                          Resend
+                        </button>
+                      )}
                     </td>
                   </tr>
                 )
@@ -349,90 +391,108 @@ export function HistoryPanel({ newsletters, isLoading, canDelete, onDelete }: Hi
         </div>
       )}
 
-      {/* View body modal */}
-      {viewingBody && (
+      {/* Full-screen email preview */}
+      {previewNewsletter && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 100,
+            zIndex: 200,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            flexDirection: 'column',
+            background: '#e8e8e8',
           }}
-          onClick={() => setViewingBody(null)}
         >
+          {/* Preview header bar */}
           <div
             style={{
               background: 'hsl(var(--background))',
-              borderRadius: 'var(--radius-lg)',
-              width: '90%',
-              maxWidth: 680,
-              maxHeight: '80vh',
-              overflow: 'hidden',
+              borderBottom: '1px solid hsl(var(--border))',
+              padding: '12px 20px',
               display: 'flex',
-              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexShrink: 0,
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid hsl(var(--border))',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <div>
-                <p
-                  style={{
-                    margin: 0,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 13,
-                    color: 'hsl(var(--on-surface))',
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
+                {previewNewsletter.subject}
+              </p>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                {audienceLabel(previewNewsletter)} ·{' '}
+                {previewNewsletter.recipient_count.toLocaleString()} recipients ·{' '}
+                {new Date(previewNewsletter.sent_at).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+                {previewNewsletter.status === 'failed' && (
+                  <span
+                    style={{
+                      marginLeft: 8,
+                      color: 'hsl(var(--destructive))',
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                    }}
+                  >
+                    · Failed
+                  </span>
+                )}
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {previewNewsletter.status === 'failed' && (
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    onResend(previewNewsletter)
+                    setPreviewNewsletter(null)
                   }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
                 >
-                  {viewingBody.subject}
-                </p>
-                <p
-                  style={{
-                    margin: '2px 0 0',
-                    fontSize: 11,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  {buildAudienceLabel(viewingBody.audience_type, viewingBody.audience_value)} ·{' '}
-                  {viewingBody.recipient_count.toLocaleString()} recipients
-                </p>
-              </div>
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                    refresh
+                  </span>
+                  Resend
+                </button>
+              )}
               <button
-                onClick={() => setViewingBody(null)}
+                onClick={() => setPreviewNewsletter(null)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}
+                title="Close preview"
               >
                 <span
                   className="material-symbols-outlined"
-                  style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+                  style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}
                 >
                   close
                 </span>
               </button>
             </div>
-            <div
-              style={{
-                padding: '20px 24px',
-                overflowY: 'auto',
-                fontSize: 13,
-                fontFamily: "'Public Sans', sans-serif",
-                color: 'hsl(var(--on-surface))',
-                lineHeight: 1.7,
-              }}
-              dangerouslySetInnerHTML={{ __html: viewingBody.body_html }}
-            />
           </div>
+
+          {/* iframe renders the branded email at full fidelity */}
+          <iframe
+            srcDoc={previewNewsletter.body_html}
+            title={previewNewsletter.subject}
+            sandbox="allow-same-origin"
+            style={{ flex: 1, border: 'none', background: '#e8e8e8' }}
+          />
         </div>
       )}
     </>

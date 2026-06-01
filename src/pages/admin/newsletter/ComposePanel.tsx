@@ -1,56 +1,157 @@
 import { useRef, useState, useEffect } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
-import type { AudienceType } from '@/services/newsletterService'
+import type { AudienceFilter, AudienceType } from '@/services/newsletterService'
 import { newsletterService, formatRecipientCount } from '@/services/newsletterService'
+
+interface FilterRowProps {
+  filter: AudienceFilter
+  onChange: (f: AudienceFilter) => void
+  onRemove: () => void
+  showRemove: boolean
+  isFirst: boolean
+}
+
+function FilterRow({ filter, onChange, onRemove, showRemove }: FilterRowProps) {
+  const [options, setOptions] = useState<string[]>([])
+
+  useEffect(() => {
+    if (filter.type === 'all') return
+    let cancelled = false
+    newsletterService
+      .getAudienceOptions(filter.type as Exclude<AudienceType, 'all' | 'multi'>)
+      .then((data) => {
+        if (!cancelled) setOptions(data)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [filter.type])
+
+  const selectStyle: React.CSSProperties = {
+    flex: 1,
+    boxSizing: 'border-box',
+    padding: '8px 12px',
+    border: '1px solid hsl(var(--border))',
+    borderRadius: 'var(--radius-sm)',
+    fontSize: 13,
+    fontFamily: "'Public Sans', sans-serif",
+    color: 'hsl(var(--on-surface))',
+    background: 'hsl(var(--background))',
+    outline: 'none',
+    cursor: 'pointer',
+  }
+
+  return (
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+      <select
+        value={filter.type}
+        onChange={(e) => {
+          const t = e.target.value as AudienceFilter['type']
+          onChange({ type: t, value: null })
+        }}
+        style={selectStyle}
+      >
+        <option value="all">All members</option>
+        <option value="region">By region</option>
+        <option value="constituency">By constituency</option>
+        <option value="chapter">By chapter</option>
+        <option value="role">By role</option>
+      </select>
+
+      {filter.type !== 'all' && (
+        <select
+          value={filter.value ?? ''}
+          onChange={(e) => onChange({ ...filter, value: e.target.value || null })}
+          style={selectStyle}
+        >
+          <option value="">— select —</option>
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      )}
+
+      {showRemove && (
+        <button
+          onClick={onRemove}
+          title="Remove"
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '6px',
+            color: 'hsl(var(--on-surface-muted))',
+            display: 'flex',
+            alignItems: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            close
+          </span>
+        </button>
+      )}
+    </div>
+  )
+}
 
 interface ComposePanelProps {
   isSending: boolean
-  onSend: (
-    subject: string,
-    bodyHtml: string,
-    audienceType: AudienceType,
-    audienceValue: string | null
-  ) => void
+  onSend: (subject: string, bodyHtml: string, filters: AudienceFilter[]) => void
 }
 
 export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
   const editorRef = useRef<{ getContent: () => string } | null>(null)
   const [subject, setSubject] = useState('')
-  const [audienceType, setAudienceType] = useState<AudienceType>('all')
-  const [audienceValue, setAudienceValue] = useState<string | null>(null)
-  const [audienceOptions, setAudienceOptions] = useState<string[]>([])
-  const [recipientCount, setRecipientCount] = useState<number | null>(null)
+  const [filters, setFilters] = useState<AudienceFilter[]>([{ type: 'all', value: null }])
+  const [totalCount, setTotalCount] = useState<number | null>(null)
 
-  // Fetch audience value options whenever the type changes (and isn't 'all')
-  useEffect(() => {
-    if (audienceType !== 'all') {
-      newsletterService
-        .getAudienceOptions(audienceType)
-        .then(setAudienceOptions)
-        .catch(() => {})
-    }
-  }, [audienceType])
+  const filtersComplete = filters.every((f) => f.type === 'all' || f.value !== null)
+  const isAllMode = filters.length === 1 && filters[0].type === 'all'
 
-  // Fetch recipient count whenever we have a complete selection
+  // Recalculate total recipient count whenever filters change to a complete state
   useEffect(() => {
-    if (audienceType === 'all' || audienceValue) {
-      newsletterService
-        .getRecipientCount(audienceType, audienceValue)
-        .then(setRecipientCount)
-        .catch(() => {})
+    if (!filtersComplete) return
+    let cancelled = false
+    Promise.all(
+      filters.map((f) =>
+        newsletterService.getRecipientCount(f.type as Exclude<AudienceType, 'multi'>, f.value)
+      )
+    )
+      .then((counts) => {
+        if (!cancelled) setTotalCount(counts.reduce((a, b) => a + b, 0))
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
     }
-  }, [audienceType, audienceValue])
+  }, [filters, filtersComplete])
+
+  function updateFilter(index: number, updated: AudienceFilter) {
+    setFilters((prev) => prev.map((f, i) => (i === index ? updated : f)))
+  }
+
+  function removeFilter(index: number) {
+    setFilters((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  function addFilter() {
+    setFilters((prev) => [...prev, { type: 'region', value: null }])
+  }
 
   function handleSend() {
     const body = editorRef.current?.getContent() ?? ''
-    onSend(subject, body, audienceType, audienceValue)
+    onSend(subject, body, filters)
   }
 
   const canSend =
     !isSending &&
     subject.trim().length > 0 &&
-    (audienceType === 'all' || audienceValue !== null) &&
-    (recipientCount === null || recipientCount > 0)
+    filtersComplete &&
+    (totalCount === null || totalCount > 0)
 
   const labelStyle: React.CSSProperties = {
     display: 'block',
@@ -61,19 +162,6 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     letterSpacing: '0.05em',
     marginBottom: 6,
     fontFamily: "'Public Sans', sans-serif",
-  }
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    boxSizing: 'border-box',
-    padding: '8px 12px',
-    border: '1px solid hsl(var(--border))',
-    borderRadius: 'var(--radius-sm)',
-    fontSize: 13,
-    fontFamily: "'Public Sans', sans-serif",
-    color: 'hsl(var(--on-surface))',
-    background: 'hsl(var(--background))',
-    outline: 'none',
   }
 
   return (
@@ -112,55 +200,63 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Movement update — June 2026"
-          style={inputStyle}
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: '8px 12px',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: 13,
+            fontFamily: "'Public Sans', sans-serif",
+            color: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--background))',
+            outline: 'none',
+          }}
         />
       </div>
 
-      {/* Audience type + value */}
-      <div style={{ marginBottom: 14, display: 'flex', gap: 10, alignItems: 'flex-end' }}>
-        <div style={{ flex: 1 }}>
-          <label style={labelStyle}>Audience</label>
-          <select
-            value={audienceType}
-            onChange={(e) => {
-              setAudienceType(e.target.value as AudienceType)
-              setAudienceValue(null)
-              setAudienceOptions([])
-              setRecipientCount(null)
+      {/* Audience filters */}
+      <div style={{ marginBottom: 6 }}>
+        <label style={labelStyle}>
+          Audience{filters.length > 1 ? ` (${filters.length} targets)` : ''}
+        </label>
+        {filters.map((f, i) => (
+          <FilterRow
+            key={i}
+            filter={f}
+            isFirst={i === 0}
+            showRemove={filters.length > 1}
+            onChange={(updated) => updateFilter(i, updated)}
+            onRemove={() => removeFilter(i)}
+          />
+        ))}
+        {!isAllMode && (
+          <button
+            onClick={addFilter}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '4px 0',
+              fontSize: 12,
+              color: 'hsl(var(--primary))',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
             }}
-            style={{ ...inputStyle, cursor: 'pointer' }}
           >
-            <option value="all">All members</option>
-            <option value="region">By region</option>
-            <option value="constituency">By constituency</option>
-            <option value="chapter">By chapter</option>
-            <option value="role">By role</option>
-          </select>
-        </div>
-
-        {audienceType !== 'all' && (
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>
-              {audienceType.charAt(0).toUpperCase() + audienceType.slice(1)}
-            </label>
-            <select
-              value={audienceValue ?? ''}
-              onChange={(e) => setAudienceValue(e.target.value || null)}
-              style={{ ...inputStyle, cursor: 'pointer' }}
-            >
-              <option value="">— select —</option>
-              {audienceOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-          </div>
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              add
+            </span>
+            Add audience
+          </button>
         )}
       </div>
 
-      {/* Recipient count preview */}
-      {recipientCount !== null && (
+      {/* Recipient count */}
+      {filtersComplete && totalCount !== null && (
         <p
           style={{
             fontSize: 12,
@@ -175,12 +271,15 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
           >
             people
           </span>
-          ~{formatRecipientCount(recipientCount)}
+          ~{formatRecipientCount(totalCount)}
+          {filters.length > 1 && (
+            <span style={{ marginLeft: 4, opacity: 0.7 }}>(duplicates removed at send time)</span>
+          )}
         </p>
       )}
 
       {/* TinyMCE body */}
-      <div style={{ marginBottom: 18 }}>
+      <div style={{ marginBottom: 18, marginTop: 14 }}>
         <label style={labelStyle}>Body</label>
         <Editor
           apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
