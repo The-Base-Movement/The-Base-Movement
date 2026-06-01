@@ -107,6 +107,46 @@ export const newsletterService = {
     return count ?? 0
   },
 
+  async getRegionsWithConstituencies(): Promise<{
+    regions: string[]
+    byRegion: Record<string, string[]>
+    allConstituencies: string[]
+  }> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('region, constituency')
+      .not('region', 'is', null)
+      .neq('region', '')
+      .not('constituency', 'is', null)
+      .neq('constituency', '')
+      .is('deleted_at', null)
+    if (error) throw error
+
+    const byRegionSet: Record<string, Set<string>> = {}
+    for (const row of (data ?? []) as { region: string; constituency: string }[]) {
+      if (!byRegionSet[row.region]) byRegionSet[row.region] = new Set()
+      byRegionSet[row.region].add(row.constituency)
+    }
+    const regions = Object.keys(byRegionSet).sort()
+    const byRegion: Record<string, string[]> = {}
+    for (const r of regions) byRegion[r] = [...byRegionSet[r]].sort()
+    const allConstituencies = [...new Set(Object.values(byRegion).flat())].sort()
+    return { regions, byRegion, allConstituencies }
+  },
+
+  async getRecipientCountForConstituencies(constituencies: string[]): Promise<number> {
+    if (constituencies.length === 0) return 0
+    const { count, error } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .not('email', 'is', null)
+      .neq('email', '')
+      .is('deleted_at', null)
+      .in('constituency', constituencies)
+    if (error) throw error
+    return count ?? 0
+  },
+
   async deleteNewsletters(ids: string[]): Promise<void> {
     const { error } = await supabase.from('newsletters').delete().in('id', ids)
     if (error) throw error

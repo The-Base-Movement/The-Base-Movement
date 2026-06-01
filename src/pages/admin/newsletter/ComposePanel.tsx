@@ -3,15 +3,81 @@ import { Editor } from '@tinymce/tinymce-react'
 import type { AudienceFilter, AudienceType } from '@/services/newsletterService'
 import { newsletterService, formatRecipientCount } from '@/services/newsletterService'
 
-interface FilterRowProps {
+// ---------------------------------------------------------------------------
+// Slot types — one slot = one row in the UI; constituency slot = N filters
+// ---------------------------------------------------------------------------
+
+interface SimpleSlot {
+  id: string
+  type: 'simple'
+  filter: AudienceFilter
+}
+
+interface ConstituencySlot {
+  id: string
+  type: 'constituency'
+  regionFilter: string | null
+  search: string
+  selected: string[]
+}
+
+type FilterSlot = SimpleSlot | ConstituencySlot
+
+interface RegionsData {
+  regions: string[]
+  byRegion: Record<string, string[]>
+  allConstituencies: string[]
+}
+
+function deriveFilters(slots: FilterSlot[]): AudienceFilter[] {
+  return slots.flatMap((slot): AudienceFilter[] => {
+    if (slot.type === 'simple') return [slot.filter]
+    return slot.selected.map((c) => ({ type: 'constituency', value: c }))
+  })
+}
+
+function slotsComplete(slots: FilterSlot[]): boolean {
+  if (slots.length === 0) return false
+  return slots.every((slot) => {
+    if (slot.type === 'simple') return slot.filter.type === 'all' || slot.filter.value !== null
+    return slot.selected.length > 0
+  })
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 9)
+}
+
+// ---------------------------------------------------------------------------
+// Shared styles
+// ---------------------------------------------------------------------------
+
+const selectStyle: React.CSSProperties = {
+  flex: 1,
+  boxSizing: 'border-box',
+  padding: '8px 12px',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-sm)',
+  fontSize: 13,
+  fontFamily: "'Public Sans', sans-serif",
+  color: 'hsl(var(--on-surface))',
+  background: 'hsl(var(--background))',
+  outline: 'none',
+  cursor: 'pointer',
+}
+
+// ---------------------------------------------------------------------------
+// SimpleFilterRow — all / region / chapter / role
+// ---------------------------------------------------------------------------
+
+interface SimpleFilterRowProps {
   filter: AudienceFilter
   onChange: (f: AudienceFilter) => void
   onRemove: () => void
   showRemove: boolean
-  isFirst: boolean
 }
 
-function FilterRow({ filter, onChange, onRemove, showRemove }: FilterRowProps) {
+function SimpleFilterRow({ filter, onChange, onRemove, showRemove }: SimpleFilterRowProps) {
   const [options, setOptions] = useState<string[]>([])
 
   useEffect(() => {
@@ -28,20 +94,6 @@ function FilterRow({ filter, onChange, onRemove, showRemove }: FilterRowProps) {
     }
   }, [filter.type])
 
-  const selectStyle: React.CSSProperties = {
-    flex: 1,
-    boxSizing: 'border-box',
-    padding: '8px 12px',
-    border: '1px solid hsl(var(--border))',
-    borderRadius: 'var(--radius-sm)',
-    fontSize: 13,
-    fontFamily: "'Public Sans', sans-serif",
-    color: 'hsl(var(--on-surface))',
-    background: 'hsl(var(--background))',
-    outline: 'none',
-    cursor: 'pointer',
-  }
-
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
       <select
@@ -54,7 +106,6 @@ function FilterRow({ filter, onChange, onRemove, showRemove }: FilterRowProps) {
       >
         <option value="all">All members</option>
         <option value="region">By region</option>
-        <option value="constituency">By constituency</option>
         <option value="chapter">By chapter</option>
         <option value="role">By role</option>
       </select>
@@ -98,6 +149,340 @@ function FilterRow({ filter, onChange, onRemove, showRemove }: FilterRowProps) {
   )
 }
 
+// ---------------------------------------------------------------------------
+// ConstituencySlotRow — region filter + search + checkbox list
+// ---------------------------------------------------------------------------
+
+interface ConstituencySlotRowProps {
+  slot: ConstituencySlot
+  regions: string[]
+  byRegion: Record<string, string[]>
+  allConstituencies: string[]
+  onChange: (updates: Partial<ConstituencySlot>) => void
+  onRemove: () => void
+  showRemove: boolean
+}
+
+function ConstituencySlotRow({
+  slot,
+  regions,
+  byRegion,
+  allConstituencies,
+  onChange,
+  onRemove,
+  showRemove,
+}: ConstituencySlotRowProps) {
+  const base = slot.regionFilter ? (byRegion[slot.regionFilter] ?? []) : allConstituencies
+  const visible = slot.search
+    ? base.filter((c) => c.toLowerCase().includes(slot.search.toLowerCase()))
+    : base
+  const allVisibleSelected = visible.length > 0 && visible.every((c) => slot.selected.includes(c))
+
+  function toggle(c: string) {
+    const next = slot.selected.includes(c)
+      ? slot.selected.filter((x) => x !== c)
+      : [...slot.selected, c]
+    onChange({ selected: next })
+  }
+
+  function selectVisible() {
+    onChange({ selected: [...new Set([...slot.selected, ...visible])] })
+  }
+
+  function deselectVisible() {
+    const vs = new Set(visible)
+    onChange({ selected: slot.selected.filter((c) => !vs.has(c)) })
+  }
+
+  const loading = regions.length === 0 && allConstituencies.length === 0
+
+  return (
+    <div
+      style={{
+        marginBottom: 10,
+        border: '1px solid hsl(var(--border))',
+        borderRadius: 'var(--radius-sm)',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '7px 10px',
+          background: 'hsl(var(--container-low))',
+          borderBottom: '1px solid hsl(var(--border))',
+        }}
+      >
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: 14, color: 'hsl(var(--primary))' }}
+        >
+          location_on
+        </span>
+        <span
+          style={{
+            fontSize: 12,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontFamily: "'Public Sans', sans-serif",
+            color: 'hsl(var(--on-surface))',
+            flex: 1,
+          }}
+        >
+          By constituency
+        </span>
+        {slot.selected.length > 0 && (
+          <span className="pill pill-ok" style={{ fontSize: 10 }}>
+            {slot.selected.length} selected
+          </span>
+        )}
+        {showRemove && (
+          <button
+            onClick={onRemove}
+            title="Remove"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '2px 4px',
+              color: 'hsl(var(--on-surface-muted))',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              close
+            </span>
+          </button>
+        )}
+      </div>
+
+      {/* Region filter + search row */}
+      <div style={{ padding: '8px 10px', display: 'flex', gap: 8 }}>
+        <select
+          value={slot.regionFilter ?? ''}
+          onChange={(e) => onChange({ regionFilter: e.target.value || null })}
+          style={{ ...selectStyle, flex: '0 0 44%' }}
+          disabled={loading}
+        >
+          {loading ? (
+            <option value="">Loading…</option>
+          ) : (
+            <>
+              <option value="">— All regions —</option>
+              {regions.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </>
+          )}
+        </select>
+
+        <div style={{ position: 'relative', flex: 1 }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 14,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            type="text"
+            placeholder="Search constituencies…"
+            value={slot.search}
+            onChange={(e) => onChange({ search: e.target.value })}
+            style={{
+              ...selectStyle,
+              width: '100%',
+              cursor: 'text',
+              paddingLeft: 32,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Select / deselect all bar */}
+      {!loading && visible.length > 0 && (
+        <div
+          style={{
+            padding: '0 10px 6px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
+          <button
+            onClick={allVisibleSelected ? deselectVisible : selectVisible}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              fontSize: 11,
+              color: 'hsl(var(--primary))',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            {allVisibleSelected ? 'Deselect' : 'Select'} all
+            {slot.search ? ' matching' : slot.regionFilter ? ` in ${slot.regionFilter}` : ''}
+          </button>
+          <span
+            style={{
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            {visible.length} constituency{visible.length !== 1 ? 'ies' : ''}
+            {slot.regionFilter && !slot.search ? ` in ${slot.regionFilter}` : ''}
+          </span>
+        </div>
+      )}
+
+      {/* Checkbox grid */}
+      <div
+        style={{
+          maxHeight: 200,
+          overflowY: 'auto',
+          padding: '0 10px 10px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '1px 16px',
+        }}
+      >
+        {loading ? (
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              gridColumn: '1 / -1',
+              margin: '8px 0',
+            }}
+          >
+            Loading constituencies…
+          </p>
+        ) : visible.length === 0 ? (
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              gridColumn: '1 / -1',
+              margin: '8px 0',
+            }}
+          >
+            {slot.search ? 'No matches.' : 'No constituencies found.'}
+          </p>
+        ) : (
+          visible.map((c) => (
+            <label
+              key={c}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                cursor: 'pointer',
+                padding: '3px 0',
+                userSelect: 'none',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={slot.selected.includes(c)}
+                onChange={() => toggle(c)}
+                style={{
+                  cursor: 'pointer',
+                  accentColor: 'hsl(var(--primary))',
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 12,
+                  fontFamily: "'Public Sans', sans-serif",
+                  color: 'hsl(var(--on-surface))',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {c}
+              </span>
+            </label>
+          ))
+        )}
+      </div>
+
+      {/* Selected pills */}
+      {slot.selected.length > 0 && (
+        <div
+          style={{
+            padding: '6px 10px 8px',
+            borderTop: '1px solid hsl(var(--border))',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 4,
+          }}
+        >
+          {slot.selected.map((c) => (
+            <span
+              key={c}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 3,
+                padding: '2px 4px 2px 8px',
+                background: 'rgba(0,107,63,0.08)',
+                color: 'hsl(var(--primary))',
+                border: '1px solid rgba(0,107,63,0.2)',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: 11,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              {c}
+              <button
+                onClick={() => toggle(c)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  lineHeight: 1,
+                  color: 'inherit',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 11 }}>
+                  close
+                </span>
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// ComposePanel
+// ---------------------------------------------------------------------------
+
 interface ComposePanelProps {
   isSending: boolean
   onSend: (subject: string, bodyHtml: string, filters: AudienceFilter[]) => void
@@ -106,21 +491,52 @@ interface ComposePanelProps {
 export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
   const editorRef = useRef<{ getContent: () => string } | null>(null)
   const [subject, setSubject] = useState('')
-  const [filters, setFilters] = useState<AudienceFilter[]>([{ type: 'all', value: null }])
+  const [slots, setSlots] = useState<FilterSlot[]>([
+    { id: uid(), type: 'simple', filter: { type: 'all', value: null } },
+  ])
   const [totalCount, setTotalCount] = useState<number | null>(null)
+  const [regionsData, setRegionsData] = useState<RegionsData | null>(null)
 
-  const filtersComplete = filters.every((f) => f.type === 'all' || f.value !== null)
-  const isAllMode = filters.length === 1 && filters[0].type === 'all'
+  // Fetch regions + constituencies once
+  useEffect(() => {
+    let cancelled = false
+    newsletterService
+      .getRegionsWithConstituencies()
+      .then((data) => {
+        if (!cancelled) setRegionsData(data)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
-  // Recalculate total recipient count whenever filters change to a complete state
+  const filters = deriveFilters(slots)
+  const filtersComplete = slotsComplete(slots)
+  const isAllMode =
+    slots.length === 1 && slots[0].type === 'simple' && slots[0].filter.type === 'all'
+  const hasConstituencySlot = slots.some((s) => s.type === 'constituency')
+
+  // Recipient count — batch constituency queries into one DB call
   useEffect(() => {
     if (!filtersComplete) return
     let cancelled = false
-    Promise.all(
-      filters.map((f) =>
+    const derived = deriveFilters(slots)
+    if (derived.length === 0) return
+
+    const constituencyValues = derived
+      .filter((f) => f.type === 'constituency' && f.value)
+      .map((f) => f.value as string)
+    const otherFilters = derived.filter((f) => f.type !== 'constituency')
+
+    Promise.all([
+      constituencyValues.length > 0
+        ? newsletterService.getRecipientCountForConstituencies(constituencyValues)
+        : Promise.resolve(0),
+      ...otherFilters.map((f) =>
         newsletterService.getRecipientCount(f.type as Exclude<AudienceType, 'multi'>, f.value)
-      )
-    )
+      ),
+    ])
       .then((counts) => {
         if (!cancelled) setTotalCount(counts.reduce((a, b) => a + b, 0))
       })
@@ -128,18 +544,43 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     return () => {
       cancelled = true
     }
-  }, [filters, filtersComplete])
+  }, [slots, filtersComplete])
 
-  function updateFilter(index: number, updated: AudienceFilter) {
-    setFilters((prev) => prev.map((f, i) => (i === index ? updated : f)))
+  function updateSimpleSlot(id: string, filter: AudienceFilter) {
+    setSlots((prev) => prev.map((s) => (s.id === id && s.type === 'simple' ? { ...s, filter } : s)))
   }
 
-  function removeFilter(index: number) {
-    setFilters((prev) => prev.filter((_, i) => i !== index))
+  function updateConstituencySlot(id: string, updates: Partial<ConstituencySlot>) {
+    setSlots((prev) =>
+      prev.map((s) => (s.id === id && s.type === 'constituency' ? { ...s, ...updates } : s))
+    )
   }
 
-  function addFilter() {
-    setFilters((prev) => [...prev, { type: 'region', value: null }])
+  function removeSlot(id: string) {
+    setSlots((prev) => {
+      const next = prev.filter((s) => s.id !== id)
+      if (next.length === 0)
+        return [{ id: uid(), type: 'simple', filter: { type: 'all', value: null } }]
+      return next
+    })
+  }
+
+  function addSimpleSlot() {
+    setSlots((prev) => [
+      ...prev,
+      { id: uid(), type: 'simple', filter: { type: 'region', value: null } },
+    ])
+  }
+
+  function addConstituencySlot() {
+    setSlots((prev) => {
+      // Remove 'all members' slot — targeting constituencies replaces it
+      const without = prev.filter((s) => !(s.type === 'simple' && s.filter.type === 'all'))
+      return [
+        ...without,
+        { id: uid(), type: 'constituency', regionFilter: null, search: '', selected: [] },
+      ]
+    })
   }
 
   function handleSend() {
@@ -151,6 +592,7 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     !isSending &&
     subject.trim().length > 0 &&
     filtersComplete &&
+    filters.length > 0 &&
     (totalCount === null || totalCount > 0)
 
   const labelStyle: React.CSSProperties = {
@@ -164,8 +606,23 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     fontFamily: "'Public Sans', sans-serif",
   }
 
+  const addBtnStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '4px 0',
+    fontSize: 12,
+    color: 'hsl(var(--primary))',
+    fontFamily: "'Public Sans', sans-serif",
+    fontWeight: 'var(--font-weight-medium, 500)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+  }
+
   return (
     <div className="panel" style={{ padding: '20px 24px' }}>
+      {/* Header */}
       <div className="ph" style={{ marginBottom: 18 }}>
         <div>
           <p
@@ -215,44 +672,56 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
         />
       </div>
 
-      {/* Audience filters */}
+      {/* Audience slots */}
       <div style={{ marginBottom: 6 }}>
         <label style={labelStyle}>
           Audience{filters.length > 1 ? ` (${filters.length} targets)` : ''}
         </label>
-        {filters.map((f, i) => (
-          <FilterRow
-            key={i}
-            filter={f}
-            isFirst={i === 0}
-            showRemove={filters.length > 1}
-            onChange={(updated) => updateFilter(i, updated)}
-            onRemove={() => removeFilter(i)}
-          />
-        ))}
-        {!isAllMode && (
-          <button
-            onClick={addFilter}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '4px 0',
-              fontSize: 12,
-              color: 'hsl(var(--primary))',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              add
-            </span>
-            Add audience
-          </button>
+
+        {slots.map((slot) =>
+          slot.type === 'simple' ? (
+            <SimpleFilterRow
+              key={slot.id}
+              filter={slot.filter}
+              onChange={(f) => updateSimpleSlot(slot.id, f)}
+              onRemove={() => removeSlot(slot.id)}
+              showRemove={
+                slots.length > 1 || (slots.length === 1 && slot.type === 'simple' && false)
+              }
+            />
+          ) : (
+            <ConstituencySlotRow
+              key={slot.id}
+              slot={slot}
+              regions={regionsData?.regions ?? []}
+              byRegion={regionsData?.byRegion ?? {}}
+              allConstituencies={regionsData?.allConstituencies ?? []}
+              onChange={(updates) => updateConstituencySlot(slot.id, updates)}
+              onRemove={() => removeSlot(slot.id)}
+              showRemove={slots.length > 1}
+            />
+          )
         )}
+
+        {/* Add buttons */}
+        <div style={{ display: 'flex', gap: 14, marginTop: 2 }}>
+          {!isAllMode && (
+            <button onClick={addSimpleSlot} style={addBtnStyle}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                add
+              </span>
+              Add audience
+            </button>
+          )}
+          {!hasConstituencySlot && (
+            <button onClick={addConstituencySlot} style={addBtnStyle}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                add_location_alt
+              </span>
+              Select constituencies
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Recipient count */}

@@ -169,7 +169,25 @@ Deno.serve(async (req) => {
         ? audience_filters
         : [{ type: audience_type ?? 'all', value: audience_value ?? null }]
 
-    for (const filter of filters) {
+    // Batch all constituency filters into one IN(...) query; run others individually
+    const constituencyValues = filters
+      .filter((f) => f.type === 'constituency' && f.value)
+      .map((f) => f.value as string)
+    const otherFilters = filters.filter((f) => f.type !== 'constituency')
+
+    if (constituencyValues.length > 0) {
+      const { data, error } = await supabase
+        .from('users')
+        .select('email')
+        .not('email', 'is', null)
+        .neq('email', '')
+        .is('deleted_at', null)
+        .in('constituency', constituencyValues)
+      if (error) throw error
+      for (const u of data ?? []) emailSet.add((u as { email: string }).email)
+    }
+
+    for (const filter of otherFilters) {
       const batch = await fetchEmailsForFilter(supabase, filter.type, filter.value)
       for (const email of batch) emailSet.add(email)
     }
