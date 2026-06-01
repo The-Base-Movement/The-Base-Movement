@@ -80,17 +80,15 @@ export const newsletterService = {
       return (data ?? []).map((c: { name: string }) => c.name)
     }
 
-    const col = type as 'chapter'
+    // chapter — query the chapters reference table
     const { data, error } = await supabase
-      .from('users')
-      .select(col)
-      .not(col, 'is', null)
-      .neq(col, '')
-      .is('deleted_at', null)
+      .from('chapters')
+      .select('name')
+      .not('name', 'is', null)
+      .neq('name', '')
+      .order('name')
     if (error) throw error
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rows = (data ?? []) as any[]
-    return [...new Set(rows.map((r: Record<string, string>) => r[col]))].filter(Boolean).sort()
+    return (data ?? []).map((c: { name: string }) => c.name)
   },
 
   async getRecipientCount(
