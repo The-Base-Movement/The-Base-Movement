@@ -1,3 +1,4 @@
+// @ts-nocheck
 // THE BASE: SENDGRID BULK CONTACT SYNC
 // Fetches all members from the database and upserts them into
 // the SendGrid marketing contacts list in batches of 1,000.
@@ -11,7 +12,6 @@
 // SendGrid Contacts API accepts up to 30,000 contacts per request.
 // We batch at 1,000 to stay well within limits and avoid timeouts.
 
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 const BATCH_SIZE = 1000
@@ -65,16 +65,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // @ts-expect-error: Deno global
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-    // @ts-expect-error: Deno global
     const listId: string | undefined = Deno.env.get('SENDGRID_LIST_ID')
 
     if (!sgKey) {
@@ -84,11 +81,10 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    // @ts-expect-error: Deno global
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // Fetch all members with an email
     const { data, error } = await supabase

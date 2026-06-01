@@ -1,3 +1,4 @@
+// @ts-nocheck
 // THE BASE: SENDGRID SINGLE-CONTACT SYNC
 // Upserts one member into the SendGrid marketing contacts list.
 //
@@ -12,7 +13,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -38,9 +38,7 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    // @ts-expect-error: Deno global
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-    // @ts-expect-error: Deno global
     const listId: string | undefined = Deno.env.get('SENDGRID_LIST_ID')
 
     if (!sgKey) {
