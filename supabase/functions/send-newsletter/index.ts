@@ -189,7 +189,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           personalizations: batch.map((email) => ({ to: [{ email }] })),
-          from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
+          from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
           subject,
           content: [{ type: 'text/html', value: html }],
         }),
