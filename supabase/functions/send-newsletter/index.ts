@@ -21,9 +21,24 @@ const SHELL_OPEN = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@media only screen and (max-width:600px){
+  body{padding:0!important}
+  .ew{width:100%!important;border-radius:0!important}
+  .eh{padding:14px 16px!important}
+  .logo{height:28px!important;width:auto!important}
+  .hero{height:90px!important}
+  .hero-t{font-size:30px!important}
+  .bd{padding:20px 16px 18px!important}
+  .subj{font-size:21px!important;line-height:1.2!important}
+  .ft{padding:14px 16px!important}
+  .cta{padding:12px 20px!important;font-size:13px!important}
+  .pills{flex-wrap:wrap!important}
+}
+</style>
 </head>
-<body style="margin:0;padding:32px 0;background:#f4f4f4;font-family:'Work Sans',Arial,sans-serif;font-size:14px;color:#1a1a1a">
-<div style="max-width:600px;margin:0 auto">`
+<body style="margin:0;padding:24px 0;background:#f4f4f4;font-family:'Work Sans',Arial,sans-serif;font-size:14px;color:#1a1a1a">
+<div class="ew" style="max-width:600px;margin:0 auto;width:100%">`
 
 const SHELL_CLOSE = `</div></body></html>`
 
@@ -31,25 +46,22 @@ const TOP_BAR = `<div style="height:5px;background:linear-gradient(to right,#CE1
 
 function emailHeader(tag: string) {
   return `
-  <div style="background:#181d19;padding:20px 28px;display:flex;align-items:center;justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div style="width:28px;height:28px;background:#CE1126;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Public Sans',Arial;font-weight:800;font-size:13px;color:#fff">B</div>
-      <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:14px;color:#fff">The Base Movement</span>
-    </div>
-    <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase">${tag}</span>
+  <div class="eh" style="background:#181d19;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <img class="logo" src="https://thebasemovement.creativeutil.com/branding/logo.png" alt="The Base Movement" height="36" style="height:36px;width:auto;display:block;flex-shrink:0;max-width:180px" />
+    <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap">${tag}</span>
   </div>`
 }
 
 function emailFooter(lines: string) {
   return `
-  <div style="background:#f9f9f9;padding:16px 28px;font-size:11px;color:#aaa;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;line-height:1.7">
+  <div class="ft" style="background:#f9f9f9;padding:16px 28px;font-size:11px;color:#aaa;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;line-height:1.7">
     ${lines}
     <div style="width:80px;height:3px;background:linear-gradient(to right,#CE1126,#DAA520,#006B3F);border-radius:99px;margin-top:10px"></div>
   </div>`
 }
 
 function ctaButton(label: string, url: string, color = '#006B3F') {
-  return `<a href="${url}" style="display:block;background:${color};color:#fff;text-align:center;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:20px 0">${label}</a>`
+  return `<a class="cta" href="${url}" style="display:block;background:${color};color:#fff;text-align:center;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:20px 0">${label}</a>`
 }
 
 interface BroadcastEmailData {
@@ -81,13 +93,13 @@ function broadcastEmail(d: BroadcastEmailData): string {
   <div style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Movement update')}
-    <div style="background:${heroBg};height:140px;display:flex;align-items:center;justify-content:center">
-      <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:48px;color:rgba(255,255,255,.25);letter-spacing:-.04em">${heroText}</span>
+    <div class="hero" style="background:${heroBg};height:140px;display:flex;align-items:center;justify-content:center;overflow:hidden">
+      <span class="hero-t" style="font-family:'Public Sans',Arial;font-weight:800;font-size:48px;color:rgba(255,255,255,.25);letter-spacing:-.04em">${heroText}</span>
     </div>
-    <div style="padding:28px 28px 24px">
+    <div class="bd" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">${greeting}</div>
-      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">${d.subject}</h1>
-      <div style="display:flex;gap:6px;margin-bottom:14px">${regionPill}${fieldPill}</div>
+      <h1 class="subj" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">${d.subject}</h1>
+      <div class="pills" style="display:flex;gap:6px;margin-bottom:14px">${regionPill}${fieldPill}</div>
       ${d.body}
       ${ctaButton(d.ctaLabel, d.ctaUrl)}
     </div>
