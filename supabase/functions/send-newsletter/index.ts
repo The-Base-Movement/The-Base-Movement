@@ -25,7 +25,7 @@ const SHELL_OPEN = `<!doctype html>
 @media only screen and (max-width:600px){
   body{padding:0!important}
   .ew{width:100%!important;border-radius:0!important}
-  .eh{padding:14px 16px!important}
+  .eh td{padding:12px 16px!important}
   .logo{height:28px!important;width:auto!important}
   .hero{height:90px!important}
   .hero-t{font-size:30px!important}
@@ -45,11 +45,22 @@ const SHELL_CLOSE = `</div></body></html>`
 const TOP_BAR = `<div style="height:5px;background:linear-gradient(to right,#CE1126,#DAA520,#006B3F)"></div>`
 
 function emailHeader(tag: string) {
+  // Table layout: Outlook Win32 ignores display:flex, so we use a 2-cell table.
+  // Mobile @media shrinks the logo via .logo class.
   return `
-  <div class="eh" style="background:#181d19;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px">
-    <img class="logo" src="https://thebasemovement.creativeutil.com/branding/logo.png" alt="The Base Movement" height="36" style="height:36px;width:auto;display:block;flex-shrink:0;max-width:180px" />
-    <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap">${tag}</span>
-  </div>`
+  <table class="eh" width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
+    style="background:#181d19;border-collapse:collapse">
+    <tr>
+      <td style="padding:18px 28px;vertical-align:middle">
+        <img class="logo" src="https://thebasemovement.creativeutil.com/branding/logo.png"
+          alt="The Base Movement" height="36" width="auto"
+          style="height:36px;width:auto;display:block;border:0;max-width:180px" />
+      </td>
+      <td style="padding:18px 28px;vertical-align:middle;text-align:right;white-space:nowrap">
+        <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase">${tag}</span>
+      </td>
+    </tr>
+  </table>`
 }
 
 function emailFooter(lines: string) {
