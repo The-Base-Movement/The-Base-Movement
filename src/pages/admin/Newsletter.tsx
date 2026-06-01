@@ -76,6 +76,15 @@ export default function NewsletterPage() {
     send(n.subject, n.body_html, filters as AudienceFilter[], n.id)
   }
 
+  function handleDuplicate(n: Newsletter) {
+    // New UUID → inserts a fresh row; does not touch the original record
+    const filters: AudienceFilter[] =
+      n.audience_filters && n.audience_filters.length > 0
+        ? n.audience_filters
+        : [{ type: n.audience_type === 'multi' ? 'all' : n.audience_type, value: n.audience_value }]
+    send(n.subject, n.body_html, filters as AudienceFilter[])
+  }
+
   // KPI derivations
   const thisMonth = newsletters.filter((n) => {
     const d = new Date(n.sent_at)
@@ -237,6 +246,7 @@ export default function NewsletterPage() {
             await fetchNewsletters()
           }}
           onResend={handleResend}
+          onDuplicate={handleDuplicate}
         />
       </div>
     </div>

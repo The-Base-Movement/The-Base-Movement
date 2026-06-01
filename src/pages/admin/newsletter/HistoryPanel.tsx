@@ -8,6 +8,7 @@ interface HistoryPanelProps {
   canDelete: boolean
   onDelete: (ids: string[]) => Promise<void>
   onResend: (newsletter: Newsletter) => void
+  onDuplicate: (newsletter: Newsletter) => void
 }
 
 function audienceLabel(n: Newsletter): string {
@@ -23,6 +24,7 @@ export function HistoryPanel({
   canDelete,
   onDelete,
   onResend,
+  onDuplicate,
 }: HistoryPanelProps) {
   const [search, setSearch] = useState('')
   const [previewNewsletter, setPreviewNewsletter] = useState<Newsletter | null>(null)
@@ -301,7 +303,7 @@ export function HistoryPanel({
                     </td>
                     {/* Actions */}
                     <td style={{ padding: '10px 8px', whiteSpace: 'nowrap' }}>
-                      {n.status === 'failed' && (
+                      {n.status === 'failed' ? (
                         <button
                           className="btn btn-outline btn-sm"
                           onClick={(e) => {
@@ -315,6 +317,21 @@ export function HistoryPanel({
                             refresh
                           </span>
                           Resend
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onDuplicate(n)
+                          }}
+                          title="Duplicate & send again"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                            content_copy
+                          </span>
+                          Duplicate
                         </button>
                       )}
                     </td>
@@ -457,7 +474,7 @@ export function HistoryPanel({
               </p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              {previewNewsletter.status === 'failed' && (
+              {previewNewsletter.status === 'failed' ? (
                 <button
                   className="btn btn-outline btn-sm"
                   onClick={() => {
@@ -470,6 +487,21 @@ export function HistoryPanel({
                     refresh
                   </span>
                   Resend
+                </button>
+              ) : (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => {
+                    onDuplicate(previewNewsletter)
+                    setPreviewNewsletter(null)
+                  }}
+                  title="Duplicate & send again as a new newsletter"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                    content_copy
+                  </span>
+                  Duplicate & send
                 </button>
               )}
               <button
