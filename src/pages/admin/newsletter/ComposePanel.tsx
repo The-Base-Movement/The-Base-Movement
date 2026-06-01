@@ -21,7 +21,14 @@ interface ConstituencySlot {
   selected: string[]
 }
 
-type FilterSlot = SimpleSlot | ConstituencySlot
+interface ChapterSlot {
+  id: string
+  type: 'chapter'
+  search: string
+  selected: string[]
+}
+
+type FilterSlot = SimpleSlot | ConstituencySlot | ChapterSlot
 
 interface RegionsData {
   regions: string[]
@@ -32,7 +39,9 @@ interface RegionsData {
 function deriveFilters(slots: FilterSlot[]): AudienceFilter[] {
   return slots.flatMap((slot): AudienceFilter[] => {
     if (slot.type === 'simple') return [slot.filter]
-    return slot.selected.map((c) => ({ type: 'constituency', value: c }))
+    if (slot.type === 'constituency')
+      return slot.selected.map((c) => ({ type: 'constituency', value: c }))
+    return slot.selected.map((c) => ({ type: 'chapter', value: c }))
   })
 }
 
@@ -492,6 +501,297 @@ function ConstituencySlotRow({
 }
 
 // ---------------------------------------------------------------------------
+// ChapterSlotRow — search + checkbox list for bulk chapter selection
+// ---------------------------------------------------------------------------
+
+interface ChapterSlotRowProps {
+  slot: ChapterSlot
+  allChapters: string[]
+  onChange: (updates: Partial<ChapterSlot>) => void
+  onRemove: () => void
+  showRemove: boolean
+}
+
+function ChapterSlotRow({
+  slot,
+  allChapters,
+  onChange,
+  onRemove,
+  showRemove,
+}: ChapterSlotRowProps) {
+  const visible = slot.search
+    ? allChapters.filter((c) => c.toLowerCase().includes(slot.search.toLowerCase()))
+    : allChapters
+  const allVisibleSelected = visible.length > 0 && visible.every((c) => slot.selected.includes(c))
+  const loading = allChapters.length === 0
+
+  function toggle(c: string) {
+    const next = slot.selected.includes(c)
+      ? slot.selected.filter((x) => x !== c)
+      : [...slot.selected, c]
+    onChange({ selected: next })
+  }
+
+  function selectVisible() {
+    onChange({ selected: [...new Set([...slot.selected, ...visible])] })
+  }
+
+  function deselectVisible() {
+    const vs = new Set(visible)
+    onChange({ selected: slot.selected.filter((c) => !vs.has(c)) })
+  }
+
+  return (
+    <div
+      style={{
+        marginBottom: 10,
+        border: '1px solid hsl(var(--border))',
+        borderRadius: 'var(--radius-sm)',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '7px 10px',
+          background: 'hsl(var(--container-low))',
+          borderBottom: '1px solid hsl(var(--border))',
+        }}
+      >
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: 14, color: 'hsl(var(--accent))' }}
+        >
+          groups
+        </span>
+        <span
+          style={{
+            fontSize: 12,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontFamily: "'Public Sans', sans-serif",
+            color: 'hsl(var(--on-surface))',
+            flex: 1,
+          }}
+        >
+          By chapters
+        </span>
+        {slot.selected.length > 0 && (
+          <span className="pill pill-ok" style={{ fontSize: 10 }}>
+            {slot.selected.length} selected
+          </span>
+        )}
+        {showRemove && (
+          <button
+            onClick={onRemove}
+            title="Remove"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '2px 4px',
+              color: 'hsl(var(--on-surface-muted))',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              close
+            </span>
+          </button>
+        )}
+      </div>
+
+      {/* Search */}
+      <div style={{ padding: '8px 10px' }}>
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 14,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            type="text"
+            placeholder="Search chapters…"
+            value={slot.search}
+            onChange={(e) => onChange({ search: e.target.value })}
+            style={{ ...selectStyle, width: '100%', cursor: 'text', paddingLeft: 32 }}
+          />
+        </div>
+      </div>
+
+      {/* Select / deselect all bar */}
+      {!loading && visible.length > 0 && (
+        <div style={{ padding: '0 10px 6px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={allVisibleSelected ? deselectVisible : selectVisible}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              fontSize: 11,
+              color: 'hsl(var(--accent))',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            {allVisibleSelected ? 'Deselect' : 'Select'} all
+            {slot.search ? ' matching' : ''}
+          </button>
+          <span
+            style={{
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            {visible.length} chapter{visible.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+      )}
+
+      {/* Checkbox grid */}
+      <div
+        style={{
+          maxHeight: 180,
+          overflowY: 'auto',
+          padding: '0 10px 10px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '1px 16px',
+        }}
+      >
+        {loading ? (
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              gridColumn: '1 / -1',
+              margin: '8px 0',
+            }}
+          >
+            Loading chapters…
+          </p>
+        ) : visible.length === 0 ? (
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              gridColumn: '1 / -1',
+              margin: '8px 0',
+            }}
+          >
+            {slot.search ? 'No matches.' : 'No chapters found.'}
+          </p>
+        ) : (
+          visible.map((c) => (
+            <label
+              key={c}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                cursor: 'pointer',
+                padding: '3px 0',
+                userSelect: 'none',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={slot.selected.includes(c)}
+                onChange={() => toggle(c)}
+                style={{
+                  cursor: 'pointer',
+                  accentColor: 'hsl(var(--accent))',
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 12,
+                  fontFamily: "'Public Sans', sans-serif",
+                  color: 'hsl(var(--on-surface))',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {c}
+              </span>
+            </label>
+          ))
+        )}
+      </div>
+
+      {/* Selected pills */}
+      {slot.selected.length > 0 && (
+        <div
+          style={{
+            padding: '6px 10px 8px',
+            borderTop: '1px solid hsl(var(--border))',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 4,
+          }}
+        >
+          {slot.selected.map((c) => (
+            <span
+              key={c}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 3,
+                padding: '2px 4px 2px 8px',
+                background: 'rgba(218,165,32,0.08)',
+                color: 'hsl(var(--accent))',
+                border: '1px solid rgba(218,165,32,0.25)',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: 11,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              {c}
+              <button
+                onClick={() => toggle(c)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  lineHeight: 1,
+                  color: 'inherit',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 11 }}>
+                  close
+                </span>
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // ComposePanel
 // ---------------------------------------------------------------------------
 
@@ -509,18 +809,21 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
   const [totalCount, setTotalCount] = useState<number | null>(null)
   const [allRegions, setAllRegions] = useState<string[]>([])
   const [regionsData, setRegionsData] = useState<RegionsData | null>(null)
+  const [allChapters, setAllChapters] = useState<string[]>([])
 
-  // Pre-fetch all regions (for SimpleFilterRow) + region→constituency map (for ConstituencySlotRow)
+  // Pre-fetch reference data for slot pickers
   useEffect(() => {
     let cancelled = false
     Promise.all([
       newsletterService.getAudienceOptions('region'),
       newsletterService.getRegionsWithConstituencies(),
+      newsletterService.getAudienceOptions('chapter'),
     ])
-      .then(([regions, rData]) => {
+      .then(([regions, rData, chapters]) => {
         if (!cancelled) {
           setAllRegions(regions)
           setRegionsData(rData)
+          setAllChapters(chapters)
         }
       })
       .catch(() => {})
@@ -534,6 +837,7 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
   const isAllMode =
     slots.length === 1 && slots[0].type === 'simple' && slots[0].filter.type === 'all'
   const hasConstituencySlot = slots.some((s) => s.type === 'constituency')
+  const hasChapterSlot = slots.some((s) => s.type === 'chapter')
 
   // Recipient count — batch constituency queries into one DB call
   useEffect(() => {
@@ -545,11 +849,17 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     const constituencyValues = derived
       .filter((f) => f.type === 'constituency' && f.value)
       .map((f) => f.value as string)
-    const otherFilters = derived.filter((f) => f.type !== 'constituency')
+    const chapterValues = derived
+      .filter((f) => f.type === 'chapter' && f.value)
+      .map((f) => f.value as string)
+    const otherFilters = derived.filter((f) => f.type !== 'constituency' && f.type !== 'chapter')
 
     Promise.all([
       constituencyValues.length > 0
         ? newsletterService.getRecipientCountForConstituencies(constituencyValues)
+        : Promise.resolve(0),
+      chapterValues.length > 0
+        ? newsletterService.getRecipientCountForChapters(chapterValues)
         : Promise.resolve(0),
       ...otherFilters.map((f) =>
         newsletterService.getRecipientCount(f.type as Exclude<AudienceType, 'multi'>, f.value)
@@ -574,6 +884,12 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
     )
   }
 
+  function updateChapterSlot(id: string, updates: Partial<ChapterSlot>) {
+    setSlots((prev) =>
+      prev.map((s) => (s.id === id && s.type === 'chapter' ? { ...s, ...updates } : s))
+    )
+  }
+
   function removeSlot(id: string) {
     setSlots((prev) => {
       const next = prev.filter((s) => s.id !== id)
@@ -592,12 +908,18 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
 
   function addConstituencySlot() {
     setSlots((prev) => {
-      // Remove 'all members' slot — targeting constituencies replaces it
       const without = prev.filter((s) => !(s.type === 'simple' && s.filter.type === 'all'))
       return [
         ...without,
         { id: uid(), type: 'constituency', regionFilter: null, search: '', selected: [] },
       ]
+    })
+  }
+
+  function addChapterSlot() {
+    setSlots((prev) => {
+      const without = prev.filter((s) => !(s.type === 'simple' && s.filter.type === 'all'))
+      return [...without, { id: uid(), type: 'chapter', search: '', selected: [] }]
     })
   }
 
@@ -706,7 +1028,7 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
               onRemove={() => removeSlot(slot.id)}
               showRemove={slots.length > 1}
             />
-          ) : (
+          ) : slot.type === 'constituency' ? (
             <ConstituencySlotRow
               key={slot.id}
               slot={slot}
@@ -714,6 +1036,15 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
               byRegion={regionsData?.byRegion ?? {}}
               allConstituencies={regionsData?.allConstituencies ?? []}
               onChange={(updates) => updateConstituencySlot(slot.id, updates)}
+              onRemove={() => removeSlot(slot.id)}
+              showRemove={slots.length > 1}
+            />
+          ) : (
+            <ChapterSlotRow
+              key={slot.id}
+              slot={slot}
+              allChapters={allChapters}
+              onChange={(updates) => updateChapterSlot(slot.id, updates)}
               onRemove={() => removeSlot(slot.id)}
               showRemove={slots.length > 1}
             />
@@ -736,6 +1067,14 @@ export function ComposePanel({ isSending, onSend }: ComposePanelProps) {
                 add_location_alt
               </span>
               Select constituencies
+            </button>
+          )}
+          {!hasChapterSlot && (
+            <button onClick={addChapterSlot} style={addBtnStyle}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                group_add
+              </span>
+              Select chapters
             </button>
           )}
         </div>

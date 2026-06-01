@@ -161,6 +161,19 @@ export const newsletterService = {
     return count ?? 0
   },
 
+  async getRecipientCountForChapters(chapters: string[]): Promise<number> {
+    if (chapters.length === 0) return 0
+    const { count, error } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .not('email', 'is', null)
+      .neq('email', '')
+      .is('deleted_at', null)
+      .in('chapter', chapters)
+    if (error) throw error
+    return count ?? 0
+  },
+
   async deleteNewsletters(ids: string[]): Promise<void> {
     const { error } = await supabase.from('newsletters').delete().in('id', ids)
     if (error) throw error
