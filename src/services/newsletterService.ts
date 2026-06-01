@@ -65,7 +65,22 @@ export const newsletterService = {
       return [...new Set((data ?? []).map((r: { role: string }) => r.role))].sort()
     }
 
-    const col = type as 'region' | 'constituency' | 'chapter'
+    if (type === 'region') {
+      const { data, error } = await supabase.from('ghana_regions').select('name').order('name')
+      if (error) throw error
+      return (data ?? []).map((r: { name: string }) => r.name)
+    }
+
+    if (type === 'constituency') {
+      const { data, error } = await supabase
+        .from('ghana_constituencies')
+        .select('name')
+        .order('name')
+      if (error) throw error
+      return (data ?? []).map((c: { name: string }) => c.name)
+    }
+
+    const col = type as 'chapter'
     const { data, error } = await supabase
       .from('users')
       .select(col)
@@ -113,19 +128,20 @@ export const newsletterService = {
     allConstituencies: string[]
   }> {
     const { data, error } = await supabase
-      .from('users')
-      .select('region, constituency')
-      .not('region', 'is', null)
-      .neq('region', '')
-      .not('constituency', 'is', null)
-      .neq('constituency', '')
-      .is('deleted_at', null)
+      .from('ghana_constituencies')
+      .select('name, ghana_regions!region_id(name)')
+      .order('name')
     if (error) throw error
 
     const byRegionSet: Record<string, Set<string>> = {}
-    for (const row of (data ?? []) as { region: string; constituency: string }[]) {
-      if (!byRegionSet[row.region]) byRegionSet[row.region] = new Set()
-      byRegionSet[row.region].add(row.constituency)
+    for (const row of (data ?? []) as {
+      name: string
+      ghana_regions: { name: string } | null
+    }[]) {
+      const region = row.ghana_regions?.name
+      if (!region) continue
+      if (!byRegionSet[region]) byRegionSet[region] = new Set()
+      byRegionSet[region].add(row.name)
     }
     const regions = Object.keys(byRegionSet).sort()
     const byRegion: Record<string, string[]> = {}
