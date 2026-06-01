@@ -290,6 +290,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
         },
         {
+          to: '/admin/newsletter',
+          icon: 'mail',
+          label: 'Newsletter',
+          permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        },
+        {
           to: '/admin/directives',
           icon: 'my_location',
           label: 'Tactical directives',
