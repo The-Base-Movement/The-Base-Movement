@@ -72,7 +72,7 @@ export default function NewsletterPage() {
       n.audience_filters && n.audience_filters.length > 0
         ? n.audience_filters
         : [{ type: n.audience_type === 'multi' ? 'all' : n.audience_type, value: n.audience_value }]
-    send(n.subject, n.body_html, filters as AudienceFilter[])
+    send(n.subject, n.body_html, filters as AudienceFilter[], n.id)
   }
 
   // KPI derivations

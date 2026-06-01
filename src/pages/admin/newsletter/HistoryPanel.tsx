@@ -234,6 +234,7 @@ export function HistoryPanel({
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => toggleRow(n.id)}
+                            onClick={(e) => e.stopPropagation()}
                             style={{ cursor: 'pointer', accentColor: 'hsl(var(--destructive))' }}
                           />
                         )}

@@ -132,7 +132,7 @@ export const newsletterService = {
     if (error) throw error
 
     const byRegionSet: Record<string, Set<string>> = {}
-    for (const row of (data ?? []) as {
+    for (const row of (data ?? []) as unknown as {
       name: string
       ghana_regions: { name: string } | null
     }[]) {
@@ -180,15 +180,19 @@ export const newsletterService = {
   },
 
   async createAndSend(payload: SendNewsletterPayload): Promise<{ sent: number; batches: number }> {
-    const { error: insertError } = await supabase.from('newsletters').insert({
-      id: payload.newsletter_id,
-      subject: payload.subject,
-      body_html: payload.body_html,
-      audience_type: payload.audience_type,
-      audience_value: payload.audience_value,
-      audience_filters: payload.audience_filters,
-      status: 'sent',
-    })
+    const { error: insertError } = await supabase.from('newsletters').upsert(
+      {
+        id: payload.newsletter_id,
+        subject: payload.subject,
+        body_html: payload.body_html,
+        audience_type: payload.audience_type,
+        audience_value: payload.audience_value,
+        audience_filters: payload.audience_filters,
+        status: 'sent',
+        error_message: null,
+      },
+      { onConflict: 'id' }
+    )
     if (insertError) throw insertError
 
     const { data, error } = await supabase.functions.invoke('send-newsletter', {
