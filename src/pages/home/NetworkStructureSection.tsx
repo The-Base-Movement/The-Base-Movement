@@ -15,7 +15,6 @@ const CONSTITUENCY_POINTS = [
   'Exclusively for members living in Ghana. Each of the 275 parliamentary constituencies maps to a defined electoral territory.',
   'You register under the constituency where you reside and are registered to vote.',
   'Constituencies are the primary unit of political accountability: your MP, your vote, your voice.',
-  'The Base tracks polling data, turnout, and sentiment by constituency to hold representatives to account.',
 ]
 
 const CHAPTER_POINTS = [
