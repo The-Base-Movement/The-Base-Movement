@@ -45,6 +45,7 @@ function fmt(n: number) {
 
 export default function FinanceDashboard() {
   const [stats, setStats] = useState<SummaryStats | null>(null)
+  const [statsError, setStatsError] = useState(false)
   const [cashflow, setCashflow] = useState<CashflowBucket[]>([])
   const [breakdown, setBreakdown] = useState<ExpenseCategory[]>([])
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
@@ -52,8 +53,16 @@ export default function FinanceDashboard() {
   const [chartsLoading, setChartsLoading] = useState(true)
 
   useEffect(() => {
-    financeAnalyticsService.getSummaryStats().then(setStats)
-    financeAnalyticsService.getRecentTransactions(20).then(setTransactions)
+    financeAnalyticsService
+      .getSummaryStats()
+      .then(setStats)
+      .catch(() => setStatsError(true))
+    financeAnalyticsService
+      .getRecentTransactions(20)
+      .then(setTransactions)
+      .catch(() => {
+        /* silent — table shows empty state */
+      })
   }, [])
 
   useEffect(() => {
@@ -72,6 +81,9 @@ export default function FinanceDashboard() {
           setBreakdown(bd)
           setChartsLoading(false)
         }
+      })
+      .catch(() => {
+        if (!cancelled) setChartsLoading(false)
       })
     return () => {
       cancelled = true
@@ -126,7 +138,15 @@ export default function FinanceDashboard() {
                 fontFamily: "'Public Sans', sans-serif",
               }}
             >
-              {stats ? fmt(stats.netBalance) : '—'}
+              {statsError ? (
+                <p style={{ fontSize: 12, color: 'hsl(var(--destructive))', margin: 0 }}>
+                  Failed to load
+                </p>
+              ) : stats ? (
+                fmt(stats.netBalance)
+              ) : (
+                '—'
+              )}
             </p>
           </div>
           <p
@@ -333,7 +353,7 @@ export default function FinanceDashboard() {
                       <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(val: number) => fmt(val)} />
+                  <Tooltip formatter={(val) => fmt(Number(val))} />
                 </PieChart>
               </ResponsiveContainer>
 
@@ -412,7 +432,7 @@ export default function FinanceDashboard() {
                   style={{
                     width: 10,
                     height: 10,
-                    borderRadius: 2,
+                    borderRadius: 'var(--radius-xs)',
                     background: 'hsl(var(--primary))',
                     display: 'inline-block',
                   }}
@@ -424,7 +444,7 @@ export default function FinanceDashboard() {
                   style={{
                     width: 10,
                     height: 10,
-                    borderRadius: 2,
+                    borderRadius: 'var(--radius-xs)',
                     background: 'hsl(var(--on-surface))',
                     display: 'inline-block',
                   }}
@@ -463,7 +483,7 @@ export default function FinanceDashboard() {
                     v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)
                   }
                 />
-                <Tooltip formatter={(val: number) => [fmt(val)]} />
+                <Tooltip formatter={(val) => [fmt(Number(val))]} />
                 <Bar
                   dataKey="income"
                   name="Income"
