@@ -5,23 +5,23 @@
  *  - Ghana Network  → Constituency-based (members living in Ghana)
  *  - Diaspora Network → Chapter-based (members living outside Ghana)
  *
- * These are equal, independent tracks — NOT a hierarchy.
+ * These are equal, independent tracks, not a hierarchy.
  * Constituencies exist only within Ghana's 275 electoral boundaries.
  * Chapters exist wherever Ghanaians in the diaspora are organised.
  */
 import { Link } from 'react-router-dom'
 
 const CONSTITUENCY_POINTS = [
-  'Exclusively for members living in Ghana — each of the 275 parliamentary constituencies maps to a defined electoral territory.',
+  'Exclusively for members living in Ghana. Each of the 275 parliamentary constituencies maps to a defined electoral territory.',
   'You register under the constituency where you reside and are registered to vote.',
-  'Constituencies are the primary unit of political accountability — your MP, your vote, your voice.',
+  'Constituencies are the primary unit of political accountability: your MP, your vote, your voice.',
   'The Base tracks polling data, turnout, and sentiment by constituency to hold representatives to account.',
 ]
 
 const CHAPTER_POINTS = [
-  'Exclusively for Ghanaians in the diaspora — there are no constituencies outside Ghana, so chapters fill that role.',
+  'Exclusively for Ghanaians in the diaspora. There are no constituencies outside Ghana, so chapters fill that role.',
   'Chapters are organised by country and city: e.g. The Base London, The Base New York, The Base Hamburg.',
-  'Diaspora members are equally valued — chapters feed resources, advocacy, and visibility back into the national movement.',
+  'Diaspora members are equally valued: chapters feed resources, advocacy, and visibility back into the national movement.',
   'Each chapter is led by an appointed coordinator who connects directly to the national leadership structure.',
 ]
 
@@ -65,7 +65,7 @@ export function NetworkStructureSection() {
               margin: '0 0 14px',
             }}
           >
-            Ghana Network or Diaspora Network — which one are you?
+            Ghana Network or Diaspora Network: Which One Are You?
           </h2>
           <p
             style={{
@@ -178,7 +178,7 @@ export function NetworkStructureSection() {
               >
                 Ghana is divided into 275 parliamentary constituencies. Every Base member living in
                 Ghana joins under the constituency where they live and vote. There are no chapters
-                inside Ghana — constituencies are the unit.
+                inside Ghana. Constituencies are the unit.
               </p>
             </div>
 
@@ -336,9 +336,9 @@ export function NetworkStructureSection() {
                   margin: 0,
                 }}
               >
-                Ghanaians in the diaspora don't have constituencies — those exist only within
-                Ghana's borders. Instead, diaspora members organise through chapters: local groups
-                in the cities and countries where they live.
+                Ghanaians in the diaspora don't have constituencies; those exist only within Ghana's
+                borders. Instead, diaspora members organise through chapters: local groups in the
+                cities and countries where they live.
               </p>
             </div>
 
@@ -455,7 +455,7 @@ export function NetworkStructureSection() {
             <strong style={{ color: 'hsl(var(--on-surface))' }}>
               Constituencies and chapters never overlap.
             </strong>{' '}
-            Ghana's 275 constituencies cover every resident member — there are no chapters inside
+            Ghana's 275 constituencies cover every resident member. There are no chapters inside
             Ghana. Chapters exist only outside Ghana, organised around the cities and countries
             where our diaspora lives. Whichever track you join, you are a full member of The Base
             Movement with equal rights, responsibilities, and voice.
