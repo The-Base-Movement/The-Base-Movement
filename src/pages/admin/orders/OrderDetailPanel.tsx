@@ -399,7 +399,7 @@ export function OrderDetailPanel({
               onClick={() => handleCancel(selectedOrder)}
               disabled={updatingId === selectedOrder.id}
             >
-              Terminate Order
+              Cancel Order
             </button>
           )}
         </div>
