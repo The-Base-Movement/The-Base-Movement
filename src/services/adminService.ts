@@ -1579,6 +1579,8 @@ class AdminService {
     else if (dbRole.includes('JUNIOR_EDITOR')) role = 'JUNIOR_EDITOR'
     else if (dbRole.includes('REGIONAL_CORRESPONDENT')) role = 'REGIONAL_CORRESPONDENT'
     else if (dbRole.includes('EDITOR')) role = 'EDITOR'
+    else if (dbRole.includes('FINANCE_OFFICER') || dbRole === 'FINANCEOFFICER')
+      role = 'FINANCE_OFFICER'
     else if (dbRole.includes('VERIFIER')) role = 'VERIFIER'
 
     return {
