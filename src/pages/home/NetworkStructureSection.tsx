@@ -1,23 +1,34 @@
+/**
+ * NetworkStructureSection
+ *
+ * Explains the two parallel membership tracks of The Base Movement:
+ *  - Ghana Network  → Constituency-based (members living in Ghana)
+ *  - Diaspora Network → Chapter-based (members living outside Ghana)
+ *
+ * These are equal, independent tracks — NOT a hierarchy.
+ * Constituencies exist only within Ghana's 275 electoral boundaries.
+ * Chapters exist wherever Ghanaians in the diaspora are organised.
+ */
 import { Link } from 'react-router-dom'
 
 const CONSTITUENCY_POINTS = [
-  'Ghana has 275 parliamentary constituencies — each a defined electoral territory.',
-  'Members join under the constituency where they are registered to vote.',
-  'Constituencies elect parliamentary representatives and are the primary unit of political accountability.',
-  'The Base tracks sentiment, feedback, and turnout data by constituency.',
+  'Exclusively for members living in Ghana — each of the 275 parliamentary constituencies maps to a defined electoral territory.',
+  'You register under the constituency where you reside and are registered to vote.',
+  'Constituencies are the primary unit of political accountability — your MP, your vote, your voice.',
+  'The Base tracks polling data, turnout, and sentiment by constituency to hold representatives to account.',
 ]
 
 const CHAPTER_POINTS = [
-  'A chapter hub is a local organisational branch within a constituency.',
-  'Multiple chapters can operate inside the same constituency.',
-  'Chapters coordinate rallies, outreach, and ground-level mobilisation activities.',
-  'Each chapter is led by an appointed coordinator who reports to the regional structure.',
+  'Exclusively for Ghanaians in the diaspora — there are no constituencies outside Ghana, so chapters fill that role.',
+  'Chapters are organised by country and city: e.g. The Base London, The Base New York, The Base Hamburg.',
+  'Diaspora members are equally valued — chapters feed resources, advocacy, and visibility back into the national movement.',
+  'Each chapter is led by an appointed coordinator who connects directly to the national leadership structure.',
 ]
 
-export function ChaptersSection() {
+export function NetworkStructureSection() {
   return (
     <section
-      aria-labelledby="structure-heading"
+      aria-labelledby="network-structure-heading"
       style={{
         background: 'hsl(var(--container-low))',
         borderTop: '1px solid hsl(var(--border))',
@@ -26,8 +37,8 @@ export function ChaptersSection() {
       }}
     >
       <div className="page-container">
-        {/* Header */}
-        <div style={{ maxWidth: 600, marginBottom: 52 }} data-fade>
+        {/* ── Header ── */}
+        <div style={{ maxWidth: 640, marginBottom: 52 }} data-fade>
           <span
             style={{
               display: 'block',
@@ -40,10 +51,10 @@ export function ChaptersSection() {
               marginBottom: 10,
             }}
           >
-            Our structure
+            How membership works
           </span>
           <h2
-            id="structure-heading"
+            id="network-structure-heading"
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -54,7 +65,7 @@ export function ChaptersSection() {
               margin: '0 0 14px',
             }}
           >
-            Constituencies &amp; Chapters
+            Ghana Network or Diaspora Network — which one are you?
           </h2>
           <p
             style={{
@@ -62,27 +73,32 @@ export function ChaptersSection() {
               fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 14,
               color: 'hsl(var(--on-surface-muted))',
-              lineHeight: 1.65,
+              lineHeight: 1.7,
               margin: 0,
             }}
           >
-            The Base Movement operates across two distinct tiers. Understanding both helps you know
-            where you fit — and how your voice moves from your street to Parliament.
+            The Base Movement has two equal membership tracks. Where you live determines which one
+            you join. If you live in Ghana, you belong to a{' '}
+            <strong style={{ color: 'hsl(var(--on-surface))' }}>constituency</strong>. If you live
+            abroad, you belong to a{' '}
+            <strong style={{ color: 'hsl(var(--on-surface))' }}>chapter</strong>. Both tracks carry
+            the same weight in building a new Ghana.
           </p>
         </div>
 
-        {/* Cards grid */}
+        {/* ── Cards ── */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: 24,
-            marginBottom: 48,
+            marginBottom: 24,
           }}
           data-fade-stagger
         >
-          {/* ── Constituency card ── */}
-          <div
+          {/* ── Constituency card (Ghana Network) ── */}
+          <article
+            aria-label="Ghana Network: Constituency membership"
             style={{
               background: '#fff',
               border: '1px solid hsl(var(--border))',
@@ -92,7 +108,6 @@ export function ChaptersSection() {
               flexDirection: 'column',
             }}
           >
-            {/* Card header */}
             <div
               style={{
                 borderTop: '4px solid hsl(var(--accent))',
@@ -116,6 +131,7 @@ export function ChaptersSection() {
                 >
                   <span
                     className="material-symbols-outlined"
+                    aria-hidden="true"
                     style={{ fontSize: 22, color: 'hsl(var(--accent))' }}
                   >
                     location_city
@@ -131,10 +147,10 @@ export function ChaptersSection() {
                       letterSpacing: '0.1em',
                       textTransform: 'uppercase',
                       color: 'hsl(var(--accent))',
-                      marginBottom: 2,
+                      marginBottom: 3,
                     }}
                   >
-                    Tier 1
+                    If you live in Ghana
                   </span>
                   <h3
                     style={{
@@ -156,33 +172,35 @@ export function ChaptersSection() {
                   fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 13,
                   color: 'hsl(var(--on-surface-muted))',
-                  lineHeight: 1.6,
+                  lineHeight: 1.65,
                   margin: 0,
                 }}
               >
-                The political foundation — a legally defined electoral territory from which a Member
-                of Parliament is elected. Every Ghanaian voter belongs to one.
+                Ghana is divided into 275 parliamentary constituencies. Every Base member living in
+                Ghana joins under the constituency where they live and vote. There are no chapters
+                inside Ghana — constituencies are the unit.
               </p>
             </div>
 
-            {/* Key points */}
             <div
               style={{
                 padding: '20px 28px 28px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 12,
+                flex: 1,
               }}
             >
               {CONSTITUENCY_POINTS.map((point, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                   <span
+                    aria-hidden="true"
                     style={{
                       width: 20,
                       height: 20,
                       borderRadius: '50%',
                       background: 'rgba(218,165,32,0.12)',
-                      border: '1px solid rgba(218,165,32,0.25)',
+                      border: '1px solid rgba(218,165,32,0.28)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -203,7 +221,7 @@ export function ChaptersSection() {
                       fontWeight: 'var(--font-weight-normal, 400)',
                       fontSize: 12.5,
                       color: 'hsl(var(--on-surface))',
-                      lineHeight: 1.55,
+                      lineHeight: 1.6,
                       margin: 0,
                     }}
                   >
@@ -213,9 +231,9 @@ export function ChaptersSection() {
               ))}
 
               <Link
-                to="/register"
+                to="/register?platform=GHANA"
                 style={{
-                  marginTop: 8,
+                  marginTop: 10,
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
@@ -226,16 +244,21 @@ export function ChaptersSection() {
                   textDecoration: 'none',
                 }}
               >
-                Join your constituency
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                Join the Ghana Network
+                <span
+                  className="material-symbols-outlined"
+                  aria-hidden="true"
+                  style={{ fontSize: 14 }}
+                >
                   arrow_forward
                 </span>
               </Link>
             </div>
-          </div>
+          </article>
 
-          {/* ── Chapter Hub card ── */}
-          <div
+          {/* ── Chapter card (Diaspora Network) ── */}
+          <article
+            aria-label="Diaspora Network: Chapter membership"
             style={{
               background: '#fff',
               border: '1px solid hsl(var(--border))',
@@ -245,7 +268,6 @@ export function ChaptersSection() {
               flexDirection: 'column',
             }}
           >
-            {/* Card header */}
             <div
               style={{
                 borderTop: '4px solid hsl(var(--primary))',
@@ -269,9 +291,10 @@ export function ChaptersSection() {
                 >
                   <span
                     className="material-symbols-outlined"
+                    aria-hidden="true"
                     style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
                   >
-                    groups
+                    public
                   </span>
                 </div>
                 <div>
@@ -284,10 +307,10 @@ export function ChaptersSection() {
                       letterSpacing: '0.1em',
                       textTransform: 'uppercase',
                       color: 'hsl(var(--primary))',
-                      marginBottom: 2,
+                      marginBottom: 3,
                     }}
                   >
-                    Tier 2
+                    If you live outside Ghana
                   </span>
                   <h3
                     style={{
@@ -299,7 +322,7 @@ export function ChaptersSection() {
                       margin: 0,
                     }}
                   >
-                    Chapter Hub
+                    Chapter
                   </h3>
                 </div>
               </div>
@@ -309,27 +332,29 @@ export function ChaptersSection() {
                   fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 13,
                   color: 'hsl(var(--on-surface-muted))',
-                  lineHeight: 1.6,
+                  lineHeight: 1.65,
                   margin: 0,
                 }}
               >
-                The movement's operational branch — an active local unit that runs events, drives
-                recruitment, and delivers accountability on the ground.
+                Ghanaians in the diaspora don't have constituencies — those exist only within
+                Ghana's borders. Instead, diaspora members organise through chapters: local groups
+                in the cities and countries where they live.
               </p>
             </div>
 
-            {/* Key points */}
             <div
               style={{
                 padding: '20px 28px 28px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 12,
+                flex: 1,
               }}
             >
               {CHAPTER_POINTS.map((point, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                   <span
+                    aria-hidden="true"
                     style={{
                       width: 20,
                       height: 20,
@@ -356,7 +381,7 @@ export function ChaptersSection() {
                       fontWeight: 'var(--font-weight-normal, 400)',
                       fontSize: 12.5,
                       color: 'hsl(var(--on-surface))',
-                      lineHeight: 1.55,
+                      lineHeight: 1.6,
                       margin: 0,
                     }}
                   >
@@ -366,9 +391,9 @@ export function ChaptersSection() {
               ))}
 
               <Link
-                to="/chapters"
+                to="/register?platform=DIASPORA"
                 style={{
-                  marginTop: 8,
+                  marginTop: 10,
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
@@ -379,16 +404,20 @@ export function ChaptersSection() {
                   textDecoration: 'none',
                 }}
               >
-                Find your chapter
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                Join the Diaspora Network
+                <span
+                  className="material-symbols-outlined"
+                  aria-hidden="true"
+                  style={{ fontSize: 14 }}
+                >
                   arrow_forward
                 </span>
               </Link>
             </div>
-          </div>
+          </article>
         </div>
 
-        {/* Bottom relationship note */}
+        {/* ── Bottom clarification ── */}
         <div
           style={{
             padding: '18px 24px',
@@ -396,14 +425,20 @@ export function ChaptersSection() {
             border: '1px solid hsl(var(--border))',
             borderRadius: 'var(--radius-md)',
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             gap: 14,
           }}
           data-fade
         >
           <span
             className="material-symbols-outlined"
-            style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}
+            aria-hidden="true"
+            style={{
+              fontSize: 20,
+              color: 'hsl(var(--on-surface-muted))',
+              flexShrink: 0,
+              marginTop: 1,
+            }}
           >
             info
           </span>
@@ -413,14 +448,17 @@ export function ChaptersSection() {
               fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12.5,
               color: 'hsl(var(--on-surface-muted))',
-              lineHeight: 1.6,
+              lineHeight: 1.65,
               margin: 0,
             }}
           >
-            <strong style={{ color: 'hsl(var(--on-surface))' }}>How they relate:</strong> A
-            constituency is the political territory; a chapter hub is the movement's active presence
-            within it. You register under your constituency — then connect with your nearest chapter
-            to take action.
+            <strong style={{ color: 'hsl(var(--on-surface))' }}>
+              Constituencies and chapters never overlap.
+            </strong>{' '}
+            Ghana's 275 constituencies cover every resident member — there are no chapters inside
+            Ghana. Chapters exist only outside Ghana, organised around the cities and countries
+            where our diaspora lives. Whichever track you join, you are a full member of The Base
+            Movement with equal rights, responsibilities, and voice.
           </p>
         </div>
       </div>

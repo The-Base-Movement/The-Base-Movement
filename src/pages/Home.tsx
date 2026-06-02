@@ -12,7 +12,7 @@ import { useGSAP } from '@gsap/react'
 import { HeroSection } from './home/HeroSection'
 import { StatsSection } from './home/StatsSection'
 import { RoadmapSection } from './home/RoadmapSection'
-import { ChaptersSection } from './home/ChaptersSection'
+import { NetworkStructureSection } from './home/NetworkStructureSection'
 import { FoundationSection } from './home/FoundationSection'
 import { LatestUpdatesSection } from './home/LatestUpdatesSection'
 import { PlatformsSection } from './home/PlatformsSection'
@@ -207,7 +207,7 @@ export default function Home() {
 
       <RoadmapSection roadmapItems={roadmapItems} />
 
-      <ChaptersSection />
+      <NetworkStructureSection />
 
       <HomeOfficers />
 
