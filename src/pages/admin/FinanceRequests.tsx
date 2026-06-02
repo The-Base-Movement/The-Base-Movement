@@ -42,8 +42,15 @@ const TYPE_LABELS: Record<RequestType, string> = {
 }
 
 export default function FinanceRequests() {
-  const currentUser = adminService.getCurrentUser()
+  // Re-read in useEffect to handle hard-refresh case where adminService
+  // hasn't finished async initialize() when the component first renders.
+  const [currentUser, setCurrentUser] = useState(adminService.getCurrentUser())
   const canReview = currentUser?.role === 'FINANCE_OFFICER' || currentUser?.role === 'SUPER_ADMIN'
+
+  useEffect(() => {
+    const u = adminService.getCurrentUser()
+    if (u) setCurrentUser(u)
+  }, [])
 
   const [requests, setRequests] = useState<FinanceRequest[]>([])
   const [loading, setLoading] = useState(true)
