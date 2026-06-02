@@ -26,7 +26,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
         <div className="mb-5">
           <h2
             id="stats-heading"
-            className="font-meta font-semibold text-xl tracking-tight text-on-surface"
+            className="font-meta font-medium text-xl tracking-tight text-on-surface"
           >
             Movement at a glance
           </h2>
