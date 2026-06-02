@@ -73,7 +73,7 @@ export const financeService = {
     } = await supabase.auth.getUser()
     if (!user) throw new Error('User not authenticated')
 
-    const { error } = await supabase
+    const { error, count } = await supabase
       .from('finance_requests')
       .update({
         status,
@@ -82,7 +82,10 @@ export const financeService = {
         reviewed_at: new Date().toISOString(),
       })
       .eq('id', requestId)
+      .eq('status', 'Pending')
+      .select('id', { count: 'exact', head: true })
 
     if (error) throw error
+    if (!count) throw new Error('Request is no longer available for review')
   },
 }
