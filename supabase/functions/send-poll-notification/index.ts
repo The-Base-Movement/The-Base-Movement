@@ -104,7 +104,10 @@ Deno.serve(async (req: Request) => {
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
             body: JSON.stringify({
               personalizations: [{ to: p.to }],
-              from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
+              from: {
+                email: 'noreply@thebasemovement.creativeutil.com',
+                name: 'The Base Movement',
+              },
               subject: `This poll closes in ${hoursRemaining} hours. Your vote counts.`,
               content: [{ type: 'text/html', value: p.substitutions.html }],
             }),
