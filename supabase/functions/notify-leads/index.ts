@@ -59,7 +59,7 @@ Deno.serve(async (req: Request) => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
         body: JSON.stringify({
           personalizations: [{ to: [{ email: memberEmail }] }],
-          from: { email: 'brastyphler17@gmail.com', name: 'The Base Movement' },
+          from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
           subject: 'You are now a verified member of The Base.',
           content: [{ type: 'text/html', value: html }],
         }),
