@@ -729,12 +729,14 @@ class LogisticsService {
 
       if (fetchError || !currentOrder) throw fetchError || new Error('Order not found')
 
-      const updates: Partial<Order> = { status, updated_at: new Date().toISOString() }
+      const updates: Partial<Order> = { status }
 
       if (status === 'Dispatched') {
         updates.dispatched_at = new Date().toISOString()
       } else if (status === 'Delivered') {
         updates.delivered_at = new Date().toISOString()
+      } else if (status === 'Cancelled') {
+        updates.cancelled_at = new Date().toISOString()
       }
 
       // 2. Update the order status first

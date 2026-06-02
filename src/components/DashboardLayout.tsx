@@ -71,7 +71,7 @@ export default function DashboardLayout() {
             .from('users')
             .select('platform, constituency')
             .eq('id', session.user.id)
-            .single(),
+            .maybeSingle(),
           adminService.getLeadChapter(session.user.id),
           adminService.getUserChapter(session.user.id),
         ])
