@@ -116,7 +116,6 @@ function bucket(
       buckets.push({ label: `Wk ${8 - i}`, income, expense })
     }
   } else {
-    // day — last 7 days
     const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     for (let i = 6; i >= 0; i--) {
       const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i)
@@ -142,11 +141,29 @@ function bucket(
 }
 
 export const financeAnalyticsService = {
-  async getSummaryStats(): Promise<SummaryStats> {
-    const [donRes, ledRes] = await Promise.all([
-      supabase.from('donations').select('amount').eq('status', 'Verified'),
-      supabase.from('mobilization_ledger').select('amount').eq('transaction_type', 'Expenditure'),
-    ])
+  /** Returns all distinct non-null chapter values from the ledger, sorted A–Z. */
+  async getChapters(): Promise<string[]> {
+    const { data, error } = await supabase
+      .from('mobilization_ledger')
+      .select('chapter')
+      .eq('transaction_type', 'Expenditure')
+      .not('chapter', 'is', null)
+    if (error) throw new Error(error.message)
+    const unique = [...new Set((data ?? []).map((r) => r.chapter as string).filter(Boolean))]
+    return unique.sort()
+  },
+
+  async getSummaryStats(chapter?: string): Promise<SummaryStats> {
+    let donQuery = supabase.from('donations').select('amount').eq('status', 'Verified')
+    let ledQuery = supabase
+      .from('mobilization_ledger')
+      .select('amount')
+      .eq('transaction_type', 'Expenditure')
+    if (chapter) {
+      donQuery = donQuery.eq('chapter', chapter)
+      ledQuery = ledQuery.eq('chapter', chapter)
+    }
+    const [donRes, ledRes] = await Promise.all([donQuery, ledQuery])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
     const totalIncome = (donRes.data ?? []).reduce((s, d) => s + Number(d.amount), 0)
@@ -154,32 +171,39 @@ export const financeAnalyticsService = {
     return { totalIncome, totalExpenses, netBalance: totalIncome - totalExpenses }
   },
 
-  async getCashflowData(period: FinancePeriod): Promise<CashflowBucket[]> {
+  async getCashflowData(period: FinancePeriod, chapter?: string): Promise<CashflowBucket[]> {
     const start = getPeriodStart(period).toISOString()
-    const [donRes, ledRes] = await Promise.all([
-      supabase
-        .from('donations')
-        .select('created_at, amount')
-        .eq('status', 'Verified')
-        .gte('created_at', start),
-      supabase
-        .from('mobilization_ledger')
-        .select('timestamp, amount')
-        .eq('transaction_type', 'Expenditure')
-        .gte('timestamp', start),
-    ])
+    let donQuery = supabase
+      .from('donations')
+      .select('created_at, amount')
+      .eq('status', 'Verified')
+      .gte('created_at', start)
+    let ledQuery = supabase
+      .from('mobilization_ledger')
+      .select('timestamp, amount')
+      .eq('transaction_type', 'Expenditure')
+      .gte('timestamp', start)
+    if (chapter) {
+      donQuery = donQuery.eq('chapter', chapter)
+      ledQuery = ledQuery.eq('chapter', chapter)
+    }
+    const [donRes, ledRes] = await Promise.all([donQuery, ledQuery])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
     return bucket(period, donRes.data ?? [], ledRes.data ?? [])
   },
 
-  async getExpenseBreakdown(period: FinancePeriod): Promise<ExpenseCategory[]> {
+  async getExpenseBreakdown(period: FinancePeriod, chapter?: string): Promise<ExpenseCategory[]> {
     const start = getPeriodStart(period).toISOString()
-    const { data, error } = await supabase
+    let query = supabase
       .from('mobilization_ledger')
       .select('category, amount')
       .eq('transaction_type', 'Expenditure')
       .gte('timestamp', start)
+    if (chapter) {
+      query = query.eq('chapter', chapter)
+    }
+    const { data, error } = await query
     if (error) throw new Error(error.message)
     const entries = data ?? []
     const totals: Record<string, number> = {}
@@ -197,20 +221,23 @@ export const financeAnalyticsService = {
       .sort((a, b) => b.amount - a.amount)
   },
 
-  async getRecentTransactions(limit = 20): Promise<TransactionRow[]> {
-    const [donRes, ledRes] = await Promise.all([
-      supabase
-        .from('donations')
-        .select('id, created_at, amount, full_name, payment_method, country, status')
-        .order('created_at', { ascending: false })
-        .limit(limit),
-      supabase
-        .from('mobilization_ledger')
-        .select('id, timestamp, amount, description, chapter')
-        .eq('transaction_type', 'Expenditure')
-        .order('timestamp', { ascending: false })
-        .limit(limit),
-    ])
+  async getRecentTransactions(limit = 20, chapter?: string): Promise<TransactionRow[]> {
+    let donQuery = supabase
+      .from('donations')
+      .select('id, created_at, amount, full_name, payment_method, country, status, chapter')
+      .order('created_at', { ascending: false })
+      .limit(limit)
+    let ledQuery = supabase
+      .from('mobilization_ledger')
+      .select('id, timestamp, amount, description, chapter')
+      .eq('transaction_type', 'Expenditure')
+      .order('timestamp', { ascending: false })
+      .limit(limit)
+    if (chapter) {
+      donQuery = donQuery.eq('chapter', chapter)
+      ledQuery = ledQuery.eq('chapter', chapter)
+    }
+    const [donRes, ledRes] = await Promise.all([donQuery, ledQuery])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
     const income: TransactionRow[] = (donRes.data ?? []).map((d) => ({
@@ -218,7 +245,7 @@ export const financeAnalyticsService = {
       kind: 'income' as const,
       description: d.full_name || 'Anonymous',
       date: d.created_at,
-      chapterOrSource: d.payment_method || d.country || '—',
+      chapterOrSource: d.chapter || d.payment_method || d.country || '—',
       amount: Number(d.amount),
       status: d.status,
     }))
