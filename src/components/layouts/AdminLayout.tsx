@@ -11,6 +11,14 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PageLabelProvider } from '@/contexts/PageLabelContext'
 import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } from '@/types/admin'
 
+const FINANCE_OFFICER_ALLOWED_PATHS = [
+  '/admin/donations',
+  '/admin/spending-ledger',
+  '/admin/store',
+  '/admin/orders',
+  '/admin/finance-requests',
+]
+
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const { settings } = useBranding()
   const { session } = useAuth()
@@ -223,6 +231,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           label: 'Expenses',
           permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
         },
+        {
+          to: '/admin/finance-requests',
+          icon: 'request_quote',
+          label: 'Finance requests',
+          permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+        },
       ],
     },
     {
@@ -415,6 +429,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         if (item.superAdminOnly) {
           const role = user?.role
           if (role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
+        }
+        if (user?.role === 'FINANCE_OFFICER') {
+          return FINANCE_OFFICER_ALLOWED_PATHS.includes(item.to)
         }
         if (!item.permission) return true
         return adminService.can(item.permission.action, item.permission.resource)
