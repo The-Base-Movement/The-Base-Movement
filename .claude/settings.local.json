@@ -87,7 +87,17 @@
       "Bash(grep -n 'btn btn-primary\\\\|btn btn-outline\\\\|btn btn-dest\\\\|btn btn-accent' C:/MAMP/htdocs/The-Base/src/pages/admin/__TRACKED_VAR__.tsx)",
       "Bash(grep -n 'btn btn-primary\\\\|btn btn-outline\\\\|btn btn-dest' C:/MAMP/htdocs/The-Base/src/pages/admin/__TRACKED_VAR__.tsx)",
       "Bash(xargs grep -L \"desktop-only\\\\|overflowX.*auto\\\\|overflowX: 'auto'\\\\|overflow.*auto\\\\|po-table-wrap\\\\|SpendingLedgerMobileList\\\\|AdministratorsMobile\")",
-      "mcp__supabase__get_logs"
+      "mcp__supabase__get_logs",
+      "Bash(supabase functions *)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\MAMP\\\\htdocs\\\\The-Base\\\\supabase\\\\functions\\\\newsletter-unsubscribe\")",
+      "Bash(Write-Host \"dir created\")",
+      "Bash(grep -r \"closing_notified\" --include=\"*.ts\" --include=\"*.tsx\" --include=\"*.sql\" -l)",
+      "Bash(grep -r \"polls\" supabase/migrations/ -l)",
+      "PowerShell($tokenPath = \"$env:APPDATA\\\\supabase\\\\access-token\"; if \\(Test-Path $tokenPath\\) { \"Token file exists\"; Get-Content $tokenPath } else { \"No token file at $tokenPath\" }; Get-ChildItem \"$env:APPDATA\\\\supabase\\\\\" -ErrorAction SilentlyContinue)",
+      "mcp__supabase__get_edge_function",
+      "Bash(npm test *)",
+      "Bash(git ls-files *)",
+      "Skill(commit-commands:commit-push-pr)"
     ]
   },
   "enableAllProjectMcpServers": true,
