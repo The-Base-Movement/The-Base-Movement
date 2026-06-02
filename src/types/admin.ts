@@ -739,6 +739,7 @@ export interface Order {
   updated_at?: string
   dispatched_at?: string
   delivered_at?: string
+  cancelled_at?: string
   tracking_number?: string
   notes?: string
   items: OrderItem[]
