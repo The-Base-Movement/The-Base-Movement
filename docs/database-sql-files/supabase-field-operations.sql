@@ -71,10 +71,15 @@ CREATE POLICY "Regional admins can manage chapter field events" ON public.field_
         )
     );
 
--- Mobilization Ledger: Regional admins view their own chapter's ledger.
-CREATE POLICY "Regional admins can view chapter ledger" ON public.mobilization_ledger
-    FOR SELECT
+-- Mobilization Ledger: Regional admins manage their own chapter's ledger.
+CREATE POLICY "Regional admins can manage chapter ledger" ON public.mobilization_ledger
+    FOR ALL
     USING (
+        chapter IN (
+            SELECT chapter FROM public.admins WHERE id = auth.uid()
+        )
+    )
+    WITH CHECK (
         chapter IN (
             SELECT chapter FROM public.admins WHERE id = auth.uid()
         )
