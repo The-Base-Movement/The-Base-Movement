@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
 
 type RequestType = FinanceRequest['request_type']
@@ -158,9 +159,28 @@ export default function FinanceRequests() {
 
   // For non-finance-officer users, show only their own requests in the "My Requests" table.
   // RLS already filters on the DB side; for finance officers who see all, we split the view.
+  const [mySearch, setMySearch] = useState('')
+  const [mySortOrder, setMySortOrder] = useState<'asc' | 'desc'>('asc')
+
   const myRequests = canReview
     ? requests.filter((r) => r.requester_id === currentUser?.id)
     : requests
+
+  const sortedMyRequests = useMemo(() => {
+    const list = myRequests.filter((r) => {
+      const q = mySearch.toLowerCase()
+      return (
+        (r.description || '').toLowerCase().includes(q) ||
+        (r.chapter || '').toLowerCase().includes(q) ||
+        TYPE_LABELS[r.request_type].toLowerCase().includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const descA = a.description || ''
+      const descB = b.description || ''
+      return mySortOrder === 'asc' ? descA.localeCompare(descB) : descB.localeCompare(descA)
+    })
+  }, [myRequests, mySearch, mySortOrder])
 
   const pendingRequests = requests.filter((r) => r.status === 'Pending')
 
@@ -409,23 +429,55 @@ export default function FinanceRequests() {
 
         {/* My Requests Table */}
         <div style={{ marginTop: 32 }}>
-          <h3
+          <div
             style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 14,
-              color: 'hsl(var(--on-surface))',
-              margin: '0 0 12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 12,
+              flexWrap: 'wrap',
+              gap: 10,
             }}
           >
-            My Submitted Requests
-          </h3>
+            <h3
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface))',
+                margin: 0,
+              }}
+            >
+              My Submitted Requests
+            </h3>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <input
+                type="text"
+                placeholder="Search requests…"
+                value={mySearch}
+                onChange={(e) => setMySearch(e.target.value)}
+                style={{
+                  padding: '6px 12px',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: 12,
+                  fontFamily: "'Public Sans', sans-serif",
+                  color: 'hsl(var(--on-surface))',
+                  background: 'hsl(var(--background))',
+                  outline: 'none',
+                  width: 180,
+                  boxSizing: 'border-box',
+                }}
+              />
+              <SortToggle value={mySortOrder} onChange={setMySortOrder} />
+            </div>
+          </div>
 
           {loading ? (
             <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>Loading…</p>
-          ) : myRequests.length === 0 ? (
+          ) : sortedMyRequests.length === 0 ? (
             <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>
-              No requests submitted yet.
+              {mySearch ? 'No matching requests found.' : 'No requests submitted yet.'}
             </p>
           ) : (
             <div style={{ overflowX: 'auto' }}>
@@ -459,7 +511,7 @@ export default function FinanceRequests() {
                   </tr>
                 </thead>
                 <tbody>
-                  {myRequests.map((r) => (
+                  {sortedMyRequests.map((r) => (
                     <tr
                       key={r.id}
                       style={{

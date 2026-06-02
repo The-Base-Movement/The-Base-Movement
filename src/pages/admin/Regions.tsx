@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { adminService, type Region } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 // Modular imports
 import { inputSt, type ConMap } from './regions/utils'
@@ -14,6 +15,7 @@ export default function AdminRegions() {
   const [regions, setRegions] = useState<Region[]>([])
   const [conMap, setConMap] = useState<ConMap>({})
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [expandedRegions, setExpandedRegions] = useState<number[]>([])
   const [constituencySearch, setConstituencySearch] = useState<Record<number, string>>({})
   const [isLoading, setIsLoading] = useState(true)
@@ -66,14 +68,21 @@ export default function AdminRegions() {
   const toggleRegion = (id: number) =>
     setExpandedRegions((prev) => (prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]))
 
-  const filteredRegions = regions.filter((region) => {
-    const rName = region.name || ''
-    const rCons = region.constituencies || []
-    return (
-      rName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rCons.some((c) => c?.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-  })
+  const filteredRegions = useMemo(() => {
+    const list = regions.filter((region) => {
+      const rName = region.name || ''
+      const rCons = region.constituencies || []
+      return (
+        rName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        rCons.some((c) => c?.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [regions, searchQuery, sortOrder])
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -206,30 +215,41 @@ export default function AdminRegions() {
         isLoading={isLoading}
       />
 
-      {/* Global search */}
-      <div style={{ position: 'relative', marginBottom: 16 }}>
-        <span
-          className="material-symbols-outlined"
-          style={{
-            position: 'absolute',
-            left: 10,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontSize: 16,
-            color: 'hsl(var(--on-surface-muted))',
-            pointerEvents: 'none',
-          }}
-        >
-          search
-        </span>
-        <input
-          name="searchQuery"
-          id="input-3b886d"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search regions or constituencies…"
-          style={{ ...inputSt, paddingLeft: 34, height: 40, width: '100%' }}
-        />
+      {/* Global search & Sort */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 12,
+          alignItems: 'center',
+          marginBottom: 16,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ position: 'relative', flex: '1 1 240px' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 16,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            name="searchQuery"
+            id="input-3b886d"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search regions or constituencies…"
+            style={{ ...inputSt, paddingLeft: 34, height: 40, width: '100%' }}
+          />
+        </div>
+        <SortToggle value={sortOrder} onChange={setSortOrder} />
       </div>
 
       {/* Regions list */}

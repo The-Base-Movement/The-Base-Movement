@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { FieldReport } from '@/types/admin'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 const pillBase: React.CSSProperties = {
   padding: '2px 10px',
@@ -40,9 +41,28 @@ interface SituationalAwarenessFeedProps {
 
 export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAwarenessFeedProps) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
-  const filteredReports =
-    statusFilter === 'ALL' ? reports : reports.filter((r) => r.status === statusFilter)
+  const sortedReports = useMemo(() => {
+    let list = reports
+    if (statusFilter !== 'ALL') {
+      list = list.filter((r) => r.status === statusFilter)
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      list = list.filter((r) => {
+        const text = r.report_text || ''
+        const userName = r.users?.full_name || ''
+        return text.toLowerCase().includes(q) || userName.toLowerCase().includes(q)
+      })
+    }
+    return list.sort((a, b) => {
+      const nameA = a.users?.full_name || ''
+      const nameB = b.users?.full_name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [reports, statusFilter, searchQuery, sortOrder])
 
   return (
     <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
@@ -79,75 +99,118 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
           </div>
         </div>
 
-        {/* Row 2: filter select — full width */}
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-              zIndex: 1,
-            }}
-          >
-            filter_list
-          </span>
-          <select
-            id="feed-status-filter"
-            name="feedStatusFilter"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            style={{
-              width: '100%',
-              height: 34,
-              paddingLeft: 32,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12,
-              background: 'hsl(var(--background))',
-              color: 'hsl(var(--on-surface))',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              outline: 'none',
-              appearance: 'none',
-            }}
-          >
-            <option value="ALL">All reports ({reports.length})</option>
-            <option value="Pending">
-              Pending ({reports.filter((r) => r.status === 'Pending').length})
-            </option>
-            <option value="Verified">
-              Verified ({reports.filter((r) => r.status === 'Verified').length})
-            </option>
-            <option value="Rejected">
-              Rejected ({reports.filter((r) => r.status === 'Rejected').length})
-            </option>
-          </select>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              right: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 14,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            expand_more
-          </span>
+        {/* Row 2: filters */}
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: '1 1 180px' }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+                opacity: 0.4,
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search reports by member or notes"
+              type="text"
+              placeholder="Search reports..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                height: 34,
+                paddingLeft: 30,
+                paddingRight: 10,
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontSize: 12,
+                background: '#fff',
+                color: 'hsl(var(--on-surface))',
+                boxSizing: 'border-box',
+                outline: 'none',
+              }}
+            />
+          </div>
+
+          <div style={{ position: 'relative', width: 150 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}
+            >
+              filter_list
+            </span>
+            <select
+              id="feed-status-filter"
+              name="feedStatusFilter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+              style={{
+                width: '100%',
+                height: 34,
+                paddingLeft: 32,
+                paddingRight: 28,
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                background: 'hsl(var(--background))',
+                color: 'hsl(var(--on-surface))',
+                boxSizing: 'border-box',
+                cursor: 'pointer',
+                outline: 'none',
+                appearance: 'none',
+              }}
+            >
+              <option value="ALL">All ({reports.length})</option>
+              <option value="Pending">
+                Pending ({reports.filter((r) => r.status === 'Pending').length})
+              </option>
+              <option value="Verified">
+                Verified ({reports.filter((r) => r.status === 'Verified').length})
+              </option>
+              <option value="Rejected">
+                Rejected ({reports.filter((r) => r.status === 'Rejected').length})
+              </option>
+            </select>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                right: 8,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              expand_more
+            </span>
+          </div>
+
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
         </div>
       </div>
 
-      {filteredReports.length === 0 ? (
+      {sortedReports.length === 0 ? (
         <div
           style={{
             display: 'flex',
@@ -179,7 +242,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
         </div>
       ) : (
         <div style={{ maxHeight: 800, overflowY: 'auto' }}>
-          {filteredReports.map((report) => (
+          {sortedReports.map((report) => (
             <div key={report.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
               {report.media_url && (
                 <div

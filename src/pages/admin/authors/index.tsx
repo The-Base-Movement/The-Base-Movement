@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { createPortal } from 'react-dom'
 import { format } from 'date-fns'
 import { adminService, type Author } from '@/services/adminService'
@@ -47,6 +48,7 @@ export default function AdminAuthors() {
   const [authors, setAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [roleFilter, setRoleFilter] = useState('all')
   const [viewingAuthor, setViewingAuthor] = useState<Author | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null)
@@ -105,14 +107,21 @@ export default function AdminAuthors() {
     }
   }
 
-  const filteredAuthors = authors.filter((a) => {
-    const matchesSearch =
-      !searchQuery ||
-      a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.role?.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesRole = roleFilter === 'all' || a.role === roleFilter
-    return matchesSearch && matchesRole
-  })
+  const filteredAuthors = useMemo(() => {
+    const list = authors.filter((a) => {
+      const matchesSearch =
+        !searchQuery ||
+        a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.role?.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesRole = roleFilter === 'all' || a.role === roleFilter
+      return matchesSearch && matchesRole
+    })
+    return list.sort((a, b) => {
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [authors, searchQuery, roleFilter, sortOrder])
 
   // ── Layout ──
   if (formView) {
@@ -224,36 +233,39 @@ export default function AdminAuthors() {
         ))}
       </div>
 
-      {/* Mobile filters — inline above the card list */}
+      {/* Mobile filters & Sort — inline above the card list */}
       <div
         className="mobile-only"
         style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}
       >
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            aria-label="Search authors"
-            name="mobAuthorSearch"
-            id="input-mob-author-search"
-            type="text"
-            placeholder="Search authors…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ ...inputSt, height: 40, paddingLeft: 34 }}
-          />
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search authors"
+              name="mobAuthorSearch"
+              id="input-mob-author-search"
+              type="text"
+              placeholder="Search authors…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ ...inputSt, height: 40, paddingLeft: 34 }}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
         </div>
         <select
           name="mobRoleFilter"
@@ -324,31 +336,34 @@ export default function AdminAuthors() {
               >
                 Filter authors
               </label>
-              <div style={{ position: 'relative' }}>
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    position: 'absolute',
-                    left: 9,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    fontSize: 14,
-                    color: 'hsl(var(--on-surface-muted))',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  search
-                </span>
-                <input
-                  aria-label="Name or role…"
-                  name="searchQuery"
-                  id="input-650b52"
-                  type="text"
-                  placeholder="Name or role…"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={inputSt}
-                />
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{
+                      position: 'absolute',
+                      left: 9,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      fontSize: 14,
+                      color: 'hsl(var(--on-surface-muted))',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    search
+                  </span>
+                  <input
+                    aria-label="Name or role…"
+                    name="searchQuery"
+                    id="input-650b52"
+                    type="text"
+                    placeholder="Name or role…"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={inputSt}
+                  />
+                </div>
+                <SortToggle value={sortOrder} onChange={setSortOrder} />
               </div>
             </div>
             <div>

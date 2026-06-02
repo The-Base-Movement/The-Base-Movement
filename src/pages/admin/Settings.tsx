@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
 import type { Factor, AuthError, Session, User } from '@supabase/supabase-js'
 import { authService } from '@/services/authService'
@@ -64,6 +64,7 @@ export default function AdminSettings() {
   const [auditSearch, setAuditSearch] = useState('')
   const [auditFilter, setAuditFilter] = useState('All Status')
   const [auditResourceFilter, setAuditResourceFilter] = useState('All Resources')
+  const [auditSortOrder, setAuditSortOrder] = useState<'asc' | 'desc'>('asc')
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [adminData, setAdminData] = useState<AdminUser | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -232,16 +233,23 @@ export default function AdminSettings() {
     }
   }
 
-  const filteredLogs = auditLogs.filter((log) => {
-    const matchesSearch =
-      log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
-      log.resource.toLowerCase().includes(auditSearch.toLowerCase()) ||
-      log.adminName.toLowerCase().includes(auditSearch.toLowerCase())
-    const matchesStatus = auditFilter === 'All Status' || log.status === auditFilter
-    const matchesResource =
-      auditResourceFilter === 'All Resources' || log.resource.includes(auditResourceFilter)
-    return matchesSearch && matchesStatus && matchesResource
-  })
+  const sortedLogs = useMemo(() => {
+    const list = auditLogs.filter((log) => {
+      const matchesSearch =
+        log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
+        log.resource.toLowerCase().includes(auditSearch.toLowerCase()) ||
+        log.adminName.toLowerCase().includes(auditSearch.toLowerCase())
+      const matchesStatus = auditFilter === 'All Status' || log.status === auditFilter
+      const matchesResource =
+        auditResourceFilter === 'All Resources' || log.resource.includes(auditResourceFilter)
+      return matchesSearch && matchesStatus && matchesResource
+    })
+    return list.sort((a, b) => {
+      const actA = a.action || ''
+      const actB = b.action || ''
+      return auditSortOrder === 'asc' ? actA.localeCompare(actB) : actB.localeCompare(actA)
+    })
+  }, [auditLogs, auditSearch, auditFilter, auditResourceFilter, auditSortOrder])
 
   const handleSaveProfile = async () => {
     setIsSaving(true)
@@ -502,7 +510,9 @@ export default function AdminSettings() {
               setAuditFilter={setAuditFilter}
               auditResourceFilter={auditResourceFilter}
               setAuditResourceFilter={setAuditResourceFilter}
-              filteredLogs={filteredLogs}
+              filteredLogs={sortedLogs}
+              auditSortOrder={auditSortOrder}
+              onAuditSortChange={setAuditSortOrder}
               handleExportLogs={handleExportLogs}
             />
           )}

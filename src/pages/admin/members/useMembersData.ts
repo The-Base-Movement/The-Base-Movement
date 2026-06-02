@@ -17,18 +17,26 @@ export function useMembersData() {
   const [searchType, setSearchType] = useState<'default' | 'constituency' | 'polling_station'>(
     'default'
   )
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const itemsPerPage = 8
 
   const fetchMembers = useCallback(() => {
     setIsLoading(true)
     adminService
-      .getMembersPaginated(currentPage, itemsPerPage, searchTerm, sourceFilter, searchType)
+      .getMembersPaginated(
+        currentPage,
+        itemsPerPage,
+        searchTerm,
+        sourceFilter,
+        searchType,
+        sortOrder
+      )
       .then(({ data, totalCount: total }) => {
         setMembers(data)
         setTotalMembers(total)
         setIsLoading(false)
       })
-  }, [currentPage, searchTerm, sourceFilter, searchType])
+  }, [currentPage, searchTerm, sourceFilter, searchType, sortOrder])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -78,6 +86,8 @@ export function useMembersData() {
     searchTerm,
     searchType,
     sourceFilter,
+    sortOrder,
+    setSortOrder,
     stats,
     fetchMembers,
     handleSearchChange,

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Entry } from './types'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface SpendingLedgerTableProps {
   filtered: Entry[]
@@ -9,6 +10,8 @@ interface SpendingLedgerTableProps {
   categoryFilter: string
   setCategoryFilter: (v: string) => void
   allCategories: string[]
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (v: 'asc' | 'desc') => void
   openEdit: (entry: Entry) => void
   openDelete: (entry: Entry) => void
 }
@@ -21,6 +24,8 @@ export function SpendingLedgerTable({
   categoryFilter,
   setCategoryFilter,
   allCategories,
+  sortOrder,
+  onSortChange,
   openEdit,
   openDelete,
 }: SpendingLedgerTableProps) {
@@ -159,6 +164,8 @@ export function SpendingLedgerTable({
             </>
           )}
         </div>
+
+        <SortToggle value={sortOrder} onChange={onSortChange} />
       </div>
 
       {/* Desktop table */}

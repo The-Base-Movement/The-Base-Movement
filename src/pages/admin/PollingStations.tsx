@@ -33,6 +33,7 @@ export default function PollingStations() {
   const [selectedConstituency, setSelectedConstituency] = useState('')
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
   const hasFilters = !!(selectedRegion || selectedConstituency || search)
@@ -44,12 +45,13 @@ export default function PollingStations() {
       PAGE_SIZE,
       selectedRegion || undefined,
       selectedConstituency || undefined,
-      search || undefined
+      search || undefined,
+      sortOrder
     )
     setStations(result.data)
     setTotalCount(result.totalCount)
     setLoading(false)
-  }, [page, selectedRegion, selectedConstituency, search])
+  }, [page, selectedRegion, selectedConstituency, search, sortOrder])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -89,7 +91,7 @@ export default function PollingStations() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1)
-  }, [selectedConstituency, search])
+  }, [selectedConstituency, search, sortOrder])
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') setSearch(searchInput)
@@ -159,6 +161,8 @@ export default function PollingStations() {
           setSearch={setSearch}
           hasFilters={hasFilters}
           handleClearFilters={handleClearFilters}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
         />
 
         {/* Table / Pagination */}

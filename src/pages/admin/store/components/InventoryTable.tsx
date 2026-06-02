@@ -1,4 +1,5 @@
 import type { InventoryItem } from '@/services/adminService'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface InventoryTableProps {
   products: InventoryItem[]
@@ -116,42 +117,48 @@ export function InventoryTable({
           ))}
         </div>
         {/* Search — full width */}
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 9,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            name="searchQuery"
-            id="input-b1aa13"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search products…"
-            style={{
-              width: '100%',
-              height: 34,
-              paddingLeft: 30,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12,
-              outline: 'none',
-              background: '#fff',
-              color: 'hsl(var(--on-surface))',
-              boxSizing: 'border-box',
-            }}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 9,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              name="searchQuery"
+              id="input-b1aa13"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products…"
+              style={{
+                width: '100%',
+                height: 34,
+                paddingLeft: 30,
+                paddingRight: 12,
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 4,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                outline: 'none',
+                background: '#fff',
+                color: 'hsl(var(--on-surface))',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <SortToggle
+            value={sortConfig?.key === 'name' ? sortConfig.direction : 'asc'}
+            onChange={() => handleSort('name')}
           />
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -33,6 +33,7 @@ export default function SpendingLedger() {
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [categories, setCategories] = useState<Category[]>([])
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   const loadCategories = useCallback(async () => {
     const data = await adminService.getSpendingCategories()
@@ -133,15 +134,22 @@ export default function SpendingLedger() {
 
   const allFilterCategories = ['All', ...categories.map((c) => c.name)]
 
-  const filtered = entries.filter((e) => {
-    const matchesSearch =
-      !searchQuery ||
-      e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.chapter.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.category.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = categoryFilter === 'All' || e.category === categoryFilter
-    return matchesSearch && matchesCategory
-  })
+  const filtered = useMemo(() => {
+    const list = entries.filter((e) => {
+      const matchesSearch =
+        !searchQuery ||
+        e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.chapter.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.category.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesCategory = categoryFilter === 'All' || e.category === categoryFilter
+      return matchesSearch && matchesCategory
+    })
+    return list.sort((a, b) => {
+      const descA = a.description || ''
+      const descB = b.description || ''
+      return sortOrder === 'asc' ? descA.localeCompare(descB) : descB.localeCompare(descA)
+    })
+  }, [entries, searchQuery, categoryFilter, sortOrder])
 
   return (
     <div className="main">
@@ -177,6 +185,8 @@ export default function SpendingLedger() {
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
         allCategories={allFilterCategories}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
         openEdit={openEdit}
         openDelete={openDelete}
       />

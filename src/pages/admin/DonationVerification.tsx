@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 // Subcomponents
 import { DonationsTable } from './donationverification/DonationsTable'
@@ -86,6 +87,7 @@ export default function FinancialAudit() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('Pending')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [selectedDonation, setSelectedDonation] = useState<DonationDetail | null>(null)
   const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState<string | null>(null)
@@ -206,37 +208,45 @@ export default function FinancialAudit() {
     }
   }
 
-  const filteredDonations = donations.filter((d) => {
-    const q = searchQuery.toLowerCase()
-    const matchesSearch =
-      d.fullName.toLowerCase().includes(q) ||
-      d.campaignTitle?.toLowerCase().includes(q) ||
-      d.reference.toLowerCase().includes(q) ||
-      d.phone?.toLowerCase().includes(q)
+  const filteredDonations = useMemo(() => {
+    const list = donations.filter((d) => {
+      const q = searchQuery.toLowerCase()
+      const matchesSearch =
+        d.fullName.toLowerCase().includes(q) ||
+        d.campaignTitle?.toLowerCase().includes(q) ||
+        d.reference.toLowerCase().includes(q) ||
+        d.phone?.toLowerCase().includes(q)
 
-    const amt = parseFloat(d.amount)
-    const matchesAmount =
-      (filters.amountMin === '' || amt >= parseFloat(filters.amountMin)) &&
-      (filters.amountMax === '' || amt <= parseFloat(filters.amountMax))
+      const amt = parseFloat(d.amount)
+      const matchesAmount =
+        (filters.amountMin === '' || amt >= parseFloat(filters.amountMin)) &&
+        (filters.amountMax === '' || amt <= parseFloat(filters.amountMax))
 
-    const donationDate = new Date(d.date)
-    const matchesDate =
-      (filters.dateFrom === '' || donationDate >= new Date(filters.dateFrom)) &&
-      (filters.dateTo === '' || donationDate <= new Date(filters.dateTo + 'T23:59:59'))
+      const donationDate = new Date(d.date)
+      const matchesDate =
+        (filters.dateFrom === '' || donationDate >= new Date(filters.dateFrom)) &&
+        (filters.dateTo === '' || donationDate <= new Date(filters.dateTo + 'T23:59:59'))
 
-    const matchesCountry =
-      filters.country === 'All' ||
-      (filters.country === 'Ghana' && d.country === 'Ghana') ||
-      (filters.country === 'Diaspora' && d.country !== 'Ghana')
+      const matchesCountry =
+        filters.country === 'All' ||
+        (filters.country === 'Ghana' && d.country === 'Ghana') ||
+        (filters.country === 'Diaspora' && d.country !== 'Ghana')
 
-    return (
-      matchesSearch &&
-      matchesMethod(d, filters.method) &&
-      matchesAmount &&
-      matchesDate &&
-      matchesCountry
-    )
-  })
+      return (
+        matchesSearch &&
+        matchesMethod(d, filters.method) &&
+        matchesAmount &&
+        matchesDate &&
+        matchesCountry
+      )
+    })
+
+    return list.sort((a, b) => {
+      const nameA = a.fullName || ''
+      const nameB = b.fullName || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [donations, searchQuery, filters, sortOrder])
 
   function setFilter<K extends keyof FilterState>(key: K, value: FilterState[K]) {
     setFilters((prev) => ({ ...prev, [key]: value }))
@@ -428,6 +438,8 @@ export default function FinancialAudit() {
             </button>
           ))}
         </div>
+
+        <SortToggle value={sortOrder} onChange={setSortOrder} />
 
         {/* Filters button + dropdown */}
         <div style={{ position: 'relative', flexGrow: 1 }} ref={filterPanelRef}>

@@ -207,14 +207,16 @@ class AdminService {
     pageSize: number,
     searchTerm?: string,
     registrationSource?: string,
-    searchType: 'default' | 'constituency' | 'polling_station' = 'default'
+    searchType: 'default' | 'constituency' | 'polling_station' = 'default',
+    sortOrder?: 'asc' | 'desc'
   ): Promise<{ data: Member[]; totalCount: number }> {
     return memberService.getMembersPaginated(
       page,
       pageSize,
       searchTerm,
       registrationSource,
-      searchType
+      searchType,
+      sortOrder
     )
   }
 
@@ -2512,7 +2514,8 @@ class AdminService {
     pageSize: number,
     region?: string,
     constituency?: string,
-    search?: string
+    search?: string,
+    sortOrder?: 'asc' | 'desc'
   ): Promise<{
     data: {
       code: string
@@ -2537,11 +2540,16 @@ class AdminService {
       query = query.or(`code.ilike.%${search}%,name.ilike.%${search}%,community.ilike.%${search}%`)
     }
 
-    const { data, count, error } = await query
-      .order('region', { ascending: true })
-      .order('constituency', { ascending: true })
-      .order('community', { ascending: true })
-      .range(from, to)
+    if (sortOrder) {
+      query = query.order('name', { ascending: sortOrder === 'asc' })
+    } else {
+      query = query
+        .order('region', { ascending: true })
+        .order('constituency', { ascending: true })
+        .order('community', { ascending: true })
+    }
+
+    const { data, count, error } = await query.range(from, to)
 
     if (error) {
       console.error('[DATABASE] getPollingStationsPaginated failed:', error)

@@ -49,6 +49,8 @@ export default function MembersList() {
     searchTerm,
     searchType,
     sourceFilter,
+    sortOrder,
+    setSortOrder,
     stats,
     fetchMembers,
     handleSearchChange,
@@ -161,9 +163,11 @@ export default function MembersList() {
         searchTerm={searchTerm}
         searchType={searchType}
         sourceFilter={sourceFilter}
+        sortOrder={sortOrder}
         onSearchChange={handleSearchChange}
         onSearchTypeChange={handleSearchTypeChange}
         onSourceFilterChange={handleSourceFilterChange}
+        onSortChange={setSortOrder}
         onClearSearch={handleClearSearch}
       />
 

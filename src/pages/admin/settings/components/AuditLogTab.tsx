@@ -1,4 +1,5 @@
 import type { AuditLogEntry } from '@/services/adminService'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface AuditLogTabProps {
   auditSearch: string
@@ -8,6 +9,8 @@ interface AuditLogTabProps {
   auditResourceFilter: string
   setAuditResourceFilter: (val: string) => void
   filteredLogs: AuditLogEntry[]
+  auditSortOrder: 'asc' | 'desc'
+  onAuditSortChange: (val: 'asc' | 'desc') => void
   handleExportLogs: () => void
 }
 
@@ -54,6 +57,8 @@ export function AuditLogTab({
   auditResourceFilter,
   setAuditResourceFilter,
   filteredLogs,
+  auditSortOrder,
+  onAuditSortChange,
   handleExportLogs,
 }: AuditLogTabProps) {
   return (
@@ -79,46 +84,49 @@ export function AuditLogTab({
           background: 'hsl(var(--container-low))',
         }}
       >
-        <div style={{ position: 'relative', flex: 1, minWidth: 180 }}>
-          <label htmlFor="input-7ba91a" style={{ display: 'none' }}>
-            Search by action or resource…
-          </label>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            aria-label="Search by action or resource…"
-            name="auditSearch"
-            id="input-7ba91a"
-            placeholder="Search by action or resource…"
-            value={auditSearch}
-            onChange={(e) => setAuditSearch(e.target.value)}
-            style={{
-              width: '100%',
-              height: 36,
-              paddingLeft: 34,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              background: '#fff',
-              outline: 'none',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12,
-              borderRadius: 4,
-              boxSizing: 'border-box',
-            }}
-          />
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flex: 1, minWidth: 180 }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <label htmlFor="input-7ba91a" style={{ display: 'none' }}>
+              Search by action or resource…
+            </label>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search by action or resource…"
+              name="auditSearch"
+              id="input-7ba91a"
+              placeholder="Search by action or resource…"
+              value={auditSearch}
+              onChange={(e) => setAuditSearch(e.target.value)}
+              style={{
+                width: '100%',
+                height: 36,
+                paddingLeft: 34,
+                paddingRight: 12,
+                border: '1px solid hsl(var(--border))',
+                background: '#fff',
+                outline: 'none',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                borderRadius: 4,
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <SortToggle value={auditSortOrder} onChange={onAuditSortChange} />
         </div>
         <label htmlFor="select-194325" style={{ display: 'none' }}>
           Filter by Status

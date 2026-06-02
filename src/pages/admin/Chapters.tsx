@@ -20,6 +20,7 @@ export default function ChaptersManagement() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
   const [regionFilter, setRegionFilter] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
   const [countries, setCountries] = useState<Country[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -78,6 +79,14 @@ export default function ChaptersManagement() {
     [chapters, search, statusFilter, regionFilter]
   )
 
+  const sortedChapters = useMemo(() => {
+    return [...filteredChapters].sort((a, b) => {
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [filteredChapters, sortOrder])
+
   const totalMembers = useMemo(
     () => chapters.reduce((s, c) => s + (c.member_count || 0), 0),
     [chapters]
@@ -92,11 +101,11 @@ export default function ChaptersManagement() {
   )
 
   const itemsPerPage = 14
-  const totalPages = Math.ceil(filteredChapters.length / itemsPerPage)
+  const totalPages = Math.ceil(sortedChapters.length / itemsPerPage)
   const currentChapters = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage
-    return filteredChapters.slice(start, start + itemsPerPage)
-  }, [filteredChapters, currentPage])
+    return sortedChapters.slice(start, start + itemsPerPage)
+  }, [sortedChapters, currentPage])
 
   const maxMemberCount = useMemo(
     () => Math.max(...regionalStats.map((s) => s.memberCount), 1),
@@ -196,7 +205,7 @@ export default function ChaptersManagement() {
 
       <ChaptersGrid
         currentChapters={currentChapters}
-        filteredChapters={filteredChapters}
+        filteredChapters={sortedChapters}
         currentPage={currentPage}
         totalPages={totalPages}
         itemsPerPage={itemsPerPage}
@@ -204,12 +213,14 @@ export default function ChaptersManagement() {
         statusFilter={statusFilter}
         regionFilter={regionFilter}
         availableRegions={availableRegions}
+        sortOrder={sortOrder}
         onSearchChange={setSearch}
         onStatusFilterChange={setStatusFilter}
         onRegionFilterChange={(val) => {
           setRegionFilter(val)
           setCurrentPage(1)
         }}
+        onSortOrderChange={setSortOrder}
         onPageChange={setCurrentPage}
         onOpenAddModal={chapterForm.openAddModal}
         onOpenEditModal={chapterForm.openEditModal}

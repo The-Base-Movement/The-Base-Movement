@@ -93,6 +93,7 @@ export default function GroundGameCommand() {
   const [readinessFilter, setReadinessFilter] = useState<
     'ALL' | 'VERIFIED_VOTER' | 'IN_PROGRESS' | 'UNVERIFIED'
   >('ALL')
+  const [readinessSortOrder, setReadinessSortOrder] = useState<'asc' | 'desc'>('asc')
 
   useEffect(() => {
     fetchData()
@@ -215,8 +216,12 @@ export default function GroundGameCommand() {
           (r.polling_station_id || '').toLowerCase().includes(q)
       )
     }
-    return rows
-  }, [voterRegs, selectedRegion, readinessFilter, readinessSearch])
+    return [...rows].sort((a, b) => {
+      const nameA = a.member_name || ''
+      const nameB = b.member_name || ''
+      return readinessSortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [voterRegs, selectedRegion, readinessFilter, readinessSearch, readinessSortOrder])
 
   const pollingAgentMemberIds = useMemo(
     () => new Set(pollingAgents.map((a) => a.member_id)),
@@ -588,6 +593,8 @@ export default function GroundGameCommand() {
             setReadinessSearch={setReadinessSearch}
             readinessFilter={readinessFilter}
             setReadinessFilter={setReadinessFilter}
+            readinessSortOrder={readinessSortOrder}
+            setReadinessSortOrder={setReadinessSortOrder}
             pollingAgentMemberIds={pollingAgentMemberIds}
             openStationModal={openStationModal}
           />

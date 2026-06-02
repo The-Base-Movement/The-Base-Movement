@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { contentService } from '@/services/contentService'
 import { logisticsService } from '@/services/logisticsService'
 import { adminService, type Member } from '@/services/adminService'
@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 import { TrashContent } from './trash/TrashContent'
 
@@ -28,6 +29,7 @@ export default function TrashPage() {
   const [members, setMembers] = useState<Member[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isBulkRestoring, setIsBulkRestoring] = useState(false)
   const [isBulkDeleting, setIsBulkDeleting] = useState(false)
@@ -151,18 +153,7 @@ export default function TrashPage() {
     return Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
   }
 
-  const countFor = (tab: TrashTab) =>
-    tab === 'blogs'
-      ? blogs.length
-      : tab === 'products'
-        ? products.length
-        : tab === 'media'
-          ? media.length
-          : tab === 'authors'
-            ? authors.length
-            : members.length
-
-  const getFilteredItems = () => {
+  const filteredItems = useMemo(() => {
     const items: (BlogPost | InventoryItem | MediaAsset | Author | Member)[] =
       activeTab === 'blogs'
         ? blogs
@@ -173,17 +164,37 @@ export default function TrashPage() {
             : activeTab === 'authors'
               ? authors
               : members
-    if (!searchQuery) return items
-    return items.filter((item) => {
-      const r = item as unknown as Record<string, unknown>
-      return String(r['title'] ?? r['name'] ?? r['filename'] ?? '')
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    })
-  }
 
-  const filteredItems = getFilteredItems()
+    const filtered = searchQuery
+      ? items.filter((item) => {
+          const r = item as unknown as Record<string, unknown>
+          return String(r['title'] ?? r['name'] ?? r['filename'] ?? '')
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        })
+      : items
+
+    return [...filtered].sort((a, b) => {
+      const rA = a as unknown as Record<string, unknown>
+      const rB = b as unknown as Record<string, unknown>
+      const nameA = String(rA['title'] ?? rA['name'] ?? rA['filename'] ?? '')
+      const nameB = String(rB['title'] ?? rB['name'] ?? rB['filename'] ?? '')
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [blogs, products, media, authors, members, activeTab, searchQuery, sortOrder])
+
   const total = blogs.length + products.length + media.length + authors.length + members.length
+
+  const countFor = (tab: TrashTab) =>
+    tab === 'blogs'
+      ? blogs.length
+      : tab === 'products'
+        ? products.length
+        : tab === 'media'
+          ? media.length
+          : tab === 'authors'
+            ? authors.length
+            : members.length
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -342,47 +353,50 @@ export default function TrashPage() {
         </div>
       </div>
 
-      {/* Mobile: search bar */}
+      {/* Mobile: search & sort bar */}
       <div className="mobile-only" style={{ marginBottom: 16 }}>
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 16,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            aria-label="Search deleted items"
-            name="searchQuery"
-            id="input-trash-search-mobile"
-            type="text"
-            placeholder="Search deleted items..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              height: 40,
-              paddingLeft: 34,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              background: '#fff',
-              borderRadius: 4,
-              outline: 'none',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12,
-              boxSizing: 'border-box',
-              color: 'hsl(var(--on-surface))',
-            }}
-          />
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 16,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search deleted items"
+              name="searchQuery"
+              id="input-trash-search-mobile"
+              type="text"
+              placeholder="Search deleted items..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                height: 40,
+                paddingLeft: 34,
+                paddingRight: 12,
+                border: '1px solid hsl(var(--border))',
+                background: '#fff',
+                borderRadius: 4,
+                outline: 'none',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                boxSizing: 'border-box',
+                color: 'hsl(var(--on-surface))',
+              }}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
         </div>
       </div>
 
@@ -503,45 +517,48 @@ export default function TrashPage() {
               </span>
             </div>
             <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ position: 'relative' }}>
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    position: 'absolute',
-                    left: 10,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    fontSize: 16,
-                    color: 'hsl(var(--on-surface-muted))',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  search
-                </span>
-                <input
-                  aria-label="Search deleted items"
-                  name="searchQuery"
-                  id="input-ddd0f6"
-                  type="text"
-                  placeholder="Search deleted items..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: 38,
-                    paddingLeft: 34,
-                    paddingRight: 12,
-                    border: '1px solid hsl(var(--border))',
-                    background: 'hsl(var(--container-low))',
-                    borderRadius: 4,
-                    outline: 'none',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 12,
-                    boxSizing: 'border-box',
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                />
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{
+                      position: 'absolute',
+                      left: 10,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      fontSize: 16,
+                      color: 'hsl(var(--on-surface-muted))',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    search
+                  </span>
+                  <input
+                    aria-label="Search deleted items"
+                    name="searchQuery"
+                    id="input-ddd0f6"
+                    type="text"
+                    placeholder="Search deleted items..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: 38,
+                      paddingLeft: 34,
+                      paddingRight: 12,
+                      border: '1px solid hsl(var(--border))',
+                      background: 'hsl(var(--container-low))',
+                      borderRadius: 4,
+                      outline: 'none',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 12,
+                      boxSizing: 'border-box',
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  />
+                </div>
+                <SortToggle value={sortOrder} onChange={setSortOrder} />
               </div>
               <div
                 style={{

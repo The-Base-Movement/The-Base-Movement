@@ -1,4 +1,5 @@
 import type { PartyOfficial, PartyTier } from './utils'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface OfficialsTableProps {
   loading: boolean
@@ -7,6 +8,10 @@ interface OfficialsTableProps {
   handleOpenModal: (official: PartyOfficial) => void
   handleDelete: (id: string) => void
   handleView: (official: PartyOfficial) => void
+  searchQuery: string
+  onSearchChange: (v: string) => void
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (v: 'asc' | 'desc') => void
 }
 
 const thSt: React.CSSProperties = {
@@ -76,11 +81,101 @@ export function OfficialsTable({
   handleOpenModal,
   handleDelete,
   handleView,
+  searchQuery,
+  onSearchChange,
+  sortOrder,
+  onSortChange,
 }: OfficialsTableProps) {
   const empty = !loading && officials.length === 0
 
   return (
     <div className="panel" style={{ overflow: 'visible' }}>
+      {/* Panel header with Search & Sort */}
+      <div
+        className="ph"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+          flexWrap: 'wrap',
+          padding: '12px 20px',
+          borderBottom: '1px solid hsl(var(--border))',
+        }}
+      >
+        <span
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 13.5,
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 15, color: 'hsl(var(--primary))' }}
+          >
+            badge
+          </span>
+          Officials Roster
+          {!loading && (
+            <span className="meta">
+              {officials.length} record{officials.length !== 1 ? 's' : ''}
+            </span>
+          )}
+        </span>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            flex: '0 1 300px',
+            minWidth: 200,
+          }}
+        >
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search officials…"
+              style={{
+                height: 34,
+                paddingLeft: 34,
+                paddingRight: 12,
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 13,
+                fontFamily: "'Public Sans', sans-serif",
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--background))',
+                boxSizing: 'border-box',
+                width: '100%',
+              }}
+              placeholder="Search officials…"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={onSortChange} />
+        </div>
+      </div>
+
       {/* ── Desktop table ── */}
       <div className="po-table-wrap" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>

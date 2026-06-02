@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { supabase } from '@/lib/supabase'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
 
 type Tab = 'comments' | 'reviews'
@@ -64,6 +65,7 @@ export default function AdminModeration() {
   const [reviews, setReviews] = useState<ProductReview[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [flaggedOnly, setFlaggedOnly] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
 
@@ -183,26 +185,40 @@ export default function AdminModeration() {
     setReviews((prev) => prev.filter((r) => r.id !== id))
   }
 
-  const filteredComments = comments.filter((c) => {
-    if (flaggedOnly && !c.flagged) return false
-    if (!search) return true
-    const q = search.toLowerCase()
-    return (
-      c.author_name.toLowerCase().includes(q) ||
-      c.content.toLowerCase().includes(q) ||
-      (c.post_title ?? '').toLowerCase().includes(q)
-    )
-  })
+  const sortedComments = useMemo(() => {
+    const list = comments.filter((c) => {
+      if (flaggedOnly && !c.flagged) return false
+      if (!search) return true
+      const q = search.toLowerCase()
+      return (
+        c.author_name.toLowerCase().includes(q) ||
+        c.content.toLowerCase().includes(q) ||
+        (c.post_title ?? '').toLowerCase().includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.author_name || ''
+      const nameB = b.author_name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [comments, flaggedOnly, search, sortOrder])
 
-  const filteredReviews = reviews.filter((r) => {
-    if (!search) return true
-    const q = search.toLowerCase()
-    return (
-      r.author_name.toLowerCase().includes(q) ||
-      (r.content ?? '').toLowerCase().includes(q) ||
-      (r.product_name ?? '').toLowerCase().includes(q)
-    )
-  })
+  const sortedReviews = useMemo(() => {
+    const list = reviews.filter((r) => {
+      if (!search) return true
+      const q = search.toLowerCase()
+      return (
+        r.author_name.toLowerCase().includes(q) ||
+        (r.content ?? '').toLowerCase().includes(q) ||
+        (r.product_name ?? '').toLowerCase().includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.author_name || ''
+      const nameB = b.author_name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [reviews, search, sortOrder])
 
   const flaggedCount = comments.filter((c) => c.flagged).length
 
@@ -328,8 +344,8 @@ export default function AdminModeration() {
           </button>
         </div>
 
-        {/* Search + flag — same row on desktop, stacked full-width on mobile */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {/* Search + flag + sort — same row on desktop, stacked full-width on mobile */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <div style={{ position: 'relative', flex: '1 1 240px', minWidth: 0 }}>
             <span
               className="material-symbols-outlined"
@@ -368,6 +384,7 @@ export default function AdminModeration() {
               Flagged only
             </button>
           )}
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
         </div>
       </div>
 
@@ -385,7 +402,7 @@ export default function AdminModeration() {
             Loading…
           </p>
         ) : tab === 'comments' ? (
-          filteredComments.length === 0 ? (
+          sortedComments.length === 0 ? (
             <p
               style={{
                 padding: 32,
@@ -420,7 +437,7 @@ export default function AdminModeration() {
                 </tr>
               </thead>
               <tbody>
-                {filteredComments.map((c) => (
+                {sortedComments.map((c) => (
                   <tr
                     key={c.id}
                     style={{
@@ -526,7 +543,7 @@ export default function AdminModeration() {
               </tbody>
             </table>
           )
-        ) : filteredReviews.length === 0 ? (
+        ) : sortedReviews.length === 0 ? (
           <p
             style={{
               padding: 32,
@@ -561,7 +578,7 @@ export default function AdminModeration() {
               </tr>
             </thead>
             <tbody>
-              {filteredReviews.map((r) => (
+              {sortedReviews.map((r) => (
                 <tr key={r.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td style={{ padding: '12px 14px', maxWidth: 180 }}>
                     <span
@@ -653,7 +670,7 @@ export default function AdminModeration() {
             Loading…
           </p>
         ) : tab === 'comments' ? (
-          filteredComments.length === 0 ? (
+          sortedComments.length === 0 ? (
             <p
               style={{
                 padding: 32,
@@ -665,7 +682,7 @@ export default function AdminModeration() {
               {flaggedOnly ? 'No flagged comments.' : 'No comments yet.'}
             </p>
           ) : (
-            filteredComments.map((c) => (
+            sortedComments.map((c) => (
               <div
                 key={c.id}
                 style={{
@@ -766,7 +783,7 @@ export default function AdminModeration() {
               </div>
             ))
           )
-        ) : filteredReviews.length === 0 ? (
+        ) : sortedReviews.length === 0 ? (
           <p
             style={{
               padding: 32,
@@ -778,7 +795,7 @@ export default function AdminModeration() {
             No reviews yet.
           </p>
         ) : (
-          filteredReviews.map((r) => (
+          sortedReviews.map((r) => (
             <div
               key={r.id}
               style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}

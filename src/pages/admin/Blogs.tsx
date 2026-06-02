@@ -11,7 +11,7 @@
  *  view  — BlogViewPage (read-only preview)
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { adminService } from '@/services/adminService'
@@ -28,6 +28,7 @@ import { BlogsGrid } from './blogs/BlogsGrid'
 import { MobileFilterSheet } from './blogs/MobileFilterSheet'
 import { BlogEditorView } from './blogs/BlogEditorView'
 import { BlogViewPage } from './blogs/BlogViewPage'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 type FormData = Omit<BlogPost, 'id'>
 
@@ -82,6 +83,7 @@ export default function AdminBlogs() {
 
   /* ── List view state ────────────────────────────────────────── */
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
@@ -336,14 +338,21 @@ export default function AdminBlogs() {
     }
   }
 
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.category.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter
-    const matchesStatus = statusFilter === 'all' || post.status === statusFilter
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  const filteredPosts = useMemo(() => {
+    const list = posts.filter((post) => {
+      const matchesSearch =
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.category.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter
+      const matchesStatus = statusFilter === 'all' || post.status === statusFilter
+      return matchesSearch && matchesCategory && matchesStatus
+    })
+    return list.sort((a, b) => {
+      const titleA = a.title || ''
+      const titleB = b.title || ''
+      return sortOrder === 'asc' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA)
+    })
+  }, [posts, searchQuery, categoryFilter, statusFilter, sortOrder])
 
   /* ── View routing ───────────────────────────────────────────── */
   if (currentView === 'edit') {
@@ -392,46 +401,52 @@ export default function AdminBlogs() {
       <BlogsHeader onWrite={() => handleEditPost()} />
       <BlogsKPIs posts={posts} />
 
-      {/* Mobile search — shown above the grid on small screens */}
-      <div className="mobile-only" style={{ marginBottom: 12, position: 'relative' }}>
-        <span
-          className="material-symbols-outlined"
-          style={{
-            position: 'absolute',
-            left: 11,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontSize: 16,
-            color: 'hsl(var(--on-surface-muted))',
-            pointerEvents: 'none',
-          }}
-        >
-          search
-        </span>
-        <input
-          aria-label="Search posts"
-          name="mobBlogSearch"
-          id="input-mob-blog-search"
-          type="text"
-          placeholder="Search posts…"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{
-            width: '100%',
-            height: 40,
-            paddingLeft: 36,
-            paddingRight: 12,
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 'var(--radius-sm)',
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-medium, 500)',
-            fontSize: 13,
-            color: 'hsl(var(--on-surface))',
-            background: '#fff',
-            outline: 'none',
-            boxSizing: 'border-box',
-          }}
-        />
+      {/* Mobile search & Sort — shown above the grid on small screens */}
+      <div
+        className="mobile-only"
+        style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}
+      >
+        <div style={{ position: 'relative', flex: 1 }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 11,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 16,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            aria-label="Search posts"
+            name="mobBlogSearch"
+            id="input-mob-blog-search"
+            type="text"
+            placeholder="Search posts…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              height: 40,
+              paddingLeft: 36,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface))',
+              background: '#fff',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
+        </div>
+        <SortToggle value={sortOrder} onChange={setSortOrder} />
       </div>
 
       <div className="sidebar-main">
@@ -442,6 +457,8 @@ export default function AdminBlogs() {
           setStatusFilter={setStatusFilter}
           categoryFilter={categoryFilter}
           setCategoryFilter={setCategoryFilter}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
         />
         <BlogsGrid
           filteredPosts={filteredPosts}

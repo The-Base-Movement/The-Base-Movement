@@ -1,5 +1,7 @@
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { ChapterMember } from './types'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface HubMembersListProps {
   members: ChapterMember[]
@@ -14,62 +16,76 @@ function statusClass(status: string) {
 }
 
 export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMembersListProps) {
-  const filteredMembers = members.filter((m) => {
-    const q = searchQuery.toLowerCase()
-    return (
-      !q ||
-      m.name.toLowerCase().includes(q) ||
-      m.regNo.toLowerCase().includes(q) ||
-      m.phone.includes(q)
-    )
-  })
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+  const sortedMembers = useMemo(() => {
+    const list = members.filter((m) => {
+      const q = searchQuery.toLowerCase()
+      return (
+        !q ||
+        m.name.toLowerCase().includes(q) ||
+        m.regNo.toLowerCase().includes(q) ||
+        m.phone.includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [members, searchQuery, sortOrder])
 
   const searchBar = (
     <div
       style={{
         padding: '12px 18px',
         borderBottom: '1px solid hsl(var(--border))',
-        position: 'relative',
+        display: 'flex',
+        gap: 12,
+        alignItems: 'center',
       }}
     >
-      <span
-        className="material-symbols-outlined"
-        style={{
-          position: 'absolute',
-          left: 30,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          fontSize: 16,
-          color: 'hsl(var(--on-surface-muted))',
-          opacity: 0.4,
-          pointerEvents: 'none',
-        }}
-      >
-        search
-      </span>
-      <input
-        aria-label="Search by name, reg. ID, or phone"
-        name="memberSearch"
-        id="hub-member-search"
-        type="text"
-        placeholder="Search by name, reg. ID, or phone..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        style={{
-          width: '100%',
-          height: 38,
-          paddingLeft: 38,
-          paddingRight: 12,
-          background: 'hsl(var(--container-low))',
-          border: '1px solid hsl(var(--border))',
-          borderRadius: 'var(--radius-xs)',
-          fontSize: 13,
-          fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 'var(--font-weight-medium, 500)',
-          outline: 'none',
-          boxSizing: 'border-box',
-        }}
-      />
+      <div style={{ position: 'relative', flex: 1 }}>
+        <span
+          className="material-symbols-outlined"
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 16,
+            color: 'hsl(var(--on-surface-muted))',
+            opacity: 0.4,
+            pointerEvents: 'none',
+          }}
+        >
+          search
+        </span>
+        <input
+          aria-label="Search by name, reg. ID, or phone"
+          name="memberSearch"
+          id="hub-member-search"
+          type="text"
+          placeholder="Search by name, reg. ID, or phone..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: '100%',
+            height: 38,
+            paddingLeft: 38,
+            paddingRight: 12,
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-xs)',
+            fontSize: 13,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
+      </div>
+      <SortToggle value={sortOrder} onChange={setSortOrder} />
     </div>
   )
 
@@ -124,12 +140,12 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
             </tr>
           </thead>
           <tbody>
-            {filteredMembers.length === 0 ? (
+            {sortedMembers.length === 0 ? (
               <tr>
                 <td colSpan={5}>{emptyState}</td>
               </tr>
             ) : (
-              filteredMembers.map((m) => (
+              sortedMembers.map((m) => (
                 <tr key={m.regNo} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td style={{ padding: '12px 18px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -245,11 +261,11 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
 
       {/* Mobile card list */}
       <div className="mobile-only">
-        {filteredMembers.length === 0 ? (
+        {sortedMembers.length === 0 ? (
           emptyState
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {filteredMembers.map((m) => (
+            {sortedMembers.map((m) => (
               <div
                 key={m.regNo}
                 style={{

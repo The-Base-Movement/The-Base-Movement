@@ -1,3 +1,6 @@
+import { useState, useMemo } from 'react'
+import { SortToggle } from '@/components/ui/SortToggle'
+
 interface FieldAgent {
   id: string
   member_id: string
@@ -22,22 +25,60 @@ export function FieldAgentsList({
   onAppointFieldAgent,
   onRemoveFieldAgent,
 }: FieldAgentsListProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+  const sortedAgents = useMemo(() => {
+    const list = fieldAgents.filter((a) => {
+      const q = searchQuery.toLowerCase()
+      return (
+        !q ||
+        a.member_name.toLowerCase().includes(q) ||
+        a.constituency.toLowerCase().includes(q) ||
+        (a.region || '').toLowerCase().includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.member_name || ''
+      const nameB = b.member_name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [fieldAgents, searchQuery, sortOrder])
   return (
     <div className="panel">
       {/* Header — title, description, button each on own row */}
       <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))' }}>
-        <h3
+        <div
           style={{
-            margin: '0 0 4px',
-            fontSize: 14,
-            fontWeight: 'var(--font-weight-medium, 500)',
-            fontFamily: "'Public Sans', sans-serif",
-            color: 'hsl(var(--on-surface))',
-            letterSpacing: '-0.01em',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: 4,
           }}
         >
-          Field agents
-        </h3>
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 14,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontFamily: "'Public Sans', sans-serif",
+              color: 'hsl(var(--on-surface))',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            Field agents
+          </h3>
+          <button
+            className="btn btn-primary btn-xs"
+            onClick={onAppointFieldAgent}
+            style={{ padding: '0 8px', height: 26, fontSize: 11 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+              add
+            </span>
+            Appoint
+          </button>
+        </div>
         <p
           style={{
             margin: '0 0 12px',
@@ -49,19 +90,51 @@ export function FieldAgentsList({
         >
           Members deployed to mobilize specific constituencies.
         </p>
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={onAppointFieldAgent}
-          style={{ width: '100%' }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-            add
-          </span>
-          Appoint
-        </button>
+
+        {/* Search & Sort input */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 8,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface-muted))',
+                opacity: 0.4,
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search field agents"
+              type="text"
+              placeholder="Search agents..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                height: 30,
+                paddingLeft: 28,
+                paddingRight: 8,
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-xs)',
+                fontSize: 11,
+                fontFamily: "'Public Sans', sans-serif",
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
+        </div>
       </div>
 
-      {fieldAgents.length === 0 ? (
+      {sortedAgents.length === 0 ? (
         <p
           style={{
             padding: '24px 18px',
@@ -72,11 +145,13 @@ export function FieldAgentsList({
             color: 'hsl(var(--on-surface-muted))',
           }}
         >
-          No field agents appointed yet.
+          {fieldAgents.length === 0
+            ? 'No field agents appointed yet.'
+            : 'No agents match your search.'}
         </p>
       ) : (
         <div style={{ padding: '6px 0' }}>
-          {fieldAgents.map((a, i) => (
+          {sortedAgents.map((a, i) => (
             <div
               key={a.id}
               style={{

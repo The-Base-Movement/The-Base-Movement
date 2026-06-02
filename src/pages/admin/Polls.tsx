@@ -25,7 +25,7 @@
  *  polls/statusPill   — Helper that returns a styled status badge element
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -66,6 +66,7 @@ export default function PollsManagement() {
 
   // ── UI state ───────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false)
@@ -177,9 +178,14 @@ export default function PollsManagement() {
   // ── Derived state ──────────────────────────────────────────────
 
   /** Polls filtered by current search query (case-insensitive) */
-  const filteredPolls = polls.filter((p) =>
-    p.question.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredPolls = useMemo(() => {
+    const list = polls.filter((p) => p.question.toLowerCase().includes(searchQuery.toLowerCase()))
+    return list.sort((a, b) => {
+      const qA = a.question || ''
+      const qB = b.question || ''
+      return sortOrder === 'asc' ? qA.localeCompare(qB) : qB.localeCompare(qA)
+    })
+  }, [polls, searchQuery, sortOrder])
 
   // ── Render ─────────────────────────────────────────────────────
 
@@ -199,6 +205,8 @@ export default function PollsManagement() {
         onView={setViewPoll}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
       />
 
       {/* Mobile: card list with same actions */}
@@ -207,6 +215,8 @@ export default function PollsManagement() {
         isLoading={isLoading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
         onView={setViewPoll}
         onDelete={handleDeletePoll}
       />

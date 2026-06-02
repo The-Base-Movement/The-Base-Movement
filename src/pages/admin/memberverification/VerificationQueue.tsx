@@ -2,6 +2,7 @@ import VerificationListCard from '@/components/admin/VerificationListCard'
 import { statusPill, PAGE_SIZE, STATUS_OPTIONS } from './utils'
 import type { PendingVerification } from '@/services/adminService'
 import { Skeleton } from '@/components/states'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface VerificationQueueProps {
   loading: boolean
@@ -20,6 +21,8 @@ interface VerificationQueueProps {
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>
   totalPages: number
   safePage: number
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (next: 'asc' | 'desc') => void
 }
 
 export function VerificationQueue({
@@ -39,6 +42,8 @@ export function VerificationQueue({
   setCurrentPage,
   totalPages,
   safePage,
+  sortOrder,
+  onSortChange,
 }: VerificationQueueProps) {
   return (
     <div className="panel">
@@ -171,6 +176,7 @@ export function VerificationQueue({
             ))}
           </select>
         </div>
+        <SortToggle value={sortOrder} onChange={onSortChange} />
       </div>
 
       {/* List rows */}

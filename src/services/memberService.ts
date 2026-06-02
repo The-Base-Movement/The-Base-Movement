@@ -609,7 +609,8 @@ class MemberService {
     pageSize: number,
     searchTerm?: string,
     registrationSource?: string,
-    searchType: 'default' | 'constituency' | 'polling_station' = 'default'
+    searchType: 'default' | 'constituency' | 'polling_station' = 'default',
+    sortOrder?: 'asc' | 'desc'
   ): Promise<{ data: Member[]; totalCount: number }> {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
@@ -646,9 +647,13 @@ class MemberService {
       query = query.eq('registration_source', registrationSource)
     }
 
-    const { data, count, error } = await query
-      .order('joined_at', { ascending: false })
-      .range(from, to)
+    if (sortOrder) {
+      query = query.order('full_name', { ascending: sortOrder === 'asc' })
+    } else {
+      query = query.order('joined_at', { ascending: false })
+    }
+
+    const { data, count, error } = await query.range(from, to)
 
     if (error) {
       console.warn('[DATABASE] Failed to fetch paginated members:', error)

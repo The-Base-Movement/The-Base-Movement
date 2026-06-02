@@ -12,6 +12,7 @@
 
 import { selectSt, labelSt } from './styles'
 import { CATEGORIES } from './constants'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface BlogsFiltersProps {
   searchQuery: string
@@ -20,6 +21,8 @@ interface BlogsFiltersProps {
   setStatusFilter: (v: string) => void
   categoryFilter: string
   setCategoryFilter: (v: string) => void
+  sortOrder: 'asc' | 'desc'
+  setSortOrder: (val: 'asc' | 'desc') => void
 }
 
 export function BlogsFilters({
@@ -29,6 +32,8 @@ export function BlogsFilters({
   setStatusFilter,
   categoryFilter,
   setCategoryFilter,
+  sortOrder,
+  setSortOrder,
 }: BlogsFiltersProps) {
   return (
     <aside className="desktop-only panel h-fit sticky top-20">
@@ -61,31 +66,34 @@ export function BlogsFilters({
           <label htmlFor="input-bbba95" style={labelSt}>
             Search feed
           </label>
-          <div style={{ position: 'relative' }}>
-            <span
-              className="material-symbols-outlined"
-              style={{
-                position: 'absolute',
-                left: 10,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: 15,
-                color: 'hsl(var(--on-surface-muted))',
-                pointerEvents: 'none',
-              }}
-            >
-              search
-            </span>
-            <input
-              aria-label="Keywords…"
-              name="searchQuery"
-              id="input-bbba95"
-              type="text"
-              placeholder="Keywords…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ ...selectSt, paddingLeft: 34 }}
-            />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 15,
+                  color: 'hsl(var(--on-surface-muted))',
+                  pointerEvents: 'none',
+                }}
+              >
+                search
+              </span>
+              <input
+                aria-label="Keywords…"
+                name="searchQuery"
+                id="input-bbba95"
+                type="text"
+                placeholder="Keywords…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ ...selectSt, paddingLeft: 34 }}
+              />
+            </div>
+            <SortToggle value={sortOrder} onChange={setSortOrder} />
           </div>
         </div>
 

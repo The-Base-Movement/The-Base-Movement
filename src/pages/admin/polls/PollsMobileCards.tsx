@@ -25,12 +25,15 @@
 import type { Poll } from '@/services/adminService'
 import { inputSt } from './styles'
 import { statusPill } from './statusPill'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface PollsMobileCardsProps {
   polls: Poll[]
   isLoading: boolean
   searchQuery: string
   onSearchChange: (v: string) => void
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (v: 'asc' | 'desc') => void
   onView: (poll: Poll) => void
   onDelete: (poll: Poll) => void
 }
@@ -40,37 +43,42 @@ export function PollsMobileCards({
   isLoading,
   searchQuery,
   onSearchChange,
+  sortOrder,
+  onSortChange,
   onView,
   onDelete,
 }: PollsMobileCardsProps) {
   return (
     <div className="mobile-only" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      {/* Mobile search bar */}
+      {/* Mobile search & sort bar */}
       <div className="panel">
-        <div style={{ padding: 12, position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 22,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            aria-label="Search polls…"
-            name="searchQuery"
-            id="input-2d822f"
-            style={{ ...inputSt, paddingLeft: 34 }}
-            placeholder="Search polls…"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
+        <div style={{ padding: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search polls…"
+              name="searchQuery"
+              id="input-2d822f"
+              style={{ ...inputSt, paddingLeft: 34 }}
+              placeholder="Search polls…"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={onSortChange} />
         </div>
       </div>
 

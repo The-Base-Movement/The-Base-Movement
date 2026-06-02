@@ -1,3 +1,6 @@
+import { useState, useMemo } from 'react'
+import { SortToggle } from '@/components/ui/SortToggle'
+
 interface PollingAgent {
   id: string
   member_id: string
@@ -17,9 +20,28 @@ interface PollingAgentsListProps {
 }
 
 export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: PollingAgentsListProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+  const sortedAgents = useMemo(() => {
+    const list = pollingAgents.filter((a) => {
+      const q = searchQuery.toLowerCase()
+      return (
+        !q ||
+        a.member_name.toLowerCase().includes(q) ||
+        a.polling_station_id.toLowerCase().includes(q) ||
+        (a.constituency || '').toLowerCase().includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.member_name || ''
+      const nameB = b.member_name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [pollingAgents, searchQuery, sortOrder])
   return (
     <div className="panel">
-      <div className="ph">
+      <div className="ph" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
         <div>
           <h3>Polling station agents</h3>
           <p
@@ -29,13 +51,56 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
               fontFamily: "'Public Sans'",
               fontWeight: 'var(--font-weight-normal, 400)',
               marginTop: 2,
+              marginBottom: 10,
             }}
           >
             Members stationed at specific polling stations on election day.
           </p>
         </div>
+
+        {/* Search & Sort input */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 8,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface-muted))',
+                opacity: 0.4,
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search station agents"
+              type="text"
+              placeholder="Search agents..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                height: 30,
+                paddingLeft: 28,
+                paddingRight: 8,
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-xs)',
+                fontSize: 11,
+                fontFamily: "'Public Sans', sans-serif",
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
+        </div>
       </div>
-      {pollingAgents.length === 0 ? (
+      {sortedAgents.length === 0 ? (
         <p
           style={{
             padding: '24px 18px',
@@ -46,11 +111,13 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
             color: 'hsl(var(--on-surface-muted))',
           }}
         >
-          No station agents appointed. Use the Member Readiness table below to appoint.
+          {pollingAgents.length === 0
+            ? 'No station agents appointed. Use the Member Readiness table below to appoint.'
+            : 'No agents match your search.'}
         </p>
       ) : (
         <div style={{ padding: '6px 0' }}>
-          {pollingAgents.map((a, i) => (
+          {sortedAgents.map((a, i) => (
             <div
               key={a.id}
               style={{

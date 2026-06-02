@@ -175,11 +175,7 @@ export default function Members() {
         canonical="/members"
       />
 
-      <MembersHeader
-        myChapter={myChapter}
-        sortOrder={sortOrder}
-        onToggleSort={() => setSortOrder((v) => (v === 'asc' ? 'desc' : 'asc'))}
-      />
+      <MembersHeader myChapter={myChapter} sortOrder={sortOrder} onToggleSort={setSortOrder} />
 
       {myChapter === null && <MembersNoChapter />}
 

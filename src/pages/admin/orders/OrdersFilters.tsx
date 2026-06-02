@@ -1,11 +1,14 @@
 import { STATUS_CONFIG } from './utils'
 import type { Order } from '@/services/adminService'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface OrdersFiltersProps {
   search: string
   setSearch: (s: string) => void
   statusFilter: Order['status'] | 'ALL'
   setStatusFilter: (s: Order['status'] | 'ALL') => void
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (v: 'asc' | 'desc') => void
 }
 
 export function OrdersFilters({
@@ -13,6 +16,8 @@ export function OrdersFilters({
   setSearch,
   statusFilter,
   setStatusFilter,
+  sortOrder,
+  onSortChange,
 }: OrdersFiltersProps) {
   return (
     <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -102,6 +107,8 @@ export function OrdersFilters({
           expand_more
         </span>
       </div>
+
+      <SortToggle value={sortOrder} onChange={onSortChange} />
     </div>
   )
 }

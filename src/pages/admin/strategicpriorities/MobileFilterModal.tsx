@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom'
 import type { DonationCampaign } from '@/types/admin'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface MobileFilterModalProps {
   isOpen: boolean
@@ -7,6 +8,8 @@ interface MobileFilterModalProps {
   campaigns: DonationCampaign[]
   searchQuery: string
   setSearchQuery: (q: string) => void
+  sortOrder: 'asc' | 'desc'
+  setSortOrder: (val: 'asc' | 'desc') => void
 }
 
 export function MobileFilterModal({
@@ -15,6 +18,8 @@ export function MobileFilterModal({
   campaigns,
   searchQuery,
   setSearchQuery,
+  sortOrder,
+  setSortOrder,
 }: MobileFilterModalProps) {
   if (!isOpen) return null
 
@@ -85,47 +90,62 @@ export function MobileFilterModal({
             overflowY: 'auto',
           }}
         >
-          {/* Priority dropdown */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <label
-              htmlFor="select-mob-filter"
+          {/* Priority dropdown & Sort */}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+              <label
+                htmlFor="select-mob-filter"
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 9,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                Filter by priority
+              </label>
+              <select
+                id="select-mob-filter"
+                name="mobileFilterSelect"
+                style={{
+                  width: '100%',
+                  height: 42,
+                  padding: '0 12px',
+                  border: '1px solid hsl(var(--border))',
+                  background: 'hsl(var(--container-low))',
+                  borderRadius: 4,
+                  outline: 'none',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  fontSize: 13,
+                  boxSizing: 'border-box',
+                  color: 'hsl(var(--on-surface))',
+                  appearance: 'none',
+                }}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              >
+                <option value="">All priorities</option>
+                {campaigns.map((c) => (
+                  <option key={c.id} value={c.title}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div
               style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 9,
-                color: 'hsl(var(--on-surface-muted))',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                flexShrink: 0,
+                justifyContent: 'flex-end',
+                height: '100%',
+                alignSelf: 'flex-end',
               }}
             >
-              Filter by priority
-            </label>
-            <select
-              id="select-mob-filter"
-              name="mobileFilterSelect"
-              style={{
-                width: '100%',
-                height: 42,
-                padding: '0 12px',
-                border: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-                borderRadius: 4,
-                outline: 'none',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-normal, 400)',
-                fontSize: 13,
-                boxSizing: 'border-box',
-                color: 'hsl(var(--on-surface))',
-                appearance: 'none',
-              }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            >
-              <option value="">All priorities</option>
-              {campaigns.map((c) => (
-                <option key={c.id} value={c.title}>
-                  {c.title}
-                </option>
-              ))}
-            </select>
+              <SortToggle value={sortOrder} onChange={setSortOrder} />
+            </div>
           </div>
 
           {/* Intelligence summary — 2-column tiles */}

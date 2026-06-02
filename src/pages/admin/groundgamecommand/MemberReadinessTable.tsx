@@ -1,3 +1,5 @@
+import { SortToggle } from '@/components/ui/SortToggle'
+
 type VoterRow = {
   id: string
   user_id: string
@@ -22,6 +24,8 @@ interface MemberReadinessTableProps {
   setReadinessSearch: (val: string) => void
   readinessFilter: 'ALL' | 'VERIFIED_VOTER' | 'IN_PROGRESS' | 'UNVERIFIED'
   setReadinessFilter: (val: 'ALL' | 'VERIFIED_VOTER' | 'IN_PROGRESS' | 'UNVERIFIED') => void
+  readinessSortOrder: 'asc' | 'desc'
+  setReadinessSortOrder: (val: 'asc' | 'desc') => void
   pollingAgentMemberIds: Set<string>
   openStationModal: (row: VoterRow) => void
 }
@@ -37,6 +41,8 @@ export function MemberReadinessTable({
   setReadinessSearch,
   readinessFilter,
   setReadinessFilter,
+  readinessSortOrder,
+  setReadinessSortOrder,
   pollingAgentMemberIds,
   openStationModal,
 }: MemberReadinessTableProps) {
@@ -198,6 +204,7 @@ export function MemberReadinessTable({
           <option value="IN_PROGRESS">In progress</option>
           <option value="UNVERIFIED">Unverified</option>
         </select>
+        <SortToggle value={readinessSortOrder} onChange={setReadinessSortOrder} />
       </div>
 
       {/* Table — desktop */}

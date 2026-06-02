@@ -1,4 +1,5 @@
 import React from 'react'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 export interface DashboardFilterControlsProps {
   searchTerm: string
@@ -85,22 +86,25 @@ export function DashboardFilterControls({
           </span>
           Sort
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-          {[
-            { v: 'az' as const, label: 'A → Z' },
-            { v: 'za' as const, label: 'Z → A' },
-            { v: 'members-desc' as const, label: 'Most members' },
-            { v: 'members-asc' as const, label: 'Fewest members' },
-          ].map((s) => (
-            <button
-              key={s.v}
-              onClick={() => setSortOrder(s.v)}
-              className={sortOrder === s.v ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-              style={{ justifyContent: 'center' }}
-            >
-              {s.label}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: 6 }}>
+          <SortToggle
+            value={sortOrder === 'za' ? 'desc' : 'asc'}
+            onChange={(next) => setSortOrder(next === 'asc' ? 'az' : 'za')}
+          />
+          <button
+            onClick={() =>
+              setSortOrder(sortOrder === 'members-desc' ? 'members-asc' : 'members-desc')
+            }
+            className={
+              sortOrder.startsWith('members') ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
+            }
+            style={{ flex: 1, justifyContent: 'center', height: 38 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              group
+            </span>
+            Members {sortOrder === 'members-desc' ? '↓' : sortOrder === 'members-asc' ? '↑' : ''}
+          </button>
         </div>
       </div>
 

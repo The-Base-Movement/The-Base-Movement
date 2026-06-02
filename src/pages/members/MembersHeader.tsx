@@ -1,7 +1,9 @@
+import { SortToggle } from '@/components/ui/SortToggle'
+
 interface MembersHeaderProps {
   myChapter: string | null | undefined
   sortOrder: 'asc' | 'desc'
-  onToggleSort: () => void
+  onToggleSort: (next: 'asc' | 'desc') => void
 }
 
 export function MembersHeader({ myChapter, sortOrder, onToggleSort }: MembersHeaderProps) {
@@ -54,14 +56,7 @@ export function MembersHeader({ myChapter, sortOrder, onToggleSort }: MembersHea
           Chapter directory
         </h2>
       </div>
-      {myChapter && (
-        <button className="btn btn-outline btn-sm" onClick={onToggleSort}>
-          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-            swap_vert
-          </span>
-          <span className="desktop-only">{sortOrder === 'asc' ? 'A → Z' : 'Z → A'}</span>
-        </button>
-      )}
+      {myChapter && <SortToggle value={sortOrder} onChange={onToggleSort} />}
     </div>
   )
 }

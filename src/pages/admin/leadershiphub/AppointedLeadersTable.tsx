@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { SearchBar } from '@/components/SearchBar'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface AppointedLeader {
   id: string
@@ -31,6 +33,7 @@ export function AppointedLeadersTable({
   onViewLeader,
   onRemoveLeader,
 }: AppointedLeadersTableProps) {
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const q = leadersSearch.toLowerCase()
   const filtered = allLeaders.filter(
     (l) =>
@@ -40,6 +43,12 @@ export function AppointedLeadersTable({
       (l.registration_number || '').toLowerCase().includes(q) ||
       (l.phone_number || '').toLowerCase().includes(q)
   )
+
+  const sorted = [...filtered].sort((a, b) => {
+    const nameA = a.leader_name || ''
+    const nameB = b.leader_name || ''
+    return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+  })
 
   const Avatar = ({ l }: { l: AppointedLeader }) => (
     <div
@@ -102,13 +111,17 @@ export function AppointedLeadersTable({
             All leaders registered across chapters
           </p>
         </div>
-        <div className="leaders-search-wrap">
+        <div
+          className="leaders-search-wrap"
+          style={{ display: 'flex', gap: 6, alignItems: 'center' }}
+        >
           <SearchBar
             value={leadersSearch}
             onChange={setLeadersSearch}
             placeholder="Search leaders…"
             variant="dashboard"
           />
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
         </div>
       </div>
 
@@ -143,7 +156,7 @@ export function AppointedLeadersTable({
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {sorted.length === 0 ? (
               <tr>
                 <td
                   colSpan={4}
@@ -162,7 +175,7 @@ export function AppointedLeadersTable({
                 </td>
               </tr>
             ) : (
-              filtered.map((l) => (
+              sorted.map((l) => (
                 <tr key={l.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td style={{ padding: '14px 24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -239,7 +252,7 @@ export function AppointedLeadersTable({
 
       {/* Mobile card list */}
       <div className="mobile-only">
-        {filtered.length === 0 ? (
+        {sorted.length === 0 ? (
           <p
             style={{
               padding: '40px 16px',
@@ -255,7 +268,7 @@ export function AppointedLeadersTable({
               : 'No officers match your search.'}
           </p>
         ) : (
-          filtered.map((l) => (
+          sorted.map((l) => (
             <div
               key={l.id}
               style={{

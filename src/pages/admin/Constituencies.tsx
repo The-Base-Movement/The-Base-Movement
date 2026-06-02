@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { constituencyService } from '@/services/constituencyService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 import type { Constituency } from '@/types/admin'
 
 const GHANA_REGIONS = [
@@ -30,6 +31,7 @@ export default function AdminConstituencies() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [regionFilter, setRegionFilter] = useState('All Regions')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
@@ -39,17 +41,26 @@ export default function AdminConstituencies() {
     })
   }, [])
 
-  const filtered = constituencies.filter((c) => {
-    const matchSearch =
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.regionName.toLowerCase().includes(search.toLowerCase())
-    const matchRegion = regionFilter === 'All Regions' || c.regionName === regionFilter
-    return matchSearch && matchRegion
-  })
+  const filtered = useMemo(() => {
+    const list = constituencies.filter((c) => {
+      const matchSearch =
+        c.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.regionName.toLowerCase().includes(search.toLowerCase())
+      const matchRegion = regionFilter === 'All Regions' || c.regionName === regionFilter
+      return matchSearch && matchRegion
+    })
+    return list.sort((a, b) => {
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [constituencies, search, regionFilter, sortOrder])
 
   const ITEMS_PER_PAGE = 10
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
-  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const paginated = useMemo(() => {
+    return filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  }, [filtered, currentPage])
 
   const total = constituencies.length
   const activeCount = constituencies.filter((c) => c.status === 'Active').length
@@ -213,7 +224,15 @@ export default function AdminConstituencies() {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 12,
+          alignItems: 'center',
+          marginBottom: 20,
+          flexWrap: 'wrap',
+        }}
+      >
         <div style={{ position: 'relative', flex: '1 1 240px' }}>
           <span
             className="material-symbols-outlined"
@@ -273,6 +292,7 @@ export default function AdminConstituencies() {
             </option>
           ))}
         </select>
+        <SortToggle value={sortOrder} onChange={setSortOrder} />
       </div>
 
       {/* Table — desktop */}

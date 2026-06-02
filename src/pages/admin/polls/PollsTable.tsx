@@ -28,6 +28,7 @@
 import type { Poll } from '@/services/adminService'
 import { thSt, tdSt, inputSt } from './styles'
 import { statusPill } from './statusPill'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface PollsTableProps {
   polls: Poll[]
@@ -36,6 +37,8 @@ interface PollsTableProps {
   onView: (poll: Poll) => void
   searchQuery: string
   onSearchChange: (v: string) => void
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (v: 'asc' | 'desc') => void
 }
 
 export function PollsTable({
@@ -45,6 +48,8 @@ export function PollsTable({
   onView,
   searchQuery,
   onSearchChange,
+  sortOrder,
+  onSortChange,
 }: PollsTableProps) {
   return (
     <div className="panel desktop-only">
@@ -75,31 +80,34 @@ export function PollsTable({
           )}
         </span>
 
-        {/* Search input */}
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            aria-label="Search polls…"
-            name="searchQuery"
-            id="input-91cd45"
-            style={{ ...inputSt, paddingLeft: 34, width: 210, height: 34 }}
-            placeholder="Search polls…"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
+        {/* Search & Sort */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative' }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search polls…"
+              name="searchQuery"
+              id="input-91cd45"
+              style={{ ...inputSt, paddingLeft: 34, width: 210, height: 34 }}
+              placeholder="Search polls…"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={onSortChange} />
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import { selectStyle, inputStyle } from './utils'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface PollingStationsFilterBarProps {
   selectedRegion: string
@@ -13,6 +14,8 @@ interface PollingStationsFilterBarProps {
   setSearch: (v: string) => void
   hasFilters: boolean
   handleClearFilters: () => void
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (next: 'asc' | 'desc') => void
 }
 
 export function PollingStationsFilterBar({
@@ -28,6 +31,8 @@ export function PollingStationsFilterBar({
   setSearch,
   hasFilters,
   handleClearFilters,
+  sortOrder,
+  onSortChange,
 }: PollingStationsFilterBarProps) {
   return (
     <div
@@ -157,6 +162,8 @@ export function PollingStationsFilterBar({
           style={{ ...inputStyle, width: '100%' }}
         />
       </div>
+
+      <SortToggle value={sortOrder} onChange={onSortChange} />
 
       {hasFilters && (
         <button className="btn btn-outline btn-sm" onClick={handleClearFilters}>

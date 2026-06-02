@@ -1,11 +1,14 @@
 import type { Milestone } from '@/services/adminService'
 import { pillBase, statusStyle, statusDot } from './utils'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface RoadmapTableProps {
   filteredMilestones: Milestone[]
   isLoading: boolean
   searchQuery: string
   setSearchQuery: (q: string) => void
+  sortOrder: 'asc' | 'desc'
+  onSortChange: (v: 'asc' | 'desc') => void
   handleOpenModal: (milestone: Milestone) => void
   handleDelete: (milestone: Milestone) => void
 }
@@ -76,6 +79,8 @@ export function RoadmapTable({
   isLoading,
   searchQuery,
   setSearchQuery,
+  sortOrder,
+  onSortChange,
   handleOpenModal,
   handleDelete,
 }: RoadmapTableProps) {
@@ -112,45 +117,48 @@ export function RoadmapTable({
             National objective timeline
           </div>
         </div>
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 9,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 15,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            aria-label="Search milestones…"
-            name="searchQuery"
-            id="roadmap-search"
-            placeholder="Search milestones…"
-            autoComplete="off"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              height: 36,
-              paddingLeft: 30,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-              fontSize: 12,
-              outline: 'none',
-              background: '#fff',
-              color: 'hsl(var(--on-surface))',
-              width: 220,
-              boxSizing: 'border-box',
-            }}
-          />
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative' }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 9,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 15,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search milestones…"
+              name="searchQuery"
+              id="roadmap-search"
+              placeholder="Search milestones…"
+              autoComplete="off"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                height: 36,
+                paddingLeft: 30,
+                paddingRight: 12,
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 4,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-normal, 400)',
+                fontSize: 12,
+                outline: 'none',
+                background: '#fff',
+                color: 'hsl(var(--on-surface))',
+                width: 220,
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={onSortChange} />
         </div>
       </div>
 

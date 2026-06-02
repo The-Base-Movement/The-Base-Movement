@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
@@ -12,6 +12,7 @@ import { RoadmapFormModal } from './roadmap/RoadmapFormModal'
 export default function RoadmapManagement() {
   const [milestones, setMilestones] = useState<Milestone[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [isLoading, setIsLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null)
@@ -111,11 +112,18 @@ export default function RoadmapManagement() {
     })
   }
 
-  const filteredMilestones = milestones.filter(
-    (m) =>
-      m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.category.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredMilestones = useMemo(() => {
+    const list = milestones.filter(
+      (m) =>
+        m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.category.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    return list.sort((a, b) => {
+      const titleA = a.title || ''
+      const titleB = b.title || ''
+      return sortOrder === 'asc' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA)
+    })
+  }, [milestones, searchQuery, sortOrder])
 
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -142,6 +150,8 @@ export default function RoadmapManagement() {
         isLoading={isLoading}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
         handleOpenModal={handleOpenModal}
         handleDelete={handleDelete}
       />

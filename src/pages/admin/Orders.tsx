@@ -3,6 +3,7 @@ import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 // Modular imports
 import { NEXT_STATUS, STATUS_CONFIG } from './orders/utils'
@@ -18,6 +19,7 @@ export default function AdminOrders() {
   const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<Order['status'] | 'ALL'>('ALL')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [cancelModal, setCancelModal] = useState<Order | null>(null)
@@ -86,22 +88,26 @@ export default function AdminOrders() {
     setCancelling(false)
   }
 
-  const filtered = useMemo(
-    () =>
-      orders.filter((o) => {
-        const matchesStatus = statusFilter === 'ALL' || o.status === statusFilter
+  const filtered = useMemo(() => {
+    const list = orders.filter((o) => {
+      const matchesStatus = statusFilter === 'ALL' || o.status === statusFilter
 
-        const q = search.toLowerCase()
-        const matchesSearch =
-          !q ||
-          o.full_name.toLowerCase().includes(q) ||
-          o.email.toLowerCase().includes(q) ||
-          o.id.toLowerCase().includes(q)
+      const q = search.toLowerCase()
+      const matchesSearch =
+        !q ||
+        o.full_name.toLowerCase().includes(q) ||
+        o.email.toLowerCase().includes(q) ||
+        o.id.toLowerCase().includes(q)
 
-        return matchesStatus && matchesSearch
-      }),
-    [orders, statusFilter, search]
-  )
+      return matchesStatus && matchesSearch
+    })
+
+    return list.sort((a, b) => {
+      const nameA = a.full_name || ''
+      const nameB = b.full_name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [orders, statusFilter, search, sortOrder])
 
   const handleExport = () => {
     try {
@@ -183,6 +189,8 @@ export default function AdminOrders() {
               setSearch={setSearch}
               statusFilter={statusFilter}
               setStatusFilter={setStatusFilter}
+              sortOrder={sortOrder}
+              onSortChange={setSortOrder}
             />
           </div>
 
@@ -237,24 +245,29 @@ export default function AdminOrders() {
                 }}
               />
             </div>
-            <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2 }}>
-              <button
-                className={`pill ${statusFilter === 'ALL' ? 'pill-ok' : 'pill-mute'}`}
-                style={{ flexShrink: 0 }}
-                onClick={() => setStatusFilter('ALL')}
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2, flex: 1 }}
               >
-                All Statuses
-              </button>
-              {(Object.keys(STATUS_CONFIG) as Array<keyof typeof STATUS_CONFIG>).map((s) => (
                 <button
-                  key={s}
-                  className={`pill ${statusFilter === s ? 'pill-ok' : 'pill-mute'}`}
+                  className={`pill ${statusFilter === 'ALL' ? 'pill-ok' : 'pill-mute'}`}
                   style={{ flexShrink: 0 }}
-                  onClick={() => setStatusFilter(s)}
+                  onClick={() => setStatusFilter('ALL')}
                 >
-                  {s}
+                  All Statuses
                 </button>
-              ))}
+                {(Object.keys(STATUS_CONFIG) as Array<keyof typeof STATUS_CONFIG>).map((s) => (
+                  <button
+                    key={s}
+                    className={`pill ${statusFilter === s ? 'pill-ok' : 'pill-mute'}`}
+                    style={{ flexShrink: 0 }}
+                    onClick={() => setStatusFilter(s)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+              <SortToggle value={sortOrder} onChange={setSortOrder} />
             </div>
           </div>
 

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { SortToggle } from '@/components/ui/SortToggle'
 import {
   BarChart,
   Bar,
@@ -50,11 +51,20 @@ export default function FinanceDashboard() {
   const [cashflow, setCashflow] = useState<CashflowBucket[]>([])
   const [breakdown, setBreakdown] = useState<ExpenseCategory[]>([])
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [period, setPeriod] = useState<FinancePeriod>('month')
   const [chartsLoading, setChartsLoading] = useState(true)
   const [chapter, setChapter] = useState<string | null>(null)
   const [chapters, setChapters] = useState<string[]>([])
   const isMobile = useIsMobile()
+
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort((a, b) => {
+      const descA = a.description || ''
+      const descB = b.description || ''
+      return sortOrder === 'asc' ? descA.localeCompare(descB) : descB.localeCompare(descA)
+    })
+  }, [transactions, sortOrder])
 
   useEffect(() => {
     Promise.resolve().then(() => {
@@ -612,7 +622,8 @@ export default function FinanceDashboard() {
               Last 20 entries — donations and expenses combined
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 16 }}>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <SortToggle value={sortOrder} onChange={setSortOrder} />
             <Link
               to="/admin/donations"
               style={{
@@ -664,7 +675,7 @@ export default function FinanceDashboard() {
               </tr>
             </thead>
             <tbody>
-              {transactions.length === 0 ? (
+              {sortedTransactions.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
@@ -680,7 +691,7 @@ export default function FinanceDashboard() {
                   </td>
                 </tr>
               ) : (
-                transactions.map((tx) => (
+                sortedTransactions.map((tx) => (
                   <tr key={tx.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                     <td
                       style={{

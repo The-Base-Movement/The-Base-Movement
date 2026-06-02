@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { Newsletter } from '@/services/newsletterService'
 import { buildAudienceLabel, buildAudienceFiltersLabel } from '@/services/newsletterService'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface HistoryPanelProps {
   newsletters: Newsletter[]
@@ -33,8 +34,18 @@ export function HistoryPanel({
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [isDeleting, setIsDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
-  const filtered = newsletters.filter((n) => n.subject.toLowerCase().includes(search.toLowerCase()))
+  const filtered = useMemo(() => {
+    const list = newsletters.filter((n) => n.subject.toLowerCase().includes(search.toLowerCase()))
+    return list.sort((a, b) => {
+      const subjectA = a.subject || ''
+      const subjectB = b.subject || ''
+      return sortOrder === 'asc'
+        ? subjectA.localeCompare(subjectB)
+        : subjectB.localeCompare(subjectA)
+    })
+  }, [newsletters, search, sortOrder])
   const failedInView = filtered.filter((n) => n.status === 'failed')
   const allFailedSelected = failedInView.length > 0 && failedInView.every((n) => selected.has(n.id))
 
@@ -141,6 +152,7 @@ export function HistoryPanel({
                 boxSizing: 'border-box',
               }}
             />
+            <SortToggle value={sortOrder} onChange={setSortOrder} />
           </div>
         </div>
 

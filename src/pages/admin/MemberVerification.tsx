@@ -30,6 +30,7 @@ export default function MemberVerification() {
     matches: string[]
     flagged: boolean
   } | null>(null)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   useEffect(() => {
     adminService
@@ -129,9 +130,15 @@ export default function MemberVerification() {
         (m.phone?.toLowerCase() || '').includes(search.toLowerCase()))
   )
 
+  const sorted = [...filtered].sort((a, b) => {
+    const nameA = a.name || ''
+    const nameB = b.name || ''
+    return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+  })
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(currentPage, totalPages)
-  const paginated = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const paginated = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
 
   return (
     <div className="main">
@@ -248,6 +255,8 @@ export default function MemberVerification() {
           setCurrentPage={setCurrentPage}
           totalPages={totalPages}
           safePage={safePage}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
         />
 
         {/* ── Right: review panel ── */}

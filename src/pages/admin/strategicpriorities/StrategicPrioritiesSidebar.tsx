@@ -1,15 +1,20 @@
+import { SortToggle } from '@/components/ui/SortToggle'
 import type { DonationCampaign } from '@/types/admin'
 
 interface StrategicPrioritiesSidebarProps {
   campaigns: DonationCampaign[]
   searchQuery: string
   setSearchQuery: (q: string) => void
+  sortOrder: 'asc' | 'desc'
+  setSortOrder: (val: 'asc' | 'desc') => void
 }
 
 export function StrategicPrioritiesSidebar({
   campaigns,
   searchQuery,
   setSearchQuery,
+  sortOrder,
+  setSortOrder,
 }: StrategicPrioritiesSidebarProps) {
   return (
     <aside
@@ -42,44 +47,47 @@ export function StrategicPrioritiesSidebar({
             >
               Search priorities
             </label>
-            <div style={{ position: 'relative' }}>
-              <span
-                className="material-symbols-outlined"
-                style={{
-                  position: 'absolute',
-                  left: 10,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  fontSize: 16,
-                  color: 'hsl(var(--on-surface-muted))',
-                  pointerEvents: 'none',
-                }}
-              >
-                search
-              </span>
-              <input
-                aria-label="Keywords"
-                name="searchQuery"
-                id="input-09c328"
-                placeholder="Keywords..."
-                style={{
-                  width: '100%',
-                  height: 38,
-                  paddingLeft: 34,
-                  paddingRight: 12,
-                  border: '1px solid hsl(var(--border))',
-                  background: 'hsl(var(--container-low))',
-                  borderRadius: 4,
-                  outline: 'none',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-normal, 400)',
-                  fontSize: 12,
-                  boxSizing: 'border-box',
-                  color: 'hsl(var(--on-surface))',
-                }}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ position: 'relative', flex: 1 }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: 'absolute',
+                    left: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface-muted))',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  search
+                </span>
+                <input
+                  aria-label="Keywords"
+                  name="searchQuery"
+                  id="input-09c328"
+                  placeholder="Keywords..."
+                  style={{
+                    width: '100%',
+                    height: 38,
+                    paddingLeft: 34,
+                    paddingRight: 12,
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--container-low))',
+                    borderRadius: 4,
+                    outline: 'none',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    fontSize: 12,
+                    boxSizing: 'border-box',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <SortToggle value={sortOrder} onChange={setSortOrder} />
             </div>
           </div>
 

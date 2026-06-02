@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { DonationCampaign } from '@/types/admin'
@@ -21,6 +21,7 @@ export default function StrategicPriorities() {
   const [editingCampaign, setEditingCampaign] = useState<DonationCampaign | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768)
   const [showMobileFilter, setShowMobileFilter] = useState(false)
   const { openDelete, modal } = useDeleteModal()
@@ -160,11 +161,18 @@ export default function StrategicPriorities() {
     }
   }
 
-  const filteredCampaigns = campaigns.filter(
-    (c) =>
-      c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.description.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredCampaigns = useMemo(() => {
+    const list = campaigns.filter(
+      (c) =>
+        c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.description.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    return list.sort((a, b) => {
+      const titleA = a.title || ''
+      const titleB = b.title || ''
+      return sortOrder === 'asc' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA)
+    })
+  }, [campaigns, searchQuery, sortOrder])
 
   if (loading) {
     return (
@@ -229,6 +237,8 @@ export default function StrategicPriorities() {
           campaigns={campaigns}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
         />
 
         {/* Main Priorities Grid */}
@@ -348,6 +358,8 @@ export default function StrategicPriorities() {
             campaigns={campaigns}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
           />
         </>
       )}

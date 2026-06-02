@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { toast } from 'sonner'
 import { auditService } from '@/services/auditService'
@@ -32,6 +32,7 @@ export default function Administrators() {
   const [roleList, setRoleList] = useState<AdminRoleRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
   // Audit log modal
@@ -196,14 +197,21 @@ export default function Administrators() {
     }
   }
 
-  const filteredAdmins = admins.filter((a) => {
+  const filteredAdmins = useMemo(() => {
     const term = searchTerm.toLowerCase()
-    return (
-      a.name?.toLowerCase().includes(term) ||
-      a.id?.toLowerCase().includes(term) ||
-      a.role?.toLowerCase().includes(term)
-    )
-  })
+    const list = admins.filter((a) => {
+      return (
+        a.name?.toLowerCase().includes(term) ||
+        a.id?.toLowerCase().includes(term) ||
+        a.role?.toLowerCase().includes(term)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [admins, searchTerm, sortOrder])
 
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -211,7 +219,12 @@ export default function Administrators() {
 
       <AdminsKPIs admins={admins} />
 
-      <AdminsSearchBar searchTerm={searchTerm} onChange={setSearchTerm} />
+      <AdminsSearchBar
+        searchTerm={searchTerm}
+        onChange={setSearchTerm}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
+      />
 
       {/* Desktop table */}
       <AdministratorsTable

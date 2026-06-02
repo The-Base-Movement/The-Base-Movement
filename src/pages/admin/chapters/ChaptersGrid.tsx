@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/services/adminService'
 import { adminService } from '@/services/adminService'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
@@ -26,9 +27,11 @@ interface ChaptersGridProps {
   statusFilter: 'All' | 'Active' | 'Pending'
   regionFilter: string
   availableRegions: string[]
+  sortOrder: 'asc' | 'desc'
   onSearchChange: (val: string) => void
   onStatusFilterChange: (val: 'All' | 'Active' | 'Pending') => void
   onRegionFilterChange: (val: string) => void
+  onSortOrderChange: (val: 'asc' | 'desc') => void
   onPageChange: (page: number) => void
   onOpenAddModal: () => void
   onOpenEditModal: (chapter: Chapter) => void
@@ -47,9 +50,11 @@ export function ChaptersGrid({
   statusFilter,
   regionFilter,
   availableRegions,
+  sortOrder,
   onSearchChange,
   onStatusFilterChange,
   onRegionFilterChange,
+  onSortOrderChange,
   onPageChange,
   onOpenAddModal,
   onOpenEditModal,
@@ -60,7 +65,10 @@ export function ChaptersGrid({
   return (
     <>
       {/* Search + filter - Desktop */}
-      <div className="desktop-only" style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
+      <div
+        className="desktop-only"
+        style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 14 }}
+      >
         <div style={{ position: 'relative', flex: 1 }}>
           <span
             className="material-symbols-outlined"
@@ -118,6 +126,7 @@ export function ChaptersGrid({
             </option>
           ))}
         </select>
+        <SortToggle value={sortOrder} onChange={onSortOrderChange} />
       </div>
 
       {/* Search + filter - Mobile */}
@@ -175,7 +184,7 @@ export function ChaptersGrid({
             </button>
           ))}
         </div>
-        <div style={{ display: 'flex', gap: 6 }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           <label htmlFor="select-region-mob" style={{ display: 'none' }}>
             Filter by region
           </label>
@@ -199,6 +208,7 @@ export function ChaptersGrid({
               </option>
             ))}
           </select>
+          <SortToggle value={sortOrder} onChange={onSortOrderChange} />
         </div>
       </div>
 

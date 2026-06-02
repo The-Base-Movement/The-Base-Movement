@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { jobService } from '@/services/jobService'
 import type { Job, JobFilters } from '@/types/jobs'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { ApplicationsDrawer } from './jobs/ApplicationsDrawer'
 import { toast } from 'sonner'
 
@@ -16,6 +17,7 @@ export default function AdminJobs() {
   const navigate = useNavigate()
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [filters, setFilters] = useState<JobFilters>({
     search: '',
     status: '',
@@ -36,6 +38,14 @@ export default function AdminJobs() {
   useEffect(() => {
     load()
   }, [load])
+
+  const sortedJobs = useMemo(() => {
+    return [...jobs].sort((a, b) => {
+      const titleA = a.title || ''
+      const titleB = b.title || ''
+      return sortOrder === 'asc' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA)
+    })
+  }, [jobs, sortOrder])
 
   const total = jobs.length
   const open = jobs.filter((j) => j.status === 'published').length
@@ -128,40 +138,43 @@ export default function AdminJobs() {
 
       {/* Filter bar */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
-        {/* Row 1 — search, full width */}
-        <div style={{ position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 16,
-              color: 'hsl(var(--on-surface-muted))',
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            placeholder="Search title or organisation..."
-            value={filters.search}
-            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-            style={{
-              width: '100%',
-              height: 34,
-              paddingLeft: 34,
-              paddingRight: 12,
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: 13,
-              fontFamily: "'Public Sans', sans-serif",
-              color: 'hsl(var(--on-surface))',
-              background: 'hsl(var(--background))',
-              boxSizing: 'border-box',
-            }}
-          />
+        {/* Row 1 — search & sort */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 16,
+                color: 'hsl(var(--on-surface-muted))',
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              placeholder="Search title or organisation..."
+              value={filters.search}
+              onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+              style={{
+                width: '100%',
+                height: 34,
+                paddingLeft: 34,
+                paddingRight: 12,
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 13,
+                fontFamily: "'Public Sans', sans-serif",
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--background))',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
         </div>
         {/* Row 2 — status tabs */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -190,7 +203,7 @@ export default function AdminJobs() {
           >
             Loading jobs...
           </p>
-        ) : jobs.length === 0 ? (
+        ) : sortedJobs.length === 0 ? (
           <p
             style={{
               padding: 32,
@@ -234,7 +247,7 @@ export default function AdminJobs() {
               </tr>
             </thead>
             <tbody>
-              {jobs.map((job) => (
+              {sortedJobs.map((job) => (
                 <tr key={job.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td
                     style={{
@@ -328,7 +341,7 @@ export default function AdminJobs() {
           >
             Loading jobs...
           </p>
-        ) : jobs.length === 0 ? (
+        ) : sortedJobs.length === 0 ? (
           <p
             style={{
               padding: 32,
@@ -340,7 +353,7 @@ export default function AdminJobs() {
             No jobs found.
           </p>
         ) : (
-          jobs.map((job) => (
+          sortedJobs.map((job) => (
             <div
               key={job.id}
               style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}

@@ -1,4 +1,6 @@
+import { useState, useMemo } from 'react'
 import type { ChapterDonation } from './types'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 interface HubDonationsListProps {
   donations: ChapterDonation[]
@@ -11,6 +13,79 @@ function donationStatusClass(status: string) {
 }
 
 export function HubDonationsList({ donations }: HubDonationsListProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+  const sortedDonations = useMemo(() => {
+    const list = donations.filter((d) => {
+      const q = searchQuery.toLowerCase()
+      return (
+        !q ||
+        d.full_name.toLowerCase().includes(q) ||
+        (d.reference && d.reference.toLowerCase().includes(q)) ||
+        d.phone.includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.full_name || ''
+      const nameB = b.full_name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [donations, searchQuery, sortOrder])
+  const searchBar = (
+    <div
+      style={{
+        padding: '12px 18px',
+        borderBottom: '1px solid hsl(var(--border))',
+        display: 'flex',
+        gap: 12,
+        alignItems: 'center',
+      }}
+    >
+      <div style={{ position: 'relative', flex: 1 }}>
+        <span
+          className="material-symbols-outlined"
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 16,
+            color: 'hsl(var(--on-surface-muted))',
+            opacity: 0.4,
+            pointerEvents: 'none',
+          }}
+        >
+          search
+        </span>
+        <input
+          aria-label="Search by donor, phone, or reference"
+          name="donationSearch"
+          id="hub-donation-search"
+          type="text"
+          placeholder="Search by donor, phone, or reference..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: '100%',
+            height: 38,
+            paddingLeft: 38,
+            paddingRight: 12,
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-xs)',
+            fontSize: 13,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
+      </div>
+      <SortToggle value={sortOrder} onChange={setSortOrder} />
+    </div>
+  )
+
   const emptyState = (
     <div
       style={{
@@ -21,12 +96,15 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
         fontFamily: "'Public Sans', sans-serif",
       }}
     >
-      No donations from chapter members yet.
+      {donations.length === 0
+        ? 'No donations from chapter members yet.'
+        : 'No donations match your search.'}
     </div>
   )
 
   return (
     <div className="panel" style={{ overflow: 'hidden' }}>
+      {searchBar}
       {/* Desktop table */}
       <div className="desktop-only" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -58,12 +136,12 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
             </tr>
           </thead>
           <tbody>
-            {donations.length === 0 ? (
+            {sortedDonations.length === 0 ? (
               <tr>
                 <td colSpan={6}>{emptyState}</td>
               </tr>
             ) : (
-              donations.map((d) => (
+              sortedDonations.map((d) => (
                 <tr key={d.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td style={{ padding: '12px 18px' }}>
                     <p
@@ -146,11 +224,11 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
 
       {/* Mobile card list */}
       <div className="mobile-only">
-        {donations.length === 0 ? (
+        {sortedDonations.length === 0 ? (
           emptyState
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {donations.map((d) => (
+            {sortedDonations.map((d) => (
               <div
                 key={d.id}
                 style={{

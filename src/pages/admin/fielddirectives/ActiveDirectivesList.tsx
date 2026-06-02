@@ -1,4 +1,6 @@
+import { useState, useMemo } from 'react'
 import type { FieldDirective } from '@/types/admin'
+import { SortToggle } from '@/components/ui/SortToggle'
 
 const pillBase: React.CSSProperties = {
   padding: '2px 10px',
@@ -36,6 +38,25 @@ interface ActiveDirectivesListProps {
 }
 
 export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirectivesListProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+  const filteredDirectives = useMemo(() => {
+    const list = directives.filter((d) => {
+      const q = searchQuery.toLowerCase()
+      return (
+        !q ||
+        d.title.toLowerCase().includes(q) ||
+        d.description.toLowerCase().includes(q) ||
+        d.target_type.toLowerCase().includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const titleA = a.title || ''
+      const titleB = b.title || ''
+      return sortOrder === 'asc' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA)
+    })
+  }, [directives, searchQuery, sortOrder])
   return (
     <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
       <div
@@ -44,51 +65,95 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
           borderBottom: '1px solid hsl(var(--border))',
           background: 'hsl(var(--container-low))',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
+          gap: 12,
         }}
       >
-        <div>
-          <div
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 13,
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            Active directives
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Active directives
+            </div>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-normal, 400)',
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                marginTop: 2,
+              }}
+            >
+              Operational field objectives
+            </div>
           </div>
-          <div
+          <button
+            className="btn btn-sm"
             style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-              fontSize: 11,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 2,
+              width: 32,
+              height: 32,
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
+            onClick={onOpenCreate}
           >
-            Operational field objectives
-          </div>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              add
+            </span>
+          </button>
         </div>
-        <button
-          className="btn btn-sm"
-          style={{
-            width: 32,
-            height: 32,
-            padding: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onClick={onOpenCreate}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            add
-          </span>
-        </button>
+
+        {/* Search & Sort input */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 8,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface-muted))',
+                opacity: 0.4,
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              aria-label="Search directives"
+              type="text"
+              placeholder="Search directives..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                height: 30,
+                paddingLeft: 28,
+                paddingRight: 8,
+                background: '#fff',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-xs)',
+                fontSize: 11,
+                fontFamily: "'Public Sans', sans-serif",
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <SortToggle value={sortOrder} onChange={setSortOrder} />
+        </div>
       </div>
-      {directives.length === 0 ? (
+      {filteredDirectives.length === 0 ? (
         <div
           style={{
             display: 'flex',
@@ -115,12 +180,12 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
               letterSpacing: '0.06em',
             }}
           >
-            No directives deployed
+            {directives.length === 0 ? 'No directives deployed' : 'No directives match your search'}
           </p>
         </div>
       ) : (
         <div style={{ maxHeight: 800, overflowY: 'auto' }}>
-          {directives.map((d) => (
+          {filteredDirectives.map((d) => (
             <div
               key={d.id}
               style={{ padding: '20px', borderBottom: '1px solid hsl(var(--border))' }}

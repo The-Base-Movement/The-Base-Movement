@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '@/lib/supabase'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
@@ -15,6 +15,8 @@ export default function PartyOfficials() {
   const [officials, setOfficials] = useState<PartyOfficial[]>([])
   const [tiers, setTiers] = useState<PartyTier[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [viewingOfficial, setViewingOfficial] = useState<PartyOfficial | null>(null)
@@ -187,7 +189,21 @@ export default function PartyOfficials() {
       }
     }
   }
-
+  const filteredOfficials = useMemo(() => {
+    const list = officials.filter((o) => {
+      const q = searchQuery.toLowerCase()
+      return (
+        o.name.toLowerCase().includes(q) ||
+        o.role.toLowerCase().includes(q) ||
+        (o.region ?? '').toLowerCase().includes(q)
+      )
+    })
+    return list.sort((a, b) => {
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [officials, searchQuery, sortOrder])
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <AdminPageHeader
@@ -214,11 +230,15 @@ export default function PartyOfficials() {
 
       <OfficialsTable
         loading={loading}
-        officials={officials}
+        officials={filteredOfficials}
         tiers={tiers}
         handleOpenModal={handleOpenModal}
         handleDelete={handleDelete}
         handleView={(official) => setViewingOfficial(official)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
       />
 
       {isModalOpen && (
