@@ -52,7 +52,24 @@ Deno.serve(async (req) => {
 
   // Mark notified optimistically — prevents double-send on concurrent cron runs
   const ids = polls.map((p: { id: string }) => p.id)
-  await supabase.from('polls').update({ closing_notified: true }).in('id', ids)
+  const { error: markError } = await supabase
+    .from('polls')
+    .update({ closing_notified: true })
+    .in('id', ids)
+
+  if (markError) {
+    console.error(
+      '[POLL-SCHEDULER] Failed to mark polls as notified — aborting to prevent double-send',
+      markError.message
+    )
+    return new Response(
+      JSON.stringify({ error: 'Failed to mark polls as notified', detail: markError.message }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    )
+  }
 
   const results: Array<{ id: string; ok: boolean; error?: string }> = []
 
