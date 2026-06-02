@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { roleService, type AdminRoleRecord } from '@/services/roleService'
 import type { AdminPermission } from '@/types/admin'
@@ -648,6 +649,7 @@ export default function RolesManager() {
   const [roles, setRoles] = useState<AdminRoleRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [editTarget, setEditTarget] = useState<AdminRoleRecord | null | 'new'>()
   const [deleteTarget, setDeleteTarget] = useState<AdminRoleRecord | null>(null)
 
@@ -670,6 +672,11 @@ export default function RolesManager() {
       r.name.toLowerCase().includes(search.toLowerCase()) ||
       (r.description ?? '').toLowerCase().includes(search.toLowerCase())
   )
+
+  const sorted = [...filtered].sort((a, b) => {
+    const cmp = formatName(a.name).localeCompare(formatName(b.name))
+    return sortDir === 'asc' ? cmp : -cmp
+  })
 
   const systemCount = roles.filter((r) => r.is_system).length
   const customCount = roles.filter((r) => !r.is_system).length
@@ -750,10 +757,10 @@ export default function RolesManager() {
         ))}
       </div>
 
-      {/* Search */}
+      {/* Search + Sort */}
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div style={{ padding: '14px 20px' }}>
-          <div style={{ position: 'relative' }}>
+        <div style={{ padding: '14px 20px', display: 'flex', gap: 10, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
             <label htmlFor="roles-search" style={{ display: 'none' }}>
               Search roles
             </label>
@@ -781,6 +788,7 @@ export default function RolesManager() {
               style={{ ...inputSt, paddingLeft: 34 }}
             />
           </div>
+          <SortToggle value={sortDir} onChange={setSortDir} />
         </div>
       </div>
 
@@ -833,7 +841,7 @@ export default function RolesManager() {
                     ))}
                   </tr>
                 ))
-              ) : filtered.length === 0 ? (
+              ) : sorted.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
@@ -849,7 +857,7 @@ export default function RolesManager() {
                   </td>
                 </tr>
               ) : (
-                filtered.map((role) => (
+                sorted.map((role) => (
                   <tr
                     key={role.id}
                     style={{
