@@ -17,13 +17,26 @@ const SHELL_CLOSE = `</div></body></html>`
 
 function emailHeader(tag: string) {
   return `
-  <div style="background:#181d19;padding:20px 28px;display:flex;align-items:center;justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div style="width:28px;height:28px;background:#CE1126;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Public Sans',Arial;font-weight:800;font-size:13px;color:#fff">B</div>
-      <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:14px;color:#fff">The Base Movement</span>
-    </div>
-    <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase">${tag}</span>
-  </div>`
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
+    style="background:#181d19;border-collapse:collapse">
+    <tr>
+      <td style="padding:20px 28px;vertical-align:middle">
+        <table cellpadding="0" cellspacing="0" border="0" role="presentation">
+          <tr>
+            <td style="padding-right:10px;vertical-align:middle">
+              <div style="width:28px;height:28px;background:#CE1126;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:13px;color:#fff;text-align:center;line-height:28px">B</div>
+            </td>
+            <td style="vertical-align:middle">
+              <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:14px;color:#fff">The Base Movement</span>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td style="padding:20px 28px;vertical-align:middle;text-align:right;white-space:nowrap">
+        <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase">${tag}</span>
+      </td>
+    </tr>
+  </table>`
 }
 
 const TOP_BAR = `<div style="height:5px;background:linear-gradient(to right,#CE1126,#DAA520,#006B3F)"></div>`
