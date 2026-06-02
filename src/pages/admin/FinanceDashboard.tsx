@@ -112,7 +112,8 @@ export default function FinanceDashboard() {
       {/* ── Chapter filter ── */}
       {chapters.length > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-          <span
+          <label
+            htmlFor="dash-chapter-filter"
             style={{
               fontSize: 12,
               fontWeight: 500,
@@ -121,8 +122,10 @@ export default function FinanceDashboard() {
             }}
           >
             Chapter:
-          </span>
+          </label>
           <select
+            id="dash-chapter-filter"
+            name="dash-chapter-filter"
             value={chapter ?? ''}
             onChange={(e) => setChapter(e.target.value || null)}
             style={{

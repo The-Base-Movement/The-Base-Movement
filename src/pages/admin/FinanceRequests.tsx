@@ -257,6 +257,7 @@ export default function FinanceRequests() {
             {/* Request Type */}
             <div>
               <label
+                htmlFor="req-type"
                 style={{
                   display: 'block',
                   fontSize: 12,
@@ -268,6 +269,8 @@ export default function FinanceRequests() {
                 Request Type
               </label>
               <select
+                id="req-type"
+                name="req-type"
                 value={reqType}
                 onChange={(e) => setReqType(e.target.value as RequestType)}
                 style={{
@@ -293,6 +296,7 @@ export default function FinanceRequests() {
             {/* Chapter */}
             <div>
               <label
+                htmlFor="req-chapter"
                 style={{
                   display: 'block',
                   fontSize: 12,
@@ -304,6 +308,8 @@ export default function FinanceRequests() {
                 Chapter
               </label>
               <input
+                id="req-chapter"
+                name="req-chapter"
                 type="text"
                 value={chapter}
                 onChange={(e) => setChapter(e.target.value)}
@@ -325,6 +331,7 @@ export default function FinanceRequests() {
             {/* Amount */}
             <div>
               <label
+                htmlFor="req-amount"
                 style={{
                   display: 'block',
                   fontSize: 12,
@@ -336,6 +343,8 @@ export default function FinanceRequests() {
                 Amount (GHS)
               </label>
               <input
+                id="req-amount"
+                name="req-amount"
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
@@ -360,6 +369,7 @@ export default function FinanceRequests() {
           {/* Description */}
           <div style={{ marginBottom: 20 }}>
             <label
+              htmlFor="req-description"
               style={{
                 display: 'block',
                 fontSize: 12,
@@ -371,6 +381,8 @@ export default function FinanceRequests() {
               Description
             </label>
             <textarea
+              id="req-description"
+              name="req-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -665,6 +677,7 @@ export default function FinanceRequests() {
             </div>
 
             <label
+              htmlFor="officer-comment"
               style={{
                 display: 'block',
                 fontSize: 12,
@@ -676,6 +689,8 @@ export default function FinanceRequests() {
               Officer Comment <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
             <textarea
+              id="officer-comment"
+              name="officer-comment"
               value={officerComment}
               onChange={(e) => setOfficerComment(e.target.value)}
               rows={3}
