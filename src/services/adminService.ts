@@ -502,6 +502,11 @@ class AdminService {
       if (approve && chapterName) {
         await this.incrementChapterMemberCount(chapterName)
       }
+      if (approve) {
+        supabase.functions.invoke('send-welcome-email', { body: { userId: id } }).catch(() => {
+          // Fire-and-forget — email failure must not block approval
+        })
+      }
     }
     return success
   }
