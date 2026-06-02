@@ -304,7 +304,7 @@ class ConstituencyService {
     return (data || []).map((c) => ({
       id: c.id as number,
       name: c.name as string,
-      regionName: (c.region as { name: string } | null)?.name,
+      regionName: (c.region as { name: string }[] | null)?.[0]?.name,
     }))
   }
 

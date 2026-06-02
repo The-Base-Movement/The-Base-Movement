@@ -96,6 +96,7 @@ const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
 const AdminJobForm = lazy(() => import('./pages/admin/jobs/JobFormPage'))
 const AdminModeration = lazy(() => import('./pages/admin/Moderation'))
 const AdminFinanceRequests = lazy(() => import('./pages/admin/FinanceRequests'))
+const AdminFinanceDashboard = lazy(() => import('./pages/admin/FinanceDashboard'))
 const LikedPosts = lazy(() => import('./pages/LikedPosts'))
 const MyDonations = lazy(() => import('./pages/MyDonations'))
 const Referrals = lazy(() => import('./pages/dashboard/Referrals'))
@@ -212,6 +213,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/donations', element: <AdminDonations /> },
       { path: '/admin/spending-ledger', element: <AdminSpendingLedger /> },
       { path: '/admin/finance-requests', element: <AdminFinanceRequests /> },
+      { path: '/admin/finance-dashboard', element: <AdminFinanceDashboard /> },
       { path: '/admin/priorities', element: <AdminStrategicPriorities /> },
       { path: '/admin/members', element: <AdminMembers /> },
       { path: '/admin/members/:memberId', element: <AdminMemberDetail /> },

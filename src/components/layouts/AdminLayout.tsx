@@ -12,6 +12,7 @@ import { PageLabelProvider } from '@/contexts/PageLabelContext'
 import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } from '@/types/admin'
 
 const FINANCE_OFFICER_ALLOWED_PATHS = [
+  '/admin/finance-dashboard',
   '/admin/donations',
   '/admin/spending-ledger',
   '/admin/store',
@@ -218,6 +219,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: 'Finance',
       icon: 'account_balance_wallet',
       items: [
+        {
+          to: '/admin/finance-dashboard',
+          icon: 'analytics',
+          label: 'Finance dashboard',
+          permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+        },
         {
           to: '/admin/donations',
           icon: 'payments',

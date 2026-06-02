@@ -12,7 +12,7 @@ import {
   Pie,
   Cell,
 } from 'recharts'
-import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import {
   financeAnalyticsService,
   type SummaryStats,
@@ -92,7 +92,7 @@ export default function FinanceDashboard() {
 
   return (
     <div className="main">
-      <AdminPageHeader title="Finance Dashboard" subtitle="Platform-wide financial overview" />
+      <AdminPageHeader title="Finance Dashboard" description="Platform-wide financial overview" />
 
       {/* ── KPI Row ── */}
       <div
