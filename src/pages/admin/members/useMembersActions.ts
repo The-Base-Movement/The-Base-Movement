@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useChapters } from '@/context/ChaptersContext'
 import { adminService, type AuditLogEntry, type Member } from '@/services/adminService'
+import { roleService, type AdminRoleRecord } from '@/services/roleService'
+import { constituencyService } from '@/services/constituencyService'
 import { toast } from 'sonner'
 import { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
+import { type ConstituencyLeader } from '@/types/admin'
 import { getCroppedImg } from '@/lib/imageUtils'
 
 export function useMembersActions(members: Member[], fetchMembers: () => void) {
@@ -13,13 +16,25 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
   const [isSubmittingRegistration, setIsSubmittingRegistration] = useState(false)
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [roles, setRoles] = useState<AdminRoleRecord[]>([])
+  const [constituencies, setConstituencies] = useState<
+    { id: number; name: string; regionName?: string }[]
+  >([])
+
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [assigningMembers, setAssigningMembers] = useState<Member[]>([])
   const [assignmentData, setAssignmentData] = useState({
+    scopeType: 'chapter' as 'chapter' | 'constituency',
     chapterId: '',
-    role: 'Chapter Coordinator',
+    constituencyId: '',
+    role: '',
   })
   const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false)
+
+  useEffect(() => {
+    roleService.getRoles().then(setRoles).catch(console.error)
+    constituencyService.listNames().then(setConstituencies).catch(console.error)
+  }, [])
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isDeletingMembers, setIsDeletingMembers] = useState(false)
@@ -265,19 +280,37 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
   }
 
   const handleConfirmAssignment = async () => {
-    if (!assignmentData.chapterId || assigningMembers.length === 0) return
+    const { scopeType, chapterId, constituencyId, role } = assignmentData
+    const hasTarget = scopeType === 'chapter' ? !!chapterId : !!constituencyId
+    if (!hasTarget || !role || assigningMembers.length === 0) return
     setIsSubmittingAssignment(true)
     try {
-      const selectedChapter = chapters.find((c) => c.id === assignmentData.chapterId)
-      if (!selectedChapter) throw new Error('Chapter not found')
-      for (const member of assigningMembers) {
-        await adminService.addChapterLeader(assignmentData.chapterId, {
-          name: member.name,
-          role: assignmentData.role,
-          imageUrl: member.avatarUrl || '',
-        })
+      if (scopeType === 'chapter') {
+        const selectedChapter = chapters.find((c) => c.id === chapterId)
+        if (!selectedChapter) throw new Error('Chapter not found')
+        for (const member of assigningMembers) {
+          await adminService.addChapterLeader(chapterId, {
+            name: member.name,
+            role,
+            imageUrl: member.avatarUrl || '',
+          })
+        }
+        toast.success(`${assigningMembers.length} leader(s) assigned to ${selectedChapter.name}.`)
+      } else {
+        const selectedConstituency = constituencies.find((c) => String(c.id) === constituencyId)
+        if (!selectedConstituency) throw new Error('Constituency not found')
+        for (const member of assigningMembers) {
+          await constituencyService.addCommitteeMember(selectedConstituency.id, {
+            memberId: member.id,
+            name: member.name,
+            role: role as ConstituencyLeader['role'],
+            imageUrl: member.avatarUrl || undefined,
+          })
+        }
+        toast.success(
+          `${assigningMembers.length} leader(s) assigned to ${selectedConstituency.name}.`
+        )
       }
-      toast.success(`${assigningMembers.length} leader(s) assigned to ${selectedChapter.name}.`)
       setIsAssignModalOpen(false)
       setSelectedIds(new Set())
     } catch {
@@ -311,6 +344,8 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
     verifyingMembers,
     isVerifyingMembers,
     chapters,
+    roles,
+    constituencies,
     handleVerify,
     handleConfirmVerify,
     handleViewAudit,

@@ -83,6 +83,8 @@ export default function MembersList() {
     verifyingMembers,
     isVerifyingMembers,
     chapters,
+    roles,
+    constituencies,
     handleVerify,
     handleConfirmVerify,
     handleViewAudit,
@@ -214,6 +216,8 @@ export default function MembersList() {
         isOpen={isAssignModalOpen}
         assigningMembers={assigningMembers}
         chapters={chapters}
+        constituencies={constituencies}
+        roles={roles}
         data={assignmentData}
         onChange={(field, value) => setAssignmentData((d) => ({ ...d, [field]: value }))}
         onConfirm={handleConfirmAssignment}

@@ -295,6 +295,19 @@ class ConstituencyService {
     return true
   }
 
+  async listNames(): Promise<{ id: number; name: string; regionName?: string }[]> {
+    const { data, error } = await supabase
+      .from('ghana_constituencies')
+      .select('id, name, region:ghana_regions(name)')
+      .order('name')
+    if (error) return []
+    return (data || []).map((c) => ({
+      id: c.id as number,
+      name: c.name as string,
+      regionName: (c.region as { name: string } | null)?.name,
+    }))
+  }
+
   async removeCommitteeMember(memberId: string): Promise<boolean> {
     const { error } = await supabase.from('constituency_leaders').delete().eq('id', memberId)
 
