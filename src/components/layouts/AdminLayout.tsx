@@ -412,7 +412,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         {
           to: '/admin/administrators',
           icon: 'shield',
-          label: 'Staff command',
+          label: 'Administrators',
           permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
         },
         {
