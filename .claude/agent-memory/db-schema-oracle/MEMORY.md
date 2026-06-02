@@ -7,3 +7,4 @@
 - [blog-posts-table-and-no-engagement-infra](schema_blog_posts.md) — blog_posts column list; no likes/reactions/comments/views tables or counters exist (as of 2026-05-29)
 - [job-applications-schema-and-missing-fk](schema_job_applications.md) — job_applications.member_id has no FK, breaking PostgREST embeds; no profiles table exists; RLS uses is_admin()
 - [donation-campaigns-schema-and-missing-write-rls](schema_donation_campaigns.md) — donation_campaigns has only a public SELECT policy; all INSERT/UPDATE/DELETE return 403
+- [finance-tables-schema](schema_finance_tables.md) — donations/mobilization_ledger/finance_requests columns + constraints; status & category are free-text (no CHECK)

@@ -23,7 +23,7 @@ Constraints:
 
 - PK: id
 - FK: `created_by` → `auth.users(id)`
-- CHECK `category`: must be one of `'Logistics' | 'Media' | 'Venues' | 'Transport' | 'Other'`
+- `category`: NOT NULL but **NO CHECK constraint** — free-text. (Re-verified 2026-06-02: the only CHECK is on transaction_type. A prior note here claimed category was enum-constrained to 'Logistics'|'Media'|'Venues'|'Transport'|'Other' — that was wrong or has since been dropped. App code may still emit those values, but the DB does not enforce them.)
 - CHECK `transaction_type`: must be one of `'Allocation' | 'Expenditure'`
 - `chapter` is free-text (no FK to a chapters table).
 
@@ -36,6 +36,6 @@ RLS: enabled. Two policies (both for role `authenticated`):
 
 - No INSERT/UPDATE/DELETE policy exists for non-SuperAdmin admins. Regional admins can read but cannot write to their own chapter's ledger. Writes are SuperAdmin-only.
 - No anon access at all.
-- `category` and `transaction_type` are effectively enums enforced by CHECK — frontend dropdowns must match these exact strings (case-sensitive).
+- Only `transaction_type` is enum-enforced by CHECK (case-sensitive: 'Allocation'|'Expenditure'). `category` is free-text — any dropdown values are an app-side convention, not DB-enforced.
 
 **How to apply:** When wiring a "log transaction" UI for chapter leaders, expect the insert to fail under RLS unless the user is a SuperAdmin. Either add a new policy or proxy through an edge function / SECURITY DEFINER RPC. Category/transaction_type values must match the CHECK literals exactly.

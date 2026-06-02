@@ -392,6 +392,8 @@ class LogisticsService {
         if (itemsError) throw itemsError
 
         if (items && items.length > 0) {
+          const { data: authData } = await supabase.auth.getUser()
+          const userId = authData?.user?.id || null
           const auditEntries = []
 
           for (const item of items) {
@@ -415,8 +417,8 @@ class LogisticsService {
                 quantity_change: -item.quantity,
                 source_location: 'Central Hub',
                 destination_location: currentReq.region || 'Regional Hub',
-                performed_by: 'System / Logistics Engine',
-                notes: `Regional Fulfillment: Request #${id.slice(0, 8)}`,
+                performed_by: userId,
+                notes: `Regional Fulfillment: Request #${id.slice(0, 8)} (by System / Logistics Engine)`,
                 timestamp: new Date().toISOString(),
               })
             }
@@ -751,6 +753,8 @@ class LogisticsService {
       if (status === 'Dispatched' && !currentOrder.dispatched_at) {
         const order = await this.getOrderById(orderId)
         if (order && order.items) {
+          const { data: authData } = await supabase.auth.getUser()
+          const userId = authData?.user?.id || null
           // Process items for deduction
           const auditEntries = []
 
@@ -775,8 +779,8 @@ class LogisticsService {
                 action: 'DISPATCHED',
                 quantity_change: -item.quantity,
                 source_location: 'Central Hub',
-                performed_by: 'System / Logistics Engine',
-                notes: `Fulfillment: Order #${orderId.slice(0, 8)}`,
+                performed_by: userId,
+                notes: `Fulfillment: Order #${orderId.slice(0, 8)} (by System / Logistics Engine)`,
                 timestamp: new Date().toISOString(),
               })
             }
@@ -793,6 +797,8 @@ class LogisticsService {
       if (status === 'Cancelled' && currentOrder.dispatched_at) {
         const order = await this.getOrderById(orderId)
         if (order && order.items) {
+          const { data: authData } = await supabase.auth.getUser()
+          const userId = authData?.user?.id || null
           const restockEntries = []
           for (const item of order.items) {
             const { data: product } = await supabase
@@ -813,8 +819,8 @@ class LogisticsService {
                 quantity_change: item.quantity,
                 source_location: 'In-Transit',
                 destination_location: 'Central Hub',
-                performed_by: 'System / Termination Protocol',
-                notes: `Order #${orderId.slice(0, 8)} Cancelled`,
+                performed_by: userId,
+                notes: `Order #${orderId.slice(0, 8)} Cancelled (by System / Termination Protocol)`,
                 timestamp: new Date().toISOString(),
               })
             }
@@ -928,6 +934,9 @@ class LogisticsService {
       const alerts = await this.getInventoryAlerts()
       if (alerts.length === 0) return true
 
+      const { data: authData } = await supabase.auth.getUser()
+      const userId = authData?.user?.id || null
+
       for (const item of alerts) {
         const replenishedStock = (item.low_stock_threshold || 10) * 5 // Set to 5x threshold
         const { error } = await supabase
@@ -943,8 +952,8 @@ class LogisticsService {
           action: 'REPLENISHED',
           quantity_change: replenishedStock - item.stock_quantity,
           source_location: 'Central Hub',
-          performed_by: 'System / Logistics Engine',
-          notes: 'Automated bulk replenishment protocol',
+          performed_by: userId,
+          notes: 'Automated bulk replenishment protocol (by System / Logistics Engine)',
           timestamp: new Date().toISOString(),
         })
       }

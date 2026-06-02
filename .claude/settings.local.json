@@ -97,7 +97,10 @@
       "mcp__supabase__get_edge_function",
       "Bash(npm test *)",
       "Bash(git ls-files *)",
-      "Skill(commit-commands:commit-push-pr)"
+      "Skill(commit-commands:commit-push-pr)",
+      "Bash(git stash *)",
+      "Bash(git grep *)",
+      "Bash(xargs grep -il \"mobilization_ledger\")"
     ]
   },
   "enableAllProjectMcpServers": true,
