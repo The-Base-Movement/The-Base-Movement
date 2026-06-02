@@ -1,0 +1,88 @@
+import { supabase } from '@/lib/supabase'
+
+export interface FinanceRequest {
+  id: string
+  requester_id: string
+  request_type: 'BudgetAllocation' | 'ExpenseReimbursement' | 'InventoryReplenishment'
+  chapter: string
+  amount: number
+  description: string
+  status: 'Pending' | 'Approved' | 'Rejected'
+  officer_comment: string | null
+  reviewed_by: string | null
+  created_at: string
+  reviewed_at: string | null
+  requester_name?: string
+}
+
+export const financeService = {
+  async getRequests(): Promise<FinanceRequest[]> {
+    const { data, error } = await supabase
+      .from('finance_requests')
+      .select(
+        `
+        *,
+        users:requester_id (full_name)
+      `
+      )
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    return (data ?? []).map((r: FinanceRequest & { users?: { full_name?: string } }) => ({
+      ...r,
+      requester_name: r.users?.full_name ?? 'Unknown User',
+    }))
+  },
+
+  async createRequest(request: {
+    request_type: FinanceRequest['request_type']
+    chapter: string
+    amount: number
+    description: string
+  }): Promise<FinanceRequest> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+
+    const { data, error } = await supabase
+      .from('finance_requests')
+      .insert({
+        requester_id: user.id,
+        request_type: request.request_type,
+        chapter: request.chapter,
+        amount: request.amount,
+        description: request.description,
+        status: 'Pending',
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  async reviewRequest(
+    requestId: string,
+    status: 'Approved' | 'Rejected',
+    comment: string
+  ): Promise<void> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+
+    const { error } = await supabase
+      .from('finance_requests')
+      .update({
+        status,
+        officer_comment: comment,
+        reviewed_by: user.id,
+        reviewed_at: new Date().toISOString(),
+      })
+      .eq('id', requestId)
+
+    if (error) throw error
+  },
+}
