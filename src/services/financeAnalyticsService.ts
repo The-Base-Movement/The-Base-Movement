@@ -37,7 +37,7 @@ function getPeriodStart(period: FinancePeriod): Date {
       return new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6)
     case 'week': {
       const d = new Date(now)
-      d.setDate(now.getDate() - 7 * 7)
+      d.setDate(now.getDate() - 8 * 7)
       d.setHours(0, 0, 0, 0)
       return d
     }
@@ -145,8 +145,10 @@ export const financeAnalyticsService = {
   async getSummaryStats(): Promise<SummaryStats> {
     const [donRes, ledRes] = await Promise.all([
       supabase.from('donations').select('amount').eq('status', 'Verified'),
-      supabase.from('mobilization_ledger').select('amount'),
+      supabase.from('mobilization_ledger').select('amount').eq('transaction_type', 'Expenditure'),
     ])
+    if (donRes.error) throw new Error(donRes.error.message)
+    if (ledRes.error) throw new Error(ledRes.error.message)
     const totalIncome = (donRes.data ?? []).reduce((s, d) => s + Number(d.amount), 0)
     const totalExpenses = (ledRes.data ?? []).reduce((s, l) => s + Number(l.amount), 0)
     return { totalIncome, totalExpenses, netBalance: totalIncome - totalExpenses }
@@ -160,17 +162,25 @@ export const financeAnalyticsService = {
         .select('created_at, amount')
         .eq('status', 'Verified')
         .gte('created_at', start),
-      supabase.from('mobilization_ledger').select('timestamp, amount').gte('timestamp', start),
+      supabase
+        .from('mobilization_ledger')
+        .select('timestamp, amount')
+        .eq('transaction_type', 'Expenditure')
+        .gte('timestamp', start),
     ])
+    if (donRes.error) throw new Error(donRes.error.message)
+    if (ledRes.error) throw new Error(ledRes.error.message)
     return bucket(period, donRes.data ?? [], ledRes.data ?? [])
   },
 
   async getExpenseBreakdown(period: FinancePeriod): Promise<ExpenseCategory[]> {
     const start = getPeriodStart(period).toISOString()
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('mobilization_ledger')
       .select('category, amount')
+      .eq('transaction_type', 'Expenditure')
       .gte('timestamp', start)
+    if (error) throw new Error(error.message)
     const entries = data ?? []
     const totals: Record<string, number> = {}
     for (const e of entries) {
@@ -197,9 +207,12 @@ export const financeAnalyticsService = {
       supabase
         .from('mobilization_ledger')
         .select('id, timestamp, amount, description, chapter')
+        .eq('transaction_type', 'Expenditure')
         .order('timestamp', { ascending: false })
         .limit(limit),
     ])
+    if (donRes.error) throw new Error(donRes.error.message)
+    if (ledRes.error) throw new Error(ledRes.error.message)
     const income: TransactionRow[] = (donRes.data ?? []).map((d) => ({
       id: d.id,
       kind: 'income' as const,
