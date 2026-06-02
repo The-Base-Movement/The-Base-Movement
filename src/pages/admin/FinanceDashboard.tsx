@@ -13,6 +13,7 @@ import {
   Cell,
 } from 'recharts'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { useIsMobile } from '@/hooks/use-mobile'
 import {
   financeAnalyticsService,
   type SummaryStats,
@@ -53,6 +54,7 @@ export default function FinanceDashboard() {
   const [chartsLoading, setChartsLoading] = useState(true)
   const [chapter, setChapter] = useState<string | null>(null)
   const [chapters, setChapters] = useState<string[]>([])
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     Promise.resolve().then(() => {
@@ -188,7 +190,7 @@ export default function FinanceDashboard() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1.5fr 1fr 1fr 1fr',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : '1.5fr 1fr 1fr 1fr',
           gap: 14,
           marginBottom: 24,
         }}
@@ -203,6 +205,7 @@ export default function FinanceDashboard() {
             flexDirection: 'column',
             justifyContent: 'space-between',
             minHeight: 120,
+            gridColumn: isMobile ? '1 / -1' : undefined,
           }}
         >
           <div>
@@ -370,7 +373,7 @@ export default function FinanceDashboard() {
       </div>
 
       {/* ── Period filter ── */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
         {PERIODS.map((p) => (
           <button
             key={p.value}
@@ -494,7 +497,7 @@ export default function FinanceDashboard() {
 
         {/* Cashflow bar chart — main (right) */}
         <div className="panel" style={{ padding: 20 }}>
-          <div className="ph" style={{ marginBottom: 12 }}>
+          <div className="ph" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
             <div>
               <h3 style={{ margin: 0 }}>Cashflow</h3>
               <p
@@ -515,6 +518,7 @@ export default function FinanceDashboard() {
                 fontSize: 12,
                 color: 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
+                flexWrap: 'wrap',
               }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
