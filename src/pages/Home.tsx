@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-  adminService,
-  type BlogPost,
-  type Milestone,
-  type Chapter,
-  type Poll,
-} from '@/services/adminService'
+import { adminService, type BlogPost, type Milestone, type Poll } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { usePerformance } from '@/context/PerformanceContext'
 import SEO from '@/components/SEO'
@@ -69,7 +63,6 @@ export default function Home() {
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 })
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([])
   const [milestones, setMilestones] = useState<Milestone[]>([])
-  const [chapters, setChapters] = useState<Chapter[]>([])
   const [activePolls, setActivePolls] = useState<Poll[]>([])
   const [stats, setStats] = useState({
     members: 0,
@@ -118,10 +111,6 @@ export default function Home() {
         )
         setMilestones(sorted.slice(0, 4))
       })
-      .catch(() => {})
-    adminService
-      .getChapters()
-      .then((data) => setChapters(data.slice(0, 3)))
       .catch(() => {})
     adminService
       .getPolls()
@@ -218,7 +207,7 @@ export default function Home() {
 
       <RoadmapSection roadmapItems={roadmapItems} />
 
-      <ChaptersSection chapters={chapters} />
+      <ChaptersSection />
 
       <HomeOfficers />
 

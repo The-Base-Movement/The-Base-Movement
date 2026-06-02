@@ -1,308 +1,428 @@
 import { Link } from 'react-router-dom'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Pagination } from 'swiper/modules'
-import { type Chapter } from '@/services/adminService'
-import { Button } from '@/components/buttons/ui/neon-button'
-import { Skeleton } from '@/components/states'
-import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 
-interface ChaptersSectionProps {
-  chapters: Chapter[]
-}
+const CONSTITUENCY_POINTS = [
+  'Ghana has 275 parliamentary constituencies — each a defined electoral territory.',
+  'Members join under the constituency where they are registered to vote.',
+  'Constituencies elect parliamentary representatives and are the primary unit of political accountability.',
+  'The Base tracks sentiment, feedback, and turnout data by constituency.',
+]
 
-function ChapterCard({ chapter }: { chapter: Chapter }) {
-  const leader = chapter.leadership?.[0]
-  const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
-  const leaderInitial = leaderName.charAt(0).toUpperCase()
-  const leaderImage = leader?.imageUrl || chapter.leader_avatar_url
-  const isFeatured = chapter.status === 'Active' && chapter.member_count > 500
+const CHAPTER_POINTS = [
+  'A chapter hub is a local organisational branch within a constituency.',
+  'Multiple chapters can operate inside the same constituency.',
+  'Chapters coordinate rallies, outreach, and ground-level mobilisation activities.',
+  'Each chapter is led by an appointed coordinator who reports to the regional structure.',
+]
+
+export function ChaptersSection() {
   return (
-    <div
+    <section
+      aria-labelledby="structure-heading"
       style={{
-        background: '#fff',
-        border: '1px solid hsl(var(--border))',
-        borderRadius: 6,
-        overflow: 'hidden',
-        height: '100%',
+        background: 'hsl(var(--container-low))',
+        borderTop: '1px solid hsl(var(--border))',
+        borderBottom: '1px solid hsl(var(--border))',
+        padding: '72px 0',
       }}
     >
-      <div
-        style={{
-          padding: '14px 16px',
-          background: isFeatured ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
-          color: '#fff',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{ minWidth: 0 }}>
-          <div
+      <div className="page-container">
+        {/* Header */}
+        <div style={{ maxWidth: 600, marginBottom: 52 }} data-fade>
+          <span
             style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-semibold, 600)',
-              fontSize: 14,
-              letterSpacing: '-.005em',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-            }}
-          >
-            {chapter.name}
-            {chapter.flag_url && (
-              <img
-                src={chapter.flag_url}
-                alt={chapter.country}
-                style={{ height: 13, width: 'auto', borderRadius: 2, flexShrink: 0 }}
-              />
-            )}
-          </div>
-          <div
-            style={{
-              fontSize: 9.5,
+              display: 'block',
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
-              letterSpacing: '.06em',
+              fontSize: 10,
+              letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              color: isFeatured ? 'rgba(255,255,255,.85)' : 'hsl(var(--accent))',
-              marginTop: 2,
+              color: 'hsl(var(--on-surface-muted))',
+              marginBottom: 10,
             }}
           >
-            {chapter.city_or_region || chapter.country}
-          </div>
+            Our structure
+          </span>
+          <h2
+            id="structure-heading"
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 'clamp(22px, 3.5vw, 32px)',
+              color: 'hsl(var(--on-surface))',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.2,
+              margin: '0 0 14px',
+            }}
+          >
+            Constituencies &amp; Chapters
+          </h2>
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 14,
+              color: 'hsl(var(--on-surface-muted))',
+              lineHeight: 1.65,
+              margin: 0,
+            }}
+          >
+            The Base Movement operates across two distinct tiers. Understanding both helps you know
+            where you fit — and how your voice moves from your street to Parliament.
+          </p>
         </div>
-        <span
-          style={{
-            padding: '2px 8px',
-            background: 'rgba(255,255,255,.1)',
-            border: '1px solid rgba(255,255,255,.18)',
-            borderRadius: 2,
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-semibold, 600)',
-            fontSize: 9,
-            letterSpacing: '.05em',
-            textTransform: 'uppercase',
-            flexShrink: 0,
-          }}
-        >
-          {chapter.country !== 'Ghana' ? 'Diaspora' : isFeatured ? 'Featured' : 'Active'}
-        </span>
-      </div>
-      <div style={{ padding: '14px 16px' }}>
+
+        {/* Cards grid */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 10,
-            marginBottom: 14,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 24,
+            marginBottom: 48,
           }}
+          data-fade-stagger
         >
-          {[
-            { v: chapter.member_count.toLocaleString(), l: 'Members' },
-            { v: String(chapter.activities?.length ?? 0), l: 'Events' },
-            { v: chapter.status === 'Active' ? 'Open' : 'Closed', l: 'Status' },
-          ].map((stat) => (
-            <div key={stat.l}>
-              <div
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
-                  fontSize: 17,
-                  letterSpacing: '-.015em',
-                }}
-              >
-                {stat.v}
-              </div>
-              <div
-                style={{
-                  fontSize: 9.5,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  letterSpacing: '.05em',
-                  textTransform: 'uppercase',
-                  marginTop: 2,
-                }}
-              >
-                {stat.l}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            paddingTop: 12,
-            borderTop: '1px solid hsl(var(--border))',
-          }}
-        >
+          {/* ── Constituency card ── */}
           <div
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background: 'hsl(var(--primary))',
-              border: '2px solid hsl(var(--accent))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
+              background: '#fff',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-lg)',
               overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            {leaderImage ? (
-              <img
-                src={leaderImage}
-                alt={leaderName}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                onError={(e) => {
-                  const el = e.currentTarget
-                  el.style.display = 'none'
-                  const parent = el.parentElement
-                  if (parent)
-                    parent.innerHTML = `<span style="color:#fff;font-size:12px;font-weight:700">${leaderInitial}</span>`
-                }}
-              />
-            ) : (
-              <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#fff' }}>
-                person
-              </span>
-            )}
-          </div>
-          <div>
+            {/* Card header */}
             <div
               style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontSize: 11.5,
-                fontWeight: 'var(--font-weight-semibold, 600)',
+                borderTop: '4px solid hsl(var(--accent))',
+                padding: '28px 28px 20px',
+                background: 'rgba(218,165,32,0.04)',
+                borderBottom: '1px solid hsl(var(--border))',
               }}
             >
-              {leaderName}
-            </div>
-            <span
-              style={{
-                fontSize: 10,
-                color: 'hsl(var(--on-surface-muted))',
-                display: 'block',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-              }}
-            >
-              Branch chair
-            </span>
-          </div>
-          <Button
-            variant={isFeatured ? 'primary' : 'outline'}
-            size="sm"
-            style={{ marginLeft: 'auto' }}
-          >
-            Join
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export function ChaptersSection({ chapters }: ChaptersSectionProps) {
-  return (
-    <section
-      aria-labelledby="chapters-heading"
-      className="py-16 md:py-24 bg-background border-y border-border/40"
-    >
-      <div className="page-container">
-        <div className="flex items-end justify-between mb-8 md:mb-10" data-fade>
-          <div>
-            <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
-              Community
-            </span>
-            <h2
-              id="chapters-heading"
-              className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight"
-            >
-              Chapters near you
-            </h2>
-            <p className="text-xs text-muted-foreground/60 mt-1">
-              Community branches across all 16 regions. Find yours.
-            </p>
-          </div>
-          <Link
-            to="/chapters"
-            className="hidden md:inline-flex items-center gap-2 text-primary font-meta font-medium tracking-tight text-xs hover:underline"
-          >
-            All chapters{' '}
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              arrow_forward
-            </span>
-          </Link>
-        </div>
-
-        {chapters.length === 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  overflow: 'hidden',
-                }}
-              >
-                <Skeleton variant="img" height={56} style={{ borderRadius: 0 }} />
-                <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <Skeleton variant="text-sm" width="75%" />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                    {[0, 1, 2].map((j) => (
-                      <Skeleton key={j} variant="btn" />
-                    ))}
-                  </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 'var(--radius-md)',
+                    background: 'rgba(218,165,32,0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 22, color: 'hsl(var(--accent))' }}
+                  >
+                    location_city
+                  </span>
+                </div>
+                <div>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 9.5,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'hsl(var(--accent))',
+                      marginBottom: 2,
+                    }}
+                  >
+                    Tier 1
+                  </span>
+                  <h3
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 20,
+                      color: 'hsl(var(--on-surface))',
+                      letterSpacing: '-0.015em',
+                      margin: 0,
+                    }}
+                  >
+                    Constituency
+                  </h3>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <>
-            <div className="sm:hidden -mx-5 px-5">
-              <Swiper
-                modules={[Pagination]}
-                slidesPerView={1.1}
-                spaceBetween={12}
-                pagination={{ clickable: true }}
-                style={{ paddingBottom: 36 }}
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface-muted))',
+                  lineHeight: 1.6,
+                  margin: 0,
+                }}
               >
-                {chapters.map((chapter) => (
-                  <SwiperSlide key={chapter.id}>
-                    <Link to="/chapters" style={{ textDecoration: 'none', display: 'block' }}>
-                      <ChapterCard chapter={chapter} />
-                    </Link>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+                The political foundation — a legally defined electoral territory from which a Member
+                of Parliament is elected. Every Ghanaian voter belongs to one.
+              </p>
             </div>
 
+            {/* Key points */}
             <div
-              className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
-              data-fade-stagger
+              style={{
+                padding: '20px 28px 28px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+              }}
             >
-              {chapters.map((chapter) => (
-                <Link key={chapter.id} to="/chapters" style={{ textDecoration: 'none' }}>
-                  <ChapterCard chapter={chapter} />
-                </Link>
+              {CONSTITUENCY_POINTS.map((point, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                  <span
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: 'rgba(218,165,32,0.12)',
+                      border: '1px solid rgba(218,165,32,0.25)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: 1,
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 11, color: 'hsl(var(--accent))' }}
+                    >
+                      check
+                    </span>
+                  </span>
+                  <p
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-normal, 400)',
+                      fontSize: 12.5,
+                      color: 'hsl(var(--on-surface))',
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {point}
+                  </p>
+                </div>
               ))}
-            </div>
-          </>
-        )}
 
-        <ButtonPrimary asChild className="md:hidden mt-8 w-full">
-          <Link to="/chapters">
-            View all chapters
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              arrow_forward
-            </span>
-          </Link>
-        </ButtonPrimary>
+              <Link
+                to="/register"
+                style={{
+                  marginTop: 8,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 12,
+                  color: 'hsl(var(--accent))',
+                  textDecoration: 'none',
+                }}
+              >
+                Join your constituency
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  arrow_forward
+                </span>
+              </Link>
+            </div>
+          </div>
+
+          {/* ── Chapter Hub card ── */}
+          <div
+            style={{
+              background: '#fff',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-lg)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Card header */}
+            <div
+              style={{
+                borderTop: '4px solid hsl(var(--primary))',
+                padding: '28px 28px 20px',
+                background: 'rgba(34,197,94,0.03)',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 'var(--radius-md)',
+                    background: 'rgba(34,197,94,0.10)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
+                  >
+                    groups
+                  </span>
+                </div>
+                <div>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 9.5,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'hsl(var(--primary))',
+                      marginBottom: 2,
+                    }}
+                  >
+                    Tier 2
+                  </span>
+                  <h3
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 20,
+                      color: 'hsl(var(--on-surface))',
+                      letterSpacing: '-0.015em',
+                      margin: 0,
+                    }}
+                  >
+                    Chapter Hub
+                  </h3>
+                </div>
+              </div>
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface-muted))',
+                  lineHeight: 1.6,
+                  margin: 0,
+                }}
+              >
+                The movement's operational branch — an active local unit that runs events, drives
+                recruitment, and delivers accountability on the ground.
+              </p>
+            </div>
+
+            {/* Key points */}
+            <div
+              style={{
+                padding: '20px 28px 28px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+              }}
+            >
+              {CHAPTER_POINTS.map((point, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                  <span
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: 'rgba(34,197,94,0.10)',
+                      border: '1px solid rgba(34,197,94,0.22)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: 1,
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 11, color: 'hsl(var(--primary))' }}
+                    >
+                      check
+                    </span>
+                  </span>
+                  <p
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-normal, 400)',
+                      fontSize: 12.5,
+                      color: 'hsl(var(--on-surface))',
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {point}
+                  </p>
+                </div>
+              ))}
+
+              <Link
+                to="/chapters"
+                style={{
+                  marginTop: 8,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 12,
+                  color: 'hsl(var(--primary))',
+                  textDecoration: 'none',
+                }}
+              >
+                Find your chapter
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  arrow_forward
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom relationship note */}
+        <div
+          style={{
+            padding: '18px 24px',
+            background: '#fff',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-md)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
+          }}
+          data-fade
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}
+          >
+            info
+          </span>
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 12.5,
+              color: 'hsl(var(--on-surface-muted))',
+              lineHeight: 1.6,
+              margin: 0,
+            }}
+          >
+            <strong style={{ color: 'hsl(var(--on-surface))' }}>How they relate:</strong> A
+            constituency is the political territory; a chapter hub is the movement's active presence
+            within it. You register under your constituency — then connect with your nearest chapter
+            to take action.
+          </p>
+        </div>
       </div>
     </section>
   )
