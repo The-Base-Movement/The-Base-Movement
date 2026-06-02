@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { cn, getCountryFlag } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
+import { authService } from '@/services/authService'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { CountryBadge } from '@/components/CountryBadge'
@@ -117,6 +118,26 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
     init()
   }, [navigate, session])
+
+  // 15-minute inactivity timeout — sign out and return to admin login
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    const TIMEOUT_MS = 15 * 60 * 1000
+    const reset = () => {
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
+      inactivityTimer.current = setTimeout(async () => {
+        await authService.logout()
+        navigate('/admin-login')
+      }, TIMEOUT_MS)
+    }
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'] as const
+    events.forEach((e) => window.addEventListener(e, reset, { passive: true }))
+    reset()
+    return () => {
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
+      events.forEach((e) => window.removeEventListener(e, reset))
+    }
+  }, [navigate])
 
   const handleMarkAsRead = async (id: string) => {
     try {

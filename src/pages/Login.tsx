@@ -43,8 +43,16 @@ export default function Login() {
       }
 
       window.dispatchEvent(new Event('storage'))
-      toast.success('Welcome back, patriot!')
-      navigate(from, { replace: true })
+
+      // If the user is also an admin (any role), send them to the admin panel
+      const adminUser = await adminService.initialize()
+      if (adminUser) {
+        toast.success('Welcome back. Redirecting to the admin panel.')
+        navigate('/admin', { replace: true })
+      } else {
+        toast.success('Welcome back, patriot!')
+        navigate(from, { replace: true })
+      }
     } catch (error) {
       console.error('Login error:', error)
       toast.error(error instanceof Error ? error.message : 'Invalid credentials. Please try again.')
