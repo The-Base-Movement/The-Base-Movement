@@ -51,19 +51,25 @@ export default function FinanceDashboard() {
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
   const [period, setPeriod] = useState<FinancePeriod>('month')
   const [chartsLoading, setChartsLoading] = useState(true)
+  const [chapter, setChapter] = useState<string | null>(null)
+  const [chapters, setChapters] = useState<string[]>([])
 
   useEffect(() => {
+    Promise.resolve().then(() => {
+      setStats(null)
+      setStatsError(false)
+    })
     financeAnalyticsService
-      .getSummaryStats()
+      .getSummaryStats(chapter ?? undefined)
       .then(setStats)
       .catch(() => setStatsError(true))
     financeAnalyticsService
-      .getRecentTransactions(20)
+      .getRecentTransactions(20, chapter ?? undefined)
       .then(setTransactions)
       .catch(() => {
         /* silent — table shows empty state */
       })
-  }, [])
+  }, [chapter])
 
   useEffect(() => {
     let cancelled = false
@@ -71,8 +77,8 @@ export default function FinanceDashboard() {
       .then(() => {
         if (!cancelled) setChartsLoading(true)
         return Promise.all([
-          financeAnalyticsService.getCashflowData(period),
-          financeAnalyticsService.getExpenseBreakdown(period),
+          financeAnalyticsService.getCashflowData(period, chapter ?? undefined),
+          financeAnalyticsService.getExpenseBreakdown(period, chapter ?? undefined),
         ])
       })
       .then(([cf, bd]) => {
@@ -88,11 +94,92 @@ export default function FinanceDashboard() {
     return () => {
       cancelled = true
     }
-  }, [period])
+  }, [period, chapter])
+
+  useEffect(() => {
+    financeAnalyticsService
+      .getChapters()
+      .then(setChapters)
+      .catch(() => {
+        /* silent — dropdown just won't show */
+      })
+  }, [])
 
   return (
     <div className="main">
       <AdminPageHeader title="Finance Dashboard" description="Platform-wide financial overview" />
+
+      {/* ── Chapter filter ── */}
+      {chapters.length > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 500,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            Chapter:
+          </span>
+          <select
+            value={chapter ?? ''}
+            onChange={(e) => setChapter(e.target.value || null)}
+            style={{
+              padding: '6px 10px',
+              borderRadius: 'var(--radius-sm)',
+              border: '1px solid hsl(var(--border))',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+              fontFamily: "'Public Sans', sans-serif",
+              cursor: 'pointer',
+              boxSizing: 'border-box',
+            }}
+          >
+            <option value="">All Chapters</option>
+            {chapters.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+          {chapter && (
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setChapter(null)}
+              style={{ fontSize: 12 }}
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      )}
+
+      {chapter && (
+        <div
+          style={{
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-md)',
+            padding: '8px 14px',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: "'Public Sans', sans-serif",
+            marginBottom: 16,
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 14, verticalAlign: 'middle', marginRight: 4 }}
+          >
+            info
+          </span>
+          Income figures show only donations explicitly assigned to{' '}
+          <strong style={{ color: 'hsl(var(--on-surface))' }}>{chapter}</strong>. Historical
+          donations without a chapter assignment are excluded.
+        </div>
+      )}
 
       {/* ── KPI Row ── */}
       <div
