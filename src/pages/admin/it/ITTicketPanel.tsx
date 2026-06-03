@@ -10,7 +10,7 @@ interface Comment {
   body: string
   created_at: string
   author_id: string
-  admins: { name: string } | null
+  users: { full_name: string } | null
 }
 
 interface Props {
@@ -48,7 +48,7 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
       setLoadingCmts(true)
       const { data } = await supabase
         .from('it_ticket_comments')
-        .select('id, body, created_at, author_id, admins!author_id(name)')
+        .select('id, body, created_at, author_id, users!author_id(full_name)')
         .eq('ticket_id', ticket.id)
         .order('created_at', { ascending: true })
       if (!cancelled) {
@@ -79,7 +79,7 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
       setBody('')
       const { data } = await supabase
         .from('it_ticket_comments')
-        .select('id, body, created_at, author_id, admins!author_id(name)')
+        .select('id, body, created_at, author_id, users!author_id(full_name)')
         .eq('ticket_id', ticket.id)
         .order('created_at', { ascending: true })
       setComments((data ?? []) as unknown as Comment[])
@@ -270,7 +270,7 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
-                    {c.admins?.name ?? 'Unknown'}
+                    {c.users?.full_name ?? 'Unknown'}
                   </span>
                   <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>
                     {relativeTime(c.created_at)}

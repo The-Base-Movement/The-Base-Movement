@@ -64,16 +64,26 @@ export default function ITTickets() {
       const [{ data: rawTickets }, { data: staff }] = await Promise.all([
         supabase
           .from('it_tickets')
-          .select('*, submitter:admins!submitted_by(name), assignee:admins!assigned_to(name)')
+          .select(
+            '*, submitter:users!submitted_by(full_name), assignee:users!assigned_to(full_name)'
+          )
           .order('created_at', { ascending: false }),
-        supabase.from('admins').select('id, name').in('role', ['SUPER_ADMIN', 'FOUNDER']),
+        supabase
+          .from('admins')
+          .select('id, users!admins_id_fkey(full_name)')
+          .in('role', ['SUPER_ADMIN', 'FOUNDER']),
       ])
-      setItStaff((staff ?? []) as AdminStub[])
+      setItStaff(
+        (staff ?? []).map((s: Record<string, unknown>) => ({
+          id: s.id as string,
+          name: (s.users as { full_name: string } | null)?.full_name ?? 'Unknown',
+        }))
+      )
       setTickets(
         (rawTickets ?? []).map((t: Record<string, unknown>) => ({
           ...(t as Omit<ITTicket, 'submitter_name' | 'assignee_name'>),
-          submitter_name: (t.submitter as { name: string } | null)?.name ?? 'Unknown',
-          assignee_name: (t.assignee as { name: string } | null)?.name ?? null,
+          submitter_name: (t.submitter as { full_name: string } | null)?.full_name ?? 'Unknown',
+          assignee_name: (t.assignee as { full_name: string } | null)?.full_name ?? null,
         }))
       )
     } catch (err) {
