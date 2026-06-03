@@ -83,6 +83,19 @@ export function AdminsSearchBar({
             >
               manage_accounts
             </span>
+            <label
+              htmlFor="role-filter"
+              style={{
+                position: 'absolute',
+                width: 1,
+                height: 1,
+                overflow: 'hidden',
+                clip: 'rect(0,0,0,0)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Filter by role
+            </label>
             <select
               id="role-filter"
               name="roleFilter"

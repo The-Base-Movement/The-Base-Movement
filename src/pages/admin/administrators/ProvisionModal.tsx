@@ -336,9 +336,9 @@ export function ProvisionModal({
 
           {/* Role */}
           <div>
-            <label id="provision-role-label" style={labelSt}>
+            <p id="provision-role-label" style={labelSt}>
               Role
-            </label>
+            </p>
             <div
               role="listbox"
               aria-labelledby="provision-role-label"

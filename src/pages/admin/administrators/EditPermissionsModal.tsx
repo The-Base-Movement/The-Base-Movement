@@ -161,9 +161,9 @@ export function EditPermissionsModal({
           }}
         >
           <div>
-            <label id="edit-role-label" style={labelSt}>
+            <p id="edit-role-label" style={labelSt}>
               Role
-            </label>
+            </p>
             <div
               role="listbox"
               aria-labelledby="edit-role-label"
