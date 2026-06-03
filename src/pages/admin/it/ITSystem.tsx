@@ -115,7 +115,7 @@ function HealthCard({
         style={{
           height: 4,
           background: 'hsl(var(--border))',
-          borderRadius: 99,
+          borderRadius: 'var(--radius-pill)',
           overflow: 'hidden',
           marginBottom: 8,
         }}
@@ -125,7 +125,7 @@ function HealthCard({
             height: '100%',
             width: `${loading ? 0 : pct}%`,
             background: bar,
-            borderRadius: 99,
+            borderRadius: 'var(--radius-pill)',
             transition: 'width 0.6s ease',
           }}
         />
@@ -195,26 +195,28 @@ export default function ITSystem() {
 
   const loadLogs = useCallback(async () => {
     setLogsLoading(true)
-    const { data } = await supabase
-      .from('system_audit_logs')
-      .select('*, user:users!user_id(full_name)')
-      .order('created_at', { ascending: sortDir === 'asc' })
-    setLogs(
-      (data ?? []).map((l: Record<string, unknown>) => ({
-        ...(l as Omit<AuditLog, 'user_name'>),
-        user_name: (l.user as { full_name: string } | null)?.full_name ?? 'System',
-      }))
-    )
-    setLogsLoading(false)
+    try {
+      const { data } = await supabase
+        .from('system_audit_logs')
+        .select('*, user:users!user_id(full_name)')
+        .order('created_at', { ascending: sortDir === 'asc' })
+        .limit(500)
+      setLogs(
+        (data ?? []).map((l: Record<string, unknown>) => ({
+          ...(l as Omit<AuditLog, 'user_name'>),
+          user_name: (l.user as { full_name: string } | null)?.full_name ?? 'System',
+        }))
+      )
+    } finally {
+      setLogsLoading(false)
+    }
   }, [sortDir])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadLogs()
   }, [loadLogs])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1)
   }, [search, sevFilter])
 
@@ -254,7 +256,7 @@ export default function ITSystem() {
     fontWeight: 'var(--font-weight-medium, 500)',
     fontSize: 12,
     color: 'hsl(var(--on-surface))',
-    background: '#fff',
+    background: 'hsl(var(--background))',
     boxSizing: 'border-box' as const,
     outline: 'none',
   }
@@ -369,7 +371,7 @@ export default function ITSystem() {
                           style={{
                             height: 11,
                             background: 'hsl(var(--container-low))',
-                            borderRadius: 2,
+                            borderRadius: 'var(--radius-xs)',
                             width: `${w}%`,
                           }}
                         />
