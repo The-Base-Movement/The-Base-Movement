@@ -30,8 +30,8 @@ class AuditService {
   }
 
   async logAction(
-    action: string, 
-    resource: string, 
+    action: string,
+    resource: string,
     status: 'Success' | 'Failure' | 'Warning' = 'Success',
     details?: Record<string, unknown>
   ): Promise<void> {
@@ -52,14 +52,16 @@ class AuditService {
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
     const { data, error } = await supabase
       .from('audit_logs')
-      .select(`
+      .select(
+        `
         *,
-        admins!fk_admin_id (
+        admins!fk_audit_logs_admin (
           users!admins_id_fkey (
             full_name
           )
         )
-      `)
+      `
+      )
       .order('timestamp', { ascending: false })
       .limit(100)
 
@@ -72,25 +74,28 @@ class AuditService {
       id: log.id,
       timestamp: log.timestamp,
       adminId: log.admin_id || 'SYS',
-      adminName: log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
+      adminName:
+        log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
       action: log.action,
       resource: log.resource,
       status: log.status,
-      details: log.metadata
+      details: log.metadata,
     }))
   }
 
   async getAuditLogsForResource(resourceId: string): Promise<AuditLogEntry[]> {
     const { data, error } = await supabase
       .from('audit_logs')
-      .select(`
+      .select(
+        `
         *,
-        admins!fk_admin_id (
+        admins!fk_audit_logs_admin (
           users!admins_id_fkey (
             full_name
           )
         )
-      `)
+      `
+      )
       .eq('resource', resourceId)
       .order('timestamp', { ascending: false })
 
@@ -103,11 +108,12 @@ class AuditService {
       id: log.id,
       timestamp: log.timestamp,
       adminId: log.admin_id || 'SYS',
-      adminName: log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
+      adminName:
+        log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
       action: log.action,
       resource: log.resource,
       status: log.status,
-      details: log.metadata
+      details: log.metadata,
     }))
   }
 
@@ -120,7 +126,7 @@ class AuditService {
       time: new Date(log.timestamp).toLocaleTimeString(),
       details: `${log.action} on ${log.resource}`,
       icon: log.status === 'Success' ? '✓' : '!',
-      color: log.status === 'Success' ? 'var(--brand-green)' : 'var(--brand-gold)'
+      color: log.status === 'Success' ? 'var(--brand-green)' : 'var(--brand-gold)',
     }))
   }
 }
