@@ -6,6 +6,17 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { ITTicketPanel } from './ITTicketPanel'
+import {
+  DndContext,
+  DragEndEvent,
+  useDroppable,
+  useDraggable,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { TICKET_COLUMNS, relativeTime } from './itTicketUtils'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -210,29 +221,361 @@ export default function ITTickets() {
   )
 }
 
-// ─── Stubs (replaced in Tasks 6 & 7) ─────────────────────────────────────────
+// ─── Kanban Board (Task 6) ────────────────────────────────────────────────────
 
-function KanbanBoard(_props: {
+function KanbanBoard({
+  tickets,
+  itStaff,
+  onStatusChange,
+  onAssign,
+  onSelect,
+}: {
   tickets: ITTicket[]
   itStaff: AdminStub[]
   onStatusChange: (id: string, s: TicketStatus) => void
   onAssign: (id: string, adminId: string | null) => void
   onSelect: (id: string) => void
 }) {
+  const [draggingId, setDraggingId] = useState<string | null>(null)
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    setDraggingId(null)
+    if (!over || active.id === over.id) return
+    const newStatus = over.id as TicketStatus
+    const ticket = tickets.find((t) => t.id === active.id)
+    if (ticket && ticket.status !== newStatus) {
+      onStatusChange(active.id as string, newStatus)
+    }
+  }
+
+  const draggingTicket = tickets.find((t) => t.id === draggingId) ?? null
+
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragStart={(e) => setDraggingId(e.active.id as string)}
+      onDragEnd={handleDragEnd}
+      onDragCancel={() => setDraggingId(null)}
+    >
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 16,
+          alignItems: 'start',
+        }}
+      >
+        {TICKET_COLUMNS.map((col) => (
+          <KanbanColumn
+            key={col.status}
+            column={col}
+            tickets={tickets.filter((t) => t.status === col.status)}
+            itStaff={itStaff}
+            onAssign={onAssign}
+            onSelect={onSelect}
+          />
+        ))}
+      </div>
+      <DragOverlay>
+        {draggingTicket && (
+          <TicketCard
+            ticket={draggingTicket}
+            itStaff={itStaff}
+            onAssign={onAssign}
+            onSelect={onSelect}
+            isDragging
+          />
+        )}
+      </DragOverlay>
+    </DndContext>
+  )
+}
+
+function KanbanColumn({
+  column,
+  tickets,
+  itStaff,
+  onAssign,
+  onSelect,
+}: {
+  column: (typeof TICKET_COLUMNS)[number]
+  tickets: ITTicket[]
+  itStaff: AdminStub[]
+  onAssign: (id: string, adminId: string | null) => void
+  onSelect: (id: string) => void
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: column.status })
+
   return (
     <div
+      ref={setNodeRef}
       style={{
-        color: 'hsl(var(--on-surface-muted))',
-        fontSize: 13,
-        fontFamily: "'Public Sans', sans-serif",
-        padding: '40px 0',
-        textAlign: 'center',
+        background: isOver ? 'hsl(var(--container-low))' : 'transparent',
+        borderRadius: 'var(--radius-md)',
+        minHeight: 200,
+        transition: 'background 0.15s',
       }}
     >
-      Kanban board coming soon…
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '10px 14px',
+          borderBottom: `3px solid ${column.bar}`,
+          marginBottom: 10,
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          {column.label}
+        </p>
+        <span
+          style={{
+            padding: '2px 7px',
+            borderRadius: 'var(--radius-pill)',
+            background: column.bar,
+            color: '#fff',
+            fontSize: 10,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
+          {tickets.length}
+        </span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '0 4px 8px' }}>
+        {tickets.length === 0 ? (
+          <p
+            style={{
+              textAlign: 'center',
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 11,
+              padding: '20px 0',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            No tickets
+          </p>
+        ) : (
+          tickets.map((t) => (
+            <TicketCard
+              key={t.id}
+              ticket={t}
+              itStaff={itStaff}
+              onAssign={onAssign}
+              onSelect={onSelect}
+            />
+          ))
+        )}
+      </div>
     </div>
   )
 }
+
+function TicketCard({
+  ticket,
+  itStaff,
+  onAssign,
+  onSelect,
+  isDragging = false,
+}: {
+  ticket: ITTicket
+  itStaff: AdminStub[]
+  onAssign: (id: string, adminId: string | null) => void
+  onSelect: (id: string) => void
+  isDragging?: boolean
+}) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: ticket.id })
+  const [assignOpen, setAssignOpen] = useState(false)
+
+  const style: React.CSSProperties = {
+    transform: transform ? `translate3d(${transform.x}px,${transform.y}px,0)` : undefined,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? 'grabbing' : 'grab',
+  }
+
+  const priorityPill: Record<TicketPriority, string> = {
+    high: 'pill pill-err',
+    medium: 'pill pill-warn',
+    low: 'pill pill-mute',
+  }
+
+  return (
+    <div ref={setNodeRef} style={{ ...style, position: 'relative' }}>
+      <div className="panel" style={{ padding: '12px 14px' }}>
+        <div
+          {...attributes}
+          {...listeners}
+          style={{ marginBottom: 8 }}
+          onClick={() => onSelect(ticket.id)}
+        >
+          <p
+            style={{
+              margin: '0 0 6px',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface))',
+              display: '-webkit-box',
+              WebkitLineClamp: 2 as number,
+              WebkitBoxOrient: 'vertical' as const,
+              overflow: 'hidden',
+            }}
+          >
+            {ticket.title}
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span className={priorityPill[ticket.priority]}>{ticket.priority}</span>
+            <span
+              style={{
+                fontSize: 10,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              {ticket.submitter_name}
+            </span>
+            <span
+              style={{
+                fontSize: 10,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                marginLeft: 'auto',
+              }}
+            >
+              {relativeTime(ticket.created_at)}
+            </span>
+          </div>
+        </div>
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            marginTop: 8,
+            paddingTop: 8,
+            borderTop: '1px solid hsl(var(--border))',
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}
+          >
+            person
+          </span>
+          <span
+            style={{
+              fontSize: 10,
+              fontFamily: "'Public Sans', sans-serif",
+              color: 'hsl(var(--on-surface-muted))',
+              flex: 1,
+            }}
+          >
+            {ticket.assignee_name ?? 'Unassigned'}
+          </span>
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{ padding: '0 6px', fontSize: 10 }}
+            onClick={(e) => {
+              e.stopPropagation()
+              setAssignOpen((v) => !v)
+            }}
+          >
+            Assign
+          </button>
+          {assignOpen && (
+            <>
+              <div
+                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                onClick={() => setAssignOpen(false)}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 'calc(100% + 4px)',
+                  zIndex: 50,
+                  background: '#fff',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  minWidth: 160,
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                  overflow: 'hidden',
+                }}
+              >
+                {itStaff.map((s) => (
+                  <button
+                    key={s.id}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '8px 14px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                    }
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                    onClick={() => {
+                      onAssign(ticket.id, s.id)
+                      setAssignOpen(false)
+                    }}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '8px 14px',
+                    background: 'none',
+                    border: 'none',
+                    borderTop: '1px solid hsl(var(--border))',
+                    cursor: 'pointer',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                  }
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                  onClick={() => {
+                    onAssign(ticket.id, null)
+                    setAssignOpen(false)
+                  }}
+                >
+                  Unassign
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Mobile stub (replaced in Task 7) ────────────────────────────────────────
 
 function MobileTicketList(_props: {
   tickets: ITTicket[]
