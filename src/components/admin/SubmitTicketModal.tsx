@@ -135,6 +135,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
         <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label
+              htmlFor="ticket-title"
               style={{
                 display: 'block',
                 fontFamily: "'Public Sans', sans-serif",
@@ -149,6 +150,8 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
               Title
             </label>
             <input
+              id="ticket-title"
+              name="ticketTitle"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -160,6 +163,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
 
           <div>
             <label
+              htmlFor="ticket-description"
               style={{
                 display: 'block',
                 fontFamily: "'Public Sans', sans-serif",
@@ -174,6 +178,8 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
               Description
             </label>
             <textarea
+              id="ticket-description"
+              name="ticketDescription"
               value={description}
               onChange={(e) => setDesc(e.target.value)}
               placeholder="Describe the issue in detail…"
