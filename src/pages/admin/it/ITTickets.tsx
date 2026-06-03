@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -407,6 +408,8 @@ function TicketCard({
 }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: ticket.id })
   const [assignOpen, setAssignOpen] = useState(false)
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; right: number } | null>(null)
+  const assignBtnRef = useRef<HTMLButtonElement>(null)
 
   const style: React.CSSProperties = {
     transform: transform ? `translate3d(${transform.x}px,${transform.y}px,0)` : undefined,
@@ -418,6 +421,15 @@ function TicketCard({
     high: 'pill pill-err',
     medium: 'pill pill-warn',
     low: 'pill pill-mute',
+  }
+
+  const openAssign = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (assignBtnRef.current) {
+      const rect = assignBtnRef.current.getBoundingClientRect()
+      setDropdownPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
+    }
+    setAssignOpen((v) => !v)
   }
 
   return (
@@ -495,38 +507,63 @@ function TicketCard({
             {ticket.assignee_name ?? 'Unassigned'}
           </span>
           <button
+            ref={assignBtnRef}
             className="btn btn-ghost btn-sm"
             style={{ padding: '0 6px', fontSize: 10 }}
-            onClick={(e) => {
-              e.stopPropagation()
-              setAssignOpen((v) => !v)
-            }}
+            onClick={openAssign}
           >
             Assign
           </button>
-          {assignOpen && (
-            <>
-              <div
-                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
-                onClick={() => setAssignOpen(false)}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 'calc(100% + 4px)',
-                  zIndex: 50,
-                  background: '#fff',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-md)',
-                  minWidth: 160,
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-                  overflow: 'hidden',
-                }}
-              >
-                {itStaff.map((s) => (
+          {assignOpen &&
+            dropdownPos &&
+            createPortal(
+              <>
+                <div
+                  style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                  onClick={() => setAssignOpen(false)}
+                />
+                <div
+                  style={{
+                    position: 'fixed',
+                    top: dropdownPos.top,
+                    right: dropdownPos.right,
+                    zIndex: 50,
+                    background: '#fff',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-md)',
+                    minWidth: 160,
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {itStaff.map((s) => (
+                    <button
+                      key={s.id}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '8px 14px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                      }
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                      onClick={() => {
+                        onAssign(ticket.id, s.id)
+                        setAssignOpen(false)
+                      }}
+                    >
+                      {s.name}
+                    </button>
+                  ))}
                   <button
-                    key={s.id}
                     style={{
                       display: 'block',
                       width: '100%',
@@ -534,51 +571,27 @@ function TicketCard({
                       padding: '8px 14px',
                       background: 'none',
                       border: 'none',
+                      borderTop: '1px solid hsl(var(--border))',
                       cursor: 'pointer',
                       fontFamily: "'Public Sans', sans-serif",
                       fontSize: 12,
-                      color: 'hsl(var(--on-surface))',
+                      color: 'hsl(var(--on-surface-muted))',
                     }}
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.background = 'hsl(var(--container-low))')
                     }
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                     onClick={() => {
-                      onAssign(ticket.id, s.id)
+                      onAssign(ticket.id, null)
                       setAssignOpen(false)
                     }}
                   >
-                    {s.name}
+                    Unassign
                   </button>
-                ))}
-                <button
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '8px 14px',
-                    background: 'none',
-                    border: 'none',
-                    borderTop: '1px solid hsl(var(--border))',
-                    cursor: 'pointer',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontSize: 12,
-                    color: 'hsl(var(--on-surface-muted))',
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                  }
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
-                  onClick={() => {
-                    onAssign(ticket.id, null)
-                    setAssignOpen(false)
-                  }}
-                >
-                  Unassign
-                </button>
-              </div>
-            </>
-          )}
+                </div>
+              </>,
+              document.body
+            )}
         </div>
       </div>
     </div>
