@@ -102,11 +102,14 @@ function AddSubordinateModal({
 
     setSaving(true)
     try {
-      const { error } = await supabase.from('it_hierarchy').insert({
-        user_id: selected.id,
-        reports_to: parentUserId,
-        role_title: roleTitle.trim(),
-      })
+      const { error } = await supabase.from('it_hierarchy').upsert(
+        {
+          user_id: selected.id,
+          reports_to: parentUserId,
+          role_title: roleTitle.trim(),
+        },
+        { onConflict: 'user_id' }
+      )
       if (error) throw error
       toast.success(`${selected.full_name} added to the hierarchy`)
       onSaved()
@@ -433,11 +436,14 @@ function SetupRootModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
     }
     setSaving(true)
     try {
-      const { error } = await supabase.from('it_hierarchy').insert({
-        user_id: selected.id,
-        reports_to: null,
-        role_title: 'IT Manager',
-      })
+      const { error } = await supabase.from('it_hierarchy').upsert(
+        {
+          user_id: selected.id,
+          reports_to: null,
+          role_title: 'IT Manager',
+        },
+        { onConflict: 'user_id' }
+      )
       if (error) throw error
       toast.success(`${selected.full_name} set as IT Manager`)
       onSaved()

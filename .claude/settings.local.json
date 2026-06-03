@@ -102,7 +102,14 @@
       "Bash(git grep *)",
       "Bash(xargs grep -il \"mobilization_ledger\")",
       "Bash(git checkout *)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(Select-String -Pattern \"dnd-kit\" package.json)",
+      "Bash(gh pr create --title 'feat: IT Helpdesk — Kanban board, ticket submission, permissions, and dashboard stat' --body ' *)",
+      "Bash(gh pr *)",
+      "Bash(xargs grep -l -i \"cloudflare\\\\|wrangler\")",
+      "Bash(git merge *)",
+      "Skill(commit-commands:commit)",
+      "Skill(commit-commands:commit:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
