@@ -26,9 +26,7 @@ export function RoadmapSection({ roadmapItems }: RoadmapSectionProps) {
             id="roadmap-heading"
             className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight mb-1"
           >
-            Where we are,
-            <br />
-            what's next.
+            Where we are, what's next.
           </h2>
         </div>
 

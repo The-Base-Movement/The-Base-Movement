@@ -100,7 +100,9 @@
       "Skill(commit-commands:commit-push-pr)",
       "Bash(git stash *)",
       "Bash(git grep *)",
-      "Bash(xargs grep -il \"mobilization_ledger\")"
+      "Bash(xargs grep -il \"mobilization_ledger\")",
+      "Bash(git checkout *)",
+      "Bash(git pull *)"
     ]
   },
   "enableAllProjectMcpServers": true,
