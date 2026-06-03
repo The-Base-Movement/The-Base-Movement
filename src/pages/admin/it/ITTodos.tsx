@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './ITLayoutContext'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -629,6 +629,18 @@ export default function ITTodos() {
   const [filter, setFilter] = useState<TodoStatus | 'all'>('all')
   const [addOpen, setAddOpen] = useState(false)
 
+  useITLayout(
+    'Team To-Dos',
+    'checklist',
+    'Daily IT task list — add, assign and check off tasks.',
+    <button className="btn btn-primary btn-sm" onClick={() => setAddOpen(true)}>
+      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+        add
+      </span>
+      Add task
+    </button>
+  )
+
   // Quick-add
   const [quickTask, setQuickTask] = useState('')
   const [quickAdding, setQuickAdding] = useState(false)
@@ -737,20 +749,6 @@ export default function ITTodos() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="Team To-Dos"
-        icon="checklist"
-        description="Daily IT task list — add, assign and check off tasks."
-        actions={
-          <button className="btn btn-primary btn-sm" onClick={() => setAddOpen(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              add
-            </span>
-            Add task
-          </button>
-        }
-      />
-
       {/* KPI strip */}
       <div className="kpis" style={{ gridTemplateColumns: 'repeat(4,1fr)', marginBottom: 24 }}>
         {ALL_STATUSES.map((s) => {

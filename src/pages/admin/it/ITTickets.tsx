@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './ITLayoutContext'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -53,6 +53,8 @@ export default function ITTickets() {
   useEffect(() => {
     setCurrentLabel('IT Helpdesk')
   }, [setCurrentLabel])
+
+  useITLayout('IT Helpdesk', 'confirmation_number', 'Manage support tickets from the team.')
 
   const [tickets, setTickets] = useState<ITTicket[]>([])
   const [itStaff, setItStaff] = useState<AdminStub[]>([])
@@ -142,12 +144,6 @@ export default function ITTickets() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="IT Helpdesk"
-        icon="confirmation_number"
-        description="Manage support tickets from the team."
-      />
-
       <div className="kpis" style={{ marginBottom: 28 }}>
         {kpis.map((kpi) => (
           <div

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './ITLayoutContext'
 import { OrgChart } from './components/OrgChart'
 
 interface ITStats {
@@ -51,6 +51,12 @@ export default function ITDashboard() {
   useEffect(() => {
     setCurrentLabel('IT Department')
   }, [setCurrentLabel])
+
+  useITLayout(
+    'IT Department',
+    'computer',
+    'Internal IT operations — projects, tasks, protocols and team structure.'
+  )
 
   const [stats, setStats] = useState<ITStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -135,12 +141,6 @@ export default function ITDashboard() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="IT Department"
-        icon="computer"
-        description="Internal IT operations — projects, tasks, protocols and team structure."
-      />
-
       {/* KPI tiles */}
       <div className="kpis" style={{ marginBottom: 28 }}>
         {kpis.map((kpi) => {

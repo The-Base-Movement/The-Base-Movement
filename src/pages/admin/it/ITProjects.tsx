@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './ITLayoutContext'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -557,6 +557,18 @@ export default function ITProjects() {
   const [createOpen, setCreateOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Project | null>(null)
 
+  useITLayout(
+    'IT Projects',
+    'folder_open',
+    'Track ongoing and completed IT department projects.',
+    <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
+      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+        add
+      </span>
+      Create project
+    </button>
+  )
+
   const load = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -624,20 +636,6 @@ export default function ITProjects() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="IT Projects"
-        icon="folder_open"
-        description="Track ongoing and completed IT department projects."
-        actions={
-          <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              add
-            </span>
-            Create project
-          </button>
-        }
-      />
-
       {/* KPI strip */}
       <div className="kpis" style={{ gridTemplateColumns: 'repeat(4,1fr)', marginBottom: 24 }}>
         {COLUMNS.map((c) => {

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './ITLayoutContext'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -749,6 +749,18 @@ export default function ITNotes() {
   const [activeNote, setActiveNote] = useState<Note | null>(null)
   const [colorFilter, setColorFilter] = useState<NoteColor | ''>('')
 
+  useITLayout(
+    'Team Noticeboard',
+    'sticky_note_2',
+    'Shared sticky notes for the IT team — pin ideas, reminders and updates.',
+    <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
+      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+        add
+      </span>
+      New note
+    </button>
+  )
+
   const loadNotes = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -799,20 +811,6 @@ export default function ITNotes() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="Team Noticeboard"
-        icon="sticky_note_2"
-        description="Shared sticky notes for the IT team — pin ideas, reminders and updates."
-        actions={
-          <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              add
-            </span>
-            New note
-          </button>
-        }
-      />
-
       {/* Colour filter bar */}
       <div
         style={{

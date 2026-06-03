@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useContext } from 'react'
 import DOMPurify from 'dompurify'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { ITLayoutContext } from './ITLayoutContext'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -628,6 +628,29 @@ export default function ITSecurity() {
   const [openId, setOpenId] = useState<string | null>(null)
   const [formOpen, setFormOpen] = useState(false)
 
+  const { setHeader } = useContext(ITLayoutContext)
+  useEffect(() => {
+    setHeader({
+      title: 'Security Protocols',
+      icon: 'security',
+      description: 'IT security policies, procedures and reference documents for the team.',
+      actions: (
+        <button
+          className={formOpen ? 'btn btn-outline btn-sm' : 'btn btn-primary btn-sm'}
+          onClick={() => {
+            setFormOpen((o) => !o)
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+            {formOpen ? 'close' : 'add'}
+          </span>
+          {formOpen ? 'Cancel' : 'Add protocol'}
+        </button>
+      ),
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formOpen])
+
   const [title, setTitle] = useState('')
   const [version, setVersion] = useState('')
   const [markdown, setMarkdown] = useState('')
@@ -777,26 +800,6 @@ export default function ITSecurity() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="Security Protocols"
-        icon="security"
-        description="IT security policies, procedures and reference documents for the team."
-        actions={
-          <button
-            className={formOpen ? 'btn btn-outline btn-sm' : 'btn btn-primary btn-sm'}
-            onClick={() => {
-              setFormOpen((o) => !o)
-              if (formOpen) reset()
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              {formOpen ? 'close' : 'add'}
-            </span>
-            {formOpen ? 'Cancel' : 'Add protocol'}
-          </button>
-        }
-      />
-
       {/* ── Form ───────────────────────────────────────────────────────── */}
       {formOpen && (
         <div className="panel" style={{ padding: 24, marginBottom: 24 }}>
