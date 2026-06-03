@@ -13,6 +13,7 @@ export interface FinanceRequest {
   created_at: string
   reviewed_at: string | null
   approval_tier: number
+  category: string
   requester_name?: string
 }
 
@@ -41,6 +42,7 @@ export const financeService = {
     chapter: string
     amount: number
     description: string
+    category: string
   }): Promise<FinanceRequest> {
     const {
       data: { user },
@@ -55,6 +57,7 @@ export const financeService = {
         chapter: request.chapter,
         amount: request.amount,
         description: request.description,
+        category: request.category,
         status: 'Pending',
       })
       .select()

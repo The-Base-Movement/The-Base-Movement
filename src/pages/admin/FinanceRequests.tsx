@@ -123,6 +123,7 @@ export default function FinanceRequests() {
   const [chapter, setChapter] = useState('')
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
+  const [category, setCategory] = useState('Other')
   const [submitting, setSubmitting] = useState(false)
 
   async function loadRequests() {
@@ -162,11 +163,13 @@ export default function FinanceRequests() {
         chapter: chapter.trim(),
         amount: parsed,
         description: description.trim(),
+        category,
       })
       toast.success('Request submitted')
       setChapter('')
       setAmount('')
       setDescription('')
+      setCategory('Other')
       setReqType('BudgetAllocation')
       await loadRequests()
     } catch {
@@ -364,6 +367,43 @@ export default function FinanceRequests() {
                     {TYPE_LABELS[t]}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="req-category"
+                style={{
+                  display: 'block',
+                  fontSize: 12,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginBottom: 6,
+                }}
+              >
+                Category
+              </label>
+              <select
+                id="req-category"
+                name="req-category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: '1px solid hsl(var(--border))',
+                  background: 'hsl(var(--background))',
+                  color: 'hsl(var(--on-surface))',
+                  fontSize: 14,
+                  boxSizing: 'border-box',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                <option value="Logistics">Logistics</option>
+                <option value="Transport">Transport</option>
+                <option value="Venues">Venues</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
