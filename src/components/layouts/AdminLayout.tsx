@@ -886,9 +886,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               </span>
               <input
                 aria-label="Search command center…"
-                name="searchQuery"
-                id="input-5b759c"
-                type="text"
+                id="admin-search"
+                name="adminSearch"
+                type="search"
+                autoComplete="off"
                 placeholder="Search command center…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

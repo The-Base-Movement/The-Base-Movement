@@ -153,6 +153,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
               id="ticket-title"
               name="ticketTitle"
               type="text"
+              autoComplete="off"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Brief summary of the issue"
@@ -180,6 +181,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
             <textarea
               id="ticket-description"
               name="ticketDescription"
+              autoComplete="off"
               value={description}
               onChange={(e) => setDesc(e.target.value)}
               placeholder="Describe the issue in detail…"
