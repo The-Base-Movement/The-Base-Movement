@@ -747,7 +747,7 @@ export default function ITTodos() {
 
   const filtered = filter === 'all' ? todos : todos.filter((t) => t.status === filter)
   const displayed = [...filtered].sort((a, b) => {
-    const cmp = a.title.localeCompare(b.title)
+    const cmp = a.task.localeCompare(b.task)
     return sortDir === 'asc' ? cmp : -cmp
   })
 
