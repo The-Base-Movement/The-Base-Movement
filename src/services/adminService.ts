@@ -233,7 +233,16 @@ class AdminService {
   }
 
   async getAdministrators(): Promise<AdminUser[]> {
-    return memberService.getAdministrators()
+    const admins = await memberService.getAdministrators()
+    // Privileged accounts (SUPER_ADMIN / FOUNDER / EXECUTIVE) are only visible
+    // to other privileged viewers — regular appointed admins cannot see them.
+    const viewerIsPrivileged =
+      this.currentUser?.role === 'SUPER_ADMIN' ||
+      this.currentUser?.role === 'FOUNDER' ||
+      this.currentUser?.role === 'EXECUTIVE'
+    if (viewerIsPrivileged) return admins
+    const HIDDEN: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE']
+    return admins.filter((a) => !HIDDEN.includes(a.role as AdminRole))
   }
 
   async provisionAdministrator(
