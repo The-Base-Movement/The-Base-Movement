@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
 export function Analytics() {
   useEffect(() => {
@@ -15,5 +16,5 @@ export function Analytics() {
     }
   }, [])
 
-  return null
+  return <VercelAnalytics />
 }
