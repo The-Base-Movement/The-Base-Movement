@@ -177,7 +177,12 @@ class AdminService {
   public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
     if (!authService.isAuthenticated()) return false
     if (!this.currentUser) return false
-    if (this.currentUser.role === 'SUPER_ADMIN' || this.currentUser.role === 'FOUNDER') return true
+    if (
+      this.currentUser.role === 'SUPER_ADMIN' ||
+      this.currentUser.role === 'FOUNDER' ||
+      this.currentUser.role === 'EXECUTIVE'
+    )
+      return true
     return this.currentUser.permissions.some((p) => p.action === action && p.resource === resource)
   }
 
@@ -1571,6 +1576,7 @@ class AdminService {
     const dbRole = admin.role?.toUpperCase() || ''
     if (dbRole.includes('FOUNDER')) role = 'FOUNDER'
     else if (dbRole.includes('ORGANIZER')) role = 'ORGANIZER'
+    else if (dbRole === 'EXECUTIVE') role = 'EXECUTIVE'
     else if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN'
     else if (dbRole === 'ADMIN') role = 'ADMIN'
     else if (dbRole.includes('CHIEF_EDITOR')) role = 'CHIEF_EDITOR'

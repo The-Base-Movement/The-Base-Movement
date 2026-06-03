@@ -586,6 +586,7 @@ export interface AuditLogEntry {
 export type AdminRole =
   | 'FOUNDER'
   | 'ORGANIZER'
+  | 'EXECUTIVE'
   | 'SUPER_ADMIN'
   | 'ADMIN'
   | 'FINANCE_OFFICER'

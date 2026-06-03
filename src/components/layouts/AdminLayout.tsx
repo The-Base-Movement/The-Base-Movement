@@ -713,17 +713,19 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                         ? 'Movement Founder'
                         : user?.role === 'ORGANIZER'
                           ? 'Strategic Organizer'
-                          : user?.role === 'SUPER_ADMIN'
-                            ? 'System Admin'
-                            : user?.role === 'ADMIN'
-                              ? 'Administrator'
-                              : user?.role === 'FINANCE_OFFICER'
-                                ? 'Finance Officer'
-                                : user?.role === 'REGIONAL_DIRECTOR'
-                                  ? 'Regional Director'
-                                  : user?.role === 'CONSTITUENCY_LEAD'
-                                    ? 'Constituency Lead'
-                                    : 'Staff'}
+                          : user?.role === 'EXECUTIVE'
+                            ? 'Executive'
+                            : user?.role === 'SUPER_ADMIN'
+                              ? 'System Admin'
+                              : user?.role === 'ADMIN'
+                                ? 'Administrator'
+                                : user?.role === 'FINANCE_OFFICER'
+                                  ? 'Finance Officer'
+                                  : user?.role === 'REGIONAL_DIRECTOR'
+                                    ? 'Regional Director'
+                                    : user?.role === 'CONSTITUENCY_LEAD'
+                                      ? 'Constituency Lead'
+                                      : 'Staff'}
                     </div>
                   </div>
                 </div>
@@ -1362,17 +1364,19 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                       ? 'Movement Founder'
                       : user?.role === 'ORGANIZER'
                         ? 'Strategic Organizer'
-                        : user?.role === 'SUPER_ADMIN'
-                          ? 'System Admin'
-                          : user?.role === 'ADMIN'
-                            ? 'Administrator'
-                            : user?.role === 'FINANCE_OFFICER'
-                              ? 'Finance Officer'
-                              : user?.role === 'REGIONAL_DIRECTOR'
-                                ? 'Regional Director'
-                                : user?.role === 'CONSTITUENCY_LEAD'
-                                  ? 'Constituency Lead'
-                                  : 'Staff Verifier'}
+                        : user?.role === 'EXECUTIVE'
+                          ? 'Executive'
+                          : user?.role === 'SUPER_ADMIN'
+                            ? 'System Admin'
+                            : user?.role === 'ADMIN'
+                              ? 'Administrator'
+                              : user?.role === 'FINANCE_OFFICER'
+                                ? 'Finance Officer'
+                                : user?.role === 'REGIONAL_DIRECTOR'
+                                  ? 'Regional Director'
+                                  : user?.role === 'CONSTITUENCY_LEAD'
+                                    ? 'Constituency Lead'
+                                    : 'Staff Verifier'}
                   </div>
                 </div>
                 {/* Avatar */}
