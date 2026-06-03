@@ -171,13 +171,15 @@ export default function ITSystem() {
   const [healthLoading, setHealthLoading] = useState(true)
 
   useEffect(() => {
-    supabase
-      .rpc('get_db_stats')
-      .then(({ data }) => {
+    async function loadHealth() {
+      try {
+        const { data } = await supabase.rpc('get_db_stats')
         if (data) setDbStats(data as DbStats)
+      } finally {
         setHealthLoading(false)
-      })
-      .catch(() => setHealthLoading(false))
+      }
+    }
+    loadHealth()
   }, [])
 
   const dbSizeMB = (dbStats?.db_size_bytes ?? 0) / 1024 / 1024
