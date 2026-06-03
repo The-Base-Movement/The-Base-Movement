@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -738,6 +739,7 @@ function NoteCard({ note, onClick }: { note: Note; onClick: () => void }) {
 
 export default function ITNotes() {
   const { setCurrentLabel } = usePageLabel()
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     setCurrentLabel('IT Notes')
@@ -869,8 +871,10 @@ export default function ITNotes() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-            gap: 20,
+            gridTemplateColumns: isMobile
+              ? 'repeat(2, 1fr)'
+              : 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: isMobile ? 10 : 20,
           }}
         >
           {Array.from({ length: 6 }).map((_, i) => (
@@ -916,9 +920,9 @@ export default function ITNotes() {
       ) : (
         <div
           style={{
-            columns: 'auto 220px',
-            columnGap: 20,
-            gap: 20,
+            columns: isMobile ? 2 : 'auto 220px',
+            columnGap: isMobile ? 10 : 20,
+            gap: isMobile ? 10 : 20,
           }}
         >
           {displayed.map((note) => (
