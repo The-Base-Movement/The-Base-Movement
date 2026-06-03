@@ -300,6 +300,8 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
           {canComment ? (
             <>
               <textarea
+                id="ticket-comment"
+                name="ticketComment"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 placeholder="Add a comment…"
