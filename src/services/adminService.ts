@@ -1620,11 +1620,15 @@ class AdminService {
       assigned_region?: string | null
     }
   ) {
-    const { error } = await supabase.from('admins').update(updates).eq('id', userId)
+    const { data, error } = await supabase
+      .from('admins')
+      .update(updates)
+      .eq('id', userId)
+      .select('id')
 
-    if (error) {
-      throw new Error(error.message || 'Failed to update admin data')
-    }
+    if (error) throw new Error(error.message || 'Failed to update admin data')
+    if (!data?.length)
+      throw new Error('Update failed — you may not have permission to edit this record')
   }
 
   async updatePublicUserProfile(
