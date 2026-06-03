@@ -96,6 +96,11 @@ const PERMISSION_GROUPS: {
     resource: 'ADMINS',
     items: [{ action: 'VIEW_ADMINS', label: 'View administrator list (read-only)' }],
   },
+  {
+    label: 'IT Support',
+    resource: 'IT_SUPPORT',
+    items: [{ action: 'SUBMIT_IT_TICKET', label: 'Submit IT support tickets' }],
+  },
 ]
 
 const ALL_PERMISSIONS: AdminPermission[] = PERMISSION_GROUPS.flatMap((g) =>
