@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -620,6 +622,7 @@ const FILTER_TABS: { label: string; value: TodoStatus | 'all' }[] = [
 
 export default function ITTodos() {
   const { setCurrentLabel } = usePageLabel()
+  const isMobile = useIsMobile()
   useEffect(() => {
     setCurrentLabel('IT To-Dos')
   }, [setCurrentLabel])
@@ -627,6 +630,7 @@ export default function ITTodos() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<TodoStatus | 'all'>('all')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [addOpen, setAddOpen] = useState(false)
 
   useITLayout(
@@ -741,7 +745,11 @@ export default function ITTodos() {
     }
   }
 
-  const displayed = filter === 'all' ? todos : todos.filter((t) => t.status === filter)
+  const filtered = filter === 'all' ? todos : todos.filter((t) => t.status === filter)
+  const displayed = [...filtered].sort((a, b) => {
+    const cmp = a.title.localeCompare(b.title)
+    return sortDir === 'asc' ? cmp : -cmp
+  })
 
   const counts = Object.fromEntries(
     ALL_STATUSES.map((s) => [s, todos.filter((t) => t.status === s).length])
@@ -804,54 +812,103 @@ export default function ITTodos() {
 
       {/* Checklist panel */}
       <div className="panel" style={{ overflow: 'hidden' }}>
-        {/* Filter tabs */}
-        <div
-          style={{
-            display: 'flex',
-            borderBottom: '1px solid hsl(var(--border))',
-            background: 'hsl(var(--container-low))',
-          }}
-        >
-          {FILTER_TABS.map((tab) => {
-            const active = filter === tab.value
-            const count = tab.value === 'all' ? todos.length : counts[tab.value as TodoStatus]
-            return (
-              <button
-                key={tab.value}
-                onClick={() => setFilter(tab.value)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  padding: '10px 14px',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 11,
-                  color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
-                  borderBottom: active ? '2px solid hsl(var(--primary))' : '2px solid transparent',
-                  marginBottom: -1,
-                  transition: 'color 0.12s',
-                }}
-              >
-                {tab.label}
-                <span
-                  style={{
-                    fontSize: 9,
-                    padding: '0 5px',
-                    borderRadius: 'var(--radius-pill)',
-                    background: active ? 'hsl(var(--primary) / 0.1)' : 'hsl(var(--border))',
-                    color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
-                  }}
-                >
-                  {count}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+        {/* Filter toolbar — dropdown on mobile, tabs on desktop */}
+        {isMobile ? (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 14px',
+              borderBottom: '1px solid hsl(var(--border))',
+              background: 'hsl(var(--container-low))',
+            }}
+          >
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as TodoStatus | 'all')}
+              style={{
+                flex: 1,
+                height: 34,
+                padding: '0 10px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--background))',
+                boxSizing: 'border-box',
+              }}
+            >
+              {FILTER_TABS.map((tab) => {
+                const count = tab.value === 'all' ? todos.length : counts[tab.value as TodoStatus]
+                return (
+                  <option key={tab.value} value={tab.value}>
+                    {tab.label} ({count})
+                  </option>
+                )
+              })}
+            </select>
+            <SortToggle value={sortDir} onChange={setSortDir} />
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              borderBottom: '1px solid hsl(var(--border))',
+              background: 'hsl(var(--container-low))',
+            }}
+          >
+            <div style={{ display: 'flex', flex: 1 }}>
+              {FILTER_TABS.map((tab) => {
+                const active = filter === tab.value
+                const count = tab.value === 'all' ? todos.length : counts[tab.value as TodoStatus]
+                return (
+                  <button
+                    key={tab.value}
+                    onClick={() => setFilter(tab.value)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      padding: '10px 14px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 11,
+                      color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                      borderBottom: active
+                        ? '2px solid hsl(var(--primary))'
+                        : '2px solid transparent',
+                      marginBottom: -1,
+                      transition: 'color 0.12s',
+                    }}
+                  >
+                    {tab.label}
+                    <span
+                      style={{
+                        fontSize: 9,
+                        padding: '0 5px',
+                        borderRadius: 'var(--radius-pill)',
+                        background: active ? 'hsl(var(--primary) / 0.1)' : 'hsl(var(--border))',
+                        color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+            <div style={{ padding: '0 14px', flexShrink: 0 }}>
+              <SortToggle value={sortDir} onChange={setSortDir} />
+            </div>
+          </div>
+        )}
 
         {/* Quick-add bar */}
         <form

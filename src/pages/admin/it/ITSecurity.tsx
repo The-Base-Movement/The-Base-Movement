@@ -3,6 +3,7 @@ import DOMPurify from 'dompurify'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { ITLayoutContext } from './ITLayoutContext'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -627,6 +628,7 @@ export default function ITSecurity() {
   const [loading, setLoading] = useState(true)
   const [openId, setOpenId] = useState<string | null>(null)
   const [formOpen, setFormOpen] = useState(false)
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
   const { setHeader } = useContext(ITLayoutContext)
   useEffect(() => {
@@ -978,10 +980,13 @@ export default function ITSecurity() {
             Saved Protocols
           </p>
           {!loading && protocols.length > 0 && (
-            <span className="pill pill-ok" style={{ fontSize: 9, marginLeft: 'auto' }}>
+            <span className="pill pill-ok" style={{ fontSize: 9 }}>
               {protocols.length} {protocols.length === 1 ? 'protocol' : 'protocols'}
             </span>
           )}
+          <div style={{ marginLeft: 'auto' }}>
+            <SortToggle value={sortDir} onChange={setSortDir} />
+          </div>
         </div>
 
         {loading ? (
@@ -1019,15 +1024,20 @@ export default function ITSecurity() {
             </button>
           </div>
         ) : (
-          protocols.map((p) => (
-            <AccordionItem
-              key={p.id}
-              protocol={p}
-              isOpen={openId === p.id}
-              onToggle={() => setOpenId((cur) => (cur === p.id ? null : p.id))}
-              onDelete={() => handleDelete(p.id, p.file_url)}
-            />
-          ))
+          [...protocols]
+            .sort((a, b) => {
+              const cmp = a.title.localeCompare(b.title)
+              return sortDir === 'asc' ? cmp : -cmp
+            })
+            .map((p) => (
+              <AccordionItem
+                key={p.id}
+                protocol={p}
+                isOpen={openId === p.id}
+                onToggle={() => setOpenId((cur) => (cur === p.id ? null : p.id))}
+                onDelete={() => handleDelete(p.id, p.file_url)}
+              />
+            ))
         )}
       </div>
     </div>
