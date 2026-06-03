@@ -63,6 +63,8 @@ export function processFundRequest(
       return { outcome: 'PROCESSED_MIDDLE', message: 'Processed at middle tier' }
     } else if (amount >= tier1Max + 1 && amount <= tier2Max && action === 'Acknowledge') {
       return { outcome: 'PASS_UP', message: 'Pass to the next level' }
+    } else if (amount > tier2Max && action === 'Acknowledge') {
+      return { outcome: 'PASS_UP', message: 'Pass to the next level' }
     } else if (amount > tier2Max && action === 'Approve') {
       return {
         outcome: 'ERROR_NEEDS_TOP',
