@@ -128,11 +128,12 @@ export default function ITDepartmentLayout() {
           icon={header.icon}
           description={header.description}
           actions={header.actions}
+          style={isMobile ? { padding: '0 14px 16px' } : undefined}
         />
 
         {isMobile ? (
           /* ── Mobile: horizontal tab strip + full-width content ── */
-          <div>
+          <div style={{ padding: '0 14px 40px' }}>
             <nav
               style={{
                 display: 'flex',
