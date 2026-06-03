@@ -64,7 +64,7 @@ export function NetworkStructureSection() {
               margin: '0 0 14px',
             }}
           >
-            Ghana Network or Diaspora Network: Which One Are You?
+            Ghana Network or Diaspora Network: <br /> Which One Are You?
           </h2>
           <p
             style={{

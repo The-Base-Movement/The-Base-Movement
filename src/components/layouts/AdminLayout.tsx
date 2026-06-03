@@ -19,6 +19,28 @@ const FINANCE_OFFICER_ALLOWED_PATHS = [
   '/admin/store',
   '/admin/orders',
   '/admin/finance-requests',
+  '/admin/finance-requests/review-inbox',
+]
+
+const EXECUTIVE_ALLOWED_PATHS = [
+  '/admin/executive',
+  '/admin/finance-dashboard',
+  '/admin/finance-requests',
+  '/admin/finance-requests/review-inbox',
+  '/admin/war-room',
+  '/admin/mobilization-metrics',
+  '/admin/ground-game',
+  '/admin/polling-stations',
+  '/admin/broadcasts',
+  '/admin/directives',
+  '/admin/deploy',
+  '/admin/priorities',
+  '/admin/polls',
+  '/admin/plan-manager',
+  '/admin/roadmap',
+  '/admin/party-officials',
+  '/admin/administrators',
+  '/admin/members',
 ]
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
@@ -191,6 +213,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     label: string
     pill?: string
     superAdminOnly?: boolean
+    executiveOnly?: boolean
     permission?: {
       action: AdminPermission['action']
       resource: AdminPermission['resource']
@@ -202,6 +225,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: 'Overview',
       icon: 'dashboard',
       items: [
+        {
+          to: '/admin/executive',
+          icon: 'corporate_fare',
+          label: 'Executive Dashboard',
+          executiveOnly: true,
+        },
         { to: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard' },
         { to: '/admin/war-room', icon: 'radio', label: 'War Room', pill: 'LIVE' },
         { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics' },
@@ -263,6 +292,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           to: '/admin/finance-requests',
           icon: 'request_quote',
           label: 'Finance requests',
+          permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+        },
+        {
+          to: '/admin/finance-requests/review-inbox',
+          icon: 'inbox',
+          label: 'Review inbox',
           permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
         },
       ],
@@ -423,6 +458,13 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
         },
         {
+          to: '/admin/it-department',
+          icon: 'computer',
+          label: 'IT Department',
+          superAdminOnly: true,
+          permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        },
+        {
           to: '/admin/party-officials',
           icon: 'badge',
           label: 'Party Officials',
@@ -458,8 +500,15 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           const role = user?.role
           if (role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
         }
+        if (item.executiveOnly) {
+          const role = user?.role
+          if (role !== 'EXECUTIVE' && role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
+        }
         if (user?.role === 'FINANCE_OFFICER') {
           return FINANCE_OFFICER_ALLOWED_PATHS.includes(item.to)
+        }
+        if (user?.role === 'EXECUTIVE') {
+          return EXECUTIVE_ALLOWED_PATHS.includes(item.to)
         }
         if (!item.permission) return true
         return adminService.can(item.permission.action, item.permission.resource)

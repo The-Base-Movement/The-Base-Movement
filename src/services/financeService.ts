@@ -12,6 +12,7 @@ export interface FinanceRequest {
   reviewed_by: string | null
   created_at: string
   reviewed_at: string | null
+  approval_tier: number
   requester_name?: string
 }
 
@@ -87,5 +88,24 @@ export const financeService = {
 
     if (error) throw error
     if (!data?.length) throw new Error('Request is no longer available for review')
+  },
+
+  async acknowledgeRequest(requestId: string): Promise<void> {
+    const { data: current, error: fetchErr } = await supabase
+      .from('finance_requests')
+      .select('approval_tier')
+      .eq('id', requestId)
+      .eq('status', 'Pending')
+      .single()
+
+    if (fetchErr || !current) throw new Error('Request is no longer available for review')
+
+    const { error } = await supabase
+      .from('finance_requests')
+      .update({ approval_tier: current.approval_tier + 1 })
+      .eq('id', requestId)
+      .eq('status', 'Pending')
+
+    if (error) throw error
   },
 }

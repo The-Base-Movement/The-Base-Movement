@@ -18,6 +18,7 @@ const PERMISSION_GROUPS: {
     label: 'Members',
     resource: 'MEMBERS',
     items: [
+      { action: 'VIEW_MEMBER_DIRECTORY', label: 'View member directory (read-only)' },
       { action: 'VERIFY_MEMBER', label: 'Verify / approve members' },
       { action: 'DELETE_MEMBER', label: 'Delete members' },
     ],
@@ -33,7 +34,10 @@ const PERMISSION_GROUPS: {
   {
     label: 'Polls',
     resource: 'POLLS',
-    items: [{ action: 'MANAGE_POLLS', label: 'Create & manage polls' }],
+    items: [
+      { action: 'VIEW_POLLS', label: 'View polls (read-only)' },
+      { action: 'MANAGE_POLLS', label: 'Create & manage polls' },
+    ],
   },
   {
     label: 'Store',
@@ -54,6 +58,43 @@ const PERMISSION_GROUPS: {
     label: 'System',
     resource: 'SYSTEM',
     items: [{ action: 'VIEW_AUDIT_LOGS', label: 'View audit logs & system data' }],
+  },
+  {
+    label: 'Finance',
+    resource: 'FINANCE',
+    items: [{ action: 'VIEW_FINANCE', label: 'View all finance pages' }],
+  },
+  {
+    label: 'Operations',
+    resource: 'OPERATIONS',
+    items: [
+      { action: 'VIEW_WAR_ROOM', label: 'View War Room' },
+      { action: 'VIEW_DEPLOYMENT_METRICS', label: 'View Deployment Metrics' },
+      { action: 'VIEW_CONSTITUENCY_OPS', label: 'View Constituency Operations' },
+      { action: 'VIEW_POLLING_STATIONS', label: 'View Polling Stations' },
+      { action: 'VIEW_MASS_MOBILIZATION', label: 'View Mass Mobilization' },
+      { action: 'VIEW_DIRECTIVES', label: 'View Tactical Directives' },
+      { action: 'VIEW_DEPLOY_ASSET', label: 'View Deploy Asset' },
+    ],
+  },
+  {
+    label: 'Strategy',
+    resource: 'STRATEGY',
+    items: [
+      { action: 'VIEW_STRATEGIC_FOCUS', label: 'View Strategic Focus' },
+      { action: 'VIEW_MISSION_PLAN', label: 'View Mission Plan' },
+      { action: 'VIEW_ROADMAP', label: 'View Mission Roadmap' },
+    ],
+  },
+  {
+    label: 'Party & Administration',
+    resource: 'PARTY',
+    items: [{ action: 'VIEW_PARTY_OFFICIALS', label: 'View Party Officials' }],
+  },
+  {
+    label: 'Admins (Read-Only)',
+    resource: 'ADMINS',
+    items: [{ action: 'VIEW_ADMINS', label: 'View administrator list (read-only)' }],
   },
 ]
 
