@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './ITLayoutContext'
 import { OrgChart } from './components/OrgChart'
 
 interface ITStats {
   totalProjects: number
   completedProjects: number
   activeTodos: number
+  pendingTickets: number
 }
 
 const QUICK_LINKS = [
@@ -51,13 +52,24 @@ export default function ITDashboard() {
     setCurrentLabel('IT Department')
   }, [setCurrentLabel])
 
+  useITLayout(
+    'IT Department',
+    'computer',
+    'Internal IT operations — projects, tasks, protocols and team structure.'
+  )
+
   const [stats, setStats] = useState<ITStats | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
       try {
-        const [{ count: total }, { count: completed }, { count: activeTodos }] = await Promise.all([
+        const [
+          { count: total },
+          { count: completed },
+          { count: activeTodos },
+          { count: pendingTickets },
+        ] = await Promise.all([
           supabase.from('it_projects').select('*', { count: 'exact', head: true }),
           supabase
             .from('it_projects')
@@ -67,12 +79,17 @@ export default function ITDashboard() {
             .from('it_todos')
             .select('*', { count: 'exact', head: true })
             .neq('status', 'done'),
+          supabase
+            .from('it_tickets')
+            .select('*', { count: 'exact', head: true })
+            .in('status', ['open', 'in-progress']),
         ])
 
         setStats({
           totalProjects: total ?? 0,
           completedProjects: completed ?? 0,
           activeTodos: activeTodos ?? 0,
+          pendingTickets: pendingTickets ?? 0,
         })
       } catch (err) {
         console.error('[IT Dashboard] Failed to load stats:', err)
@@ -83,7 +100,14 @@ export default function ITDashboard() {
     load()
   }, [])
 
-  const kpis = [
+  const kpis: {
+    label: string
+    value: number | undefined
+    icon: string
+    bar: string
+    sub: string
+    to?: string
+  }[] = [
     {
       label: 'Total Projects on Board',
       value: stats?.totalProjects,
@@ -105,83 +129,98 @@ export default function ITDashboard() {
       bar: 'hsl(var(--accent))',
       sub: 'Tasks not yet marked as done',
     },
+    {
+      label: 'Pending Tickets',
+      value: stats?.pendingTickets,
+      icon: 'confirmation_number',
+      bar: 'hsl(var(--destructive))',
+      sub: 'Open and in-progress tickets',
+      to: '/admin/it-department/tickets',
+    },
   ]
 
   return (
     <div>
-      <AdminPageHeader
-        title="IT Department"
-        icon="computer"
-        description="Internal IT operations — projects, tasks, protocols and team structure."
-      />
-
       {/* KPI tiles */}
       <div className="kpis" style={{ marginBottom: 28 }}>
-        {kpis.map((kpi) => (
-          <div
-            key={kpi.label}
-            className="panel"
-            style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
-          >
+        {kpis.map((kpi) => {
+          const content = (
             <div
+              className="panel"
               style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: 3,
-                background: kpi.bar,
-              }}
-            />
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                marginBottom: 10,
+                padding: '16px 18px 16px 22px',
+                position: 'relative',
+                overflow: 'hidden',
+                cursor: kpi.to ? 'pointer' : undefined,
               }}
             >
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 3,
+                  background: kpi.bar,
+                }}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  marginBottom: 10,
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'hsl(var(--on-surface-muted))',
+                    margin: 0,
+                  }}
+                >
+                  {kpi.label}
+                </p>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 16, color: kpi.bar, opacity: 0.55 }}
+                >
+                  {kpi.icon}
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: 'var(--kpi-num-size)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                  margin: '0 0 4px',
+                }}
+              >
+                {loading ? '—' : (kpi.value ?? 0)}
+              </p>
               <p
                 style={{
                   fontSize: 10,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
                   color: 'hsl(var(--on-surface-muted))',
                   margin: 0,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                 }}
               >
-                {kpi.label}
+                {kpi.sub}
               </p>
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 16, color: kpi.bar, opacity: 0.55 }}
-              >
-                {kpi.icon}
-              </span>
             </div>
-            <p
-              style={{
-                fontSize: 'var(--kpi-num-size)',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                margin: '0 0 4px',
-              }}
-            >
-              {loading ? '—' : (kpi.value ?? 0)}
-            </p>
-            <p
-              style={{
-                fontSize: 10,
-                color: 'hsl(var(--on-surface-muted))',
-                margin: 0,
-                fontWeight: 'var(--font-weight-medium, 500)',
-              }}
-            >
-              {kpi.sub}
-            </p>
-          </div>
-        ))}
+          )
+          return kpi.to ? (
+            <Link key={kpi.label} to={kpi.to} style={{ textDecoration: 'none' }}>
+              {content}
+            </Link>
+          ) : (
+            <div key={kpi.label}>{content}</div>
+          )
+        })}
       </div>
 
       {/* Org chart */}

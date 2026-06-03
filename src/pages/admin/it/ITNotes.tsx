@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './ITLayoutContext'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -738,6 +739,7 @@ function NoteCard({ note, onClick }: { note: Note; onClick: () => void }) {
 
 export default function ITNotes() {
   const { setCurrentLabel } = usePageLabel()
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     setCurrentLabel('IT Notes')
@@ -748,6 +750,18 @@ export default function ITNotes() {
   const [createOpen, setCreateOpen] = useState(false)
   const [activeNote, setActiveNote] = useState<Note | null>(null)
   const [colorFilter, setColorFilter] = useState<NoteColor | ''>('')
+
+  useITLayout(
+    'Team Noticeboard',
+    'sticky_note_2',
+    'Shared sticky notes for the IT team — pin ideas, reminders and updates.',
+    <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
+      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+        add
+      </span>
+      New note
+    </button>
+  )
 
   const loadNotes = useCallback(async () => {
     try {
@@ -799,20 +813,6 @@ export default function ITNotes() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="Team Noticeboard"
-        icon="sticky_note_2"
-        description="Shared sticky notes for the IT team — pin ideas, reminders and updates."
-        actions={
-          <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              add
-            </span>
-            New note
-          </button>
-        }
-      />
-
       {/* Colour filter bar */}
       <div
         style={{
@@ -871,8 +871,10 @@ export default function ITNotes() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-            gap: 20,
+            gridTemplateColumns: isMobile
+              ? 'repeat(2, 1fr)'
+              : 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: isMobile ? 10 : 20,
           }}
         >
           {Array.from({ length: 6 }).map((_, i) => (
@@ -918,9 +920,9 @@ export default function ITNotes() {
       ) : (
         <div
           style={{
-            columns: 'auto 220px',
-            columnGap: 20,
-            gap: 20,
+            columns: isMobile ? 2 : 'auto 220px',
+            columnGap: isMobile ? 10 : 20,
+            gap: isMobile ? 10 : 20,
           }}
         >
           {displayed.map((note) => (

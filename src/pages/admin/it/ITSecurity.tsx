@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useContext } from 'react'
 import DOMPurify from 'dompurify'
 import { supabase } from '@/lib/supabase'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { ITLayoutContext } from './ITLayoutContext'
+import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -627,6 +628,30 @@ export default function ITSecurity() {
   const [loading, setLoading] = useState(true)
   const [openId, setOpenId] = useState<string | null>(null)
   const [formOpen, setFormOpen] = useState(false)
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+
+  const { setHeader } = useContext(ITLayoutContext)
+  useEffect(() => {
+    setHeader({
+      title: 'Security Protocols',
+      icon: 'security',
+      description: 'IT security policies, procedures and reference documents for the team.',
+      actions: (
+        <button
+          className={formOpen ? 'btn btn-outline btn-sm' : 'btn btn-primary btn-sm'}
+          onClick={() => {
+            setFormOpen((o) => !o)
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+            {formOpen ? 'close' : 'add'}
+          </span>
+          {formOpen ? 'Cancel' : 'Add protocol'}
+        </button>
+      ),
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formOpen])
 
   const [title, setTitle] = useState('')
   const [version, setVersion] = useState('')
@@ -777,26 +802,6 @@ export default function ITSecurity() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="Security Protocols"
-        icon="security"
-        description="IT security policies, procedures and reference documents for the team."
-        actions={
-          <button
-            className={formOpen ? 'btn btn-outline btn-sm' : 'btn btn-primary btn-sm'}
-            onClick={() => {
-              setFormOpen((o) => !o)
-              if (formOpen) reset()
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              {formOpen ? 'close' : 'add'}
-            </span>
-            {formOpen ? 'Cancel' : 'Add protocol'}
-          </button>
-        }
-      />
-
       {/* ── Form ───────────────────────────────────────────────────────── */}
       {formOpen && (
         <div className="panel" style={{ padding: 24, marginBottom: 24 }}>
@@ -975,10 +980,13 @@ export default function ITSecurity() {
             Saved Protocols
           </p>
           {!loading && protocols.length > 0 && (
-            <span className="pill pill-ok" style={{ fontSize: 9, marginLeft: 'auto' }}>
+            <span className="pill pill-ok" style={{ fontSize: 9 }}>
               {protocols.length} {protocols.length === 1 ? 'protocol' : 'protocols'}
             </span>
           )}
+          <div style={{ marginLeft: 'auto' }}>
+            <SortToggle value={sortDir} onChange={setSortDir} />
+          </div>
         </div>
 
         {loading ? (
@@ -1016,15 +1024,20 @@ export default function ITSecurity() {
             </button>
           </div>
         ) : (
-          protocols.map((p) => (
-            <AccordionItem
-              key={p.id}
-              protocol={p}
-              isOpen={openId === p.id}
-              onToggle={() => setOpenId((cur) => (cur === p.id ? null : p.id))}
-              onDelete={() => handleDelete(p.id, p.file_url)}
-            />
-          ))
+          [...protocols]
+            .sort((a, b) => {
+              const cmp = a.title.localeCompare(b.title)
+              return sortDir === 'asc' ? cmp : -cmp
+            })
+            .map((p) => (
+              <AccordionItem
+                key={p.id}
+                protocol={p}
+                isOpen={openId === p.id}
+                onToggle={() => setOpenId((cur) => (cur === p.id ? null : p.id))}
+                onDelete={() => handleDelete(p.id, p.file_url)}
+              />
+            ))
         )}
       </div>
     </div>

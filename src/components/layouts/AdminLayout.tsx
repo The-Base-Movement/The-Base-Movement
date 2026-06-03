@@ -11,6 +11,7 @@ import { CountryBadge } from '@/components/CountryBadge'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PageLabelProvider } from '@/contexts/PageLabelContext'
 import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } from '@/types/admin'
+import { SubmitTicketModal } from '@/components/admin/SubmitTicketModal'
 
 const FINANCE_OFFICER_ALLOWED_PATHS = [
   '/admin/finance-dashboard',
@@ -70,6 +71,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   )
   const [pendingVerificationsCount, setPendingVerificationsCount] = useState<number>(0)
   const [pendingDonationsCount, setPendingDonationsCount] = useState<number>(0)
+  const [submitTicketOpen, setSubmitTicketOpen] = useState(false)
+
+  const canSubmitTicket =
+    user?.role === 'SUPER_ADMIN' ||
+    user?.role === 'FOUNDER' ||
+    (user?.permissions ?? []).some(
+      (p) => p.action === 'SUBMIT_IT_TICKET' && p.resource === 'IT_SUPPORT'
+    )
 
   // Search State
   const [searchQuery, setSearchQuery] = useState('')
@@ -1124,6 +1133,19 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
           {/* Right: notifications + divider + user */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            {/* IT Support */}
+            {canSubmitTicket && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => setSubmitTicketOpen(true)}
+                style={{ gap: 6, padding: '0 10px', flexShrink: 0 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  support_agent
+                </span>
+                <span className="desktop-only">IT Support</span>
+              </button>
+            )}
             {/* Notification bell */}
             <div style={{ position: 'relative' }}>
               <button
@@ -1642,6 +1664,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           </PageLabelProvider>
         </main>
       </div>
+      {submitTicketOpen && user && (
+        <SubmitTicketModal userId={user.id} onClose={() => setSubmitTicketOpen(false)} />
+      )}
     </div>
   )
 }

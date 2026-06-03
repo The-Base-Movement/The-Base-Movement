@@ -105,6 +105,8 @@ const ITNotes = lazy(() => import('./pages/admin/it/ITNotes'))
 const ITProjects = lazy(() => import('./pages/admin/it/ITProjects'))
 const ITTodos = lazy(() => import('./pages/admin/it/ITTodos'))
 const ITSecurity = lazy(() => import('./pages/admin/it/ITSecurity'))
+const ITSystem = lazy(() => import('./pages/admin/it/ITSystem'))
+const ITTickets = lazy(() => import('./pages/admin/it/ITTickets'))
 const LikedPosts = lazy(() => import('./pages/LikedPosts'))
 const MyDonations = lazy(() => import('./pages/MyDonations'))
 const Referrals = lazy(() => import('./pages/dashboard/Referrals'))
@@ -259,10 +261,12 @@ export const routes: RouteObject[] = [
         element: <ITDepartmentLayout />,
         children: [
           { path: '/admin/it-department', element: <ITDashboard /> },
+          { path: '/admin/it-department/tickets', element: <ITTickets /> },
           { path: '/admin/it-department/projects', element: <ITProjects /> },
           { path: '/admin/it-department/notes', element: <ITNotes /> },
           { path: '/admin/it-department/todos', element: <ITTodos /> },
           { path: '/admin/it-department/security-protocols', element: <ITSecurity /> },
+          { path: '/admin/it-department/system', element: <ITSystem /> },
           { path: '/admin/it-department/hierarchy', element: <ITDashboard /> },
         ],
       },
