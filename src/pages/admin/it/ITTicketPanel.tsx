@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import type { ITTicket, TicketPriority, TicketStatus } from './ITTickets'
+import { relativeTime } from './itTicketUtils'
 
 interface Comment {
   id: string
@@ -30,15 +31,6 @@ const statusPill: Record<TicketStatus, string> = {
   open: 'pill pill-err',
   'in-progress': 'pill pill-warn',
   resolved: 'pill pill-ok',
-}
-
-function relativeTime(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `${mins}m ago`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `${hours}h ago`
-  return `${Math.floor(hours / 24)}d ago`
 }
 
 export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpdated }: Props) {
