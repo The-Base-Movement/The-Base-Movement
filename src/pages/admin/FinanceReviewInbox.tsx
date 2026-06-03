@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -133,15 +134,67 @@ function FinanceSubNav({ pendingCount }: { pendingCount: number }) {
   )
 }
 
+// ─── Shared types ─────────────────────────────────────────────────────────────
+
+export interface TierLeader {
+  id: string
+  name: string
+  avatarUrl: string | null
+  tier: 1 | 2 | 3
+}
+
+function Avatar({ url, name, size = 28 }: { url?: string | null; name: string; size?: number }) {
+  if (url) {
+    return (
+      <img
+        src={url}
+        alt={name}
+        title={name}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          objectFit: 'cover',
+          border: '2px solid hsl(var(--background))',
+          flexShrink: 0,
+        }}
+      />
+    )
+  }
+  return (
+    <div
+      title={name}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        background: 'hsl(var(--primary))',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: size * 0.38,
+        color: '#fff',
+        fontWeight: 'var(--font-weight-medium, 500)',
+        fontFamily: "'Public Sans', sans-serif",
+        border: '2px solid hsl(var(--background))',
+        flexShrink: 0,
+      }}
+    >
+      {name.charAt(0).toUpperCase()}
+    </div>
+  )
+}
+
 // ─── Approval Chain Tracker ───────────────────────────────────────────────────
 
 interface ChainTrackerProps {
   request: FinanceRequest
   tier1Max: number
   tier2Max: number
+  tierLeaders: TierLeader[]
 }
 
-function ApprovalChainTracker({ request, tier1Max, tier2Max }: ChainTrackerProps) {
+function ApprovalChainTracker({ request, tier1Max, tier2Max, tierLeaders }: ChainTrackerProps) {
   const activeTier = request.status === 'Pending' ? request.approval_tier : null
   const resolvedAtTier = request.status !== 'Pending' ? request.approval_tier : null
 
@@ -285,6 +338,29 @@ function ApprovalChainTracker({ request, tier1Max, tier2Max }: ChainTrackerProps
                   Awaiting
                 </span>
               )}
+              {/* Avatar stack for this tier's leaders */}
+              {(() => {
+                const leaders = tierLeaders.filter((l) => l.tier === tier.n).slice(0, 3)
+                if (!leaders.length) return null
+                return (
+                  <div
+                    style={{
+                      display: 'flex',
+                      marginTop: 6,
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {leaders.map((l, idx) => (
+                      <div
+                        key={l.id}
+                        style={{ marginLeft: idx === 0 ? 0 : -8, zIndex: leaders.length - idx }}
+                      >
+                        <Avatar url={l.avatarUrl} name={l.name} size={22} />
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()}
             </div>
 
             {/* Connector line (not after last node) */}
@@ -391,10 +467,17 @@ function ActionModal({
               ? 'Reject Request'
               : 'Acknowledge & Pass Up'}
         </h3>
-        <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: '0 0 16px' }}>
-          {modal.request.requester_name} · {fmtAmount(modal.request.amount)} ·{' '}
-          {modal.request.chapter}
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 16px' }}>
+          <Avatar
+            url={modal.request.requester_avatar}
+            name={modal.request.requester_name ?? 'Unknown'}
+            size={28}
+          />
+          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+            {modal.request.requester_name} · {fmtAmount(modal.request.amount)} ·{' '}
+            {modal.request.chapter}
+          </p>
+        </div>
 
         {modal.action === 'Acknowledged' ? (
           <div
@@ -513,6 +596,7 @@ export default function FinanceReviewInbox() {
   const canSeeInbox = userTier !== null
 
   const [requests, setRequests] = useState<FinanceRequest[]>([])
+  const [tierLeaders, setTierLeaders] = useState<TierLeader[]>([])
   const [loading, setLoading] = useState(true)
   const [tier1Max, setTier1Max] = useState(50)
   const [tier2Max, setTier2Max] = useState(100)
@@ -523,15 +607,55 @@ export default function FinanceReviewInbox() {
 
   async function loadAll() {
     try {
-      const [data, settings] = await Promise.all([
+      const [data, settings, adminRows] = await Promise.all([
         financeService.getRequests(),
         adminService.getSiteSettings(),
+        supabase
+          .from('admins')
+          .select('id, role')
+          .in('role', [
+            'FINANCE_OFFICER',
+            'EXECUTIVE',
+            'ORGANIZER',
+            'SUPER_ADMIN',
+            'FOUNDER',
+            'ADMIN',
+          ]),
       ])
       setRequests(data)
       const t1 = parseFloat(String(settings['finance_tier1_max'] ?? '50'))
       const t2 = parseFloat(String(settings['finance_tier2_max'] ?? '100'))
       if (!isNaN(t1)) setTier1Max(t1)
       if (!isNaN(t2)) setTier2Max(t2)
+
+      const adminList = adminRows.data ?? []
+      if (adminList.length) {
+        const { data: profiles } = await supabase
+          .from('users')
+          .select('id, full_name, avatar_url')
+          .in(
+            'id',
+            adminList.map((a) => a.id)
+          )
+        const profileMap = Object.fromEntries((profiles ?? []).map((u) => [u.id, u]))
+        setTierLeaders(
+          adminList.map((a) => {
+            const p = profileMap[a.id]
+            const tier: 1 | 2 | 3 =
+              a.role === 'FINANCE_OFFICER'
+                ? 1
+                : a.role === 'EXECUTIVE' || a.role === 'ORGANIZER'
+                  ? 2
+                  : 3
+            return {
+              id: a.id,
+              name: p?.full_name ?? 'Unknown',
+              avatarUrl: p?.avatar_url ?? null,
+              tier,
+            }
+          })
+        )
+      }
     } catch {
       toast.error('Failed to load requests')
     } finally {
@@ -787,16 +911,30 @@ export default function FinanceReviewInbox() {
                             }}
                           >
                             <div style={{ flex: 1, minWidth: 200 }}>
-                              <p
+                              <div
                                 style={{
-                                  margin: '0 0 4px',
-                                  fontWeight: 'var(--font-weight-medium, 500)',
-                                  fontSize: 14,
-                                  color: 'hsl(var(--on-surface))',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  marginBottom: 4,
                                 }}
                               >
-                                {r.requester_name ?? 'Unknown'}
-                              </p>
+                                <Avatar
+                                  url={r.requester_avatar}
+                                  name={r.requester_name ?? 'Unknown'}
+                                  size={30}
+                                />
+                                <p
+                                  style={{
+                                    margin: 0,
+                                    fontWeight: 'var(--font-weight-medium, 500)',
+                                    fontSize: 14,
+                                    color: 'hsl(var(--on-surface))',
+                                  }}
+                                >
+                                  {r.requester_name ?? 'Unknown'}
+                                </p>
+                              </div>
                               <p
                                 style={{
                                   margin: '0 0 2px',
@@ -889,6 +1027,7 @@ export default function FinanceReviewInbox() {
                               request={r}
                               tier1Max={tier1Max}
                               tier2Max={tier2Max}
+                              tierLeaders={tierLeaders}
                             />
                           </div>
                         </div>
@@ -948,15 +1087,32 @@ export default function FinanceReviewInbox() {
                         background: 'hsl(var(--container-low))',
                       }}
                     >
+                      <div
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}
+                      >
+                        <Avatar
+                          url={r.requester_avatar}
+                          name={r.requester_name ?? 'Unknown'}
+                          size={26}
+                        />
+                        <p
+                          style={{
+                            margin: 0,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 13,
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
+                          {r.requester_name ?? 'Unknown'}
+                        </p>
+                      </div>
                       <p
                         style={{
                           margin: '0 0 2px',
-                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 13,
-                          color: 'hsl(var(--on-surface))',
+                          color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
-                        {r.requester_name ?? 'Unknown'} ·{' '}
                         <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
                           {TYPE_LABELS[r.request_type]}
                         </span>{' '}
@@ -967,7 +1123,12 @@ export default function FinanceReviewInbox() {
                       </p>
                     </div>
                     <div style={{ padding: '10px 18px 14px' }}>
-                      <ApprovalChainTracker request={r} tier1Max={tier1Max} tier2Max={tier2Max} />
+                      <ApprovalChainTracker
+                        request={r}
+                        tier1Max={tier1Max}
+                        tier2Max={tier2Max}
+                        tierLeaders={tierLeaders}
+                      />
                     </div>
                   </div>
                 ))}
@@ -1081,7 +1242,14 @@ export default function FinanceReviewInbox() {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {r.requester_name ?? 'Unknown'}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <Avatar
+                              url={r.requester_avatar}
+                              name={r.requester_name ?? 'Unknown'}
+                              size={24}
+                            />
+                            {r.requester_name ?? 'Unknown'}
+                          </div>
                         </td>
                         <td
                           style={{

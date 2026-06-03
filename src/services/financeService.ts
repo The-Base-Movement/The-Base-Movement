@@ -15,6 +15,7 @@ export interface FinanceRequest {
   approval_tier: number
   category: string
   requester_name?: string
+  requester_avatar?: string | null
 }
 
 export const financeService = {
@@ -24,17 +25,20 @@ export const financeService = {
       .select(
         `
         *,
-        users:requester_id (full_name)
+        users:requester_id (full_name, avatar_url)
       `
       )
       .order('created_at', { ascending: false })
 
     if (error) throw error
 
-    return (data ?? []).map((r: FinanceRequest & { users?: { full_name?: string } }) => ({
-      ...r,
-      requester_name: r.users?.full_name ?? 'Unknown User',
-    }))
+    return (data ?? []).map(
+      (r: FinanceRequest & { users?: { full_name?: string; avatar_url?: string | null } }) => ({
+        ...r,
+        requester_name: r.users?.full_name ?? 'Unknown User',
+        requester_avatar: r.users?.avatar_url ?? null,
+      })
+    )
   },
 
   async createRequest(request: {
