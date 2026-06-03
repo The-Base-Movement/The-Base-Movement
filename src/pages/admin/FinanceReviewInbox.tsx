@@ -1057,6 +1057,7 @@ export default function FinanceReviewInbox() {
                 <textarea
                   id="officer-comment"
                   name="officer-comment"
+                  autoComplete="off"
                   value={officerComment}
                   onChange={(e) => setOfficerComment(e.target.value)}
                   rows={3}
