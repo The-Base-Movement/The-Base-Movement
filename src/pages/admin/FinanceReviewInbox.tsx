@@ -395,7 +395,7 @@ interface ReviewModal {
 // ─── Action Modal ─────────────────────────────────────────────────────────────
 
 interface ActionModalProps {
-  modal: ModalState
+  modal: ReviewModal
   actioning: boolean
   officerComment: string
   userTier: ActingTier | null
