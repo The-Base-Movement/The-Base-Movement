@@ -7,6 +7,7 @@ const IT_ALLOWED_ROLES = ['SUPER_ADMIN', 'FOUNDER']
 
 const IT_NAV: { to: string; icon: string; label: string }[] = [
   { to: '/admin/it-department', icon: 'dashboard', label: 'Overview' },
+  { to: '/admin/it-department/tickets', icon: 'confirmation_number', label: 'Helpdesk' },
   { to: '/admin/it-department/projects', icon: 'folder_open', label: 'Projects' },
   { to: '/admin/it-department/notes', icon: 'sticky_note_2', label: 'Notes' },
   { to: '/admin/it-department/todos', icon: 'checklist', label: 'To-Dos' },
