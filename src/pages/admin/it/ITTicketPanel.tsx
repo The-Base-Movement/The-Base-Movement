@@ -60,7 +60,7 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
         .eq('ticket_id', ticket.id)
         .order('created_at', { ascending: true })
       if (!cancelled) {
-        setComments((data ?? []) as Comment[])
+        setComments((data ?? []) as unknown as Comment[])
         setLoadingCmts(false)
       }
     }
@@ -90,7 +90,7 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
         .select('id, body, created_at, author_id, admins!author_id(name)')
         .eq('ticket_id', ticket.id)
         .order('created_at', { ascending: true })
-      setComments((data ?? []) as Comment[])
+      setComments((data ?? []) as unknown as Comment[])
       onUpdated()
     }
     setPosting(false)

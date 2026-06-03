@@ -8,7 +8,6 @@ import { toast } from 'sonner'
 import { ITTicketPanel } from './ITTicketPanel'
 import {
   DndContext,
-  DragEndEvent,
   useDroppable,
   useDraggable,
   DragOverlay,
@@ -16,6 +15,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
 import { TICKET_COLUMNS, relativeTime } from './itTicketUtils'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
