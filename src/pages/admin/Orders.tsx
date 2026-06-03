@@ -65,7 +65,7 @@ export default function AdminOrders() {
     setUpdatingId(null)
   }
 
-  const handleCancel = (order: Order) => {
+  const handleCancel = async (order: Order) => {
     setCancelModal(order)
   }
 

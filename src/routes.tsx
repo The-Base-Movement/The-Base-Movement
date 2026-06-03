@@ -99,6 +99,12 @@ const AdminFinanceRequests = lazy(() => import('./pages/admin/FinanceRequests'))
 const AdminFinanceReviewInbox = lazy(() => import('./pages/admin/FinanceReviewInbox'))
 const AdminFinanceDashboard = lazy(() => import('./pages/admin/FinanceDashboard'))
 const AdminExecutiveDashboard = lazy(() => import('./pages/admin/ExecutiveDashboard'))
+const ITDepartmentLayout = lazy(() => import('./pages/admin/it/ITDepartmentLayout'))
+const ITDashboard = lazy(() => import('./pages/admin/it/ITDashboard'))
+const ITNotes = lazy(() => import('./pages/admin/it/ITNotes'))
+const ITProjects = lazy(() => import('./pages/admin/it/ITProjects'))
+const ITTodos = lazy(() => import('./pages/admin/it/ITTodos'))
+const ITSecurity = lazy(() => import('./pages/admin/it/ITSecurity'))
 const LikedPosts = lazy(() => import('./pages/LikedPosts'))
 const MyDonations = lazy(() => import('./pages/MyDonations'))
 const Referrals = lazy(() => import('./pages/dashboard/Referrals'))
@@ -249,6 +255,17 @@ export const routes: RouteObject[] = [
       { path: '/admin/trash', element: <AdminTrash /> },
       { path: '/admin/roles', element: <AdminRolesManager /> },
       { path: '/admin/notifications', element: <AdminNotifications /> },
+      {
+        element: <ITDepartmentLayout />,
+        children: [
+          { path: '/admin/it-department', element: <ITDashboard /> },
+          { path: '/admin/it-department/projects', element: <ITProjects /> },
+          { path: '/admin/it-department/notes', element: <ITNotes /> },
+          { path: '/admin/it-department/todos', element: <ITTodos /> },
+          { path: '/admin/it-department/security-protocols', element: <ITSecurity /> },
+          { path: '/admin/it-department/hierarchy', element: <ITDashboard /> },
+        ],
+      },
     ],
   },
   {

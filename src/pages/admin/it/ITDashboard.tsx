@@ -1,0 +1,256 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { usePageLabel } from '@/contexts/PageLabelContext'
+import { OrgChart } from './components/OrgChart'
+
+interface ITStats {
+  totalProjects: number
+  completedProjects: number
+  activeTodos: number
+}
+
+const QUICK_LINKS = [
+  {
+    to: '/admin/it-department/projects',
+    icon: 'folder_open',
+    label: 'Projects',
+    color: 'hsl(var(--primary))',
+  },
+  {
+    to: '/admin/it-department/notes',
+    icon: 'sticky_note_2',
+    label: 'Notes',
+    color: 'hsl(var(--accent))',
+  },
+  {
+    to: '/admin/it-department/todos',
+    icon: 'checklist',
+    label: 'To-Dos',
+    color: 'hsl(var(--on-surface))',
+  },
+  {
+    to: '/admin/it-department/security-protocols',
+    icon: 'security',
+    label: 'Security Protocols',
+    color: 'hsl(var(--destructive))',
+  },
+  {
+    to: '/admin/it-department/hierarchy',
+    icon: 'account_tree',
+    label: 'Team Hierarchy',
+    color: 'hsl(var(--primary))',
+  },
+]
+
+export default function ITDashboard() {
+  const { setCurrentLabel } = usePageLabel()
+
+  useEffect(() => {
+    setCurrentLabel('IT Department')
+  }, [setCurrentLabel])
+
+  const [stats, setStats] = useState<ITStats | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [{ count: total }, { count: completed }, { count: activeTodos }] = await Promise.all([
+          supabase.from('it_projects').select('*', { count: 'exact', head: true }),
+          supabase
+            .from('it_projects')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'completed'),
+          supabase
+            .from('it_todos')
+            .select('*', { count: 'exact', head: true })
+            .neq('status', 'done'),
+        ])
+
+        setStats({
+          totalProjects: total ?? 0,
+          completedProjects: completed ?? 0,
+          activeTodos: activeTodos ?? 0,
+        })
+      } catch (err) {
+        console.error('[IT Dashboard] Failed to load stats:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const kpis = [
+    {
+      label: 'Total Projects on Board',
+      value: stats?.totalProjects,
+      icon: 'folder_open',
+      bar: 'hsl(var(--on-surface))',
+      sub: 'All projects registered in the system',
+    },
+    {
+      label: 'Projects Completed',
+      value: stats?.completedProjects,
+      icon: 'task_alt',
+      bar: 'hsl(var(--primary))',
+      sub: 'Delivered and marked complete',
+    },
+    {
+      label: 'Active To-Dos',
+      value: stats?.activeTodos,
+      icon: 'checklist',
+      bar: 'hsl(var(--accent))',
+      sub: 'Tasks not yet marked as done',
+    },
+  ]
+
+  return (
+    <div>
+      <AdminPageHeader
+        title="IT Department"
+        icon="computer"
+        description="Internal IT operations — projects, tasks, protocols and team structure."
+      />
+
+      {/* KPI tiles */}
+      <div className="kpis" style={{ marginBottom: 28 }}>
+        {kpis.map((kpi) => (
+          <div
+            key={kpi.label}
+            className="panel"
+            style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: 3,
+                background: kpi.bar,
+              }}
+            />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                marginBottom: 10,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 10,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: 'hsl(var(--on-surface-muted))',
+                  margin: 0,
+                }}
+              >
+                {kpi.label}
+              </p>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 16, color: kpi.bar, opacity: 0.55 }}
+              >
+                {kpi.icon}
+              </span>
+            </div>
+            <p
+              style={{
+                fontSize: 'var(--kpi-num-size)',
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+                margin: '0 0 4px',
+              }}
+            >
+              {loading ? '—' : (kpi.value ?? 0)}
+            </p>
+            <p
+              style={{
+                fontSize: 10,
+                color: 'hsl(var(--on-surface-muted))',
+                margin: 0,
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              {kpi.sub}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Org chart */}
+      <div style={{ marginBottom: 28 }}>
+        <OrgChart />
+      </div>
+
+      {/* Quick access */}
+      <div className="panel">
+        <div
+          style={{
+            padding: '13px 20px',
+            borderBottom: '1px solid hsl(var(--border))',
+            background: 'hsl(var(--container-low))',
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            Quick access
+          </p>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+            gap: 1,
+            background: 'hsl(var(--border))',
+          }}
+        >
+          {QUICK_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '14px 18px',
+                background: '#fff',
+                textDecoration: 'none',
+                color: 'hsl(var(--on-surface))',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                transition: 'background 0.1s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 17, color: link.color }}
+              >
+                {link.icon}
+              </span>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
