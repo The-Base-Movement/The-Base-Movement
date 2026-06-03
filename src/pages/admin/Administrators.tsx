@@ -32,6 +32,7 @@ export default function Administrators() {
   const [roleList, setRoleList] = useState<AdminRoleRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [roleFilter, setRoleFilter] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
@@ -200,18 +201,19 @@ export default function Administrators() {
   const filteredAdmins = useMemo(() => {
     const term = searchTerm.toLowerCase()
     const list = admins.filter((a) => {
-      return (
+      const matchesSearch =
         a.name?.toLowerCase().includes(term) ||
         a.id?.toLowerCase().includes(term) ||
         a.role?.toLowerCase().includes(term)
-      )
+      const matchesRole = roleFilter === '' || a.role === roleFilter
+      return matchesSearch && matchesRole
     })
     return list.sort((a, b) => {
       const nameA = a.name || ''
       const nameB = b.name || ''
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
     })
-  }, [admins, searchTerm, sortOrder])
+  }, [admins, searchTerm, roleFilter, sortOrder])
 
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -224,6 +226,8 @@ export default function Administrators() {
         onChange={setSearchTerm}
         sortOrder={sortOrder}
         onSortChange={setSortOrder}
+        roleFilter={roleFilter}
+        onRoleFilterChange={setRoleFilter}
       />
 
       {/* Desktop table */}

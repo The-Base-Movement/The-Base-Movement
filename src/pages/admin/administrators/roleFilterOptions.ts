@@ -1,0 +1,16 @@
+export const ROLE_FILTER_OPTIONS: { label: string; value: string }[] = [
+  { label: 'All Roles', value: '' },
+  { label: 'Admin', value: 'ADMIN' },
+  { label: 'Chapter Leader', value: 'ORGANIZER' },
+  { label: 'Chapter Secretary', value: 'REGIONAL_CORRESPONDENT' },
+  { label: 'Authors', value: 'CHIEF_EDITOR' },
+  { label: 'Communication Officer', value: 'SENIOR_EDITOR' },
+  { label: 'Finance Officer', value: 'FINANCE_OFFICER' },
+  { label: 'Constituency Lead', value: 'CONSTITUENCY_LEAD' },
+  { label: 'Field Agent', value: 'VERIFIER' },
+  { label: 'Founder', value: 'FOUNDER' },
+  { label: 'IT Manager', value: 'SUPER_ADMIN' },
+  { label: 'Movement Leader', value: 'EXECUTIVE' },
+  { label: 'Store Manager', value: 'EDITOR' },
+  { label: 'Youth Leader', value: 'JUNIOR_EDITOR' },
+]

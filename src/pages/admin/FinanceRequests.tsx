@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -6,11 +7,6 @@ import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
 
 type RequestType = FinanceRequest['request_type']
-
-interface ReviewModal {
-  request: FinanceRequest
-  action: 'Approved' | 'Rejected'
-}
 
 function statusPill(status: FinanceRequest['status']) {
   if (status === 'Approved') return <span className="pill pill-ok">Approved</span>
@@ -42,9 +38,76 @@ const TYPE_LABELS: Record<RequestType, string> = {
   InventoryReplenishment: 'Inventory Replenishment',
 }
 
+// ─── Sub-nav ─────────────────────────────────────────────────────────────────
+
+function FinanceSubNav({ pendingCount }: { pendingCount: number }) {
+  const location = useLocation()
+  const tabs = [
+    { to: '/admin/finance-requests', label: 'Finance Requests', icon: 'request_quote' },
+    {
+      to: '/admin/finance-requests/review-inbox',
+      label: 'Review Inbox',
+      icon: 'inbox',
+      badge: pendingCount,
+    },
+  ]
+  return (
+    <div
+      style={{
+        display: 'flex',
+        gap: 4,
+        marginBottom: 24,
+        borderBottom: '1px solid hsl(var(--border))',
+        paddingBottom: 0,
+      }}
+    >
+      {tabs.map((tab) => {
+        const active = location.pathname === tab.to
+        return (
+          <Link
+            key={tab.to}
+            to={tab.to}
+            className={active ? 'btn-active-tab' : 'btn-inactive-tab'}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '8px 14px',
+              marginBottom: -1,
+              textDecoration: 'none',
+              fontSize: 12,
+              borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              {tab.icon}
+            </span>
+            {tab.label}
+            {tab.badge != null && tab.badge > 0 && (
+              <span
+                style={{
+                  background: 'hsl(var(--accent))',
+                  color: '#fff',
+                  fontSize: 9,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  padding: '1px 5px',
+                  borderRadius: 'var(--radius-pill)',
+                  lineHeight: 1.4,
+                }}
+              >
+                {tab.badge}
+              </span>
+            )}
+          </Link>
+        )
+      })}
+    </div>
+  )
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function FinanceRequests() {
-  // Re-read in useEffect to handle hard-refresh case where adminService
-  // hasn't finished async initialize() when the component first renders.
   const [currentUser, setCurrentUser] = useState(adminService.getCurrentUser())
   const canReview = currentUser?.role === 'FINANCE_OFFICER' || currentUser?.role === 'SUPER_ADMIN'
 
@@ -56,17 +119,11 @@ export default function FinanceRequests() {
   const [requests, setRequests] = useState<FinanceRequest[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Form state
   const [reqType, setReqType] = useState<RequestType>('BudgetAllocation')
   const [chapter, setChapter] = useState('')
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
   const [submitting, setSubmitting] = useState(false)
-
-  // Review modal
-  const [modal, setModal] = useState<ReviewModal | null>(null)
-  const [officerComment, setOfficerComment] = useState('')
-  const [reviewing, setReviewing] = useState(false)
 
   async function loadRequests() {
     try {
@@ -98,7 +155,6 @@ export default function FinanceRequests() {
       toast.error('Description is required')
       return
     }
-
     setSubmitting(true)
     try {
       await financeService.createRequest({
@@ -120,51 +176,16 @@ export default function FinanceRequests() {
     }
   }
 
-  function openModal(request: FinanceRequest, action: 'Approved' | 'Rejected') {
-    setOfficerComment('')
-    setModal({ request, action })
-  }
-
-  async function handleReview() {
-    if (!modal) return
-    if (!officerComment.trim()) {
-      toast.error('A comment is required')
-      return
-    }
-
-    setReviewing(true)
-    try {
-      await financeService.reviewRequest(modal.request.id, modal.action, officerComment.trim())
-      toast.success(`Request ${modal.action.toLowerCase()} successfully`)
-      setModal(null)
-      await loadRequests()
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : ''
-      if (msg.toLowerCase().includes('no longer available')) {
-        toast.warning('This request is no longer available for review')
-        setModal(null)
-        await loadRequests()
-      } else {
-        toast.error('Failed to review request')
-      }
-    } finally {
-      setReviewing(false)
-    }
-  }
-
-  // KPI derivations
   const totalCount = requests.length
   const pendingCount = requests.filter((r) => r.status === 'Pending').length
   const approvedCount = requests.filter((r) => r.status === 'Approved').length
 
-  // For non-finance-officer users, show only their own requests in the "My Requests" table.
-  // RLS already filters on the DB side; for finance officers who see all, we split the view.
-  const [mySearch, setMySearch] = useState('')
-  const [mySortOrder, setMySortOrder] = useState<'asc' | 'desc'>('asc')
-
   const myRequests = canReview
     ? requests.filter((r) => r.requester_id === currentUser?.id)
     : requests
+
+  const [mySearch, setMySearch] = useState('')
+  const [mySortOrder, setMySortOrder] = useState<'asc' | 'desc'>('asc')
 
   const sortedMyRequests = useMemo(() => {
     const list = myRequests.filter((r) => {
@@ -182,8 +203,6 @@ export default function FinanceRequests() {
     })
   }, [myRequests, mySearch, mySortOrder])
 
-  const pendingRequests = requests.filter((r) => r.status === 'Pending')
-
   const kpis = [
     { label: 'Total Requests', value: totalCount, bar: 'hsl(var(--on-surface))' },
     { label: 'Pending', value: pendingCount, bar: 'hsl(var(--accent))' },
@@ -196,7 +215,43 @@ export default function FinanceRequests() {
         title="Finance Requests"
         icon="account_balance_wallet"
         description="Submit and manage internal finance requests"
+        actions={
+          canReview ? (
+            <Link
+              to="/admin/finance-requests/review-inbox"
+              className="btn btn-outline btn-sm"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                textDecoration: 'none',
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                inbox
+              </span>
+              Review Inbox
+              {pendingCount > 0 && (
+                <span
+                  style={{
+                    background: 'hsl(var(--accent))',
+                    color: '#fff',
+                    fontSize: 9,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    padding: '1px 5px',
+                    borderRadius: 'var(--radius-pill)',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {pendingCount}
+                </span>
+              )}
+            </Link>
+          ) : undefined
+        }
       />
+
+      <FinanceSubNav pendingCount={canReview ? pendingCount : 0} />
 
       {/* KPI Tiles */}
       {!loading && (
@@ -244,8 +299,8 @@ export default function FinanceRequests() {
         </div>
       )}
 
-      {/* Panel A — Submit a Request */}
-      <div className="panel" style={{ padding: 24, marginBottom: 28 }}>
+      {/* Submit a Request */}
+      <div className="panel" style={{ padding: 24 }}>
         <div className="ph" style={{ marginBottom: 20 }}>
           <div>
             <h2
@@ -274,7 +329,6 @@ export default function FinanceRequests() {
               marginBottom: 16,
             }}
           >
-            {/* Request Type */}
             <div>
               <label
                 htmlFor="req-type"
@@ -313,7 +367,6 @@ export default function FinanceRequests() {
               </select>
             </div>
 
-            {/* Chapter */}
             <div>
               <label
                 htmlFor="req-chapter"
@@ -348,7 +401,6 @@ export default function FinanceRequests() {
               />
             </div>
 
-            {/* Amount */}
             <div>
               <label
                 htmlFor="req-amount"
@@ -386,7 +438,6 @@ export default function FinanceRequests() {
             </div>
           </div>
 
-          {/* Description */}
           <div style={{ marginBottom: 20 }}>
             <label
               htmlFor="req-description"
@@ -551,240 +602,6 @@ export default function FinanceRequests() {
           )}
         </div>
       </div>
-
-      {/* Panel B — Review Inbox (Finance Officer / Super Admin only) */}
-      {canReview && (
-        <div className="panel" style={{ padding: 24, marginBottom: 28 }}>
-          <div className="ph" style={{ marginBottom: 20 }}>
-            <div>
-              <h2
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 16,
-                  color: 'hsl(var(--on-surface))',
-                  margin: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                }}
-              >
-                Review Inbox
-                {pendingCount > 0 && (
-                  <span className="pill pill-warn" style={{ fontSize: 11 }}>
-                    {pendingCount} pending
-                  </span>
-                )}
-              </h2>
-              <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: '4px 0 0' }}>
-                Approve or reject pending finance requests from the team.
-              </p>
-            </div>
-          </div>
-
-          {loading ? (
-            <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>Loading…</p>
-          ) : pendingRequests.length === 0 ? (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '40px 0',
-                color: 'hsl(var(--on-surface-muted))',
-                fontSize: 14,
-              }}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 40, display: 'block', marginBottom: 8 }}
-              >
-                inbox
-              </span>
-              No pending requests to review.
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {pendingRequests.map((r) => (
-                <div
-                  key={r.id}
-                  style={{
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '16px 20px',
-                    background: 'hsl(var(--container-low))',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'space-between',
-                    gap: 16,
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 200 }}>
-                    <p
-                      style={{
-                        margin: '0 0 4px',
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 14,
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                    >
-                      {r.requester_name ?? 'Unknown'}
-                    </p>
-                    <p
-                      style={{
-                        margin: '0 0 2px',
-                        fontSize: 13,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      {TYPE_LABELS[r.request_type]} · {r.chapter} · {fmtAmount(r.amount)}
-                    </p>
-                    <p
-                      style={{
-                        margin: '0 0 2px',
-                        fontSize: 13,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      {r.description}
-                    </p>
-                    <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-                      Submitted {fmtDate(r.created_at)}
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => openModal(r, 'Approved')}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="btn btn-outline-dest btn-sm"
-                      onClick={() => openModal(r, 'Rejected')}
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Review Modal */}
-      {modal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 16,
-          }}
-          onClick={() => setModal(null)}
-        >
-          <div
-            style={{
-              background: 'hsl(var(--background))',
-              borderRadius: 'var(--radius-lg)',
-              padding: 28,
-              width: '100%',
-              maxWidth: 480,
-              fontFamily: "'Public Sans', sans-serif",
-              boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3
-              style={{
-                margin: '0 0 4px',
-                fontSize: 18,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color:
-                  modal.action === 'Approved' ? 'hsl(var(--primary))' : 'hsl(var(--destructive))',
-              }}
-            >
-              {modal.action === 'Approved' ? 'Approve Request' : 'Reject Request'}
-            </h3>
-            <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: '0 0 20px' }}>
-              {modal.request.requester_name} · {fmtAmount(modal.request.amount)} ·{' '}
-              {modal.request.chapter}
-            </p>
-
-            <div
-              style={{
-                background: 'hsl(var(--container-low))',
-                borderRadius: 'var(--radius-md)',
-                padding: '12px 14px',
-                marginBottom: 20,
-                fontSize: 13,
-                color: 'hsl(var(--on-surface))',
-              }}
-            >
-              {modal.request.description}
-            </div>
-
-            <label
-              htmlFor="officer-comment"
-              style={{
-                display: 'block',
-                fontSize: 12,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface-muted))',
-                marginBottom: 6,
-              }}
-            >
-              Officer Comment <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-            </label>
-            <textarea
-              id="officer-comment"
-              name="officer-comment"
-              value={officerComment}
-              onChange={(e) => setOfficerComment(e.target.value)}
-              rows={3}
-              placeholder="Provide a reason or note for this decision…"
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--background))',
-                color: 'hsl(var(--on-surface))',
-                fontSize: 14,
-                boxSizing: 'border-box',
-                fontFamily: "'Public Sans', sans-serif",
-                resize: 'vertical',
-                marginBottom: 20,
-              }}
-            />
-
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-              <button
-                className="btn btn-outline"
-                onClick={() => setModal(null)}
-                disabled={reviewing}
-              >
-                Cancel
-              </button>
-              <button
-                className={modal.action === 'Approved' ? 'btn btn-primary' : 'btn btn-dest'}
-                onClick={handleReview}
-                disabled={reviewing || !officerComment.trim()}
-              >
-                {reviewing
-                  ? 'Processing…'
-                  : modal.action === 'Approved'
-                    ? 'Confirm Approve'
-                    : 'Confirm Reject'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

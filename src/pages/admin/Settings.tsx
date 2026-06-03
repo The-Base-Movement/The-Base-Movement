@@ -15,6 +15,7 @@ import { SecuritySettingsTab } from './settings/components/SecuritySettingsTab'
 import { ButtonCustomizerTab } from './settings/components/ButtonCustomizerTab'
 import { AuditLogTab } from './settings/components/AuditLogTab'
 import { AboutPageTab } from './settings/components/AboutPageTab'
+import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
 
 type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density'
 type SettingsTab =
@@ -26,6 +27,7 @@ type SettingsTab =
   | 'security'
   | 'buttons'
   | 'audit'
+  | 'finance'
 
 interface SupabaseAuthWithMFA {
   mfa: {
@@ -54,6 +56,7 @@ const tabs: { id: SettingsTab; label: string; icon: string }[] = [
   { id: 'security', label: 'Security', icon: 'lock' },
   { id: 'buttons', label: 'Buttons', icon: 'ads_click' },
   { id: 'audit', label: 'Audit Log', icon: 'history' },
+  { id: 'finance', label: 'Finance Approvals', icon: 'account_balance_wallet' },
 ]
 
 export default function AdminSettings() {
@@ -502,6 +505,7 @@ export default function AdminSettings() {
               handleVerifyMfa={handleVerifyMfa}
             />
           )}
+          {activeTab === 'finance' && <FinanceApprovalsTab />}
           {activeTab === 'audit' && (
             <AuditLogTab
               auditSearch={auditSearch}
