@@ -625,6 +625,7 @@ export interface AdminPermission {
     | 'VIEW_PARTY_OFFICIALS'
     | 'VIEW_ADMINS'
     | 'VIEW_MEMBER_DIRECTORY'
+    | 'SUBMIT_IT_TICKET'
   resource:
     | 'MEMBERS'
     | 'CHAPTERS'
@@ -638,6 +639,7 @@ export interface AdminPermission {
     | 'STRATEGY'
     | 'PARTY'
     | 'ADMINS'
+    | 'IT_SUPPORT'
 }
 
 export interface AdminUser {
