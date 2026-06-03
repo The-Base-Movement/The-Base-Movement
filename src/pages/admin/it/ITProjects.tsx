@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { toast } from 'sonner'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -548,6 +549,7 @@ function ProjectCard({ project, onEdit, onDelete, onStatusChange }: CardProps) {
 
 export default function ITProjects() {
   const { setCurrentLabel } = usePageLabel()
+  const isMobile = useIsMobile()
   useEffect(() => {
     setCurrentLabel('IT Projects')
   }, [setCurrentLabel])
@@ -556,6 +558,7 @@ export default function ITProjects() {
   const [loading, setLoading] = useState(true)
   const [createOpen, setCreateOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Project | null>(null)
+  const [mobileFilter, setMobileFilter] = useState<ProjectStatus | 'all'>('all')
 
   useITLayout(
     'IT Projects',
@@ -683,17 +686,52 @@ export default function ITProjects() {
         })}
       </div>
 
-      {/* Kanban */}
+      {/* Mobile filter */}
+      {isMobile && (
+        <div style={{ marginBottom: 16 }}>
+          <select
+            value={mobileFilter}
+            onChange={(e) => setMobileFilter(e.target.value as ProjectStatus | 'all')}
+            style={{
+              width: '100%',
+              height: 38,
+              padding: '0 12px',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
+              boxSizing: 'border-box',
+            }}
+          >
+            <option value="all">All ({projects.length})</option>
+            {COLUMNS.map((c) => (
+              <option key={c.status} value={c.status}>
+                {c.label} ({projects.filter((p) => p.status === c.status).length})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Kanban — 4 columns desktop / single filtered list mobile */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 16,
-          alignItems: 'start',
-          overflowX: 'auto',
-        }}
+        style={
+          isMobile
+            ? { display: 'flex', flexDirection: 'column', gap: 10 }
+            : {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: 16,
+                alignItems: 'start',
+              }
+        }
       >
-        {COLUMNS.map((col) => {
+        {COLUMNS.filter(
+          (col) => !isMobile || mobileFilter === 'all' || mobileFilter === col.status
+        ).map((col) => {
           const colProjects = projects.filter((p) => p.status === col.status)
           return (
             <div key={col.status}>
