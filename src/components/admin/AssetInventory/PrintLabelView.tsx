@@ -81,8 +81,9 @@ export function PrintLabelView({ asset, onClose }: Props) {
 
       <style>{`
         @media print {
-          body > *:not(.print-only) { display: none !important; }
-          .print-only { display: block !important; padding: 24px; }
+          body * { display: none !important; }
+          .print-only, .print-only * { display: block !important; }
+          .print-only { padding: 24px; }
         }
       `}</style>
     </>

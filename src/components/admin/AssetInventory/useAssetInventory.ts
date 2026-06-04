@@ -262,21 +262,16 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
       purchase_price: number | null
       purchase_date: string | null
     }) => {
-      const { error } = await supabase
+      const { data: inserted, error } = await supabase
         .from('assets')
         .insert({ ...payload, department_id: departmentId })
+        .select('id, asset_tag')
+        .single()
       if (error) {
         toast.error('Failed to add asset')
         return false
       }
       toast.success('Asset added')
-      const { data: inserted } = await supabase
-        .from('assets')
-        .select('id, asset_tag')
-        .eq('department_id', departmentId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
       if (inserted?.id && inserted?.asset_tag) {
         generateAndSaveQR(inserted.id, inserted.asset_tag)
       }
@@ -485,10 +480,6 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
     [fetchAlerts]
   )
 
-  const saveQrCodeUrl = useCallback(async (assetId: string, url: string) => {
-    await supabase.from('assets').update({ qr_code_url: url }).eq('id', assetId)
-  }, [])
-
   return {
     assets,
     categories,
@@ -517,7 +508,6 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
     denyRequest,
     resolveAlert,
     escalateToMissing,
-    saveQrCodeUrl,
     generateAndSaveQR,
   }
 }

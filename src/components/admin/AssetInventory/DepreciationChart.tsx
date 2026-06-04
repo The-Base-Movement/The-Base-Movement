@@ -9,6 +9,7 @@ interface Props {
 
 export function DepreciationChart({ purchasePrice, purchaseDate, lifespanYears }: Props) {
   const data = useMemo(() => {
+    if (lifespanYears <= 0) return []
     const start = new Date(purchaseDate)
     const endYear = start.getFullYear() + lifespanYears
     const points: { year: string; value: number }[] = []
@@ -19,6 +20,8 @@ export function DepreciationChart({ purchasePrice, purchaseDate, lifespanYears }
     }
     return points
   }, [purchasePrice, purchaseDate, lifespanYears])
+
+  if (lifespanYears <= 0) return null
 
   return (
     <div style={{ marginTop: 12 }}>
