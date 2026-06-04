@@ -1,4 +1,4 @@
-import { LiveContributionFeed } from '@/components/LiveContributionFeed'
+﻿import { LiveContributionFeed } from '@/components/LiveContributionFeed'
 import type { DonationDetail } from '@/types/admin'
 
 interface SpendingRecord {
@@ -166,7 +166,7 @@ export function OperationalTransparency({
             display: 'flex',
             background: 'hsl(var(--container-low))',
             padding: 4,
-            borderRadius: '4px 4px 0 0',
+            borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0',
             border: '1px solid hsl(var(--border))',
             borderBottom: 'none',
             overflowX: 'auto',
@@ -207,7 +207,7 @@ export function OperationalTransparency({
               padding: '10px 12px',
               background: 'hsl(var(--container-low))',
               border: '1px solid hsl(var(--border))',
-              borderRadius: '0 0 4px 4px',
+              borderRadius: '0 0 var(--radius-sm) var(--radius-sm)',
               flexWrap: 'wrap',
             }}
           >

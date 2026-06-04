@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { adminService, type MovementPulse } from '@/services/adminService'
 import { cn } from '@/lib/utils'
 
@@ -229,7 +229,7 @@ export function PulseReport() {
                   style={{
                     height: '4px',
                     background: 'hsl(var(--container-low))',
-                    borderRadius: '2px',
+                    borderRadius: 'var(--radius-xs)',
                     overflow: 'hidden',
                   }}
                 >

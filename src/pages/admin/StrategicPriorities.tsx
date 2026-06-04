@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+﻿import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { DonationCampaign } from '@/types/admin'
@@ -335,7 +335,7 @@ export default function StrategicPriorities() {
               zIndex: 50,
               width: 38,
               height: 48,
-              borderRadius: '0 8px 8px 0',
+              borderRadius: '0 var(--radius-md) var(--radius-md) 0',
               background: 'hsl(var(--on-surface))',
               color: '#fff',
               border: 'none',

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+﻿import { useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -56,7 +56,7 @@ export function StatCard({
       style={{
         background: '#fff',
         border: '1px solid #dfe4dd',
-        borderRadius: '6px',
+        borderRadius: 'var(--radius-md)',
         padding: '22px 22px 20px',
         position: 'relative',
         overflow: 'hidden',

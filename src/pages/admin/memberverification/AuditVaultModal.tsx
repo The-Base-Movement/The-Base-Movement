@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import type { PendingVerification } from '@/services/adminService'
 
 interface AuditVaultModalProps {
@@ -234,7 +234,7 @@ export function AuditVaultModal({
                     background: '#fff',
                     borderLeft: '3px solid hsl(var(--on-surface))',
                     boxShadow: '0 1px 4px rgba(0,0,0,.06)',
-                    borderRadius: '0 4px 4px 0',
+                    borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
                   }}
                 >
                   <div
@@ -284,7 +284,7 @@ export function AuditVaultModal({
                       background: '#fff',
                       borderLeft: '3px solid hsl(var(--primary))',
                       boxShadow: '0 1px 4px rgba(0,0,0,.06)',
-                      borderRadius: '0 4px 4px 0',
+                      borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
                     }}
                   >
                     <div
@@ -336,7 +336,7 @@ export function AuditVaultModal({
                       background: '#fff',
                       borderLeft: '3px solid hsl(var(--destructive))',
                       boxShadow: '0 1px 4px rgba(0,0,0,.06)',
-                      borderRadius: '0 4px 4px 0',
+                      borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
                     }}
                   >
                     <div

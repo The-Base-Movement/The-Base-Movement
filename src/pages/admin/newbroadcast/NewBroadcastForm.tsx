@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { Editor } from '@tinymce/tinymce-react'
 import { toast } from 'sonner'
 import { fieldStyle, labelStyle, priorityBorderColor } from './utils'
@@ -36,7 +36,7 @@ export function NewBroadcastForm({
         style={{
           background: 'linear-gradient(135deg,#0f1310,#1f2620)',
           borderTop: '3px solid hsl(var(--destructive))',
-          borderRadius: '6px 6px 0 0',
+          borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0',
           padding: '16px 18px',
           display: 'flex',
           alignItems: 'center',
@@ -310,7 +310,7 @@ export function NewBroadcastForm({
           gap: 10,
           justifyContent: 'flex-end',
           background: 'hsl(var(--container-low))',
-          borderRadius: '0 0 6px 6px',
+          borderRadius: '0 0 var(--radius-sm) var(--radius-sm)',
         }}
       >
         <Link to="/admin/broadcasts">

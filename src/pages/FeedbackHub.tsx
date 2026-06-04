@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { sessionStore } from '@/lib/sessionStore'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -273,7 +273,7 @@ export default function FeedbackHub() {
                     right: 0,
                     height: 3,
                     background: 'hsl(var(--border))',
-                    borderRadius: '0 0 4px 4px',
+                    borderRadius: '0 0 var(--radius-sm) var(--radius-sm)',
                     overflow: 'hidden',
                   }}
                 >

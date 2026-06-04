@@ -1,4 +1,4 @@
-import { STATUS_CONFIG, NEXT_STATUS } from './utils'
+﻿import { STATUS_CONFIG, NEXT_STATUS } from './utils'
 import type { Order } from '@/services/adminService'
 
 interface OrderDetailPanelProps {
@@ -25,7 +25,7 @@ export function OrderDetailPanel({
         style={{
           background: 'linear-gradient(135deg,#0f1310,#1f2620)',
           borderTop: '3px solid hsl(var(--primary))',
-          borderRadius: '6px 6px 0 0',
+          borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0',
           padding: '16px 18px',
         }}
       >

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+﻿import { useState, useCallback, useEffect } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 
@@ -583,7 +583,7 @@ export default function RegistrationForm({
                     alignItems: 'center',
                     gap: '16px',
                     padding: '16px',
-                    borderRadius: '8px',
+                    borderRadius: 'var(--radius-md)',
                     background:
                       formStep === item.step ? 'hsl(var(--container-low))' : 'transparent',
                     borderLeft: `4px solid ${formStep === item.step ? 'hsl(var(--primary))' : 'transparent'}`,
@@ -735,7 +735,7 @@ export default function RegistrationForm({
                         fontSize: '14px',
                         background: 'hsl(var(--container-low))',
                         border: '1px solid hsl(var(--border))',
-                        borderRadius: '4px',
+                        borderRadius: 'var(--radius-sm)',
                         outline: 'none',
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -765,7 +765,7 @@ export default function RegistrationForm({
                             border: '1px solid hsl(var(--border))',
                             padding: '16px',
                             textAlign: 'center',
-                            borderRadius: '4px',
+                            borderRadius: 'var(--radius-sm)',
                             fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: '11px',
                             textTransform: 'uppercase',
@@ -831,7 +831,7 @@ export default function RegistrationForm({
                             fontSize: '14px',
                             background: 'hsl(var(--container-low))',
                             border: '1px solid hsl(var(--border))',
-                            borderRadius: '4px',
+                            borderRadius: 'var(--radius-sm)',
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
@@ -872,7 +872,7 @@ export default function RegistrationForm({
                             fontWeight: 'var(--font-weight-medium, 500)',
                             background: 'hsl(var(--container-low))',
                             border: '1px solid hsl(var(--border))',
-                            borderRadius: '4px',
+                            borderRadius: 'var(--radius-sm)',
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
@@ -901,7 +901,7 @@ export default function RegistrationForm({
                             fontSize: '14px',
                             background: 'hsl(var(--container-low))',
                             border: '1px solid hsl(var(--border))',
-                            borderRadius: '4px',
+                            borderRadius: 'var(--radius-sm)',
                             outline: 'none',
                             color: 'hsl(var(--on-surface))',
                           }}
@@ -940,7 +940,7 @@ export default function RegistrationForm({
                           fontSize: '14px',
                           background: 'hsl(var(--container-low))',
                           border: '1px solid hsl(var(--border))',
-                          borderRadius: '4px',
+                          borderRadius: 'var(--radius-sm)',
                           outline: 'none',
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -1027,7 +1027,7 @@ export default function RegistrationForm({
                               border: '1px solid hsl(var(--border))',
                               padding: '12px',
                               textAlign: 'center',
-                              borderRadius: '4px',
+                              borderRadius: 'var(--radius-sm)',
                               fontWeight: 'var(--font-weight-medium, 500)',
                               fontSize: '10px',
                               textTransform: 'uppercase',
@@ -1085,7 +1085,7 @@ export default function RegistrationForm({
                               border: '1px solid hsl(var(--border))',
                               padding: '12px',
                               textAlign: 'center',
-                              borderRadius: '4px',
+                              borderRadius: 'var(--radius-sm)',
                               fontWeight: 'var(--font-weight-medium, 500)',
                               fontSize: '10px',
                               textTransform: 'uppercase',
@@ -1149,7 +1149,7 @@ export default function RegistrationForm({
                         fontSize: '14px',
                         background: 'hsl(var(--container-low))',
                         border: '1px solid hsl(var(--border))',
-                        borderRadius: '4px',
+                        borderRadius: 'var(--radius-sm)',
                         outline: 'none',
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -1191,7 +1191,7 @@ export default function RegistrationForm({
                               fontSize: '14px',
                               background: 'hsl(var(--container-low))',
                               border: '1px solid hsl(var(--border))',
-                              borderRadius: '4px',
+                              borderRadius: 'var(--radius-sm)',
                               color: 'hsl(var(--on-surface))',
                             }}
                           >
@@ -1230,7 +1230,7 @@ export default function RegistrationForm({
                               fontSize: '14px',
                               background: 'hsl(var(--container-low))',
                               border: '1px solid hsl(var(--border))',
-                              borderRadius: '4px',
+                              borderRadius: 'var(--radius-sm)',
                               color: 'hsl(var(--on-surface))',
                               opacity: !formData.region ? 0.5 : 1,
                             }}
@@ -1274,7 +1274,7 @@ export default function RegistrationForm({
                             fontSize: '14px',
                             background: 'hsl(var(--container-low))',
                             border: '1px solid hsl(var(--border))',
-                            borderRadius: '4px',
+                            borderRadius: 'var(--radius-sm)',
                             outline: 'none',
                             color: 'hsl(var(--on-surface))',
                           }}
@@ -1342,7 +1342,7 @@ export default function RegistrationForm({
                         fontSize: '14px',
                         background: 'hsl(var(--container-low))',
                         border: '1px solid hsl(var(--border))',
-                        borderRadius: '4px',
+                        borderRadius: 'var(--radius-sm)',
                         outline: 'none',
                         color: 'hsl(var(--on-surface))',
                       }}
@@ -1383,7 +1383,7 @@ export default function RegistrationForm({
                           fontSize: '14px',
                           background: 'hsl(var(--container-low))',
                           border: '1px solid hsl(var(--border))',
-                          borderRadius: '4px',
+                          borderRadius: 'var(--radius-sm)',
                           outline: 'none',
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -1418,7 +1418,7 @@ export default function RegistrationForm({
                           fontSize: '14px',
                           background: 'hsl(var(--container-low))',
                           border: '1px solid hsl(var(--border))',
-                          borderRadius: '4px',
+                          borderRadius: 'var(--radius-sm)',
                           outline: 'none',
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -1461,7 +1461,7 @@ export default function RegistrationForm({
                           fontSize: '14px',
                           background: 'hsl(var(--container-low))',
                           border: '1px solid hsl(var(--border))',
-                          borderRadius: '4px',
+                          borderRadius: 'var(--radius-sm)',
                           outline: 'none',
                           color: 'hsl(var(--on-surface))',
                         }}
@@ -1493,7 +1493,7 @@ export default function RegistrationForm({
                           fontSize: '14px',
                           background: 'hsl(var(--container-low))',
                           border: '1px solid hsl(var(--border))',
-                          borderRadius: '4px',
+                          borderRadius: 'var(--radius-sm)',
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
@@ -1559,7 +1559,7 @@ export default function RegistrationForm({
                           textAlign: 'center',
                           background: 'hsl(var(--container-low))',
                           position: 'relative',
-                          borderRadius: '4px',
+                          borderRadius: 'var(--radius-sm)',
                           cursor: 'pointer',
                         }}
                       >
@@ -1582,7 +1582,7 @@ export default function RegistrationForm({
                             width: '60px',
                             height: '60px',
                             background: 'hsla(var(--primary), 0.1)',
-                            borderRadius: '4px',
+                            borderRadius: 'var(--radius-sm)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -1618,7 +1618,7 @@ export default function RegistrationForm({
                             height: '400px',
                             width: '100%',
                             background: 'hsl(var(--on-surface))',
-                            borderRadius: '4px',
+                            borderRadius: 'var(--radius-sm)',
                             overflow: 'hidden',
                           }}
                         >
@@ -1683,7 +1683,7 @@ export default function RegistrationForm({
                       padding: '32px',
                       marginTop: '40px',
                       borderLeft: '8px solid hsl(var(--primary))',
-                      borderRadius: '4px',
+                      borderRadius: 'var(--radius-sm)',
                       position: 'relative',
                       overflow: 'hidden',
                     }}

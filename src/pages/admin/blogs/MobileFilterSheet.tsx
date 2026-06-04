@@ -1,4 +1,4 @@
-/**
+﻿/**
  * blogs/MobileFilterSheet.tsx
  * ─────────────────────────────────────────────────────────────────
  * Mobile bottom-sheet portal for Blogs list view filters.
@@ -63,7 +63,7 @@ export function MobileFilterSheet({
           right: 0,
           zIndex: 70,
           background: '#fff',
-          borderRadius: '14px 14px 0 0',
+          borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
         }}
       >
         {/* Sheet header */}

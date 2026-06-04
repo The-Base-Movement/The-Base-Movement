@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import type { DonationCampaign } from '@/types/admin'
 import { SortToggle } from '@/components/ui/SortToggle'
 
@@ -42,7 +42,7 @@ export function MobileFilterModal({
           right: 0,
           zIndex: 70,
           background: '#fff',
-          borderRadius: '14px 14px 0 0',
+          borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
         }}
       >
         <div

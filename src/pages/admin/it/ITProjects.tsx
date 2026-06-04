@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -335,7 +335,7 @@ function ProjectCard({ project, onEdit, onDelete, onStatusChange }: CardProps) {
           bottom: 0,
           width: 3,
           background: col.bar,
-          borderRadius: '4px 0 0 4px',
+          borderRadius: 'var(--radius-sm) 0 0 var(--radius-sm)',
         }}
       />
 

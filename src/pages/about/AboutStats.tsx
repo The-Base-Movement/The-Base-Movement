@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import { Sparkline } from '../home/Sparkline'
 
 function useCountUp(target: number, active: boolean, duration = 1800) {
@@ -67,7 +67,7 @@ function StatCard({
       style={{
         background: '#fff',
         border: '1px solid #dfe4dd',
-        borderRadius: '6px',
+        borderRadius: 'var(--radius-md)',
         padding: '22px 22px 20px',
         position: 'relative',
         overflow: 'hidden',
