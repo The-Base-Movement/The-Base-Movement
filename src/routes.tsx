@@ -107,6 +107,7 @@ const ITTodos = lazy(() => import('./pages/admin/it/ITTodos'))
 const ITSecurity = lazy(() => import('./pages/admin/it/ITSecurity'))
 const ITSystem = lazy(() => import('./pages/admin/it/ITSystem'))
 const ITTickets = lazy(() => import('./pages/admin/it/ITTickets'))
+const ITLicenses = lazy(() => import('./pages/admin/it/ITLicenses'))
 const LikedPosts = lazy(() => import('./pages/LikedPosts'))
 const MyDonations = lazy(() => import('./pages/MyDonations'))
 const Referrals = lazy(() => import('./pages/dashboard/Referrals'))
@@ -267,6 +268,7 @@ export const routes: RouteObject[] = [
           { path: '/admin/it-department/todos', element: <ITTodos /> },
           { path: '/admin/it-department/security-protocols', element: <ITSecurity /> },
           { path: '/admin/it-department/system', element: <ITSystem /> },
+          { path: '/admin/it-department/licenses', element: <ITLicenses /> },
           { path: '/admin/it-department/hierarchy', element: <ITDashboard /> },
         ],
       },

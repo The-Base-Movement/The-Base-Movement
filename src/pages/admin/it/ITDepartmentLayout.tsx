@@ -17,6 +17,7 @@ const IT_NAV: { to: string; icon: string; label: string }[] = [
   { to: '/admin/it-department/todos', icon: 'checklist', label: 'To-Dos' },
   { to: '/admin/it-department/security-protocols', icon: 'security', label: 'Security Protocols' },
   { to: '/admin/it-department/system', icon: 'shield', label: 'System' },
+  { to: '/admin/it-department/licenses', icon: 'license', label: 'Licenses' },
   { to: '/admin/it-department/hierarchy', icon: 'account_tree', label: 'Hierarchy' },
 ]
 
