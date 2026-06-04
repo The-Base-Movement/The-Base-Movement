@@ -1,59 +1,66 @@
 /**
- * WingDivider — Eagle Wing decorative section divider.
+ * WingDivider — small Eagle Head ornamental section divider.
  *
- * Replaces plain horizontal lines between public-page sections.
- * Three variants:
- *   'default' → use on white/light backgrounds
- *   'gold'    → use on dark/black backgrounds
- *   'white'   → use on green/coloured backgrounds
+ * Renders a thin line — eagle icon — thin line centred between sections.
+ * Three colour variants:
+ *   'default' → dark lines + eagle, for light backgrounds
+ *   'gold'    → gold lines + eagle, for dark backgrounds
+ *   'white'   → white lines + eagle, for green/coloured backgrounds
  *
  * Usage:
  *   <WingDivider />
  *   <WingDivider variant="gold" />
- *   <WingDivider variant="white" maxWidth={400} />
+ *   <WingDivider variant="white" />
+ *   <WingDivider size={24} my={24} />
  */
 
 interface WingDividerProps {
   variant?: 'default' | 'gold' | 'white'
-  maxWidth?: number | string
+  /** Eagle icon size in px (default 28) */
+  size?: number
+  /** Vertical margin in px (default 28) */
+  my?: number
   className?: string
-  my?: number // vertical margin in px (default 32)
 }
 
-const SRC: Record<NonNullable<WingDividerProps['variant']>, string> = {
-  default: '/brand/divider-default.png',
-  gold: '/brand/divider-gold.png',
-  white: '/brand/divider-white.png',
+const LINE_COLOR: Record<NonNullable<WingDividerProps['variant']>, string> = {
+  default: 'rgba(0,0,0,0.15)',
+  gold: 'hsl(var(--accent))',
+  white: 'rgba(255,255,255,0.35)',
 }
+
+const EAGLE_SRC = '/brand/icons/eagle-head.png'
 
 export function WingDivider({
   variant = 'default',
-  maxWidth = 560,
+  size = 28,
+  my = 28,
   className,
-  my = 32,
 }: WingDividerProps) {
+  const lineColor = LINE_COLOR[variant]
+
   return (
     <div
       className={className}
       aria-hidden="true"
       style={{
         display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
+        gap: 12,
         marginTop: my,
         marginBottom: my,
+        paddingLeft: 32,
+        paddingRight: 32,
       }}
     >
+      <div style={{ flex: 1, height: 1, background: lineColor, maxWidth: 180 }} />
       <img
-        src={SRC[variant]}
+        src={EAGLE_SRC}
         alt=""
-        style={{
-          width: '100%',
-          maxWidth,
-          height: 'auto',
-          display: 'block',
-          userSelect: 'none',
-        }}
+        style={{ width: size, height: size, objectFit: 'contain', flexShrink: 0 }}
       />
+      <div style={{ flex: 1, height: 1, background: lineColor, maxWidth: 180 }} />
     </div>
   )
 }
