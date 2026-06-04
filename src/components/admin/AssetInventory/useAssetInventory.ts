@@ -1,7 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
-import type { Asset, AssetCategory, AssetDetail, AssetCondition, ViewMode } from './types'
+import type {
+  Asset,
+  AssetCategory,
+  AssetDetail,
+  AssetCondition,
+  ViewMode,
+  AssetRequest,
+  AssetAlert,
+} from './types'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildAssetFromRow(row: any): Asset {
@@ -19,6 +27,10 @@ export function buildAssetFromRow(row: any): Asset {
     description: row.description,
     created_at: row.created_at,
     category_name: row.asset_categories?.name ?? '',
+    purchase_price: row.purchase_price ?? null,
+    purchase_date: row.purchase_date ?? null,
+    asset_tag: row.asset_tag ?? null,
+    qr_code_url: row.qr_code_url ?? null,
     assigned_to_id: openAssignment?.assigned_to ?? null,
     assigned_to_name: openAssignment?.users?.full_name ?? null,
     assignment_id: openAssignment?.id ?? null,
@@ -34,6 +46,8 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
   const [loading, setLoading] = useState(true)
   const [detail, setDetail] = useState<AssetDetail | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
+  const [pendingRequests, setPendingRequests] = useState<AssetRequest[]>([])
+  const [alerts, setAlerts] = useState<AssetAlert[]>([])
 
   const fetchAssets = useCallback(async () => {
     setLoading(true)
@@ -42,7 +56,8 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
       .select(
         `id, name, category_id, department_id, condition,
          serial_number, description, created_at,
-         asset_categories ( name ),
+         purchase_price, purchase_date, asset_tag, qr_code_url,
+         asset_categories ( name, lifespan_years ),
          asset_assignments ( id, assigned_to, checked_in_at, users ( full_name ) )`
       )
       .order('created_at', { ascending: false })
@@ -73,7 +88,7 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
   const fetchCategories = useCallback(async () => {
     const { data } = await supabase
       .from('asset_categories')
-      .select('id, name, department_id, created_at')
+      .select('id, name, department_id, created_at, lifespan_years')
       .or(`department_id.eq.${departmentId},department_id.is.null`)
       .order('name')
     setCategories(data ?? [])
@@ -82,6 +97,41 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
   const fetchMembers = useCallback(async () => {
     const { data } = await supabase.from('users').select('id, full_name').order('full_name')
     setMembers(data ?? [])
+  }, [])
+
+  const fetchRequests = useCallback(async () => {
+    const { data } = await supabase
+      .from('asset_requests')
+      .select(
+        'id, asset_id, requested_by, department_id, reason, status, reviewed_by, review_note, expected_return_date, created_at, assets(name), users!asset_requests_requested_by_fkey(full_name)'
+      )
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true })
+    setPendingRequests(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (data ?? []).map((r: any) => ({
+        id: r.id,
+        asset_id: r.asset_id,
+        asset_name: r.assets?.name ?? '',
+        requested_by: r.requested_by,
+        requester_name: r.users?.full_name ?? 'Unknown',
+        department_id: r.department_id,
+        reason: r.reason,
+        status: r.status,
+        reviewed_by: r.reviewed_by,
+        review_note: r.review_note,
+        expected_return_date: r.expected_return_date,
+        created_at: r.created_at,
+      }))
+    )
+  }, [])
+
+  const fetchAlerts = useCallback(async () => {
+    const { data } = await supabase
+      .from('asset_alerts')
+      .select('id, asset_id, assignment_id, alert_type, resolved, created_at')
+      .eq('resolved', false)
+    setAlerts(data ?? [])
   }, [])
 
   useEffect(() => {
@@ -96,6 +146,14 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchMembers()
   }, [fetchMembers])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchRequests()
+  }, [fetchRequests])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchAlerts()
+  }, [fetchAlerts])
 
   const loadDetail = useCallback(async (assetId: string) => {
     setDetailLoading(true)
@@ -286,6 +344,117 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
     [fetchAssets, loadDetail]
   )
 
+  const submitRequest = useCallback(
+    async (payload: {
+      asset_id: string
+      department_id: string
+      reason: string
+      expected_return_date: string | null
+      requested_by: string
+    }) => {
+      const { error } = await supabase.from('asset_requests').insert(payload)
+      if (error) {
+        toast.error('Failed to submit request')
+        return false
+      }
+      toast.success('Request submitted')
+      await fetchRequests()
+      return true
+    },
+    [fetchRequests]
+  )
+
+  const approveRequest = useCallback(
+    async (
+      requestId: string,
+      assetId: string,
+      assignTo: string,
+      returnDate: string | null,
+      reviewNote: string,
+      reviewedBy: string
+    ) => {
+      const { error: reqErr } = await supabase
+        .from('asset_requests')
+        .update({ status: 'approved', reviewed_by: reviewedBy, review_note: reviewNote })
+        .eq('id', requestId)
+      if (reqErr) {
+        toast.error('Failed to approve request')
+        return false
+      }
+      const { error: assignErr } = await supabase.from('asset_assignments').insert({
+        asset_id: assetId,
+        assigned_to: assignTo,
+        expected_return_date: returnDate,
+        notes: reviewNote,
+      })
+      if (assignErr) {
+        toast.error('Assignment failed after approval')
+        return false
+      }
+      toast.success('Request approved — asset checked out')
+      await fetchRequests()
+      await fetchAssets()
+      return true
+    },
+    [fetchRequests, fetchAssets]
+  )
+
+  const denyRequest = useCallback(
+    async (requestId: string, reviewNote: string, reviewedBy: string) => {
+      const { error } = await supabase
+        .from('asset_requests')
+        .update({ status: 'denied', reviewed_by: reviewedBy, review_note: reviewNote })
+        .eq('id', requestId)
+      if (error) {
+        toast.error('Failed to deny request')
+        return false
+      }
+      toast.success('Request denied')
+      await fetchRequests()
+      return true
+    },
+    [fetchRequests]
+  )
+
+  const resolveAlert = useCallback(
+    async (alertId: string) => {
+      const { error } = await supabase
+        .from('asset_alerts')
+        .update({ resolved: true })
+        .eq('id', alertId)
+      if (error) {
+        toast.error('Failed to resolve alert')
+        return false
+      }
+      toast.success('Alert resolved')
+      await fetchAlerts()
+      return true
+    },
+    [fetchAlerts]
+  )
+
+  const escalateToMissing = useCallback(
+    async (assetId: string, assignmentId: string | null) => {
+      const { error } = await supabase.from('asset_alerts').insert({
+        asset_id: assetId,
+        assignment_id: assignmentId,
+        alert_type: 'missing',
+      })
+      if (error) {
+        toast.error('Failed to escalate')
+        return false
+      }
+      toast.success('Escalated to missing')
+      await fetchAlerts()
+      return true
+    },
+    [fetchAlerts]
+  )
+
+  const saveQrCodeUrl = useCallback(async (assetId: string, url: string) => {
+    await supabase.from('assets').update({ qr_code_url: url }).eq('id', assetId)
+  }, [])
+
   return {
     assets,
     categories,
@@ -305,5 +474,15 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
     updateCondition,
     checkOut,
     checkIn,
+    pendingRequests,
+    alerts,
+    fetchRequests,
+    fetchAlerts,
+    submitRequest,
+    approveRequest,
+    denyRequest,
+    resolveAlert,
+    escalateToMissing,
+    saveQrCodeUrl,
   }
 }
