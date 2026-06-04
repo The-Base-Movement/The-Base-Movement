@@ -1311,8 +1311,9 @@ export default function ConstituencyDetails() {
       {isProfileOpen && leaderProfile && (
         <LeaderProfileModal
           leaderProfile={leaderProfile}
-          chapterName={constituency.name}
-          chapterCityOrRegion={constituency.regionName}
+          locationName={constituency.name}
+          locationRegion={constituency.regionName}
+          leaderTitle="Constituency Coordinator"
           onClose={() => setIsProfileOpen(false)}
         />
       )}

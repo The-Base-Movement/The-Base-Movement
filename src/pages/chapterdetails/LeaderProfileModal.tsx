@@ -2,15 +2,17 @@ import type { Member } from '@/types/admin'
 
 interface LeaderProfileModalProps {
   leaderProfile: Member
-  chapterName: string
-  chapterCityOrRegion: string
+  locationName: string
+  locationRegion: string
+  leaderTitle?: string
   onClose: () => void
 }
 
 export function LeaderProfileModal({
   leaderProfile,
-  chapterName,
-  chapterCityOrRegion,
+  locationName,
+  locationRegion,
+  leaderTitle = 'Chapter Leader',
   onClose,
 }: LeaderProfileModalProps) {
   return (
@@ -30,7 +32,7 @@ export function LeaderProfileModal({
       <div
         style={{
           background: '#fff',
-          borderRadius: 6,
+          borderRadius: 'var(--radius-sm)',
           border: '1px solid hsl(var(--border))',
           width: '100%',
           maxWidth: 500,
@@ -55,7 +57,7 @@ export function LeaderProfileModal({
               left: 24,
               width: 52,
               height: 52,
-              borderRadius: 4,
+              borderRadius: 'var(--radius-xs)',
               border: '3px solid #fff',
               boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
               overflow: 'hidden',
@@ -94,7 +96,7 @@ export function LeaderProfileModal({
               right: 12,
               background: 'rgba(255,255,255,0.1)',
               border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-xs)',
               width: 30,
               height: 30,
               display: 'flex',
@@ -140,13 +142,13 @@ export function LeaderProfileModal({
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
-                {leaderProfile.profession || 'Chapter Leader'}
+                {leaderProfile.profession || leaderTitle}
               </div>
             </div>
             <span
               style={{
                 padding: '2px 10px',
-                borderRadius: 4,
+                borderRadius: 'var(--radius-xs)',
                 fontSize: 11,
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontFamily: "'Public Sans', sans-serif",
@@ -157,7 +159,7 @@ export function LeaderProfileModal({
                 letterSpacing: '0.05em',
               }}
             >
-              Chapter Leader
+              {leaderTitle}
             </span>
           </div>
 
@@ -232,7 +234,7 @@ export function LeaderProfileModal({
           <div
             style={{
               background: 'hsl(var(--container-low))',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-xs)',
               padding: '12px 14px',
               marginBottom: 20,
             }}
@@ -247,8 +249,8 @@ export function LeaderProfileModal({
                 margin: 0,
               }}
             >
-              Appointed chapter leader for {chapterName}. Responsible for coordinating local chapter
-              activities and driving grassroots mobilization in {chapterCityOrRegion}.
+              Appointed {leaderTitle.toLowerCase()} for {locationName}. Responsible for coordinating
+              local activities and driving grassroots mobilization in {locationRegion}.
             </p>
           </div>
 

@@ -365,8 +365,8 @@ export default function ChapterDetails() {
       {isProfileOpen && leaderProfile && (
         <LeaderProfileModal
           leaderProfile={leaderProfile}
-          chapterName={chapter.name}
-          chapterCityOrRegion={chapter.city_or_region}
+          locationName={chapter.name}
+          locationRegion={chapter.city_or_region}
           onClose={() => setIsProfileOpen(false)}
         />
       )}
