@@ -13,6 +13,7 @@ interface ITStats {
   totalAssets: number
   assignedAssets: number
   damagedAssets: number
+  unresolvedAlerts: number
 }
 
 const QUICK_LINKS = [
@@ -75,6 +76,7 @@ export default function ITDashboard() {
           { count: totalAssets },
           { count: assignedAssets },
           { count: damagedAssets },
+          { count: unresolvedAlerts },
         ] = await Promise.all([
           supabase.from('it_projects').select('*', { count: 'exact', head: true }),
           supabase
@@ -103,6 +105,10 @@ export default function ITDashboard() {
             .select('*', { count: 'exact', head: true })
             .eq('department_id', 'it')
             .eq('condition', 'damaged'),
+          supabase
+            .from('asset_alerts')
+            .select('*', { count: 'exact', head: true })
+            .eq('resolved', false),
         ])
 
         setStats({
@@ -113,6 +119,7 @@ export default function ITDashboard() {
           totalAssets: totalAssets ?? 0,
           assignedAssets: assignedAssets ?? 0,
           damagedAssets: damagedAssets ?? 0,
+          unresolvedAlerts: unresolvedAlerts ?? 0,
         })
       } catch (err) {
         console.error('[IT Dashboard] Failed to load stats:', err)
@@ -159,6 +166,14 @@ export default function ITDashboard() {
       bar: 'hsl(var(--destructive))',
       sub: 'Open and in-progress tickets',
       to: '/admin/it-department/tickets',
+    },
+    {
+      label: 'Asset Alerts',
+      value: stats?.unresolvedAlerts,
+      icon: 'warning',
+      bar: 'hsl(var(--destructive))',
+      sub: 'Overdue or missing assets',
+      to: '/admin/it-department/assets',
     },
     {
       label: 'Total Assets',
