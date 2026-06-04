@@ -10,6 +10,9 @@ interface ITStats {
   completedProjects: number
   activeTodos: number
   pendingTickets: number
+  totalAssets: number
+  assignedAssets: number
+  damagedAssets: number
 }
 
 const QUICK_LINKS = [
@@ -69,6 +72,9 @@ export default function ITDashboard() {
           { count: completed },
           { count: activeTodos },
           { count: pendingTickets },
+          { count: totalAssets },
+          { count: assignedAssets },
+          { count: damagedAssets },
         ] = await Promise.all([
           supabase.from('it_projects').select('*', { count: 'exact', head: true }),
           supabase
@@ -83,6 +89,20 @@ export default function ITDashboard() {
             .from('it_tickets')
             .select('*', { count: 'exact', head: true })
             .in('status', ['open', 'in-progress']),
+          supabase
+            .from('assets')
+            .select('*', { count: 'exact', head: true })
+            .eq('department_id', 'it'),
+          supabase
+            .from('asset_assignments')
+            .select('assets!inner(department_id)', { count: 'exact', head: true })
+            .eq('assets.department_id', 'it')
+            .is('checked_in_at', null),
+          supabase
+            .from('assets')
+            .select('*', { count: 'exact', head: true })
+            .eq('department_id', 'it')
+            .eq('condition', 'damaged'),
         ])
 
         setStats({
@@ -90,6 +110,9 @@ export default function ITDashboard() {
           completedProjects: completed ?? 0,
           activeTodos: activeTodos ?? 0,
           pendingTickets: pendingTickets ?? 0,
+          totalAssets: totalAssets ?? 0,
+          assignedAssets: assignedAssets ?? 0,
+          damagedAssets: damagedAssets ?? 0,
         })
       } catch (err) {
         console.error('[IT Dashboard] Failed to load stats:', err)
@@ -136,6 +159,30 @@ export default function ITDashboard() {
       bar: 'hsl(var(--destructive))',
       sub: 'Open and in-progress tickets',
       to: '/admin/it-department/tickets',
+    },
+    {
+      label: 'Total Assets',
+      value: stats?.totalAssets,
+      icon: 'inventory_2',
+      bar: 'hsl(var(--on-surface))',
+      sub: 'All IT department assets',
+      to: '/admin/it-department/assets',
+    },
+    {
+      label: 'Assigned Assets',
+      value: stats?.assignedAssets,
+      icon: 'person_check',
+      bar: 'hsl(var(--accent))',
+      sub: 'Currently checked out',
+      to: '/admin/it-department/assets',
+    },
+    {
+      label: 'Damaged Assets',
+      value: stats?.damagedAssets,
+      icon: 'report',
+      bar: 'hsl(var(--destructive))',
+      sub: 'Condition marked as damaged',
+      to: '/admin/it-department/assets',
     },
   ]
 

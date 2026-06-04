@@ -7,7 +7,7 @@ import type { AdminUser } from '@/types/admin'
 import { ITLayoutContext } from './ITLayoutContext'
 import type React from 'react'
 
-const IT_ALLOWED_ROLES = ['SUPER_ADMIN', 'FOUNDER']
+const IT_ALLOWED_ROLES = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
 
 const IT_NAV: { to: string; icon: string; label: string }[] = [
   { to: '/admin/it-department', icon: 'dashboard', label: 'Overview' },
@@ -18,6 +18,7 @@ const IT_NAV: { to: string; icon: string; label: string }[] = [
   { to: '/admin/it-department/security-protocols', icon: 'security', label: 'Security Protocols' },
   { to: '/admin/it-department/system', icon: 'shield', label: 'System' },
   { to: '/admin/it-department/licenses', icon: 'license', label: 'Licenses' },
+  { to: '/admin/it-department/assets', icon: 'inventory_2', label: 'Assets' },
   { to: '/admin/it-department/hierarchy', icon: 'account_tree', label: 'Hierarchy' },
 ]
 
@@ -324,7 +325,11 @@ export default function ITDepartmentLayout() {
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {user.role === 'FOUNDER' ? 'Founder' : 'IT Manager'}
+                    {user.role === 'FOUNDER'
+                      ? 'Founder'
+                      : user.role === 'SUPER_ADMIN'
+                        ? 'Super Admin'
+                        : 'IT Manager'}
                   </span>
                 </div>
               </div>
