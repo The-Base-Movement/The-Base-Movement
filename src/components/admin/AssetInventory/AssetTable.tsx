@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import type { Asset, AssetCondition } from './types'
+import type { Asset, AssetCondition, AssetAlert } from './types'
+import { AlertBadge } from './AlertBadge'
 
 const CONDITION_PILL: Record<AssetCondition, string> = {
   good: 'pill pill-ok',
@@ -17,12 +18,21 @@ interface Props {
   assets: Asset[]
   loading: boolean
   canWrite: boolean
+  alerts: AssetAlert[]
   onRowClick: (asset: Asset) => void
   onEdit: (asset: Asset) => void
   onDelete: (asset: Asset) => void
 }
 
-export function AssetTable({ assets, loading, canWrite, onRowClick, onEdit, onDelete }: Props) {
+export function AssetTable({
+  assets,
+  loading,
+  canWrite,
+  alerts,
+  onRowClick,
+  onEdit,
+  onDelete,
+}: Props) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
   if (loading) {
@@ -100,6 +110,10 @@ export function AssetTable({ assets, loading, canWrite, onRowClick, onEdit, onDe
                 }}
               >
                 {asset.name}
+                {(() => {
+                  const activeAlert = alerts.find((al) => al.asset_id === asset.id && !al.resolved)
+                  return activeAlert ? <AlertBadge type={activeAlert.alert_type} /> : null
+                })()}
               </td>
               <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
                 {asset.category_name}

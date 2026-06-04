@@ -1,8 +1,11 @@
 import { useState } from 'react'
-import type { AssetDetail, AssetCondition } from './types'
+import type { AssetDetail, AssetCondition, AssetAlert } from './types'
 import { MaintenanceTimeline } from './MaintenanceTimeline'
 import { CheckoutHistory } from './CheckoutHistory'
 import { ConditionUpdateForm } from './ConditionUpdateForm'
+import { AlertsPanel } from './AlertsPanel'
+import { PrintLabelView } from './PrintLabelView'
+import { DepreciationChart } from './DepreciationChart'
 
 const CONDITION_PILL: Record<AssetCondition, string> = {
   good: 'pill pill-ok',
@@ -32,6 +35,10 @@ interface Props {
     notes: string
   }) => Promise<boolean>
   onCheckIn: (assignmentId: string, assetId: string) => Promise<boolean>
+  alerts: AssetAlert[]
+  lifespanYears: number
+  onResolveAlert: (alertId: string) => Promise<boolean>
+  onEscalate: (assetId: string, assignmentId: string | null) => Promise<boolean>
 }
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -63,8 +70,13 @@ export function AssetDetailPanel({
   onUpdateCondition,
   onCheckOut,
   onCheckIn,
+  alerts,
+  lifespanYears,
+  onResolveAlert,
+  onEscalate,
 }: Props) {
   const [tab, setTab] = useState<Tab>('overview')
+  const [showPrint, setShowPrint] = useState(false)
   const { asset, maintenanceLogs, assignments } = detail
 
   const TABS: { id: Tab; label: string }[] = [
@@ -220,6 +232,124 @@ export function AssetDetailPanel({
                   onUpdate={onUpdateCondition}
                 />
               )}
+
+              {/* Asset tag + QR */}
+              {asset.asset_tag && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                    padding: '12px 14px',
+                    background: 'hsl(var(--container-low))',
+                    borderRadius: 'var(--radius-md)',
+                  }}
+                >
+                  {asset.qr_code_url && (
+                    <img
+                      src={asset.qr_code_url}
+                      alt="QR"
+                      style={{ width: 64, height: 64, flexShrink: 0 }}
+                    />
+                  )}
+                  <div>
+                    <p
+                      style={{
+                        margin: '0 0 2px',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      Asset Tag
+                    </p>
+                    <p
+                      style={{
+                        margin: '0 0 8px',
+                        fontFamily: 'monospace',
+                        fontSize: 15,
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {asset.asset_tag}
+                    </p>
+                    <button
+                      className="btn btn-outline btn-sm"
+                      style={{ display: 'flex', alignItems: 'center', gap: 5 }}
+                      onClick={() => setShowPrint(true)}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        print
+                      </span>
+                      Print Label
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Depreciation */}
+              {asset.purchase_price != null &&
+                asset.purchase_date &&
+                (() => {
+                  const now = new Date().getTime()
+                  const ageYears =
+                    (now - new Date(asset.purchase_date).getTime()) / (1000 * 60 * 60 * 24 * 365.25)
+                  const current = Math.max(0, asset.purchase_price * (1 - ageYears / lifespanYears))
+                  return (
+                    <div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          marginBottom: 4,
+                        }}
+                      >
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 10,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          Estimated Value
+                        </p>
+                      </div>
+                      <p
+                        style={{
+                          margin: '0 0 4px',
+                          fontSize: 'var(--kpi-num-size)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        ${current.toFixed(2)}
+                      </p>
+                      <DepreciationChart
+                        purchasePrice={asset.purchase_price!}
+                        purchaseDate={asset.purchase_date}
+                        lifespanYears={lifespanYears}
+                      />
+                    </div>
+                  )
+                })()}
+
+              {/* Alerts */}
+              {canWrite && (
+                <AlertsPanel
+                  alerts={alerts}
+                  assetId={asset.id}
+                  assignmentId={asset.assignment_id}
+                  onResolve={onResolveAlert}
+                  onEscalate={onEscalate}
+                />
+              )}
+
+              {/* Print label modal */}
+              {showPrint && <PrintLabelView asset={asset} onClose={() => setShowPrint(false)} />}
             </div>
           ) : tab === 'maintenance' ? (
             <MaintenanceTimeline logs={maintenanceLogs} />
