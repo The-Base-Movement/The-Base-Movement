@@ -24,23 +24,82 @@ export function DeliveryForm({
   dbRegions,
   onChange,
 }: DeliveryFormProps) {
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: 11,
+    fontWeight: 'var(--font-weight-bold, 700)',
+    color: 'hsl(var(--on-surface))',
+    letterSpacing: '-0.005em',
+    marginBottom: 8,
+    fontFamily: "'Public Sans', sans-serif",
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    height: 48,
+    background: 'hsl(var(--container-low))',
+    border: '1px solid hsl(var(--border))',
+    outline: 'none',
+    boxSizing: 'border-box',
+    padding: '0 16px',
+    borderRadius: 'var(--radius-sm)',
+    fontSize: 14,
+    fontFamily: "'Public Sans', sans-serif",
+    color: 'hsl(var(--on-surface))',
+    transition: 'border-color 0.15s ease',
+  }
+
   return (
-    <div className="bg-white border border-stone-200 p-8 rounded-sm shadow-sm">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 bg-[var(--brand-green)]/10 rounded-full flex items-center justify-center">
+    <div
+      className="panel"
+      style={{
+        padding: 24,
+        background: 'hsl(var(--background))',
+        border: '1px solid hsl(var(--border))',
+        borderRadius: 'var(--radius-sm)',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            background: 'hsl(var(--primary) / 10%)',
+            borderRadius: 'var(--radius-pill)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <span
             className="material-symbols-outlined"
-            style={{ fontSize: 20, color: 'var(--brand-green)' }}
+            style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
           >
             local_shipping
           </span>
         </div>
-        <h2 className="font-h3 text-xl text-stone-900">1. Delivery Information</h2>
+        <h2
+          className="font-h3 text-xl"
+          style={{
+            margin: 0,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-semibold, 600)',
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          1. Delivery Information
+        </h2>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-6">
-        <div className="sm:col-span-2">
-          <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: 20,
+        }}
+      >
+        <div style={{ gridColumn: 'span 2' }}>
+          <label htmlFor="input-9f4084" style={labelStyle}>
             Full name
           </label>
           <input
@@ -51,12 +110,12 @@ export function DeliveryForm({
             required
             value={formData.fullName}
             onChange={onChange}
-            className="w-full h-12 bg-stone-50 border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
+            style={inputStyle}
             placeholder="Enter your full name"
           />
         </div>
         <div>
-          <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+          <label htmlFor="input-94b596" style={labelStyle}>
             Email address
           </label>
           <input
@@ -67,12 +126,12 @@ export function DeliveryForm({
             required
             value={formData.email}
             onChange={onChange}
-            className="w-full h-12 bg-stone-50 border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
+            style={inputStyle}
             placeholder="email@example.com"
           />
         </div>
         <div>
-          <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+          <label htmlFor="input-6781fb" style={labelStyle}>
             Phone number
           </label>
           <input
@@ -83,12 +142,12 @@ export function DeliveryForm({
             required
             value={formData.phone}
             onChange={onChange}
-            className="w-full h-12 bg-stone-50 border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
+            style={inputStyle}
             placeholder="+233 00 000 0000"
           />
         </div>
-        <div className="sm:col-span-2">
-          <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+        <div style={{ gridColumn: 'span 2' }}>
+          <label htmlFor="input-5705f2" style={labelStyle}>
             Shipping address
           </label>
           <input
@@ -99,12 +158,12 @@ export function DeliveryForm({
             required
             value={formData.address}
             onChange={onChange}
-            className="w-full h-12 bg-stone-50 border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
+            style={inputStyle}
             placeholder="House Number, Street Name"
           />
         </div>
         <div>
-          <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+          <label htmlFor="select-5d78b8" style={labelStyle}>
             Country
           </label>
           <select
@@ -112,7 +171,7 @@ export function DeliveryForm({
             name="country"
             value={formData.country}
             onChange={onChange}
-            className="w-full h-12 bg-stone-50 border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm appearance-none"
+            style={{ ...inputStyle, paddingRight: 40 }}
           >
             {dbCountries.map((c) => (
               <option key={c.name} value={c.name}>
@@ -124,7 +183,7 @@ export function DeliveryForm({
         </div>
         {isDiaspora ? (
           <div>
-            <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+            <label htmlFor="input-c53526" style={labelStyle}>
               State / Province
             </label>
             <input
@@ -134,13 +193,13 @@ export function DeliveryForm({
               name="stateProvince"
               value={formData.stateProvince}
               onChange={onChange}
-              className="w-full h-12 bg-stone-50 border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
+              style={inputStyle}
               placeholder="State or Province"
             />
           </div>
         ) : (
           <div>
-            <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+            <label htmlFor="select-12f928" style={labelStyle}>
               Region
             </label>
             <select
@@ -148,7 +207,7 @@ export function DeliveryForm({
               name="region"
               value={formData.region}
               onChange={onChange}
-              className="w-full h-12 bg-stone-50 border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm appearance-none"
+              style={{ ...inputStyle, paddingRight: 40 }}
             >
               {dbRegions.map((r) => (
                 <option key={r.id} value={r.name}>

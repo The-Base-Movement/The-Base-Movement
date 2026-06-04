@@ -187,7 +187,7 @@ export default function Checkout() {
         <header className="mb-12">
           <Link
             to={isDashboard ? '/dashboard/store/cart' : '/store/cart'}
-            className="inline-flex items-center gap-2 hover:text-[var(--brand-green)] transition-colors mb-4 group"
+            className="inline-flex items-center gap-2 hover:text-brand-green transition-colors mb-4 group"
             style={{ color: 'hsl(var(--on-surface-muted))' }}
           >
             <span
@@ -204,7 +204,7 @@ export default function Checkout() {
           >
             <span
               className="material-symbols-outlined shrink-0"
-              style={{ fontSize: 32, color: 'var(--brand-green)' }}
+              style={{ fontSize: 32, color: 'hsl(var(--brand-green))' }}
             >
               check_circle
             </span>
@@ -296,7 +296,7 @@ export default function Checkout() {
                           id="usePoints"
                           checked={usePoints}
                           onChange={(e) => setUsePoints(e.target.checked)}
-                          className="w-4 h-4 rounded border-border text-[var(--brand-green)] focus:ring-[var(--brand-green)]"
+                          className="w-4 h-4 rounded border-border text-brand-green focus:ring-brand-green"
                         />
                         <label
                           htmlFor="usePoints"
@@ -306,12 +306,12 @@ export default function Checkout() {
                           Redeem Points
                         </label>
                       </div>
-                      <span className="text-micro font-bold text-[var(--brand-green)] tracking-tight">
+                      <span className="text-micro font-bold text-brand-green tracking-tight">
                         {userPoints.toLocaleString()} Available
                       </span>
                     </div>
                     {usePoints && (
-                      <div className="flex justify-between text-xs text-[var(--brand-green)] tracking-tight animate-in fade-in slide-in-from-top-1">
+                      <div className="flex justify-between text-xs text-brand-green tracking-tight animate-in fade-in slide-in-from-top-1">
                         <span>Points Discount</span>
                         <span className="font-bold">- ₵{appliedPointsValue.toFixed(2)}</span>
                       </div>
@@ -323,9 +323,7 @@ export default function Checkout() {
                   <span className="font-h3 text-lg" style={{ color: 'hsl(var(--on-surface))' }}>
                     Total
                   </span>
-                  <span className="font-h3 text-xl text-[var(--brand-green)]">
-                    ₵{total.toFixed(2)}
-                  </span>
+                  <span className="font-h3 text-xl text-brand-green">₵{total.toFixed(2)}</span>
                 </div>
               </div>
 

@@ -5,87 +5,246 @@ interface PaymentMethodSelectorProps {
 
 export function PaymentMethodSelector({ paymentMethod, onSelect }: PaymentMethodSelectorProps) {
   return (
-    <div className="bg-white border border-stone-200 p-8 rounded-sm shadow-sm">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 bg-[var(--brand-green)]/10 rounded-full flex items-center justify-center">
+    <div
+      className="panel"
+      style={{
+        padding: 24,
+        background: 'hsl(var(--background))',
+        border: '1px solid hsl(var(--border))',
+        borderRadius: 'var(--radius-sm)',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            background: 'hsl(var(--primary) / 10%)',
+            borderRadius: 'var(--radius-pill)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <span
             className="material-symbols-outlined"
-            style={{ fontSize: 20, color: 'var(--brand-green)' }}
+            style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
           >
             credit_card
           </span>
         </div>
-        <h2 className="font-h3 text-xl text-stone-900">2. Payment Method</h2>
+        <h2
+          className="font-h3 text-xl"
+          style={{
+            margin: 0,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-semibold, 600)',
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          2. Payment Method
+        </h2>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 16,
+        }}
+      >
         <button
           type="button"
           onClick={() => onSelect('momo')}
-          className={`flex items-center gap-4 p-6 border rounded-sm transition-all text-left ${
-            paymentMethod === 'momo'
-              ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 ring-1 ring-[var(--brand-green)]'
-              : 'border-stone-200 hover:border-stone-300 bg-stone-50'
-          }`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16,
+            padding: 24,
+            border: `1px solid ${
+              paymentMethod === 'momo' ? 'hsl(var(--primary))' : 'hsl(var(--border))'
+            }`,
+            borderRadius: 'var(--radius-sm)',
+            background:
+              paymentMethod === 'momo' ? 'hsl(var(--primary) / 5%)' : 'hsl(var(--container-low))',
+            boxShadow: paymentMethod === 'momo' ? '0 0 0 1px hsl(var(--primary))' : 'none',
+            textAlign: 'left',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
         >
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${paymentMethod === 'momo' ? 'bg-[var(--brand-green)] text-white' : 'bg-stone-200 text-stone-500'}`}
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 'var(--radius-pill)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              background: paymentMethod === 'momo' ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+              color: paymentMethod === 'momo' ? '#fff' : 'hsl(var(--on-surface-muted))',
+            }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
               smartphone
             </span>
           </div>
           <div>
-            <p className="font-bold text-stone-900 text-sm">Mobile money</p>
-            <p className="text-micro text-stone-500 tracking-tight">MTN, Telecel, AT money</p>
+            <p
+              style={{
+                margin: '0 0 4px',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-bold, 700)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Mobile money
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                letterSpacing: '-0.005em',
+              }}
+            >
+              MTN, Telecel, AT money
+            </p>
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => onSelect('card')}
-          className={`flex items-center gap-4 p-6 border rounded-sm transition-all text-left ${
-            paymentMethod === 'card'
-              ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 ring-1 ring-[var(--brand-green)]'
-              : 'border-stone-200 hover:border-stone-300 bg-stone-50'
-          }`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16,
+            padding: 24,
+            border: `1px solid ${
+              paymentMethod === 'card' ? 'hsl(var(--primary))' : 'hsl(var(--border))'
+            }`,
+            borderRadius: 'var(--radius-sm)',
+            background:
+              paymentMethod === 'card' ? 'hsl(var(--primary) / 5%)' : 'hsl(var(--container-low))',
+            boxShadow: paymentMethod === 'card' ? '0 0 0 1px hsl(var(--primary))' : 'none',
+            textAlign: 'left',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
         >
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${paymentMethod === 'card' ? 'bg-[var(--brand-green)] text-white' : 'bg-stone-200 text-stone-500'}`}
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 'var(--radius-pill)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              background: paymentMethod === 'card' ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+              color: paymentMethod === 'card' ? '#fff' : 'hsl(var(--on-surface-muted))',
+            }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
               credit_card
             </span>
           </div>
           <div>
-            <p className="font-bold text-stone-900 text-sm">Credit / debit card</p>
-            <p className="text-micro text-stone-500 tracking-tight">Visa, Mastercard, AMEX</p>
+            <p
+              style={{
+                margin: '0 0 4px',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-bold, 700)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Credit / debit card
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                letterSpacing: '-0.005em',
+              }}
+            >
+              Visa, Mastercard, AMEX
+            </p>
           </div>
         </button>
       </div>
 
       {paymentMethod === 'momo' && (
-        <div className="mt-8 p-6 bg-stone-50 border border-stone-100 rounded-sm">
-          <label className="block text-micro font-bold text-stone-900 tracking-tight mb-4">
+        <div
+          style={{
+            marginTop: 24,
+            padding: 24,
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+          }}
+        >
+          <label
+            style={{
+              display: 'block',
+              fontSize: 11,
+              fontWeight: 'var(--font-weight-bold, 700)',
+              color: 'hsl(var(--on-surface))',
+              letterSpacing: '-0.005em',
+              marginBottom: 12,
+            }}
+          >
             Select network
           </label>
-          <div className="flex flex-wrap gap-4">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
             {['MTN', 'Telecel', 'AT Money'].map((network) => (
-              <label key={network} className="flex items-center gap-2 cursor-pointer group">
+              <label
+                key={network}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  cursor: 'pointer',
+                }}
+              >
                 <input
                   id="input-4964d2"
                   type="radio"
                   name="network"
-                  className="w-4 h-4 text-[var(--brand-green)] focus:ring-[var(--brand-green)]"
+                  style={{
+                    width: 16,
+                    height: 16,
+                    accentColor: 'hsl(var(--primary))',
+                  }}
                 />
-                <span className="text-xs font-bold text-stone-600 group-hover:text-stone-900 tracking-tight">
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-bold, 700)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    letterSpacing: '-0.005em',
+                  }}
+                >
                   {network}
                 </span>
               </label>
             ))}
           </div>
-          <div className="mt-6">
-            <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">
+          <div style={{ marginTop: 20 }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: 11,
+                fontWeight: 'var(--font-weight-bold, 700)',
+                color: 'hsl(var(--on-surface))',
+                letterSpacing: '-0.005em',
+                marginBottom: 8,
+              }}
+            >
               MoMo number
             </label>
             <input
@@ -93,7 +252,19 @@ export function PaymentMethodSelector({ paymentMethod, onSelect }: PaymentMethod
               name="name-94ad78"
               id="input-94ad78"
               type="tel"
-              className="w-full h-12 bg-white border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
+              style={{
+                width: '100%',
+                height: 48,
+                background: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
+                outline: 'none',
+                boxSizing: 'border-box',
+                padding: '0 16px',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 14,
+                fontFamily: "'Public Sans', sans-serif",
+                transition: 'border-color 0.15s ease',
+              }}
               placeholder="Enter your mobile number"
             />
           </div>

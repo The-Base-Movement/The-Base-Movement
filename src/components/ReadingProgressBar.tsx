@@ -12,32 +12,54 @@ export default function ReadingProgressBar() {
     PUBLIC_PREFIXES.some((p) => location.pathname.startsWith(p)) &&
     !EXCLUDED_PREFIXES.some((p) => location.pathname.startsWith(p))
 
-  // Reset to 0 on every route change
   useEffect(() => {
-    const t = setTimeout(() => setScrollProgress(0), 0)
-    return () => clearTimeout(t)
-  }, [location.pathname])
-
-  useEffect(() => {
-    if (!isPublic) return
+    if (!isPublic) {
+      const t = setTimeout(() => setScrollProgress(0), 0)
+      return () => clearTimeout(t)
+    }
 
     const handler = () => {
-      const scrolled = window.scrollY
-      const total = document.documentElement.scrollHeight - window.innerHeight
+      const scrolled =
+        window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+      const total = document.documentElement.scrollHeight - document.documentElement.clientHeight
       setScrollProgress(total > 0 ? (scrolled / total) * 100 : 0)
     }
 
+    // Defer the initial calculation to avoid synchronous setState in the effect body
+    const t = setTimeout(handler, 0)
+
     window.addEventListener('scroll', handler, { passive: true })
-    return () => window.removeEventListener('scroll', handler)
-  }, [isPublic])
+    window.addEventListener('resize', handler, { passive: true })
+
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('scroll', handler)
+      window.removeEventListener('resize', handler)
+    }
+  }, [isPublic, location.pathname])
 
   if (!isPublic) return null
 
   return (
-    <div className="fixed top-0 left-0 w-full h-[4px] z-[300] pointer-events-none">
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: 4,
+        zIndex: 300,
+        pointerEvents: 'none',
+      }}
+    >
       <div
-        className="h-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] transition-all duration-150 ease-out"
-        style={{ width: `${scrollProgress}%` }}
+        style={{
+          height: '100%',
+          width: `${scrollProgress}%`,
+          background:
+            'linear-gradient(to right, hsl(var(--brand-red)), hsl(var(--brand-gold)), hsl(var(--brand-green)))',
+          transition: 'width 150ms ease-out',
+        }}
       />
     </div>
   )

@@ -40,16 +40,20 @@ export function PublicImpactView({
   onCloseFullLog,
 }: PublicImpactViewProps) {
   const heroStats = [
-    { v: isLoading ? '—' : stats.totalMembers, l: 'Members registered', color: 'var(--brand-red)' },
+    {
+      v: isLoading ? '—' : stats.totalMembers,
+      l: 'Members registered',
+      color: 'hsl(var(--brand-red))',
+    },
     {
       v: isLoading ? '₵—' : stats.totalDonations,
       l: 'Donations raised',
-      color: 'var(--brand-gold)',
+      color: 'hsl(var(--brand-gold))',
     },
     {
       v: isLoading ? '—' : stats.activeChapters,
       l: 'Active branches',
-      color: 'var(--brand-green)',
+      color: 'hsl(var(--brand-green))',
     },
     { v: isLoading ? '—' : `${stats.countriesReached}`, l: 'Countries reached', color: '#fff' },
   ]
@@ -71,7 +75,7 @@ export function PublicImpactView({
           overflow: 'hidden',
           borderBottom: '5px solid',
           borderImage:
-            'linear-gradient(to right, var(--brand-red), var(--brand-gold), var(--brand-green)) 1',
+            'linear-gradient(to right, hsl(var(--brand-red)), hsl(var(--brand-gold)), hsl(var(--brand-green))) 1',
         }}
       >
         <div
@@ -287,9 +291,9 @@ export function PublicImpactView({
                   },
                 }[level]
                 const barColor = {
-                  hi: 'var(--brand-green)',
-                  mid: 'var(--brand-gold)',
-                  lo: 'var(--brand-red)',
+                  hi: 'hsl(var(--brand-green))',
+                  mid: 'hsl(var(--brand-gold))',
+                  lo: 'hsl(var(--brand-red))',
                 }[level]
                 return (
                   <div key={r.name} className="panel" style={{ overflow: 'hidden' }}>
@@ -594,7 +598,7 @@ export function PublicImpactView({
                     height: '100%',
                     width: `${progressPct}%`,
                     background:
-                      'linear-gradient(to right, var(--brand-red), var(--brand-gold), var(--brand-green))',
+                      'linear-gradient(to right, hsl(var(--brand-red)), hsl(var(--brand-gold)), hsl(var(--brand-green)))',
                     borderRadius: 'var(--radius-pill)',
                   }}
                 />
@@ -693,9 +697,9 @@ export function PublicImpactView({
             margin: '0 auto 40px',
           }}
         >
-          <div style={{ flex: 1, background: 'var(--brand-red)' }} />
-          <div style={{ flex: 1, background: 'var(--brand-gold)' }} />
-          <div style={{ flex: 1, background: 'var(--brand-green)' }} />
+          <div style={{ flex: 1, background: 'hsl(var(--brand-red))' }} />
+          <div style={{ flex: 1, background: 'hsl(var(--brand-gold))' }} />
+          <div style={{ flex: 1, background: 'hsl(var(--brand-green))' }} />
         </div>
         <h2
           style={{
