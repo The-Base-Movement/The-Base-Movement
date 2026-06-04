@@ -5,8 +5,25 @@ export function FoundationSection() {
     <section
       aria-labelledby="foundation-heading"
       className="py-16 md:py-24 bg-on-surface text-white border-t border-white/5"
+      style={{ position: 'relative', overflow: 'hidden' }}
     >
-      <div className="page-container">
+      {/* Eagle watermark */}
+      <img
+        src="/brand/eagle-in-flight.png"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          right: '-4%',
+          bottom: '-10%',
+          width: '45%',
+          maxWidth: 520,
+          opacity: 0.06,
+          pointerEvents: 'none',
+          userSelect: 'none',
+          filter: 'invert(1)',
+        }}
+      />
+      <div className="page-container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="mb-10 md:mb-16" data-fade>
           <h2
             id="foundation-heading"
