@@ -10,6 +10,13 @@ class ContentService {
 
   private constructor() {}
 
+  private async getActorId(): Promise<string> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    return user?.id ?? 'hq-system-admin'
+  }
+
   public static getInstance(): ContentService {
     if (!ContentService.instance) {
       ContentService.instance = new ContentService()
@@ -558,7 +565,7 @@ class ContentService {
       return false
     }
 
-    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    const adminId = await this.getActorId()
     await adminService.logAction('Create Author', 'AUTHORS', 'Success', {
       name: author.name,
       adminId,
@@ -583,7 +590,7 @@ class ContentService {
       return false
     }
 
-    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    const adminId = await this.getActorId()
     await adminService.logAction('Update Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -600,7 +607,7 @@ class ContentService {
       return false
     }
 
-    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    const adminId = await this.getActorId()
     await adminService.logAction('Trash Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -649,7 +656,7 @@ class ContentService {
       return false
     }
 
-    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    const adminId = await this.getActorId()
     await adminService.logAction('Restore Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -663,7 +670,7 @@ class ContentService {
       return false
     }
 
-    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    const adminId = await this.getActorId()
     await adminService.logAction('Delete Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -765,7 +772,7 @@ class ContentService {
       return false
     }
 
-    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    const adminId = await this.getActorId()
     await adminService.logAction('Create Media Category', 'SYSTEM', 'Success', {
       name,
       label,
