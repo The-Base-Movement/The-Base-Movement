@@ -25,7 +25,7 @@ export default function Impact() {
   const [stats, setStats] = useState({
     totalDonations: '₵0',
     activeChapters: '0',
-    totalMembers: '355,482',
+    totalMembers: '—',
     countriesReached: '1',
     raised: 0,
     goal: 500000,

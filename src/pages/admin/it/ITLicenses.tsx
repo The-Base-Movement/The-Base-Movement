@@ -375,7 +375,7 @@ export default function ITLicenses() {
                       style={{
                         width: 8,
                         height: 8,
-                        borderRadius: '50%',
+                        borderRadius: 'var(--radius-pill)',
                         background: DONUT_COLORS[i % DONUT_COLORS.length],
                         display: 'inline-block',
                         flexShrink: 0,

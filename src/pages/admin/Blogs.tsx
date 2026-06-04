@@ -37,7 +37,7 @@ const EMPTY_FORM: FormData = {
   slug: '',
   excerpt: '',
   content: '',
-  authorId: 'USR-001',
+  authorId: '',
   category: 'Movement',
   imageUrl: '',
   readTime: '5 min read',
@@ -229,6 +229,12 @@ export default function AdminBlogs() {
   }
 
   const handleSubmit = async () => {
+    if (!formData.authorId) {
+      toast.error('Author required', {
+        description: 'Select an author before saving or publishing.',
+      })
+      return
+    }
     setIsLoading(true)
     try {
       const editorContent = editorRef.current ? editorRef.current.getContent() : formData.content
