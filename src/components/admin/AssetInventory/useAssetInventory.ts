@@ -135,23 +135,18 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
   }, [])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAssets()
   }, [fetchAssets])
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCategories()
   }, [fetchCategories])
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchMembers()
   }, [fetchMembers])
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchRequests()
   }, [fetchRequests])
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAlerts()
   }, [fetchAlerts])
 
@@ -214,6 +209,33 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
 
   const closeDetail = useCallback(() => setDetail(null), [])
 
+  const generateAndSaveQR = useCallback(
+    async (assetId: string, _assetTag: string) => {
+      try {
+        const QRCode = await import('qrcode')
+        const url = `${window.location.origin}/admin/it-department/assets?id=${assetId}`
+        const dataUrl = await QRCode.default.toDataURL(url, { width: 300, margin: 2 })
+        const res = await fetch(dataUrl)
+        const blob = await res.blob()
+        const { data: uploadData, error: uploadErr } = await supabase.storage
+          .from('asset-qr-codes')
+          .upload(`${assetId}.png`, blob, { contentType: 'image/png', upsert: true })
+        if (uploadErr) {
+          console.error('QR upload failed', uploadErr)
+          return
+        }
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from('asset-qr-codes').getPublicUrl(uploadData.path)
+        await supabase.from('assets').update({ qr_code_url: publicUrl }).eq('id', assetId)
+        await fetchAssets()
+      } catch (err) {
+        console.error('QR generation failed', err)
+      }
+    },
+    [fetchAssets]
+  )
+
   const addCategory = useCallback(
     async (name: string) => {
       const { error } = await supabase
@@ -237,6 +259,8 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
       serial_number: string
       description: string
       condition: AssetCondition
+      purchase_price: number | null
+      purchase_date: string | null
     }) => {
       const { error } = await supabase
         .from('assets')
@@ -246,10 +270,20 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
         return false
       }
       toast.success('Asset added')
+      const { data: inserted } = await supabase
+        .from('assets')
+        .select('id, asset_tag')
+        .eq('department_id', departmentId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      if (inserted?.id && inserted?.asset_tag) {
+        generateAndSaveQR(inserted.id, inserted.asset_tag)
+      }
       await fetchAssets()
       return true
     },
-    [departmentId, fetchAssets]
+    [departmentId, fetchAssets, generateAndSaveQR]
   )
 
   const updateAsset = useCallback(
@@ -484,5 +518,6 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
     resolveAlert,
     escalateToMissing,
     saveQrCodeUrl,
+    generateAndSaveQR,
   }
 }

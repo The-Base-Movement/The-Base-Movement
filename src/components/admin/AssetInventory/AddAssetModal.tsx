@@ -11,6 +11,8 @@ interface Props {
     serial_number: string
     description: string
     condition: AssetCondition
+    purchase_price: number | null
+    purchase_date: string | null
   }) => Promise<boolean>
   onUpdate?: (
     id: string,
@@ -46,6 +48,10 @@ export function AddAssetModal({ categories, editAsset, onClose, onSubmit, onUpda
   const [serialNumber, setSerialNumber] = useState(editAsset?.serial_number ?? '')
   const [description, setDescription] = useState(editAsset?.description ?? '')
   const [condition, setCondition] = useState<AssetCondition>(editAsset?.condition ?? 'good')
+  const [purchasePrice, setPurchasePrice] = useState(
+    editAsset?.purchase_price != null ? String(editAsset.purchase_price) : ''
+  )
+  const [purchaseDate, setPurchaseDate] = useState(editAsset?.purchase_date ?? '')
   const [saving, setSaving] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -67,6 +73,8 @@ export function AddAssetModal({ categories, editAsset, onClose, onSubmit, onUpda
         serial_number: serialNumber.trim(),
         description: description.trim(),
         condition,
+        purchase_price: purchasePrice ? parseFloat(purchasePrice) : null,
+        purchase_date: purchaseDate || null,
       })
     }
     setSaving(false)
@@ -157,6 +165,29 @@ export function AddAssetModal({ categories, editAsset, onClose, onSubmit, onUpda
                 </select>
               </div>
             )}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label style={labelStyle}>Purchase Price</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={purchasePrice}
+                onChange={(e) => setPurchasePrice(e.target.value)}
+                placeholder="Optional"
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Purchase Date</label>
+              <input
+                type="date"
+                value={purchaseDate}
+                onChange={(e) => setPurchaseDate(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
           </div>
           <div>
             <label style={labelStyle}>Description</label>
