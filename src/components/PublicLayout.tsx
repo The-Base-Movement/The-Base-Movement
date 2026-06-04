@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import BackToTop from './BackToTop'
-import TawkChat from './TawkChat'
 
 export default function PublicLayout() {
   return (
@@ -20,7 +19,6 @@ export default function PublicLayout() {
       </main>
       <Footer />
       <BackToTop />
-      <TawkChat />
     </div>
   )
 }

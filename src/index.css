@@ -257,20 +257,6 @@
   }
 }
 
-/* Tawk.to widget containment — prevent global CSS rules from stretching the iframe */
-#chat-widget-container {
-  max-width: 390px !important;
-  max-height: 680px !important;
-  width: auto !important;
-  height: auto !important;
-}
-
-#chat-widget-container iframe {
-  max-width: 390px !important;
-  max-height: 680px !important;
-  width: 390px !important;
-}
-
 @layer utilities {
   .brand-line {
     @apply flex h-1.5 w-32 mb-6;

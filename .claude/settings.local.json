@@ -112,7 +112,14 @@
       "Skill(commit-commands:commit:*)",
       "mcp__plugin_vercel_vercel__list_teams",
       "mcp__plugin_vercel_vercel__list_projects",
-      "PowerShell(Head -10)"
+      "PowerShell(Head -10)",
+      "Bash(grep -v \"//.*eslint\")",
+      "Bash(grep -v \"node_modules\\\\|import\\\\|type\\\\|interface\\\\|//\\\\|Notification\\\\b\")",
+      "Bash(grep -n 'chapter\\\\|Chapter' 'C:\\\\MAMP\\\\htdocs\\\\The-Base/__TRACKED_VAR__')",
+      "Bash(git -C C:/MAMP/htdocs/The-Base log --oneline --all -- .env)",
+      "Bash(git -C C:/MAMP/htdocs/The-Base show d8e195b --name-only)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(grep -v \"//\\\\|import\\\\|sectionId\\\\|section-title\\\\|Section>\\\\|<.*Section\")"
     ]
   },
   "enableAllProjectMcpServers": true,

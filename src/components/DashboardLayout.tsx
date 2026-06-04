@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import BackToTop from './BackToTop'
-import TawkChat from './TawkChat'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
@@ -1332,7 +1331,6 @@ export default function DashboardLayout() {
         </footer>
       </main>
       <BackToTop />
-      <TawkChat />
     </div>
   )
 }
