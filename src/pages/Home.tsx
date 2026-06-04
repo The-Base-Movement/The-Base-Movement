@@ -17,6 +17,7 @@ import { FoundationSection } from './home/FoundationSection'
 import { LatestUpdatesSection } from './home/LatestUpdatesSection'
 import { PlatformsSection } from './home/PlatformsSection'
 import { PollsSection } from './home/PollsSection'
+import { WingDivider } from '@/components/ui/WingDivider'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -201,17 +202,31 @@ export default function Home() {
 
       <StatsSection statsGridRef={statsGridRef} stats={stats} />
 
+      <WingDivider />
+
       <PlatformsSection />
+
+      <WingDivider />
 
       <FoundationSection />
 
+      <WingDivider />
+
       <RoadmapSection roadmapItems={roadmapItems} />
+
+      <WingDivider />
 
       <NetworkStructureSection />
 
+      <WingDivider />
+
       <HomeOfficers />
 
+      <WingDivider />
+
       <LatestUpdatesSection latestPosts={latestPosts} />
+
+      <WingDivider />
 
       <PollsSection activePolls={activePolls} />
     </main>
