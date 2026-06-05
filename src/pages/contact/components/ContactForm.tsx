@@ -26,6 +26,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
           name="name-c11fb5"
           id="fullName"
           type="text"
+          autoComplete="name"
           value={formData.fullName}
           onChange={handleChange}
           className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50/50"
@@ -44,6 +45,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
             name="name-2d2db6"
             id="email"
             type="email"
+            autoComplete="email"
             value={formData.email}
             onChange={handleChange}
             className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50/50"
@@ -60,6 +62,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
             name="name-1ec9f2"
             id="phone"
             type="text"
+            autoComplete="tel"
             value={formData.phone}
             onChange={handleChange}
             className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50/50"
@@ -77,6 +80,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
         <select
           name="name-36f857"
           id="platform"
+          autoComplete="off"
           value={formData.platform}
           onChange={handleChange}
           className="w-full form-understate p-4 text-charcoal-dark appearance-none text-sm bg-slate-50/50"
@@ -103,6 +107,7 @@ export function ContactForm({ formData, handleChange, handleSubmit }: ContactFor
         <textarea
           name="name-aab423"
           id="message"
+          autoComplete="off"
           value={formData.message}
           onChange={handleChange}
           className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50/50"
