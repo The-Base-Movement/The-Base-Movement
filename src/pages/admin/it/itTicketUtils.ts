@@ -1,4 +1,4 @@
-import type { TicketStatus } from './ITTickets'
+import type { TicketStatus } from './tickets/types'
 
 // ─── Column config ────────────────────────────────────────────────────────────
 
