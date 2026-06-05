@@ -178,6 +178,24 @@
     --charcoal: #1a1a1a;
   }
 
+  /* Interface Density Variables */
+  :root[data-density='comfortable'] {
+    --panel-padding: 24px;
+    --panel-gap: 24px;
+    --table-cell-padding: 14px 16px;
+  }
+  :root[data-density='compact'] {
+    --panel-padding: 16px;
+    --panel-gap: 16px;
+    --table-cell-padding: 10px 12px;
+  }
+  :root[data-density='high-density'] {
+    --panel-padding: 12px;
+    --panel-gap: 12px;
+    --table-cell-padding: 6px 10px;
+    --fs-base: 14px;
+  }
+
   @media (min-width: 1280px) {
     :root {
       --font-scale: 1.1;

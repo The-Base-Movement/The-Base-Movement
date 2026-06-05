@@ -651,6 +651,17 @@ export interface AdminPermission {
     | 'IT_SUPPORT'
 }
 
+export interface AdminPreferences {
+  interfaceDensity: 'Comfortable' | 'Compact' | 'High Density'
+  darkMode: boolean
+  notifications: {
+    newRegistrations: boolean
+    securityAlerts: boolean
+    auditEvents: boolean
+    financeRequests: boolean
+  }
+}
+
 export interface AdminUser {
   id: string
   email: string
@@ -661,6 +672,7 @@ export interface AdminUser {
   permissions: AdminPermission[]
   phone?: string
   avatarUrl?: string
+  preferences?: AdminPreferences
 }
 
 export interface Broadcast {

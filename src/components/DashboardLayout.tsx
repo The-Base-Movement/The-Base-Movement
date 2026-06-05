@@ -49,6 +49,20 @@ export default function DashboardLayout() {
       if (!session?.user?.id) return
       const adminData = await adminService.getAdminData(session.user.id)
       setIsAdmin(!!adminData)
+
+      // Apply Admin Preferences (Density & Dark Mode)
+      if (adminData?.preferences) {
+        const { interfaceDensity, darkMode } = adminData.preferences
+        if (interfaceDensity) {
+          const densityValue = interfaceDensity.toLowerCase().replace(' ', '-')
+          document.documentElement.setAttribute('data-density', densityValue)
+        }
+        if (darkMode) {
+          document.documentElement.setAttribute('data-theme', 'dark')
+        } else {
+          document.documentElement.removeAttribute('data-theme')
+        }
+      }
     }
     checkAdmin()
   }, [session])

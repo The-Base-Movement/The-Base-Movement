@@ -1544,6 +1544,7 @@ class AdminService {
             avatar_url: string
           }[]
         | null
+      preferences?: Record<string, unknown>
     }
 
     const admin = data as unknown as DBAdminResponse
@@ -1600,6 +1601,26 @@ class AdminService {
       role = 'FINANCE_OFFICER'
     else if (dbRole.includes('VERIFIER')) role = 'VERIFIER'
 
+    const defaultPreferences: import('@/types/admin').AdminPreferences = {
+      interfaceDensity: 'Comfortable',
+      darkMode: false,
+      notifications: {
+        newRegistrations: true,
+        securityAlerts: true,
+        auditEvents: true,
+        financeRequests: true,
+      },
+    }
+
+    const mergedPreferences = {
+      ...defaultPreferences,
+      ...(admin.preferences || {}),
+      notifications: {
+        ...defaultPreferences.notifications,
+        ...(admin.preferences?.notifications || {}),
+      },
+    }
+
     return {
       id: admin.id,
       email: userProfile?.email || '',
@@ -1609,7 +1630,25 @@ class AdminService {
       permissions,
       phone: userProfile?.phone_number || '',
       avatarUrl: userProfile?.avatar_url || '',
+      preferences: mergedPreferences,
     } as AdminUser
+  }
+
+  async updatePreferences(
+    userId: string,
+    preferences: import('@/types/admin').AdminPreferences
+  ): Promise<void> {
+    const { error } = await supabase.from('admins').update({ preferences }).eq('id', userId)
+
+    if (error) {
+      console.error('[ADMIN SERVICE] Failed to update preferences:', error)
+      throw new Error(error.message || 'Failed to update preferences')
+    }
+
+    // Update local currentUser if it matches
+    if (this.currentUser && this.currentUser.id === userId) {
+      this.currentUser.preferences = preferences
+    }
   }
 
   async updateAdminData(

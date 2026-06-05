@@ -17,7 +17,6 @@ import { AuditLogTab } from './settings/components/AuditLogTab'
 import { AboutPageTab } from './settings/components/AboutPageTab'
 import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
 
-type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density'
 type SettingsTab =
   | 'profile'
   | 'roles'
@@ -77,9 +76,6 @@ export default function AdminSettings() {
   const [mfaStep, setMfaStep] = useState<'qr' | 'verify'>('qr')
   const [mfaEnrollData, setMfaEnrollData] = useState<{ id: string; qr: string } | null>(null)
   const [mfaCode, setMfaCode] = useState('')
-  const [interfaceDensity, setInterfaceDensity] = useState<InterfaceDensity>(
-    (localStorage.getItem('admin_interface_density') as InterfaceDensity) || 'Comfortable'
-  )
   const [siteSettings, setSiteSettings] = useState<Record<string, unknown>>({})
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -453,13 +449,7 @@ export default function AdminSettings() {
             />
           )}
           {activeTab === 'roles' && <RolesManagementTab />}
-          {activeTab === 'system' && (
-            <SystemPreferencesTab
-              interfaceDensity={interfaceDensity}
-              setInterfaceDensity={setInterfaceDensity}
-              toast={toast}
-            />
-          )}
+          {activeTab === 'system' && <SystemPreferencesTab adminData={adminData} toast={toast} />}
           {activeTab === 'movement' && (
             <MovementInfoTab
               siteSettings={siteSettings}
