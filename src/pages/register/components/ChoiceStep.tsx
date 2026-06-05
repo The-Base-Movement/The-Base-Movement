@@ -1,21 +1,15 @@
 import { Link } from 'react-router-dom'
 import SEO from '@/components/SEO'
-import type { BrandingSettings } from '@/types/branding'
+
 import { cn } from '@/lib/utils'
 
 interface ChoiceStepProps {
-  settings: BrandingSettings
   onSelect: (platform: string, file?: File) => void
   isScanning?: boolean
   scanStatus?: string
 }
 
-export function ChoiceStep({
-  settings,
-  onSelect,
-  isScanning = false,
-  scanStatus,
-}: ChoiceStepProps) {
+export function ChoiceStep({ onSelect, isScanning = false, scanStatus }: ChoiceStepProps) {
   return (
     <div className="max-w-[840px] w-full mx-auto auth-frame">
       <div className="auth-header-label">
@@ -28,11 +22,6 @@ export function ChoiceStep({
           canonical="/register"
         />
         <div className="text-center mb-10">
-          <img
-            src={settings.logo_url}
-            alt="The Base"
-            className="h-16 w-auto mx-auto mb-4 object-contain"
-          />
           <h1 className="text-2xl font-medium text-on-surface tracking-tight font-meta mb-1">
             The Base
           </h1>

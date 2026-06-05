@@ -335,7 +335,6 @@ export default function Register() {
       <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
         <OfflineBanner />
         <ChoiceStep
-          settings={settings}
           isScanning={isScanningForm}
           scanStatus={scanStatus}
           onSelect={(p, file) => {
