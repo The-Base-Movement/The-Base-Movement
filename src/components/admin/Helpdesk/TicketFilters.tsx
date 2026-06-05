@@ -28,8 +28,6 @@ export function TicketFilters({ filters, onChange, counts }: Props) {
             style={{
               padding: '6px 12px',
               fontSize: 12,
-              border: 'none',
-              background: 'none',
               cursor: 'pointer',
               fontFamily: "'Public Sans', sans-serif",
               display: 'flex',
