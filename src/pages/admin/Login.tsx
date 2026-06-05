@@ -114,7 +114,7 @@ export default function AdminLogin() {
                     lineHeight: 1.2,
                   }}
                 >
-                  Command Center
+                  Admin Access
                 </div>
                 <div
                   style={{
@@ -174,13 +174,16 @@ export default function AdminLogin() {
 
             {/* Email */}
             <div>
-              <label style={labelStyle}>Email address</label>
+              <label htmlFor="input-5337b3" style={labelStyle}>
+                Email address
+              </label>
               <input
                 aria-label="admin@thebase.org"
                 name="email"
                 id="input-5337b3"
                 type="email"
                 required
+                autoComplete="username"
                 placeholder="admin@thebase.org"
                 style={fieldStyle}
                 value={email}
@@ -190,7 +193,9 @@ export default function AdminLogin() {
 
             {/* Password */}
             <div>
-              <label style={labelStyle}>Password</label>
+              <label htmlFor="input-55345f" style={labelStyle}>
+                Password
+              </label>
               <div style={{ position: 'relative' }}>
                 <input
                   aria-label="••••••••"
@@ -198,6 +203,7 @@ export default function AdminLogin() {
                   id="input-55345f"
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   style={{ ...fieldStyle, paddingRight: 42 }}
                   value={password}
