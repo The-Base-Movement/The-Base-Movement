@@ -599,6 +599,14 @@ export type AdminRole =
   | 'EDITOR'
   | 'JUNIOR_EDITOR'
   | 'REGIONAL_CORRESPONDENT'
+  | 'CHAPTER_LEAD'
+  | 'CHAPTER_SECRETARY'
+  | 'FIELD_AGENT'
+  | 'COMMUNICATIONS_OFFICER'
+  | 'INTELLIGENCE_ANALYST'
+  | 'STORE_MANAGER'
+  | 'YOUTH_LEADER'
+  | 'MOVEMENT_LEADER'
 
 export interface AdminPermission {
   action:
