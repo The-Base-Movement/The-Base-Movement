@@ -29,7 +29,7 @@ export default function SEO({
   const defaultDescription =
     'We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens in Ghana and across the diaspora working for a more productive future.'
   const metaDescription = description || defaultDescription
-  const image = ogImage || settings.logo_url
+  const image = ogImage || settings.og_image_url
   const siteUrl = 'https://thebasemovement.com'
   const canonicalPath = canonical ?? (typeof window !== 'undefined' ? window.location.pathname : '')
   const canonicalUrl = canonicalPath ? `${siteUrl}${canonicalPath}` : null
