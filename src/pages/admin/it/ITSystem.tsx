@@ -51,19 +51,37 @@ export default function ITSystem() {
         : 'hsl(var(--primary))'
   const connStatus = conns > 80 ? 'High Load' : conns > 50 ? 'Elevated' : 'Normal'
 
+  const cacheRatio = dbStats?.cache_hit_ratio ?? null
+  const cacheBar =
+    cacheRatio === null
+      ? 'hsl(var(--on-surface-muted))'
+      : cacheRatio >= 95
+        ? 'hsl(var(--primary))'
+        : cacheRatio >= 80
+          ? 'hsl(var(--accent))'
+          : 'hsl(var(--destructive))'
+  const cacheStatus =
+    cacheRatio === null
+      ? '—'
+      : cacheRatio >= 95
+        ? 'Optimal'
+        : cacheRatio >= 80
+          ? 'Moderate'
+          : 'Low — check indexes'
+
   return (
     <div>
       {/* Telemetry Health Indicator panels */}
       <div className="kpis" style={{ gridTemplateColumns: 'repeat(3,1fr)', marginBottom: 28 }}>
         <HealthCard
-          label="API Uptime"
-          icon="cloud_done"
-          value="99.9%"
-          pct={99.9}
-          bar="hsl(var(--primary))"
-          status="Operational"
-          statusColor="hsl(var(--primary))"
-          loading={false}
+          label="Cache Hit Ratio"
+          icon="memory"
+          value={healthLoading ? '—' : cacheRatio === null ? 'No data' : `${cacheRatio}%`}
+          pct={cacheRatio ?? 0}
+          bar={cacheBar}
+          status={cacheStatus}
+          statusColor={cacheBar}
+          loading={healthLoading}
         />
         <HealthCard
           label="Database Storage"

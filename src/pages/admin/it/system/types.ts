@@ -13,6 +13,7 @@ export interface AuditLog {
 export interface DbStats {
   db_size_bytes: number
   active_connections: number
+  cache_hit_ratio: number | null
 }
 
 export const PAGE_SIZE = 25
