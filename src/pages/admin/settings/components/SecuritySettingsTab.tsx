@@ -74,7 +74,14 @@ export function SecuritySettingsTab({
   const mfaActive = mfaFactors.length > 0
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: 20,
+        alignItems: 'start',
+      }}
+    >
       {/* Password panel */}
       <div className="panel">
         <div className="ph">
