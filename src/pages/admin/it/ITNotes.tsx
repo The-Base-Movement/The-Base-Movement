@@ -195,7 +195,6 @@ export default function ITNotes() {
           style={{
             columns: isMobile ? 2 : 'auto 220px',
             columnGap: isMobile ? 10 : 20,
-            gap: isMobile ? 10 : 20,
           }}
         >
           {displayed.map((note) => (

@@ -97,6 +97,8 @@ export function AuditLogTable() {
             style={{ ...inputSt, flex: 1, minWidth: 160 }}
           />
           <select
+            id="audit-severity"
+            name="auditSeverity"
             value={sevFilter}
             onChange={(e) => setSevFilter(e.target.value as Severity | 'all')}
             style={inputSt}
