@@ -5,6 +5,16 @@ import { SortToggle } from '@/components/ui/SortToggle'
 import type { AuditLog, Severity } from './types'
 import { SEV, PAGE_SIZE } from './types'
 
+function defaultFrom() {
+  const d = new Date()
+  d.setDate(d.getDate() - 7)
+  return d.toISOString().slice(0, 10)
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10)
+}
+
 export function AuditLogTable() {
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [logsLoading, setLogsLoading] = useState(true)
@@ -12,6 +22,8 @@ export function AuditLogTable() {
   const [sevFilter, setSevFilter] = useState<Severity | 'all'>('all')
   const [page, setPage] = useState(1)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [dateFrom, setDateFrom] = useState(defaultFrom)
+  const [dateTo, setDateTo] = useState(todayStr)
 
   const loadLogs = useCallback(async () => {
     setLogsLoading(true)
@@ -19,8 +31,9 @@ export function AuditLogTable() {
       const { data } = await supabase
         .from('system_audit_logs')
         .select('*, user:users!user_id(full_name)')
+        .gte('created_at', dateFrom + 'T00:00:00Z')
+        .lte('created_at', dateTo + 'T23:59:59Z')
         .order('created_at', { ascending: sortDir === 'asc' })
-        .limit(500)
 
       setLogs(
         (data ?? []).map((l: Record<string, unknown>) => ({
@@ -36,7 +49,7 @@ export function AuditLogTable() {
     } finally {
       setLogsLoading(false)
     }
-  }, [sortDir])
+  }, [sortDir, dateFrom, dateTo])
 
   useEffect(() => {
     loadLogs()
@@ -44,7 +57,7 @@ export function AuditLogTable() {
 
   useEffect(() => {
     setPage(1)
-  }, [search, sevFilter])
+  }, [search, sevFilter, dateFrom, dateTo])
 
   const filtered = logs.filter((l) => {
     const matchSearch =
@@ -108,6 +121,24 @@ export function AuditLogTable() {
             <option value="warning">Warning</option>
             <option value="critical">Critical</option>
           </select>
+          <input
+            id="audit-date-from"
+            name="auditDateFrom"
+            type="date"
+            value={dateFrom}
+            max={dateTo}
+            onChange={(e) => setDateFrom(e.target.value)}
+            style={inputSt}
+          />
+          <input
+            id="audit-date-to"
+            name="auditDateTo"
+            type="date"
+            value={dateTo}
+            min={dateFrom}
+            onChange={(e) => setDateTo(e.target.value)}
+            style={inputSt}
+          />
           <SortToggle value={sortDir} onChange={setSortDir} label="Date" />
         </div>
 
