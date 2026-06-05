@@ -104,7 +104,10 @@ export function RegistrationForm(props: RegistrationFormProps) {
           <p className="text-[12px] text-on-surface-muted">
             {formStep === 1 && 'Join the movement to build a better Ghana.'}
             {formStep === 2 && 'Used to assign you to your local branch.'}
-            {formStep === 3 && 'Upload a clear photo of your Ghana Card (or passport).'}
+            {formStep === 3 &&
+              (platform === 'DIASPORA'
+                ? 'Upload a clear photo of your ID (Optional for Diaspora).'
+                : 'Upload a clear photo of your Ghana Card (or passport).')}
             {formStep === 4 && 'Almost there, patriot. Confirm your details.'}
           </p>
         </div>
@@ -870,8 +873,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   </span>{' '}
                   Processing...
                 </>
+              ) : formStep === 4 ? (
+                'Submit registration →'
+              ) : formStep === 3 && platform === 'DIASPORA' && (!photoUrl || !selfieUrl) ? (
+                'Skip verification →'
+              ) : formStep === 3 ? (
+                'Continue to final step →'
               ) : (
-                <>{formStep < 4 ? 'Continue to verify ID →' : 'Submit registration →'}</>
+                'Continue to next step →'
               )}
             </button>
           </div>

@@ -134,6 +134,12 @@ export default function Register() {
 
   const runKycProtocol = async () => {
     if (!photoUrl || !selfieUrl) {
+      if (platform === 'DIASPORA') {
+        toast.info('ID verification skipped for Diaspora platform.')
+        setFormStep(4)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
       toast.error('Both ID photo and selfie are required for biometric verification.')
       return
     }
