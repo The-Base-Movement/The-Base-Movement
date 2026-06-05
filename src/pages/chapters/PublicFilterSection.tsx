@@ -22,7 +22,12 @@ export function PublicFilterSection({
       <div className="bg-white border border-stone-200 p-6">
         <div className="space-y-6">
           <div>
-            <label className="text-micro font-medium text-stone-900 mb-3 block">Search hubs</label>
+            <label
+              htmlFor="input-caa685"
+              className="text-micro font-medium text-stone-900 mb-3 block"
+            >
+              Search hubs
+            </label>
             <div className="relative">
               <span
                 className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-300"

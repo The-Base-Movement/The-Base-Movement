@@ -59,7 +59,7 @@ export function PublicRequestModal({
         ) : (
           <form onSubmit={onSubmit} className="p-8 space-y-6">
             <div className="space-y-1.5">
-              <label className="text-micro font-medium text-stone-400">
+              <label htmlFor="input-53d016" className="text-micro font-medium text-stone-400">
                 Chapter location / country
               </label>
               <div className="relative">
@@ -82,7 +82,7 @@ export function PublicRequestModal({
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-micro font-medium text-stone-400">
+              <label htmlFor="textarea-7ec95d" className="text-micro font-medium text-stone-400">
                 Why start a chapter here?
               </label>
               <textarea

@@ -150,7 +150,9 @@ export function DashboardRequestModal({
             style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}
           >
             <div>
-              <label style={labelSt}>Chapter location / country</label>
+              <label htmlFor="input-c66f5d" style={labelSt}>
+                Chapter location / country
+              </label>
               <div style={{ position: 'relative' }}>
                 <span
                   className="material-symbols-outlined"
@@ -179,7 +181,9 @@ export function DashboardRequestModal({
               </div>
             </div>
             <div>
-              <label style={labelSt}>Why start a chapter here?</label>
+              <label htmlFor="textarea-3c577c" style={labelSt}>
+                Why start a chapter here?
+              </label>
               <textarea
                 aria-label="Describe local interest and your vision for organizing this hub…"
                 name="chapterDescription"
