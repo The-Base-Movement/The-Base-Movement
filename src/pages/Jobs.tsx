@@ -335,6 +335,9 @@ export default function Jobs() {
                 search
               </span>
               <input
+                id="jobs-search"
+                name="jobs-search"
+                autoComplete="off"
                 placeholder="Search title or organisation..."
                 value={filters.search}
                 onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
@@ -366,6 +369,9 @@ export default function Jobs() {
                 All
               </button>
               <select
+                id="jobs-category"
+                name="jobs-category"
+                autoComplete="off"
                 value={filters.category}
                 onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
                 style={{
@@ -392,6 +398,9 @@ export default function Jobs() {
               {/* forces a line break between category and type/network on mobile only */}
               <div className="jobs-filter-break" />
               <select
+                id="jobs-type"
+                name="jobs-type"
+                autoComplete="off"
                 value={filters.job_type}
                 onChange={(e) =>
                   setFilters((f) => ({ ...f, job_type: e.target.value as JobType | '' }))
@@ -418,6 +427,9 @@ export default function Jobs() {
                 ))}
               </select>
               <select
+                id="jobs-network"
+                name="jobs-network"
+                autoComplete="off"
                 value={filters.platform_filter}
                 onChange={(e) =>
                   setFilters((f) => ({

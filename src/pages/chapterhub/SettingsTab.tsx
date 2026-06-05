@@ -119,7 +119,9 @@ export function SettingsTab({
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={lbl}>About this chapter</label>
+            <label htmlFor="textarea-ba58d1" style={lbl}>
+              About this chapter
+            </label>
             <textarea
               name="descDraft"
               id="textarea-ba58d1"
@@ -146,7 +148,9 @@ export function SettingsTab({
           </div>
 
           <div>
-            <label style={lbl}>Local focus areas</label>
+            <label htmlFor="input-9b4d88" style={lbl}>
+              Local focus areas
+            </label>
             {focusTags.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
                 {focusTags.map((tag) => (
@@ -288,7 +292,9 @@ export function SettingsTab({
           }}
         >
           <div>
-            <label style={lbl}>Chapter email</label>
+            <label htmlFor="input-17e0b1" style={lbl}>
+              Chapter email
+            </label>
             <input
               name="emailDraft"
               id="input-17e0b1"
@@ -300,7 +306,9 @@ export function SettingsTab({
             />
           </div>
           <div>
-            <label style={lbl}>Chapter phone</label>
+            <label htmlFor="input-ec7459" style={lbl}>
+              Chapter phone
+            </label>
             <input
               name="phoneDraft"
               id="input-ec7459"
