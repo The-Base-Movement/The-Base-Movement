@@ -31,6 +31,9 @@ export function SearchBar({
         search
       </span>
       <input
+        id="search-bar-input"
+        name="search-bar-input"
+        autoComplete="off"
         type="text"
         placeholder={placeholder}
         value={value}
