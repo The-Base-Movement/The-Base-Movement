@@ -121,7 +121,9 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(grep -v \"//\\\\|import\\\\|sectionId\\\\|section-title\\\\|Section>\\\\|<.*Section\")",
       "Bash(git -C \"C:/MAMP/htdocs/The-Base\" add -A)",
-      "Bash(git -C \"C:/MAMP/htdocs/The-Base\" commit -m \"feat\\(db\\): add helpdesk schema — departments, tickets, comments, attachments, RLS\")"
+      "Bash(git -C \"C:/MAMP/htdocs/The-Base\" commit -m \"feat\\(db\\): add helpdesk schema — departments, tickets, comments, attachments, RLS\")",
+      "Bash(Start-Sleep -Seconds 4)",
+      "Bash(git fetch *)"
     ]
   },
   "enableAllProjectMcpServers": true,
