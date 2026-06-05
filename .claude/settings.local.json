@@ -125,7 +125,13 @@
       "Bash(Start-Sleep -Seconds 4)",
       "Bash(git fetch *)",
       "Bash(git cherry-pick *)",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "Bash(git worktree *)",
+      "Bash(awk -F: '{print $1}')",
+      "Bash(xargs -I{} git stash drop {})",
+      "Bash(git prune *)",
+      "Bash(git gc *)",
+      "Bash(git count-objects *)"
     ]
   },
   "enableAllProjectMcpServers": true,
