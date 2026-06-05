@@ -447,6 +447,7 @@ export function MobilizationProtocol({
                 id="fullName"
                 placeholder="Legal full name"
                 required
+                autoComplete="name"
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 onFocus={() => setActiveStep(2)}
@@ -484,6 +485,7 @@ export function MobilizationProtocol({
                 id="phone"
                 placeholder="+233 xx xxx xxxx"
                 required
+                autoComplete="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 onFocus={() => setActiveStep(2)}
@@ -523,6 +525,7 @@ export function MobilizationProtocol({
                   type="number"
                   placeholder="0.00"
                   required
+                  autoComplete="off"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   onFocus={() => setActiveStep(2)}
@@ -558,6 +561,7 @@ export function MobilizationProtocol({
                     name="name-4a0eac"
                     id="country"
                     required
+                    autoComplete="country-name"
                     value={formData.country}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                     onFocus={() => setActiveStep(2)}
@@ -613,6 +617,7 @@ export function MobilizationProtocol({
                   name="name-348cbe"
                   id="campaign"
                   required
+                  autoComplete="off"
                   value={formData.campaignId}
                   onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
                   onFocus={() => setActiveStep(2)}
@@ -750,6 +755,7 @@ export function MobilizationProtocol({
                   name="name-915196"
                   id="membershipNumber"
                   placeholder="gh-2028-xxxxxx"
+                  autoComplete="off"
                   value={formData.membershipNumber}
                   onChange={(e) => setFormData({ ...formData, membershipNumber: e.target.value })}
                   onFocus={() => setActiveStep(3)}

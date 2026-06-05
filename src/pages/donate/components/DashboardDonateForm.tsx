@@ -92,6 +92,7 @@ export function DashboardDonateForm({
           <select
             name="name-badabb"
             id="select-badabb"
+            autoComplete="off"
             value={formData.campaignId}
             onChange={(e) => setFormData((prev) => ({ ...prev, campaignId: e.target.value }))}
             style={{
@@ -151,6 +152,7 @@ export function DashboardDonateForm({
               id="input-ded56b"
               type="number"
               placeholder="0.00"
+              autoComplete="off"
               value={formData.amount}
               onChange={(e) => setFormData((prev) => ({ ...prev, amount: e.target.value }))}
               required
@@ -211,6 +213,7 @@ export function DashboardDonateForm({
             name="name-46ec53"
             id="input-46ec53"
             type="text"
+            autoComplete="name"
             value={formData.fullName}
             onChange={(e) => setFormData((prev) => ({ ...prev, fullName: e.target.value }))}
             required
@@ -249,6 +252,7 @@ export function DashboardDonateForm({
             id="input-4a990b"
             type="tel"
             placeholder="024XXXXXXX"
+            autoComplete="tel"
             value={formData.phone}
             onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
             required

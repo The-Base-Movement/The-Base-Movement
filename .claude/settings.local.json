@@ -123,7 +123,9 @@
       "Bash(git -C \"C:/MAMP/htdocs/The-Base\" add -A)",
       "Bash(git -C \"C:/MAMP/htdocs/The-Base\" commit -m \"feat\\(db\\): add helpdesk schema — departments, tickets, comments, attachments, RLS\")",
       "Bash(Start-Sleep -Seconds 4)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git branch *)"
     ]
   },
   "enableAllProjectMcpServers": true,
