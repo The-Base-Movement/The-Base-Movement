@@ -741,10 +741,20 @@ interface TreeNodeProps {
   isRoot?: boolean
   existingUserIds: Set<string>
   onAddSubordinate: (parentUserId: string, parentName: string) => void
+  onRemove: (userId: string, name: string, hasChildren: boolean) => void
+  onEditTitle: (userId: string, currentTitle: string, name: string) => void
 }
 
-function OrgNode({ node, isRoot = false, existingUserIds, onAddSubordinate }: TreeNodeProps) {
+function OrgNode({
+  node,
+  isRoot = false,
+  existingUserIds,
+  onAddSubordinate,
+  onRemove,
+  onEditTitle,
+}: TreeNodeProps) {
   const n = node.children.length
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -764,6 +774,99 @@ function OrgNode({ node, isRoot = false, existingUserIds, onAddSubordinate }: Tr
           position: 'relative',
         }}
       >
+        {/* Node actions menu */}
+        <div style={{ position: 'absolute', top: 6, right: 6 }}>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 2,
+              borderRadius: 'var(--radius-xs)',
+              color: 'hsl(var(--on-surface-muted))',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              more_vert
+            </span>
+          </button>
+          {menuOpen && (
+            <>
+              <div
+                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                onClick={() => setMenuOpen(false)}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 'calc(100% + 2px)',
+                  zIndex: 50,
+                  background: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  minWidth: 130,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  overflow: 'hidden',
+                }}
+              >
+                <button
+                  onClick={() => {
+                    setMenuOpen(false)
+                    onEditTitle(node.user_id, node.role_title, node.full_name)
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    textAlign: 'left',
+                    fontSize: 12,
+                    fontFamily: "'Public Sans', sans-serif",
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'hsl(var(--on-surface))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    edit
+                  </span>
+                  Edit title
+                </button>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false)
+                    onRemove(node.user_id, node.full_name, n > 0)
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    textAlign: 'left',
+                    fontSize: 12,
+                    fontFamily: "'Public Sans', sans-serif",
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'hsl(var(--destructive))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    person_remove
+                  </span>
+                  Remove
+                </button>
+              </div>
+            </>
+          )}
+        </div>
         {/* Avatar circle */}
         <div
           style={{
@@ -898,6 +1001,8 @@ function OrgNode({ node, isRoot = false, existingUserIds, onAddSubordinate }: Tr
                   node={child}
                   existingUserIds={existingUserIds}
                   onAddSubordinate={onAddSubordinate}
+                  onRemove={onRemove}
+                  onEditTitle={onEditTitle}
                 />
               </div>
             ))}
@@ -917,6 +1022,57 @@ export function OrgChart() {
     null
   )
   const [setupModal, setSetupModal] = useState(false)
+  const [editModal, setEditModal] = useState<{
+    userId: string
+    currentTitle: string
+    name: string
+  } | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editSaving, setEditSaving] = useState(false)
+
+  async function handleRemove(userId: string, name: string, hasChildren: boolean) {
+    const row = rows.find((r) => r.user_id === userId)
+    const confirmMsg = hasChildren
+      ? `Remove ${name} from the hierarchy? Their direct reports will be reassigned to their manager.`
+      : `Remove ${name} from the hierarchy?`
+    if (!confirm(confirmMsg)) return
+
+    if (hasChildren && row?.reports_to) {
+      await supabase
+        .from('it_hierarchy')
+        .update({ reports_to: row.reports_to })
+        .eq('reports_to', userId)
+    }
+    const { error } = await supabase.from('it_hierarchy').delete().eq('user_id', userId)
+    if (error) {
+      toast.error('Failed to remove member')
+      return
+    }
+    toast.success(`${name} removed from hierarchy`)
+    load()
+  }
+
+  function openEditModal(userId: string, currentTitle: string, name: string) {
+    setEditModal({ userId, currentTitle, name })
+    setEditTitle(currentTitle)
+  }
+
+  async function handleEditSave() {
+    if (!editModal || !editTitle.trim()) return
+    setEditSaving(true)
+    const { error } = await supabase
+      .from('it_hierarchy')
+      .update({ role_title: editTitle.trim() })
+      .eq('user_id', editModal.userId)
+    setEditSaving(false)
+    if (error) {
+      toast.error('Failed to update title')
+      return
+    }
+    toast.success('Role title updated')
+    setEditModal(null)
+    load()
+  }
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -1086,6 +1242,8 @@ export function OrgChart() {
                 onAddSubordinate={(parentUserId, parentName) =>
                   setAddModal({ parentUserId, parentName })
                 }
+                onRemove={handleRemove}
+                onEditTitle={openEditModal}
               />
             ))}
           </div>
@@ -1114,6 +1272,98 @@ export function OrgChart() {
           }}
         />
       )}
+
+      {/* Edit role title modal */}
+      {editModal &&
+        createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.45)',
+              zIndex: 200,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 20,
+            }}
+            onClick={() => setEditModal(null)}
+          >
+            <div
+              style={{
+                background: 'hsl(var(--background))',
+                borderRadius: 'var(--radius-lg)',
+                width: '100%',
+                maxWidth: 380,
+                boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                overflow: 'hidden',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                style={{
+                  padding: '16px 20px',
+                  borderBottom: '1px solid hsl(var(--border))',
+                  background: 'hsl(var(--container-low))',
+                }}
+              >
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 14,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  Edit Role Title
+                </p>
+                <p
+                  style={{ margin: '2px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}
+                >
+                  {editModal.name}
+                </p>
+              </div>
+              <div style={{ padding: '20px' }}>
+                <input
+                  id="edit-role-title"
+                  name="roleTitle"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Role title"
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    height: 38,
+                    padding: '0 12px',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface))',
+                    background: 'hsl(var(--background))',
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleEditSave()}
+                />
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button className="btn btn-outline btn-sm" onClick={() => setEditModal(null)}>
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    disabled={editSaving || !editTitle.trim()}
+                    onClick={handleEditSave}
+                  >
+                    {editSaving ? 'Saving…' : 'Save'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }
