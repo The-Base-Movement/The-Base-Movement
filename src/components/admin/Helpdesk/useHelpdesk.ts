@@ -384,7 +384,10 @@ export function useMemberHelpdesk(userId: string) {
         .select('id, ticket_id, uploaded_by, file_url, file_name, file_size, created_at')
         .eq('ticket_id', ticketId),
     ])
-    if (ticketRes.error) return
+    if (ticketRes.error) {
+      toast.error('Failed to load ticket')
+      return
+    }
     setDetail({
       ticket: buildTicketFromRow(ticketRes.data),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
