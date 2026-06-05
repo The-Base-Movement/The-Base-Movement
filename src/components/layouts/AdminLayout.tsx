@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { cn, getCountryFlag } from '@/lib/utils'
@@ -60,6 +60,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     System: true,
   })
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+  const prevPathname = useRef('')
   const location = useLocation()
   const navigate = useNavigate()
   const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
@@ -216,28 +217,6 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
     return () => clearTimeout(timer)
   }, [searchQuery])
-
-  useEffect(() => {
-    const currentPath = location.pathname
-    const activeGroup = filteredNavGroups.find((group) =>
-      group.items.some((item) => {
-        if (item.to === currentPath) return true
-        if (item.subItems?.some((sub) => sub.to === currentPath)) return true
-        if (item.to !== '/admin/dashboard' && currentPath.startsWith(item.to)) return true
-        return false
-      })
-    )
-
-    if (activeGroup) {
-      setOpenGroups((prev) => {
-        const nextGroups: Record<string, boolean> = {}
-        Object.keys(prev).forEach((key) => {
-          nextGroups[key] = key === activeGroup.label
-        })
-        return nextGroups
-      })
-    }
-  }, [location.pathname, filteredNavGroups])
 
   interface NavItem {
     to: string
@@ -541,29 +520,57 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     },
   ]
 
-  const filteredNavGroups = navGroups
-    .map((group) => ({
-      ...group,
-      items: group.items.filter((item) => {
-        if (item.superAdminOnly) {
-          const role = user?.role
-          if (role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
-        }
-        if (item.executiveOnly) {
-          const role = user?.role
-          if (role !== 'EXECUTIVE' && role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
-        }
-        if (user?.role === 'FINANCE_OFFICER') {
-          return FINANCE_OFFICER_ALLOWED_PATHS.includes(item.to)
-        }
-        if (user?.role === 'EXECUTIVE') {
-          return EXECUTIVE_ALLOWED_PATHS.includes(item.to)
-        }
-        if (!item.permission) return true
-        return adminService.can(item.permission.action, item.permission.resource)
-      }),
-    }))
-    .filter((group) => group.items.length > 0)
+  const filteredNavGroups = useMemo(() => {
+    return navGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => {
+          if (item.superAdminOnly) {
+            const role = user?.role
+            if (role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
+          }
+          if (item.executiveOnly) {
+            const role = user?.role
+            if (role !== 'EXECUTIVE' && role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
+          }
+          if (user?.role === 'FINANCE_OFFICER') {
+            return FINANCE_OFFICER_ALLOWED_PATHS.includes(item.to)
+          }
+          if (user?.role === 'EXECUTIVE') {
+            return EXECUTIVE_ALLOWED_PATHS.includes(item.to)
+          }
+          if (!item.permission) return true
+          return adminService.can(item.permission.action, item.permission.resource)
+        }),
+      }))
+      .filter((group) => group.items.length > 0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
+
+  useEffect(() => {
+    if (prevPathname.current !== location.pathname) {
+      prevPathname.current = location.pathname
+      const currentPath = location.pathname
+      const activeGroup = filteredNavGroups.find((group) =>
+        group.items.some((item) => {
+          if (item.to === currentPath) return true
+          if (item.subItems?.some((sub) => sub.to === currentPath)) return true
+          if (item.to !== '/admin/dashboard' && currentPath.startsWith(item.to)) return true
+          return false
+        })
+      )
+
+      if (activeGroup) {
+        setOpenGroups((prev) => {
+          const nextGroups: Record<string, boolean> = {}
+          Object.keys(prev).forEach((key) => {
+            nextGroups[key] = key === activeGroup.label
+          })
+          return nextGroups
+        })
+      }
+    }
+  }, [location.pathname, filteredNavGroups])
 
   const toggleGroup = (groupLabel: string) => {
     if (!isSidebarOpen) setIsSidebarOpen(true)
@@ -802,7 +809,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                                   : 'max-h-0 opacity-0'
                               )}
                             >
-                              {item.subItems.map((subItem) => {
+                              {item.subItems?.map((subItem) => {
                                 const isSubActive =
                                   subItem.to === item.to
                                     ? location.pathname === subItem.to
