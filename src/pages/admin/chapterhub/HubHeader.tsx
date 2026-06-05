@@ -7,8 +7,8 @@ interface HubHeaderProps {
   pendingCount: number
   totalMembers: number
   totalDonated: number
-  activeTab: 'members' | 'donations'
-  setActiveTab: (tab: 'members' | 'donations') => void
+  activeTab: 'members' | 'donations' | 'helpdesk'
+  setActiveTab: (tab: 'members' | 'donations' | 'helpdesk') => void
   donationsCount: number
 }
 
@@ -96,6 +96,7 @@ export function HubHeader({
           [
             { key: 'members', label: `Members (${totalMembers})` },
             { key: 'donations', label: `Donations (${donationsCount})` },
+            { key: 'helpdesk', label: 'Support Tickets' },
           ] as const
         ).map((tab) => (
           <button

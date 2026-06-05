@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { constituencyService } from '@/services/constituencyService'
 import { supabase } from '@/lib/supabase'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { Helpdesk } from '@/components/admin/Helpdesk'
 import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
 import { toast } from 'sonner'
 
@@ -31,7 +32,9 @@ export default function AdminConstituencyLeadHub() {
   const [activities, setActivities] = useState<ConstituencyActivity[]>([])
   const [committee, setCommittee] = useState<ConstituencyLeader[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'members' | 'activities' | 'committee'>('members')
+  const [activeTab, setActiveTab] = useState<'members' | 'activities' | 'committee' | 'helpdesk'>(
+    'members'
+  )
   const [modal, setModal] = useState<Modal>(null)
 
   // Activity form
@@ -437,6 +440,12 @@ export default function AdminConstituencyLeadHub() {
         >
           Committee ({committee.length})
         </button>
+        <button
+          className={activeTab === 'helpdesk' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
+          onClick={() => setActiveTab('helpdesk')}
+        >
+          Support Tickets
+        </button>
       </div>
 
       {/* Members tab */}
@@ -802,6 +811,9 @@ export default function AdminConstituencyLeadHub() {
           </div>
         </div>
       )}
+
+      {/* Helpdesk tab */}
+      {activeTab === 'helpdesk' && <Helpdesk departmentId="constituency" />}
 
       {/* Assign Committee Member Modal */}
       {modal === 'assign-committee' && (

@@ -12,6 +12,7 @@ import { HubHeader } from './chapterhub/HubHeader'
 import { HubMembersList } from './chapterhub/HubMembersList'
 import { HubDonationsList } from './chapterhub/HubDonationsList'
 import { Skeleton } from '@/components/states'
+import { Helpdesk } from '@/components/admin/Helpdesk'
 
 export default function AdminChapterLeadHub() {
   const { chapterId } = useParams<{ chapterId: string }>()
@@ -21,7 +22,7 @@ export default function AdminChapterLeadHub() {
   const [members, setMembers] = useState<ChapterMember[]>([])
   const [donations, setDonations] = useState<ChapterDonation[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'members' | 'donations'>('members')
+  const [activeTab, setActiveTab] = useState<'members' | 'donations' | 'helpdesk'>('members')
   const [memberSearch, setMemberSearch] = useState('')
 
   useEffect(() => {
@@ -142,6 +143,8 @@ export default function AdminChapterLeadHub() {
       )}
 
       {activeTab === 'donations' && <HubDonationsList donations={donations} />}
+
+      {activeTab === 'helpdesk' && <Helpdesk departmentId="chapter" />}
     </div>
   )
 }
