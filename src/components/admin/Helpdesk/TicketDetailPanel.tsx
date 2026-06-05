@@ -35,7 +35,6 @@ interface Props {
   loading: boolean
   canWrite: boolean
   handlers: { id: string; full_name: string }[]
-  currentUserId: string
   onClose: () => void
   onUpdateStatus: (status: TicketStatus) => Promise<boolean>
   onUpdatePriority: (priority: TicketPriority) => Promise<boolean>
@@ -72,7 +71,6 @@ export function TicketDetailPanel({
   loading,
   canWrite,
   handlers,
-  _currentUserId,
   onClose,
   onUpdateStatus,
   onUpdatePriority,
