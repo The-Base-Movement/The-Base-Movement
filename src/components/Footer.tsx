@@ -281,6 +281,7 @@ export default function Footer() {
                   name="email"
                   id="input-a60551"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email address"

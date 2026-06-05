@@ -108,6 +108,7 @@ export function DeliveryForm({
             type="text"
             name="fullName"
             required
+            autoComplete="name"
             value={formData.fullName}
             onChange={onChange}
             style={inputStyle}
@@ -124,6 +125,7 @@ export function DeliveryForm({
             type="email"
             name="email"
             required
+            autoComplete="email"
             value={formData.email}
             onChange={onChange}
             style={inputStyle}
@@ -140,6 +142,7 @@ export function DeliveryForm({
             type="tel"
             name="phone"
             required
+            autoComplete="tel"
             value={formData.phone}
             onChange={onChange}
             style={inputStyle}
@@ -156,6 +159,7 @@ export function DeliveryForm({
             type="text"
             name="address"
             required
+            autoComplete="street-address"
             value={formData.address}
             onChange={onChange}
             style={inputStyle}
@@ -191,6 +195,7 @@ export function DeliveryForm({
               id="input-c53526"
               type="text"
               name="stateProvince"
+              autoComplete="address-level1"
               value={formData.stateProvince}
               onChange={onChange}
               style={inputStyle}
