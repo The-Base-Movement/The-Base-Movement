@@ -275,6 +275,7 @@ export default function DashboardLayout() {
     if (path === '/dashboard/liked') return 'Liked Posts'
     if (path === '/dashboard/referrals') return 'Referrals'
     if (path === '/dashboard/my-donations') return 'My Donations'
+    if (path === '/dashboard/tickets') return 'My Tickets'
     if (path === '/dashboard/wishlist') return 'Wishlist'
     if (path === '/dashboard/cart') return 'Cart'
     if (path === '/dashboard/checkout') return 'Checkout'
@@ -520,6 +521,7 @@ export default function DashboardLayout() {
                   icon: 'volunteer_activism',
                   label: 'My Donations',
                 },
+                { to: '/dashboard/tickets', icon: 'confirmation_number', label: 'My Tickets' },
                 { to: '/dashboard/settings', icon: 'settings', label: 'Settings' },
               ],
             },

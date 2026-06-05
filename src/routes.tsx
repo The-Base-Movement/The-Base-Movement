@@ -110,6 +110,8 @@ const ITSystem = lazy(() => import('./pages/admin/it/ITSystem'))
 const ITTickets = lazy(() => import('./pages/admin/it/ITTickets'))
 const ITLicenses = lazy(() => import('./pages/admin/it/ITLicenses'))
 const ITAssets = lazy(() => import('./pages/admin/it/ITAssets'))
+const ITHelpdesk = lazy(() => import('./pages/admin/it/ITHelpdesk'))
+const MyTickets = lazy(() => import('./components/member/MyTickets'))
 const LikedPosts = lazy(() => import('./pages/LikedPosts'))
 const MyDonations = lazy(() => import('./pages/MyDonations'))
 const Referrals = lazy(() => import('./pages/dashboard/Referrals'))
@@ -198,6 +200,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/my-donations', element: <MyDonations /> },
           { path: '/dashboard/referrals', element: <Referrals /> },
           { path: '/dashboard/notifications', element: <NotificationsPage /> },
+          { path: '/dashboard/tickets', element: <MyTickets /> },
         ],
       },
     ],
@@ -268,6 +271,7 @@ export const routes: RouteObject[] = [
             children: [
               { path: '/admin/it-department', element: <ITDashboard /> },
               { path: '/admin/it-department/tickets', element: <ITTickets /> },
+              { path: '/admin/it-department/helpdesk', element: <ITHelpdesk /> },
               { path: '/admin/it-department/projects', element: <ITProjects /> },
               { path: '/admin/it-department/notes', element: <ITNotes /> },
               { path: '/admin/it-department/todos', element: <ITTodos /> },

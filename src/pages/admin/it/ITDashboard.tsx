@@ -165,7 +165,7 @@ export default function ITDashboard() {
       icon: 'confirmation_number',
       bar: 'hsl(var(--destructive))',
       sub: 'Open and in-progress tickets',
-      to: '/admin/it-department/tickets',
+      to: '/admin/it-department/helpdesk',
     },
     {
       label: 'Asset Alerts',
