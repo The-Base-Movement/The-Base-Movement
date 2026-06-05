@@ -11,6 +11,7 @@ interface HierarchyRow {
   reports_to: string | null
   role_title: string
   full_name: string
+  avatar_url?: string | null
 }
 
 interface TreeNode extends HierarchyRow {
@@ -21,6 +22,7 @@ interface AdminCandidate {
   id: string
   full_name: string
   role: string
+  avatar_url?: string | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -77,12 +79,19 @@ function AddSubordinateModal({
       try {
         const { data } = await supabase
           .from('users')
-          .select('id, full_name')
+          .select('id, full_name, avatar_url')
           .ilike('full_name', `%${query}%`)
           .limit(8)
 
         const filtered = (data ?? []).filter((u) => !existingUserIds.has(u.id))
-        setCandidates(filtered.map((u) => ({ id: u.id, full_name: u.full_name, role: '' })))
+        setCandidates(
+          filtered.map((u) => ({
+            id: u.id,
+            full_name: u.full_name,
+            role: '',
+            avatar_url: u.avatar_url,
+          }))
+        )
       } finally {
         setSearching(false)
       }
@@ -230,12 +239,21 @@ function AddSubordinateModal({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: 15, color: 'hsl(var(--primary))' }}
-                  >
-                    person
-                  </span>
+                  {selected.avatar_url ? (
+                    <img
+                      src={selected.avatar_url}
+                      alt={selected.full_name}
+                      style={{ width: 18, height: 18, borderRadius: '50%', objectFit: 'cover' }}
+                      decoding="async"
+                    />
+                  ) : (
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 15, color: 'hsl(var(--primary))' }}
+                    >
+                      person
+                    </span>
+                  )}
                   <span
                     style={{
                       fontSize: 13,
@@ -330,12 +348,26 @@ function AddSubordinateModal({
                           }
                           onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                         >
-                          <span
-                            className="material-symbols-outlined"
-                            style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}
-                          >
-                            person
-                          </span>
+                          {c.avatar_url ? (
+                            <img
+                              src={c.avatar_url}
+                              alt={c.full_name}
+                              style={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: '50%',
+                                objectFit: 'cover',
+                              }}
+                              decoding="async"
+                            />
+                          ) : (
+                            <span
+                              className="material-symbols-outlined"
+                              style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}
+                            >
+                              person
+                            </span>
+                          )}
                           {c.full_name}
                         </div>
                       ))
@@ -418,10 +450,17 @@ function SetupRootModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
       try {
         const { data } = await supabase
           .from('users')
-          .select('id, full_name')
+          .select('id, full_name, avatar_url')
           .ilike('full_name', `%${query}%`)
           .limit(8)
-        setCandidates((data ?? []).map((u) => ({ id: u.id, full_name: u.full_name, role: '' })))
+        setCandidates(
+          (data ?? []).map((u) => ({
+            id: u.id,
+            full_name: u.full_name,
+            role: '',
+            avatar_url: u.avatar_url,
+          }))
+        )
       } finally {
         setSearching(false)
       }
@@ -529,15 +568,32 @@ function SetupRootModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
                 background: 'hsl(var(--primary) / 0.05)',
               }}
             >
-              <span
-                style={{
-                  fontSize: 13,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
-                {selected.full_name}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {selected.avatar_url ? (
+                  <img
+                    src={selected.avatar_url}
+                    alt={selected.full_name}
+                    style={{ width: 18, height: 18, borderRadius: '50%', objectFit: 'cover' }}
+                    decoding="async"
+                  />
+                ) : (
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 15, color: 'hsl(var(--primary))' }}
+                  >
+                    person
+                  </span>
+                )}
+                <span
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {selected.full_name}
+                </span>
+              </div>
               <button
                 onClick={() => setSelected(null)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}
@@ -622,12 +678,26 @@ function SetupRootModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
                         }
                         onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                       >
-                        <span
-                          className="material-symbols-outlined"
-                          style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}
-                        >
-                          person
-                        </span>
+                        {c.avatar_url ? (
+                          <img
+                            src={c.avatar_url}
+                            alt={c.full_name}
+                            style={{
+                              width: 16,
+                              height: 16,
+                              borderRadius: '50%',
+                              objectFit: 'cover',
+                            }}
+                            decoding="async"
+                          />
+                        ) : (
+                          <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}
+                          >
+                            person
+                          </span>
+                        )}
                         {c.full_name}
                       </div>
                     ))
@@ -706,14 +776,24 @@ function OrgNode({ node, isRoot = false, existingUserIds, onAddSubordinate }: Tr
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 8px',
+            overflow: 'hidden',
           }}
         >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: 18, color: isRoot ? '#fff' : 'hsl(var(--on-surface-muted))' }}
-          >
-            {isRoot ? 'computer' : 'person'}
-          </span>
+          {node.avatar_url ? (
+            <img
+              src={node.avatar_url}
+              alt={node.full_name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              decoding="async"
+            />
+          ) : (
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 18, color: isRoot ? '#fff' : 'hsl(var(--on-surface-muted))' }}
+            >
+              {isRoot ? 'computer' : 'person'}
+            </span>
+          )}
         </div>
 
         <p
@@ -855,12 +935,14 @@ export function OrgChart() {
       ] as string[]
 
       let nameMap: Record<string, string> = {}
+      let avatarMap: Record<string, string | null> = {}
       if (allIds.length > 0) {
         const { data: users } = await supabase
           .from('users')
-          .select('id, full_name')
+          .select('id, full_name, avatar_url')
           .in('id', allIds)
         nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
+        avatarMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.avatar_url ?? null]))
       }
 
       const mapped: HierarchyRow[] = (rows ?? []).map((r) => ({
@@ -869,6 +951,7 @@ export function OrgChart() {
         reports_to: r.reports_to,
         role_title: r.role_title,
         full_name: nameMap[r.user_id] ?? 'Unknown',
+        avatar_url: avatarMap[r.user_id] ?? null,
       }))
       setRows(mapped)
     } catch (err) {
