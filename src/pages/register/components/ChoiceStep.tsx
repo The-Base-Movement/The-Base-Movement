@@ -157,9 +157,7 @@ function PlatformCard({
         variant === 'primary' ? 'hover:border-primary/50' : 'hover:border-brand-gold/50'
       )}
     >
-      <div className="auth-header-label">
-        {subtitle} <span className={cn(variant === 'gold' && 'text-brand-gold')}>PATRIOT</span>
-      </div>
+      <div className="auth-header-label">{subtitle}</div>
       <div className="p-8 flex flex-col h-full">
         <div
           className={cn(
