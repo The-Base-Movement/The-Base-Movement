@@ -131,7 +131,13 @@
       "Bash(xargs -I{} git stash drop {})",
       "Bash(git prune *)",
       "Bash(git gc *)",
-      "Bash(git count-objects *)"
+      "Bash(git count-objects *)",
+      "Bash(not exist *)",
+      "PowerShell(New-Item *)",
+      "Bash(xargs grep -l \"CREATE TABLE.*donations\\\\|CREATE TABLE.*store_orders\")",
+      "Bash(git show *)",
+      "Skill(pr-review-toolkit:review-pr)",
+      "Bash(git *)"
     ]
   },
   "enableAllProjectMcpServers": true,

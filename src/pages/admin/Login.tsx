@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authService } from '@/services/authService'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 
@@ -34,6 +35,9 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showMfaPrompt, setShowMfaPrompt] = useState(false)
+  const [mfaFactorId, setMfaFactorId] = useState('')
+  const [mfaCode, setMfaCode] = useState('')
   const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -41,6 +45,22 @@ export default function AdminLogin() {
     setIsLoading(true)
     try {
       await authService.login(email, password)
+
+      // Check if MFA is required
+      const { data: aal, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+      if (error) throw error
+
+      if (aal.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
+        // User has MFA enrolled, fetch factors and show prompt
+        const { data: factors } = await supabase.auth.mfa.listFactors()
+        if (factors && factors.all && factors.all.length > 0) {
+          setMfaFactorId(factors.all[0].id)
+          setShowMfaPrompt(true)
+          setIsLoading(false)
+          return
+        }
+      }
+
       toast.success('Access granted. Welcome to the Command Center.')
       navigate('/admin')
     } catch (error) {
@@ -49,6 +69,28 @@ export default function AdminLogin() {
           ? error.message
           : 'Authentication failed. Please check your credentials.'
       )
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleVerifyMfa = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      const challenge = await supabase.auth.mfa.challenge({ factorId: mfaFactorId })
+      if (challenge.error) throw challenge.error
+      const verify = await supabase.auth.mfa.verify({
+        factorId: mfaFactorId,
+        challengeId: challenge.data.id,
+        code: mfaCode,
+      })
+      if (verify.error) throw verify.error
+
+      toast.success('Access granted. Welcome to the Command Center.')
+      navigate('/admin')
+    } catch {
+      toast.error('Invalid verification code.')
     } finally {
       setIsLoading(false)
     }
@@ -138,120 +180,215 @@ export default function AdminLogin() {
           </div>
 
           {/* Form body */}
-          <form
-            onSubmit={handleLogin}
-            style={{
-              background: '#fff',
-              padding: '28px 32px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 18,
-            }}
-          >
-            <div style={{ marginBottom: 2 }}>
-              <div
-                style={{
-                  fontSize: 14,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontFamily: "'Public Sans', sans-serif",
-                  color: 'hsl(var(--on-surface))',
-                  marginBottom: 4,
-                }}
-              >
-                Admin login
-              </div>
-              <div
-                style={{
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 400,
-                }}
-              >
-                Authorized personnel only
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label htmlFor="input-5337b3" style={labelStyle}>
-                Email address
-              </label>
-              <input
-                aria-label="admin@thebase.org"
-                name="email"
-                id="input-5337b3"
-                type="email"
-                required
-                autoComplete="username"
-                placeholder="admin@thebase.org"
-                style={fieldStyle}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="input-55345f" style={labelStyle}>
-                Password
-              </label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  aria-label="••••••••"
-                  name="password"
-                  id="input-55345f"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  style={{ ...fieldStyle, paddingRight: 42 }}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: 'absolute',
-                    right: 12,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                    color: 'hsl(var(--on-surface-muted))',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                    {showPassword ? 'visibility_off' : 'visibility'}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="btn btn-dest"
+          {!showMfaPrompt ? (
+            <form
+              onSubmit={handleLogin}
               style={{
-                width: '100%',
-                justifyContent: 'center',
-                height: 48,
-                fontSize: 13,
-                marginTop: 2,
+                background: '#fff',
+                padding: '28px 32px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 18,
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                {isLoading ? 'hourglass_empty' : 'login'}
-              </span>
-              {isLoading ? 'Authenticating...' : 'Sign in to command →'}
-            </button>
-          </form>
+              <div style={{ marginBottom: 2 }}>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface))',
+                    marginBottom: 4,
+                  }}
+                >
+                  Admin login
+                </div>
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 400,
+                  }}
+                >
+                  Authorized personnel only
+                </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label htmlFor="input-5337b3" style={labelStyle}>
+                  Email address
+                </label>
+                <input
+                  aria-label="admin@thebase.org"
+                  name="email"
+                  id="input-5337b3"
+                  type="email"
+                  required
+                  autoComplete="username"
+                  placeholder="admin@thebase.org"
+                  style={fieldStyle}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label htmlFor="input-55345f" style={labelStyle}>
+                  Password
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    aria-label="••••••••"
+                    name="password"
+                    id="input-55345f"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    autoComplete="current-password"
+                    placeholder="••••••••"
+                    style={{ ...fieldStyle, paddingRight: 42 }}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: 12,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      color: 'hsl(var(--on-surface-muted))',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn btn-dest"
+                style={{
+                  width: '100%',
+                  justifyContent: 'center',
+                  height: 48,
+                  fontSize: 13,
+                  marginTop: 2,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  {isLoading ? 'hourglass_empty' : 'login'}
+                </span>
+                {isLoading ? 'Authenticating...' : 'Sign in to command →'}
+              </button>
+            </form>
+          ) : (
+            <form
+              onSubmit={handleVerifyMfa}
+              style={{
+                background: '#fff',
+                padding: '28px 32px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 18,
+              }}
+            >
+              <div style={{ marginBottom: 2 }}>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface))',
+                    marginBottom: 4,
+                  }}
+                >
+                  Two-Factor Authentication
+                </div>
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 400,
+                  }}
+                >
+                  Enter the 6-digit code from your authenticator app
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="input-mfa" style={labelStyle}>
+                  Verification code
+                </label>
+                <input
+                  name="mfaCode"
+                  id="input-mfa"
+                  type="text"
+                  required
+                  autoComplete="one-time-code"
+                  placeholder="000 000"
+                  maxLength={6}
+                  style={{
+                    ...fieldStyle,
+                    textAlign: 'center',
+                    fontSize: 22,
+                    letterSpacing: '0.4em',
+                    height: 52,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                  }}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading || mfaCode.length < 6}
+                className="btn btn-primary"
+                style={{
+                  width: '100%',
+                  justifyContent: 'center',
+                  height: 48,
+                  fontSize: 13,
+                  marginTop: 2,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  {isLoading ? 'hourglass_empty' : 'verified_user'}
+                </span>
+                {isLoading ? 'Verifying...' : 'Verify Identity →'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowMfaPrompt(false)}
+                className="btn btn-outline"
+                style={{
+                  width: '100%',
+                  justifyContent: 'center',
+                  height: 40,
+                  fontSize: 12,
+                }}
+                disabled={isLoading}
+              >
+                Back to login
+              </button>
+            </form>
+          )}
 
           {/* Footer */}
           <div
