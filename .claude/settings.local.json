@@ -119,7 +119,9 @@
       "Bash(git -C C:/MAMP/htdocs/The-Base log --oneline --all -- .env)",
       "Bash(git -C C:/MAMP/htdocs/The-Base show d8e195b --name-only)",
       "mcp__Claude_Preview__preview_start",
-      "Bash(grep -v \"//\\\\|import\\\\|sectionId\\\\|section-title\\\\|Section>\\\\|<.*Section\")"
+      "Bash(grep -v \"//\\\\|import\\\\|sectionId\\\\|section-title\\\\|Section>\\\\|<.*Section\")",
+      "Bash(git -C \"C:/MAMP/htdocs/The-Base\" add -A)",
+      "Bash(git -C \"C:/MAMP/htdocs/The-Base\" commit -m \"feat\\(db\\): add helpdesk schema — departments, tickets, comments, attachments, RLS\")"
     ]
   },
   "enableAllProjectMcpServers": true,

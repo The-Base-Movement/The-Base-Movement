@@ -59,6 +59,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     Content: true,
     System: true,
   })
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
   const location = useLocation()
   const navigate = useNavigate()
   const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
@@ -216,6 +217,28 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  useEffect(() => {
+    const currentPath = location.pathname
+    const activeGroup = filteredNavGroups.find((group) =>
+      group.items.some((item) => {
+        if (item.to === currentPath) return true
+        if (item.subItems?.some((sub) => sub.to === currentPath)) return true
+        if (item.to !== '/admin/dashboard' && currentPath.startsWith(item.to)) return true
+        return false
+      })
+    )
+
+    if (activeGroup) {
+      setOpenGroups((prev) => {
+        const nextGroups: Record<string, boolean> = {}
+        Object.keys(prev).forEach((key) => {
+          nextGroups[key] = key === activeGroup.label
+        })
+        return nextGroups
+      })
+    }
+  }, [location.pathname, filteredNavGroups])
+
   interface NavItem {
     to: string
     icon: string
@@ -227,6 +250,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       action: AdminPermission['action']
       resource: AdminPermission['resource']
     }
+    subItems?: NavItem[]
   }
 
   const navGroups: { label: string; icon: string; items: NavItem[] }[] = [
@@ -472,6 +496,22 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           label: 'IT Department',
           superAdminOnly: true,
           permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+          subItems: [
+            { to: '/admin/it-department', icon: 'dashboard', label: 'Overview' },
+            { to: '/admin/it-department/tickets', icon: 'confirmation_number', label: 'Helpdesk' },
+            { to: '/admin/it-department/projects', icon: 'folder_open', label: 'Projects' },
+            { to: '/admin/it-department/notes', icon: 'sticky_note_2', label: 'Notes' },
+            { to: '/admin/it-department/todos', icon: 'checklist', label: 'To-Dos' },
+            {
+              to: '/admin/it-department/security-protocols',
+              icon: 'security',
+              label: 'Security Protocols',
+            },
+            { to: '/admin/it-department/system', icon: 'shield', label: 'System' },
+            { to: '/admin/it-department/licenses', icon: 'license', label: 'Licenses' },
+            { to: '/admin/it-department/assets', icon: 'inventory_2', label: 'Assets' },
+            { to: '/admin/it-department/hierarchy', icon: 'account_tree', label: 'Hierarchy' },
+          ],
         },
         {
           to: '/admin/party-officials',
@@ -527,7 +567,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
   const toggleGroup = (groupLabel: string) => {
     if (!isSidebarOpen) setIsSidebarOpen(true)
-    setOpenGroups((prev) => ({ ...prev, [groupLabel]: !prev[groupLabel] }))
+    setOpenGroups((prev) => {
+      const isCurrentlyOpen = prev[groupLabel]
+      const newOpenGroups: Record<string, boolean> = {}
+      Object.keys(prev).forEach((key) => {
+        newOpenGroups[key] = key === groupLabel ? !isCurrentlyOpen : false
+      })
+      return newOpenGroups
+    })
   }
 
   const handleLogout = () => {
@@ -657,45 +704,139 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <div
                     className={cn(
                       'overflow-hidden transition-all duration-300 relative',
-                      isOpen && isSidebarOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                      isOpen && isSidebarOpen ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'
                     )}
                   >
                     {group.items.map((item) => {
-                      const isActive = location.pathname === item.to
+                      const hasSubItems = item.subItems && item.subItems.length > 0
+                      const isParentActive = hasSubItems
+                        ? location.pathname.startsWith(item.to)
+                        : location.pathname === item.to
+
+                      const isExpanded = !!(
+                        expandedItems[item.to] ||
+                        (hasSubItems && location.pathname.startsWith(item.to))
+                      )
+
                       return (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          className={cn(
-                            'flex items-center gap-[10px] px-[10px] py-[8px] mx-[8px] transition-all relative group/item rounded-[3px] font-display font-medium text-[11.5px]',
-                            isActive
-                              ? 'bg-[hsl(var(--destructive))] text-white shadow-sm'
-                              : 'text-white/70 hover:text-white hover:bg-white/5'
-                          )}
-                          onClick={() => {
-                            if (window.innerWidth < 1024) setIsSidebarOpen(false)
-                          }}
-                        >
-                          <span
-                            className="material-symbols-outlined shrink-0"
-                            style={{ fontSize: 16 }}
-                          >
-                            {item.icon}
-                          </span>
-                          <span className="whitespace-nowrap flex-1">{item.label}</span>
-                          {item.pill && (
-                            <span
+                        <div key={item.to} className="space-y-0.5">
+                          <div className="flex items-center justify-between relative group/item mx-[8px] rounded-[3px]">
+                            <Link
+                              to={item.to}
                               className={cn(
-                                'px-[7px] py-[1px] rounded-full text-[9px] font-semibold',
-                                isActive
-                                  ? 'bg-black/30 text-white'
-                                  : 'bg-[hsl(var(--destructive))] text-white'
+                                'flex items-center gap-[10px] px-[10px] py-[8px] flex-1 transition-all rounded-[3px] font-display font-medium text-[11.5px]',
+                                isParentActive && !hasSubItems
+                                  ? 'bg-[hsl(var(--destructive))] text-white shadow-sm'
+                                  : isParentActive
+                                    ? 'text-white bg-white/5 font-semibold'
+                                    : 'text-white/70 hover:text-white hover:bg-white/5'
+                              )}
+                              onClick={() => {
+                                if (hasSubItems) {
+                                  setExpandedItems((prev) => ({
+                                    ...prev,
+                                    [item.to]: !prev[item.to],
+                                  }))
+                                }
+                                if (!hasSubItems && window.innerWidth < 1024) {
+                                  setIsSidebarOpen(false)
+                                }
+                              }}
+                            >
+                              <span
+                                className="material-symbols-outlined shrink-0"
+                                style={{ fontSize: 16 }}
+                              >
+                                {item.icon}
+                              </span>
+                              <span className="whitespace-nowrap flex-1">{item.label}</span>
+                              {item.pill && (
+                                <span
+                                  className={cn(
+                                    'px-[7px] py-[1px] rounded-full text-[9px] font-semibold mr-1',
+                                    isParentActive
+                                      ? 'bg-black/30 text-white'
+                                      : 'bg-[hsl(var(--destructive))] text-white'
+                                  )}
+                                >
+                                  {item.pill}
+                                </span>
+                              )}
+                            </Link>
+
+                            {hasSubItems && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  setExpandedItems((prev) => ({
+                                    ...prev,
+                                    [item.to]: !prev[item.to],
+                                  }))
+                                }}
+                                className={cn(
+                                  'absolute right-2 top-1/2 -translate-y-1/2 p-1 text-white/40 hover:text-white transition-colors duration-150',
+                                  isParentActive ? 'text-white/70' : ''
+                                )}
+                              >
+                                <span
+                                  className={cn(
+                                    'material-symbols-outlined transition-transform duration-200 block',
+                                    isExpanded ? 'rotate-180' : ''
+                                  )}
+                                  style={{ fontSize: 14 }}
+                                >
+                                  expand_more
+                                </span>
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Sub-items container */}
+                          {hasSubItems && (
+                            <div
+                              className={cn(
+                                'overflow-hidden transition-all duration-300 relative space-y-0.5',
+                                isExpanded && isSidebarOpen
+                                  ? 'max-h-[500px] opacity-100 mt-0.5'
+                                  : 'max-h-0 opacity-0'
                               )}
                             >
-                              {item.pill}
-                            </span>
+                              {item.subItems.map((subItem) => {
+                                const isSubActive =
+                                  subItem.to === item.to
+                                    ? location.pathname === subItem.to
+                                    : location.pathname.startsWith(subItem.to)
+
+                                return (
+                                  <Link
+                                    key={subItem.to}
+                                    to={subItem.to}
+                                    className={cn(
+                                      'flex items-center gap-[8px] pl-[34px] pr-[10px] py-[6px] mx-[8px] transition-all rounded-[3px] font-display font-medium text-[10.5px]',
+                                      isSubActive
+                                        ? 'bg-[hsl(var(--destructive))] text-white shadow-sm'
+                                        : 'text-white/50 hover:text-white hover:bg-white/5'
+                                    )}
+                                    onClick={() => {
+                                      if (window.innerWidth < 1024) setIsSidebarOpen(false)
+                                    }}
+                                  >
+                                    <span
+                                      className="material-symbols-outlined shrink-0"
+                                      style={{ fontSize: 13 }}
+                                    >
+                                      {subItem.icon}
+                                    </span>
+                                    <span className="whitespace-nowrap flex-1">
+                                      {subItem.label}
+                                    </span>
+                                  </Link>
+                                )
+                              })}
+                            </div>
                           )}
-                        </Link>
+                        </div>
                       )
                     })}
                   </div>
