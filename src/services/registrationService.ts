@@ -45,7 +45,9 @@ export const registrationService = {
 
     if (authError) {
       if (authError.message?.toLowerCase().includes('already registered')) {
-        throw new Error('An account with this phone number already exists. Try signing in instead.')
+        throw new Error(
+          'An account with this primary phone number (or email) already exists. Try signing in instead.'
+        )
       }
       throw authError
     }
