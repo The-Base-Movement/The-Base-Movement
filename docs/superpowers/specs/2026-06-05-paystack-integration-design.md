@@ -1,8 +1,8 @@
 # Paystack Payment Integration — Design Spec
 
-**Date:** 2026-06-05  
-**Status:** Approved — ready for implementation  
-**Priority:** High  
+**Date:** 2026-06-05
+**Status:** Approved — ready for implementation
+**Priority:** High
 **Affects:** Donations, Store Checkout, Chapter/Constituency donate buttons, Public header
 
 ---
@@ -122,11 +122,12 @@ interface PaystackButtonProps {
 2. No email → use `donations@thebasemovement.com` (movement catches Paystack receipts)
 
 **Confirmation channels (handled by Edge Function after payment):**
-| Donor has email | Donor has phone | Receives |
-|---|---|---|
-| ✓ | — | Paystack email receipt |
-| — | ✓ | SMS via Africa's Talking |
-| ✓ | ✓ | Both |
+
+| Donor has email | Donor has phone | Receives                 |
+| --------------- | --------------- | ------------------------ |
+| ✓               | —               | Paystack email receipt   |
+| —               | ✓               | SMS via Africa's Talking |
+| ✓               | ✓               | Both                     |
 
 **Behaviour:**
 
@@ -212,12 +213,16 @@ https://vhlyekyxutwbxlvktnzd.supabase.co/functions/v1/paystack-webhook
 
 ### `src/pages/Donate.tsx`
 
-- Step 4 (manual receipt upload) **removed**
-- Step 3 now ends with `PaystackButton` instead of a "Submit" button
-- Flow: form filled → `PaystackButton` clicked → popup → `onSuccess` callback:
-  1. Call `verify-payment` Edge Function
-  2. On success → show existing `DonateSuccessPanel`
-- Donor email resolved from auth session if logged in, otherwise field in form (optional)
+Receipt upload (Step 4) is **kept** — it serves offline donors (cash, bank transfer, MoMo done outside the website). Paystack is an additional online payment path, not a replacement.
+
+**Updated flow:**
+
+- Steps 1–2 unchanged (amount, contributor profile)
+- Step 3 ends with a **payment method choice:**
+  - **"Pay online now"** → `PaystackButton` fires popup → on success: call `verify-payment` Edge Function → donation auto-set to `Verified` → `DonateSuccessPanel`
+  - **"I already paid / paying offline"** → proceeds to existing Step 4 (receipt upload) → submission stays `Pending` for admin processing
+- Both paths end at the same `DonateSuccessPanel`
+- Donor email resolved from auth session if logged in, otherwise optional field in form
 
 ### `src/pages/Checkout.tsx`
 
@@ -261,11 +266,11 @@ npm install react-paystack
 
 ### Before testing
 
-- [ ] **Add `PAYSTACK_SECRET_KEY` to Supabase Edge Function secrets**
+- [x] **Add `PAYSTACK_SECRET_KEY` to Supabase Edge Function secrets**
   - Supabase dashboard → Edge Functions → Manage secrets → add `PAYSTACK_SECRET_KEY=sk_test_...`
-- [ ] **Add `PAYSTACK_PUBLIC_KEY` to Vercel environment variables**
+- [x] **Add `PAYSTACK_PUBLIC_KEY` to Vercel environment variables**
   - Vercel dashboard → Project → Settings → Environment Variables → add `PAYSTACK_PUBLIC_KEY=pk_test_...`
-- [ ] **Add `PAYSTACK_PUBLIC_KEY` to local `.env`** _(already done)_
+- [x] **Add `PAYSTACK_PUBLIC_KEY` to local `.env`** _(already done)_
 
 ### In Paystack dashboard (test environment)
 
