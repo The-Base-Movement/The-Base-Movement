@@ -12,6 +12,7 @@ interface PaystackButtonProps {
     orderId?: string
     memberId?: string
     context?: { type: 'chapter' | 'constituency'; name: string; id: string }
+    custom_fields?: { display_name: string; variable_name: string; value: unknown }[]
   }
   label?: string
   onSuccess: (paystackRef: string) => void
@@ -54,8 +55,7 @@ export default function PaystackButton({
 
   const initializePayment = usePaystackPayment(config)
 
-  const handleSuccess = (ref: any) => {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
+  const handleSuccess = (ref: { reference?: string; trxref?: string }) => {
     setLoading(false)
     // ref.reference === the UUID we passed; Paystack echoes it back
     onSuccess(ref.reference || ref.trxref || reference)
