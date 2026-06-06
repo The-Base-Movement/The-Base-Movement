@@ -385,7 +385,7 @@ export default function TrashPage() {
                 paddingLeft: 34,
                 paddingRight: 12,
                 border: '1px solid hsl(var(--border))',
-                background: '#fff',
+                background: 'hsl(var(--surface))',
                 borderRadius: 4,
                 outline: 'none',
                 fontFamily: "'Public Sans', sans-serif",

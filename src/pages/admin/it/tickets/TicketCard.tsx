@@ -141,7 +141,7 @@ export function TicketCard({
                     top: dropdownPos.top,
                     right: dropdownPos.right,
                     zIndex: 50,
-                    background: '#fff',
+                    background: 'hsl(var(--surface))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: 'var(--radius-md)',
                     minWidth: 160,

@@ -152,25 +152,33 @@ export function OfficialsTable({
             >
               search
             </span>
-            <input
-              aria-label="Search officials…"
-              style={{
-                height: 34,
-                paddingLeft: 34,
-                paddingRight: 12,
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: 13,
-                fontFamily: "'Public Sans', sans-serif",
-                color: 'hsl(var(--on-surface))',
-                background: 'hsl(var(--background))',
-                boxSizing: 'border-box',
-                width: '100%',
-              }}
-              placeholder="Search officials…"
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-            />
+            <label htmlFor="officials-search" style={{ display: 'block', width: '100%' }}>
+              <span className="sr-only" style={{ display: 'none' }}>
+                Search officials
+              </span>
+              <input
+                id="officials-search"
+                name="officials-search"
+                type="text"
+                aria-label="Search officials…"
+                style={{
+                  height: 34,
+                  paddingLeft: 34,
+                  paddingRight: 12,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: 13,
+                  fontFamily: "'Public Sans', sans-serif",
+                  color: 'hsl(var(--on-surface))',
+                  background: 'hsl(var(--background))',
+                  boxSizing: 'border-box',
+                  width: '100%',
+                }}
+                placeholder="Search officials…"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+              />
+            </label>
           </div>
           <SortToggle value={sortOrder} onChange={onSortChange} />
         </div>
@@ -274,7 +282,7 @@ export function OfficialsTable({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 6,
                   padding: '14px 16px',
-                  background: '#fff',
+                  background: 'hsl(var(--surface))',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 10,

@@ -1,4 +1,4 @@
-﻿import React from 'react'
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 
@@ -88,12 +88,16 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
   const isDark = variant === 'dark'
 
   const navClass = isDark
-    ? 'breadcrumb-nav flex items-center gap-2 mb-6 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/15'
-    : 'breadcrumb-nav flex items-center gap-2 mb-8 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50'
+    ? 'breadcrumb-nav flex items-center gap-2 mb-6 mt-5 backdrop-blur-sm px-4 py-2 rounded-full border'
+    : 'breadcrumb-nav flex items-center gap-2 mb-8 mt-5 backdrop-blur-sm px-4 py-2 rounded-full border'
+
+  const navStyle = isDark
+    ? { background: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(255, 255, 255, 0.15)' }
+    : { background: 'hsl(var(--card) / 0.5)', borderColor: 'hsl(var(--border) / 0.5)' }
 
   const mutedClass = isDark
     ? 'text-white/50 hover:text-white transition-colors flex items-center gap-1.5 shrink-0'
-    : 'hover:text-[var(--brand-green)] transition-colors flex items-center gap-1.5 shrink-0'
+    : 'hover:text-[hsl(var(--brand-green))] transition-colors flex items-center gap-1.5 shrink-0'
 
   const mutedStyle = isDark ? undefined : { color: 'hsl(var(--on-surface-muted))' }
 
@@ -113,7 +117,7 @@ export function Breadcrumbs({ currentLabel: labelProp, variant = 'light' }: Brea
   const inactiveLinkStyle = isDark ? undefined : { color: 'hsl(var(--on-surface-muted))' }
 
   return (
-    <nav aria-label="Breadcrumb" className={navClass}>
+    <nav aria-label="Breadcrumb" className={navClass} style={navStyle}>
       <Link to={root.to} className={mutedClass} style={mutedStyle}>
         <span className="material-symbols-outlined shrink-0" style={{ fontSize: 14 }}>
           home

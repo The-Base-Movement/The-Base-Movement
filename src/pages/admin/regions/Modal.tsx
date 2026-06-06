@@ -26,7 +26,7 @@ export function Modal({ title, subtitle, onClose, children }: ModalProps) {
         style={{
           width: '100%',
           maxWidth: 440,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',
@@ -40,7 +40,7 @@ export function Modal({ title, subtitle, onClose, children }: ModalProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
           }}
         >
           <div>
@@ -49,7 +49,7 @@ export function Modal({ title, subtitle, onClose, children }: ModalProps) {
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 margin: 0,
               }}
             >
@@ -60,7 +60,7 @@ export function Modal({ title, subtitle, onClose, children }: ModalProps) {
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
                   fontSize: 12,
-                  color: 'rgba(255,255,255,0.55)',
+                  color: 'hsl(var(--on-surface-muted))',
                   margin: '2px 0 0',
                   fontWeight: 'var(--font-weight-medium, 500)',
                 }}
@@ -75,7 +75,7 @@ export function Modal({ title, subtitle, onClose, children }: ModalProps) {
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              color: 'rgba(255,255,255,0.6)',
+              color: 'hsl(var(--on-surface-muted))',
               display: 'flex',
               alignItems: 'center',
             }}

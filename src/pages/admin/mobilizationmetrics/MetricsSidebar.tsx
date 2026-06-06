@@ -118,11 +118,18 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
       </div>
 
       {/* Movement velocity */}
-      <div style={{ background: 'hsl(var(--on-surface))', borderRadius: 6, overflow: 'hidden' }}>
+      <div
+        style={{
+          background: 'hsl(var(--card))',
+          border: '1px solid hsl(var(--border))',
+          borderRadius: 6,
+          overflow: 'hidden',
+        }}
+      >
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid rgba(255,255,255,0.05)',
+            borderBottom: '1px solid hsl(var(--border))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -133,7 +140,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 10,
-              color: 'rgba(255,255,255,0.4)',
+              color: 'hsl(var(--on-surface-muted))',
             }}
           >
             Movement velocity
@@ -164,7 +171,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-normal, 400)',
                     fontSize: 10,
-                    color: 'rgba(255,255,255,0.6)',
+                    color: 'hsl(var(--on-surface-muted))',
                   }}
                 >
                   {bar.label}
@@ -174,7 +181,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-semibold, 600)',
                     fontSize: 12,
-                    color: '#fff',
+                    color: 'hsl(var(--on-surface))',
                   }}
                 >
                   {bar.pct}%
@@ -183,7 +190,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
               <div
                 style={{
                   height: 4,
-                  background: 'rgba(255,255,255,0.1)',
+                  background: 'hsl(var(--border))',
                   borderRadius: 99,
                   overflow: 'hidden',
                 }}
@@ -202,7 +209,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
           <div
             style={{
               paddingTop: 14,
-              borderTop: '1px solid rgba(255,255,255,0.05)',
+              borderTop: '1px solid hsl(var(--border))',
               textAlign: 'center',
             }}
           >
@@ -211,7 +218,7 @@ export function MetricsSidebar({ achievements, pulse, leaderboardLength }: Metri
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 11,
-                color: 'rgba(255,255,255,0.3)',
+                color: 'hsl(var(--on-surface-muted))',
                 lineHeight: 1.6,
                 fontStyle: 'italic',
                 margin: 0,

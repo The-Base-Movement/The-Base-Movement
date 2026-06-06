@@ -12,12 +12,15 @@ export function LeaderboardPanel({
   topScore,
 }: LeaderboardPanelProps) {
   return (
-    <div className="panel">
+    <div
+      className="panel"
+      style={{ height: '100%', maxHeight: 660, display: 'flex', flexDirection: 'column' }}
+    >
       <div className="ph">
         <h3>Today's leaderboard</h3>
         <span className="meta">sign-ups · {canvassersOnline} field agents</span>
       </div>
-      <div style={{ padding: '6px 0' }}>
+      <div style={{ padding: '6px 0', flex: 1, overflowY: 'auto' }}>
         {leaderboard.length === 0 ? (
           <p
             style={{

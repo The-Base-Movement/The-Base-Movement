@@ -4,18 +4,32 @@ interface RoutesPanelProps {
   campaigns: CanvassingCampaign[]
   activeCampaigns: CanvassingCampaign[]
   fieldLogs: CanvasserLog[]
+  maxHeight?: number
 }
 
-export function RoutesPanel({ campaigns, activeCampaigns, fieldLogs }: RoutesPanelProps) {
+export function RoutesPanel({
+  campaigns,
+  activeCampaigns,
+  fieldLogs,
+  maxHeight,
+}: RoutesPanelProps) {
   return (
-    <div className="panel">
+    <div
+      className="panel"
+      style={{
+        height: '100%',
+        maxHeight: maxHeight ?? 'none',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <div className="ph">
         <h3>Routes today</h3>
         <span className="meta">
           {campaigns.length} routes · {activeCampaigns.length} active
         </span>
       </div>
-      <div style={{ padding: '6px 0' }}>
+      <div style={{ padding: '6px 0', flex: 1, overflowY: 'auto' }}>
         {campaigns.map((c, i) => {
           const knocked = fieldLogs.filter((l) =>
             l.canvasser_id.includes(c.id?.substring(0, 4) ?? '')

@@ -1,8 +1,9 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Editor } from '@tinymce/tinymce-react'
 import { toast } from 'sonner'
 import { fieldStyle, labelStyle, priorityBorderColor } from './utils'
 import type { Broadcast, Region } from '@/services/adminService'
+import { useIsDarkTheme } from '@/hooks/useIsDarkTheme'
 
 interface NewBroadcastFormProps {
   newBroadcast: Omit<Broadcast, 'id' | 'sender_id' | 'created_at'>
@@ -29,6 +30,7 @@ export function NewBroadcastForm({
   handleSend,
   editorRef,
 }: NewBroadcastFormProps) {
+  const isDark = useIsDarkTheme()
   return (
     <div className="panel" style={{ maxWidth: 900 }}>
       {/* Dark gradient header */}
@@ -265,6 +267,7 @@ export function NewBroadcastForm({
             }}
           >
             <Editor
+              key={isDark ? 'dark' : 'light'}
               aria-labelledby="label-broadcast-message"
               apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
               onInit={(_, editor) => (editorRef.current = editor)}
@@ -288,9 +291,11 @@ export function NewBroadcastForm({
                 ],
                 toolbar:
                   'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat | link | help',
-                content_style:
-                  "body { font-family: 'Public Sans', sans-serif; font-size:14px; } p { margin-bottom: 1em; }",
-                skin: 'oxide',
+                content_style: isDark
+                  ? "body { font-family: 'Public Sans', sans-serif; font-size:14px; color: #f1f5f9; background: #0f1110; } p { margin-bottom: 1em; }"
+                  : "body { font-family: 'Public Sans', sans-serif; font-size:14px; color: #1f2520; background: #ffffff; } p { margin-bottom: 1em; }",
+                skin: isDark ? 'oxide-dark' : 'oxide',
+                content_css: isDark ? 'dark' : 'default',
                 placeholder: 'Compose your administrative directive with rich formatting...',
                 branding: false,
                 statusbar: false,

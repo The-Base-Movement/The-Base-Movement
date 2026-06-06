@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import type { Broadcast } from '@/services/adminService'
 import { priorityStyle, targetLabel, pillBase } from './styles'
 
@@ -18,44 +19,91 @@ export function BroadcastHistory({
   broadcastMetrics,
   fetchMetrics,
 }: BroadcastHistoryProps) {
+  const [searchInput, setSearchInput] = useState(searchQuery)
+  const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery)
+
+  // Sync external searchQuery → local input if parent resets/updates it
+  if (searchQuery !== prevSearchQuery) {
+    setPrevSearchQuery(searchQuery)
+    setSearchInput(searchQuery)
+  }
+
+  // Live search debounce: 400ms after the user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(searchInput)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [searchInput, setSearchQuery])
+
   return (
-    <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+    <div
+      className="panel"
+      style={{ padding: 0, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column' }}
+    >
       <div
         style={{
           padding: '16px 20px',
           borderBottom: '1px solid hsl(var(--border))',
           background: 'hsl(var(--container-low))',
           display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
           gap: 12,
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div>
-          <div
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 13,
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            Broadcast history
+        {/* Title row */}
+        <div style={{ position: 'relative', overflow: 'hidden', minHeight: 38 }}>
+          <div style={{ position: 'relative', zIndex: 1, paddingRight: 60 }}>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Broadcast history
+            </div>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                marginTop: 2,
+              }}
+            >
+              HQ-to-field transmission log
+            </div>
           </div>
-          <div
+          <img
+            src="/brand/icons/megaphone.png"
+            alt=""
             style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 11,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 2,
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '100%',
+              opacity: 0.12,
+              pointerEvents: 'none',
+              zIndex: 0,
+              objectFit: 'contain',
             }}
-          >
-            HQ-to-field transmission log
-          </div>
+          />
         </div>
-        <div style={{ position: 'relative', flex: '1 1 200px' }}>
+        {/* Separator line */}
+        <div
+          style={{
+            height: 1,
+            background: 'hsl(var(--border))',
+            marginLeft: -20,
+            marginRight: -20,
+          }}
+        />
+        <div style={{ position: 'relative' }}>
           <span
             className="material-symbols-outlined"
             style={{
@@ -76,8 +124,8 @@ export function BroadcastHistory({
             id="input-ee6569"
             type="text"
             placeholder="Search broadcasts…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             style={{
               height: 36,
               paddingLeft: 30,
@@ -88,7 +136,7 @@ export function BroadcastHistory({
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               outline: 'none',
-              background: '#fff',
+              background: 'hsl(var(--surface))',
               color: 'hsl(var(--on-surface))',
               width: '100%',
               boxSizing: 'border-box',

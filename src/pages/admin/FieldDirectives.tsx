@@ -189,11 +189,11 @@ export default function FieldDirectives() {
       </div>
 
       {/* Main grid */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
-        <div style={{ flex: '1 1 300px', minWidth: 0 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'stretch' }}>
+        <div style={{ flex: '1 1 300px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
           <ActiveDirectivesList directives={directives} onOpenCreate={() => setIsCreating(true)} />
         </div>
-        <div style={{ flex: '2 1 400px', minWidth: 0 }}>
+        <div style={{ flex: '2 1 400px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
           <SituationalAwarenessFeed reports={reports} onVerify={handleVerify} />
         </div>
       </div>

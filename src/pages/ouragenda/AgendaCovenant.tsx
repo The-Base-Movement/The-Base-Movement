@@ -10,7 +10,7 @@ export function AgendaCovenant({ isLoggedIn }: AgendaCovenantProps) {
   return (
     <section
       style={{
-        background: 'hsl(var(--on-surface))',
+        background: 'hsl(var(--container-low))',
         borderRadius: 'var(--radius-lg)',
         padding: 'clamp(48px, 6vw, 72px) clamp(32px, 5vw, 64px)',
         marginTop: 'clamp(48px, 6vw, 72px)',
@@ -27,7 +27,7 @@ export function AgendaCovenant({ isLoggedIn }: AgendaCovenantProps) {
           fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
           letterSpacing: '-0.02em',
-          color: '#fff',
+          color: 'hsl(var(--on-surface))',
           margin: '0 0 24px',
         }}
       >

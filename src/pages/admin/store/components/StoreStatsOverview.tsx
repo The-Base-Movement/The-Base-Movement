@@ -30,6 +30,7 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
     <>
       <div className="kpis">
         <TacticalKPI
+          variant="red"
           label="Inventory alerts"
           value={lowStockItems.length}
           description={lowStockItems.length > 0 ? 'Replenishment required' : 'Supply chain stable'}
@@ -40,6 +41,7 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
           }
         />
         <TacticalKPI
+          variant="gold"
           label="Active requests"
           value={pendingRequests}
           description={pendingRequests > 0 ? 'Pending HQ approval' : 'All processed'}
@@ -50,11 +52,13 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
           }
         />
         <TacticalKPI
+          variant="black"
           label="Stock units"
           value={totalStockUnits.toLocaleString()}
           description={`Across ${products.length} catalog items`}
         />
         <TacticalKPI
+          variant="green"
           label="Stock value"
           value={`₵${stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
           description="Movement asset valuation"

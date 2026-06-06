@@ -59,6 +59,21 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         root.style.setProperty('--admin-gap', '2rem')
         root.style.setProperty('--admin-font-scale', '1')
       }
+
+      // Sync dark mode preference if available
+      const localDarkMode = localStorage.getItem('admin_dark_mode')
+      if (localDarkMode === 'true') {
+        root.setAttribute('data-theme', 'dark')
+      } else if (localDarkMode === 'false') {
+        root.removeAttribute('data-theme')
+      } else {
+        const adminData = user || JSON.parse(localStorage.getItem('admin_user_session') || '{}')
+        if (adminData?.preferences?.darkMode) {
+          root.setAttribute('data-theme', 'dark')
+        } else {
+          root.removeAttribute('data-theme')
+        }
+      }
     }
 
     applyDensity()
@@ -71,6 +86,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       window.removeEventListener('admin_density_changed', applyDensity)
       window.removeEventListener('resize', handleResize)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -84,6 +100,13 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         // Resolve avatar from auth session (using the one from AuthContext if available)
         const sessionAvatar = session?.user?.user_metadata?.avatar_url || null
         setAvatarUrl(currentUser.avatarUrl || sessionAvatar || null)
+
+        // Apply dark mode if preference exists
+        if (currentUser.preferences?.darkMode) {
+          document.documentElement.setAttribute('data-theme', 'dark')
+        } else {
+          document.documentElement.removeAttribute('data-theme')
+        }
 
         // Fetch unread notifications
         try {
@@ -153,7 +176,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   return (
-    <div className="h-screen bg-[#f1f5ee] font-meta text-on-surface flex overflow-hidden admin-context">
+    <div
+      className="h-screen font-meta text-on-surface flex overflow-hidden admin-context"
+      style={{ background: 'var(--container-low)' }}
+    >
       <SEO noindex />
       <div
         className={cn(

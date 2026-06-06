@@ -169,8 +169,8 @@ export default function AdminOrders() {
       <div className="twocol">
         {/* Orders Feed */}
         <div className="panel">
-          <div className="ph">
-            <div>
+          <div className="ph" style={{ position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
               <h3>Fulfillment feed</h3>
               <p
                 style={{
@@ -184,6 +184,31 @@ export default function AdminOrders() {
               </p>
               <div className="meta">Real-time merchandise dispatch telemetry</div>
             </div>
+            <img
+              src="/brand/eagle-in-flight.png"
+              alt=""
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                height: 90,
+                opacity: 0.15,
+                pointerEvents: 'none',
+                filter: 'grayscale(100%)',
+              }}
+            />
+          </div>
+
+          {/* Desktop Filters Row */}
+          <div
+            className="desktop-only"
+            style={{
+              padding: '10px 14px',
+              borderBottom: '1px solid hsl(var(--border))',
+              background: 'hsl(var(--container-low))',
+            }}
+          >
             <OrdersFilters
               search={search}
               setSearch={setSearch}
@@ -235,7 +260,7 @@ export default function AdminOrders() {
                   paddingLeft: 30,
                   paddingRight: 12,
                   boxSizing: 'border-box',
-                  background: '#fff',
+                  background: 'hsl(var(--surface))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-sm)',
                   fontSize: 13,

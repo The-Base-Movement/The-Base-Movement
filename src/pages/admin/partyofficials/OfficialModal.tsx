@@ -39,7 +39,7 @@ export function OfficialModal({
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           width: '100%',
           maxWidth: 900,
@@ -57,7 +57,7 @@ export function OfficialModal({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
           }}
         >
           <div>
@@ -66,7 +66,7 @@ export function OfficialModal({
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 margin: 0,
               }}
             >
@@ -80,7 +80,7 @@ export function OfficialModal({
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              color: 'rgba(255,255,255,0.6)',
+              color: 'hsl(var(--on-surface-muted))',
               display: 'flex',
               alignItems: 'center',
               padding: 0,

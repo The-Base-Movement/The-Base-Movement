@@ -330,7 +330,7 @@ export default function ITDashboard() {
                 alignItems: 'center',
                 gap: 10,
                 padding: '14px 18px',
-                background: '#fff',
+                background: 'hsl(var(--surface))',
                 textDecoration: 'none',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",

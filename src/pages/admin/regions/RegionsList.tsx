@@ -71,7 +71,7 @@ export function RegionsList({
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {filteredRegions.map((region) => {
         const isExpanded = expandedRegions.includes(region.id)
         const cSearch = constituencySearch[region.id] || ''
@@ -110,7 +110,7 @@ export function RegionsList({
                     className="material-symbols-outlined"
                     style={{
                       fontSize: 16,
-                      color: isExpanded ? '#fff' : 'hsl(var(--on-surface-muted))',
+                      color: isExpanded ? 'hsl(var(--surface))' : 'hsl(var(--on-surface-muted))',
                     }}
                   >
                     location_on
@@ -147,7 +147,7 @@ export function RegionsList({
                   className="btn btn-sm"
                   style={{
                     background: 'hsl(var(--accent))',
-                    color: '#000',
+                    color: 'hsl(var(--accent-foreground))',
                     border: 'none',
                     width: 32,
                     height: 32,
@@ -285,7 +285,7 @@ export function RegionsList({
                           justifyContent: 'space-between',
                           gap: 6,
                           padding: '8px 10px',
-                          background: '#fff',
+                          background: 'hsl(var(--surface))',
                           border: '1px solid hsl(var(--border))',
                           borderRadius: 4,
                         }}
@@ -309,7 +309,7 @@ export function RegionsList({
                             className="btn btn-sm"
                             style={{
                               background: 'hsl(var(--accent))',
-                              color: '#000',
+                              color: 'hsl(var(--accent-foreground))',
                               border: 'none',
                               width: 26,
                               height: 26,

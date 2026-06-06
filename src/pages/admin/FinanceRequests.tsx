@@ -543,6 +543,8 @@ export default function FinanceRequests() {
             </h3>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               <input
+                id="my-requests-search"
+                name="my-requests-search"
                 type="text"
                 placeholder="Search requests…"
                 value={mySearch}

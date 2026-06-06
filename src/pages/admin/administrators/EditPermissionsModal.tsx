@@ -92,7 +92,7 @@ export function EditPermissionsModal({
           position: 'relative',
           width: '100%',
           maxWidth: 480,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           border: '1px solid hsl(var(--border))',
@@ -172,7 +172,7 @@ export function EditPermissionsModal({
                 borderRadius: 4,
                 maxHeight: 210,
                 overflowY: 'auto',
-                background: '#fff',
+                background: 'hsl(var(--surface))',
               }}
             >
               {roles.map((r, i) => {

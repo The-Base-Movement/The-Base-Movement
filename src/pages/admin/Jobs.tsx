@@ -191,145 +191,239 @@ export default function AdminJobs() {
       </div>
 
       {/* Table — desktop */}
-      <div className="panel desktop-only" style={{ overflowX: 'auto' }}>
-        {loading ? (
-          <p
+      <div className="panel desktop-only" style={{ overflowX: 'auto', overflow: 'hidden' }}>
+        <div
+          style={{
+            padding: '14px 18px',
+            borderBottom: '1px solid hsl(var(--border))',
+            background: 'hsl(var(--container-low))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Job listings
+            </div>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                marginTop: 2,
+              }}
+            >
+              {sortedJobs.length} position{sortedJobs.length !== 1 ? 's' : ''}
+            </div>
+          </div>
+          <img
+            src="/brand/icons/whistle.png"
+            alt=""
             style={{
-              padding: 32,
-              textAlign: 'center',
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '140%',
+              opacity: 0.12,
+              pointerEvents: 'none',
+              zIndex: 0,
             }}
-          >
-            Loading jobs...
-          </p>
-        ) : sortedJobs.length === 0 ? (
-          <p
-            style={{
-              padding: 32,
-              textAlign: 'center',
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-            }}
-          >
-            No jobs found.
-          </p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                {[
-                  'Title',
-                  'Organisation',
-                  'Type',
-                  'Category',
-                  'Deadline',
-                  'Status',
-                  'Applications',
-                  '',
-                ].map((h) => (
-                  <th
-                    key={h}
-                    style={{
-                      padding: '10px 14px',
-                      textAlign: 'left',
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontSize: 11,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sortedJobs.map((job) => (
-                <tr key={job.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                  <td
-                    style={{
-                      padding: '12px 14px',
-                      color: 'hsl(var(--on-surface))',
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                    }}
-                  >
-                    {job.title}
-                  </td>
-                  <td style={{ padding: '12px 14px', color: 'hsl(var(--on-surface-muted))' }}>
-                    {job.organization}
-                  </td>
-                  <td style={{ padding: '12px 14px', color: 'hsl(var(--on-surface-muted))' }}>
-                    {job.job_type}
-                  </td>
-                  <td style={{ padding: '12px 14px', color: 'hsl(var(--on-surface-muted))' }}>
-                    {job.category}
-                  </td>
-                  <td
-                    style={{
-                      padding: '12px 14px',
-                      color: 'hsl(var(--on-surface-muted))',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {job.deadline
-                      ? new Date(job.deadline).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        })
-                      : '—'}
-                  </td>
-                  <td style={{ padding: '12px 14px' }}>
-                    <span
-                      className={`pill ${STATUS_PILL[job.status] ?? 'pill-mute'}`}
-                      style={{ fontSize: 11 }}
+          />
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          {loading ? (
+            <p
+              style={{
+                padding: 32,
+                textAlign: 'center',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+              }}
+            >
+              Loading jobs...
+            </p>
+          ) : sortedJobs.length === 0 ? (
+            <p
+              style={{
+                padding: 32,
+                textAlign: 'center',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+              }}
+            >
+              No jobs found.
+            </p>
+          ) : (
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                  {[
+                    'Title',
+                    'Organisation',
+                    'Type',
+                    'Category',
+                    'Deadline',
+                    'Status',
+                    'Applications',
+                    '',
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '10px 14px',
+                        textAlign: 'left',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontSize: 11,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        whiteSpace: 'nowrap',
+                      }}
                     >
-                      {job.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px 14px' }}>
-                    <button
-                      className="btn btn-ghost btn-sm"
-                      style={{ color: 'hsl(var(--primary))', textDecoration: 'underline' }}
-                      onClick={() => setDrawerJob(job)}
-                    >
-                      {job.application_count ?? 0} application
-                      {(job.application_count ?? 0) !== 1 ? 's' : ''}
-                    </button>
-                  </td>
-                  <td style={{ padding: '12px 14px' }}>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <button
-                        className="btn btn-outline btn-sm"
-                        onClick={() => navigate(`/admin/jobs/${job.id}/edit`)}
-                      >
-                        Edit
-                      </button>
-                      {job.status !== 'closed' && (
-                        <button className="btn btn-outline btn-sm" onClick={() => handleClose(job)}>
-                          Close
-                        </button>
-                      )}
-                      <button
-                        className="btn btn-outline-dest btn-sm"
-                        onClick={() => handleDelete(job)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {sortedJobs.map((job) => (
+                  <tr key={job.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                    <td
+                      style={{
+                        padding: '12px 14px',
+                        color: 'hsl(var(--on-surface))',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                      }}
+                    >
+                      {job.title}
+                    </td>
+                    <td style={{ padding: '12px 14px', color: 'hsl(var(--on-surface-muted))' }}>
+                      {job.organization}
+                    </td>
+                    <td style={{ padding: '12px 14px', color: 'hsl(var(--on-surface-muted))' }}>
+                      {job.job_type}
+                    </td>
+                    <td style={{ padding: '12px 14px', color: 'hsl(var(--on-surface-muted))' }}>
+                      {job.category}
+                    </td>
+                    <td
+                      style={{
+                        padding: '12px 14px',
+                        color: 'hsl(var(--on-surface-muted))',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {job.deadline
+                        ? new Date(job.deadline).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })
+                        : '—'}
+                    </td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <span
+                        className={`pill ${STATUS_PILL[job.status] ?? 'pill-mute'}`}
+                        style={{ fontSize: 11 }}
+                      >
+                        {job.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <button
+                        className="btn btn-ghost btn-sm"
+                        style={{ color: 'hsl(var(--primary))', textDecoration: 'underline' }}
+                        onClick={() => setDrawerJob(job)}
+                      >
+                        {job.application_count ?? 0} application
+                        {(job.application_count ?? 0) !== 1 ? 's' : ''}
+                      </button>
+                    </td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={() => navigate(`/admin/jobs/${job.id}/edit`)}
+                        >
+                          Edit
+                        </button>
+                        {job.status !== 'closed' && (
+                          <button
+                            className="btn btn-outline btn-sm"
+                            onClick={() => handleClose(job)}
+                          >
+                            Close
+                          </button>
+                        )}
+                        <button
+                          className="btn btn-outline-dest btn-sm"
+                          onClick={() => handleDelete(job)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
 
       {/* Mobile cards */}
       <div className="panel mobile-only" style={{ overflow: 'hidden' }}>
+        <div
+          style={{
+            padding: '14px 18px',
+            borderBottom: '1px solid hsl(var(--border))',
+            background: 'hsl(var(--container-low))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 13,
+              color: 'hsl(var(--on-surface))',
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            Job listings
+          </div>
+          <img
+            src="/brand/icons/whistle.png"
+            alt=""
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '140%',
+              opacity: 0.12,
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          />
+        </div>
         {loading ? (
           <p
             style={{

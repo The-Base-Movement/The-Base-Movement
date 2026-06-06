@@ -31,7 +31,7 @@ export function ReplenishConfirmModal({
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 6,
           width: '100%',
           maxWidth: 440,

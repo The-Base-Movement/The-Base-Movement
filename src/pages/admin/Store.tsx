@@ -120,7 +120,7 @@ export default function AdminStore() {
         stock: 0,
         status: 'Stable',
         image: '👕',
-        color: '#000000',
+        color: 'hsl(var(--on-surface))',
       }
     )
     setIsModalOpen(true)
@@ -295,7 +295,7 @@ export default function AdminStore() {
               display: 'flex',
               gap: 0,
               borderBottom: '1px solid hsl(var(--border))',
-              background: '#fff',
+              background: 'hsl(var(--surface))',
               marginBottom: 16,
               overflowX: 'auto',
             }}
@@ -333,7 +333,7 @@ export default function AdminStore() {
                   <span
                     style={{
                       background: 'hsl(var(--accent))',
-                      color: '#000',
+                      color: 'hsl(var(--on-surface))',
                       borderRadius: 99,
                       padding: '1px 7px',
                       fontSize: 9,

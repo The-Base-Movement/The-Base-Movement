@@ -68,7 +68,7 @@ export const modalBackdrop: React.CSSProperties = {
 
 /** Modal box — call with a maxWidth value */
 export const modalBox = (maxW: number): React.CSSProperties => ({
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   borderRadius: 6,
   border: '1px solid hsl(var(--border))',
   width: '100%',

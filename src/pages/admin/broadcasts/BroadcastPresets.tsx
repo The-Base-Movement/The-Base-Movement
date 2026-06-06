@@ -5,7 +5,7 @@ export function BroadcastPresets() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
       {/* Mobilization presets */}
       <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
         <div
@@ -120,7 +120,7 @@ export function BroadcastPresets() {
       {/* Protocol Red */}
       <div
         style={{
-          background: 'hsl(var(--on-surface))',
+          background: 'hsl(var(--container-low))',
           borderRadius: 'var(--radius-md)',
           borderTop: '4px solid hsl(var(--destructive))',
           padding: 28,
@@ -129,11 +129,19 @@ export function BroadcastPresets() {
           textAlign: 'center',
         }}
       >
-        <div style={{ position: 'absolute', right: -20, bottom: -20, opacity: 0.05 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 160, color: '#fff' }}>
-            campaign
-          </span>
-        </div>
+        <img
+          src="/brand/icons/megaphone.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            right: -20,
+            bottom: -20,
+            height: '85%',
+            opacity: 0.12,
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div
             style={{
@@ -159,7 +167,7 @@ export function BroadcastPresets() {
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 18,
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
               marginBottom: 10,
             }}
           >
@@ -169,7 +177,7 @@ export function BroadcastPresets() {
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 12,
-              color: 'rgba(255,255,255,0.45)',
+              color: 'hsl(var(--on-surface-muted))',
               lineHeight: 1.6,
               marginBottom: 20,
             }}

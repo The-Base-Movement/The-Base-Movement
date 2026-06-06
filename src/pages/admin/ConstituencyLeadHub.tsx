@@ -344,7 +344,7 @@ export default function AdminConstituencyLeadHub() {
               top: 0,
               bottom: 0,
               width: 3,
-              background: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--container-low))',
             }}
           />
           <p

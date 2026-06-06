@@ -61,7 +61,7 @@ export function CreateNoteModal({ onClose, onSaved }: CreateModalProps) {
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 480,

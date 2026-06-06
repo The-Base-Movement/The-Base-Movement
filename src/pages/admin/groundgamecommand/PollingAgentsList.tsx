@@ -77,6 +77,8 @@ export function PollingAgentsList({ pollingAgents, onRemovePollingAgent }: Polli
               search
             </span>
             <input
+              id="station-agents-search"
+              name="station-agents-search"
               aria-label="Search station agents"
               type="text"
               placeholder="Search agents..."

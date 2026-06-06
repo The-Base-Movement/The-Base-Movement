@@ -19,7 +19,8 @@ export function NationalSupplyChainMap({
     <div
       style={{
         marginTop: 24,
-        background: 'hsl(var(--on-surface))',
+        background: 'hsl(var(--card))',
+        border: '1px solid hsl(var(--border))',
         borderRadius: 6,
         overflow: 'hidden',
       }}
@@ -41,7 +42,7 @@ export function NationalSupplyChainMap({
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 17,
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
               marginBottom: 6,
             }}
           >
@@ -51,7 +52,7 @@ export function NationalSupplyChainMap({
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 12,
-              color: 'rgba(255,255,255,0.4)',
+              color: 'hsl(var(--on-surface-muted))',
               margin: 0,
             }}
           >
@@ -74,7 +75,7 @@ export function NationalSupplyChainMap({
                 style={{
                   fontFamily: "'Public Sans', sans-serif",
                   fontSize: 11,
-                  color: 'rgba(255,255,255,0.5)',
+                  color: 'hsl(var(--on-surface-muted))',
                 }}
               >
                 {routes.length} active route{routes.length !== 1 ? 's' : ''}
@@ -84,8 +85,8 @@ export function NationalSupplyChainMap({
           <button
             className="btn btn-outline"
             style={{
-              color: '#fff',
-              borderColor: 'rgba(255,255,255,0.2)',
+              color: 'hsl(var(--on-surface))',
+              borderColor: 'hsl(var(--border))',
               background: 'transparent',
             }}
             onClick={onEnterpriseView}
@@ -100,8 +101,8 @@ export function NationalSupplyChainMap({
       <div
         style={{
           height: 500,
-          background: 'rgba(0,0,0,0.4)',
-          borderTop: '1px solid rgba(255,255,255,0.05)',
+          background: 'hsl(var(--card))',
+          borderTop: '1px solid hsl(var(--border))',
           position: 'relative',
         }}
       >

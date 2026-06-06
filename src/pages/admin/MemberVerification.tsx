@@ -280,7 +280,7 @@ export default function MemberVerification() {
               height: 380,
               border: '2px dashed hsl(var(--border))',
               borderRadius: 6,
-              background: 'rgba(255,255,255,.5)',
+              background: 'transparent',
               gap: 12,
             }}
           >

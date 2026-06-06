@@ -32,7 +32,7 @@ export function AuditVaultModal({
         style={{
           width: '100%',
           maxWidth: 860,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 6,
           overflow: 'hidden',
           maxHeight: '90vh',
@@ -231,7 +231,7 @@ export function AuditVaultModal({
                 <div
                   style={{
                     padding: '12px 16px',
-                    background: '#fff',
+                    background: 'hsl(var(--surface))',
                     borderLeft: '3px solid hsl(var(--on-surface))',
                     boxShadow: '0 1px 4px rgba(0,0,0,.06)',
                     borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
@@ -281,7 +281,7 @@ export function AuditVaultModal({
                   <div
                     style={{
                       padding: '12px 16px',
-                      background: '#fff',
+                      background: 'hsl(var(--surface))',
                       borderLeft: '3px solid hsl(var(--primary))',
                       boxShadow: '0 1px 4px rgba(0,0,0,.06)',
                       borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
@@ -333,7 +333,7 @@ export function AuditVaultModal({
                   <div
                     style={{
                       padding: '12px 16px',
-                      background: '#fff',
+                      background: 'hsl(var(--surface))',
                       borderLeft: '3px solid hsl(var(--destructive))',
                       boxShadow: '0 1px 4px rgba(0,0,0,.06)',
                       borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',

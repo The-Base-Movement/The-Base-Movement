@@ -65,7 +65,7 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 480,
@@ -84,7 +84,7 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
           }}
         >
           <p
@@ -92,7 +92,7 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-semibold, 600)',
               fontSize: 15,
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
               margin: 0,
             }}
           >
@@ -105,7 +105,7 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              color: 'rgba(255,255,255,0.6)',
+              color: 'hsl(var(--on-surface-muted))',
               display: 'flex',
               alignItems: 'center',
               padding: 0,

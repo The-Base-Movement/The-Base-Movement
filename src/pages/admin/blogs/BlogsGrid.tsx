@@ -108,7 +108,7 @@ export function BlogsGrid({
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 12,
             color: 'hsl(var(--on-surface))',
-            background: '#fff',
+            background: 'hsl(var(--surface))',
             outline: 'none',
           }}
         >
@@ -402,7 +402,7 @@ export function BlogsGrid({
                               top: menuAnchor.top,
                               right: menuAnchor.right,
                               zIndex: 9999,
-                              background: '#fff',
+                              background: 'hsl(var(--surface))',
                               border: '1px solid hsl(var(--border))',
                               borderRadius: 6,
                               minWidth: 168,

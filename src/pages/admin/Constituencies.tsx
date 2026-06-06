@@ -195,7 +195,7 @@ export default function AdminConstituencies() {
               top: 0,
               bottom: 0,
               width: 3,
-              background: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--container-low))',
             }}
           />
           <p
@@ -248,6 +248,8 @@ export default function AdminConstituencies() {
             search
           </span>
           <input
+            id="constituency-search"
+            name="constituency-search"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -270,6 +272,8 @@ export default function AdminConstituencies() {
           />
         </div>
         <select
+          id="region-filter"
+          name="region-filter"
           value={regionFilter}
           onChange={(e) => {
             setRegionFilter(e.target.value)

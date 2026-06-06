@@ -138,7 +138,7 @@ export function AccordionItem({ protocol, isOpen, onToggle, onDelete }: Accordio
           {protocol.markdown_content && (
             <div
               style={{
-                background: '#fff',
+                background: 'hsl(var(--surface))',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 'var(--radius-md)',
                 padding: '18px 20px',

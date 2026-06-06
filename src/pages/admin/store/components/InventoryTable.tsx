@@ -74,11 +74,27 @@ export function InventoryTable({
   return (
     <div className="panel">
       {/* Row 1: title */}
-      <div className="ph">
-        <h3>Inventory</h3>
-        <span className="meta">
-          {sortedAndFilteredProducts.length} of {products.length} items
-        </span>
+      <div className="ph" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h3>Inventory</h3>
+          <span className="meta">
+            {sortedAndFilteredProducts.length} of {products.length} items
+          </span>
+        </div>
+        <img
+          src="/brand/icons/movement-arrow.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            right: 10,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            height: '120%',
+            opacity: 0.12,
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
       </div>
 
       {/* Row 2: filter controls — categories scroll + search */}
@@ -150,7 +166,7 @@ export function InventoryTable({
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 12,
                 outline: 'none',
-                background: '#fff',
+                background: 'hsl(var(--surface))',
                 color: 'hsl(var(--on-surface))',
                 boxSizing: 'border-box',
               }}
@@ -299,8 +315,7 @@ export function InventoryTable({
                 <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <button
-                      className="btn btn-sm"
-                      style={{ background: 'hsl(var(--accent))', color: '#000', border: 'none' }}
+                      className="btn btn-accent btn-sm"
                       onClick={() => handleOpenModal(product)}
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
@@ -476,13 +491,10 @@ export function InventoryTable({
             {/* Row 3: actions */}
             <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
               <button
-                className="btn btn-sm"
+                className="btn btn-accent btn-sm"
                 style={{
                   flex: 1,
                   justifyContent: 'center',
-                  background: 'hsl(var(--accent))',
-                  color: '#000',
-                  border: 'none',
                 }}
                 onClick={() => handleOpenModal(product)}
               >

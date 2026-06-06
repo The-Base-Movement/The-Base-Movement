@@ -11,7 +11,7 @@ const fieldStyle = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   color: 'hsl(var(--on-surface))',
 }
 
@@ -54,31 +54,55 @@ export function DeployMissionForm({
   return (
     <form onSubmit={handleSubmit}>
       <div className="panel">
-        <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))' }}>
-          <h3
+        <div
+          style={{
+            padding: '14px 18px',
+            borderBottom: '1px solid hsl(var(--border))',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <h3
+              style={{
+                margin: '0 0 4px',
+                fontSize: 14,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontFamily: "'Public Sans', sans-serif",
+                color: 'hsl(var(--on-surface))',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Tactical deployment parameters
+            </h3>
+            <p
+              style={{
+                margin: '0 0 10px',
+                fontSize: 11,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontFamily: "'Public Sans', sans-serif",
+                color: 'hsl(var(--on-surface-muted))',
+              }}
+            >
+              Define the operational scope and objectives
+            </p>
+            <span className="pill pill-warn">New mission</span>
+          </div>
+          <img
+            src="/brand/icons/flag-bearer.png"
+            alt=""
             style={{
-              margin: '0 0 4px',
-              fontSize: 14,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontFamily: "'Public Sans', sans-serif",
-              color: 'hsl(var(--on-surface))',
-              letterSpacing: '-0.01em',
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '100%',
+              opacity: 0.12,
+              pointerEvents: 'none',
+              zIndex: 0,
+              objectFit: 'contain',
             }}
-          >
-            Tactical deployment parameters
-          </h3>
-          <p
-            style={{
-              margin: '0 0 10px',
-              fontSize: 11,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontFamily: "'Public Sans', sans-serif",
-              color: 'hsl(var(--on-surface-muted))',
-            }}
-          >
-            Define the operational scope and objectives
-          </p>
-          <span className="pill pill-warn">New mission</span>
+          />
         </div>
 
         <div style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 18 }}>

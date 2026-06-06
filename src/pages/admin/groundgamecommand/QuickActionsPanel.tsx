@@ -29,15 +29,7 @@ export function QuickActionsPanel({
           </span>
           Assign new turf
         </button>
-        <button
-          onClick={onBroadcast}
-          className="btn"
-          style={{
-            background: 'hsl(var(--accent))',
-            color: '#000',
-            fontWeight: 'var(--font-weight-medium, 500)',
-          }}
-        >
+        <button onClick={onBroadcast} className="btn btn-accent">
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
             campaign
           </span>

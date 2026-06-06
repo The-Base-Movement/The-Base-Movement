@@ -13,7 +13,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   color: 'hsl(var(--on-surface))',
 }
 

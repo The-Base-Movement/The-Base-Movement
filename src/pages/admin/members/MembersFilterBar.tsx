@@ -185,7 +185,10 @@ export function MembersFilterBar({
                   background: sourceFilter === opt.value ? 'hsl(var(--on-surface))' : 'transparent',
                   borderColor:
                     sourceFilter === opt.value ? 'hsl(var(--on-surface))' : 'hsl(var(--border))',
-                  color: sourceFilter === opt.value ? '#fff' : 'hsl(var(--on-surface-muted))',
+                  color:
+                    sourceFilter === opt.value
+                      ? 'hsl(var(--background))'
+                      : 'hsl(var(--on-surface-muted))',
                 }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 13 }}>

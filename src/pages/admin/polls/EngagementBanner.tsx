@@ -26,7 +26,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
       {/* Dark "Maximize engagement" promotional panel */}
       <div
         style={{
-          background: 'hsl(var(--on-surface))',
+          background: 'hsl(var(--container-low))',
           borderRadius: 6,
           padding: 28,
           position: 'relative',
@@ -41,7 +41,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 15,
-            color: '#fff',
+            color: 'hsl(var(--on-surface))',
             margin: 0,
           }}
         >
@@ -66,7 +66,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
             alignSelf: 'flex-start',
             background: 'transparent',
             border: '1px solid rgba(255,255,255,0.25)',
-            color: '#fff',
+            color: 'hsl(var(--on-surface))',
           }}
           onClick={onOpenAnalytics}
         >

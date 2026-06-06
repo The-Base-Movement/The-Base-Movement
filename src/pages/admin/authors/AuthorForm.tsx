@@ -352,7 +352,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                             left: 0,
                             right: 0,
                             zIndex: 100,
-                            background: '#fff',
+                            background: 'hsl(var(--surface))',
                             border: '1px solid hsl(var(--border))',
                             borderRadius: 6,
                             boxShadow: '0 8px 24px rgba(0,0,0,0.12)',

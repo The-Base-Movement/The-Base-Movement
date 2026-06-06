@@ -392,17 +392,20 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           margin: '0 auto',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="ph" style={{ padding: '20px 24px', background: 'hsl(var(--on-surface))' }}>
+        <div
+          className="ph"
+          style={{ padding: '20px 24px', background: 'hsl(var(--container-low))' }}
+        >
           <div>
             <h2
               style={{
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 fontSize: 20,
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
@@ -428,7 +431,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
             style={{
               background: 'rgba(255,255,255,0.1)',
               borderColor: 'transparent',
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
             }}
             disabled={isImporting}
           >
@@ -529,7 +532,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     key={h}
                     style={{
                       fontSize: 11,
-                      background: '#fff',
+                      background: 'hsl(var(--surface))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 3,
                       padding: '2px 8px',

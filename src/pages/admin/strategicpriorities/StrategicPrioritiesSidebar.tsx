@@ -187,7 +187,11 @@ export function StrategicPrioritiesSidebar({
 
       <div
         className="panel"
-        style={{ background: 'hsl(var(--on-surface))', color: '#fff', padding: 24 }}
+        style={{
+          background: 'hsl(var(--container-low))',
+          color: 'hsl(var(--on-surface))',
+          padding: 24,
+        }}
       >
         <h4
           style={{
@@ -205,7 +209,7 @@ export function StrategicPrioritiesSidebar({
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 12,
-            color: 'rgba(255,255,255,0.6)',
+            color: 'hsl(var(--on-surface-muted))',
             lineHeight: 1.6,
             margin: 0,
           }}

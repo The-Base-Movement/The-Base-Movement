@@ -317,7 +317,7 @@ export default function Members() {
             <div
               style={{
                 height: 80,
-                background: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--container-low))',
                 position: 'relative',
                 flexShrink: 0,
               }}
@@ -350,7 +350,7 @@ export default function Members() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#fff',
+                      color: 'hsl(var(--on-surface))',
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 20,
@@ -375,7 +375,7 @@ export default function Members() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  color: '#fff',
+                  color: 'hsl(var(--on-surface))',
                 }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>

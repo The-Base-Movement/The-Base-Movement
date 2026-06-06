@@ -20,6 +20,7 @@ export function SystemPreferencesTab({ adminData, toast }: SystemPreferencesTabP
         localStorage.setItem('admin_interface_density', adminData.preferences.interfaceDensity)
         window.dispatchEvent(new Event('admin_density_changed'))
       }
+      localStorage.setItem('admin_dark_mode', adminData.preferences.darkMode ? 'true' : 'false')
     }
   }, [adminData])
 
@@ -51,8 +52,10 @@ export function SystemPreferencesTab({ adminData, toast }: SystemPreferencesTabP
     // This will be picked up by DashboardLayout eventually
     if (newPrefs.darkMode) {
       document.documentElement.setAttribute('data-theme', 'dark')
+      localStorage.setItem('admin_dark_mode', 'true')
     } else {
       document.documentElement.removeAttribute('data-theme')
+      localStorage.setItem('admin_dark_mode', 'false')
     }
   }
 
@@ -182,7 +185,7 @@ export function SystemPreferencesTab({ adminData, toast }: SystemPreferencesTabP
                 style={{
                   width: 14,
                   height: 14,
-                  background: '#fff',
+                  background: 'hsl(var(--surface))',
                   borderRadius: '50%',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                   transition: 'all 0.2s ease',
@@ -297,7 +300,7 @@ export function SystemPreferencesTab({ adminData, toast }: SystemPreferencesTabP
                       style={{
                         width: 14,
                         height: 14,
-                        background: '#fff',
+                        background: 'hsl(var(--surface))',
                         borderRadius: '50%',
                         boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                         transition: 'all 0.2s ease',

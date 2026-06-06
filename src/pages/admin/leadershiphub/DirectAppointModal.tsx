@@ -56,7 +56,7 @@ export function DirectAppointModal({
         style={{
           width: '100%',
           maxWidth: 520,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',
@@ -70,7 +70,7 @@ export function DirectAppointModal({
         <div
           style={{
             padding: '14px 20px',
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
             borderTop: '4px solid hsl(var(--primary))',
           }}
         >
@@ -79,7 +79,7 @@ export function DirectAppointModal({
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 15,
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
               margin: 0,
             }}
           >
@@ -89,7 +89,7 @@ export function DirectAppointModal({
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 12,
-              color: 'rgba(255,255,255,0.55)',
+              color: 'hsl(var(--on-surface-muted))',
               margin: '3px 0 0',
               fontWeight: 'var(--font-weight-normal, 400)',
             }}
@@ -350,7 +350,7 @@ export function DirectAppointModal({
                         fontSize: 13,
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 'var(--font-weight-medium, 500)',
-                        background: '#fff',
+                        background: 'hsl(var(--surface))',
                         color: 'hsl(var(--on-surface))',
                         boxSizing: 'border-box',
                       }}
@@ -392,7 +392,7 @@ export function DirectAppointModal({
                       fontSize: 13,
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 'var(--font-weight-medium, 500)',
-                      background: '#fff',
+                      background: 'hsl(var(--surface))',
                       color: 'hsl(var(--on-surface))',
                       boxSizing: 'border-box',
                     }}

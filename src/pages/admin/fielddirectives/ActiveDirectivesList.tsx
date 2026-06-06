@@ -58,7 +58,16 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
     })
   }, [directives, searchQuery, sortOrder])
   return (
-    <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+    <div
+      className="panel"
+      style={{
+        padding: 0,
+        overflow: 'hidden',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <div
         style={{
           padding: '16px 20px',
@@ -69,8 +78,15 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
           gap: 12,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
+        {/* Title row */}
+        <div
+          style={{
+            position: 'relative',
+            overflow: 'hidden',
+            minHeight: 38,
+          }}
+        >
+          <div style={{ position: 'relative', zIndex: 1, paddingRight: 60 }}>
             <div
               style={{
                 fontFamily: "'Public Sans', sans-serif",
@@ -93,23 +109,52 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
               Operational field objectives
             </div>
           </div>
-          <button
-            className="btn btn-sm"
+          <img
+            src="/brand/icons/shield.png"
+            alt=""
             style={{
-              width: 32,
-              height: 32,
-              padding: 0,
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '100%',
+              opacity: 0.12,
+              pointerEvents: 'none',
+              zIndex: 0,
+              objectFit: 'contain',
+            }}
+          />
+        </div>
+
+        {/* Action Button Row */}
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={onOpenCreate}
+            style={{
               display: 'flex',
               alignItems: 'center',
+              gap: 6,
+              width: '100%',
               justifyContent: 'center',
             }}
-            onClick={onOpenCreate}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               add
             </span>
+            New directive
           </button>
         </div>
+
+        {/* Separator line */}
+        <div
+          style={{
+            height: 1,
+            background: 'hsl(var(--border))',
+            marginLeft: -20,
+            marginRight: -20,
+          }}
+        />
 
         {/* Search & Sort input */}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -140,7 +185,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
                 height: 30,
                 paddingLeft: 28,
                 paddingRight: 8,
-                background: '#fff',
+                background: 'hsl(var(--surface))',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 'var(--radius-xs)',
                 fontSize: 11,
@@ -162,6 +207,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
             justifyContent: 'center',
             padding: '60px 24px',
             gap: 12,
+            flex: 1,
           }}
         >
           <span
@@ -184,7 +230,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
           </p>
         </div>
       ) : (
-        <div style={{ maxHeight: 800, overflowY: 'auto' }}>
+        <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
           {filteredDirectives.map((d) => (
             <div
               key={d.id}

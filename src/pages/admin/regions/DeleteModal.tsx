@@ -27,7 +27,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
         style={{
           width: '100%',
           maxWidth: 420,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.35)',
@@ -38,7 +38,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
         <div
           style={{
             padding: '18px 22px',
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
             display: 'flex',
             alignItems: 'flex-start',
             gap: 14,
@@ -69,7 +69,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-semibold, 600)',
                 fontSize: 15,
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 margin: 0,
               }}
             >
@@ -79,7 +79,7 @@ export function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: 
               style={{
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 12,
-                color: 'rgba(255,255,255,0.55)',
+                color: 'hsl(var(--on-surface-muted))',
                 margin: '3px 0 0',
                 fontWeight: 'var(--font-weight-medium, 500)',
                 lineHeight: 1.5,

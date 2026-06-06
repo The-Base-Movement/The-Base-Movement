@@ -102,7 +102,7 @@ export function ProvisionModal({
           position: 'relative',
           width: '100%',
           maxWidth: 520,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           border: '1px solid hsl(var(--border))',
@@ -261,7 +261,7 @@ export function ProvisionModal({
                       top: 'calc(100% + 4px)',
                       left: 0,
                       right: 0,
-                      background: '#fff',
+                      background: 'hsl(var(--surface))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 4,
                       zIndex: 10,
@@ -347,7 +347,7 @@ export function ProvisionModal({
                 borderRadius: 4,
                 maxHeight: 210,
                 overflowY: 'auto',
-                background: '#fff',
+                background: 'hsl(var(--surface))',
               }}
             >
               {roles.map((r, i) => {

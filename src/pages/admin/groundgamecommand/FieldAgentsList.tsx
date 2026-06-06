@@ -110,6 +110,8 @@ export function FieldAgentsList({
               search
             </span>
             <input
+              id="field-agents-search"
+              name="field-agents-search"
               aria-label="Search field agents"
               type="text"
               placeholder="Search agents..."

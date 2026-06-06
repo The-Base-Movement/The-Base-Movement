@@ -93,35 +93,98 @@ export function HistoryPanel({
 
   return (
     <>
-      <div className="panel" style={{ padding: '20px 24px' }}>
-        <div className="ph" style={{ marginBottom: 14 }}>
-          <div>
-            <p
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 13,
-                color: 'hsl(var(--on-surface))',
-                margin: 0,
-              }}
-            >
-              Send history
-            </p>
-            <p
-              style={{
-                fontSize: 11,
-                color: 'hsl(var(--on-surface-muted))',
-                margin: '2px 0 0',
-                fontFamily: "'Public Sans', sans-serif",
-              }}
-            >
-              {newsletters.filter((n) => n.status === 'sent').length} sent
-              {newsletters.some((n) => n.status === 'scheduled') &&
-                ` · ${newsletters.filter((n) => n.status === 'scheduled').length} scheduled`}
-            </p>
+      <div className="panel" style={{ padding: 0 }}>
+        <div
+          style={{
+            padding: '16px 20px',
+            borderBottom: '1px solid hsl(var(--border))',
+            background: 'hsl(var(--container-low))',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+          }}
+        >
+          {/* Title row */}
+          <div style={{ position: 'relative', overflow: 'hidden', minHeight: 38 }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <p
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                }}
+              >
+                Send history
+              </p>
+              <p
+                style={{
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                  margin: '2px 0 0',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                {newsletters.filter((n) => n.status === 'sent').length} sent
+                {newsletters.some((n) => n.status === 'scheduled') &&
+                  ` · ${newsletters.filter((n) => n.status === 'scheduled').length} scheduled`}
+              </p>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Separator line */}
+          <div
+            style={{
+              height: 1,
+              background: 'hsl(var(--border))',
+              marginLeft: -20,
+              marginRight: -20,
+            }}
+          />
+
+          {/* Search & Actions Row */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 10,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flex: '1 1 200px' }}>
+              <label
+                htmlFor="newsletter-history-search"
+                style={{ display: 'block', width: '100%' }}
+              >
+                <span className="sr-only" style={{ display: 'none' }}>
+                  Search by subject
+                </span>
+                <input
+                  id="newsletter-history-search"
+                  name="newsletter-history-search"
+                  type="text"
+                  placeholder="Search by subject…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: 12,
+                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface))',
+                    background: 'hsl(var(--background))',
+                    outline: 'none',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </label>
+              <SortToggle value={sortOrder} onChange={setSortOrder} />
+            </div>
+
             {canDelete && selectedCount > 0 && (
               <button
                 className="btn btn-outline-dest btn-sm"
@@ -131,285 +194,311 @@ export function HistoryPanel({
                 <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                   delete
                 </span>
-                Delete {selectedCount} selected
+                Delete {selectedCount}
               </button>
             )}
-            <input
-              type="text"
-              placeholder="Search by subject…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                padding: '6px 12px',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: 12,
-                fontFamily: "'Public Sans', sans-serif",
-                color: 'hsl(var(--on-surface))',
-                background: 'hsl(var(--background))',
-                outline: 'none',
-                width: 200,
-                boxSizing: 'border-box',
-              }}
-            />
-            <SortToggle value={sortOrder} onChange={setSortOrder} />
           </div>
         </div>
 
         {isLoading ? (
-          <p
-            style={{
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-              padding: '20px 0',
-            }}
-          >
-            Loading…
-          </p>
+          <div className="history-body">
+            <p
+              style={{
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                padding: '20px 0',
+                margin: 0,
+              }}
+            >
+              Loading…
+            </p>
+          </div>
         ) : filtered.length === 0 ? (
-          <p
-            style={{
-              fontSize: 13,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-              padding: '20px 0',
-            }}
-          >
-            {search ? 'No newsletters match your search.' : 'No newsletters sent yet.'}
-          </p>
+          <div className="history-body">
+            <p
+              style={{
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                padding: '20px 0',
+                margin: 0,
+              }}
+            >
+              {search ? 'No newsletters match your search.' : 'No newsletters sent yet.'}
+            </p>
+          </div>
         ) : (
-          <table
-            style={{
-              width: '100%',
-              borderCollapse: 'collapse',
-              fontSize: 12,
-              fontFamily: "'Public Sans', sans-serif",
-            }}
+          <div
+            className="history-body"
+            style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}
           >
-            <thead>
-              <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                {showCheckboxes && (
-                  <th style={{ padding: '6px 8px', width: 32 }}>
-                    <input
-                      type="checkbox"
-                      checked={allFailedSelected}
-                      onChange={toggleAllFailed}
-                      title="Select all failed"
-                      style={{ cursor: 'pointer', accentColor: 'hsl(var(--destructive))' }}
-                    />
-                  </th>
-                )}
-                {['Date', 'Subject', 'Audience', 'Recipients', 'Status', ''].map((h) => (
-                  <th
-                    key={h}
-                    style={{
-                      textAlign: 'left',
-                      padding: '6px 8px',
-                      fontSize: 10,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      color: 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((n) => {
-                const isSelected = selected.has(n.id)
-                const isSelectable = canDelete && n.status === 'failed'
-                return (
-                  <tr
-                    key={n.id}
-                    style={{
-                      borderBottom: '1px solid hsl(var(--border))',
-                      background: isSelected ? 'rgba(239,68,68,0.04)' : 'transparent',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isSelected)
-                        e.currentTarget.style.background = 'hsl(var(--container-low))'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = isSelected
-                        ? 'rgba(239,68,68,0.04)'
-                        : 'transparent'
-                    }}
-                  >
-                    {showCheckboxes && (
-                      <td
-                        style={{ padding: '10px 8px', width: 32 }}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (isSelectable) toggleRow(n.id)
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                fontSize: 12,
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              <thead>
+                <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                  {showCheckboxes && (
+                    <th style={{ padding: '6px 8px', width: 32 }}>
+                      <label
+                        htmlFor="select-all-failed-checkbox"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          cursor: 'pointer',
+                          margin: 0,
                         }}
                       >
-                        {isSelectable && (
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggleRow(n.id)}
-                            onClick={(e) => e.stopPropagation()}
-                            style={{ cursor: 'pointer', accentColor: 'hsl(var(--destructive))' }}
-                          />
-                        )}
-                      </td>
-                    )}
-                    <td
+                        <span className="sr-only" style={{ display: 'none' }}>
+                          Select all failed
+                        </span>
+                        <input
+                          id="select-all-failed-checkbox"
+                          name="select-all-failed-checkbox"
+                          type="checkbox"
+                          checked={allFailedSelected}
+                          onChange={toggleAllFailed}
+                          title="Select all failed"
+                          style={{ cursor: 'pointer', accentColor: 'hsl(var(--destructive))' }}
+                        />
+                      </label>
+                    </th>
+                  )}
+                  {['Date', 'Subject', 'Audience', 'Recipients', 'Status', ''].map((h) => (
+                    <th
+                      key={h}
                       style={{
-                        padding: '10px 8px',
+                        textAlign: 'left',
+                        padding: '6px 8px',
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
                         color: 'hsl(var(--on-surface-muted))',
-                        whiteSpace: 'nowrap',
-                        cursor: 'pointer',
                       }}
-                      onClick={() => setPreviewNewsletter(n)}
                     >
-                      {n.status === 'scheduled' && n.scheduled_at ? (
-                        <span style={{ color: 'hsl(var(--accent))' }}>
-                          {new Date(n.scheduled_at).toLocaleDateString('en-GB', {
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((n) => {
+                  const isSelected = selected.has(n.id)
+                  const isSelectable = canDelete && n.status === 'failed'
+                  return (
+                    <tr
+                      key={n.id}
+                      style={{
+                        borderBottom: '1px solid hsl(var(--border))',
+                        background: isSelected ? 'rgba(239,68,68,0.04)' : 'transparent',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected)
+                          e.currentTarget.style.background = 'hsl(var(--container-low))'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = isSelected
+                          ? 'rgba(239,68,68,0.04)'
+                          : 'transparent'
+                      }}
+                    >
+                      {showCheckboxes && (
+                        <td
+                          style={{ padding: '10px 8px', width: 32 }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (isSelectable) toggleRow(n.id)
+                          }}
+                        >
+                          {isSelectable && (
+                            <label
+                              htmlFor={`select-failed-checkbox-${n.id}`}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                cursor: 'pointer',
+                                margin: 0,
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span className="sr-only" style={{ display: 'none' }}>
+                                Select record
+                              </span>
+                              <input
+                                id={`select-failed-checkbox-${n.id}`}
+                                name={`select-failed-checkbox-${n.id}`}
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleRow(n.id)}
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                  cursor: 'pointer',
+                                  accentColor: 'hsl(var(--destructive))',
+                                }}
+                              />
+                            </label>
+                          )}
+                        </td>
+                      )}
+                      <td
+                        style={{
+                          padding: '10px 8px',
+                          color: 'hsl(var(--on-surface-muted))',
+                          whiteSpace: 'nowrap',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => setPreviewNewsletter(n)}
+                      >
+                        {n.status === 'scheduled' && n.scheduled_at ? (
+                          <span style={{ color: 'hsl(var(--accent))' }}>
+                            {new Date(n.scheduled_at).toLocaleDateString('en-GB', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </span>
+                        ) : n.sent_at ? (
+                          new Date(n.sent_at).toLocaleDateString('en-GB', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',
-                          })}
-                        </span>
-                      ) : n.sent_at ? (
-                        new Date(n.sent_at).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        })
-                      ) : (
-                        '—'
-                      )}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        color: 'hsl(var(--on-surface))',
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        maxWidth: 220,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => setPreviewNewsletter(n)}
-                    >
-                      {n.subject}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        color: 'hsl(var(--on-surface-muted))',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => setPreviewNewsletter(n)}
-                    >
-                      {audienceLabel(n)}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        color: 'hsl(var(--on-surface))',
-                        textAlign: 'right',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => setPreviewNewsletter(n)}
-                    >
-                      <span>{n.recipient_count.toLocaleString()}</span>
-                      {n.delivered_count > 0 && (
-                        <div
-                          style={{
-                            fontSize: 10,
-                            marginTop: 2,
-                            color: 'hsl(var(--on-surface-muted))',
-                            fontFamily: "'Public Sans', sans-serif",
-                          }}
-                        >
-                          <span style={{ color: 'hsl(var(--primary))' }}>
-                            ✓{n.delivered_count.toLocaleString()}
-                          </span>
-                          {n.bounce_count > 0 && (
-                            <span style={{ color: 'hsl(var(--destructive))', marginLeft: 5 }}>
-                              ✕{n.bounce_count.toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </td>
-                    <td
-                      style={{ padding: '10px 8px', cursor: 'pointer' }}
-                      onClick={() => setPreviewNewsletter(n)}
-                    >
-                      <span
-                        className={
-                          n.status === 'sent'
-                            ? 'pill pill-ok'
-                            : n.status === 'scheduled'
-                              ? 'pill pill-warn'
-                              : 'pill pill-err'
-                        }
+                          })
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+                      <td
+                        style={{
+                          padding: '10px 8px',
+                          color: 'hsl(var(--on-surface))',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          maxWidth: 220,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => setPreviewNewsletter(n)}
                       >
-                        {n.status}
-                      </span>
-                    </td>
-                    {/* Actions */}
-                    <td style={{ padding: '10px 8px', whiteSpace: 'nowrap' }}>
-                      {n.status === 'failed' ? (
-                        <button
-                          className="btn btn-outline btn-sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onResend(n)
-                          }}
-                          title="Resend"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                        {n.subject}
+                      </td>
+                      <td
+                        style={{
+                          padding: '10px 8px',
+                          color: 'hsl(var(--on-surface-muted))',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => setPreviewNewsletter(n)}
+                      >
+                        {audienceLabel(n)}
+                      </td>
+                      <td
+                        style={{
+                          padding: '10px 8px',
+                          color: 'hsl(var(--on-surface))',
+                          textAlign: 'right',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => setPreviewNewsletter(n)}
+                      >
+                        <span>{n.recipient_count.toLocaleString()}</span>
+                        {n.delivered_count > 0 && (
+                          <div
+                            style={{
+                              fontSize: 10,
+                              marginTop: 2,
+                              color: 'hsl(var(--on-surface-muted))',
+                              fontFamily: "'Public Sans', sans-serif",
+                            }}
+                          >
+                            <span style={{ color: 'hsl(var(--primary))' }}>
+                              ✓{n.delivered_count.toLocaleString()}
+                            </span>
+                            {n.bounce_count > 0 && (
+                              <span style={{ color: 'hsl(var(--destructive))', marginLeft: 5 }}>
+                                ✕{n.bounce_count.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                      <td
+                        style={{ padding: '10px 8px', cursor: 'pointer' }}
+                        onClick={() => setPreviewNewsletter(n)}
+                      >
+                        <span
+                          className={
+                            n.status === 'sent'
+                              ? 'pill pill-ok'
+                              : n.status === 'scheduled'
+                                ? 'pill pill-warn'
+                                : 'pill pill-err'
+                          }
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                            refresh
-                          </span>
-                          Resend
-                        </button>
-                      ) : n.status === 'scheduled' ? (
-                        <button
-                          className="btn btn-outline-dest btn-sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            void onCancel(n.id)
-                          }}
-                          title="Cancel scheduled send"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                            cancel
-                          </span>
-                          Cancel
-                        </button>
-                      ) : (
-                        <button
-                          className="btn btn-ghost btn-sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onDuplicate(n)
-                          }}
-                          title="Duplicate & send again"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                            content_copy
-                          </span>
-                          Duplicate
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                          {n.status}
+                        </span>
+                      </td>
+                      {/* Actions */}
+                      <td style={{ padding: '10px 8px', whiteSpace: 'nowrap' }}>
+                        {n.status === 'failed' ? (
+                          <button
+                            className="btn btn-outline btn-sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onResend(n)
+                            }}
+                            title="Resend"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              refresh
+                            </span>
+                            Resend
+                          </button>
+                        ) : n.status === 'scheduled' ? (
+                          <button
+                            className="btn btn-outline-dest btn-sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              void onCancel(n.id)
+                            }}
+                            title="Cancel scheduled send"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              cancel
+                            </span>
+                            Cancel
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onDuplicate(n)
+                            }}
+                            title="Duplicate & send again"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              content_copy
+                            </span>
+                            Duplicate
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

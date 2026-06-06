@@ -22,7 +22,7 @@ export function AboutCTA() {
       ref={ref}
       className="flex flex-col md:flex-row items-center justify-between gap-6"
       style={{
-        background: 'hsl(var(--on-surface))',
+        background: 'hsl(var(--container-low))',
         borderRadius: 16,
         padding: 'clamp(24px, 4vw, 40px) clamp(24px, 5vw, 48px)',
         opacity: visible ? 1 : 0,
@@ -36,7 +36,7 @@ export function AboutCTA() {
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 'clamp(1.25rem, 3vw, 1.6rem)',
-            color: '#fff',
+            color: 'hsl(var(--on-surface))',
             margin: '0 0 6px',
           }}
         >

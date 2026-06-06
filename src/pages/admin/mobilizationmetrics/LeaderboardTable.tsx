@@ -33,9 +33,11 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div>
+        <div style={{ position: 'relative', zIndex: 1 }}>
           <div
             style={{
               fontFamily: "'Public Sans', sans-serif",
@@ -58,12 +60,20 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
             Aggregated mobilization points
           </div>
         </div>
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
-        >
-          trending_up
-        </span>
+        <img
+          src="/brand/icons/upward-arrow.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            right: 10,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            height: '140%',
+            opacity: 0.12,
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
       </div>
 
       {/* Desktop table */}

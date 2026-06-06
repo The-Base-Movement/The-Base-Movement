@@ -37,7 +37,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
         flexDirection: 'column',
         height: '100%',
         background: 'rgba(17,22,18,.5)',
-        border: '1px solid #1c221e',
+        border: '1px solid hsl(var(--border))',
       }}
     >
       <div
@@ -46,7 +46,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderBottom: '1px solid #1c221e',
+          border: '1px solid hsl(var(--border))',
         }}
       >
         <h3
@@ -199,7 +199,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
                         borderRadius: 2,
                         border: '1px solid rgba(255,255,255,0.2)',
                         background: 'rgba(0,0,0,.8)',
-                        borderColor: '#1c221e',
+                        borderColor: 'hsl(var(--border))',
                       }}
                     >
                       <span style={{ color }}>{r.region}</span> · {r.memberCount.toLocaleString()}
@@ -226,7 +226,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
             border: '1px solid rgba(255,255,255,0.1)',
             color: 'rgba(255,255,255,.7)',
             background: 'rgba(0,0,0,.6)',
-            borderColor: '#1c221e',
+            borderColor: 'hsl(var(--border))',
             backdropFilter: 'blur(8px)',
           }}
         >

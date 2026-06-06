@@ -48,8 +48,8 @@ export function MemberReadinessTable({
 }: MemberReadinessTableProps) {
   return (
     <div className="panel" style={{ marginTop: 14 }}>
-      <div className="ph">
-        <div>
+      <div className="ph" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
           <h3>Member readiness</h3>
           <p
             style={{
@@ -64,6 +64,19 @@ export function MemberReadinessTable({
             logistics by constituency.
           </p>
         </div>
+        <img
+          src="/brand/eagle-in-flight.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            right: 10,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            height: '120%',
+            opacity: 0.15,
+            pointerEvents: 'none',
+          }}
+        />
       </div>
 
       {/* Readiness KPIs — horizontal scroll slider */}
@@ -86,7 +99,8 @@ export function MemberReadinessTable({
             key={k.label}
             className="panel"
             style={{
-              flex: '0 0 160px',
+              flex: '1 1 0px',
+              minWidth: 140,
               padding: '14px 16px 14px 20px',
               position: 'relative',
               overflow: 'hidden',
@@ -174,10 +188,14 @@ export function MemberReadinessTable({
               fontWeight: 'var(--font-weight-medium, 500)',
               boxSizing: 'border-box',
               outline: 'none',
+              background: 'hsl(var(--surface))',
+              color: 'hsl(var(--on-surface))',
             }}
           />
         </div>
         <select
+          id="readiness-status-filter"
+          name="readiness-status-filter"
           value={readinessFilter}
           onChange={(e) =>
             setReadinessFilter(

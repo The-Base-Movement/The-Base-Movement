@@ -10,7 +10,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   color: 'hsl(var(--on-surface))',
 }
 
@@ -113,7 +113,7 @@ export function PollCreateEditModal({
         style={{
           width: '100%',
           maxWidth: 540,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 6,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',
@@ -126,7 +126,7 @@ export function PollCreateEditModal({
         <div
           style={{
             padding: '14px 20px',
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
             borderTop: '4px solid hsl(var(--primary))',
           }}
         >
@@ -142,7 +142,7 @@ export function PollCreateEditModal({
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 15,
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 margin: 0,
               }}
             >
@@ -203,7 +203,7 @@ export function PollCreateEditModal({
                     borderRadius: 4,
                     padding: '4px 8px',
                     cursor: 'pointer',
-                    color: '#fff',
+                    color: 'hsl(var(--on-surface))',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 4,
@@ -332,7 +332,7 @@ export function PollCreateEditModal({
                         top: 'calc(100% + 4px)',
                         left: 0,
                         right: 0,
-                        background: '#fff',
+                        background: 'hsl(var(--surface))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 4,
                         zIndex: 20,

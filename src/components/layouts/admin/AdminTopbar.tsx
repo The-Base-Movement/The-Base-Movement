@@ -47,6 +47,9 @@ export function AdminTopbar({
   const [searchResults, setSearchResults] = useState<GlobalSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const [isDarkTheme, setIsDarkTheme] = useState(
+    () => document.documentElement.getAttribute('data-theme') === 'dark'
+  )
 
   // Debounced global search effect
   useEffect(() => {
@@ -75,7 +78,7 @@ export function AdminTopbar({
     <header
       style={{
         height: 80,
-        background: '#fff',
+        background: 'hsl(var(--card))',
         borderBottom: '1px solid hsl(var(--border))',
         display: 'flex',
         alignItems: 'center',
@@ -383,6 +386,30 @@ export function AdminTopbar({
             <span className="desktop-only">IT Support</span>
           </button>
         )}
+
+        {/* Theme Toggle */}
+        <button
+          onClick={() => {
+            const currentTheme = document.documentElement.getAttribute('data-theme')
+            if (currentTheme === 'dark') {
+              document.documentElement.removeAttribute('data-theme')
+              localStorage.setItem('theme', 'light')
+              setIsDarkTheme(false)
+            } else {
+              document.documentElement.setAttribute('data-theme', 'dark')
+              localStorage.setItem('theme', 'dark')
+              setIsDarkTheme(true)
+            }
+          }}
+          className="ico"
+          title="Toggle Theme"
+          style={{ width: 32, height: 32, position: 'relative' }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+            {isDarkTheme ? 'light_mode' : 'dark_mode'}
+          </span>
+        </button>
+
         {/* Notification bell */}
         <div style={{ position: 'relative' }}>
           <button

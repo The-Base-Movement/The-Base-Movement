@@ -102,8 +102,8 @@ export function TrashCard({
             <span
               className="pill"
               style={{
-                background: 'hsl(var(--on-surface))',
-                color: '#fff',
+                background: 'hsl(var(--container-low))',
+                color: 'hsl(var(--on-surface))',
                 fontSize: 9,
                 fontWeight: 'var(--font-weight-medium, 500)',
                 padding: '2px 7px',
@@ -283,8 +283,8 @@ export function TrashCard({
                 <span
                   className="pill"
                   style={{
-                    background: 'hsl(var(--on-surface))',
-                    color: '#fff',
+                    background: 'hsl(var(--container-low))',
+                    color: 'hsl(var(--on-surface))',
                     fontSize: 9,
                     fontWeight: 'var(--font-weight-medium, 500)',
                     padding: '2px 7px',

@@ -260,7 +260,7 @@ export function AdministratorsTable({
                         className="btn btn-sm"
                         style={{
                           background: 'hsl(var(--accent))',
-                          color: '#000',
+                          color: 'hsl(var(--on-surface))',
                           border: 'none',
                         }}
                         title="Activity logs"
@@ -285,7 +285,7 @@ export function AdministratorsTable({
                               position: 'absolute',
                               right: 0,
                               top: 'calc(100% + 4px)',
-                              background: '#fff',
+                              background: 'hsl(var(--surface))',
                               border: '1px solid hsl(var(--border))',
                               borderRadius: 4,
                               zIndex: 50,

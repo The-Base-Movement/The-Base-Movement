@@ -39,7 +39,7 @@ export function VerifyModal({
         style={{
           width: '100%',
           maxWidth: 440,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px -12px rgba(0,0,0,0.4)',

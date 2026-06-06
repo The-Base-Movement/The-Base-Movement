@@ -236,7 +236,7 @@ export default function FinanceDashboard() {
               style={{
                 fontSize: 'var(--kpi-num-size)',
                 fontWeight: 500,
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -549,7 +549,7 @@ export default function FinanceDashboard() {
                     width: 10,
                     height: 10,
                     borderRadius: 'var(--radius-xs)',
-                    background: 'hsl(var(--on-surface))',
+                    background: 'hsl(var(--container-low))',
                     display: 'inline-block',
                   }}
                 />

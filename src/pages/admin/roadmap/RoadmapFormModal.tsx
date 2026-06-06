@@ -57,7 +57,7 @@ export function RoadmapFormModal({
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 6,
           width: '100%',
           maxWidth: 680,

@@ -26,7 +26,7 @@ const selectStyle: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 11.5,
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   color: 'hsl(var(--on-surface))',
   cursor: 'pointer',
   outline: 'none',

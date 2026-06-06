@@ -501,13 +501,13 @@ export default function RegistrationForm({
         className="ph"
         style={{
           padding: isMobile ? '14px 16px' : '24px 32px',
-          background: 'hsl(var(--on-surface))',
+          background: 'hsl(var(--container-low))',
         }}
       >
         <div>
           <h2
             style={{
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
               fontSize: isMobile ? '18px' : '24px',
               margin: 0,
               fontWeight: 600,
@@ -529,7 +529,11 @@ export default function RegistrationForm({
         <button
           onClick={onClose}
           className="ico"
-          style={{ background: 'rgba(255,255,255,0.1)', borderColor: 'transparent', color: '#fff' }}
+          style={{
+            background: 'rgba(255,255,255,0.1)',
+            borderColor: 'transparent',
+            color: 'hsl(var(--on-surface))',
+          }}
         >
           <span className="material-symbols-outlined">close</span>
         </button>
@@ -1617,7 +1621,7 @@ export default function RegistrationForm({
                             position: 'relative',
                             height: '400px',
                             width: '100%',
-                            background: 'hsl(var(--on-surface))',
+                            background: 'hsl(var(--container-low))',
                             borderRadius: 'var(--radius-sm)',
                             overflow: 'hidden',
                           }}
@@ -1678,8 +1682,8 @@ export default function RegistrationForm({
 
                   <div
                     style={{
-                      background: 'hsl(var(--on-surface))',
-                      color: '#fff',
+                      background: 'hsl(var(--container-low))',
+                      color: 'hsl(var(--on-surface))',
                       padding: '32px',
                       marginTop: '40px',
                       borderLeft: '8px solid hsl(var(--primary))',

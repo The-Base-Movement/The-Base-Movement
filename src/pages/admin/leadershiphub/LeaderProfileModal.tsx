@@ -42,7 +42,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
         style={{
           width: '100%',
           maxWidth: 400,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',
@@ -52,7 +52,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
         <div
           style={{
             padding: '14px 20px',
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
             borderTop: '4px solid hsl(var(--primary))',
             display: 'flex',
             alignItems: 'center',
@@ -65,7 +65,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
             }}
           >
             Officer profile
@@ -76,7 +76,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              color: 'rgba(255,255,255,0.6)',
+              color: 'hsl(var(--on-surface-muted))',
               lineHeight: 1,
             }}
           >

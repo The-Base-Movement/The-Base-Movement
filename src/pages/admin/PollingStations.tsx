@@ -3,7 +3,7 @@ import { adminService } from '@/services/adminService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular imports
-import { PAGE_SIZE, type Station } from './pollingstations/utils'
+import { type Station } from './pollingstations/utils'
 import { PollingStationsKPIs } from './pollingstations/PollingStationsKPIs'
 import { PollingStationsFilterBar } from './pollingstations/PollingStationsFilterBar'
 import { PollingStationsTable } from './pollingstations/PollingStationsTable'
@@ -12,7 +12,14 @@ export default function PollingStations() {
   const [stations, setStations] = useState<Station[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(window.innerWidth < 768 ? 15 : 25)
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const handleResize = () => setPageSize(window.innerWidth < 768 ? 15 : 25)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const [stats, setStats] = useState<{
     total: number
@@ -35,14 +42,14 @@ export default function PollingStations() {
   const [searchInput, setSearchInput] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
   const hasFilters = !!(selectedRegion || selectedConstituency || search)
 
   const fetchStations = useCallback(async () => {
     setLoading(true)
     const result = await adminService.getPollingStationsPaginated(
       page,
-      PAGE_SIZE,
+      pageSize,
       selectedRegion || undefined,
       selectedConstituency || undefined,
       search || undefined,
@@ -51,7 +58,7 @@ export default function PollingStations() {
     setStations(result.data)
     setTotalCount(result.totalCount)
     setLoading(false)
-  }, [page, selectedRegion, selectedConstituency, search, sortOrder])
+  }, [page, pageSize, selectedRegion, selectedConstituency, search, sortOrder])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -93,6 +100,14 @@ export default function PollingStations() {
     setPage(1)
   }, [selectedConstituency, search, sortOrder])
 
+  // Live search debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') setSearch(searchInput)
   }
@@ -118,8 +133,8 @@ export default function PollingStations() {
 
       {/* Table panel */}
       <div className="panel">
-        <div className="ph">
-          <div>
+        <div className="ph" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'relative', zIndex: 1 }}>
             <h3>Station directory</h3>
             <p
               style={{
@@ -145,6 +160,19 @@ export default function PollingStations() {
               {totalCount.toLocaleString()} {totalCount === 1 ? 'station' : 'stations'}
             </p>
           </div>
+          <img
+            src="/brand/eagle-in-flight.png"
+            alt=""
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '120%',
+              opacity: 0.15,
+              pointerEvents: 'none',
+            }}
+          />
         </div>
 
         {/* Filter bar */}
@@ -173,6 +201,7 @@ export default function PollingStations() {
           setPage={setPage}
           totalCount={totalCount}
           totalPages={totalPages}
+          pageSize={pageSize}
         />
       </div>
     </div>

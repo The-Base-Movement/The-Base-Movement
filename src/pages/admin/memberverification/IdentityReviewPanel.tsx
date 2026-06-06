@@ -141,7 +141,7 @@ export function IdentityReviewPanel({
         </div>
 
         {/* Field grid */}
-        <div style={{ background: '#fff', padding: '18px 22px' }}>
+        <div style={{ background: 'hsl(var(--surface))', padding: '18px 22px' }}>
           <dl
             className="verify-field-grid"
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 18px' }}
@@ -341,7 +341,7 @@ export function IdentityReviewPanel({
                 width: '100%',
                 justifyContent: 'center',
                 background: 'hsl(var(--accent))',
-                color: '#000',
+                color: 'hsl(var(--on-surface))',
                 fontWeight: 'var(--font-weight-medium, 500)',
                 height: 40,
               }}

@@ -234,7 +234,7 @@ export default function OfficerDetail() {
       {/* Hero band */}
       <section
         style={{
-          background: 'hsl(var(--on-surface))',
+          background: 'hsl(var(--container-low))',
           padding: 'clamp(48px, 8vw, 80px) clamp(16px, 5vw, 48px) clamp(32px, 5vw, 56px)',
         }}
       >
@@ -673,7 +673,7 @@ export default function OfficerDetail() {
           ref={ctaRef}
           className="flex flex-col md:flex-row items-center justify-between gap-6"
           style={{
-            background: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--container-low))',
             borderRadius: 'var(--radius-lg)',
             padding: 'clamp(24px, 4vw, 40px) clamp(24px, 5vw, 48px)',
             opacity: ctaVisible ? 1 : 0,
@@ -687,7 +687,7 @@ export default function OfficerDetail() {
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 margin: '0 0 6px',
               }}
             >

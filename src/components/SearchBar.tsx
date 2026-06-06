@@ -1,3 +1,5 @@
+import { useId } from 'react'
+
 interface SearchBarProps {
   value: string
   onChange: (value: string) => void
@@ -13,6 +15,8 @@ export function SearchBar({
   variant = 'dashboard',
 }: SearchBarProps) {
   const isDashboard = variant === 'dashboard'
+  const uniqueId = useId()
+  const inputId = `search-bar-${uniqueId}`
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
@@ -31,8 +35,8 @@ export function SearchBar({
         search
       </span>
       <input
-        id="search-bar-input"
-        name="search-bar-input"
+        id={inputId}
+        name={inputId}
         autoComplete="off"
         type="text"
         placeholder={placeholder}

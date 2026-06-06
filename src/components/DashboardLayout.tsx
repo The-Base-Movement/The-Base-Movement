@@ -43,6 +43,9 @@ export default function DashboardLayout() {
   const [userPlatform, setUserPlatform] = useState<'GHANA' | 'DIASPORA' | null>(null)
   const [likedCount, setLikedCount] = useState(0)
   const [referralCount, setReferralCount] = useState(0)
+  const [isDarkTheme, setIsDarkTheme] = useState(
+    () => document.documentElement.getAttribute('data-theme') === 'dark'
+  )
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -847,6 +850,49 @@ export default function DashboardLayout() {
                 </span>
                 Donate ₵
               </Link>
+
+              {/* Theme Toggle */}
+              <button
+                onClick={() => {
+                  const currentTheme = document.documentElement.getAttribute('data-theme')
+                  if (currentTheme === 'dark') {
+                    document.documentElement.removeAttribute('data-theme')
+                    localStorage.setItem('theme', 'light')
+                    setIsDarkTheme(false)
+                  } else {
+                    document.documentElement.setAttribute('data-theme', 'dark')
+                    localStorage.setItem('theme', 'dark')
+                    setIsDarkTheme(true)
+                  }
+                }}
+                aria-label="Toggle Theme"
+                style={{
+                  width: 36,
+                  height: 36,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'none',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 4,
+                  cursor: 'pointer',
+                  color: 'hsl(var(--on-surface-muted))',
+                  flexShrink: 0,
+                  transition: 'color 0.2s, background 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'hsl(var(--on-surface))'
+                  e.currentTarget.style.background = 'hsl(var(--container-low))'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'hsl(var(--on-surface-muted))'
+                  e.currentTarget.style.background = 'none'
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                  {isDarkTheme ? 'light_mode' : 'dark_mode'}
+                </span>
+              </button>
 
               {/* Notification Bell */}
               <div style={{ position: 'relative' }}>

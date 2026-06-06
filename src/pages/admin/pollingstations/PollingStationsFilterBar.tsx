@@ -63,6 +63,8 @@ export function PollingStationsFilterBar({
           map
         </span>
         <select
+          id="ps-region-filter"
+          name="ps-region-filter"
           aria-label="Filter by region"
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
@@ -107,6 +109,8 @@ export function PollingStationsFilterBar({
           location_city
         </span>
         <select
+          id="ps-constituency-filter"
+          name="ps-constituency-filter"
           aria-label="Filter by constituency"
           value={selectedConstituency}
           onChange={(e) => setSelectedConstituency(e.target.value)}
@@ -152,6 +156,8 @@ export function PollingStationsFilterBar({
           search
         </span>
         <input
+          id="ps-search"
+          name="ps-search"
           type="text"
           aria-label="Search polling stations by code, name or community"
           placeholder="Search code, name, community…"

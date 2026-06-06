@@ -244,7 +244,7 @@ export default function MediaLibrary() {
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
-            background: '#fff',
+            background: 'hsl(var(--surface))',
             color: 'hsl(var(--on-surface))',
             outline: 'none',
             boxSizing: 'border-box',

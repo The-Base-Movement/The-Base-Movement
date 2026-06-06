@@ -502,7 +502,7 @@ export function MemberDetailPanel({
               display: 'flex',
               gap: 0,
               borderBottom: '1px solid hsl(var(--border))',
-              background: '#fff',
+              background: 'hsl(var(--surface))',
               padding: '0 14px',
               overflowX: 'auto',
             }}
@@ -598,7 +598,7 @@ export function MemberDetailPanel({
         >
           <div
             style={{
-              background: '#fff',
+              background: 'hsl(var(--surface))',
               borderRadius: 'var(--radius-lg)',
               padding: '28px 28px 24px',
               width: '100%',

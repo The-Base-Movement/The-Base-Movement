@@ -31,8 +31,8 @@ export function GeofenceViewer({ selectedAction }: GeofenceViewerProps) {
     <div
       className="panel"
       style={{
-        background: 'hsl(var(--on-surface))',
-        color: '#fff',
+        background: 'hsl(var(--container-low))',
+        color: 'hsl(var(--on-surface))',
         position: 'relative',
         overflow: 'hidden',
         height: 320,

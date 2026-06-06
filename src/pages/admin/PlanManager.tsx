@@ -1213,7 +1213,7 @@ export default function PlanManager() {
                                 borderRadius: 4,
                                 fontSize: 12,
                                 fontWeight: 'var(--font-weight-medium, 500)',
-                                background: '#fff',
+                                background: 'hsl(var(--surface))',
                                 color: 'hsl(var(--on-surface))',
                               }}
                             />
@@ -1298,7 +1298,7 @@ export default function PlanManager() {
                                     border: '1px solid hsl(var(--border))',
                                     borderRadius: 4,
                                     fontSize: 11.5,
-                                    background: '#fff',
+                                    background: 'hsl(var(--surface))',
                                     color: 'hsl(var(--on-surface-muted))',
                                   }}
                                 />

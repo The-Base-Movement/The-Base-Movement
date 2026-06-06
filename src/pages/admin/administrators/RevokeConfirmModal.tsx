@@ -47,7 +47,7 @@ export function RevokeConfirmModal({
           position: 'relative',
           width: '100%',
           maxWidth: 420,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 4,
           overflow: 'hidden',
           border: '1px solid hsl(var(--border))',

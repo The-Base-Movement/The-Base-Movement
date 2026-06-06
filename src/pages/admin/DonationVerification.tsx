@@ -54,7 +54,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12.5,
   outline: 'none',
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   color: 'hsl(var(--on-surface))',
   boxSizing: 'border-box',
 }
@@ -363,7 +363,7 @@ export default function FinancialAudit() {
       {/* Filter bar */}
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           border: '1px solid hsl(var(--border))',
           borderRadius: 'var(--radius-md)',
           padding: '12px 14px',
@@ -419,8 +419,11 @@ export default function FinancialAudit() {
               style={{
                 height: 34,
                 padding: '0 12px',
-                background: statusFilter === tab.value ? '#181d19' : '#fff',
-                color: statusFilter === tab.value ? '#fff' : 'hsl(var(--on-surface-muted))',
+                background: statusFilter === tab.value ? 'hsl(var(--on-surface))' : 'transparent',
+                color:
+                  statusFilter === tab.value
+                    ? 'hsl(var(--background))'
+                    : 'hsl(var(--on-surface-muted))',
                 border: 'none',
                 borderRight: '1px solid hsl(var(--border))',
                 fontFamily: "'Public Sans', sans-serif",
@@ -479,7 +482,7 @@ export default function FinancialAudit() {
                   right: 0,
                   top: 'calc(100% + 6px)',
                   zIndex: 50,
-                  background: '#fff',
+                  background: 'hsl(var(--surface))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-md)',
                   padding: 16,

@@ -37,7 +37,7 @@ export function SpendingDeleteModal({
           position: 'relative',
           width: '100%',
           maxWidth: 420,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           border: '1px solid hsl(var(--border))',
           borderRadius: 6,
           boxShadow: '0 24px 64px rgba(0,0,0,0.12)',

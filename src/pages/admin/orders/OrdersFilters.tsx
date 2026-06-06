@@ -20,8 +20,11 @@ export function OrdersFilters({
   onSortChange,
 }: OrdersFiltersProps) {
   return (
-    <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ position: 'relative' }}>
+    <div
+      className="desktop-only"
+      style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
+    >
+      <div style={{ position: 'relative', flex: 1 }}>
         <span
           className="material-symbols-outlined"
           style={{
@@ -48,7 +51,7 @@ export function OrdersFilters({
             paddingLeft: 36,
             paddingRight: 16,
             height: 36,
-            width: 256,
+            width: '100%',
             border: '1px solid hsl(var(--border))',
             background: 'hsl(var(--background))',
             outline: 'none',

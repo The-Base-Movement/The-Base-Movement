@@ -100,7 +100,7 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 560,
@@ -324,7 +324,7 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
-                background: '#fff',
+                background: 'hsl(var(--surface))',
                 boxSizing: 'border-box',
                 outline: 'none',
                 resize: 'none',

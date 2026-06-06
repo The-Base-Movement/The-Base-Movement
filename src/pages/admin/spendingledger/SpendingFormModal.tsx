@@ -24,7 +24,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   boxSizing: 'border-box',
   outline: 'none',
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   color: 'hsl(var(--on-surface))',
 }
 
@@ -107,7 +107,7 @@ export function SpendingFormModal({
           position: 'relative',
           width: '100%',
           maxWidth: 520,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           border: '1px solid hsl(var(--border))',
           borderRadius: 6,
           boxShadow: '0 24px 64px rgba(0,0,0,0.12)',
@@ -155,7 +155,7 @@ export function SpendingFormModal({
               width: 32,
               height: 32,
               border: '1px solid hsl(var(--border))',
-              background: '#fff',
+              background: 'hsl(var(--surface))',
               borderRadius: 4,
               cursor: 'pointer',
               display: 'flex',

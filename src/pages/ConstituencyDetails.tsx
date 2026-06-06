@@ -940,7 +940,7 @@ export default function ConstituencyDetails() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0,
-                      color: '#fff',
+                      color: 'hsl(var(--on-surface))',
                       fontSize: 16,
                       fontWeight: 'var(--font-weight-medium, 500)',
                       fontFamily: "'Public Sans', sans-serif",
@@ -1193,7 +1193,7 @@ export default function ConstituencyDetails() {
           {/* Official Verification widget */}
           <div
             style={{
-              background: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--container-low))',
               padding: 22,
               borderRadius: 6,
               position: 'relative',
@@ -1201,7 +1201,10 @@ export default function ConstituencyDetails() {
             }}
           >
             <div style={{ position: 'absolute', top: 8, right: 8, opacity: 0.08 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 80, color: '#fff' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 80, color: 'hsl(var(--on-surface))' }}
+              >
                 verified_user
               </span>
             </div>

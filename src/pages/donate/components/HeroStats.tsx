@@ -7,8 +7,8 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
   return (
     <div
       style={{
-        background: 'hsl(var(--on-surface))',
-        color: '#fff',
+        background: 'hsl(var(--container-low))',
+        color: 'hsl(var(--on-surface))',
         position: 'relative',
         overflow: 'hidden',
         padding: '48px 0',
@@ -149,7 +149,7 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 style={{
                   fontSize: 24,
                   fontWeight: 'var(--font-weight-semibold, 600)',
-                  color: '#fff',
+                  color: 'hsl(var(--on-surface))',
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
                 }}
@@ -183,7 +183,7 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 style={{
                   fontSize: 24,
                   fontWeight: 'var(--font-weight-semibold, 600)',
-                  color: '#fff',
+                  color: 'hsl(var(--on-surface))',
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
                 }}

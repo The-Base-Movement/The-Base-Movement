@@ -162,7 +162,7 @@ export default function AdminMemberDetail() {
       const canvas = await html2canvas(cardRef.current, {
         scale: 4,
         useCORS: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'hsl(var(--surface))',
         logging: false,
         scrollX: 0,
         scrollY: 0,
@@ -193,7 +193,7 @@ export default function AdminMemberDetail() {
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'hsl(var(--surface))',
       })
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [85.6, 54] })
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 85.6, 54)
@@ -624,7 +624,7 @@ export default function AdminMemberDetail() {
           display: 'flex',
           gap: 0,
           borderBottom: '1px solid hsl(var(--border))',
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           padding: '0 14px',
           overflowX: 'auto',
         }}
@@ -745,7 +745,7 @@ export default function AdminMemberDetail() {
         >
           <div
             style={{
-              background: '#fff',
+              background: 'hsl(var(--surface))',
               borderRadius: 'var(--radius-lg)',
               padding: '28px 28px 24px',
               width: '100%',

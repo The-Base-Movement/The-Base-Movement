@@ -1,7 +1,34 @@
+import { useState, useEffect } from 'react'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 export default function AdminAnalytics() {
   const shareUrl = import.meta.env.VITE_UMAMI_SHARE_URL as string | undefined
+
+  const [isDark, setIsDark] = useState(
+    () => document.documentElement.getAttribute('data-theme') === 'dark'
+  )
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.getAttribute('data-theme') === 'dark')
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  let iframeUrl = shareUrl
+  if (shareUrl) {
+    try {
+      const url = new URL(shareUrl)
+      url.searchParams.set('theme', isDark ? 'dark' : 'light')
+      iframeUrl = url.toString()
+    } catch {
+      console.warn('Invalid VITE_UMAMI_SHARE_URL')
+    }
+  }
 
   return (
     <div className="admin-page-container">
@@ -14,7 +41,8 @@ export default function AdminAnalytics() {
       {shareUrl ? (
         <div className="panel" style={{ padding: 0, overflow: 'hidden', marginTop: 4 }}>
           <iframe
-            src={shareUrl}
+            key={isDark ? 'dark' : 'light'}
+            src={iframeUrl}
             style={{ width: '100%', height: 800, border: 'none', display: 'block' }}
             title="Umami Analytics Dashboard"
           />

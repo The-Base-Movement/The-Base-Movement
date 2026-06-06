@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { DotLoader } from '@/components/states'
 import { useNavigate } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
@@ -95,9 +95,23 @@ export default function GroundGameCommand() {
   >('ALL')
   const [readinessSortOrder, setReadinessSortOrder] = useState<'asc' | 'desc'>('asc')
 
+  const rightColRef = useRef<HTMLDivElement>(null)
+  const [rightColHeight, setRightColHeight] = useState<number | undefined>(undefined)
+
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (!rightColRef.current) return
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setRightColHeight(entry.contentRect.height)
+      }
+    })
+    observer.observe(rightColRef.current)
+    return () => observer.disconnect()
+  }, [fieldAgents, pollingAgents, transportReqs])
 
   const fetchData = async () => {
     setLoading(true)
@@ -155,7 +169,7 @@ export default function GroundGameCommand() {
   })
   const leaderboard = Object.entries(lbMap)
     .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
+    .slice(0, 10)
   const topScore = leaderboard[0]?.[1] || 1
 
   const memberNameMap = useMemo(() => {
@@ -339,6 +353,8 @@ export default function GroundGameCommand() {
                 place
               </span>
               <select
+                id="region-filter-desktop"
+                name="region-filter-desktop"
                 aria-label="Filter by region"
                 value={selectedRegion}
                 onChange={(e) => setSelectedRegion(e.target.value)}
@@ -351,7 +367,7 @@ export default function GroundGameCommand() {
                   fontFamily: "'Public Sans'",
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
-                  background: '#fff',
+                  background: 'hsl(var(--surface))',
                   cursor: 'pointer',
                   appearance: 'none',
                   outline: 'none',
@@ -422,6 +438,8 @@ export default function GroundGameCommand() {
             place
           </span>
           <select
+            id="region-filter-mobile"
+            name="region-filter-mobile"
             aria-label="Filter by region"
             value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}
@@ -435,7 +453,7 @@ export default function GroundGameCommand() {
               fontFamily: "'Public Sans'",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
-              background: '#fff',
+              background: 'hsl(var(--surface))',
               cursor: 'pointer',
               appearance: 'none',
               outline: 'none',
@@ -525,7 +543,7 @@ export default function GroundGameCommand() {
               flexWrap: 'wrap',
               gap: 14,
               marginBottom: 14,
-              alignItems: 'start',
+              alignItems: 'stretch',
             }}
           >
             <div style={{ flex: '1 1 300px', minWidth: 0 }}>
@@ -541,39 +559,49 @@ export default function GroundGameCommand() {
             </div>
           </div>
 
-          {/* Routes */}
-          {(activeCampaigns.length > 0 || doorsKnocked > 0) && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 14 }}>
-              <div style={{ flex: '2 1 280px', minWidth: 0 }}>
-                <RoutesPanel
-                  campaigns={campaigns}
-                  activeCampaigns={activeCampaigns}
-                  fieldLogs={fieldLogs}
-                />
-              </div>
-              <div style={{ flex: '1 1 240px', minWidth: 0 }}>
-                <QuickActionsPanel
-                  onNavigateDeploy={() => navigate('/admin/ground-game/deploy')}
-                  onBroadcast={() => {}}
-                  onAppointFieldAgent={openFieldModal}
-                  onExportRouteSheet={() => {}}
-                  pendingTransportRequests={transportReqs.filter((r) => r.status === 'PENDING')}
-                  onDispatchTransport={handleDispatch}
-                />
-              </div>
+          {/* Layout Grid: Routes (Left) and Agents/Actions (Right) */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 14,
+              marginTop: 14,
+              alignItems: 'stretch',
+            }}
+          >
+            <div
+              style={{ flex: '2 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column' }}
+            >
+              <RoutesPanel
+                campaigns={campaigns}
+                activeCampaigns={activeCampaigns}
+                fieldLogs={fieldLogs}
+                maxHeight={rightColHeight}
+              />
             </div>
-          )}
-
-          {/* Field Agents + Polling Station Agents */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 14 }}>
-            <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+            <div
+              ref={rightColRef}
+              style={{
+                flex: '1 1 300px',
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 14,
+              }}
+            >
+              <QuickActionsPanel
+                onNavigateDeploy={() => navigate('/admin/ground-game/deploy')}
+                onBroadcast={() => {}}
+                onAppointFieldAgent={openFieldModal}
+                onExportRouteSheet={() => {}}
+                pendingTransportRequests={transportReqs.filter((r) => r.status === 'PENDING')}
+                onDispatchTransport={handleDispatch}
+              />
               <FieldAgentsList
                 fieldAgents={fieldAgents}
                 onAppointFieldAgent={openFieldModal}
                 onRemoveFieldAgent={handleRemoveFieldAgent}
               />
-            </div>
-            <div style={{ flex: '1 1 260px', minWidth: 0 }}>
               <PollingAgentsList
                 pollingAgents={pollingAgents}
                 onRemovePollingAgent={handleRemovePollingAgent}

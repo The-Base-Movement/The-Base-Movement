@@ -34,7 +34,7 @@ const selectSt: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-normal, 400)',
   fontSize: 13,
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   color: 'hsl(var(--on-surface))',
   outline: 'none',
   boxSizing: 'border-box',
@@ -87,7 +87,7 @@ export function AssignmentModal({
         style={{
           width: '100%',
           maxWidth: 460,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 'var(--radius-md)',
           overflow: 'hidden',
         }}

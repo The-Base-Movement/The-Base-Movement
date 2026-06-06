@@ -68,8 +68,8 @@ export function VictoriesSection({ pastCampaigns }: VictoriesSectionProps) {
             <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
               <span
                 style={{
-                  background: 'hsl(var(--on-surface))',
-                  color: '#fff',
+                  background: 'hsl(var(--container-low))',
+                  color: 'hsl(var(--on-surface))',
                   fontSize: 9,
                   fontWeight: 'var(--font-weight-medium, 500)',
 

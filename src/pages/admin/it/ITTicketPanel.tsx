@@ -103,7 +103,7 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
         style={{
           width: 420,
           maxWidth: '100vw',
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderLeft: '1px solid hsl(var(--border))',
           boxShadow: '-4px 0 24px rgba(0,0,0,0.1)',
           display: 'flex',

@@ -1,4 +1,4 @@
-import { PAGE_SIZE, type Station } from './utils'
+import { type Station } from './utils'
 import { DotLoader } from '@/components/states'
 
 interface PollingStationsTableProps {
@@ -8,6 +8,7 @@ interface PollingStationsTableProps {
   setPage: React.Dispatch<React.SetStateAction<number>>
   totalCount: number
   totalPages: number
+  pageSize: number
 }
 
 export function PollingStationsTable({
@@ -17,6 +18,7 @@ export function PollingStationsTable({
   setPage,
   totalCount,
   totalPages,
+  pageSize,
 }: PollingStationsTableProps) {
   return (
     <>
@@ -88,7 +90,7 @@ export function PollingStationsTable({
                     style={{
                       borderBottom:
                         i < stations.length - 1 ? '1px solid hsl(var(--border))' : 'none',
-                      background: i % 2 === 0 ? '#fff' : 'hsl(var(--container-low))',
+                      background: i % 2 === 0 ? 'transparent' : 'hsl(var(--container-low))',
                     }}
                   >
                     <td style={{ padding: '9px 16px', whiteSpace: 'nowrap' }}>
@@ -300,7 +302,7 @@ export function PollingStationsTable({
               color: 'hsl(var(--on-surface-muted))',
             }}
           >
-            Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} of{' '}
+            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} of{' '}
             {totalCount.toLocaleString()} stations
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

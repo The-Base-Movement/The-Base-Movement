@@ -12,8 +12,6 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
       style={{
         padding: 0,
         overflow: 'hidden',
-        background: 'hsl(var(--on-surface))',
-        color: '#fff',
       }}
     >
       <div
@@ -23,7 +21,7 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          borderBottom: '1px solid hsl(var(--border))',
         }}
       >
         <span
@@ -37,7 +35,7 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
         </span>
         <span
           className="material-symbols-outlined"
-          style={{ fontSize: 20, color: 'rgba(255,255,255,0.4)' }}
+          style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}
         >
           map
         </span>
@@ -50,7 +48,7 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 11,
-                color: 'rgba(255,255,255,0.4)',
+                color: 'hsl(var(--on-surface-muted))',
               }}
             >
               No regional data available.
@@ -65,7 +63,7 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                borderBottom: '1px solid hsl(var(--border))',
               }}
             >
               <span
@@ -88,9 +86,9 @@ export function SentimentRegionalMetrics({ sentimentMetrics }: SentimentRegional
                   }}
                 >
                   <span style={{ color: 'hsl(var(--primary))' }}>{t.positive_count}</span>
-                  <span style={{ color: 'rgba(255,255,255,0.1)' }}>/</span>
-                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>{t.neutral_count}</span>
-                  <span style={{ color: 'rgba(255,255,255,0.1)' }}>/</span>
+                  <span style={{ color: 'hsl(var(--border))' }}>/</span>
+                  <span style={{ color: 'hsl(var(--on-surface-muted))' }}>{t.neutral_count}</span>
+                  <span style={{ color: 'hsl(var(--border))' }}>/</span>
                   <span style={{ color: 'hsl(var(--destructive))' }}>{t.negative_count}</span>
                 </div>
                 <span

@@ -1015,7 +1015,7 @@ export default function AdminAuthors() {
                     width: 80,
                     height: 80,
                     borderRadius: '50%',
-                    background: '#fff',
+                    background: 'hsl(var(--surface))',
                     padding: 4,
                     boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
                   }}
@@ -1049,7 +1049,7 @@ export default function AdminAuthors() {
                     width: 32,
                     height: 32,
                     borderRadius: '50%',
-                    background: '#fff',
+                    background: 'hsl(var(--surface))',
                     border: '1px solid hsl(var(--border))',
                     cursor: 'pointer',
                     display: 'flex',

@@ -97,7 +97,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
             padding: '14px 16px',
             border: '1px solid hsl(var(--border))',
             borderRadius: 'var(--radius-sm)',
-            background: '#fff',
+            background: 'hsl(var(--surface))',
             overflowY: 'auto',
             fontFamily: "'Public Sans', sans-serif",
             fontSize: 13,

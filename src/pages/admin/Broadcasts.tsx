@@ -59,8 +59,8 @@ export default function Broadcasts() {
         urgentCount={broadcasts.filter((b) => b.priority === 'Urgent').length}
       />
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
-        <div style={{ flex: '1 1 400px', minWidth: 0 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'stretch' }}>
+        <div style={{ flex: '1 1 400px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
           <BroadcastHistory
             isLoading={isLoading}
             filteredBroadcasts={filteredBroadcasts}
@@ -70,7 +70,7 @@ export default function Broadcasts() {
             fetchMetrics={fetchMetrics}
           />
         </div>
-        <div style={{ flex: '1 1 280px' }}>
+        <div style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column' }}>
           <BroadcastPresets />
         </div>
       </div>

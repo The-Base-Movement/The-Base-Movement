@@ -121,7 +121,7 @@ export function AdminSidebar({
           )}
         >
           <Link to="/admin/dashboard" className="flex items-center gap-4 shrink-0">
-            <div className="w-10 h-10 bg-background flex items-center justify-center shadow-2xl p-1.5 shrink-0">
+            <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center shadow-2xl p-1.5 shrink-0">
               <img
                 src={logoUrl}
                 alt="The Base Logo"

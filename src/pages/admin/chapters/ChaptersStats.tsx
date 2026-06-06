@@ -62,7 +62,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                   tick={{
                     fontSize: 9,
                     fontFamily: "'Public Sans'",
-                    fill: 'rgba(0,0,0,0.3)',
+                    fill: 'hsl(var(--on-surface-muted))',
                   }}
                 />
                 <YAxis
@@ -74,23 +74,30 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                   tick={{
                     fontSize: 10,
                     fontFamily: "'Public Sans'",
-                    fill: 'rgba(0,0,0,0.55)',
+                    fill: 'hsl(var(--accent))',
                   }}
                 />
                 <Tooltip
-                  cursor={{ fill: 'rgba(0,0,0,0.04)' }}
+                  cursor={{ fill: 'rgba(128,128,128,0.1)' }}
                   contentStyle={{
-                    backgroundColor: '#0f1310',
-                    border: '1px solid rgba(255,255,255,.1)',
+                    backgroundColor: 'hsl(var(--surface))',
+                    border: '1px solid hsl(var(--border))',
                     borderRadius: 4,
                     fontSize: 10,
                     fontFamily: "'Public Sans'",
+                    color: 'hsl(var(--on-surface))',
                   }}
+                  itemStyle={{ color: 'hsl(var(--on-surface))' }}
                   formatter={(value: number, name: string) => [
                     name === 'memberCount' ? `${value} members` : `${value} chapters`,
                     name === 'memberCount' ? 'Mobilization strength' : 'Chapter density',
                   ]}
-                  labelStyle={{ color: 'rgba(255,255,255,0.6)', fontSize: 10 }}
+                  labelStyle={{
+                    color: 'hsl(var(--accent))',
+                    fontSize: 10,
+                    fontWeight: 600,
+                    marginBottom: 4,
+                  }}
                 />
                 <Bar dataKey="memberCount" name="memberCount" radius={[0, 2, 2, 0]} maxBarSize={14}>
                   {sorted.map((entry, i) => (

@@ -5,7 +5,7 @@ export const inputSt: React.CSSProperties = {
   height: 40,
   padding: '0 12px',
   border: '1px solid hsl(var(--border))',
-  background: '#fff',
+  background: 'hsl(var(--surface))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-normal, 400)',

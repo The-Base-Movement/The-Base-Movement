@@ -16,7 +16,7 @@ export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
   return (
     <header
       style={{
-        background: 'hsl(var(--on-surface))',
+        background: 'hsl(var(--container-low))',
         padding: 'clamp(56px, 8vw, 88px) clamp(16px, 5vw, 48px) clamp(40px, 6vw, 64px)',
         position: 'relative',
         overflow: 'hidden',
@@ -76,7 +76,7 @@ export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
                 letterSpacing: '-0.03em',
                 lineHeight: 0.95,
                 margin: '16px 0 20px',
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
               }}
             >
               The <span style={{ color: 'hsl(var(--accent))' }}>Plan</span>
@@ -107,7 +107,7 @@ export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
                       fontSize: 'clamp(1.8rem, 3vw, 2.25rem)',
                       letterSpacing: '-0.025em',
                       lineHeight: 1,
-                      color: '#fff',
+                      color: 'hsl(var(--on-surface))',
                     }}
                   >
                     {s.value}

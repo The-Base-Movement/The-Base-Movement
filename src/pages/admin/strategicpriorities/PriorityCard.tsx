@@ -36,7 +36,12 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
             onError={() => setImageError(true)}
             crossOrigin="anonymous"
             loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', background: '#fff' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              background: 'hsl(var(--surface))',
+            }}
           />
         ) : (
           <div

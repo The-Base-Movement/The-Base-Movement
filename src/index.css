@@ -54,6 +54,8 @@
 
     /* --- Surfaces — design spec: #f6fbf4 green-tinted off-white --- */
     --background: 103 47% 97%; /* #f6fbf4 */
+    --surface: var(--background);
+    --surface-foreground: var(--foreground);
     --surface-warm: 36 24% 96%; /* #F7F5F2 footer / soft sections */
 
     /* --- Ink / text --- */
@@ -176,6 +178,56 @@
 
     /* Elite Industrial Admin specific tokens */
     --charcoal: #1a1a1a;
+  }
+
+  /* --- DARK MODE OVERRIDES --- */
+  :root[data-theme='dark'] {
+    /* Surfaces */
+    --background: 132 9% 6%;
+    --surface: var(--background);
+    --surface-foreground: var(--foreground);
+    --surface-warm: 132 9% 8%;
+    --card: 132 9% 10%;
+    --popover: 132 9% 10%;
+
+    /* Extended surfaces */
+    --surface-bright: 132 9% 15%;
+    --surface-dim: 132 9% 5%;
+    --surface-variant: 132 9% 12%;
+    --container: #141615;
+    --container-low: #0f1110;
+    --container-hi: #1a1d1b;
+
+    /* Ink / Text */
+    --foreground: 0 0% 95%;
+    --on-surface: 0 0% 95%;
+    --card-foreground: 0 0% 95%;
+    --popover-foreground: 0 0% 95%;
+    --on-surface-muted: 131 5% 65%;
+    --muted-foreground: 131 5% 65%;
+    --on-surface-variant: 0 0% 85%;
+
+    /* Brand Tuned Colors (Pop against dark backgrounds) */
+    --primary: 156 80% 35%;
+    --secondary: 132 9% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 132 9% 15%;
+    --accent: 45 90% 55%;
+    --accent-foreground: 132 9% 10%;
+    --destructive: 0 85% 55%;
+
+    --brand-green: 156 80% 35%;
+    --brand-gold: 45 90% 55%;
+    --brand-red: 0 85% 55%;
+
+    /* Borders */
+    --border: 132 9% 20%;
+    --input: 132 9% 20%;
+    --outline-variant: 132 9% 30%;
+
+    /* Overrides for specific hardcoded charcoals */
+    --charcoal-dark: 0 0% 100%;
+    --charcoal: 0 0% 96%;
   }
 
   /* Interface Density Variables */
@@ -443,7 +495,7 @@
 /* Form Styles */
 .form-understate {
   border: 1px solid #bec9bf;
-  background: #fff;
+  background: hsl(var(--card));
   border-radius: var(--radius-sm);
   font-size: 13px;
   transition: all 0.2s ease;
@@ -452,6 +504,31 @@
   outline: none;
   border-color: hsl(var(--primary));
   box-shadow: inset 0 0 0 2px rgba(0, 107, 63, 0.08);
+}
+
+/* Custom focus states - replace blue default/Tailwind outlines with brand primary color */
+input:focus,
+select:focus,
+textarea:focus,
+[contenteditable]:focus {
+  border-color: hsl(var(--primary)) !important;
+  outline: none !important;
+  --tw-ring-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px hsla(var(--primary), 0.15) !important;
+}
+
+/* Universal brand focus indicator safeguard - prevents any default browser blue focus rings */
+*:focus,
+*:focus-visible {
+  outline-color: hsl(var(--primary)) !important;
+  --tw-ring-color: hsl(var(--primary)) !important;
+}
+
+/* TinyMCE focus border override */
+.tox-tinymce.tox-edit-focus,
+.tox:not(.tox-tinymce-inline).tox-tinymce--focused {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 1px hsl(var(--primary)) !important;
 }
 
 /* Navigation Utilities */
@@ -729,7 +806,7 @@ td.leadership-col-secondary {
   margin-bottom: 18px;
 }
 .kpi {
-  background: #fff;
+  background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius-md);
   padding: 14px 16px;
@@ -883,8 +960,37 @@ td.leadership-col-secondary {
   }
 }
 
+.compose-body,
+.history-body {
+  padding: 20px 24px;
+}
+.newsletter-send-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
 /* ── Mobile breakpoints ───────────────────────────────────────── */
 @media (max-width: 768px) {
+  .compose-body,
+  .history-body {
+    padding: 12px 14px;
+  }
+  .newsletter-send-row {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .newsletter-send-row > *,
+  .newsletter-send-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .newsletter-send-row input[type='datetime-local'] {
+    width: 100%;
+  }
   .admin-content-area {
     padding-left: 0 !important;
     padding-right: 0 !important;
@@ -951,6 +1057,13 @@ td.leadership-col-secondary {
     flex-wrap: wrap;
     gap: 8px;
     width: 100%;
+  }
+  .admin-page-header .actions a,
+  .admin-page-header .actions button {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
   }
   /* War Room lower 2-col → 1-col on mobile */
   .war-room-lower {
@@ -1186,9 +1299,12 @@ td.leadership-col-secondary {
 .card.black {
   --accent: #1a1a1a;
 }
+[data-theme='dark'] .card.black {
+  --accent: #ffffff;
+}
 
 .card {
-  background: #fff;
+  background: hsl(var(--card));
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 22px 22px 20px;
@@ -1238,12 +1354,11 @@ td.leadership-col-secondary {
   text-transform: uppercase;
 }
 .card .num {
-  font-family: 'Public Sans', sans-serif;
-  font-weight: 600;
-  font-size: 48px;
+  font-size: 40px;
+  font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 0.95;
-  color: #181d19;
+  color: hsl(var(--foreground));
 }
 .card .num small {
   font-size: 20px;
@@ -1260,9 +1375,10 @@ td.leadership-col-secondary {
 .card .lbl {
   font-size: 12px;
   font-weight: 500;
-  color: #181d19;
+  color: hsl(var(--on-surface-muted));
   letter-spacing: -0.005em;
   line-height: 1.4;
+  margin-top: 14px;
 }
 .card .foot {
   display: flex;
@@ -1371,7 +1487,7 @@ td.leadership-col-secondary {
 
 /* Panels & Tables */
 .panel {
-  background: #fff;
+  background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -1431,7 +1547,7 @@ td.leadership-col-secondary {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-family: 'Public Sans';
-  background: hsl(var(--container-low));
+  background: var(--container-low);
   border-bottom: 1px solid hsl(var(--border));
 }
 .table td {
@@ -1445,7 +1561,7 @@ td.leadership-col-secondary {
   border-bottom: 0;
 }
 .table tr:hover td {
-  background: hsl(var(--container-low));
+  background: var(--container-low);
 }
 .table .who {
   display: flex;
@@ -1485,7 +1601,7 @@ td.leadership-col-secondary {
   justify-content: center;
   border: 1px solid hsl(var(--border));
   border-radius: 3px;
-  background: #fff;
+  background: hsl(var(--card));
   cursor: pointer;
   transition: all 0.15s ease;
   color: hsl(var(--on-surface-muted));
@@ -1571,7 +1687,7 @@ td.leadership-col-secondary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: hsl(var(--container-low));
+  background: var(--container-low);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 .compose .toolbar .left {
@@ -1677,7 +1793,7 @@ td.leadership-col-secondary {
   font-size: 11.5px;
 }
 .btn-outline {
-  background: #fff;
+  background: hsl(var(--card));
   color: hsl(var(--on-surface));
   border: 1px solid hsl(var(--border));
 }
@@ -1698,7 +1814,7 @@ td.leadership-col-secondary {
   color: hsl(var(--on-surface));
 }
 .btn-ghost:hover {
-  background: hsl(var(--container-low));
+  background: var(--container-low);
   color: hsl(var(--primary));
 }
 .btn-primary {
@@ -1763,7 +1879,7 @@ td.leadership-col-secondary {
 
 /* --- Industrial Auth Design System (from Design Handoff) --- */
 .auth-frame {
-  background: #fff;
+  background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -1901,7 +2017,7 @@ td.leadership-col-secondary {
 
 /* Verification */
 .verify-checks {
-  background: #fff;
+  background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius-md);
   padding: 14px;
@@ -1961,7 +2077,7 @@ td.leadership-col-secondary {
   gap: 4px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  background: hsl(var(--container-low));
+  background: var(--container-low);
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius-sm);
   padding: 8px;

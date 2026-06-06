@@ -2,7 +2,7 @@ export function StorageUsagePanel() {
   return (
     <div
       style={{
-        background: 'hsl(var(--on-surface))',
+        background: 'hsl(var(--container-low))',
         borderRadius: 6,
         padding: '24px 28px',
         display: 'flex',
@@ -38,7 +38,7 @@ export function StorageUsagePanel() {
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 14,
-              color: '#fff',
+              color: 'hsl(var(--on-surface))',
               marginBottom: 2,
             }}
           >

@@ -27,7 +27,7 @@ export function ReceiptViewerModal({ isOpen, receiptUrl, onClose }: ReceiptViewe
         style={{
           maxWidth: 680,
           width: '100%',
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 8,
           overflow: 'hidden',
           boxShadow: '0 30px 80px rgba(0,0,0,.4)',
@@ -122,7 +122,7 @@ export function ReceiptViewerModal({ isOpen, receiptUrl, onClose }: ReceiptViewe
             display: 'flex',
             justifyContent: 'flex-end',
             borderTop: '1px solid hsl(var(--border))',
-            background: '#fff',
+            background: 'hsl(var(--surface))',
           }}
         >
           <button className="btn btn-dest" onClick={onClose}>

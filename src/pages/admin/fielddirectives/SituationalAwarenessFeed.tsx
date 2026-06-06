@@ -65,42 +65,94 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
   }, [reports, statusFilter, searchQuery, sortOrder])
 
   return (
-    <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+    <div
+      className="panel"
+      style={{
+        padding: 0,
+        overflow: 'hidden',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {/* Header */}
       <div
         style={{
           padding: '16px 20px',
           borderBottom: '1px solid hsl(var(--border))',
           background: 'hsl(var(--container-low))',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
         {/* Row 1: title + description */}
-        <div style={{ marginBottom: 12 }}>
-          <div
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 13,
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            Situational awareness feed
+        <div style={{ position: 'relative', overflow: 'hidden', minHeight: 38 }}>
+          <div style={{ position: 'relative', zIndex: 1, paddingRight: 60 }}>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Situational awareness feed
+            </div>
+            <div
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-normal, 400)',
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                marginTop: 2,
+              }}
+            >
+              Real-time field intelligence
+            </div>
           </div>
-          <div
+          <img
+            src="/brand/icons/network.png"
+            alt=""
             style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-              fontSize: 11,
-              color: 'hsl(var(--on-surface-muted))',
-              marginTop: 2,
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '100%',
+              opacity: 0.12,
+              pointerEvents: 'none',
+              zIndex: 0,
+              objectFit: 'contain',
             }}
-          >
-            Real-time field intelligence
-          </div>
+          />
         </div>
 
+        {/* Separator line */}
+        <div
+          style={{
+            height: 1,
+            background: 'hsl(var(--border))',
+            marginLeft: -20,
+            marginRight: -20,
+            position: 'relative',
+            zIndex: 1,
+          }}
+        />
+
         {/* Row 2: filters */}
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 10,
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
           <div style={{ position: 'relative', flex: '1 1 180px' }}>
             <span
               className="material-symbols-outlined"
@@ -132,7 +184,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                 borderRadius: 'var(--radius-sm)',
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 12,
-                background: '#fff',
+                background: 'hsl(var(--surface))',
                 color: 'hsl(var(--on-surface))',
                 boxSizing: 'border-box',
                 outline: 'none',
@@ -219,6 +271,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
             justifyContent: 'center',
             padding: '60px 24px',
             gap: 12,
+            flex: 1,
           }}
         >
           <span
@@ -241,7 +294,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
           </p>
         </div>
       ) : (
-        <div style={{ maxHeight: 800, overflowY: 'auto' }}>
+        <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
           {sortedReports.map((report) => (
             <div key={report.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
               {report.media_url && (

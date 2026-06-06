@@ -234,7 +234,7 @@ export function AdministratorsMobileCards({
                 style={{
                   flex: 1,
                   background: 'hsl(var(--accent))',
-                  color: '#000',
+                  color: 'hsl(var(--on-surface))',
                   border: 'none',
                   justifyContent: 'center',
                 }}

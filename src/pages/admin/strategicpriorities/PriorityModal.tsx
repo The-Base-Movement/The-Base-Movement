@@ -687,7 +687,7 @@ export function PriorityModal({
                       objectFit: 'cover',
                       borderRadius: 4,
                       border: '1px solid hsl(var(--border))',
-                      background: '#fff',
+                      background: 'hsl(var(--surface))',
                     }}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>

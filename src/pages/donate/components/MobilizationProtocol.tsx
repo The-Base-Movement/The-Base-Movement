@@ -178,8 +178,8 @@ export function MobilizationProtocol({
         <div
           id="payment-section"
           style={{
-            background: 'hsl(var(--on-surface))',
-            color: '#fff',
+            background: 'hsl(var(--container-low))',
+            color: 'hsl(var(--on-surface))',
             padding: 'clamp(24px, 5vw, 40px)',
             position: 'relative',
             overflow: 'hidden',
@@ -213,7 +213,7 @@ export function MobilizationProtocol({
                 width: 32,
                 height: 32,
                 background: 'hsl(var(--destructive))',
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -227,7 +227,7 @@ export function MobilizationProtocol({
             <h3
               style={{
                 fontWeight: 'var(--font-weight-medium, 500)',
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
                 letterSpacing: '-0.02em',
                 fontSize: 20,
@@ -278,7 +278,7 @@ export function MobilizationProtocol({
               <p
                 style={{
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  color: '#fff',
+                  color: 'hsl(var(--on-surface))',
                   fontSize: 24,
                   letterSpacing: '-0.02em',
                   margin: 0,
@@ -400,7 +400,7 @@ export function MobilizationProtocol({
                 width: 32,
                 height: 32,
                 background: 'hsl(var(--accent))',
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -667,8 +667,8 @@ export function MobilizationProtocol({
               style={{
                 width: 32,
                 height: 32,
-                background: 'hsl(var(--on-surface))',
-                color: '#fff',
+                background: 'hsl(var(--container-low))',
+                color: 'hsl(var(--on-surface))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -810,7 +810,7 @@ export function MobilizationProtocol({
                       className="material-symbols-outlined"
                       style={{
                         position: 'absolute',
-                        color: '#fff',
+                        color: 'hsl(var(--on-surface))',
                         fontSize: 16,
                         left: 2,
                         pointerEvents: 'none',
@@ -854,7 +854,7 @@ export function MobilizationProtocol({
                 width: 32,
                 height: 32,
                 background: 'hsl(var(--primary))',
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1018,7 +1018,7 @@ export function MobilizationProtocol({
                 gap: 12,
                 padding: '0 32px',
                 background: 'hsl(var(--primary))',
-                color: '#fff',
+                color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--button-font-weight)',
                 fontSize: 13,

@@ -12,7 +12,10 @@ interface ConstituencyCoverageTableProps {
 
 export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCoverageTableProps) {
   return (
-    <div className="panel">
+    <div
+      className="panel"
+      style={{ height: '100%', maxHeight: 660, display: 'flex', flexDirection: 'column' }}
+    >
       <div className="ph">
         <div>
           <h3>Constituency coverage</h3>
@@ -51,8 +54,11 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
       ) : (
         <>
           {/* Table — desktop */}
-          <div className="desktop-only">
-            <div style={{ overflowX: 'auto', maxHeight: 460, overflowY: 'auto' }}>
+          <div
+            className="desktop-only"
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}
+          >
+            <div style={{ overflowX: 'auto', overflowY: 'auto', flex: 1 }}>
               <table
                 style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Public Sans'" }}
               >
@@ -208,7 +214,7 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
           </div>
 
           {/* Card list — mobile */}
-          <div className="mobile-only">
+          <div className="mobile-only" style={{ flex: 1, overflowY: 'auto' }}>
             {constituencyStats.map((row, i) => {
               const coveragePct =
                 row.members > 0 ? Math.round((row.submitted / row.members) * 100) : 0

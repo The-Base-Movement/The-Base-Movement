@@ -19,6 +19,7 @@ import type { BlogPost, Author } from '@/types/admin'
 import { MediaLibrary } from './MediaLibrary'
 import { IntelPanel } from './IntelPanel'
 import { CATEGORIES } from './constants'
+import { useIsDarkTheme } from '@/hooks/useIsDarkTheme'
 
 type FormData = Omit<BlogPost, 'id'>
 
@@ -69,6 +70,7 @@ export function BlogEditorView({
   onBack,
   onSubmit,
 }: BlogEditorViewProps) {
+  const isDark = useIsDarkTheme()
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -214,7 +216,7 @@ export function BlogEditorView({
             >
               <div
                 style={{
-                  background: '#fff',
+                  background: 'hsl(var(--surface))',
                   padding: isMobile ? '16px' : '32px 48px',
                   minHeight: isMobile ? 'auto' : 900,
                 }}
@@ -461,7 +463,7 @@ export function BlogEditorView({
                 {/* TinyMCE editor — keyed by post id to force re-mount on post change */}
                 <div style={{ minHeight: 500 }}>
                   <Editor
-                    key={editingPost?.id ?? 'new'}
+                    key={`${editingPost?.id ?? 'new'}-${isDark ? 'dark' : 'light'}`}
                     apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                     onInit={(_, editor) => (editorRef.current = editor)}
                     initialValue={formData.content ?? ''}
@@ -485,8 +487,11 @@ export function BlogEditorView({
                       toolbar:
                         'undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
                       statusbar: false,
-                      content_style:
-                        'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; } img { max-width: 100%; height: auto; display: block; margin: 1.5em 0; border-radius: 4px; }',
+                      content_style: isDark
+                        ? 'body { font-family: "Inter", sans-serif; font-size:16px; color:#f1f5f9; line-height:1.7; background:#0f1110; } img { max-width: 100%; height: auto; display: block; margin: 1.5em 0; border-radius: 4px; }'
+                        : 'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; } img { max-width: 100%; height: auto; display: block; margin: 1.5em 0; border-radius: 4px; }',
+                      skin: isDark ? 'oxide-dark' : 'oxide',
+                      content_css: isDark ? 'dark' : 'default',
                       branding: false,
                       images_upload_handler: async (blobInfo: {
                         blob: () => Blob

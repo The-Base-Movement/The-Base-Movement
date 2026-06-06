@@ -622,6 +622,7 @@ class MemberService {
         { count: 'exact' }
       )
       .is('deleted_at', null)
+      .eq('status', 'Active')
 
     if (searchTerm) {
       if (searchType === 'constituency') {
