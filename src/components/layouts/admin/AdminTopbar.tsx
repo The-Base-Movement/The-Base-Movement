@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import { CountryBadge } from '@/components/CountryBadge'
 import { getCountryFlag } from '@/lib/utils'
-import type { GlobalSearchResult, AdminUser, Notification } from '@/types/admin'
+import type { GlobalSearchResult, AdminUser, Notification, AdminPreferences } from '@/types/admin'
 
 interface AdminTopbarProps {
   isSidebarOpen: boolean
@@ -50,6 +50,14 @@ export function AdminTopbar({
   const [isDarkTheme, setIsDarkTheme] = useState(
     () => document.documentElement.getAttribute('data-theme') === 'dark'
   )
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      setIsDarkTheme(document.documentElement.getAttribute('data-theme') === 'dark')
+    }
+    window.addEventListener('admin_theme_changed', handleThemeChange)
+    return () => window.removeEventListener('admin_theme_changed', handleThemeChange)
+  }, [])
 
   // Debounced global search effect
   useEffect(() => {
@@ -389,16 +397,38 @@ export function AdminTopbar({
 
         {/* Theme Toggle */}
         <button
-          onClick={() => {
+          onClick={async () => {
             const currentTheme = document.documentElement.getAttribute('data-theme')
-            if (currentTheme === 'dark') {
-              document.documentElement.removeAttribute('data-theme')
-              localStorage.setItem('theme', 'light')
-              setIsDarkTheme(false)
-            } else {
+            const nextIsDark = currentTheme !== 'dark'
+            if (nextIsDark) {
               document.documentElement.setAttribute('data-theme', 'dark')
               localStorage.setItem('theme', 'dark')
+              localStorage.setItem('admin_dark_mode', 'true')
               setIsDarkTheme(true)
+            } else {
+              document.documentElement.removeAttribute('data-theme')
+              localStorage.setItem('theme', 'light')
+              localStorage.setItem('admin_dark_mode', 'false')
+              setIsDarkTheme(false)
+            }
+            window.dispatchEvent(new Event('admin_theme_changed'))
+
+            if (user) {
+              try {
+                const updatedPrefs: AdminPreferences = {
+                  interfaceDensity: user.preferences?.interfaceDensity || 'Comfortable',
+                  darkMode: nextIsDark,
+                  notifications: user.preferences?.notifications || {
+                    newRegistrations: true,
+                    securityAlerts: true,
+                    auditEvents: true,
+                    financeRequests: true,
+                  },
+                }
+                await adminService.updatePreferences(user.id, updatedPrefs)
+              } catch (err) {
+                console.error('[TOPBAR] Failed to update preferences in DB:', err)
+              }
             }
           }}
           className="ico"

@@ -24,6 +24,15 @@ export function SystemPreferencesTab({ adminData, toast }: SystemPreferencesTabP
     }
   }, [adminData])
 
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const isDark = localStorage.getItem('admin_dark_mode') === 'true'
+      setPreferences((prev) => (prev ? { ...prev, darkMode: isDark } : null))
+    }
+    window.addEventListener('admin_theme_changed', handleThemeChange)
+    return () => window.removeEventListener('admin_theme_changed', handleThemeChange)
+  }, [])
+
   const handleUpdatePreferences = async (newPrefs: AdminPreferences) => {
     setPreferences(newPrefs)
     if (adminData) {
@@ -57,6 +66,7 @@ export function SystemPreferencesTab({ adminData, toast }: SystemPreferencesTabP
       document.documentElement.removeAttribute('data-theme')
       localStorage.setItem('admin_dark_mode', 'false')
     }
+    window.dispatchEvent(new Event('admin_theme_changed'))
   }
 
   const handleToggle = (key: keyof AdminPreferences['notifications'], label: string) => {

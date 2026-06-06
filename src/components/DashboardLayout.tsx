@@ -48,6 +48,14 @@ export default function DashboardLayout() {
   )
 
   useEffect(() => {
+    const handleThemeChange = () => {
+      setIsDarkTheme(document.documentElement.getAttribute('data-theme') === 'dark')
+    }
+    window.addEventListener('admin_theme_changed', handleThemeChange)
+    return () => window.removeEventListener('admin_theme_changed', handleThemeChange)
+  }, [])
+
+  useEffect(() => {
     const checkAdmin = async () => {
       if (!session?.user?.id) return
       const adminData = await adminService.getAdminData(session.user.id)
@@ -853,16 +861,44 @@ export default function DashboardLayout() {
 
               {/* Theme Toggle */}
               <button
-                onClick={() => {
+                onClick={async () => {
                   const currentTheme = document.documentElement.getAttribute('data-theme')
-                  if (currentTheme === 'dark') {
-                    document.documentElement.removeAttribute('data-theme')
-                    localStorage.setItem('theme', 'light')
-                    setIsDarkTheme(false)
-                  } else {
+                  const nextIsDark = currentTheme !== 'dark'
+                  if (nextIsDark) {
                     document.documentElement.setAttribute('data-theme', 'dark')
                     localStorage.setItem('theme', 'dark')
+                    localStorage.setItem('admin_dark_mode', 'true')
                     setIsDarkTheme(true)
+                  } else {
+                    document.documentElement.removeAttribute('data-theme')
+                    localStorage.setItem('theme', 'light')
+                    localStorage.setItem('admin_dark_mode', 'false')
+                    setIsDarkTheme(false)
+                  }
+                  window.dispatchEvent(new Event('admin_theme_changed'))
+
+                  if (session?.user?.id) {
+                    try {
+                      const adminData =
+                        adminService.getCurrentUser() ||
+                        (await adminService.getAdminData(session.user.id))
+                      if (adminData) {
+                        const updatedPrefs: import('@/types/admin').AdminPreferences = {
+                          interfaceDensity:
+                            adminData.preferences?.interfaceDensity || 'Comfortable',
+                          darkMode: nextIsDark,
+                          notifications: adminData.preferences?.notifications || {
+                            newRegistrations: true,
+                            securityAlerts: true,
+                            auditEvents: true,
+                            financeRequests: true,
+                          },
+                        }
+                        await adminService.updatePreferences(adminData.id, updatedPrefs)
+                      }
+                    } catch (err) {
+                      console.error('[DASHBOARD] Failed to update preferences in DB:', err)
+                    }
                   }
                 }}
                 aria-label="Toggle Theme"
