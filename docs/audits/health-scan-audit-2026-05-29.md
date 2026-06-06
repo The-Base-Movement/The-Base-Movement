@@ -39,11 +39,11 @@
 **Fix:** Wire FeedbackVaultModal + EngagementBanner to `member_feedback` table via Supabase; add local `searchQuery` state + filter logic to AttendanceTable.  
 **Status:** ✅ Fixed
 
-#### 4. `VITE_PAYSTACK_PUBLIC_KEY` missing from `.env.example`
+#### 4. Payment provider env vars missing from `.env.example`
 
 **File:** `.env.example`  
-**Problem:** Paystack is the #1 upcoming integration but any dev cloning the repo won't know the env var is needed.  
-**Fix:** Add documented entry.  
+**Problem:** The payment provider integration needs documented env vars so developers know which secrets belong server-side.  
+**Fix:** Add documented entries.  
 **Status:** ✅ Fixed
 
 ---

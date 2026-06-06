@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
-import PaystackButton from './PaystackButton'
+import HubtelButton from './HubtelButton'
 import { useAuth } from '@/context/AuthContext'
 
 interface DonateModalProps {
@@ -71,7 +71,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
           phone: form.phone.trim(),
           amount: parseFloat(form.amount),
           country: 'Ghana',
-          payment_method: 'Paystack',
+          payment_method: 'Hubtel',
           status: 'Pending',
           member_id: session?.user?.id || null,
           chapter: context?.type === 'chapter' ? context.name : null,
@@ -90,30 +90,11 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
     }
   }
 
-  const handlePaystackSuccess = async (paystackRef: string) => {
-    try {
-      const {
-        data: { session: s },
-      } = await supabase.auth.getSession()
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${s?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ reference: pendingDonationId, paystackRef, type: 'donation' }),
-      })
-      if (!res.ok) console.warn('[DonateModal] verify-payment returned', res.status)
-    } catch (err) {
-      // Webhook will catch this as fallback; don't block the success UI
-      console.warn('[DonateModal] verify-payment call failed:', err)
-    }
-    setPendingDonationId(null)
-    setSucceeded(true)
+  const handleHubtelStarted = () => {
+    toast.success('Redirecting to Hubtel checkout.')
   }
 
-  const handlePaystackClose = async () => {
-    // User dismissed popup without paying — delete the pending donation
+  const handleHubtelError = async () => {
     if (pendingDonationId) {
       await supabase.from('donations').delete().eq('id', pendingDonationId).eq('status', 'Pending')
     }
@@ -316,14 +297,14 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                       lock
                     </span>
-                    Pay with Paystack
+                    Pay with Hubtel
                   </>
                 )}
               </button>
             </form>
 
             {pendingDonationId && (
-              <PaystackButton
+              <HubtelButton
                 autoOpen
                 reference={pendingDonationId}
                 amount={parseFloat(form.amount)}
@@ -335,8 +316,8 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                   memberId: session?.user?.id,
                   context: context ?? undefined,
                 }}
-                onSuccess={handlePaystackSuccess}
-                onClose={handlePaystackClose}
+                onStarted={handleHubtelStarted}
+                onError={handleHubtelError}
               />
             )}
           </>

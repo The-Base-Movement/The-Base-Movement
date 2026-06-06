@@ -83,7 +83,7 @@ VITE_VAPID_PUBLIC_KEY=BK3q2sRNuPF1...   <-- your actual public key
 
 - [ ] **Step 4: Update `.env.example`**
 
-The full content of `.env.example` already has Supabase, TinyMCE, Sentry, Mapbox, Paystack, Umami, Tawk entries. Append this block at the end:
+The full content of `.env.example` already has Supabase, TinyMCE, Sentry, Mapbox, Umami, Tawk entries. Append this block at the end:
 
 ```
 # Web Push — generate VAPID keys with: npx web-push generate-vapid-keys

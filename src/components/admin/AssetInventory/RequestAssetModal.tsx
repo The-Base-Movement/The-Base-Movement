@@ -112,8 +112,12 @@ export function RequestAssetModal({ assets, departmentId, requestedBy, onClose, 
         </p>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ position: 'relative' }}>
-            <label style={labelStyle}>Asset</label>
+            <label htmlFor="asset-request-search" style={labelStyle}>
+              Asset
+            </label>
             <input
+              id="asset-request-search"
+              name="assetRequestSearch"
               value={selectedAssetId ? selectedName : search}
               onChange={(e) => {
                 setSearch(e.target.value)
@@ -185,8 +189,12 @@ export function RequestAssetModal({ assets, departmentId, requestedBy, onClose, 
             )}
           </div>
           <div>
-            <label style={labelStyle}>Reason</label>
+            <label htmlFor="asset-request-reason" style={labelStyle}>
+              Reason
+            </label>
             <textarea
+              id="asset-request-reason"
+              name="assetRequestReason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Why do you need this asset?"
@@ -195,11 +203,13 @@ export function RequestAssetModal({ assets, departmentId, requestedBy, onClose, 
             />
           </div>
           <div>
-            <label style={labelStyle}>
+            <label htmlFor="asset-request-return-date" style={labelStyle}>
               Expected Return Date{' '}
               <span style={{ textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
             </label>
             <input
+              id="asset-request-return-date"
+              name="assetRequestReturnDate"
               type="date"
               value={returnDate}
               onChange={(e) => setReturnDate(e.target.value)}

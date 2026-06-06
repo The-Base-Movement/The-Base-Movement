@@ -105,8 +105,12 @@ export function CheckOutModal({ assetId, assetName, members, onClose, onSubmit }
         </p>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ position: 'relative' }}>
-            <label style={labelStyle}>Assign To</label>
+            <label htmlFor={`asset-checkout-assignee-${assetId}`} style={labelStyle}>
+              Assign To
+            </label>
             <input
+              id={`asset-checkout-assignee-${assetId}`}
+              name="assetCheckoutAssignee"
               value={selectedId ? selectedName : search}
               onChange={(e) => {
                 setSearch(e.target.value)
@@ -173,11 +177,13 @@ export function CheckOutModal({ assetId, assetName, members, onClose, onSubmit }
             )}
           </div>
           <div>
-            <label style={labelStyle}>
+            <label htmlFor={`asset-checkout-return-date-${assetId}`} style={labelStyle}>
               Expected Return Date{' '}
               <span style={{ textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
             </label>
             <input
+              id={`asset-checkout-return-date-${assetId}`}
+              name="assetCheckoutReturnDate"
               type="date"
               value={returnDate}
               onChange={(e) => setReturnDate(e.target.value)}
@@ -185,10 +191,12 @@ export function CheckOutModal({ assetId, assetName, members, onClose, onSubmit }
             />
           </div>
           <div>
-            <label style={labelStyle}>
+            <label htmlFor={`asset-checkout-notes-${assetId}`} style={labelStyle}>
               Notes <span style={{ textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
             </label>
             <textarea
+              id={`asset-checkout-notes-${assetId}`}
+              name="assetCheckoutNotes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}

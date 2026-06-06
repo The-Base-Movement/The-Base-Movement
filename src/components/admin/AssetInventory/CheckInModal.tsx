@@ -153,8 +153,12 @@ export function CheckInModal({
               style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
             >
               <div>
-                <label style={labelStyle}>Condition</label>
+                <label htmlFor={`asset-checkin-condition-${assetId}`} style={labelStyle}>
+                  Condition
+                </label>
                 <select
+                  id={`asset-checkin-condition-${assetId}`}
+                  name="assetCheckinCondition"
                   value={condition}
                   onChange={(e) => setCondition(e.target.value as AssetCondition)}
                   style={inputStyle}
@@ -167,13 +171,15 @@ export function CheckInModal({
                 </select>
               </div>
               <div>
-                <label style={labelStyle}>
+                <label htmlFor={`asset-checkin-note-${assetId}`} style={labelStyle}>
                   Note{' '}
                   <span style={{ textTransform: 'none', letterSpacing: 0 }}>
                     (leave blank to skip)
                   </span>
                 </label>
                 <textarea
+                  id={`asset-checkin-note-${assetId}`}
+                  name="assetCheckinNote"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Any damage, wear, or repairs noted?"

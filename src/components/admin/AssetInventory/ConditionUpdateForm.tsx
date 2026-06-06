@@ -68,8 +68,12 @@ export function ConditionUpdateForm({ currentCondition, onUpdate }: Props) {
         Update Condition
       </p>
       <div>
-        <label style={labelStyle}>New Condition</label>
+        <label htmlFor="asset-condition-update-condition" style={labelStyle}>
+          New Condition
+        </label>
         <select
+          id="asset-condition-update-condition"
+          name="assetConditionUpdateCondition"
           value={condition}
           onChange={(e) => setCondition(e.target.value as AssetCondition)}
           style={inputStyle}
@@ -80,8 +84,12 @@ export function ConditionUpdateForm({ currentCondition, onUpdate }: Props) {
         </select>
       </div>
       <div>
-        <label style={labelStyle}>Note (required)</label>
+        <label htmlFor="asset-condition-update-note" style={labelStyle}>
+          Note (required)
+        </label>
         <textarea
+          id="asset-condition-update-note"
+          name="assetConditionUpdateNote"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="e.g. Screen repaired, charging port replaced"

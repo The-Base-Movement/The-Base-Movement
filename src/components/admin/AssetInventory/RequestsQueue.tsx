@@ -146,7 +146,12 @@ export function RequestsQueue({ requests, reviewerId, onApprove, onDeny }: Props
                 borderTop: '1px solid hsl(var(--border))',
               }}
             >
+              <label htmlFor={`asset-request-review-note-${req.id}`} style={{ display: 'none' }}>
+                Review note
+              </label>
               <textarea
+                id={`asset-request-review-note-${req.id}`}
+                name="assetRequestReviewNote"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder={

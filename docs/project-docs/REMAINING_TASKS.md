@@ -16,19 +16,15 @@
 
 ---
 
-## 💳 1. Paystack Payment Integration
+## 💳 1. Hubtel Payment Integration
 
-> File: `docs/project-docs/todo_payment.md`
-
-- [ ] Create Paystack account, complete Ghana compliance form
-- [ ] Add `VITE_PAYSTACK_PUBLIC_KEY` to `.env`
-- [ ] Install `react-paystack`, build reusable `PaystackButton` in `src/components/Payment/PaystackAction.tsx`
-- [ ] **Donations** (`Donate.tsx`) — replace manual receipt upload (Step 3) with live Paystack modal
-  - [ ] Show success screen immediately on payment approval
-  - [ ] Auto-update member to "Verified Donor" status
-- [ ] **Store checkout** — replace WhatsApp/manual flow with Paystack checkout
-  - [ ] Only deduct inventory after webhook confirms `charge.success`
-- [ ] Supabase Edge Function webhook handler — verify `x-paystack-signature`, update order/donation status
+- [x] Remove previous browser payment dependency and public key usage
+- [x] Add Hubtel server-side checkout initiation function
+- [x] Add Hubtel callback function to update donation/order payment status
+- [x] Wire chapter/constituency donation modal to Hubtel checkout
+- [ ] Deploy Hubtel Supabase edge functions and configure live secrets
+- [ ] Register Hubtel callback URL in the Hubtel dashboard
+- [ ] Wire store checkout to redirect through Hubtel before order summary
 - [ ] Transaction history tab on member dashboard
 - [ ] Fallback manual support link for failed payments
 
@@ -140,7 +136,7 @@ All P1–P3 pages migrated to design system. Lucide icons removed, Tailwind colo
 
 | #   | Task                       | Impact                                  | Effort |
 | --- | -------------------------- | --------------------------------------- | ------ |
-| 1   | Paystack Integration       | 🔴 Critical — enables real transactions | Medium |
+| 1   | Hubtel Integration         | 🔴 Critical — enables real transactions | Medium |
 | 2   | Frontend Mobile (P1 pages) | 🔴 High — user-facing quality           | Medium |
 | 3   | SMS Gateway                | 🟡 High — mobilization core             | Medium |
 | 4   | ~~Production RLS Audit~~   | ✅ Done                                 | —      |

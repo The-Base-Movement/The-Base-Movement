@@ -56,6 +56,7 @@ export function AddCategoryModal({ onClose, onSubmit }: Props) {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <label
+              htmlFor="asset-category-name"
               style={{
                 display: 'block',
                 fontSize: 11,
@@ -69,6 +70,8 @@ export function AddCategoryModal({ onClose, onSubmit }: Props) {
               Category Name
             </label>
             <input
+              id="asset-category-name"
+              name="assetCategoryName"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Laptop, AV Equipment"

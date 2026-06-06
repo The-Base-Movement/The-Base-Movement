@@ -99,26 +99,33 @@ export function AssetInventory({ departmentId, viewMode }: AssetInventoryProps) 
         }}
       >
         {viewMode === 'master' && (
-          <select
-            value={filterDept}
-            onChange={(e) => setFilterDept(e.target.value)}
-            style={{
-              padding: '7px 10px',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: 13,
-              fontFamily: "'Public Sans', sans-serif",
-              background: 'hsl(var(--background))',
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            <option value="">All Departments</option>
-            {departments.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
+          <>
+            <label htmlFor="asset-inventory-department-filter" className="sr-only">
+              Filter by department
+            </label>
+            <select
+              id="asset-inventory-department-filter"
+              name="assetInventoryDepartmentFilter"
+              value={filterDept}
+              onChange={(e) => setFilterDept(e.target.value)}
+              style={{
+                padding: '7px 10px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 13,
+                fontFamily: "'Public Sans', sans-serif",
+                background: 'hsl(var(--background))',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              <option value="">All Departments</option>
+              {departments.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </>
         )}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
           {canWrite && viewMode === 'department' && (
