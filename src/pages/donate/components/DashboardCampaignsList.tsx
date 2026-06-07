@@ -101,7 +101,9 @@ export function DashboardCampaignsList({
                     borderRadius: 4,
                     padding: 14,
                     cursor: 'pointer',
-                    background: isSelected ? 'hsla(var(--primary), 0.04)' : 'hsl(var(--background))',
+                    background: isSelected
+                      ? 'hsla(var(--primary), 0.04)'
+                      : 'hsl(var(--background))',
                     transition: 'all 0.15s',
                   }}
                 >

@@ -127,18 +127,38 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     init()
   }, [navigate, session])
 
-  // 15-minute inactivity timeout — sign out and return to admin login
+  // 15-minute inactivity timeout — only sign out after no admin interaction.
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastActivityAt = useRef(Date.now())
   useEffect(() => {
     const TIMEOUT_MS = 15 * 60 * 1000
+    const logoutIfIdle = async () => {
+      const idleFor = Date.now() - lastActivityAt.current
+      if (idleFor < TIMEOUT_MS) {
+        reset()
+        return
+      }
+      await authService.logout()
+      navigate('/admin-login')
+    }
     const reset = () => {
+      lastActivityAt.current = Date.now()
       if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
-      inactivityTimer.current = setTimeout(async () => {
-        await authService.logout()
-        navigate('/admin-login')
+      inactivityTimer.current = setTimeout(() => {
+        void logoutIfIdle()
       }, TIMEOUT_MS)
     }
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'] as const
+    const events = [
+      'pointermove',
+      'mousemove',
+      'mousedown',
+      'click',
+      'keydown',
+      'touchstart',
+      'wheel',
+      'scroll',
+      'focus',
+    ] as const
     events.forEach((e) => window.addEventListener(e, reset, { passive: true }))
     reset()
     return () => {

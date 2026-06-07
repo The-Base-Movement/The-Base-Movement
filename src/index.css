@@ -273,7 +273,7 @@
     color: hsl(var(--on-surface));
   }
 
-  :root[data-theme='dark'] .public-layout [class*="bg-on-surface"],
+  :root[data-theme='dark'] .public-layout [class*='bg-on-surface'],
   :root[data-theme='dark'] .public-layout .bg-white,
   :root[data-theme='dark'] .public-layout .bg-stone-50,
   :root[data-theme='dark'] .public-layout .bg-stone-50\/50,
