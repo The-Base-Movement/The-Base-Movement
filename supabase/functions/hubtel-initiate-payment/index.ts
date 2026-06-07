@@ -1,5 +1,6 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { normalizeHubtelPhone } from './phone.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,14 +36,6 @@ function getRequiredEnv(name: string) {
   const value = Deno.env.get(name)
   if (!value) throw new Error(`${name} is not configured`)
   return value
-}
-
-function normalizePhone(phone: string) {
-  const digits = phone.replace(/[^\d+]/g, '')
-  if (digits.startsWith('+')) return digits
-  if (digits.startsWith('0')) return `+233${digits.slice(1)}`
-  if (digits.startsWith('233')) return `+${digits}`
-  return digits
 }
 
 function getCheckoutUrl(payload: Record<string, unknown>) {
@@ -133,7 +126,7 @@ Deno.serve(async (req: Request) => {
       merchantAccountNumber: accountNumber,
       clientReference: reference,
       customerName: name,
-      customerPhoneNumber: normalizePhone(phone),
+      customerPhoneNumber: normalizeHubtelPhone(phone),
       customerEmail: body.email || 'donations@thebasemovement.com',
       channels: ['mobilemoney', 'card'],
       metadata: body.metadata ?? {},
