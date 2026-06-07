@@ -147,6 +147,7 @@ export default function Topbar({
               search
             </span>
             <input
+              name="siteSearch"
               aria-label="Search the movement..."
               type="text"
               placeholder="Search the movement..."

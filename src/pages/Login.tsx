@@ -44,7 +44,6 @@ export default function Login() {
 
       window.dispatchEvent(new Event('storage'))
 
-      // If the user is also an admin (any role), send them to the admin panel
       const adminUser = await adminService.initialize()
       if (adminUser) {
         toast.success('Welcome back. Redirecting to the admin panel.')

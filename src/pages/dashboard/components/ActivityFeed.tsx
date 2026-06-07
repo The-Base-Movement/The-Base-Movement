@@ -39,7 +39,9 @@ export function ActivityFeed() {
           timestamp: new Date(d.date),
           loc: d.country || 'Ghana',
           amt: `₵${d.amount}`,
-          img: `https://i.pravatar.cc/80?u=${d.fullName}`,
+          img: d.avatarUrl
+            ? d.avatarUrl
+            : `https://i.pravatar.cc/80?u=${encodeURIComponent(d.fullName)}`,
         })),
         ...members.map((m) => ({
           name: m.name,
@@ -63,7 +65,10 @@ export function ActivityFeed() {
 
     if (lowBandwidthMode) return
 
-    const donationSub = donationService.subscribeToPublicDonations((d) => {
+    let donationSub: ReturnType<typeof donationService.subscribeToPublicDonations> | null = null
+    let memberSub: ReturnType<typeof memberService.subscribeToNewMembers> | null = null
+
+    donationSub = donationService.subscribeToPublicDonations((d) => {
       const newActivity: Activity = {
         name: d.fullName,
         action: 'just contributed to the',
@@ -72,13 +77,14 @@ export function ActivityFeed() {
         timestamp: new Date(),
         loc: d.country || 'Global',
         amt: `₵${d.amount}`,
-        img: `https://i.pravatar.cc/80?u=${d.fullName}`,
+        img: d.avatarUrl
+          ? d.avatarUrl
+          : `https://i.pravatar.cc/80?u=${encodeURIComponent(d.fullName)}`,
       }
       setActivities((prev) => [newActivity, ...prev].slice(0, 10))
     })
 
-    // Subscribe to members
-    const memberSub = memberService.subscribeToNewMembers((m) => {
+    memberSub = memberService.subscribeToNewMembers((m) => {
       const newActivity: Activity = {
         name: m.name,
         action: 'registered as a member of',

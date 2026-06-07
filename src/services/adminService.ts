@@ -1532,15 +1532,18 @@ class AdminService {
 
   async getMovementSpendingHistory(): Promise<MobilizationLedger[]> {
     const data = await donationService.getMobilizationLedger(50)
-    return data.map((d) => ({
-      id: d.id,
-      chapter: d.chapter,
-      transaction_type: d.type,
-      amount: Number(d.amount),
-      description: d.description,
-      timestamp: d.date,
-      category: d.category as MobilizationLedger['category'],
-    }))
+    return data.map((d) => {
+      const amount = Number(String(d.amount).replace(/[^0-9.-]+/g, ''))
+      return {
+        id: d.id,
+        chapter: d.chapter,
+        transaction_type: d.type,
+        amount: Number.isFinite(amount) ? amount : 0,
+        description: d.description,
+        timestamp: d.date,
+        category: d.category as MobilizationLedger['category'],
+      }
+    })
   }
 
   subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {

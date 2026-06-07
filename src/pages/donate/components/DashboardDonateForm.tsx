@@ -80,6 +80,7 @@ export function DashboardDonateForm({
       >
         <div>
           <label
+            htmlFor="dashboard-donation-campaign"
             style={{
               fontSize: 10,
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -93,8 +94,8 @@ export function DashboardDonateForm({
             Campaign
           </label>
           <select
-            name="name-badabb"
-            id="select-badabb"
+            name="campaignId"
+            id="dashboard-donation-campaign"
             autoComplete="off"
             value={formData.campaignId}
             onChange={(e) => setFormData((prev) => ({ ...prev, campaignId: e.target.value }))}
@@ -103,7 +104,7 @@ export function DashboardDonateForm({
               height: 40,
               padding: '0 10px',
               border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -123,6 +124,7 @@ export function DashboardDonateForm({
 
         <div>
           <label
+            htmlFor="dashboard-donation-amount"
             style={{
               fontSize: 10,
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -151,8 +153,8 @@ export function DashboardDonateForm({
             </span>
             <input
               aria-label="0.00"
-              name="name-ded56b"
-              id="input-ded56b"
+              name="amount"
+              id="dashboard-donation-amount"
               type="number"
               placeholder="0.00"
               autoComplete="off"
@@ -165,7 +167,7 @@ export function DashboardDonateForm({
                 paddingLeft: 24,
                 paddingRight: 10,
                 border: '1px solid hsl(var(--border))',
-                borderRadius: 4,
+                borderRadius: 'var(--radius-sm)',
                 fontSize: 13,
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
@@ -187,7 +189,7 @@ export function DashboardDonateForm({
                   fontSize: 11,
                   fontWeight: 'var(--font-weight-medium, 500)',
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: 4,
+                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
                   background:
                     formData.amount === amt ? 'hsl(var(--primary))' : 'hsl(var(--background))',
@@ -204,6 +206,7 @@ export function DashboardDonateForm({
 
         <div>
           <label
+            htmlFor="dashboard-donation-full-name"
             style={{
               fontSize: 10,
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -217,8 +220,8 @@ export function DashboardDonateForm({
             Full Name
           </label>
           <input
-            name="name-46ec53"
-            id="input-46ec53"
+            name="fullName"
+            id="dashboard-donation-full-name"
             type="text"
             autoComplete="name"
             value={formData.fullName}
@@ -229,7 +232,7 @@ export function DashboardDonateForm({
               height: 40,
               padding: '0 10px',
               border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -241,6 +244,7 @@ export function DashboardDonateForm({
 
         <div>
           <label
+            htmlFor="dashboard-donation-phone"
             style={{
               fontSize: 10,
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -255,8 +259,8 @@ export function DashboardDonateForm({
           </label>
           <input
             aria-label="024XXXXXXX"
-            name="name-4a990b"
-            id="input-4a990b"
+            name="phone"
+            id="dashboard-donation-phone"
             type="tel"
             placeholder="024XXXXXXX"
             autoComplete="tel"
@@ -268,7 +272,7 @@ export function DashboardDonateForm({
               height: 40,
               padding: '0 10px',
               border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -285,7 +289,7 @@ export function DashboardDonateForm({
             gap: 8,
             padding: '10px 12px',
             background: 'hsl(var(--container-low))',
-            borderRadius: 4,
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid hsl(var(--border))',
           }}
         >

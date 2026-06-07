@@ -27,6 +27,33 @@ interface OperationalTransparencyProps {
   onOpenAudit: () => void
 }
 
+const formatSpendingAmount = (amount: string) => {
+  const value = String(amount).trim()
+  if (!value) return '₵0'
+  if (value.includes('₵')) return value
+  const numeric = Number(
+    value
+      .replace(/GHS/gi, '')
+      .replace(/,/g, '')
+      .replace(/[^0-9.-]+/g, '')
+  )
+  if (!Number.isFinite(numeric)) return '₵0'
+  return `₵${new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: numeric % 1 === 0 ? 0 : 2,
+    minimumFractionDigits: numeric % 1 === 0 ? 0 : 2,
+  }).format(numeric)}`
+}
+
+const matchesSpendingSearch = (item: SpendingRecord, query: string) => {
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return true
+  return (
+    item.description.toLowerCase().includes(normalized) ||
+    item.chapter.toLowerCase().includes(normalized) ||
+    item.category.toLowerCase().includes(normalized)
+  )
+}
+
 export function OperationalTransparency({
   globalStats,
   historyTab,
@@ -38,6 +65,10 @@ export function OperationalTransparency({
   onDownload,
   onOpenAudit,
 }: OperationalTransparencyProps) {
+  const filteredSpendingHistory = spendingHistory.filter((item) =>
+    matchesSpendingSearch(item, searchQuery)
+  )
+
   return (
     <section
       style={{
@@ -93,7 +124,7 @@ export function OperationalTransparency({
               background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               textAlign: 'center',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
             }}
           >
             <p
@@ -127,7 +158,7 @@ export function OperationalTransparency({
               background: 'hsla(var(--primary), 0.07)',
               border: '1px solid hsla(var(--primary), 0.18)',
               textAlign: 'center',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
             }}
           >
             <p
@@ -184,7 +215,7 @@ export function OperationalTransparency({
                 fontWeight: 'var(--font-weight-semibold, 600)',
                 fontFamily: "'Public Sans', sans-serif",
                 border: 'none',
-                borderRadius: 4,
+                borderRadius: 'var(--radius-sm)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 whiteSpace: 'nowrap',
@@ -240,7 +271,7 @@ export function OperationalTransparency({
                   paddingRight: 12,
                   background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: 4,
+                  borderRadius: 'var(--radius-sm)',
                   fontSize: 13,
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontFamily: "'Public Sans', sans-serif",
@@ -268,7 +299,7 @@ export function OperationalTransparency({
         style={{
           background: 'hsl(var(--card))',
           border: '1px solid hsl(var(--border))',
-          borderRadius: 4,
+          borderRadius: 'var(--radius-sm)',
           overflow: 'hidden',
         }}
       >
@@ -354,91 +385,82 @@ export function OperationalTransparency({
                         Synchronising ledger…
                       </td>
                     </tr>
-                  ) : spendingHistory.length > 0 ? (
-                    spendingHistory
-                      .filter(
-                        (item) =>
-                          !searchQuery ||
-                          item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.chapter.toLowerCase().includes(searchQuery.toLowerCase())
-                      )
-                      .map((item, idx) => (
-                        <tr key={idx} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                          <td style={{ padding: '12px 16px', maxWidth: 240 }}>
-                            <p
-                              style={{
-                                fontSize: 13,
-                                fontWeight: 'var(--font-weight-medium, 500)',
-                                color: 'hsl(var(--on-surface))',
-                                margin: 0,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                              }}
-                            >
-                              {item.description}
-                            </p>
-                          </td>
-                          <td style={{ padding: '12px 16px' }}>
-                            <span
-                              style={{
-                                fontSize: 11,
-                                fontWeight: 'var(--font-weight-medium, 500)',
-                                padding: '3px 8px',
-                                borderRadius: 3,
-                                background: 'hsl(var(--container-low))',
-                                color: 'hsl(var(--on-surface-muted))',
-                              }}
-                            >
-                              {item.category}
-                            </span>
-                          </td>
-                          <td style={{ padding: '12px 16px' }}>
-                            <p
-                              style={{
-                                fontSize: 12,
-                                fontWeight: 'var(--font-weight-medium, 500)',
-                                color: 'hsl(var(--on-surface-muted))',
-                                margin: 0,
-                              }}
-                            >
-                              {item.chapter}
-                            </p>
-                          </td>
-                          <td
+                  ) : filteredSpendingHistory.length > 0 ? (
+                    filteredSpendingHistory.map((item, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                        <td style={{ padding: '12px 16px', maxWidth: 240 }}>
+                          <p
                             style={{
-                              padding: '12px 16px',
-                              textAlign: 'right',
+                              fontSize: 13,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              color: 'hsl(var(--on-surface))',
+                              margin: 0,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            <span
-                              style={{
-                                fontSize: 13,
-                                fontWeight: 'var(--font-weight-semibold, 600)',
-                                color: 'hsl(var(--on-surface))',
-                                fontFamily: "'Public Sans', sans-serif",
-                              }}
-                            >
-                              {item.amount.includes('₵')
-                                ? item.amount
-                                : `₵${item.amount.replace(/GHS/i, '').trim()}`}
-                            </span>
-                          </td>
-                          <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                            <p
-                              style={{
-                                fontSize: 12,
-                                fontWeight: 500,
-                                color: 'hsl(var(--on-surface-muted))',
-                                margin: 0,
-                              }}
-                            >
-                              {item.date}
-                            </p>
-                          </td>
-                        </tr>
-                      ))
+                            {item.description}
+                          </p>
+                        </td>
+                        <td style={{ padding: '12px 16px' }}>
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              padding: '3px 8px',
+                              borderRadius: 'var(--radius-xs)',
+                              background: 'hsl(var(--container-low))',
+                              color: 'hsl(var(--on-surface-muted))',
+                            }}
+                          >
+                            {item.category}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 16px' }}>
+                          <p
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              color: 'hsl(var(--on-surface-muted))',
+                              margin: 0,
+                            }}
+                          >
+                            {item.chapter}
+                          </p>
+                        </td>
+                        <td
+                          style={{
+                            padding: '12px 16px',
+                            textAlign: 'right',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              color: 'hsl(var(--on-surface))',
+                              fontFamily: "'Public Sans', sans-serif",
+                            }}
+                          >
+                            {formatSpendingAmount(item.amount)}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+                          <p
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 500,
+                              color: 'hsl(var(--on-surface-muted))',
+                              margin: 0,
+                            }}
+                          >
+                            {item.date}
+                          </p>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td
@@ -461,77 +483,69 @@ export function OperationalTransparency({
 
             {/* mobile card view */}
             <div className="mobile-only" style={{ display: 'flex', flexDirection: 'column' }}>
-              {spendingHistory.length > 0 ? (
-                spendingHistory
-                  .filter(
-                    (item) =>
-                      !searchQuery ||
-                      item.description.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                  .map((item, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        padding: '14px 16px',
-                        borderBottom: '1px solid hsl(var(--border))',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        gap: 12,
-                      }}
-                    >
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            color: 'hsl(var(--on-surface))',
-                            margin: 0,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {item.description}
-                        </p>
-                        <p
-                          style={{
-                            fontSize: 10,
-                            color: 'hsl(var(--on-surface-muted))',
-                            fontWeight: 500,
-                            margin: '2px 0 0',
-                          }}
-                        >
-                          {item.chapter} · {item.category}
-                        </p>
-                        <p
-                          style={{
-                            fontSize: 10,
-                            color: 'hsl(var(--on-surface-muted))',
-                            fontWeight: 500,
-                            margin: '2px 0 0',
-                          }}
-                        >
-                          {item.date}
-                        </p>
-                      </div>
-                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <p
-                          style={{
-                            fontSize: 14,
-                            fontWeight: 'var(--font-weight-semibold, 600)',
-                            color: 'hsl(var(--on-surface))',
-                            margin: 0,
-                            fontFamily: "'Public Sans', sans-serif",
-                          }}
-                        >
-                          {item.amount.includes('₵')
-                            ? item.amount
-                            : `₵${item.amount.replace(/GHS/i, '').trim()}`}
-                        </p>
-                      </div>
+              {filteredSpendingHistory.length > 0 ? (
+                filteredSpendingHistory.map((item, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: '14px 16px',
+                      borderBottom: '1px solid hsl(var(--border))',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 12,
+                    }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface))',
+                          margin: 0,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {item.description}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: 10,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 500,
+                          margin: '2px 0 0',
+                        }}
+                      >
+                        {item.chapter} · {item.category}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: 10,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 500,
+                          margin: '2px 0 0',
+                        }}
+                      >
+                        {item.date}
+                      </p>
                     </div>
-                  ))
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <p
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          color: 'hsl(var(--on-surface))',
+                          margin: 0,
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
+                        {formatSpendingAmount(item.amount)}
+                      </p>
+                    </div>
+                  </div>
+                ))
               ) : (
                 <div
                   style={{

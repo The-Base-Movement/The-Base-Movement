@@ -3,6 +3,45 @@ import { authService } from './authService'
 import type { DonationDetail } from '@/types/admin'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 
+interface DonationCampaignJoin {
+  title?: string | null
+}
+
+interface DonationUserJoin {
+  avatar_url?: string | null
+}
+
+interface PublicDonationRow {
+  id: string
+  created_at: string
+  amount: number
+  payment_method: string
+  status: 'Verified'
+  full_name: string
+  show_on_dashboard: boolean
+  reference: string | null
+  donation_campaigns?: DonationCampaignJoin | null
+  member_id?: string | null
+  users?: DonationUserJoin | null
+}
+
+interface DonationRow {
+  id: string
+  created_at: string
+  amount: number | string
+  payment_method: string
+  status: 'Pending' | 'Verified' | 'Rejected'
+  full_name: string
+  phone: string
+  country: string
+  receipt_url?: string | null
+  campaign_id?: string | null
+  member_id?: string | null
+  reference?: string | null
+  donation_campaigns?: DonationCampaignJoin | null
+  users?: DonationUserJoin | null
+}
+
 class DonationService {
   private static instance: DonationService
 
@@ -272,7 +311,7 @@ class DonationService {
   async getPublicDonationFeed(limit: number = 10): Promise<DonationDetail[]> {
     const { data, error } = await supabase
       .from('donations')
-      .select('*, donation_campaigns(title)')
+      .select('*, donation_campaigns(title), users(avatar_url)')
       .eq('status', 'Verified')
       .order('created_at', { ascending: false })
       .limit(limit)
@@ -282,33 +321,25 @@ class DonationService {
       return []
     }
 
-    interface DBDonation {
-      id: string
-      created_at: string
-      amount: number
-      payment_method: string
-      status: 'Verified'
-      full_name: string
-      show_on_dashboard: boolean
-      reference: string | null
-      donation_campaigns: { title: string }
+    const adminIds = (data || [])
+      .filter((d: PublicDonationRow) => d.member_id && !d.show_on_dashboard)
+      .map((d: PublicDonationRow) => d.member_id as string)
+
+    const adminIdSet = new Set<string>()
+    if (adminIds.length > 0) {
+      const { data: adminRows, error: adminError } = await supabase
+        .from('admins')
+        .select('id')
+        .in('id', adminIds)
+
+      if (!adminError && Array.isArray(adminRows)) {
+        for (const row of adminRows) {
+          adminIdSet.add(row.id)
+        }
+      }
     }
 
-    return (data || []).map((d: DBDonation) => ({
-      id: d.id,
-      date: d.created_at,
-      amount: d.amount.toString(),
-      method: d.payment_method,
-      status: d.status,
-      reference: d.reference ?? d.id.substring(0, 8).toUpperCase(),
-      campaignTitle: d.donation_campaigns?.title,
-      fullName: d.show_on_dashboard ? d.full_name : 'Anonymous Patriot',
-      phone: '', // Redacted for public feed
-      country: '',
-      receiptUrl: '',
-      campaignId: '',
-      memberId: '',
-    }))
+    return (data || []).map((d: PublicDonationRow) => this._mapPublicDonation(d, adminIdSet))
   }
 
   async getMemberDonations(phone: string): Promise<DonationDetail[]> {
@@ -341,22 +372,51 @@ class DonationService {
     return (data || []).map((d) => this._mapDonation(d))
   }
 
-  private _mapDonation(d: Record<string, unknown>): DonationDetail {
+  private _mapDonation(d: DonationRow): DonationDetail {
     return {
-      id: d.id as string,
-      date: d.created_at as string,
+      id: d.id,
+      date: d.created_at,
       amount: String(d.amount),
-      method: d.payment_method as string,
-      status: d.status as string as 'Pending' | 'Verified' | 'Rejected',
-      reference: (d.reference as string | null) ?? (d.id as string).substring(0, 8).toUpperCase(),
-      campaignTitle: (d.donation_campaigns as { title?: string } | null)?.title,
-      fullName: d.full_name as string,
-      phone: d.phone as string,
-      country: d.country as string,
-      receiptUrl: (d.receipt_url as string | null) ?? undefined,
-      campaignId: (d.campaign_id as string | null) ?? '',
-      memberId: (d.member_id as string | null) ?? undefined,
+      method: d.payment_method,
+      status: d.status,
+      reference: d.reference ?? d.id.substring(0, 8).toUpperCase(),
+      campaignTitle: d.donation_campaigns?.title ?? undefined,
+      fullName: d.full_name,
+      phone: d.phone,
+      country: d.country,
+      receiptUrl: d.receipt_url ?? undefined,
+      campaignId: d.campaign_id ?? '',
+      memberId: d.member_id ?? undefined,
+      avatarUrl: d.users?.avatar_url ?? undefined,
     }
+  }
+
+  private _mapPublicDonation(d: PublicDonationRow, adminIdSet: Set<string>): DonationDetail {
+    const isAdminDonation = Boolean(d.member_id && adminIdSet.has(d.member_id))
+    return {
+      id: d.id,
+      date: d.created_at,
+      amount: d.amount.toString(),
+      method: d.payment_method,
+      status: d.status,
+      reference: d.reference ?? d.id.substring(0, 8).toUpperCase(),
+      campaignTitle: d.donation_campaigns?.title ?? undefined,
+      fullName: isAdminDonation
+        ? d.full_name
+        : d.show_on_dashboard
+          ? d.full_name
+          : 'Anonymous Patriot',
+      phone: '',
+      country: '',
+      receiptUrl: '',
+      campaignId: '',
+      memberId: d.member_id ?? '',
+      avatarUrl: d.users?.avatar_url ?? undefined,
+    }
+  }
+
+  private _adminDonationSet(d: PublicDonationRow, isAdminDonation: boolean): Set<string> {
+    return isAdminDonation && d.member_id ? new Set([d.member_id]) : new Set()
   }
 
   subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {
@@ -374,26 +434,26 @@ class DonationService {
         async (payload) => {
           const { data, error } = await supabase
             .from('donations')
-            .select('*, donation_campaigns(title)')
+            .select('*, donation_campaigns(title), users(avatar_url)')
             .eq('id', payload.new.id)
             .single()
 
           if (!error && data) {
-            callback({
-              id: data.id,
-              date: data.created_at,
-              amount: data.amount.toString(),
-              method: data.payment_method,
-              status: data.status,
-              reference: (data.reference as string | null) ?? data.id.substring(0, 8).toUpperCase(),
-              campaignTitle: data.donation_campaigns?.title,
-              fullName: data.show_on_dashboard ? data.full_name : 'Anonymous Patriot',
-              phone: '',
-              country: '',
-              receiptUrl: '',
-              campaignId: '',
-              memberId: '',
-            })
+            let isAdminDonation = false
+            if (data.member_id && !data.show_on_dashboard) {
+              const { data: adminRow, error: adminError } = await supabase
+                .from('admins')
+                .select('id')
+                .eq('id', data.member_id)
+                .single()
+
+              isAdminDonation = !!adminRow && !adminError
+            }
+
+            const donation = data as PublicDonationRow
+            callback(
+              this._mapPublicDonation(donation, this._adminDonationSet(donation, isAdminDonation))
+            )
           }
         }
       )
@@ -409,26 +469,26 @@ class DonationService {
           // If a donation was updated to 'Verified'
           const { data, error } = await supabase
             .from('donations')
-            .select('*, donation_campaigns(title)')
+            .select('*, donation_campaigns(title), users(avatar_url)')
             .eq('id', payload.new.id)
             .single()
 
           if (!error && data) {
-            callback({
-              id: data.id,
-              date: data.created_at,
-              amount: data.amount.toString(),
-              method: data.payment_method,
-              status: data.status,
-              reference: (data.reference as string | null) ?? data.id.substring(0, 8).toUpperCase(),
-              campaignTitle: data.donation_campaigns?.title,
-              fullName: data.show_on_dashboard ? data.full_name : 'Anonymous Patriot',
-              phone: '',
-              country: '',
-              receiptUrl: '',
-              campaignId: '',
-              memberId: '',
-            })
+            let isAdminDonation = false
+            if (data.member_id && !data.show_on_dashboard) {
+              const { data: adminRow, error: adminError } = await supabase
+                .from('admins')
+                .select('id')
+                .eq('id', data.member_id)
+                .single()
+
+              isAdminDonation = !!adminRow && !adminError
+            }
+
+            const donation = data as PublicDonationRow
+            callback(
+              this._mapPublicDonation(donation, this._adminDonationSet(donation, isAdminDonation))
+            )
           }
         }
       )

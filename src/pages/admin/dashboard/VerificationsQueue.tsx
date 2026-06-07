@@ -75,17 +75,20 @@ export function VerificationsQueue({
   navigate,
 }: VerificationsQueueProps) {
   return (
-    <div className="panel">
+    <div className="panel" style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       <div className="ph">
         <div>
           <h3>ID verification queue</h3>
-          <div className="meta">{pendingVerifications.length} pending · sorted by oldest first</div>
+          <div className="meta">
+            Showing {Math.min(10, pendingVerifications.length)} of {pendingVerifications.length}{' '}
+            pending · sorted by oldest first
+          </div>
         </div>
         <button className="btn btn-outline btn-sm" onClick={() => navigate('/admin/verification')}>
           View all
         </button>
       </div>
-      <div style={{ overflowX: 'auto' }}>
+      <div style={{ overflow: 'auto', flex: 1, minHeight: 0 }}>
         <table className="table">
           <thead>
             <tr>
@@ -98,7 +101,7 @@ export function VerificationsQueue({
             </tr>
           </thead>
           <tbody>
-            {pendingVerifications.slice(0, 5).map((member) => (
+            {pendingVerifications.slice(0, 10).map((member) => (
               <tr key={member.id}>
                 <td>
                   <div className="who">
