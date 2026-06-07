@@ -369,12 +369,38 @@ export default function Activity() {
         }}
       >
         <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
-          <div className="ph" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+          <div
+            style={{
+              padding: '18px 18px 12px',
+              borderBottom: '1px solid hsl(var(--border))',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 14,
+            }}
+          >
             <div>
-              <h3>Activity timeline</h3>
-              <p>Events and estimated minutes by selected interval.</p>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 16,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
+                Activity timeline
+              </h3>
+              <p style={{ margin: '5px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                Events and estimated minutes by selected interval.
+              </p>
             </div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(96px, 1fr))',
+                gap: 8,
+                width: '100%',
+              }}
+            >
               {BUCKET_OPTIONS.map((option) => (
                 <button
                   key={option.key}
@@ -384,6 +410,7 @@ export default function Activity() {
                       : 'btn btn-inactive-tab btn-sm'
                   }
                   onClick={() => setBucket(option.key)}
+                  style={{ justifyContent: 'center', width: '100%' }}
                 >
                   {option.label}
                 </button>
@@ -531,33 +558,43 @@ export default function Activity() {
         <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
           <div className="ph" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
             <div>
-              <h3>Tracked sources</h3>
-              <p>Tables queried for this member account.</p>
+              <h3>Activity filters</h3>
+              <p>Focus the dashboard on the parts of your account history that matter right now.</p>
             </div>
           </div>
-          <div style={{ padding: 18, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <div
+            style={{
+              padding: 18,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: 8,
+            }}
+          >
             <button
               className={
                 sourceFilter === 'all' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
               }
               onClick={() => setSourceFilter('all')}
+              style={{ justifyContent: 'center', width: '100%' }}
             >
-              All sources
+              All activity
             </button>
-            {analytics.sources.map((source) => (
-              <button
-                key={source.source}
-                className={
-                  sourceFilter === source.source
-                    ? 'btn btn-primary btn-sm'
-                    : 'btn btn-outline btn-sm'
-                }
-                onClick={() => setSourceFilter(source.source)}
-                style={{ opacity: source.loaded ? 1 : 0.58 }}
-              >
-                {source.loaded ? 'database' : 'database_off'} {source.label} · {source.count}
-              </button>
-            ))}
+            {analytics.sources
+              .filter((source) => source.count > 0)
+              .map((source) => (
+                <button
+                  key={source.source}
+                  className={
+                    sourceFilter === source.source
+                      ? 'btn btn-primary btn-sm'
+                      : 'btn btn-outline btn-sm'
+                  }
+                  onClick={() => setSourceFilter(source.source)}
+                  style={{ justifyContent: 'center', width: '100%' }}
+                >
+                  {source.label} · {source.count}
+                </button>
+              ))}
           </div>
         </div>
       </div>
@@ -566,18 +603,20 @@ export default function Activity() {
         <div className="ph" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
           <div>
             <h3>Activity ledger</h3>
-            <p>Latest account actions across dashboard modules.</p>
+            <p>Recent account actions across dashboard modules.</p>
           </div>
-          <span className="pill pill-mute">{filteredEntries.length} records</span>
+          <span className="pill pill-mute">
+            {Math.min(filteredEntries.length, 20)} of {filteredEntries.length} records
+          </span>
         </div>
         {loading ? (
           <LoadingBlock />
         ) : filteredEntries.length === 0 ? (
           <EmptyBlock label="No activity records found for this view." />
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div style={{ overflowX: 'auto', maxHeight: 720, overflowY: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 760 }}>
-              <thead>
+              <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
                 <tr style={{ background: 'hsl(var(--container-low))' }}>
                   {['Event', 'Source', 'Time', 'Duration', 'Value', 'Status'].map((head) => (
                     <th
@@ -598,7 +637,7 @@ export default function Activity() {
                 </tr>
               </thead>
               <tbody>
-                {filteredEntries.slice(0, 80).map((entry) => (
+                {filteredEntries.slice(0, 20).map((entry) => (
                   <tr
                     key={`${entry.source}-${entry.id}`}
                     style={{ borderBottom: '1px solid hsl(var(--border))' }}

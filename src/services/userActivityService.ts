@@ -403,13 +403,13 @@ class UserActivityService {
         async () => {
           const { data, error } = await supabase
             .from('voter_registrations')
-            .select('id, status, created_at')
+            .select('id, created_at')
             .eq('user_id', userId)
             .gte('created_at', sinceIso)
             .order('created_at', { ascending: false })
             .limit(50)
           if (error) throw error
-          return (data ?? []) as { id: string; status: string | null; created_at: string }[]
+          return (data ?? []) as { id: string; created_at: string }[]
         },
         (row) => ({
           id: row.id,
@@ -420,7 +420,7 @@ class UserActivityService {
           source: 'voter_registrations',
           source_label: sourceLabels.voter_registrations,
           minutes: getEstimatedMinutes('voter_registration'),
-          status: row.status,
+          status: null,
         })
       ),
     ])
