@@ -6,7 +6,7 @@ import {
   type ActivityType,
 } from '@/services/userActivityService'
 
-const ICON_MAP: Record<ActivityType, string> = {
+const ICON_MAP: Partial<Record<ActivityType, string>> = {
   login: 'login',
   logout: 'logout',
   profile_update: 'manage_accounts',
