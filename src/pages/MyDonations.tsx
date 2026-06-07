@@ -92,8 +92,16 @@ export default function MyDonations() {
       <SEO title="My Donations" noindex />
       <div className="main">
         {/* Header */}
-        <div className="ph" style={{ marginBottom: 24 }}>
-          <div>
+        <div
+          style={{
+            marginBottom: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            gap: 14,
+          }}
+        >
+          <div style={{ maxWidth: 620 }}>
             <h2
               style={{
                 margin: 0,
@@ -122,11 +130,20 @@ export default function MyDonations() {
               Your contribution history
             </p>
           </div>
-          <div className="actions">
+          <div
+            className="actions"
+            style={{
+              width: '100%',
+              display: 'grid',
+              gridTemplateColumns: donations.length > 0 ? 'repeat(2, minmax(0, 1fr))' : '1fr',
+              gap: 10,
+            }}
+          >
             {donations.length > 0 && (
               <button
                 className="btn btn-outline btn-sm"
                 onClick={() => downloadCSV(donations, sessionStore.getItem('userName') || 'member')}
+                style={{ justifyContent: 'center', width: '100%' }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                   download
@@ -137,7 +154,7 @@ export default function MyDonations() {
             <Link
               to="/dashboard/donate"
               className="btn btn-primary btn-sm"
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: 'none', justifyContent: 'center', width: '100%' }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 add

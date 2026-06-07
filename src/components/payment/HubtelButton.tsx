@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { initiateHubtelCheckout, openHubtelCheckout } from './hubtelCheckout'
 
 interface HubtelButtonProps {
   amount: number
@@ -16,6 +16,7 @@ interface HubtelButtonProps {
   }
   label?: string
   onStarted?: () => void
+  onCheckoutReady?: (checkoutUrl: string) => void
   onError?: () => void
   disabled?: boolean
   autoOpen?: boolean
@@ -30,6 +31,7 @@ export default function HubtelButton({
   metadata,
   label,
   onStarted,
+  onCheckoutReady,
   onError,
   disabled,
   autoOpen,
@@ -41,27 +43,19 @@ export default function HubtelButton({
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.functions.invoke('hubtel-initiate-payment', {
-        body: {
-          type: metadata?.donationId ? 'donation' : metadata?.orderId ? 'order' : 'payment',
-          reference,
-          amount,
-          name,
-          phone,
-          email,
-          metadata,
-          returnUrl: window.location.href,
-          cancellationUrl: window.location.href,
-        },
+      const checkoutUrl = await initiateHubtelCheckout({
+        reference,
+        amount,
+        name,
+        phone,
+        email,
+        metadata,
       })
 
-      if (error) throw error
-
-      const checkoutUrl = data?.checkoutUrl || data?.data?.checkoutUrl || data?.data?.paymentUrl
-      if (!checkoutUrl) throw new Error('Hubtel did not return a checkout URL.')
-
       onStarted?.()
-      window.location.assign(checkoutUrl)
+      onCheckoutReady?.(checkoutUrl)
+      const popup = openHubtelCheckout(checkoutUrl)
+      if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
     } catch (err) {
       console.error('[HubtelButton] payment initiation failed:', err)
       toast.error('Could not start Hubtel payment. Please try again.')

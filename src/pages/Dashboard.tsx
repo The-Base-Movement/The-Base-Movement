@@ -218,7 +218,7 @@ export default function Dashboard() {
         </div>
 
         {user && (
-          <div style={{ marginTop: 20 }}>
+          <div className="dash-card-recent-activity" style={{ marginTop: 20 }}>
             <RecentActivityPanel userId={user.id} />
           </div>
         )}
@@ -256,6 +256,7 @@ export default function Dashboard() {
           .dash-card-journey    { order: 2; }
           .dash-card-feed       { order: 3; }
           .dash-card-actions    { order: 4; }
+          .dash-card-recent-activity { order: 5; margin-top: 0 !important; }
         }
       `,
         }}

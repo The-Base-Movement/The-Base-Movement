@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import HubtelButton from './HubtelButton'
 import { useAuth } from '@/context/AuthContext'
+import { openHubtelCheckout } from './hubtelCheckout'
 
 interface DonateModalProps {
   isOpen: boolean
@@ -27,6 +28,10 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
   const { session } = useAuth()
   const [form, setForm] = useState<ModalForm>(EMPTY)
   const [pendingDonationId, setPendingDonationId] = useState<string | null>(null)
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [paymentState, setPaymentState] = useState<'idle' | 'starting' | 'checkout' | 'failed'>(
+    'idle'
+  )
   const [succeeded, setSucceeded] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -34,16 +39,47 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
     if (isOpen) {
       setForm(EMPTY)
       setPendingDonationId(null)
+      setCheckoutUrl(null)
+      setPaymentState('idle')
       setSucceeded(false)
       setSubmitting(false)
     }
   }, [isOpen])
+
+  useEffect(() => {
+    if (!pendingDonationId || succeeded) return
+
+    const checkStatus = async () => {
+      const { data, error } = await supabase
+        .from('donations')
+        .select('status')
+        .eq('id', pendingDonationId)
+        .maybeSingle()
+
+      if (error || !data) return
+      if (data.status === 'Verified') {
+        setSucceeded(true)
+        setPaymentState('idle')
+        toast.success('Donation confirmed.')
+      }
+      if (data.status === 'Rejected') {
+        setPaymentState('failed')
+        toast.error('Hubtel could not confirm this payment.')
+      }
+    }
+
+    void checkStatus()
+    const timer = window.setInterval(() => void checkStatus(), 3000)
+    return () => window.clearInterval(timer)
+  }, [pendingDonationId, succeeded])
 
   if (!isOpen) return null
 
   const reset = () => {
     setForm(EMPTY)
     setPendingDonationId(null)
+    setCheckoutUrl(null)
+    setPaymentState('idle')
     setSucceeded(false)
   }
 
@@ -82,6 +118,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
         .single()
       if (error) throw error
       setPendingDonationId(data.id)
+      setPaymentState('starting')
     } catch (err) {
       console.error('[DonateModal] insert failed:', err)
       toast.error('Could not start payment. Please try again.')
@@ -91,7 +128,8 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
   }
 
   const handleHubtelStarted = () => {
-    toast.success('Redirecting to Hubtel checkout.')
+    setPaymentState('checkout')
+    toast.success('Hubtel checkout opened. Complete payment to confirm your donation.')
   }
 
   const handleHubtelError = async () => {
@@ -99,6 +137,8 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
       await supabase.from('donations').delete().eq('id', pendingDonationId).eq('status', 'Pending')
     }
     setPendingDonationId(null)
+    setCheckoutUrl(null)
+    setPaymentState('failed')
   }
 
   const contextLabel = context
@@ -318,7 +358,67 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                 }}
                 onStarted={handleHubtelStarted}
                 onError={handleHubtelError}
+                onCheckoutReady={setCheckoutUrl}
               />
+            )}
+
+            {pendingDonationId && (
+              <div
+                style={{
+                  marginTop: 18,
+                  padding: 16,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'hsl(var(--container-low))',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 20, color: 'hsl(var(--primary))', marginTop: 1 }}
+                  >
+                    {paymentState === 'failed' ? 'error' : 'payments'}
+                  </span>
+                  <div style={{ flex: 1 }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      {paymentState === 'failed'
+                        ? 'Payment not confirmed'
+                        : paymentState === 'starting'
+                          ? 'Opening Hubtel checkout'
+                          : 'Complete payment in the secure Hubtel window'}
+                    </p>
+                    <p
+                      style={{
+                        margin: '5px 0 0',
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface-muted))',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      Keep this page open. Your donation will confirm automatically after Hubtel
+                      completes the transaction.
+                    </p>
+                  </div>
+                </div>
+                {checkoutUrl && (
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    style={{ width: '100%', justifyContent: 'center', marginTop: 14 }}
+                    onClick={() => openHubtelCheckout(checkoutUrl)}
+                  >
+                    Reopen secure checkout
+                  </button>
+                )}
+              </div>
             )}
           </>
         )}

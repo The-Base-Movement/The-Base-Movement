@@ -14,7 +14,7 @@ import { contentService } from '@/services/contentService'
 
 export default function DashboardLayout() {
   const { settings } = useBranding()
-  const { session } = useAuth()
+  const { session, signOut } = useAuth()
   const { wishlist } = useStore()
   const location = useLocation()
   const navigate = useNavigate()
@@ -46,6 +46,45 @@ export default function DashboardLayout() {
   const [isDarkTheme, setIsDarkTheme] = useState(
     () => document.documentElement.getAttribute('data-theme') === 'dark'
   )
+
+  const toggleTheme = async () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    const nextIsDark = currentTheme !== 'dark'
+    if (nextIsDark) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+      localStorage.setItem('admin_dark_mode', 'true')
+      setIsDarkTheme(true)
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+      localStorage.setItem('admin_dark_mode', 'false')
+      setIsDarkTheme(false)
+    }
+    window.dispatchEvent(new Event('admin_theme_changed'))
+
+    if (session?.user?.id) {
+      try {
+        const adminData =
+          adminService.getCurrentUser() || (await adminService.getAdminData(session.user.id))
+        if (adminData) {
+          const updatedPrefs: import('@/types/admin').AdminPreferences = {
+            interfaceDensity: adminData.preferences?.interfaceDensity || 'Comfortable',
+            darkMode: nextIsDark,
+            notifications: adminData.preferences?.notifications || {
+              newRegistrations: true,
+              securityAlerts: true,
+              auditEvents: true,
+              financeRequests: true,
+            },
+          }
+          await adminService.updatePreferences(adminData.id, updatedPrefs)
+        }
+      } catch (err) {
+        console.error('[DASHBOARD] Failed to update preferences in DB:', err)
+      }
+    }
+  }
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -275,7 +314,7 @@ export default function DashboardLayout() {
 
   const handleLogout = async () => {
     try {
-      await authService.logout()
+      await signOut()
       sessionStore.clearAll()
       navigate('/login')
     } catch (error) {
@@ -742,6 +781,34 @@ export default function DashboardLayout() {
               </span>
               {!isSidebarCollapsed && 'Invite & Share'}
             </button>
+            <button
+              className="dashboard-mobile-theme-toggle"
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+              style={{
+                width: isSidebarCollapsed ? 44 : '100%',
+                height: 44,
+                marginTop: 10,
+                borderRadius: isSidebarCollapsed ? '50%' : 4,
+                background: 'rgba(255,255,255,0.06)',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.12)',
+                cursor: 'pointer',
+                display: 'none',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                letterSpacing: '0.02em',
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                {isDarkTheme ? 'light_mode' : 'dark_mode'}
+              </span>
+              {!isSidebarCollapsed && (isDarkTheme ? 'Light Mode' : 'Dark Mode')}
+            </button>
           </div>
         </div>
 
@@ -802,7 +869,10 @@ export default function DashboardLayout() {
             </div>
 
             {/* Right: Actions + Avatar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div
+              className="dashboard-header-actions"
+              style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+            >
               {/* Search — desktop only */}
               <div className="hidden lg:block" style={{ position: 'relative' }}>
                 <span
@@ -847,10 +917,12 @@ export default function DashboardLayout() {
               {/* Donate shortcut */}
               <Link
                 to="/dashboard/donate"
-                className="hidden md:flex donate-button"
+                className="hidden md:flex donate-button dashboard-header-donate"
+                aria-label="Donate"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 6,
                   padding: '0 14px',
                   height: 36,
@@ -867,51 +939,13 @@ export default function DashboardLayout() {
                 <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                   volunteer_activism
                 </span>
-                Donate ₵
+                <span className="dashboard-header-donate-label">Donate ₵</span>
               </Link>
 
               {/* Theme Toggle */}
               <button
-                onClick={async () => {
-                  const currentTheme = document.documentElement.getAttribute('data-theme')
-                  const nextIsDark = currentTheme !== 'dark'
-                  if (nextIsDark) {
-                    document.documentElement.setAttribute('data-theme', 'dark')
-                    localStorage.setItem('theme', 'dark')
-                    localStorage.setItem('admin_dark_mode', 'true')
-                    setIsDarkTheme(true)
-                  } else {
-                    document.documentElement.removeAttribute('data-theme')
-                    localStorage.setItem('theme', 'light')
-                    localStorage.setItem('admin_dark_mode', 'false')
-                    setIsDarkTheme(false)
-                  }
-                  window.dispatchEvent(new Event('admin_theme_changed'))
-
-                  if (session?.user?.id) {
-                    try {
-                      const adminData =
-                        adminService.getCurrentUser() ||
-                        (await adminService.getAdminData(session.user.id))
-                      if (adminData) {
-                        const updatedPrefs: import('@/types/admin').AdminPreferences = {
-                          interfaceDensity:
-                            adminData.preferences?.interfaceDensity || 'Comfortable',
-                          darkMode: nextIsDark,
-                          notifications: adminData.preferences?.notifications || {
-                            newRegistrations: true,
-                            securityAlerts: true,
-                            auditEvents: true,
-                            financeRequests: true,
-                          },
-                        }
-                        await adminService.updatePreferences(adminData.id, updatedPrefs)
-                      }
-                    } catch (err) {
-                      console.error('[DASHBOARD] Failed to update preferences in DB:', err)
-                    }
-                  }
-                }}
+                className="dashboard-header-theme-toggle"
+                onClick={toggleTheme}
                 aria-label="Toggle Theme"
                 style={{
                   width: 36,
@@ -1440,6 +1474,38 @@ export default function DashboardLayout() {
             </div>
           </div>
         </footer>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              @media (max-width: 768px) {
+                .dashboard-header-actions {
+                  gap: 8px !important;
+                }
+
+                .dashboard-header-theme-toggle {
+                  display: none !important;
+                }
+
+                .dashboard-header-donate {
+                  display: flex !important;
+                  width: 36px !important;
+                  min-width: 36px !important;
+                  padding: 0 !important;
+                  border-radius: var(--radius-sm) !important;
+                  box-shadow: 0 6px 16px rgba(191, 167, 106, 0.24);
+                }
+
+                .dashboard-header-donate-label {
+                  display: none !important;
+                }
+
+                .dashboard-mobile-theme-toggle {
+                  display: flex !important;
+                }
+              }
+            `,
+          }}
+        />
       </main>
       <BackToTop />
     </div>

@@ -22,6 +22,7 @@ import { OperationalTransparency } from './donate/components/OperationalTranspar
 import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
 import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { initiateHubtelCheckout, openHubtelCheckout } from '@/components/payment/hubtelCheckout'
 
 export default function PublicDonate() {
   const [loading, setLoading] = useState(true)
@@ -32,6 +33,11 @@ export default function PublicDonate() {
   const [globalStats, setGlobalStats] = useState({ totalRaised: 0, totalMembers: 0 })
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [paymentState, setPaymentState] = useState<
+    'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
+  >('idle')
   const [historyTab, setHistoryTab] = useState<'contributions' | 'spending'>('contributions')
   const [searchQuery, setSearchQuery] = useState('')
   const [contributionFilter, setContributionFilter] = useState<'all' | 'me'>('all')
@@ -113,6 +119,37 @@ export default function PublicDonate() {
     load()
   }, [])
 
+  useEffect(() => {
+    if (!activeDonationId || submitted) return
+
+    const checkStatus = async () => {
+      const { data, error } = await supabase
+        .from('donations')
+        .select('status')
+        .eq('id', activeDonationId)
+        .maybeSingle()
+
+      if (error || !data) return
+
+      if (data.status === 'Verified') {
+        setSubmitted(true)
+        setPaymentState('idle')
+        setCheckoutUrl(null)
+        trackEvent('donation_verified', { donationId: activeDonationId })
+        toast.success('Payment confirmed. Thank you for supporting the movement.')
+      }
+
+      if (data.status === 'Rejected') {
+        setPaymentState('failed')
+        toast.error('Hubtel could not confirm this payment. Please try again.')
+      }
+    }
+
+    void checkStatus()
+    const timer = window.setInterval(() => void checkStatus(), 3000)
+    return () => window.clearInterval(timer)
+  }, [activeDonationId, submitted])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
@@ -124,23 +161,60 @@ export default function PublicDonate() {
       return
     }
 
+    setPaymentState('starting')
+
+    let donationIdToCleanUp: string | null = null
     try {
-      const success = await adminService.submitDonation({
-        ...formData,
-        showOnDashboard: formData.showOnDashboard,
+      const amount = parseFloat(formData.amount)
+      const { data, error } = await supabase
+        .from('donations')
+        .insert({
+          full_name: formData.fullName.trim(),
+          phone: formData.phone.trim(),
+          amount,
+          country: formData.country,
+          payment_method: 'Hubtel',
+          status: 'Pending',
+          show_on_dashboard: formData.showOnDashboard,
+          member_id: formData.memberId || null,
+          campaign_id: formData.campaignId || null,
+        })
+        .select('id')
+        .single()
+
+      if (error) throw error
+
+      donationIdToCleanUp = data.id
+      setActiveDonationId(data.id)
+      const url = await initiateHubtelCheckout({
+        reference: data.id,
+        amount,
+        name: formData.fullName,
+        phone: formData.phone,
+        metadata: {
+          donationId: data.id,
+          memberId: formData.memberId || undefined,
+          membershipNumber: formData.membershipNumber || undefined,
+          campaignId: formData.campaignId || undefined,
+        },
       })
-      if (success) {
-        trackEvent('donation_submitted', { amount: parseFloat(formData.amount) })
-        toast.success(
-          'Receipt recorded — please proceed to payment using the transfer details above.'
-        )
-        // keep the form open so the member can proceed to payment
-        document
-          .getElementById('payment-section')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
+
+      setCheckoutUrl(url)
+      setPaymentState('checkout')
+      trackEvent('donation_payment_started', { amount })
+      const popup = openHubtelCheckout(url)
+      if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
     } catch {
-      toast.error('Transmission failure. Please try again.')
+      if (donationIdToCleanUp) {
+        await supabase
+          .from('donations')
+          .delete()
+          .eq('id', donationIdToCleanUp)
+          .eq('status', 'Pending')
+      }
+      setActiveDonationId(null)
+      setPaymentState('failed')
+      toast.error('Could not start secure Hubtel checkout. Please try again.')
     }
   }
 
@@ -240,11 +314,14 @@ export default function PublicDonate() {
               setActiveStep={setActiveStep}
               formData={formData}
               setFormData={setFormData}
+              paymentState={paymentState}
+              checkoutUrl={checkoutUrl}
               isLoggedIn={isLoggedIn}
               countriesLoading={countriesLoading}
               countries={countries}
               campaigns={campaigns}
               onSubmit={handleSubmit}
+              onReopenCheckout={() => checkoutUrl && openHubtelCheckout(checkoutUrl)}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
             />
             <VictoriesSection pastCampaigns={pastCampaigns} />

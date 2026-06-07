@@ -1,7 +1,4 @@
-import type { FormEvent, Dispatch, SetStateAction } from 'react'
-import { useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
-import { adminService } from '@/services/adminService'
+import type { Dispatch, FormEvent, SetStateAction } from 'react'
 import type { DonationCampaign } from '@/types/admin'
 
 interface FormData {
@@ -31,7 +28,10 @@ interface MobilizationProtocolProps {
   countriesLoading: boolean
   countries: Country[]
   campaigns: DonationCampaign[]
+  paymentState: 'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
+  checkoutUrl: string | null
   onSubmit: (e: FormEvent) => void
+  onReopenCheckout: () => void
   onOpenAudit: () => void
 }
 
@@ -63,60 +63,17 @@ export function MobilizationProtocol({
   countriesLoading,
   countries,
   campaigns,
+  paymentState,
+  checkoutUrl,
   onSubmit,
+  onReopenCheckout,
   onOpenAudit,
 }: MobilizationProtocolProps) {
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
-  const [donationReference, setDonationReference] = useState('')
-
-  useEffect(() => {
-    const inp = fileInputRef.current
-    if (!inp) return
-    const handle = async (e: Event) => {
-      const target = e.target as HTMLInputElement
-      const file = target.files && target.files[0]
-      if (!file) return
-      if (!donationReference.trim()) {
-        toast.error('Enter the donation reference or ID before attaching a receipt.')
-        target.value = ''
-        return
-      }
-      // show preview for images
-      if (file.type.startsWith('image/')) {
-        const url = URL.createObjectURL(file)
-        setPreviewUrl(url)
-      } else {
-        setPreviewUrl(null)
-      }
-      setUploading(true)
-      try {
-        const ok = await adminService.uploadDonationReceipt(file, donationReference.trim())
-        if (ok) {
-          toast.success('Receipt attached to donation reference.')
-          onOpenAudit()
-        } else {
-          toast.error('Failed to link receipt. Check the reference and try again.')
-        }
-      } catch (err) {
-        console.error('Receipt upload failed', err)
-        toast.error('Receipt upload failed. Please try again.')
-      } finally {
-        setUploading(false)
-        // clear input
-        target.value = ''
-        if (previewUrl) URL.revokeObjectURL(previewUrl)
-      }
-    }
-    inp.addEventListener('change', handle)
-    return () => inp.removeEventListener('change', handle)
-  }, [donationReference, onOpenAudit, previewUrl])
   const steps = [
-    { step: 1, label: 'Capital transfer', id: 'payment-section', color: 'hsl(var(--destructive))' },
+    { step: 1, label: 'Secure checkout', id: 'payment-section', color: 'hsl(var(--destructive))' },
     { step: 2, label: 'Contributor profile', id: 'donor-section', color: 'hsl(var(--accent))' },
     { step: 3, label: 'Member link', id: 'link-section', color: 'hsl(var(--primary))' },
-    { step: 4, label: 'Verification', id: 'receipt-section', color: 'hsl(var(--primary))' },
+    { step: 4, label: 'Confirmation', id: 'receipt-section', color: 'hsl(var(--primary))' },
   ]
 
   return (
@@ -239,133 +196,33 @@ export function MobilizationProtocol({
                 Audit trail
               </h5>
 
-              {/* Preview row: sits above the description */}
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <label
-                    htmlFor="donationReference"
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                    }}
-                  >
-                    Donation reference or ID
-                  </label>
-                  <input
-                    id="donationReference"
-                    value={donationReference}
-                    onChange={(e) => setDonationReference(e.target.value)}
-                    placeholder="Enter reference or id"
-                    style={{
-                      width: '100%',
-                      height: 44,
-                      background: 'hsl(var(--container-low))',
-                      border: '1px solid hsl(var(--border))',
-                      color: 'hsl(var(--on-surface))',
-                      fontSize: 13,
-                      fontFamily: "'Public Sans', sans-serif",
-                      padding: '0 12px',
-                      outline: 'none',
-                    }}
-                  />
-                  <p
-                    style={{
-                      margin: '8px 0 0',
-                      fontSize: 11,
-                      color: 'hsl(var(--on-surface-muted))',
-                      lineHeight: 1.4,
-                      fontFamily: "'Public Sans', sans-serif",
-                    }}
-                  >
-                    Use the contribution reference shown after submission or the donation ID from
-                    your payment record.
-                  </p>
-                </div>
-                <div
-                  id="sidebar-receipt-preview"
-                  style={{
-                    minHeight: 56,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {previewUrl ? (
-                    <img
-                      src={previewUrl}
-                      alt="receipt preview"
-                      style={{
-                        width: 96,
-                        height: 64,
-                        objectFit: 'cover',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px solid hsl(var(--border))',
-                      }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        width: 96,
-                        height: 64,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: 'hsl(var(--container-low))',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px dashed hsl(var(--border))',
-                      }}
-                    >
-                      <span style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-                        No preview
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginBottom: 12 }}>
-                Optional: attach external receipts or view the deployment ledger.
+              <p
+                style={{
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                  margin: '0 0 12px',
+                  lineHeight: 1.5,
+                }}
+              >
+                Hubtel confirms successful payments automatically. No receipt upload or copied
+                payment reference is required.
               </p>
 
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', width: '100%' }}>
-                <button
-                  onClick={onOpenAudit}
-                  className="btn btn-primary btn-sm"
-                  style={{ flex: 1 }}
-                >
-                  View ledger
-                </button>
-
-                <input
-                  id="sidebar-receipt-input"
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  style={{ display: 'none' }}
-                />
-                <label
-                  htmlFor="sidebar-receipt-input"
-                  className="btn btn-sm btn-outline"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    flex: 1,
-                    justifyContent: 'center',
-                  }}
-                >
-                  {uploading ? 'Uploading...' : 'Attach'}
-                </label>
-              </div>
+              <button
+                type="button"
+                onClick={onOpenAudit}
+                className="btn btn-primary btn-sm"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                View ledger
+              </button>
             </div>
           </div>
         </div>
       </aside>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 48, width: '100%' }}>
-        {/* step 1: capital transfer */}
+        {/* step 1: secure checkout */}
         <div
           id="payment-section"
           style={{
@@ -394,7 +251,7 @@ export function MobilizationProtocol({
               className="material-symbols-outlined"
               style={{ fontSize: 128, color: 'hsl(var(--primary))' }}
             >
-              call
+              payments
             </span>
           </div>
 
@@ -424,7 +281,7 @@ export function MobilizationProtocol({
                 fontSize: 20,
               }}
             >
-              Capital transfer
+              Secure Hubtel checkout
             </h3>
           </div>
 
@@ -439,7 +296,7 @@ export function MobilizationProtocol({
                   marginBottom: 8,
                 }}
               >
-                account holder
+                payment processor
               </p>
               <p
                 style={{
@@ -451,7 +308,7 @@ export function MobilizationProtocol({
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                Paul Kofi Agyekum
+                Hubtel Checkout
               </p>
             </div>
             <div>
@@ -464,7 +321,7 @@ export function MobilizationProtocol({
                   marginBottom: 8,
                 }}
               >
-                momo identifier
+                payment options
               </p>
               <p
                 style={{
@@ -476,7 +333,7 @@ export function MobilizationProtocol({
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                +233 538 873 569
+                Mobile Money and Card
               </p>
             </div>
             <div
@@ -499,7 +356,7 @@ export function MobilizationProtocol({
                     marginBottom: 8,
                   }}
                 >
-                  network hub
+                  secured by
                 </p>
                 <p
                   style={{
@@ -509,7 +366,7 @@ export function MobilizationProtocol({
                     fontSize: 16,
                   }}
                 >
-                  MTN Mobile Money
+                  Hubtel Sales API
                 </p>
               </div>
               <div>
@@ -522,7 +379,7 @@ export function MobilizationProtocol({
                     marginBottom: 8,
                   }}
                 >
-                  deployment reference
+                  confirmation
                 </p>
                 <p
                   style={{
@@ -535,7 +392,7 @@ export function MobilizationProtocol({
                     paddingBottom: 4,
                   }}
                 >
-                  "the base"
+                  Automatic after payment
                 </p>
               </div>
             </div>
@@ -568,7 +425,8 @@ export function MobilizationProtocol({
                 fontFamily: "'Public Sans', sans-serif",
               }}
             >
-              Complete transfer protocol first, then capture receipt for verification.
+              Stay on this page while the secure Hubtel checkout opens. Your donation is confirmed
+              automatically when Hubtel completes the transaction.
             </p>
           </div>
         </div>
@@ -1027,7 +885,7 @@ export function MobilizationProtocol({
           </div>
         </div>
 
-        {/* step 4: audit trail */}
+        {/* step 4: confirmation */}
         <div
           id="receipt-section"
           style={{
@@ -1065,7 +923,7 @@ export function MobilizationProtocol({
                 fontSize: 20,
               }}
             >
-              Audit trail
+              Payment confirmation
             </h3>
           </div>
 
@@ -1075,16 +933,15 @@ export function MobilizationProtocol({
                 style={{
                   fontSize: 13,
                   color: 'hsl(var(--on-surface))',
-                  fontWeight: 500,
+                  fontWeight: 'var(--font-weight-medium, 500)',
                   marginBottom: 6,
                 }}
               >
-                Receipts (optional)
+                No manual receipt required
               </p>
               <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
-                If you paid outside the site, attach your receipt via the Audit trail panel in the
-                Deployment protocol sidebar. Receipts are optional and not required to submit the
-                form.
+                Hubtel sends payment confirmation back to the platform. Keep this page open after
+                checkout starts and your donation will update automatically.
               </p>
             </div>
 
@@ -1100,7 +957,7 @@ export function MobilizationProtocol({
                   className="material-symbols-outlined"
                   style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
                 >
-                  language
+                  {paymentState === 'failed' ? 'error' : 'verified'}
                 </span>
                 <h4
                   style={{
@@ -1112,7 +969,13 @@ export function MobilizationProtocol({
                     margin: 0,
                   }}
                 >
-                  Global diaspora hub
+                  {paymentState === 'failed'
+                    ? 'Payment not confirmed'
+                    : paymentState === 'checkout'
+                      ? 'Waiting for Hubtel'
+                      : paymentState === 'starting'
+                        ? 'Opening checkout'
+                        : 'Ready for secure payment'}
                 </h4>
               </div>
               <p
@@ -1126,23 +989,36 @@ export function MobilizationProtocol({
                   margin: 0,
                 }}
               >
-                Use deployment code{' '}
-                <span
-                  style={{
-                    color: 'hsl(var(--primary))',
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                  }}
-                >
-                  thebasem
-                </span>{' '}
-                on taptap for resource scaling bonus.
+                {paymentState === 'failed'
+                  ? 'The payment was not completed. You can try again using the secure Hubtel checkout.'
+                  : paymentState === 'checkout'
+                    ? 'Complete payment in the secure Hubtel window. This page will update once Hubtel confirms.'
+                    : paymentState === 'starting'
+                      ? 'Creating your Hubtel checkout session. This should only take a moment.'
+                      : 'Submit your details to open Hubtel checkout for mobile money or card payment.'}
               </p>
             </div>
+
+            {checkoutUrl && paymentState !== 'failed' && (
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={onReopenCheckout}
+                style={{
+                  width: '100%',
+                  height: 44,
+                  justifyContent: 'center',
+                }}
+              >
+                Reopen secure checkout
+              </button>
+            )}
 
             <button
               type="submit"
               form="donationForm"
               className="btn btn-primary"
+              disabled={paymentState === 'starting' || paymentState === 'checkout'}
               style={{
                 width: '100%',
                 height: 56,
@@ -1156,9 +1032,17 @@ export function MobilizationProtocol({
               }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                favorite
+                {paymentState === 'starting' || paymentState === 'checkout'
+                  ? 'hourglass_empty'
+                  : 'lock'}
               </span>
-              Authorize contribution
+              {paymentState === 'failed'
+                ? 'Try secure payment again'
+                : paymentState === 'starting'
+                  ? 'Opening secure checkout'
+                  : paymentState === 'checkout'
+                    ? 'Waiting for payment confirmation'
+                    : 'Pay securely with Hubtel'}
             </button>
           </div>
         </div>
