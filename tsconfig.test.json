@@ -12,6 +12,7 @@
     "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
+    "ignoreDeprecations": "5.0",
     "noEmit": true
   },
   "include": ["src/test", "src/components", "src/lib", "src/hooks", "src/context"]

@@ -58,7 +58,7 @@ export default function HubtelButton({
       if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
     } catch (err) {
       console.error('[HubtelButton] payment initiation failed:', err)
-      toast.error('Could not start Hubtel payment. Please try again.')
+      toast.error('Could not start secure payment. Please try again.')
       onError?.()
       setLoading(false)
     }

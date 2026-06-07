@@ -144,7 +144,7 @@ export default function PublicDonate() {
 
       if (data.status === 'Rejected') {
         setPaymentState('failed')
-        toast.error('Hubtel could not confirm this payment. Please try again.')
+        toast.error('The payment could not be confirmed. Please try again.')
       }
     }
 
@@ -222,7 +222,7 @@ export default function PublicDonate() {
       }
       setActiveDonationId(null)
       setPaymentState('failed')
-      toast.error('Could not start secure Hubtel checkout. Please try again.')
+      toast.error('Could not start secure checkout. Please try again.')
     }
   }
 
@@ -248,9 +248,9 @@ export default function PublicDonate() {
     >
       <header
         style={{
-          background: 'hsl(var(--card))',
+          background: 'hsl(var(--background))',
           borderBottom: '1px solid hsl(var(--border))',
-          padding: 'clamp(40px, 10vw, 80px) 0',
+          padding: '56px 0 42px',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -258,15 +258,27 @@ export default function PublicDonate() {
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 clamp(16px, 4vw, 32px)' }}>
           <Breadcrumbs />
           <div style={{ position: 'relative', zIndex: 2 }}>
+            <p
+              style={{
+                margin: '0 0 10px',
+                fontSize: 10,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                color: 'hsl(var(--primary))',
+              }}
+            >
+              Movement fund
+            </p>
             <h1
               style={{
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 'clamp(32px, 8vw, 48px)',
+                fontSize: 42,
                 color: 'hsl(var(--on-surface))',
                 margin: 0,
-                letterSpacing: '-0.04em',
-                marginBottom: 24,
+                letterSpacing: '0',
+                marginBottom: 18,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 16,
@@ -275,11 +287,11 @@ export default function PublicDonate() {
             >
               <span
                 className="material-symbols-outlined"
-                style={{ fontSize: 'clamp(32px, 8vw, 48px)', color: 'hsl(var(--destructive))' }}
+                style={{ fontSize: 40, color: 'hsl(var(--destructive))' }}
               >
                 favorite
               </span>
-              Support the Movement
+              Support the movement
             </h1>
             <BrandLine />
             <p
@@ -289,12 +301,13 @@ export default function PublicDonate() {
                 marginTop: 24,
                 lineHeight: 1.6,
                 fontWeight: 400,
-                fontSize: 'clamp(14px, 2vw, 16px)',
+                fontSize: 15,
                 fontFamily: "'Public Sans', sans-serif",
               }}
             >
-              Your contributions fuel the growth and sustainability of the movement. Join citizens
-              across Ghana and the diaspora in building a more productive and transparent future.
+              Give directly on the platform using mobile money or card. Your contribution is linked
+              to a movement priority, confirmed automatically, and shown in the public ledger only
+              when you choose.
             </p>
           </div>
         </div>

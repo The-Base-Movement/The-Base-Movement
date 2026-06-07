@@ -38,13 +38,70 @@ interface MobilizationProtocolProps {
   onOpenAudit: () => void
 }
 
-function SelIcon() {
+const fieldLabelStyle = {
+  display: 'block',
+  fontSize: 10,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  color: 'hsl(var(--on-surface-muted))',
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.05em',
+  marginBottom: 6,
+}
+
+const inputStyle = {
+  width: '100%',
+  height: 42,
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-sm)',
+  background: 'hsl(var(--background))',
+  color: 'hsl(var(--on-surface))',
+  fontSize: 13,
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  outline: 'none',
+  boxSizing: 'border-box' as const,
+}
+
+function statusCopy(paymentState: MobilizationProtocolProps['paymentState']) {
+  if (paymentState === 'failed') {
+    return {
+      icon: 'error',
+      title: 'Payment not confirmed',
+      body: 'The payment was not completed. You can retry with the secure checkout.',
+      tone: 'hsl(var(--destructive))',
+    }
+  }
+  if (paymentState === 'checkout') {
+    return {
+      icon: 'hourglass_empty',
+      title: 'Waiting for confirmation',
+      body: 'Complete payment in the secure checkout window. This page will update automatically.',
+      tone: 'hsl(var(--accent))',
+    }
+  }
+  if (paymentState === 'starting') {
+    return {
+      icon: 'lock_open',
+      title: 'Opening secure checkout',
+      body: 'Your payment session is being prepared. This should only take a moment.',
+      tone: 'hsl(var(--primary))',
+    }
+  }
+  return {
+    icon: 'verified_user',
+    title: 'Ready for secure payment',
+    body: 'Submit your details to complete payment by mobile money or card.',
+    tone: 'hsl(var(--primary))',
+  }
+}
+
+function SelectIcon() {
   return (
     <span
       className="material-symbols-outlined"
       style={{
         position: 'absolute',
-        right: 0,
+        right: 12,
         top: '50%',
         transform: 'translateY(-50%)',
         fontSize: 18,
@@ -73,986 +130,587 @@ export function MobilizationProtocol({
   onReopenCheckout,
   onOpenAudit,
 }: MobilizationProtocolProps) {
+  const status = statusCopy(paymentState)
+  const quickAmounts = ['50', '100', '250', '500']
+  const selectedCampaign = campaigns.find((campaign) => campaign.id === formData.campaignId)
   const steps = [
-    { step: 1, label: 'Secure checkout', id: 'payment-section', color: 'hsl(var(--destructive))' },
-    { step: 2, label: 'Contributor profile', id: 'donor-section', color: 'hsl(var(--accent))' },
-    { step: 3, label: 'Member link', id: 'link-section', color: 'hsl(var(--primary))' },
-    { step: 4, label: 'Confirmation', id: 'receipt-section', color: 'hsl(var(--primary))' },
+    { id: 1, label: 'Amount' },
+    { id: 2, label: 'Profile' },
+    { id: 3, label: 'Link' },
+    { id: 4, label: 'Confirm' },
   ]
 
   return (
-    <div
+    <section
+      id="donor-section"
       style={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 64,
-        alignItems: 'flex-start',
-        paddingTop: 80,
+        paddingTop: 56,
+        scrollMarginTop: 120,
       }}
-      className="lg:flex-row flex-col"
     >
-      {/* sidebar navigation */}
-      <aside
-        className="desktop-only"
-        style={{ width: 280, flexShrink: 0, position: 'sticky', top: 96 }}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          gap: 18,
+          flexWrap: 'wrap',
+          marginBottom: 18,
+        }}
       >
-        <div
-          style={{
-            background: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            padding: 32,
-          }}
-        >
-          <h4
+        <div style={{ maxWidth: 680 }}>
+          <p
             style={{
-              fontSize: 11,
+              margin: '0 0 8px',
+              fontSize: 10,
               fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface-muted))',
-              marginBottom: 32,
-              letterSpacing: '0.02em',
-              fontFamily: "'Public Sans', sans-serif",
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              color: 'hsl(var(--primary))',
             }}
           >
-            Deployment protocol
-          </h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-            {steps.map((s) => (
-              <button
-                key={s.step}
-                onClick={() => {
-                  const el = document.getElementById(s.id)
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                  setActiveStep(s.step)
-                }}
-                className={activeStep === s.step ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 16,
-                  width: '100%',
-                  textAlign: 'left',
-                  justifyContent: 'flex-start',
-                }}
-              >
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 12,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    transition: 'all 0.3s ease',
-                    background: activeStep === s.step ? s.color : 'hsl(var(--container-low))',
-                    color: activeStep === s.step ? '#fff' : 'hsl(var(--on-surface-muted))',
-                    borderRadius: 'var(--radius-sm)',
-                    transform: activeStep === s.step ? 'scale(1.1)' : 'scale(1)',
-                  }}
-                >
-                  {s.step}
-                </div>
-                <div>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      letterSpacing: '-0.01em',
-                      display: 'block',
-                      transition: 'colors 0.3s ease',
-                      color:
-                        activeStep === s.step
-                          ? 'hsl(var(--on-surface))'
-                          : 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                    }}
-                  >
-                    {s.label}
-                  </span>
-                  {activeStep === s.step && (
-                    <span
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 500,
-                        color: 'hsl(var(--primary))',
-                        letterSpacing: '0.02em',
-                        fontFamily: "'Public Sans', sans-serif",
-                      }}
-                    >
-                      In Progress
-                    </span>
-                  )}
-                </div>
-              </button>
-            ))}
-            <div
-              style={{ marginTop: 18, borderTop: '1px solid hsl(var(--border))', paddingTop: 18 }}
-            >
-              <h5
-                style={{
-                  fontSize: 11,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface-muted))',
-                  marginBottom: 8,
-                  fontFamily: "'Public Sans', sans-serif",
-                }}
-              >
-                Audit trail
-              </h5>
-
-              <p
-                style={{
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                  margin: '0 0 12px',
-                  lineHeight: 1.5,
-                }}
-              >
-                Hubtel confirms successful payments automatically. No receipt upload or copied
-                payment reference is required.
-              </p>
-
-              <button
-                type="button"
-                onClick={onOpenAudit}
-                className="btn btn-primary btn-sm"
-                style={{ width: '100%', justifyContent: 'center' }}
-              >
-                View ledger
-              </button>
-            </div>
-          </div>
+            Contribution desk
+          </p>
+          <h2
+            style={{
+              margin: 0,
+              fontFamily: "'Public Sans', sans-serif",
+              fontSize: 26,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface))',
+              letterSpacing: '0',
+              lineHeight: 1.15,
+            }}
+          >
+            Fund the work directly from this page.
+          </h2>
+          <p
+            style={{
+              margin: '10px 0 0',
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 14,
+              lineHeight: 1.6,
+              maxWidth: 620,
+            }}
+          >
+            Choose an amount, link it to a movement priority, and complete payment in a secure
+            checkout window. No copied payment instructions are required.
+          </p>
         </div>
-      </aside>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 48, width: '100%' }}>
-        {/* step 1: secure checkout */}
-        <div
-          id="payment-section"
+        <button
+          type="button"
+          className="btn btn-outline btn-sm"
+          onClick={onOpenAudit}
+          style={{ flexShrink: 0 }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            receipt_long
+          </span>
+          View ledger
+        </button>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+          gap: 8,
+          marginBottom: 18,
+        }}
+      >
+        {steps.map((step) => (
+          <button
+            key={step.id}
+            type="button"
+            className={
+              activeStep === step.id ? 'btn btn-active-tab btn-sm' : 'btn btn-inactive-tab btn-sm'
+            }
+            onClick={() => {
+              setActiveStep(step.id)
+              document
+                .getElementById(step.id === 4 ? 'receipt-section' : 'donor-section')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }}
+            style={{ justifyContent: 'center', minWidth: 0 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              {activeStep > step.id ? 'check' : 'radio_button_unchecked'}
+            </span>
+            {step.label}
+          </button>
+        ))}
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'stretch',
+          gap: 18,
+          flexWrap: 'wrap',
+        }}
+      >
+        <form
+          onSubmit={onSubmit}
+          id="donationForm"
+          className="panel"
           style={{
-            background: 'hsl(var(--container-low))',
-            color: 'hsl(var(--on-surface))',
-            padding: 'clamp(24px, 5vw, 40px)',
-            position: 'relative',
+            flex: '1 1 520px',
+            minWidth: 0,
+            padding: 0,
             overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            scrollMarginTop: 180,
           }}
         >
           <div
             style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              padding: 16,
-              opacity: 0.05,
-              pointerEvents: 'none',
-              transform: 'translateX(16px) translateY(-16px)',
+              padding: '18px 20px',
+              borderBottom: '1px solid hsl(var(--border))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 14,
             }}
           >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 128, color: 'hsl(var(--primary))' }}
-            >
-              payments
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
-            <span
-              style={{
-                width: 32,
-                height: 32,
-                background: 'hsl(var(--destructive))',
-                color: 'hsl(var(--on-surface))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 12,
-                fontFamily: "'Public Sans', sans-serif",
-              }}
-            >
-              01
-            </span>
-            <h3
-              style={{
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                fontFamily: "'Public Sans', sans-serif",
-                letterSpacing: '-0.02em',
-                fontSize: 20,
-              }}
-            >
-              Secure Hubtel checkout
-            </h3>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 40, flex: 1 }}>
             <div>
               <p
                 style={{
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontFamily: "'Public Sans', sans-serif",
-                  marginBottom: 8,
-                }}
-              >
-                payment processor
-              </p>
-              <p
-                style={{
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--primary))',
-                  fontSize: 24,
-                  letterSpacing: '-0.02em',
                   margin: 0,
-                  fontFamily: "'Public Sans', sans-serif",
-                }}
-              >
-                Hubtel Checkout
-              </p>
-            </div>
-            <div>
-              <p
-                style={{
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontFamily: "'Public Sans', sans-serif",
-                  marginBottom: 8,
-                }}
-              >
-                payment options
-              </p>
-              <p
-                style={{
+                  fontSize: 15,
                   fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--on-surface))',
-                  fontSize: 24,
-                  letterSpacing: '-0.02em',
-                  margin: 0,
-                  fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                Mobile Money and Card
+                Contribution details
+              </p>
+              <p
+                style={{
+                  margin: '3px 0 0',
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                Mobile money and card payments are supported.
               </p>
             </div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr',
-                gap: 32,
-                paddingTop: 40,
-                borderTop: '1px solid hsl(var(--border))',
-              }}
-              className="md:grid-cols-2"
-            >
-              <div>
-                <p
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    marginBottom: 8,
-                  }}
-                >
-                  secured by
-                </p>
-                <p
-                  style={{
-                    color: 'hsl(var(--on-surface))',
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontSize: 16,
-                  }}
-                >
-                  Hubtel Sales API
-                </p>
-              </div>
-              <div>
-                <p
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    marginBottom: 8,
-                  }}
-                >
-                  confirmation
-                </p>
-                <p
-                  style={{
-                    color: 'hsl(var(--accent))',
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontSize: 16,
-                    fontStyle: 'italic',
-                    borderBottom: '1px solid rgba(218,165,32,0.3)',
-                    paddingBottom: 4,
-                  }}
-                >
-                  Automatic after payment
-                </p>
-              </div>
-            </div>
+            <span className="pill pill-ok">Secure</span>
           </div>
 
           <div
             style={{
-              marginTop: 48,
-              padding: 24,
-              background: 'hsl(var(--background))',
-              border: '1px solid hsl(var(--border))',
-              display: 'flex',
-              alignItems: 'flex-start',
+              padding: 20,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
               gap: 16,
             }}
           >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 18, color: 'hsl(var(--primary))', marginTop: 2 }}
-            >
-              check
-            </span>
-            <p
-              style={{
-                fontSize: 12,
-                color: 'hsl(var(--on-surface-muted))',
-                lineHeight: 1.5,
-                fontWeight: 400,
-                letterSpacing: '-0.01em',
-                fontFamily: "'Public Sans', sans-serif",
-              }}
-            >
-              Stay on this page while the secure Hubtel checkout opens. Your donation is confirmed
-              automatically when Hubtel completes the transaction.
-            </p>
-          </div>
-        </div>
-
-        {/* step 2: contributor profile */}
-        <div
-          id="donor-section"
-          style={{
-            background: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            padding: 'clamp(24px, 5vw, 40px)',
-            display: 'flex',
-            flexDirection: 'column',
-            scrollMarginTop: 180,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
-            <span
-              style={{
-                width: 32,
-                height: 32,
-                background: 'hsl(var(--accent))',
-                color: 'hsl(var(--on-surface))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 12,
-                fontFamily: "'Public Sans', sans-serif",
-              }}
-            >
-              02
-            </span>
-            <h3
-              style={{
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                fontFamily: "'Public Sans', sans-serif",
-                letterSpacing: '-0.02em',
-                fontSize: 20,
-              }}
-            >
-              Contributor profile
-            </h3>
-          </div>
-
-          <form
-            onSubmit={onSubmit}
-            id="donationForm"
-            style={{ display: 'flex', flexDirection: 'column', gap: 32, flex: 1 }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label
-                htmlFor="fullName"
-                style={{
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontFamily: "'Public Sans', sans-serif",
-                }}
-              >
-                Identification <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+            <div>
+              <label htmlFor="country" style={fieldLabelStyle}>
+                Country
               </label>
-              <input
-                aria-label="Legal full name"
-                name="name-01ce78"
-                id="fullName"
-                placeholder="Legal full name"
-                required
-                autoComplete="name"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                onFocus={() => setActiveStep(2)}
-                style={{
-                  width: '100%',
-                  height: 48,
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  color: 'hsl(var(--on-surface))',
-                  fontSize: 14,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontFamily: "'Public Sans', sans-serif",
-                  outline: 'none',
-                  padding: 0,
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <select
+                  name="donation-country"
+                  id="country"
+                  required
+                  autoComplete="country-name"
+                  value={formData.country}
+                  onChange={(e) => {
+                    setFormData({ ...formData, country: e.target.value })
+                    setActiveStep(1)
+                  }}
+                  disabled={countriesLoading}
+                  style={{
+                    ...inputStyle,
+                    appearance: 'none',
+                    padding: '0 40px 0 12px',
+                    cursor: countriesLoading ? 'wait' : 'pointer',
+                  }}
+                >
+                  {countriesLoading ? (
+                    <option>Loading countries...</option>
+                  ) : countries.length > 0 ? (
+                    countries.map((country) => (
+                      <option key={country.id} value={country.name}>
+                        {country.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="Ghana">Ghana</option>
+                  )}
+                </select>
+                <SelectIcon />
+              </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label
-                htmlFor="phone"
-                style={{
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontFamily: "'Public Sans', sans-serif",
-                }}
-              >
-                Contact line <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+            <div>
+              <label htmlFor="campaign" style={fieldLabelStyle}>
+                Priority
+              </label>
+              <div style={{ position: 'relative' }}>
+                <select
+                  name="donation-campaign"
+                  id="campaign"
+                  required
+                  autoComplete="off"
+                  value={formData.campaignId}
+                  onChange={(e) => {
+                    setFormData({ ...formData, campaignId: e.target.value })
+                    setActiveStep(1)
+                  }}
+                  style={{
+                    ...inputStyle,
+                    appearance: 'none',
+                    padding: '0 40px 0 12px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <option value="">General movement fund</option>
+                  {campaigns.map((campaign) => (
+                    <option key={campaign.id} value={campaign.id}>
+                      {campaign.title}
+                    </option>
+                  ))}
+                </select>
+                <SelectIcon />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="amount" style={fieldLabelStyle}>
+                Amount ({currency.code})
+              </label>
+              <div style={{ position: 'relative' }}>
+                <span
+                  style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {currency.symbol}
+                </span>
+                <input
+                  aria-label={`Amount in ${currency.code}`}
+                  name="donation-amount"
+                  id="amount"
+                  type="number"
+                  placeholder="0.00"
+                  required
+                  autoComplete="off"
+                  value={formData.amount}
+                  onChange={(e) => {
+                    setFormData({ ...formData, amount: e.target.value })
+                    setActiveStep(1)
+                  }}
+                  style={{
+                    ...inputStyle,
+                    padding: '0 12px 0 30px',
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+                {quickAmounts.map((amount) => (
+                  <button
+                    key={amount}
+                    type="button"
+                    className={
+                      formData.amount === amount
+                        ? 'btn btn-primary btn-sm'
+                        : 'btn btn-outline btn-sm'
+                    }
+                    onClick={() => {
+                      setFormData({ ...formData, amount })
+                      setActiveStep(1)
+                    }}
+                  >
+                    {currency.symbol}
+                    {amount}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="phone" style={fieldLabelStyle}>
+                Payment phone
               </label>
               <input
-                aria-label="+233 xx xxx xxxx"
-                name="name-ff548e"
+                aria-label="Payment phone"
+                name="donation-phone"
                 id="phone"
                 placeholder="+233 xx xxx xxxx"
                 required
                 autoComplete="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                onFocus={() => setActiveStep(2)}
+                onChange={(e) => {
+                  setFormData({ ...formData, phone: e.target.value })
+                  setActiveStep(2)
+                }}
                 style={{
-                  width: '100%',
-                  height: 48,
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  color: 'hsl(var(--on-surface))',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  fontFamily: "'Public Sans', sans-serif",
-                  outline: 'none',
-                  padding: 0,
+                  ...inputStyle,
+                  padding: '0 12px',
                 }}
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <label
-                  htmlFor="amount"
+            <div>
+              <label htmlFor="fullName" style={fieldLabelStyle}>
+                Full name
+              </label>
+              <input
+                aria-label="Legal full name"
+                name="donation-full-name"
+                id="fullName"
+                placeholder="Legal full name"
+                required
+                autoComplete="name"
+                value={formData.fullName}
+                onChange={(e) => {
+                  setFormData({ ...formData, fullName: e.target.value })
+                  setActiveStep(2)
+                }}
+                style={{
+                  ...inputStyle,
+                  padding: '0 12px',
+                }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="membershipNumber" style={fieldLabelStyle}>
+                Movement ID
+              </label>
+              <input
+                aria-label="Movement ID"
+                name="donation-membership-number"
+                id="membershipNumber"
+                placeholder={isLoggedIn ? 'Linked automatically' : 'Optional'}
+                autoComplete="off"
+                value={formData.membershipNumber}
+                onChange={(e) => {
+                  setFormData({ ...formData, membershipNumber: e.target.value })
+                  setActiveStep(3)
+                }}
+                style={{
+                  ...inputStyle,
+                  padding: '0 12px',
+                }}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              padding: '0 20px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 14,
+              flexWrap: 'wrap',
+            }}
+          >
+            <label
+              htmlFor="showOnDashboard"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+                cursor: 'pointer',
+                color: 'hsl(var(--on-surface))',
+                fontSize: 12,
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              <input
+                name="donation-show-public"
+                id="showOnDashboard"
+                type="checkbox"
+                checked={formData.showOnDashboard}
+                onChange={(e) => {
+                  setFormData({ ...formData, showOnDashboard: e.target.checked })
+                  setActiveStep(3)
+                }}
+                style={{
+                  width: 16,
+                  height: 16,
+                  accentColor: 'hsl(var(--primary))',
+                  cursor: 'pointer',
+                }}
+              />
+              Show my name in the public ledger
+            </label>
+
+            <span
+              style={{
+                color: 'hsl(var(--on-surface-muted))',
+                fontSize: 12,
+                lineHeight: 1.5,
+              }}
+            >
+              Current entry: {formatCurrencyAmount(formData.amount || 0, currency)}
+            </span>
+          </div>
+        </form>
+
+        <aside
+          id="receipt-section"
+          className="panel"
+          style={{
+            flex: '1 1 340px',
+            maxWidth: 430,
+            minWidth: 0,
+            padding: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              padding: '18px 20px',
+              borderBottom: '1px solid hsl(var(--border))',
+              background: 'hsl(var(--container-low))',
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                color: 'hsl(var(--on-surface))',
+                fontSize: 15,
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              Payment summary
+            </p>
+            <p
+              style={{
+                margin: '3px 0 0',
+                color: 'hsl(var(--on-surface-muted))',
+                fontSize: 12,
+              }}
+            >
+              Review before opening secure checkout.
+            </p>
+          </div>
+
+          <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div
+              style={{
+                borderLeft: '3px solid hsl(var(--primary))',
+                paddingLeft: 14,
+              }}
+            >
+              <p style={{ margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', fontSize: 11 }}>
+                Amount
+              </p>
+              <p
+                style={{
+                  margin: 0,
+                  color: 'hsl(var(--on-surface))',
+                  fontSize: 30,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  letterSpacing: '0',
+                }}
+              >
+                {formatCurrencyAmount(formData.amount || 0, currency)}
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: 10,
+                padding: 14,
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-md)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                  Priority
+                </span>
+                <span
                   style={{
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textAlign: 'right',
                   }}
                 >
-                  Amount ({currency.code}){' '}
-                  <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <span
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontSize: 14,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontFamily: "'Public Sans', sans-serif",
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    {currency.symbol}
-                  </span>
-                  <input
-                    aria-label={`Amount in ${currency.code}`}
-                    name="name-6790e5"
-                    id="amount"
-                    type="number"
-                    placeholder="0.00"
-                    required
-                    autoComplete="off"
-                    value={formData.amount}
-                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                    onFocus={() => setActiveStep(2)}
-                    style={{
-                      width: '100%',
-                      height: 48,
-                      background: 'transparent',
-                      border: 'none',
-                      borderBottom: '1px solid hsl(var(--border))',
-                      color: 'hsl(var(--on-surface))',
-                      fontSize: 14,
-                      fontWeight: 500,
-                      fontFamily: "'Public Sans', sans-serif",
-                      outline: 'none',
-                      padding: '0 0 0 28px',
-                    }}
-                  />
-                </div>
+                  {selectedCampaign?.title || 'General fund'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>Country</span>
+                <span
+                  style={{
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
+                  {formData.country}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                  Visibility
+                </span>
+                <span
+                  style={{
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
+                  {formData.showOnDashboard ? 'Public ledger' : 'Private'}
+                </span>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 12,
+                padding: 14,
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-md)',
+                background: 'hsl(var(--background))',
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 20, color: status.tone, marginTop: 1 }}
+              >
+                {status.icon}
+              </span>
+              <div>
                 <p
                   style={{
                     margin: 0,
-                    fontSize: 11,
-                    lineHeight: 1.5,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
                   }}
                 >
-                  Jurisdiction sets the amount currency. Current entry:{' '}
-                  {formatCurrencyAmount(formData.amount || 0, currency)}.
+                  {status.title}
+                </p>
+                <p
+                  style={{
+                    margin: '4px 0 0',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 12,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {status.body}
                 </p>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <label
-                  htmlFor="country"
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  Jurisdiction <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <select
-                    name="name-4a0eac"
-                    id="country"
-                    required
-                    autoComplete="country-name"
-                    value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                    onFocus={() => setActiveStep(2)}
-                    disabled={countriesLoading}
-                    style={{
-                      width: '100%',
-                      height: 48,
-                      background: 'hsl(var(--card))',
-                      border: 'none',
-                      borderBottom: '1px solid hsl(var(--border))',
-                      color: 'hsl(var(--on-surface))',
-                      fontSize: 14,
-                      fontWeight: 500,
-                      fontFamily: "'Public Sans', sans-serif",
-                      outline: 'none',
-                      appearance: 'none',
-                      paddingRight: 32,
-                      paddingLeft: 0,
-                      borderRadius: 0,
-                    }}
-                  >
-                    {countriesLoading ? (
-                      <option
-                        style={{
-                          background: 'hsl(var(--card))',
-                          color: 'hsl(var(--on-surface))',
-                        }}
-                      >
-                        synchronizing...
-                      </option>
-                    ) : countries.length > 0 ? (
-                      countries.map((c) => (
-                        <option
-                          key={c.id}
-                          value={c.name}
-                          style={{
-                            background: 'hsl(var(--card))',
-                            color: 'hsl(var(--on-surface))',
-                          }}
-                        >
-                          {c.name}
-                        </option>
-                      ))
-                    ) : (
-                      <option
-                        value="Ghana"
-                        style={{
-                          background: 'hsl(var(--card))',
-                          color: 'hsl(var(--on-surface))',
-                        }}
-                      >
-                        Ghana
-                      </option>
-                    )}
-                  </select>
-                  <SelIcon />
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label
-                htmlFor="campaign"
-                style={{
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontFamily: "'Public Sans', sans-serif",
-                }}
-              >
-                Target cell <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-              </label>
-              <div style={{ position: 'relative' }}>
-                <select
-                  name="name-348cbe"
-                  id="campaign"
-                  required
-                  autoComplete="off"
-                  value={formData.campaignId}
-                  onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
-                  onFocus={() => setActiveStep(2)}
-                  style={{
-                    width: '100%',
-                    height: 48,
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--on-surface))',
-                    fontSize: 14,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontFamily: "'Public Sans', sans-serif",
-                    outline: 'none',
-                    appearance: 'none',
-                    paddingRight: 32,
-                    paddingLeft: 0,
-                    borderRadius: 0,
-                  }}
-                >
-                  {campaigns.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.title}
-                    </option>
-                  ))}
-                </select>
-                <SelIcon />
-              </div>
-            </div>
-          </form>
-        </div>
-
-        {/* step 3: link patriot */}
-        <div
-          id="link-section"
-          style={{
-            background: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            padding: 'clamp(24px, 5vw, 40px)',
-            display: 'flex',
-            flexDirection: 'column',
-            scrollMarginTop: 180,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
-            <span
-              style={{
-                width: 32,
-                height: 32,
-                background: 'hsl(var(--container-low))',
-                color: 'hsl(var(--on-surface))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 12,
-                fontFamily: "'Public Sans', sans-serif",
-              }}
-            >
-              03
-            </span>
-            <h3
-              style={{
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                fontFamily: "'Public Sans', sans-serif",
-                letterSpacing: '-0.02em',
-                fontSize: 20,
-              }}
-            >
-              {isLoggedIn ? 'Member profile' : 'Link member'}
-            </h3>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 32, flex: 1 }}>
-            <div
-              style={{
-                background: 'hsl(var(--container-low))',
-                border: '1px solid hsl(var(--border))',
-                padding: 32,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 32,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
-                >
-                  vital_signs
-                </span>
-                <h4
-                  style={{
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    letterSpacing: '-0.01em',
-                    fontSize: 14,
-                    margin: 0,
-                  }}
-                >
-                  {isLoggedIn ? 'Active session' : 'Movement ID'}
-                </h4>
-              </div>
-              <p
-                style={{
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  letterSpacing: '-0.01em',
-                  fontFamily: "'Public Sans', sans-serif",
-                  margin: 0,
-                }}
-              >
-                {isLoggedIn
-                  ? 'Automatic recognition active. This deployment will be linked to your patriot profile.'
-                  : 'Enter your movement identification number to synchronize this capital with your profile.'}
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <label
-                  htmlFor="membershipNumber"
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  Movement ID
-                </label>
-                <input
-                  aria-label="gh-2028-xxxxxx"
-                  name="name-915196"
-                  id="membershipNumber"
-                  placeholder="gh-2028-xxxxxx"
-                  autoComplete="off"
-                  value={formData.membershipNumber}
-                  onChange={(e) => setFormData({ ...formData, membershipNumber: e.target.value })}
-                  onFocus={() => setActiveStep(3)}
-                  style={{
-                    width: '100%',
-                    height: 48,
-                    background: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--on-surface))',
-                    fontSize: 14,
-                    fontWeight: 500,
-                    fontFamily: "'Public Sans', sans-serif",
-                    outline: 'none',
-                    padding: '0 16px',
-                  }}
-                />
-              </div>
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 16,
-                  cursor: 'pointer',
-                  paddingTop: 8,
-                }}
-              >
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <input
-                    name="name-97e307"
-                    id="input-97e307"
-                    type="checkbox"
-                    checked={formData.showOnDashboard}
-                    onChange={(e) =>
-                      setFormData({ ...formData, showOnDashboard: e.target.checked })
-                    }
-                    onFocus={() => setActiveStep(3)}
-                    style={{
-                      height: 20,
-                      width: 20,
-                      cursor: 'pointer',
-                      appearance: 'none',
-                      border: '1px solid hsl(var(--on-surface-muted))',
-                      borderRadius: 0,
-                      background: formData.showOnDashboard ? 'hsl(var(--primary))' : 'transparent',
-                      borderColor: formData.showOnDashboard
-                        ? 'hsl(var(--primary))'
-                        : 'hsl(var(--on-surface-muted))',
-                    }}
-                  />
-                  {formData.showOnDashboard && (
-                    <span
-                      className="material-symbols-outlined"
-                      style={{
-                        position: 'absolute',
-                        color: 'hsl(var(--on-surface))',
-                        fontSize: 16,
-                        left: 2,
-                        pointerEvents: 'none',
-                      }}
-                    >
-                      check
-                    </span>
-                  )}
-                </div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    color: 'hsl(var(--on-surface))',
-                    fontWeight: 500,
-                    letterSpacing: '-0.01em',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  Publish to personal dossier
-                </span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* step 4: confirmation */}
-        <div
-          id="receipt-section"
-          style={{
-            background: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            padding: 'clamp(24px, 5vw, 40px)',
-            display: 'flex',
-            flexDirection: 'column',
-            scrollMarginTop: 180,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
-            <span
-              style={{
-                width: 32,
-                height: 32,
-                background: 'hsl(var(--primary))',
-                color: 'hsl(var(--on-surface))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 12,
-                fontFamily: "'Public Sans', sans-serif",
-              }}
-            >
-              04
-            </span>
-            <h3
-              style={{
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                fontFamily: "'Public Sans', sans-serif",
-                letterSpacing: '-0.02em',
-                fontSize: 20,
-              }}
-            >
-              Payment confirmation
-            </h3>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 32, flex: 1 }}>
-            <div style={{ padding: 16, textAlign: 'left' }}>
-              <p
-                style={{
-                  fontSize: 13,
-                  color: 'hsl(var(--on-surface))',
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  marginBottom: 6,
-                }}
-              >
-                No manual receipt required
-              </p>
-              <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
-                Hubtel sends payment confirmation back to the platform. Keep this page open after
-                checkout starts and your donation will update automatically.
-              </p>
-            </div>
-
-            <div
-              style={{
-                background: 'hsl(var(--container-low))',
-                padding: 24,
-                border: '1px solid hsl(var(--border))',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
-                >
-                  {paymentState === 'failed' ? 'error' : 'verified'}
-                </span>
-                <h4
-                  style={{
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface))',
-                    fontFamily: "'Public Sans', sans-serif",
-                    letterSpacing: '-0.01em',
-                    fontSize: 11,
-                    margin: 0,
-                  }}
-                >
-                  {paymentState === 'failed'
-                    ? 'Payment not confirmed'
-                    : paymentState === 'checkout'
-                      ? 'Waiting for Hubtel'
-                      : paymentState === 'starting'
-                        ? 'Opening checkout'
-                        : 'Ready for secure payment'}
-                </h4>
-              </div>
-              <p
-                style={{
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                  lineHeight: 1.6,
-                  fontWeight: 400,
-                  letterSpacing: '-0.01em',
-                  fontFamily: "'Public Sans', sans-serif",
-                  margin: 0,
-                }}
-              >
-                {paymentState === 'failed'
-                  ? 'The payment was not completed. You can try again using the secure Hubtel checkout.'
-                  : paymentState === 'checkout'
-                    ? 'Complete payment in the secure Hubtel window. This page will update once Hubtel confirms.'
-                    : paymentState === 'starting'
-                      ? 'Creating your Hubtel checkout session. This should only take a moment.'
-                      : 'Submit your details to open Hubtel checkout for mobile money or card payment.'}
-              </p>
             </div>
 
             {checkoutUrl && paymentState !== 'failed' && (
@@ -1060,12 +718,11 @@ export function MobilizationProtocol({
                 type="button"
                 className="btn btn-outline"
                 onClick={onReopenCheckout}
-                style={{
-                  width: '100%',
-                  height: 44,
-                  justifyContent: 'center',
-                }}
+                style={{ width: '100%', justifyContent: 'center', height: 42 }}
               >
+                <span className="material-symbols-outlined" style={{ fontSize: 17 }}>
+                  open_in_new
+                </span>
                 Reopen secure checkout
               </button>
             )}
@@ -1075,19 +732,14 @@ export function MobilizationProtocol({
               form="donationForm"
               className="btn btn-primary"
               disabled={paymentState === 'starting' || paymentState === 'checkout'}
+              onClick={() => setActiveStep(4)}
               style={{
                 width: '100%',
-                height: 56,
-                display: 'flex',
-                alignItems: 'center',
+                height: 48,
                 justifyContent: 'center',
-                gap: 12,
-                padding: '0 32px',
-                textTransform: 'lowercase',
-                boxShadow: '0 12px 32px -12px rgba(0,107,63,0.3)',
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                 {paymentState === 'starting' || paymentState === 'checkout'
                   ? 'hourglass_empty'
                   : 'lock'}
@@ -1097,12 +749,46 @@ export function MobilizationProtocol({
                 : paymentState === 'starting'
                   ? 'Opening secure checkout'
                   : paymentState === 'checkout'
-                    ? 'Waiting for payment confirmation'
-                    : 'Pay securely with Hubtel'}
+                    ? 'Waiting for confirmation'
+                    : 'Pay securely'}
             </button>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 8,
+                borderTop: '1px solid hsl(var(--border))',
+                paddingTop: 14,
+              }}
+            >
+              {[
+                ['encrypted', 'Encrypted'],
+                ['smartphone', 'MoMo'],
+                ['credit_card', 'Card'],
+              ].map(([icon, label]) => (
+                <div
+                  key={label}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 5,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 10,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    {icon}
+                  </span>
+                  {label}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </aside>
       </div>
-    </div>
+    </section>
   )
 }

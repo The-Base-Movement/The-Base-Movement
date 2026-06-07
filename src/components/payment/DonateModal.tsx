@@ -64,7 +64,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
       }
       if (data.status === 'Rejected') {
         setPaymentState('failed')
-        toast.error('Hubtel could not confirm this payment.')
+        toast.error('The payment could not be confirmed.')
       }
     }
 
@@ -129,7 +129,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
 
   const handleHubtelStarted = () => {
     setPaymentState('checkout')
-    toast.success('Hubtel checkout opened. Complete payment to confirm your donation.')
+    toast.success('Secure checkout opened. Complete payment to confirm your donation.')
   }
 
   const handleHubtelError = async () => {
@@ -337,7 +337,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                       lock
                     </span>
-                    Pay with Hubtel
+                    Pay securely
                   </>
                 )}
               </button>
@@ -392,8 +392,8 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                       {paymentState === 'failed'
                         ? 'Payment not confirmed'
                         : paymentState === 'starting'
-                          ? 'Opening Hubtel checkout'
-                          : 'Complete payment in the secure Hubtel window'}
+                          ? 'Opening secure checkout'
+                          : 'Complete payment in the secure checkout window'}
                     </p>
                     <p
                       style={{
@@ -403,8 +403,8 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                         lineHeight: 1.5,
                       }}
                     >
-                      Keep this page open. Your donation will confirm automatically after Hubtel
-                      completes the transaction.
+                      Keep this page open. Your donation will confirm automatically after payment is
+                      completed.
                     </p>
                   </div>
                 </div>
