@@ -600,8 +600,17 @@ export default function Activity() {
       </div>
 
       <div className="panel" style={{ marginTop: 18, overflow: 'hidden' }}>
-        <div className="ph" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-          <div>
+        <div
+          style={{
+            padding: '16px 18px',
+            borderBottom: '1px solid hsl(var(--border))',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 10,
+          }}
+        >
+          <div style={{ maxWidth: 620 }}>
             <h3>Activity ledger</h3>
             <p>Recent account actions across dashboard modules.</p>
           </div>
