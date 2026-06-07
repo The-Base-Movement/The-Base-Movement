@@ -124,12 +124,13 @@ class MemberService {
         'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range'
       )
       .eq('registration_number', regNo)
-      .single()
+      .maybeSingle()
 
-    if (error || !data) {
+    if (error) {
       console.error('[DATABASE] Failed to fetch member profile:', error)
       return null
     }
+    if (!data) return null
 
     return {
       id: data.registration_number,

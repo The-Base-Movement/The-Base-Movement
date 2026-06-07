@@ -162,12 +162,21 @@ export default function ProfileSettings() {
       setDbCountries(uniqueCountries)
 
       const regNo = sessionStore.getItem('userRegNo')
-      if (!regNo) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      let profile = regNo ? await adminService.getMemberProfile(regNo) : null
+      if (!profile && user?.id) {
+        profile = await adminService.getMemberProfileByAuthId(user.id)
+        if (profile?.id) sessionStore.setItem('userRegNo', profile.id)
+      }
+
+      if (!profile) {
         setLoading(false)
         return
       }
 
-      const profile = await adminService.getMemberProfile(regNo)
       if (profile) {
         const profileCountry = profile.country || (userPlatform === 'GHANA' ? 'Ghana' : '')
         const phoneParts = splitProfilePhone(profile.phone || '', profileCountry, uniqueCountries)

@@ -235,6 +235,18 @@ export default function DashboardLayout() {
       const user = authService.getUser()
       let resolvedName = 'Member'
       if (user) {
+        const profile = await adminService.getMemberProfileByAuthId(user.id)
+        if (profile) {
+          sessionStore.setItem('userRegNo', profile.id)
+          sessionStore.setItem('userName', profile.name)
+          if (profile.avatarUrl) sessionStore.setItem('userAvatar', profile.avatarUrl)
+          setUserName(profile.name)
+          setAvatarUrl(profile.avatarUrl || null)
+          setUserRegNo(profile.id)
+          checkChapterRole()
+          return
+        }
+
         resolvedName = user.user_metadata?.full_name || 'Member'
         setUserName(resolvedName)
         setAvatarUrl(user.user_metadata?.avatar_url || null)

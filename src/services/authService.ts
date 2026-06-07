@@ -104,7 +104,7 @@ class AuthService {
 
   async logout() {
     this.currentSession = null
-    await supabase.auth.signOut()
+    await supabase.auth.signOut({ scope: 'local' })
   }
 
   getToken(): string | null {

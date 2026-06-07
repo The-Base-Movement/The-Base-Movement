@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (user) {
       await userActivityService.logActivity(user.id, 'logout', 'Signed out of account')
     }
-    await supabase.auth.signOut()
+    await supabase.auth.signOut({ scope: 'local' })
   }
 
   return (
