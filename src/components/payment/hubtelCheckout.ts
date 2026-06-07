@@ -10,6 +10,7 @@ export interface HubtelCheckoutMetadata {
 
 export interface HubtelCheckoutRequest {
   amount: number
+  currency?: string
   name: string
   phone: string
   email?: string
@@ -40,6 +41,7 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
           : 'payment',
       reference: request.reference,
       amount: request.amount,
+      currency: request.currency,
       name: request.name,
       phone: request.phone,
       email: request.email,

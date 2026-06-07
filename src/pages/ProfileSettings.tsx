@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import Cropper from 'react-easy-crop'
+import type { Area } from 'react-easy-crop'
 import { sessionStore } from '@/lib/sessionStore'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { userActivityService } from '@/services/userActivityService'
-import { dataURLtoBlob } from '@/lib/imageUtils'
+import { dataURLtoBlob, getCroppedImg } from '@/lib/imageUtils'
 import { toast } from 'sonner'
 import { usePerformance } from '@/context/PerformanceContext'
 import { MembershipCardPanel } from './settings/MembershipCardPanel'
@@ -31,6 +33,80 @@ interface FormState {
   country: string
   city: string
   residentialAddress: string
+}
+
+function onlyDigits(value: string) {
+  return value.replace(/\D/g, '')
+}
+
+function formatLocalPhone(value: string, countryCode: string) {
+  const digits = onlyDigits(value).replace(/^0+/, '')
+  if (!digits) return ''
+  if (countryCode === '+233' && digits.length === 9) {
+    return `${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5)}`
+  }
+  if (digits.length === 9) {
+    return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`
+  }
+  return digits.replace(/(\d{3})(?=\d)/g, '$1 ').trim()
+}
+
+function getDialingCodeForCountry(
+  country: string,
+  countries: { name: string; dialing_code: string; is_diaspora: boolean }[],
+  phone: string
+) {
+  const countryCode = countries.find((c) => c.name === country)?.dialing_code
+  if (countryCode) return countryCode
+
+  const normalizedPhone = phone.replace(/\s+/g, '')
+  const matchedCode = countries
+    .map((c) => c.dialing_code)
+    .concat('+233')
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length)
+    .find((code) => normalizedPhone.startsWith(code))
+
+  return matchedCode || '+233'
+}
+
+function splitProfilePhone(
+  phone: string,
+  country: string,
+  countries: { name: string; dialing_code: string; is_diaspora: boolean }[]
+) {
+  const countryCode = getDialingCodeForCountry(country, countries, phone)
+  const phoneDigits = onlyDigits(phone)
+  const codeDigits = onlyDigits(countryCode)
+  const localDigits = phoneDigits.startsWith(codeDigits)
+    ? phoneDigits.slice(codeDigits.length)
+    : phoneDigits
+
+  return {
+    countryCode,
+    phone: formatLocalPhone(localDigits, countryCode),
+  }
+}
+
+function normalizeProfilePhone(countryCode: string, phone: string) {
+  const code = countryCode.startsWith('+') ? countryCode : `+${countryCode}`
+  const codeDigits = onlyDigits(code)
+  let localDigits = onlyDigits(phone)
+
+  if (localDigits.startsWith(codeDigits)) {
+    localDigits = localDigits.slice(codeDigits.length)
+  }
+
+  return `${code}${localDigits.replace(/^0+/, '')}`
+}
+
+const modalLabelStyle: React.CSSProperties = {
+  fontFamily: "'Public Sans', sans-serif",
+  fontSize: 10.5,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  color: 'hsl(var(--on-surface-muted))',
 }
 
 export default function ProfileSettings() {
@@ -69,6 +145,10 @@ export default function ProfileSettings() {
   const [dbCountries, setDbCountries] = useState<
     { name: string; dialing_code: string; is_diaspora: boolean }[]
   >([])
+  const [avatarDraftUrl, setAvatarDraftUrl] = useState<string | null>(null)
+  const [avatarCrop, setAvatarCrop] = useState({ x: 0, y: 0 })
+  const [avatarZoom, setAvatarZoom] = useState(1)
+  const [avatarCropPixels, setAvatarCropPixels] = useState<Area | null>(null)
 
   useEffect(() => {
     async function loadProfile() {
@@ -89,11 +169,13 @@ export default function ProfileSettings() {
 
       const profile = await adminService.getMemberProfile(regNo)
       if (profile) {
+        const profileCountry = profile.country || (userPlatform === 'GHANA' ? 'Ghana' : '')
+        const phoneParts = splitProfilePhone(profile.phone || '', profileCountry, uniqueCountries)
         setForm({
           fullName: profile.name,
           email: profile.email || '',
-          phone: profile.phone || '',
-          countryCode: '+233',
+          phone: phoneParts.phone,
+          countryCode: phoneParts.countryCode,
           region: profile.region || '',
           constituency: profile.constituency || '',
           profession: profile.profession || 'Member',
@@ -105,7 +187,7 @@ export default function ProfileSettings() {
           joinedDate: profile.joined,
           status: profile.status === 'Active' ? 'Active Member' : profile.status,
           chapter: profile.chapter || 'TBM Ghana Chapter',
-          country: profile.country || (userPlatform === 'GHANA' ? 'Ghana' : ''),
+          country: profileCountry,
           city: profile.city || '',
           residentialAddress: profile.residentialAddress || '',
         })
@@ -125,11 +207,37 @@ export default function ProfileSettings() {
       const reader = new FileReader()
       reader.addEventListener('load', () => {
         const result = reader.result?.toString() || null
-        setAvatarUrl(result)
-        if (result) sessionStore.setItem('userAvatar', result)
-        window.dispatchEvent(new Event('storage'))
+        setAvatarDraftUrl(result)
+        setAvatarCrop({ x: 0, y: 0 })
+        setAvatarZoom(1)
+        setAvatarCropPixels(null)
       })
       reader.readAsDataURL(e.target.files[0])
+      e.target.value = ''
+    }
+  }
+
+  const handleApplyAvatarCrop = async () => {
+    if (!avatarDraftUrl) return
+    try {
+      const blob = avatarCropPixels
+        ? await getCroppedImg(avatarDraftUrl, avatarCropPixels)
+        : await (await fetch(avatarDraftUrl)).blob()
+      if (!blob) throw new Error('Unable to crop selected image')
+
+      const previewUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = () => reject(reader.error)
+        reader.readAsDataURL(blob)
+      })
+
+      setAvatarUrl(previewUrl)
+      sessionStore.setItem('userAvatar', previewUrl)
+      window.dispatchEvent(new Event('storage'))
+      setAvatarDraftUrl(null)
+    } catch {
+      toast.error('Failed to crop profile photo. Please try another image.')
     }
   }
 
@@ -167,12 +275,13 @@ export default function ProfileSettings() {
       await adminService.updateMemberProfile(regNo, {
         name: form.fullName,
         email: form.email,
-        phone: form.phone,
+        phone: normalizeProfilePhone(form.countryCode, form.phone),
         gender: form.gender,
         // Chapter is Diaspora-only; Ghana Network members are organised by constituency
         ...(userPlatform !== 'GHANA' && { chapter: form.chapter }),
         avatarUrl: finalAvatarUrl || undefined,
         profession: form.profession,
+        country: form.country,
         city: form.city,
         residentialAddress: form.residentialAddress,
       })
@@ -301,6 +410,90 @@ export default function ProfileSettings() {
           <DangerZonePanel />
         </form>
       </div>
+
+      {avatarDraftUrl && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setAvatarDraftUrl(null)}
+        >
+          <div
+            className="panel"
+            style={{
+              width: 'min(440px, 100%)',
+              overflow: 'hidden',
+              background: 'hsl(var(--background))',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="ph">
+              <h3>Crop profile photo</h3>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => setAvatarDraftUrl(null)}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  close
+                </span>
+              </button>
+            </div>
+            <div
+              style={{
+                position: 'relative',
+                height: 320,
+                background: 'hsl(var(--on-surface))',
+              }}
+            >
+              <Cropper
+                image={avatarDraftUrl}
+                crop={avatarCrop}
+                zoom={avatarZoom}
+                aspect={1}
+                cropShape="round"
+                showGrid={false}
+                onCropChange={setAvatarCrop}
+                onCropComplete={(_area, areaPixels) => setAvatarCropPixels(areaPixels)}
+                onZoomChange={setAvatarZoom}
+              />
+            </div>
+            <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <label htmlFor="avatar-zoom" style={{ ...modalLabelStyle, margin: 0 }}>
+                Zoom
+              </label>
+              <input
+                id="avatar-zoom"
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={avatarZoom}
+                onChange={(e) => setAvatarZoom(Number(e.target.value))}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => setAvatarDraftUrl(null)}
+                >
+                  Cancel
+                </button>
+                <button type="button" className="btn btn-primary" onClick={handleApplyAvatarCrop}>
+                  Apply photo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

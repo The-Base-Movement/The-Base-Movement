@@ -42,8 +42,8 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 gap: 8,
                 padding: '4px 12px',
                 borderRadius: 99,
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
                 marginBottom: 24,
                 backdropFilter: 'blur(4px)',
               }}
@@ -61,7 +61,7 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 style={{
                   fontSize: 10.5,
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'rgba(255,255,255,0.9)',
+                  color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '0.05em',
                   textTransform: 'uppercase',
                   fontFamily: "'Public Sans', sans-serif",
@@ -90,10 +90,10 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 style={{
                   height: 8,
                   width: '100%',
-                  background: 'rgba(255,255,255,0.1)',
+                  background: 'hsl(var(--background))',
                   borderRadius: 99,
                   overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.05)',
+                  border: '1px solid hsl(var(--border))',
                   marginBottom: 8,
                 }}
               >
@@ -111,7 +111,7 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 style={{
                   fontSize: 10.5,
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'rgba(255,255,255,0.4)',
+                  color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '0.05em',
                   textTransform: 'uppercase',
                   fontFamily: "'Public Sans', sans-serif",
@@ -125,9 +125,9 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
             <div
               style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'hsl(var(--background))',
                 padding: 24,
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid hsl(var(--border))',
                 backdropFilter: 'blur(8px)',
                 borderRadius: 4,
               }}
@@ -136,7 +136,7 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 style={{
                   fontSize: 10.5,
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'rgba(255,255,255,0.4)',
+                  color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '0.05em',
                   textTransform: 'uppercase',
                   marginBottom: 8,
@@ -159,9 +159,9 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
             </div>
             <div
               style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'hsl(var(--background))',
                 padding: 24,
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid hsl(var(--border))',
                 backdropFilter: 'blur(8px)',
                 borderRadius: 4,
               }}
@@ -170,7 +170,7 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
                 style={{
                   fontSize: 10.5,
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'rgba(255,255,255,0.4)',
+                  color: 'hsl(var(--on-surface-muted))',
                   letterSpacing: '0.05em',
                   textTransform: 'uppercase',
                   marginBottom: 8,

@@ -131,13 +131,16 @@ export function StatCards({
   memberSince,
   contributionYTD,
   rank,
+  platform,
 }: {
   memberStatus: string
   memberSince: string
   contributionYTD: { total: number; lastMonth: number }
   rank: { rank: number; delta: string }
+  platform?: string
 }) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  const rankLabel = platform === 'DIASPORA' ? 'Chapter Rank' : 'Constituency Rank'
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)
@@ -174,7 +177,7 @@ export function StatCards({
     <Tile
       key="rank"
       color="green"
-      label="Chapter Rank"
+      label={rankLabel}
       value={`#${rank.rank.toString().padStart(2, '0')}`}
       delta={rank.delta}
       icon="military_tech"

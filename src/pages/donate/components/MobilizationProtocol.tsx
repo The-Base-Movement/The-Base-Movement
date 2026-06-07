@@ -1,5 +1,7 @@
 import type { Dispatch, FormEvent, SetStateAction } from 'react'
 import type { DonationCampaign } from '@/types/admin'
+import type { CurrencyInfo } from '@/lib/currency'
+import { formatCurrencyAmount } from '@/lib/currency'
 
 interface FormData {
   fullName: string
@@ -27,6 +29,7 @@ interface MobilizationProtocolProps {
   isLoggedIn: boolean
   countriesLoading: boolean
   countries: Country[]
+  currency: CurrencyInfo
   campaigns: DonationCampaign[]
   paymentState: 'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
   checkoutUrl: string | null
@@ -62,6 +65,7 @@ export function MobilizationProtocol({
   isLoggedIn,
   countriesLoading,
   countries,
+  currency,
   campaigns,
   paymentState,
   checkoutUrl,
@@ -291,7 +295,7 @@ export function MobilizationProtocol({
                 style={{
                   fontSize: 11,
                   fontWeight: 500,
-                  color: 'rgba(255,255,255,0.4)',
+                  color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
                   marginBottom: 8,
                 }}
@@ -316,7 +320,7 @@ export function MobilizationProtocol({
                 style={{
                   fontSize: 11,
                   fontWeight: 500,
-                  color: 'rgba(255,255,255,0.4)',
+                  color: 'hsl(var(--on-surface-muted))',
                   fontFamily: "'Public Sans', sans-serif",
                   marginBottom: 8,
                 }}
@@ -342,7 +346,7 @@ export function MobilizationProtocol({
                 gridTemplateColumns: '1fr',
                 gap: 32,
                 paddingTop: 40,
-                borderTop: '1px solid rgba(255,255,255,0.1)',
+                borderTop: '1px solid hsl(var(--border))',
               }}
               className="md:grid-cols-2"
             >
@@ -351,7 +355,7 @@ export function MobilizationProtocol({
                   style={{
                     fontSize: 11,
                     fontWeight: 500,
-                    color: 'rgba(255,255,255,0.4)',
+                    color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
                     marginBottom: 8,
                   }}
@@ -360,7 +364,7 @@ export function MobilizationProtocol({
                 </p>
                 <p
                   style={{
-                    color: 'rgba(255,255,255,0.9)',
+                    color: 'hsl(var(--on-surface))',
                     fontWeight: 'var(--font-weight-medium, 500)',
                     fontFamily: "'Public Sans', sans-serif",
                     fontSize: 16,
@@ -374,7 +378,7 @@ export function MobilizationProtocol({
                   style={{
                     fontSize: 11,
                     fontWeight: 500,
-                    color: 'rgba(255,255,255,0.4)',
+                    color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
                     marginBottom: 8,
                   }}
@@ -402,8 +406,8 @@ export function MobilizationProtocol({
             style={{
               marginTop: 48,
               padding: 24,
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
               display: 'flex',
               alignItems: 'flex-start',
               gap: 16,
@@ -418,7 +422,7 @@ export function MobilizationProtocol({
             <p
               style={{
                 fontSize: 12,
-                color: 'rgba(255,255,255,0.4)',
+                color: 'hsl(var(--on-surface-muted))',
                 lineHeight: 1.5,
                 fontWeight: 400,
                 letterSpacing: '-0.01em',
@@ -565,33 +569,63 @@ export function MobilizationProtocol({
                     fontFamily: "'Public Sans', sans-serif",
                   }}
                 >
-                  Amount (₵) <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+                  Amount ({currency.code}){' '}
+                  <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
-                <input
-                  aria-label="0.00"
-                  name="name-6790e5"
-                  id="amount"
-                  type="number"
-                  placeholder="0.00"
-                  required
-                  autoComplete="off"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  onFocus={() => setActiveStep(2)}
+                <div style={{ position: 'relative' }}>
+                  <span
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 14,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontFamily: "'Public Sans', sans-serif",
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    {currency.symbol}
+                  </span>
+                  <input
+                    aria-label={`Amount in ${currency.code}`}
+                    name="name-6790e5"
+                    id="amount"
+                    type="number"
+                    placeholder="0.00"
+                    required
+                    autoComplete="off"
+                    value={formData.amount}
+                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    onFocus={() => setActiveStep(2)}
+                    style={{
+                      width: '100%',
+                      height: 48,
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: '1px solid hsl(var(--border))',
+                      color: 'hsl(var(--on-surface))',
+                      fontSize: 14,
+                      fontWeight: 500,
+                      fontFamily: "'Public Sans', sans-serif",
+                      outline: 'none',
+                      padding: '0 0 0 28px',
+                    }}
+                  />
+                </div>
+                <p
                   style={{
-                    width: '100%',
-                    height: 48,
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--on-surface))',
-                    fontSize: 14,
-                    fontWeight: 500,
+                    margin: 0,
+                    fontSize: 11,
+                    lineHeight: 1.5,
+                    color: 'hsl(var(--on-surface-muted))',
                     fontFamily: "'Public Sans', sans-serif",
-                    outline: 'none',
-                    padding: 0,
                   }}
-                />
+                >
+                  Jurisdiction sets the amount currency. Current entry:{' '}
+                  {formatCurrencyAmount(formData.amount || 0, currency)}.
+                </p>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <label
@@ -618,7 +652,7 @@ export function MobilizationProtocol({
                     style={{
                       width: '100%',
                       height: 48,
-                      background: 'transparent',
+                      background: 'hsl(var(--card))',
                       border: 'none',
                       borderBottom: '1px solid hsl(var(--border))',
                       color: 'hsl(var(--on-surface))',
@@ -633,15 +667,37 @@ export function MobilizationProtocol({
                     }}
                   >
                     {countriesLoading ? (
-                      <option>synchronizing...</option>
+                      <option
+                        style={{
+                          background: 'hsl(var(--card))',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        synchronizing...
+                      </option>
                     ) : countries.length > 0 ? (
                       countries.map((c) => (
-                        <option key={c.id} value={c.name}>
+                        <option
+                          key={c.id}
+                          value={c.name}
+                          style={{
+                            background: 'hsl(var(--card))',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
                           {c.name}
                         </option>
                       ))
                     ) : (
-                      <option value="ghana">ghana</option>
+                      <option
+                        value="Ghana"
+                        style={{
+                          background: 'hsl(var(--card))',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        Ghana
+                      </option>
                     )}
                   </select>
                   <SelIcon />

@@ -14,6 +14,7 @@ interface InitiatePaymentBody {
   type?: PaymentType
   reference?: string
   amount?: number
+  currency?: string
   name?: string
   phone?: string
   email?: string
@@ -76,6 +77,11 @@ Deno.serve(async (req: Request) => {
     const type = body.type ?? 'payment'
     const reference = body.reference?.trim()
     const amount = Number(body.amount)
+    const currency =
+      body.currency?.trim().toUpperCase() ||
+      (typeof body.metadata?.currency === 'string'
+        ? body.metadata.currency.trim().toUpperCase()
+        : 'GHS')
     const name = body.name?.trim()
     const phone = body.phone?.trim()
 
@@ -119,6 +125,7 @@ Deno.serve(async (req: Request) => {
 
     const hubtelPayload = {
       totalAmount: Number(amount.toFixed(2)),
+      currency,
       description: type === 'donation' ? 'The Base Movement donation' : 'The Base Movement payment',
       callbackUrl,
       returnUrl: body.returnUrl ?? fallbackUrl,

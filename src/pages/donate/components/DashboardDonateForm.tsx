@@ -1,5 +1,6 @@
 import type { FormEvent } from 'react'
 import type { DonationCampaign } from '@/types/admin'
+import { getCurrencyForCountry } from '@/lib/currency'
 
 interface FormData {
   fullName: string
@@ -25,6 +26,8 @@ export function DashboardDonateForm({
   campaigns,
   onSubmit,
 }: DashboardDonateFormProps) {
+  const currency = getCurrencyForCountry(formData.country)
+
   return (
     <div className="panel">
       <div
@@ -130,7 +133,7 @@ export function DashboardDonateForm({
               marginBottom: 6,
             }}
           >
-            Amount (GHS)
+            Amount ({currency.code})
           </label>
           <div style={{ position: 'relative' }}>
             <span
@@ -144,7 +147,7 @@ export function DashboardDonateForm({
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
-              ₵
+              {currency.symbol}
             </span>
             <input
               aria-label="0.00"
@@ -168,6 +171,8 @@ export function DashboardDonateForm({
                 fontWeight: 'var(--font-weight-medium, 500)',
                 boxSizing: 'border-box',
                 outline: 'none',
+                background: 'hsl(var(--background))',
+                color: 'hsl(var(--on-surface))',
               }}
             />
           </div>
@@ -184,12 +189,14 @@ export function DashboardDonateForm({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 4,
                   cursor: 'pointer',
-                  background: formData.amount === amt ? 'hsl(var(--primary))' : '#fff',
+                  background:
+                    formData.amount === amt ? 'hsl(var(--primary))' : 'hsl(var(--background))',
                   color: formData.amount === amt ? '#fff' : 'hsl(var(--on-surface-muted))',
                   transition: 'all 0.15s',
                 }}
               >
-                ₵{amt}
+                {currency.symbol}
+                {amt}
               </button>
             ))}
           </div>

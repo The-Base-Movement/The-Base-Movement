@@ -66,28 +66,34 @@ export function RegistrationForm(props: RegistrationFormProps) {
     onBack,
     onSubmit,
   } = props
+  const isDiaspora = platform === 'DIASPORA'
+  const displayStep = isDiaspora && formStep === 4 ? 3 : formStep
+  const totalSteps = isDiaspora ? 3 : 4
 
   return (
     <div className="auth-frame">
       <div className="auth-header-label">
         {formStep === 1 && (
           <>
-            02 · Register <span>Step 1 of 4</span>
+            02 · Register <span>Step 1 of {totalSteps}</span>
           </>
         )}
         {formStep === 2 && (
           <>
-            02 · Register <span>Step 2 of 4</span>
+            02 · Register <span>Step 2 of {totalSteps}</span>
           </>
         )}
-        {formStep === 3 && (
+        {formStep === 3 && !isDiaspora && (
           <>
             03 · Verify ID <span>Step 3 of 4</span>
           </>
         )}
         {formStep === 4 && (
           <>
-            04 · Finalize <span>Step 4 of 4</span>
+            {isDiaspora ? '03' : '04'} · Finalize{' '}
+            <span>
+              Step {displayStep} of {totalSteps}
+            </span>
           </>
         )}
       </div>
@@ -98,34 +104,33 @@ export function RegistrationForm(props: RegistrationFormProps) {
           <h2 className="auth-heading">
             {formStep === 1 && 'Create your account'}
             {formStep === 2 && 'Tell us about you'}
-            {formStep === 3 && 'Verify your ID'}
+            {formStep === 3 && !isDiaspora && 'Verify your ID'}
             {formStep === 4 && 'Final declaration'}
           </h2>
           <p className="text-[12px] text-on-surface-muted">
             {formStep === 1 && 'Join the movement to build a better Ghana.'}
             {formStep === 2 && 'Used to assign you to your local branch.'}
             {formStep === 3 &&
-              (platform === 'DIASPORA'
-                ? 'Upload a clear photo of your ID (Optional for Diaspora).'
-                : 'Upload a clear photo of your Ghana Card (or passport).')}
+              !isDiaspora &&
+              'Upload a clear photo of your Ghana Card (or passport).'}
             {formStep === 4 && 'Almost there, patriot. Confirm your details.'}
           </p>
         </div>
 
         {/* Stepper */}
         <div className="auth-stepper">
-          <div
-            className={cn('step', formStep >= 1 ? (formStep > 1 ? 'done' : 'current') : '')}
-          ></div>
-          <div
-            className={cn('step', formStep >= 2 ? (formStep > 2 ? 'done' : 'current') : '')}
-          ></div>
-          <div
-            className={cn('step', formStep >= 3 ? (formStep > 3 ? 'done' : 'current') : '')}
-          ></div>
-          <div
-            className={cn('step', formStep >= 4 ? (formStep > 4 ? 'done' : 'current') : '')}
-          ></div>
+          {Array.from({ length: totalSteps }, (_, index) => {
+            const step = index + 1
+            return (
+              <div
+                key={step}
+                className={cn(
+                  'step',
+                  displayStep >= step ? (displayStep > step ? 'done' : 'current') : ''
+                )}
+              />
+            )
+          })}
         </div>
 
         <form onSubmit={onSubmit} className="flex flex-col flex-1">
@@ -506,7 +511,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
               </div>
             )}
 
-            {formStep === 3 && (
+            {formStep === 3 && !isDiaspora && (
               <div className="space-y-6 animate-in fade-in duration-500">
                 {/* 1. Ghana Card Upload */}
                 <div className="space-y-2">
@@ -725,8 +730,10 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         id="input-f84a60"
                         type="number"
                         min={0}
-                        value={formData.children_count}
-                        onChange={(e) => onInputChange('children_count', Number(e.target.value))}
+                        value={formData.children_count === 0 ? '' : formData.children_count}
+                        onChange={(e) =>
+                          onInputChange('children_count', Number(e.target.value || 0))
+                        }
                         className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                         placeholder="0"
                       />
@@ -875,8 +882,6 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </>
               ) : formStep === 4 ? (
                 'Submit registration →'
-              ) : formStep === 3 && platform === 'DIASPORA' && (!photoUrl || !selfieUrl) ? (
-                'Skip verification →'
               ) : formStep === 3 ? (
                 'Continue to final step →'
               ) : (

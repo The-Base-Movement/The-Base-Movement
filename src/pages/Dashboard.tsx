@@ -142,6 +142,7 @@ export default function Dashboard() {
         memberSince={member?.joined_date || '14 mo.'}
         contributionYTD={contributionStats}
         rank={rankInfo}
+        platform={member?.platform || sessionStore.getItem('userPlatform') || 'GHANA'}
       />
 
       <div className="dash-content">

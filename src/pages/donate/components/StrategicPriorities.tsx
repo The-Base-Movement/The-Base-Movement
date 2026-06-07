@@ -282,7 +282,7 @@ export function StrategicPriorities({
                 height: 36,
                 border: `1px solid ${i === page ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
                 borderRadius: 'var(--radius-sm)',
-                background: i === page ? 'hsl(var(--primary))' : '#fff',
+                background: i === page ? 'hsl(var(--primary))' : 'hsl(var(--background))',
                 color: i === page ? '#fff' : 'hsl(var(--on-surface-muted))',
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',

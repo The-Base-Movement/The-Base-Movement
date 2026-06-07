@@ -195,7 +195,7 @@ export default function Chapters() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] pb-20">
+    <div className="min-h-screen bg-background pb-20">
       <SEO
         title="Movement Chapters"
         description="Connect with your local community through our global network of regional hubs."

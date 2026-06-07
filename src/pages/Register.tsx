@@ -89,6 +89,9 @@ export default function Register() {
 
   const handlePlatformChange = (newPlatform: string) => {
     setPlatform(newPlatform)
+    if (newPlatform === 'DIASPORA' && formStep === 3) {
+      setFormStep(4)
+    }
     if (newPlatform === 'GHANA')
       setFormData((prev) => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
   }
@@ -203,7 +206,7 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formStep < 3) {
-      setFormStep((prev) => prev + 1)
+      setFormStep((prev) => (prev === 2 && platform === 'DIASPORA' ? 4 : prev + 1))
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (formStep === 3) {
       if (!isOnline) {
@@ -409,7 +412,9 @@ export default function Register() {
           onInputChange={handleChange}
           onPasswordToggle={() => setShowPassword(!showPassword)}
           onAgreedChange={setAgreed}
-          onBack={() => setFormStep((prev) => prev - 1)}
+          onBack={() =>
+            setFormStep((prev) => (prev === 4 && platform === 'DIASPORA' ? 2 : prev - 1))
+          }
           onSubmit={handleSubmit}
         />
 

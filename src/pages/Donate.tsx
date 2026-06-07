@@ -23,6 +23,7 @@ import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
 import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { initiateHubtelCheckout, openHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { getCurrencyForCountry } from '@/lib/currency'
 
 export default function PublicDonate() {
   const [loading, setLoading] = useState(true)
@@ -59,6 +60,7 @@ export default function PublicDonate() {
     memberId: '',
     showOnDashboard: true,
   })
+  const selectedCurrency = getCurrencyForCountry(formData.country)
 
   useEffect(() => {
     async function load() {
@@ -85,6 +87,7 @@ export default function PublicDonate() {
           ...prev,
           fullName: profile?.name || user.user_metadata?.full_name || '',
           phone: profile?.phone || user.user_metadata?.phone || '',
+          country: profile?.country || prev.country,
           membershipNumber: profile?.id || user.user_metadata?.membership_number || '',
           memberId: user.id,
         }))
@@ -189,6 +192,7 @@ export default function PublicDonate() {
       const url = await initiateHubtelCheckout({
         reference: data.id,
         amount,
+        currency: selectedCurrency.code,
         name: formData.fullName,
         phone: formData.phone,
         metadata: {
@@ -196,12 +200,16 @@ export default function PublicDonate() {
           memberId: formData.memberId || undefined,
           membershipNumber: formData.membershipNumber || undefined,
           campaignId: formData.campaignId || undefined,
+          jurisdiction: formData.country,
+          currency: selectedCurrency.code,
+          currencySymbol: selectedCurrency.symbol,
+          enteredAmount: amount,
         },
       })
 
       setCheckoutUrl(url)
       setPaymentState('checkout')
-      trackEvent('donation_payment_started', { amount })
+      trackEvent('donation_payment_started', { amount, currency: selectedCurrency.code })
       const popup = openHubtelCheckout(url)
       if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
     } catch {
@@ -319,6 +327,7 @@ export default function PublicDonate() {
               isLoggedIn={isLoggedIn}
               countriesLoading={countriesLoading}
               countries={countries}
+              currency={selectedCurrency}
               campaigns={campaigns}
               onSubmit={handleSubmit}
               onReopenCheckout={() => checkoutUrl && openHubtelCheckout(checkoutUrl)}

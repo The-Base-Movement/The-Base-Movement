@@ -323,6 +323,7 @@ class MemberService {
     }
 
     if (profile.chapter) updateData.chapter = profile.chapter
+    if (profile.country) updateData.country = profile.country
     if (profile.profession) updateData.profession = profile.profession
     if (profile.city) updateData.city = profile.city
     if (profile.residentialAddress) updateData.residential_address = profile.residentialAddress
