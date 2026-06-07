@@ -1,7 +1,7 @@
 import type { Dispatch, FormEvent, SetStateAction } from 'react'
 import type { DonationCampaign } from '@/types/admin'
 import type { CurrencyInfo } from '@/lib/currency'
-import { formatCurrencyAmount } from '@/lib/currency'
+import { formatCurrencyAmount, formatGhsAmount } from '@/lib/currency'
 
 interface FormData {
   fullName: string
@@ -30,6 +30,7 @@ interface MobilizationProtocolProps {
   countriesLoading: boolean
   countries: Country[]
   currency: CurrencyInfo
+  ghsAmount: number
   campaigns: DonationCampaign[]
   paymentState: 'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
   checkoutUrl: string | null
@@ -123,6 +124,7 @@ export function MobilizationProtocol({
   countriesLoading,
   countries,
   currency,
+  ghsAmount,
   campaigns,
   paymentState,
   checkoutUrl,
@@ -553,6 +555,7 @@ export function MobilizationProtocol({
               }}
             >
               Current entry: {formatCurrencyAmount(formData.amount || 0, currency)}
+              {currency.code !== 'GHS' ? ` · Checkout settles ${formatGhsAmount(ghsAmount)}` : ''}
             </span>
           </div>
         </form>
@@ -617,6 +620,18 @@ export function MobilizationProtocol({
               >
                 {formatCurrencyAmount(formData.amount || 0, currency)}
               </p>
+              {currency.code !== 'GHS' && (
+                <p
+                  style={{
+                    margin: '6px 0 0',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 12,
+                    lineHeight: 1.45,
+                  }}
+                >
+                  Hubtel checkout will charge {formatGhsAmount(ghsAmount)} in Ghana cedis.
+                </p>
+              )}
             </div>
 
             <div
@@ -654,6 +669,21 @@ export function MobilizationProtocol({
                   }}
                 >
                   {formData.country}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                  Settlement
+                </span>
+                <span
+                  style={{
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textAlign: 'right',
+                  }}
+                >
+                  {formatGhsAmount(ghsAmount)}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>

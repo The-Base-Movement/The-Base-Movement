@@ -23,7 +23,7 @@ import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
 import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { initiateHubtelCheckout, openHubtelCheckout } from '@/components/payment/hubtelCheckout'
-import { getCurrencyForCountry } from '@/lib/currency'
+import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
 
 export default function PublicDonate() {
   const [loading, setLoading] = useState(true)
@@ -61,6 +61,7 @@ export default function PublicDonate() {
     showOnDashboard: true,
   })
   const selectedCurrency = getCurrencyForCountry(formData.country)
+  const ghsDonationAmount = convertToGhs(formData.amount || 0, selectedCurrency)
 
   useEffect(() => {
     async function load() {
@@ -169,12 +170,18 @@ export default function PublicDonate() {
     let donationIdToCleanUp: string | null = null
     try {
       const amount = parseFloat(formData.amount)
+      const ghsAmount = convertToGhs(amount, selectedCurrency)
+      if (!Number.isFinite(ghsAmount) || ghsAmount <= 0) {
+        toast.error('Please enter a valid contribution amount.')
+        return
+      }
+
       const { data, error } = await supabase
         .from('donations')
         .insert({
           full_name: formData.fullName.trim(),
           phone: formData.phone.trim(),
-          amount,
+          amount: ghsAmount,
           country: formData.country,
           payment_method: 'Hubtel',
           status: 'Pending',
@@ -204,12 +211,18 @@ export default function PublicDonate() {
           currency: selectedCurrency.code,
           currencySymbol: selectedCurrency.symbol,
           enteredAmount: amount,
+          ghsAmount,
+          exchangeRateToGhs: selectedCurrency.ghsRate,
         },
       })
 
       setCheckoutUrl(url)
       setPaymentState('checkout')
-      trackEvent('donation_payment_started', { amount, currency: selectedCurrency.code })
+      trackEvent('donation_payment_started', {
+        amount,
+        currency: selectedCurrency.code,
+        ghsAmount,
+      })
       const popup = openHubtelCheckout(url)
       if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
     } catch {
@@ -341,6 +354,7 @@ export default function PublicDonate() {
               countriesLoading={countriesLoading}
               countries={countries}
               currency={selectedCurrency}
+              ghsAmount={ghsDonationAmount}
               campaigns={campaigns}
               onSubmit={handleSubmit}
               onReopenCheckout={() => checkoutUrl && openHubtelCheckout(checkoutUrl)}

@@ -1,5 +1,6 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { convertToHubtelGhs, parseGhsExchangeRates } from './currency.ts'
 import { normalizeHubtelPhone } from './phone.ts'
 
 const corsHeaders = {
@@ -91,6 +92,9 @@ Deno.serve(async (req: Request) => {
     // @ts-expect-error: Deno global
     const baseUrl =
       Deno.env.get('HUBTEL_CHECKOUT_URL') ?? 'https://payproxyapi.hubtel.com/items/initiate'
+    // @ts-expect-error: Deno global
+    const exchangeRates = parseGhsExchangeRates(Deno.env.get('HUBTEL_GHS_EXCHANGE_RATES'))
+    const settlement = convertToHubtelGhs(amount, currency, exchangeRates)
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -102,7 +106,7 @@ Deno.serve(async (req: Request) => {
         .single()
 
       if (error || !donation) throw new Error('Donation record was not found')
-      if (Math.abs(Number(donation.amount) - amount) > 0.01) {
+      if (Math.abs(Number(donation.amount) - settlement.ghsAmount) > 0.01) {
         throw new Error('Donation amount does not match the payment request')
       }
     }
@@ -117,8 +121,8 @@ Deno.serve(async (req: Request) => {
       'https://thebasemovement.com'
 
     const hubtelPayload = {
-      totalAmount: Number(amount.toFixed(2)),
-      currency,
+      totalAmount: Number(settlement.ghsAmount.toFixed(2)),
+      currency: 'GHS',
       description: type === 'donation' ? 'The Base Movement donation' : 'The Base Movement payment',
       callbackUrl,
       returnUrl: body.returnUrl ?? fallbackUrl,
@@ -129,12 +133,18 @@ Deno.serve(async (req: Request) => {
       customerPhoneNumber: normalizeHubtelPhone(phone),
       customerEmail: body.email || 'donations@thebasemovement.com',
       channels: ['mobilemoney', 'card'],
-      metadata: body.metadata ?? {},
+      metadata: {
+        ...(body.metadata ?? {}),
+        sourceAmount: settlement.sourceAmount,
+        sourceCurrency: settlement.sourceCurrency,
+        exchangeRateToGhs: settlement.exchangeRateToGhs,
+        ghsAmount: settlement.ghsAmount,
+      },
       items: [
         {
           name: type === 'donation' ? 'Donation' : 'Payment',
           quantity: 1,
-          unitPrice: Number(amount.toFixed(2)),
+          unitPrice: Number(settlement.ghsAmount.toFixed(2)),
         },
       ],
     }
