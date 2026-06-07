@@ -339,7 +339,7 @@ export default function ITDashboard() {
                 transition: 'background 0.1s',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'hsl(var(--surface))')}
             >
               <span
                 className="material-symbols-outlined"

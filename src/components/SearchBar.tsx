@@ -52,8 +52,8 @@ export function SearchBar({
           fontFamily: "'Public Sans', sans-serif",
           fontWeight: 'var(--font-weight-medium, 500)',
           fontSize: isDashboard ? 12 : 13,
-          color: isDashboard ? 'hsl(var(--on-surface))' : '#1c1c1c',
-          background: isDashboard ? 'hsl(var(--background))' : '#fff',
+          color: 'hsl(var(--on-surface))',
+          background: isDashboard ? 'hsl(var(--background))' : 'hsl(var(--card))',
           outline: 'none',
           boxSizing: 'border-box',
         }}

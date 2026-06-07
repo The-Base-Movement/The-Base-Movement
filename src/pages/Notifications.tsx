@@ -195,7 +195,7 @@ export default function Notifications() {
                     width: 36,
                     height: 36,
                     borderRadius: 'var(--radius-pill)',
-                    background: n.is_read ? 'hsl(var(--container-low))' : '#fff',
+                    background: n.is_read ? 'hsl(var(--container-low))' : 'hsl(var(--card))',
                     border: `1.5px solid ${color}`,
                     display: 'flex',
                     alignItems: 'center',

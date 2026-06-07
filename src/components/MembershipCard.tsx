@@ -43,10 +43,10 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     aspectRatio: '1.6 / 1',
     display: 'flex',
     flexDirection: 'column',
-    borderLeft: '3px solid hsl(var(--primary))',
-    borderRight: '3px solid hsl(var(--primary))',
-    borderTop: '3px solid hsl(var(--destructive))',
-    borderBottom: '3px solid hsl(var(--accent))',
+    borderLeft: '3px solid #006B3F',
+    borderRight: '3px solid #006B3F',
+    borderTop: '3px solid #CE1126',
+    borderBottom: '3px solid #DAA520',
     borderRadius: 'var(--radius-md)',
     overflow: 'hidden',
     boxShadow: isForDownload ? 'none' : '0 24px 48px -12px rgba(0,0,0,.18)',
@@ -57,7 +57,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   }
 
   const headStyle: React.CSSProperties = {
-    background: 'hsl(var(--destructive))',
+    background: '#CE1126',
     padding: '12px 14px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -79,8 +79,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     width: '120px',
     height: '155px',
     padding: '2px',
-    background:
-      'linear-gradient(to bottom, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)))',
+    background: 'linear-gradient(to bottom, #CE1126, #DAA520, #006B3F)',
     borderRadius: 'var(--radius-sm)',
     flexShrink: 0,
     position: 'relative',
@@ -99,7 +98,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     lineHeight: '28px',
     letterSpacing: '-.015em',
     paddingBottom: '3px',
-    color: 'hsl(var(--on-surface))',
+    color: '#181d19',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -116,7 +115,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   const dtStyle: React.CSSProperties = {
     fontSize: '10px',
     fontWeight: 'var(--font-weight-medium, 500)',
-    color: 'hsl(var(--on-surface-muted))',
+    color: '#6f7a71',
     textTransform: 'uppercase',
     lineHeight: '16px',
     paddingBottom: '4px',
@@ -126,7 +125,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     margin: 0,
     fontSize: '11px',
     fontWeight: 'var(--font-weight-medium, 500)',
-    color: 'hsl(var(--on-surface))',
+    color: '#181d19',
     letterSpacing: '-.005em',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -148,12 +147,12 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   }
 
   const footStyle: React.CSSProperties = {
-    background: 'hsl(var(--container-low))',
-    borderTop: '1px solid hsl(var(--border))',
+    background: '#f1f5ee',
+    borderTop: '1px solid #dfe4dd',
     padding: '5px 14px',
     fontSize: '8px',
     fontWeight: 'var(--font-weight-medium, 500)',
-    color: 'hsl(var(--on-surface-muted))',
+    color: '#6f7a71',
     textAlign: 'center',
     flexShrink: 0,
   }
@@ -253,7 +252,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
                 style={{
                   width: '100%',
                   height: '100%',
-                  background: 'hsl(var(--primary))',
+                  background: '#006B3F',
                   color: '#fff',
                   display: 'flex',
                   alignItems: 'center',
@@ -289,13 +288,11 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
 
         <div style={infoStyle}>
           <div style={nameStyle}>{userName || 'Member Name'}</div>
-          <div
-            style={{ height: 2, width: 36, background: 'hsl(var(--primary))', marginBottom: 8 }}
-          />
+          <div style={{ height: 2, width: 36, background: '#006B3F', marginBottom: 8 }} />
 
           <dl style={dlStyle}>
             <dt style={dtStyle}>Reg. no.</dt>
-            <dd style={{ ...ddStyle, color: 'hsl(var(--primary))' }}>{userRegNo || 'GH-XXXXXX'}</dd>
+            <dd style={{ ...ddStyle, color: '#006B3F' }}>{userRegNo || 'GH-XXXXXX'}</dd>
 
             <dt style={dtStyle}>Gender</dt>
             <dd style={ddStyle}>{gender || 'Not Specified'}</dd>
@@ -327,12 +324,18 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             <dd style={ddStyle}>{joinedDate || '30 Mar 2025'}</dd>
 
             <dt style={dtStyle}>Status</dt>
-            <dd style={{ ...ddStyle, color: 'hsl(var(--primary))' }}>● {status || 'Verified'}</dd>
+            <dd style={{ ...ddStyle, color: '#006B3F' }}>● {status || 'Verified'}</dd>
           </dl>
         </div>
 
         <div style={qrStyle}>
-          <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', padding: 4 }}>
+          <div
+            style={{
+              background: '#fff',
+              border: '1px solid #dfe4dd',
+              padding: 4,
+            }}
+          >
             <QRCodeSVG
               value={`${typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/${userRegNo || 'GH-XXXXXX'}`}
               size={64}
@@ -343,7 +346,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             style={{
               fontSize: 8,
               fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface-muted))',
+              color: '#6f7a71',
               textTransform: 'uppercase',
             }}
           >

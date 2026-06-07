@@ -41,7 +41,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
       style={{
         padding: '13px 16px',
         borderBottom: '1px solid hsl(var(--border))',
-        background: isActive ? 'linear-gradient(135deg,#0f1310,#1f2620)' : '#fff',
+        background: isActive ? 'linear-gradient(135deg,#0f1310,#1f2620)' : 'hsl(var(--card))',
         boxShadow: isActive ? 'inset 3px 0 0 hsl(var(--primary))' : undefined,
         cursor: 'pointer',
       }}
@@ -52,9 +52,9 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
           style={{
             width: 42,
             height: 42,
-            borderRadius: 4,
+            borderRadius: 'var(--radius-sm)',
             overflow: 'hidden',
-            background: isActive ? 'rgba(255,255,255,.1)' : '#f1f5ee',
+            background: isActive ? 'rgba(255,255,255,.1)' : 'hsl(var(--container-low))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -163,7 +163,7 @@ export default function VerificationListCard({ member, isActive, onClick }: Prop
               padding: '2px 9px',
               background: 'rgba(255,255,255,.12)',
               border: '1px solid rgba(255,255,255,.2)',
-              borderRadius: 99,
+              borderRadius: 'var(--radius-pill)',
               fontSize: 9.5,
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',

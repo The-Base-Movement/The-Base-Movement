@@ -46,7 +46,7 @@ export default function MemberListCard({
       style={{
         padding: '13px 16px',
         borderBottom: '1px solid hsl(var(--border))',
-        background: isSelected ? 'rgba(0,107,63,.04)' : '#fff',
+        background: isSelected ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
         boxShadow: isSelected ? 'inset 3px 0 0 hsl(var(--primary))' : undefined,
       }}
     >
@@ -64,10 +64,10 @@ export default function MemberListCard({
           style={{
             width: 42,
             height: 42,
-            borderRadius: '50%',
+            borderRadius: 'var(--radius-pill)',
             border: '2px solid hsl(var(--border))',
             overflow: 'hidden',
-            background: '#f1f5ee',
+            background: 'hsl(var(--container-low))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -86,7 +86,7 @@ export default function MemberListCard({
             <span
               style={{
                 fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 700,
+                fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 14,
                 color: 'hsl(var(--on-surface-muted))',
               }}
@@ -100,7 +100,7 @@ export default function MemberListCard({
             style={{
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 700,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13.5,
               color: 'hsl(var(--on-surface))',
               overflow: 'hidden',
@@ -115,7 +115,7 @@ export default function MemberListCard({
               fontSize: 10.5,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-medium, 500)',
               fontVariantNumeric: 'tabular-nums',
             }}
           >

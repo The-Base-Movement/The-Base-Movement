@@ -552,7 +552,8 @@ export default function FinancialAudit() {
                           padding: '4px 10px',
                           borderRadius: 'var(--radius-pill)',
                           border: '1px solid hsl(var(--border))',
-                          background: filters.method === m ? 'hsl(var(--on-surface))' : '#fff',
+                          background:
+                            filters.method === m ? 'hsl(var(--on-surface))' : 'hsl(var(--card))',
                           color: filters.method === m ? '#fff' : 'hsl(var(--on-surface))',
                           fontSize: 11,
                           fontFamily: "'Public Sans', sans-serif",
@@ -591,7 +592,8 @@ export default function FinancialAudit() {
                           padding: '4px 10px',
                           borderRadius: 'var(--radius-pill)',
                           border: '1px solid hsl(var(--border))',
-                          background: filters.country === c ? 'hsl(var(--on-surface))' : '#fff',
+                          background:
+                            filters.country === c ? 'hsl(var(--on-surface))' : 'hsl(var(--card))',
                           color: filters.country === c ? '#fff' : 'hsl(var(--on-surface))',
                           fontSize: 11,
                           fontFamily: "'Public Sans', sans-serif",

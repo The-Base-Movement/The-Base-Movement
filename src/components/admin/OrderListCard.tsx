@@ -26,7 +26,7 @@ export function OrderListCard({
       style={{
         padding: '13px 16px',
         borderBottom: '1px solid hsl(var(--border))',
-        background: isSelected ? 'rgba(0,107,63,.04)' : '#fff',
+        background: isSelected ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
         boxShadow: isSelected ? 'inset 3px 0 0 hsl(var(--primary))' : undefined,
         display: 'flex',
         flexDirection: 'column',

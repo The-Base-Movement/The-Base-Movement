@@ -109,7 +109,9 @@ export function AdminSidebar({
     <aside
       className={cn(
         'fixed inset-y-0 left-0 z-50 flex flex-col bg-[#0f1310] text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 border-r border-black',
-        isSidebarOpen ? 'translate-x-0 w-[220px]' : '-translate-x-full lg:w-0 lg:translate-x-0'
+        isSidebarOpen
+          ? 'translate-x-0 w-[220px]'
+          : '-translate-x-full w-[220px] lg:w-[76px] lg:translate-x-0'
       )}
     >
       <div className="h-full flex flex-col">
@@ -117,11 +119,20 @@ export function AdminSidebar({
         <div
           className={cn(
             'h-16 flex items-center border-b border-white/[0.08] mb-3 overflow-hidden transition-all duration-300',
-            isSidebarOpen ? 'px-[18px]' : 'px-5'
+            isSidebarOpen ? 'justify-start px-[18px]' : 'justify-center px-0'
           )}
         >
-          <Link to="/admin/dashboard" className="flex items-center gap-4 shrink-0">
-            <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center shadow-2xl p-1.5 shrink-0">
+          <Link
+            to="/admin/dashboard"
+            className={cn('flex items-center shrink-0', isSidebarOpen ? 'gap-4' : 'gap-0')}
+          >
+            <div
+              className={cn(
+                'bg-white flex items-center justify-center shadow-2xl shrink-0 transition-all duration-300',
+                isSidebarOpen ? 'w-10 h-10 p-1.5' : 'w-9 h-9 p-1'
+              )}
+              style={{ borderRadius: 'var(--radius-md)' }}
+            >
               <img
                 src={logoUrl}
                 alt="The Base Logo"
