@@ -1,339 +1,9 @@
 ﻿import { useState, useCallback, useEffect } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-
-const ageRanges = ['16-25', '26-40', '41-60', '60+']
-const educationLevels = [
-  'None',
-  'Primary',
-  'JHS / Middle School',
-  'SHS / Secondary',
-  'Vocational / Technical',
-  'Diploma / HND',
-  "Bachelor's Degree",
-  "Master's Degree",
-  'PhD / Doctorate',
-  'Professional Certification',
-]
-const ghanaRegions = [
-  'Ahafo',
-  'Ashanti',
-  'Bono',
-  'Bono East',
-  'Central',
-  'Eastern',
-  'Greater Accra',
-  'North East',
-  'Northern',
-  'Oti',
-  'Savannah',
-  'Upper East',
-  'Upper West',
-  'Volta',
-  'Western',
-  'Western North',
-]
-
-const diasporaCountries = [
-  'United Kingdom',
-  'United States',
-  'Canada',
-  'Germany',
-  'France',
-  'Australia',
-  'South Africa',
-  'United Arab Emirates',
-  'Netherlands',
-  'Italy',
-  'Austria',
-  'Belgium',
-  'Brazil',
-  'Burkina Faso',
-  'Cameroon',
-  'China',
-  'Czech Republic',
-  'Denmark',
-  'Egypt',
-  'Finland',
-  'India',
-  'Ireland',
-  'Israel',
-  'Japan',
-  'Kenya',
-  'Kuwait',
-  'Luxembourg',
-  'Malaysia',
-  'Mexico',
-  'Morocco',
-  'New Zealand',
-  'Nigeria',
-  'Norway',
-  'Poland',
-  'Portugal',
-  'Qatar',
-  'Russia',
-  'Saudi Arabia',
-  'Senegal',
-  'Singapore',
-  'South Korea',
-  'Spain',
-  'Sweden',
-  'Switzerland',
-  'Tanzania',
-  'Thailand',
-  'Togo',
-  'Turkey',
-]
-
-const countryCodes: Record<string, string> = {
-  Ghana: '+233',
-  'United Kingdom': '+44',
-  'United States': '+1',
-  Canada: '+1',
-  Germany: '+49',
-  France: '+33',
-  Australia: '+61',
-  'South Africa': '+27',
-  'United Arab Emirates': '+971',
-  Netherlands: '+31',
-  Italy: '+39',
-  Austria: '+43',
-  Belgium: '+32',
-  Brazil: '+55',
-  'Burkina Faso': '+226',
-  Cameroon: '+237',
-  China: '+86',
-  'Czech Republic': '+420',
-  Denmark: '+45',
-  Egypt: '+20',
-  Finland: '+358',
-  India: '+91',
-  Ireland: '+353',
-  Israel: '+972',
-  Japan: '+81',
-  Kenya: '+254',
-  Kuwait: '+965',
-  Luxembourg: '+352',
-  Malaysia: '+60',
-  Mexico: '+52',
-  Morocco: '+212',
-  'New Zealand': '+64',
-  Nigeria: '+234',
-  Norway: '+47',
-  Poland: '+48',
-  Portugal: '+351',
-  Qatar: '+974',
-  Russia: '+7',
-  'Saudi Arabia': '+966',
-  Senegal: '+221',
-  Singapore: '+65',
-  'South Korea': '+82',
-  Spain: '+34',
-  Sweden: '+46',
-  Switzerland: '+41',
-  Tanzania: '+255',
-  Thailand: '+66',
-  Togo: '+228',
-  Turkey: '+90',
-}
-
-const regionConstituencies: Record<string, string[]> = {
-  Ahafo: [
-    'Asunafo North',
-    'Asunafo South',
-    'Asutifi North',
-    'Asutifi South',
-    'Tano North',
-    'Tano South',
-  ],
-  Ashanti: [
-    'Adansi-Asokwa',
-    'Fomena',
-    'New Edubease',
-    'Afigya Kwabre North',
-    'Afigya Kwabre South',
-    'Ahafo Ano North',
-    'Ahafo Ano South East',
-    'Ahafo Ano South West',
-    'Akrofuom',
-    'Odotobri',
-    'Manso Nkwanta',
-    'Manso Edubia',
-    'Asante Akim Central',
-    'Asante Akim North',
-    'Asante Akim South',
-    'Asawase',
-    'Asokwa',
-    'Atwima-Kwanwoma',
-    'Atwima Mponua',
-    'Atwima-Nwabiagya South',
-    'Atwima-Nwabiagya North',
-    'Bekwai',
-    'Bosome-Freho',
-    'Bosomtwe',
-    'Ejisu',
-    'Ejura-Sekyedumase',
-    'Juaben',
-    'Bantama',
-    'Manhyia North',
-    'Manhyia South',
-    'Nhyiaeso',
-    'Subin',
-    'Kwabre East',
-    'Kwadaso',
-    'Mampong',
-    'Obuasi East',
-    'Obuasi West',
-    'Offinso South',
-    'Offinso North',
-    'Oforikrom',
-    'Old Tafo',
-    'Sekyere Afram Plains',
-    'Nsuta-Kwamang-Beposo',
-    'Afigya Sekyere East',
-    'Kumawu',
-    'Effiduase-Asokore',
-    'Suame',
-  ],
-  Bono: [
-    'Banda Ahenkro',
-    'Berekum East',
-    'Berekum West',
-    'Dormaa Central',
-    'Dormaa East',
-    'Dormaa West',
-    'Jaman North',
-    'Jaman South',
-    'Sunyani East',
-    'Sunyani West',
-    'Tain',
-    'Wenchi',
-  ],
-  'Bono East': [
-    'Atebubu-Amantin',
-    'Kintampo North',
-    'Kintampo South',
-    'Nkoranza North',
-    'Nkoranza South',
-    'Pru East',
-    'Pru West',
-    'Sene East',
-    'Sene West',
-    'Techiman South',
-    'Techiman North',
-  ],
-  Central: [
-    'Abura-Asebu-Kwamankese',
-    'Agona East',
-    'Agona West',
-    'Ajumako-Enyan-Essiam',
-    'Asikuma-Odoben-Brakwa',
-    'Assin Central',
-    'Assin North',
-    'Assin South',
-    'Awutu-Senya East',
-    'Awutu-Senya West',
-    'Cape Coast North',
-    'Cape Coast South',
-    'Effutu',
-    'Ekumfi',
-    'Gomoa East',
-    'Gomoa Central',
-    'Gomoa West',
-    'Komenda-Edina-Eguafo-Abirem',
-    'Mfantseman',
-    'Twifo-Atii Morkwaa',
-    'Hemang Lower Denkyira',
-    'Upper Denkyira East',
-    'Upper Denkyira West',
-  ],
-  Eastern: [
-    'Abuakwa North',
-    'Abuakwa South',
-    'Achiase',
-    'Akropong',
-    'Akwapim South',
-    'Ofoase-Ayirebi',
-    'Asene Akroso Manso',
-    'Asuogyaman',
-    'Atiwa East',
-    'Atiwa West',
-    'Ayensuano',
-    'Akim Oda',
-    'Abirem',
-    'Akim Swedru',
-    'Akwatia',
-    'Fanteakwa North',
-    'Fanteakwa South',
-    'Kade',
-    'Afram Plains North',
-    'Afram Plains South',
-    'Abetifi',
-    'Mpraeso',
-    'Nkawkaw',
-    'Lower Manya',
-    'New Juaben North',
-    'New Juaben South',
-    'Nsawam Adoagyiri',
-    'Okere',
-    'Suhum',
-    'Upper Manya',
-    'Upper West Akim',
-    'Lower West Akim',
-    'Yilo Krobo',
-  ],
-  'Greater Accra': [
-    'Ablekuma Central',
-    'Ablekuma North',
-    'Ablekuma West',
-    'Ablekuma South',
-    'Odododiodio',
-    'Okaikwei Central',
-    'Okaikwei South',
-    'Ada',
-    'Sege',
-    'Adenta',
-    'Ashaiman',
-    'Ayawaso Central',
-    'Ayawaso East',
-    'Ayawaso North',
-    'Ayawaso West',
-    'Anyaa-Sowutuom',
-    'Dome-Kwabenya',
-    'Trobu',
-    'Bortianor-Ngleshie-Amanfrom',
-    'Domeabra-Obom',
-    'Amasaman',
-    'Korle Klottey',
-    'Kpone-Katamanso',
-    'Krowor',
-    'Dade Kotopon',
-    'Abokobi-Madina',
-    'Ledzokuku',
-    'Ningo-Prampram',
-    'Okaikwei North',
-    'Shai-Osudoku',
-    'Tema Central',
-    'Tema East',
-    'Tema West',
-    'Weija',
-  ],
-  'North East': ['Bunkpurugu', 'Chereponi', 'Nalerigu', 'Yagaba-Kubori', 'Walewale', 'Yunyoo'],
-  Northern: [
-    'Gushegu',
-    'Karaga',
-    'Kpandai',
-    'Kumbungu',
-    'Mion',
-    'Nanton',
-    'Bimbilla',
-    'Wulensi',
-    'Saboba',
-    'Sagnarigu',
-    'Savelugu',
-    'Tamale Central',
-  ],
-}
+import { ageRanges, educationLevels } from './RegistrationForm.constants'
+import { RegistrationFormProgress } from './RegistrationFormProgress'
+import { useRegistrationData } from '@/pages/register/useRegistrationData'
 
 export interface RegistrationSubmission {
   fullName: string
@@ -421,6 +91,15 @@ export default function RegistrationForm({
     emergencyNumber: '',
   })
 
+  const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies } = useRegistrationData()
+
+  const selectedRegion = dbRegions.find((region) => region.name === formData.region)
+  const currentConstituencies = selectedRegion
+    ? dbConstituencies
+        .filter((constituency) => constituency.region_id === selectedRegion.id)
+        .map((constituency) => constituency.name)
+    : []
+
   const handlePlatformChange = (newPlatform: string) => {
     setPlatform(newPlatform)
     setFormData((prev) => {
@@ -429,8 +108,8 @@ export default function RegistrationForm({
         newData.country = 'Ghana'
         newData.countryCode = '+233'
       } else {
-        newData.country = diasporaCountries[0]
-        newData.countryCode = countryCodes[diasporaCountries[0]] || '+1'
+        newData.country = dbCountries[0] ?? ''
+        newData.countryCode = dbCountryCodes[dbCountries[0]] || '+1'
       }
       return newData
     })
@@ -440,8 +119,8 @@ export default function RegistrationForm({
     setFormData((prev) => {
       const newData = { ...prev, [field]: value }
 
-      if (field === 'country' && countryCodes[value]) {
-        newData.countryCode = countryCodes[value]
+      if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
+        newData.countryCode = dbCountryCodes[value]
       }
 
       if (field === 'region') {
@@ -551,136 +230,10 @@ export default function RegistrationForm({
             gap: '32px',
           }}
         >
-          {/* Progress Sidebar — desktop only */}
-          <div
-            style={{
-              position: 'sticky',
-              top: 0,
-              height: 'fit-content',
-              display: isMobile ? 'none' : 'block',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '10px',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface-muted))',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                marginBottom: '24px',
-              }}
-            >
-              Registration progress
-            </div>
-
-            <div className="space-y-2">
-              {[
-                { step: 1, label: 'Primary Details' },
-                { step: 2, label: 'Demographic info' },
-                { step: 3, label: 'Emergency & Profession' },
-                { step: 4, label: 'Final Verification' },
-              ].map((item) => (
-                <div
-                  key={item.step}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '16px',
-                    padding: '16px',
-                    borderRadius: 'var(--radius-md)',
-                    background:
-                      formStep === item.step ? 'hsl(var(--container-low))' : 'transparent',
-                    borderLeft: `4px solid ${formStep === item.step ? 'hsl(var(--primary))' : 'transparent'}`,
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '11px',
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      background:
-                        formStep >= item.step ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
-                      color: formStep >= item.step ? '#fff' : 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    {formStep > item.step ? (
-                      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                        check
-                      </span>
-                    ) : (
-                      item.step
-                    )}
-                  </div>
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color:
-                        formStep === item.step
-                          ? 'hsl(var(--on-surface))'
-                          : 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <RegistrationFormProgress formStep={formStep} isMobile={isMobile} />
 
           {/* Form Content */}
           <div className="panel" style={{ padding: isMobile ? '20px 16px' : '40px' }}>
-            {/* Mobile step progress bar */}
-            {isMobile && (
-              <div
-                style={{
-                  marginBottom: 20,
-                  paddingBottom: 16,
-                  borderBottom: '1px solid hsl(var(--border))',
-                }}
-              >
-                <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-                  {[1, 2, 3, 4].map((s) => (
-                    <div
-                      key={s}
-                      style={{
-                        flex: 1,
-                        height: 3,
-                        borderRadius: 99,
-                        background: formStep >= s ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-                        transition: 'background .2s',
-                      }}
-                    />
-                  ))}
-                </div>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 11,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface-muted))',
-                    textTransform: 'uppercase',
-                    letterSpacing: '.06em',
-                  }}
-                >
-                  Step {formStep} of 4 —{' '}
-                  {
-                    [
-                      'Primary Details',
-                      'Demographic Info',
-                      'Emergency & Profession',
-                      'Final Verification',
-                    ][formStep - 1]
-                  }
-                </p>
-              </div>
-            )}
             <form onSubmit={handleSubmit}>
               {formStep === 1 && (
                 <div className="space-y-8">
@@ -839,11 +392,18 @@ export default function RegistrationForm({
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
-                          {diasporaCountries.map((country) => (
-                            <option key={country} value={country}>
-                              {country}
+                          <option value="">Select Country</option>
+                          {dbCountries.length > 0 ? (
+                            dbCountries.map((country) => (
+                              <option key={country} value={country}>
+                                {country}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="" disabled>
+                              Loading countries…
                             </option>
-                          ))}
+                          )}
                         </select>
                       </div>
                     )}
@@ -880,7 +440,7 @@ export default function RegistrationForm({
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
-                          {Array.from(new Set(Object.values(countryCodes)))
+                          {Array.from(new Set(Object.values(dbCountryCodes)))
                             .sort()
                             .map((code) => (
                               <option key={code} value={code}>
@@ -1200,11 +760,17 @@ export default function RegistrationForm({
                             }}
                           >
                             <option value="">Select Region</option>
-                            {ghanaRegions.map((region) => (
-                              <option key={region} value={region}>
-                                {region}
+                            {dbRegions.length > 0 ? (
+                              dbRegions.map((region) => (
+                                <option key={region.id} value={region.name}>
+                                  {region.name}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="" disabled>
+                                Loading regions…
                               </option>
-                            ))}
+                            )}
                           </select>
                         </div>
                         <div className="space-y-2">
@@ -1241,7 +807,7 @@ export default function RegistrationForm({
                           >
                             <option value="">Select Constituency</option>
                             {formData.region &&
-                              regionConstituencies[formData.region]?.map((con) => (
+                              currentConstituencies.map((con) => (
                                 <option key={con} value={con}>
                                   {con}
                                 </option>

@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
-import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
@@ -13,8 +11,12 @@ import {
   isPassUp,
   type ApprovalAction,
 } from '@/lib/fundApproval'
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+import FinanceSubNav from '@/pages/admin/financeReviewInbox/FinanceSubNav'
+import Avatar from '@/pages/admin/financeReviewInbox/Avatar'
+import ApprovalChainTracker from '@/pages/admin/financeReviewInbox/ApprovalChainTracker'
+import ActionModal from '@/pages/admin/financeReviewInbox/ActionModal'
+import KpiSummary from '@/pages/admin/financeReviewInbox/KpiSummary'
+import type { ModalAction, ReviewModal, TierLeader } from '@/pages/admin/financeReviewInbox/types'
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', {
@@ -53,7 +55,6 @@ function canActOn(request: FinanceRequest, userTier: ActingTier): boolean {
   return request.approval_tier === userTier
 }
 
-/** Resolve which button set to show using the approval engine */
 function resolveMode(
   request: FinanceRequest,
   userTier: ActingTier,
@@ -61,534 +62,11 @@ function resolveMode(
   tier2Max: number
 ): 'approve_deny' | 'acknowledge' {
   const tier = tierNameFromNumber(userTier)
-  // Probe with 'Approve' — if not permitted or needs pass-up, show Acknowledge
   const probe = processFundRequest(tier, request.amount, 'Approve', tier1Max, tier2Max)
   if (isPassUp(probe.outcome)) return 'acknowledge'
   if (!isPermitted(probe.outcome)) return 'acknowledge'
   return 'approve_deny'
 }
-
-// ─── Sub-nav ──────────────────────────────────────────────────────────────────
-
-function FinanceSubNav({ pendingCount }: { pendingCount: number }) {
-  const location = useLocation()
-  const tabs = [
-    { to: '/admin/finance-requests', label: 'Finance Requests', icon: 'request_quote' },
-    {
-      to: '/admin/finance-requests/review-inbox',
-      label: 'Review Inbox',
-      icon: 'inbox',
-      badge: pendingCount,
-    },
-  ]
-  return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 4,
-        marginBottom: 24,
-        borderBottom: '1px solid hsl(var(--border))',
-      }}
-    >
-      {tabs.map((tab) => {
-        const active = location.pathname === tab.to
-        return (
-          <Link
-            key={tab.to}
-            to={tab.to}
-            className={active ? 'btn-active-tab' : 'btn-inactive-tab'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 14px',
-              marginBottom: -1,
-              textDecoration: 'none',
-              fontSize: 12,
-              borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0',
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              {tab.icon}
-            </span>
-            {tab.label}
-            {tab.badge != null && tab.badge > 0 && (
-              <span
-                style={{
-                  background: 'hsl(var(--accent))',
-                  color: '#fff',
-                  fontSize: 9,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  padding: '1px 5px',
-                  borderRadius: 'var(--radius-pill)',
-                  lineHeight: 1.4,
-                }}
-              >
-                {tab.badge}
-              </span>
-            )}
-          </Link>
-        )
-      })}
-    </div>
-  )
-}
-
-// ─── Shared types ─────────────────────────────────────────────────────────────
-
-export interface TierLeader {
-  id: string
-  name: string
-  avatarUrl: string | null
-  tier: 1 | 2 | 3
-}
-
-function Avatar({ url, name, size = 28 }: { url?: string | null; name: string; size?: number }) {
-  if (url) {
-    return (
-      <img
-        src={url}
-        alt={name}
-        title={name}
-        style={{
-          width: size,
-          height: size,
-          borderRadius: '50%',
-          objectFit: 'cover',
-          border: '2px solid hsl(var(--background))',
-          flexShrink: 0,
-        }}
-      />
-    )
-  }
-  return (
-    <div
-      title={name}
-      style={{
-        width: size,
-        height: size,
-        borderRadius: '50%',
-        background: 'hsl(var(--primary))',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: size * 0.38,
-        color: '#fff',
-        fontWeight: 'var(--font-weight-medium, 500)',
-        fontFamily: "'Public Sans', sans-serif",
-        border: '2px solid hsl(var(--background))',
-        flexShrink: 0,
-      }}
-    >
-      {name.charAt(0).toUpperCase()}
-    </div>
-  )
-}
-
-// ─── Approval Chain Tracker ───────────────────────────────────────────────────
-
-interface ChainTrackerProps {
-  request: FinanceRequest
-  tier1Max: number
-  tier2Max: number
-  tierLeaders: TierLeader[]
-}
-
-function ApprovalChainTracker({ request, tier1Max, tier2Max, tierLeaders }: ChainTrackerProps) {
-  const activeTier = request.status === 'Pending' ? request.approval_tier : null
-  const resolvedAtTier = request.status !== 'Pending' ? request.approval_tier : null
-
-  const tierDefs = [
-    {
-      n: 1,
-      role: 'Finance Officer',
-      icon: 'account_balance_wallet',
-      range: `GHS 0 – ${tier1Max.toLocaleString()}`,
-    },
-    {
-      n: 2,
-      role: 'Executives',
-      icon: 'corporate_fare',
-      range: `GHS ${(tier1Max + 1).toLocaleString()} – ${tier2Max.toLocaleString()}`,
-    },
-    {
-      n: 3,
-      role: 'Founder / Appointed',
-      icon: 'shield',
-      range: `GHS ${(tier2Max + 1).toLocaleString()}+`,
-    },
-  ]
-
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 0,
-        marginTop: 16,
-        padding: '14px 16px',
-        background: 'hsl(var(--container-low))',
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid hsl(var(--border))',
-      }}
-    >
-      {tierDefs.map((tier, i) => {
-        const isActive = activeTier === tier.n
-        const isResolved = resolvedAtTier === tier.n
-        const isPast =
-          (activeTier != null && tier.n < activeTier) ||
-          (resolvedAtTier != null && tier.n < resolvedAtTier)
-        const isFuture = activeTier != null && tier.n > activeTier
-
-        let nodeColor = 'hsl(var(--border))'
-        let textColor = 'hsl(var(--on-surface-muted))'
-        let iconName = tier.icon
-
-        if (isActive) {
-          nodeColor = 'hsl(var(--primary))'
-          textColor = 'hsl(var(--on-surface))'
-        } else if (isPast) {
-          nodeColor = 'hsl(var(--primary))'
-          iconName = 'check_circle'
-          textColor = 'hsl(var(--on-surface-muted))'
-        } else if (isResolved) {
-          nodeColor =
-            request.status === 'Approved' ? 'hsl(var(--primary))' : 'hsl(var(--destructive))'
-          iconName = request.status === 'Approved' ? 'check_circle' : 'cancel'
-          textColor = 'hsl(var(--on-surface))'
-        } else if (isFuture) {
-          nodeColor = 'hsl(var(--border))'
-          textColor = 'hsl(var(--on-surface-muted))'
-        }
-
-        return (
-          <div key={tier.n} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-            {/* Node */}
-            <div
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}
-            >
-              <div
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: '50%',
-                  background:
-                    isActive || isResolved || isPast ? nodeColor : 'hsl(var(--container-low))',
-                  border: `2px solid ${nodeColor}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 6,
-                  transition: 'all 0.2s',
-                  boxShadow: isActive ? `0 0 0 4px ${nodeColor}22` : 'none',
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: 16,
-                    color: isActive || isResolved || isPast ? '#fff' : nodeColor,
-                  }}
-                >
-                  {iconName}
-                </span>
-              </div>
-              <p
-                style={{
-                  margin: 0,
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: isActive
-                    ? 'var(--font-weight-medium, 500)'
-                    : 'var(--font-weight-normal, 400)',
-                  fontSize: 10,
-                  color: textColor,
-                  textAlign: 'center',
-                  lineHeight: 1.3,
-                }}
-              >
-                {tier.role}
-              </p>
-              <p
-                style={{
-                  margin: '2px 0 0',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-normal, 400)',
-                  fontSize: 9,
-                  color: 'hsl(var(--on-surface-muted))',
-                  textAlign: 'center',
-                  opacity: isFuture ? 0.5 : 1,
-                }}
-              >
-                {tier.range}
-              </p>
-              {isActive && (
-                <span
-                  style={{
-                    marginTop: 4,
-                    fontSize: 8,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
-                    color: 'hsl(var(--primary))',
-                    background: 'hsl(var(--primary) / 0.1)',
-                    padding: '1px 6px',
-                    borderRadius: 'var(--radius-pill)',
-                  }}
-                >
-                  Awaiting
-                </span>
-              )}
-              {/* Avatar stack for this tier's leaders */}
-              {(() => {
-                const leaders = tierLeaders.filter((l) => l.tier === tier.n).slice(0, 3)
-                if (!leaders.length) return null
-                return (
-                  <div
-                    style={{
-                      display: 'flex',
-                      marginTop: 6,
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {leaders.map((l, idx) => (
-                      <div
-                        key={l.id}
-                        style={{ marginLeft: idx === 0 ? 0 : -8, zIndex: leaders.length - idx }}
-                      >
-                        <Avatar url={l.avatarUrl} name={l.name} size={22} />
-                      </div>
-                    ))}
-                  </div>
-                )
-              })()}
-            </div>
-
-            {/* Connector line (not after last node) */}
-            {i < tierDefs.length - 1 && (
-              <div
-                style={{
-                  height: 2,
-                  width: 32,
-                  flexShrink: 0,
-                  background: isPast || isResolved ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-                  marginBottom: 28,
-                  transition: 'background 0.2s',
-                }}
-              />
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-// ─── Modal types ──────────────────────────────────────────────────────────────
-
-type ModalAction = 'Approved' | 'Rejected' | 'Acknowledged'
-
-interface ReviewModal {
-  request: FinanceRequest
-  action: ModalAction
-}
-
-// ─── Action Modal ─────────────────────────────────────────────────────────────
-
-interface ActionModalProps {
-  modal: ReviewModal
-  actioning: boolean
-  officerComment: string
-  userTier: ActingTier | null
-  tier1Max: number
-  tier2Max: number
-  onClose: () => void
-  onCommentChange: (v: string) => void
-  onConfirm: () => void
-  fmtAmount: (n: number) => string
-}
-
-function ActionModal({
-  modal,
-  actioning,
-  officerComment,
-  userTier,
-  tier1Max,
-  tier2Max,
-  onClose,
-  onCommentChange,
-  onConfirm,
-  fmtAmount,
-}: ActionModalProps) {
-  return createPortal(
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 200,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-      }}
-    >
-      <div
-        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }}
-        onClick={onClose}
-      />
-      <div
-        style={{
-          position: 'relative',
-          background: 'hsl(var(--background))',
-          borderRadius: 'var(--radius-lg)',
-          padding: 28,
-          width: '100%',
-          maxWidth: 500,
-          fontFamily: "'Public Sans', sans-serif",
-          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3
-          style={{
-            margin: '0 0 4px',
-            fontSize: 17,
-            fontWeight: 'var(--font-weight-medium, 500)',
-            color:
-              modal.action === 'Approved'
-                ? 'hsl(var(--primary))'
-                : modal.action === 'Rejected'
-                  ? 'hsl(var(--destructive))'
-                  : 'hsl(var(--accent))',
-          }}
-        >
-          {modal.action === 'Approved'
-            ? 'Approve Request'
-            : modal.action === 'Rejected'
-              ? 'Reject Request'
-              : 'Acknowledge & Pass Up'}
-        </h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 16px' }}>
-          <Avatar
-            url={modal.request.requester_avatar}
-            name={modal.request.requester_name ?? 'Unknown'}
-            size={28}
-          />
-          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
-            {modal.request.requester_name} · {fmtAmount(modal.request.amount)} ·{' '}
-            {modal.request.chapter}
-          </p>
-        </div>
-
-        {modal.action === 'Acknowledged' ? (
-          <div
-            style={{
-              background: 'hsl(var(--accent) / 0.08)',
-              border: '1px solid hsl(var(--accent) / 0.3)',
-              borderRadius: 'var(--radius-md)',
-              padding: '12px 14px',
-              marginBottom: 20,
-              fontSize: 13,
-              color: 'hsl(var(--on-surface))',
-              display: 'flex',
-              gap: 10,
-              alignItems: 'flex-start',
-            }}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 16, color: 'hsl(var(--accent))', flexShrink: 0, marginTop: 1 }}
-            >
-              info
-            </span>
-            This request exceeds your tier's ceiling (
-            {fmtAmount(userTier === 1 ? tier1Max : tier2Max)}). Acknowledging will pass it to the
-            next approval tier.
-          </div>
-        ) : (
-          <div
-            style={{
-              background: 'hsl(var(--container-low))',
-              borderRadius: 'var(--radius-md)',
-              padding: '12px 14px',
-              marginBottom: 20,
-              fontSize: 13,
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            {modal.request.description}
-          </div>
-        )}
-
-        {modal.action !== 'Acknowledged' && (
-          <>
-            <label
-              htmlFor="officer-comment"
-              style={{
-                display: 'block',
-                fontSize: 12,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface-muted))',
-                marginBottom: 6,
-              }}
-            >
-              Officer Comment <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-            </label>
-            <textarea
-              id="officer-comment"
-              name="officer-comment"
-              autoComplete="off"
-              value={officerComment}
-              onChange={(e) => onCommentChange(e.target.value)}
-              rows={3}
-              placeholder="Provide a reason or note for this decision…"
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--background))',
-                color: 'hsl(var(--on-surface))',
-                fontSize: 14,
-                boxSizing: 'border-box',
-                fontFamily: "'Public Sans', sans-serif",
-                resize: 'vertical',
-                marginBottom: 20,
-              }}
-            />
-          </>
-        )}
-
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button className="btn btn-outline" onClick={onClose} disabled={actioning}>
-            Cancel
-          </button>
-          <button
-            className={
-              modal.action === 'Approved'
-                ? 'btn btn-primary'
-                : modal.action === 'Rejected'
-                  ? 'btn btn-dest'
-                  : 'btn btn-accent'
-            }
-            onClick={onConfirm}
-            disabled={actioning || (modal.action !== 'Acknowledged' && !officerComment.trim())}
-          >
-            {actioning
-              ? 'Processing…'
-              : modal.action === 'Approved'
-                ? 'Confirm Approve'
-                : modal.action === 'Rejected'
-                  ? 'Confirm Reject'
-                  : 'Confirm Acknowledge'}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body
-  )
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function FinanceReviewInbox() {
   const [currentUser] = useState(adminService.getCurrentUser())
@@ -622,6 +100,7 @@ export default function FinanceReviewInbox() {
             'ADMIN',
           ]),
       ])
+
       setRequests(data)
       const t1 = parseFloat(String(settings['finance_tier1_max'] ?? '50'))
       const t2 = parseFloat(String(settings['finance_tier2_max'] ?? '100'))
@@ -635,22 +114,24 @@ export default function FinanceReviewInbox() {
           .select('id, full_name, avatar_url')
           .in(
             'id',
-            adminList.map((a) => a.id)
+            adminList.map((admin) => admin.id)
           )
-        const profileMap = Object.fromEntries((profiles ?? []).map((u) => [u.id, u]))
+
+        const profileMap = Object.fromEntries((profiles ?? []).map((user) => [user.id, user]))
+
         setTierLeaders(
-          adminList.map((a) => {
-            const p = profileMap[a.id]
+          adminList.map((admin) => {
+            const profile = profileMap[admin.id]
             const tier: 1 | 2 | 3 =
-              a.role === 'FINANCE_OFFICER'
+              admin.role === 'FINANCE_OFFICER'
                 ? 1
-                : a.role === 'EXECUTIVE' || a.role === 'ORGANIZER'
+                : admin.role === 'EXECUTIVE' || admin.role === 'ORGANIZER'
                   ? 2
                   : 3
             return {
-              id: a.id,
-              name: p?.full_name ?? 'Unknown',
-              avatarUrl: p?.avatar_url ?? null,
+              id: admin.id,
+              name: profile?.full_name ?? 'Unknown',
+              avatarUrl: profile?.avatar_url ?? null,
               tier,
             }
           })
@@ -679,13 +160,13 @@ export default function FinanceReviewInbox() {
       return
     }
 
-    // Run the approval engine before touching the DB
     const engineAction: ApprovalAction =
       modal.action === 'Acknowledged'
         ? 'Acknowledge'
         : modal.action === 'Approved'
           ? 'Approve'
           : 'Deny'
+
     const result = processFundRequest(
       tierNameFromNumber(userTier),
       modal.request.amount,
@@ -703,19 +184,19 @@ export default function FinanceReviewInbox() {
     try {
       if (isPassUp(result.outcome)) {
         await financeService.acknowledgeRequest(modal.request.id)
-        toast.success(result.message) // "Pass to the next level"
+        toast.success(result.message)
       } else {
         await financeService.reviewRequest(
           modal.request.id,
           modal.action as 'Approved' | 'Rejected',
           officerComment.trim()
         )
-        toast.success(result.message) // "Processed at … tier"
+        toast.success(result.message)
       }
       setModal(null)
       await loadAll()
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : ''
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : ''
       if (msg.toLowerCase().includes('no longer available')) {
         toast.warning('This request is no longer available for review')
         setModal(null)
@@ -728,16 +209,16 @@ export default function FinanceReviewInbox() {
     }
   }
 
-  const pendingRequests = requests.filter((r) => r.status === 'Pending')
+  const pendingRequests = requests.filter((request) => request.status === 'Pending')
   const resolvedRequests = requests.filter(
-    (r) => r.status === 'Approved' || r.status === 'Rejected'
+    (request) => request.status === 'Approved' || request.status === 'Rejected'
   )
-
-  // Only show requests that are at the current user's tier
-  const myTierPending = userTier ? pendingRequests.filter((r) => canActOn(r, userTier)) : []
-
-  // Requests at other tiers (pending but not mine to act on now)
-  const otherTierPending = pendingRequests.filter((r) => !userTier || !canActOn(r, userTier))
+  const myTierPending = userTier
+    ? pendingRequests.filter((request) => canActOn(request, userTier))
+    : []
+  const otherTierPending = pendingRequests.filter(
+    (request) => !userTier || !canActOn(request, userTier)
+  )
 
   return (
     <div className="main" style={{ fontFamily: "'Public Sans', sans-serif" }}>
@@ -749,7 +230,6 @@ export default function FinanceReviewInbox() {
 
       <FinanceSubNav pendingCount={pendingRequests.length} />
 
-      {/* Access guard */}
       {!canSeeInbox && (
         <div
           className="panel"
@@ -773,9 +253,8 @@ export default function FinanceReviewInbox() {
 
       {canSeeInbox && (
         <>
-          {/* KPI strip */}
-          <div className="kpis" style={{ gridTemplateColumns: 'repeat(3,1fr)', marginBottom: 24 }}>
-            {[
+          <KpiSummary
+            items={[
               { label: 'Pending', value: pendingRequests.length, bar: 'hsl(var(--accent))' },
               {
                 label: 'Approved',
@@ -787,49 +266,9 @@ export default function FinanceReviewInbox() {
                 value: requests.filter((r) => r.status === 'Rejected').length,
                 bar: 'hsl(var(--destructive))',
               },
-            ].map((kpi) => (
-              <div
-                key={kpi.label}
-                className="panel"
-                style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: 3,
-                    background: kpi.bar,
-                  }}
-                />
-                <p
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: 'hsl(var(--on-surface-muted))',
-                    margin: '0 0 6px',
-                  }}
-                >
-                  {kpi.label}
-                </p>
-                <p
-                  style={{
-                    fontSize: 'var(--kpi-num-size)',
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface))',
-                    margin: 0,
-                  }}
-                >
-                  {loading ? '—' : kpi.value}
-                </p>
-              </div>
-            ))}
-          </div>
+            ]}
+          />
 
-          {/* My tier — actionable requests */}
           {!loading && pendingRequests.length > 0 && (
             <div className="panel" style={{ marginBottom: 24 }}>
               <div
@@ -887,18 +326,17 @@ export default function FinanceReviewInbox() {
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                    {myTierPending.map((r) => {
-                      const mode = resolveMode(r, userTier!, tier1Max, tier2Max)
+                    {myTierPending.map((request) => {
+                      const mode = resolveMode(request, userTier!, tier1Max, tier2Max)
                       return (
                         <div
-                          key={r.id}
+                          key={request.id}
                           style={{
                             border: '1px solid hsl(var(--border))',
                             borderRadius: 'var(--radius-md)',
                             overflow: 'hidden',
                           }}
                         >
-                          {/* Request header */}
                           <div
                             style={{
                               padding: '16px 20px',
@@ -920,8 +358,8 @@ export default function FinanceReviewInbox() {
                                 }}
                               >
                                 <Avatar
-                                  url={r.requester_avatar}
-                                  name={r.requester_name ?? 'Unknown'}
+                                  url={request.requester_avatar}
+                                  name={request.requester_name ?? 'Unknown'}
                                   size={30}
                                 />
                                 <p
@@ -932,7 +370,7 @@ export default function FinanceReviewInbox() {
                                     color: 'hsl(var(--on-surface))',
                                   }}
                                 >
-                                  {r.requester_name ?? 'Unknown'}
+                                  {request.requester_name ?? 'Unknown'}
                                 </p>
                               </div>
                               <p
@@ -942,9 +380,9 @@ export default function FinanceReviewInbox() {
                                   color: 'hsl(var(--on-surface-muted))',
                                 }}
                               >
-                                {TYPE_LABELS[r.request_type]} · {r.chapter} ·{' '}
+                                {TYPE_LABELS[request.request_type]} · {request.chapter} ·{' '}
                                 <strong style={{ color: 'hsl(var(--on-surface))' }}>
-                                  {fmtAmount(r.amount)}
+                                  {fmtAmount(request.amount)}
                                 </strong>
                               </p>
                               <p
@@ -954,7 +392,7 @@ export default function FinanceReviewInbox() {
                                   color: 'hsl(var(--on-surface-muted))',
                                 }}
                               >
-                                {r.description}
+                                {request.description}
                               </p>
                               <p
                                 style={{
@@ -963,11 +401,10 @@ export default function FinanceReviewInbox() {
                                   color: 'hsl(var(--on-surface-muted))',
                                 }}
                               >
-                                Submitted {fmtDate(r.created_at)}
+                                Submitted {fmtDate(request.created_at)}
                               </p>
                             </div>
 
-                            {/* Action buttons */}
                             <div
                               style={{
                                 display: 'flex',
@@ -981,7 +418,7 @@ export default function FinanceReviewInbox() {
                                 <>
                                   <button
                                     className="btn btn-primary btn-sm"
-                                    onClick={() => openModal(r, 'Approved')}
+                                    onClick={() => openModal(request, 'Approved')}
                                   >
                                     <span
                                       className="material-symbols-outlined"
@@ -993,7 +430,7 @@ export default function FinanceReviewInbox() {
                                   </button>
                                   <button
                                     className="btn btn-outline-dest btn-sm"
-                                    onClick={() => openModal(r, 'Rejected')}
+                                    onClick={() => openModal(request, 'Rejected')}
                                   >
                                     <span
                                       className="material-symbols-outlined"
@@ -1007,7 +444,7 @@ export default function FinanceReviewInbox() {
                               ) : (
                                 <button
                                   className="btn btn-accent btn-sm"
-                                  onClick={() => openModal(r, 'Acknowledged')}
+                                  onClick={() => openModal(request, 'Acknowledged')}
                                 >
                                   <span
                                     className="material-symbols-outlined"
@@ -1021,10 +458,9 @@ export default function FinanceReviewInbox() {
                             </div>
                           </div>
 
-                          {/* Chain tracker */}
                           <div style={{ padding: '12px 20px 16px' }}>
                             <ApprovalChainTracker
-                              request={r}
+                              request={request}
                               tier1Max={tier1Max}
                               tier2Max={tier2Max}
                               tierLeaders={tierLeaders}
@@ -1039,7 +475,6 @@ export default function FinanceReviewInbox() {
             </div>
           )}
 
-          {/* Requests at other tiers — visible but not actionable */}
           {!loading && otherTierPending.length > 0 && (
             <div className="panel" style={{ marginBottom: 24 }}>
               <div
@@ -1071,9 +506,9 @@ export default function FinanceReviewInbox() {
                 </p>
               </div>
               <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {otherTierPending.map((r) => (
+                {otherTierPending.map((request) => (
                   <div
-                    key={r.id}
+                    key={request.id}
                     style={{
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 'var(--radius-md)',
@@ -1091,8 +526,8 @@ export default function FinanceReviewInbox() {
                         style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}
                       >
                         <Avatar
-                          url={r.requester_avatar}
-                          name={r.requester_name ?? 'Unknown'}
+                          url={request.requester_avatar}
+                          name={request.requester_name ?? 'Unknown'}
                           size={26}
                         />
                         <p
@@ -1103,7 +538,7 @@ export default function FinanceReviewInbox() {
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
-                          {r.requester_name ?? 'Unknown'}
+                          {request.requester_name ?? 'Unknown'}
                         </p>
                       </div>
                       <p
@@ -1114,17 +549,17 @@ export default function FinanceReviewInbox() {
                         }}
                       >
                         <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
-                          {TYPE_LABELS[r.request_type]}
+                          {TYPE_LABELS[request.request_type]}
                         </span>{' '}
-                        · {fmtAmount(r.amount)}
+                        · {fmtAmount(request.amount)}
                       </p>
                       <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-                        {r.description} · Submitted {fmtDate(r.created_at)}
+                        {request.description} · Submitted {fmtDate(request.created_at)}
                       </p>
                     </div>
                     <div style={{ padding: '10px 18px 14px' }}>
                       <ApprovalChainTracker
-                        request={r}
+                        request={request}
                         tier1Max={tier1Max}
                         tier2Max={tier2Max}
                         tierLeaders={tierLeaders}
@@ -1136,7 +571,6 @@ export default function FinanceReviewInbox() {
             </div>
           )}
 
-          {/* Empty state (no pending at all) */}
           {!loading && pendingRequests.length === 0 && (
             <div
               className="panel"
@@ -1156,7 +590,6 @@ export default function FinanceReviewInbox() {
             </div>
           )}
 
-          {/* Resolved history */}
           {!loading && resolvedRequests.length > 0 && (
             <div className="panel">
               <div
@@ -1205,9 +638,9 @@ export default function FinanceReviewInbox() {
                         'Resolved At Tier',
                         'Reviewed',
                         'Comment',
-                      ].map((h) => (
+                      ].map((header) => (
                         <th
-                          key={h}
+                          key={header}
                           style={{
                             padding: '8px 16px',
                             textAlign: 'left',
@@ -1219,20 +652,20 @@ export default function FinanceReviewInbox() {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {h}
+                          {header}
                         </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {resolvedRequests.map((r) => (
+                    {resolvedRequests.map((request) => (
                       <tr
-                        key={r.id}
+                        key={request.id}
                         style={{ borderBottom: '1px solid hsl(var(--border))' }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                        onMouseEnter={(event) =>
+                          (event.currentTarget.style.background = 'hsl(var(--container-low))')
                         }
-                        onMouseLeave={(e) => (e.currentTarget.style.background = '')}
+                        onMouseLeave={(event) => (event.currentTarget.style.background = '')}
                       >
                         <td
                           style={{
@@ -1244,11 +677,11 @@ export default function FinanceReviewInbox() {
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <Avatar
-                              url={r.requester_avatar}
-                              name={r.requester_name ?? 'Unknown'}
+                              url={request.requester_avatar}
+                              name={request.requester_name ?? 'Unknown'}
                               size={24}
                             />
-                            {r.requester_name ?? 'Unknown'}
+                            {request.requester_name ?? 'Unknown'}
                           </div>
                         </td>
                         <td
@@ -1258,10 +691,10 @@ export default function FinanceReviewInbox() {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {TYPE_LABELS[r.request_type]}
+                          {TYPE_LABELS[request.request_type]}
                         </td>
                         <td style={{ padding: '10px 16px', color: 'hsl(var(--on-surface-muted))' }}>
-                          {r.chapter}
+                          {request.chapter}
                         </td>
                         <td
                           style={{
@@ -1270,11 +703,16 @@ export default function FinanceReviewInbox() {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {fmtAmount(r.amount)}
+                          {fmtAmount(request.amount)}
                         </td>
-                        <td style={{ padding: '10px 16px' }}>{statusPill(r.status)}</td>
-                        <td style={{ padding: '10px 16px', color: 'hsl(var(--on-surface-muted))' }}>
-                          Tier {r.approval_tier}
+                        <td style={{ padding: '10px 16px' }}>{statusPill(request.status)}</td>
+                        <td
+                          style={{
+                            padding: '10px 16px',
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          Tier {request.approval_tier}
                         </td>
                         <td
                           style={{
@@ -1283,7 +721,7 @@ export default function FinanceReviewInbox() {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {r.reviewed_at ? fmtDate(r.reviewed_at) : '—'}
+                          {request.reviewed_at ? fmtDate(request.reviewed_at) : '—'}
                         </td>
                         <td
                           style={{
@@ -1295,7 +733,7 @@ export default function FinanceReviewInbox() {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {r.officer_comment ?? '—'}
+                          {request.officer_comment ?? '—'}
                         </td>
                       </tr>
                     ))}
@@ -1307,7 +745,6 @@ export default function FinanceReviewInbox() {
         </>
       )}
 
-      {/* Action modal — portalled to document.body so it floats free of the page tree */}
       {modal && (
         <ActionModal
           modal={modal}
