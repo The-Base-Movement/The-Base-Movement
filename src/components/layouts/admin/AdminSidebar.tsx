@@ -201,13 +201,16 @@ export function AdminSidebar({
                 >
                   <div className="flex items-center gap-3">
                     {isSidebarOpen ? (
-                      <span className="text-[9px] font-medium text-white/35 tracking-[0.08em] uppercase whitespace-nowrap py-1">
+                      <span
+                        className="text-[9px] font-medium tracking-[0.08em] uppercase whitespace-nowrap py-1"
+                        style={{ color: 'hsl(var(--accent))' }}
+                      >
                         {group.label}
                       </span>
                     ) : (
                       <span
                         className="material-symbols-outlined shrink-0"
-                        style={{ fontSize: 16, color: 'rgba(255,255,255,0.4)' }}
+                        style={{ fontSize: 16, color: 'hsl(var(--accent))' }}
                       >
                         {group.icon}
                       </span>
@@ -216,10 +219,10 @@ export function AdminSidebar({
                   {isSidebarOpen && (
                     <span
                       className={cn(
-                        'material-symbols-outlined text-white/30 transition-transform duration-200',
+                        'material-symbols-outlined transition-transform duration-200',
                         isOpen ? 'rotate-180' : ''
                       )}
-                      style={{ fontSize: 14 }}
+                      style={{ fontSize: 14, color: 'hsl(var(--accent))' }}
                     >
                       expand_more
                     </span>
