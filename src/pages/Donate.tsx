@@ -130,10 +130,14 @@ export default function PublicDonate() {
         showOnDashboard: formData.showOnDashboard,
       })
       if (success) {
-        setSubmitted(true)
         trackEvent('donation_submitted', { amount: parseFloat(formData.amount) })
-        toast.success('Contribution sequence initialized.')
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        toast.success(
+          'Receipt recorded — please proceed to payment using the transfer details above.'
+        )
+        // keep the form open so the member can proceed to payment
+        document
+          .getElementById('payment-section')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
     } catch {
       toast.error('Transmission failure. Please try again.')
@@ -162,7 +166,7 @@ export default function PublicDonate() {
     >
       <header
         style={{
-          background: '#fff',
+          background: 'hsl(var(--card))',
           borderBottom: '1px solid hsl(var(--border))',
           padding: 'clamp(40px, 10vw, 80px) 0',
           position: 'relative',
@@ -241,6 +245,7 @@ export default function PublicDonate() {
               countries={countries}
               campaigns={campaigns}
               onSubmit={handleSubmit}
+              onOpenAudit={() => setIsHistoryModalOpen(true)}
             />
             <VictoriesSection pastCampaigns={pastCampaigns} />
             <OperationalTransparency

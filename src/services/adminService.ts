@@ -1066,6 +1066,59 @@ class AdminService {
       .upload(path, compressed, { upsert: true, contentType: compressed.type || 'image/webp' })
   }
 
+  /**
+   * Upload a donation receipt to storage and create a pending donation record
+   * with the receipt URL so admins can verify later. Returns true on success.
+   */
+  async uploadDonationReceipt(file: File, donationReference: string): Promise<boolean> {
+    if (!donationReference?.trim()) {
+      console.error('[UPLOAD] donationReference is required')
+      return false
+    }
+
+    try {
+      const compressed = await compressForUpload(file)
+      const ts = Date.now()
+      const safeName = `${ts}_${compressed.name}`
+      const { data, error: uploadErr } = await supabase.storage
+        .from('donation-receipts')
+        .upload(safeName, compressed, {
+          upsert: true,
+          contentType: compressed.type || 'application/octet-stream',
+        })
+
+      if (uploadErr || !data) {
+        console.error('[STORAGE] Receipt upload failed:', uploadErr)
+        return false
+      }
+
+      const { data: urlData } = supabase.storage.from('donation-receipts').getPublicUrl(data.path)
+      const publicUrl = urlData?.publicUrl || ''
+
+      const { data: updatedDonations, error: updateErr } = await supabase
+        .from('donations')
+        .update({ receipt_url: publicUrl })
+        .or(`reference.eq.${donationReference},id.eq.${donationReference}`)
+        .select('id')
+
+      if (updateErr) {
+        console.error('[DATABASE] Updating donation receipt_url failed:', updateErr)
+        return false
+      }
+
+      if (!updatedDonations || updatedDonations.length === 0) {
+        console.error('[UPLOAD] No donation matched reference or id:', donationReference)
+        return false
+      }
+
+      await this.logAction('RECEIPT_UPLOAD', `donation-receipts/${safeName}`, 'Success')
+      return true
+    } catch (err) {
+      console.error('[UPLOAD] uploadDonationReceipt failed:', err)
+      return false
+    }
+  }
+
   getBrandingAssetUrl(fileName: string): string {
     const { data } = supabase.storage.from('branding').getPublicUrl(fileName)
     return data.publicUrl

@@ -1,4 +1,7 @@
 import type { FormEvent, Dispatch, SetStateAction } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { adminService } from '@/services/adminService'
 import type { DonationCampaign } from '@/types/admin'
 
 interface FormData {
@@ -29,6 +32,7 @@ interface MobilizationProtocolProps {
   countries: Country[]
   campaigns: DonationCampaign[]
   onSubmit: (e: FormEvent) => void
+  onOpenAudit: () => void
 }
 
 function SelIcon() {
@@ -60,7 +64,54 @@ export function MobilizationProtocol({
   countries,
   campaigns,
   onSubmit,
+  onOpenAudit,
 }: MobilizationProtocolProps) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [donationReference, setDonationReference] = useState('')
+
+  useEffect(() => {
+    const inp = fileInputRef.current
+    if (!inp) return
+    const handle = async (e: Event) => {
+      const target = e.target as HTMLInputElement
+      const file = target.files && target.files[0]
+      if (!file) return
+      if (!donationReference.trim()) {
+        toast.error('Enter the donation reference or ID before attaching a receipt.')
+        target.value = ''
+        return
+      }
+      // show preview for images
+      if (file.type.startsWith('image/')) {
+        const url = URL.createObjectURL(file)
+        setPreviewUrl(url)
+      } else {
+        setPreviewUrl(null)
+      }
+      setUploading(true)
+      try {
+        const ok = await adminService.uploadDonationReceipt(file, donationReference.trim())
+        if (ok) {
+          toast.success('Receipt attached to donation reference.')
+          onOpenAudit()
+        } else {
+          toast.error('Failed to link receipt. Check the reference and try again.')
+        }
+      } catch (err) {
+        console.error('Receipt upload failed', err)
+        toast.error('Receipt upload failed. Please try again.')
+      } finally {
+        setUploading(false)
+        // clear input
+        target.value = ''
+        if (previewUrl) URL.revokeObjectURL(previewUrl)
+      }
+    }
+    inp.addEventListener('change', handle)
+    return () => inp.removeEventListener('change', handle)
+  }, [donationReference, onOpenAudit, previewUrl])
   const steps = [
     { step: 1, label: 'Capital transfer', id: 'payment-section', color: 'hsl(var(--destructive))' },
     { step: 2, label: 'Contributor profile', id: 'donor-section', color: 'hsl(var(--accent))' },
@@ -84,7 +135,13 @@ export function MobilizationProtocol({
         className="desktop-only"
         style={{ width: 280, flexShrink: 0, position: 'sticky', top: 96 }}
       >
-        <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', padding: 32 }}>
+        <div
+          style={{
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+            padding: 32,
+          }}
+        >
           <h4
             style={{
               fontSize: 11,
@@ -106,16 +163,14 @@ export function MobilizationProtocol({
                   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
                   setActiveStep(s.step)
                 }}
+                className={activeStep === s.step ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 16,
                   width: '100%',
                   textAlign: 'left',
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  cursor: 'pointer',
+                  justifyContent: 'flex-start',
                 }}
               >
                 <div
@@ -130,7 +185,7 @@ export function MobilizationProtocol({
                     transition: 'all 0.3s ease',
                     background: activeStep === s.step ? s.color : 'hsl(var(--container-low))',
                     color: activeStep === s.step ? '#fff' : 'hsl(var(--on-surface-muted))',
-                    borderRadius: 4,
+                    borderRadius: 'var(--radius-sm)',
                     transform: activeStep === s.step ? 'scale(1.1)' : 'scale(1)',
                   }}
                 >
@@ -169,6 +224,142 @@ export function MobilizationProtocol({
                 </div>
               </button>
             ))}
+            <div
+              style={{ marginTop: 18, borderTop: '1px solid hsl(var(--border))', paddingTop: 18 }}
+            >
+              <h5
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginBottom: 8,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                Audit trail
+              </h5>
+
+              {/* Preview row: sits above the description */}
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label
+                    htmlFor="donationReference"
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Donation reference or ID
+                  </label>
+                  <input
+                    id="donationReference"
+                    value={donationReference}
+                    onChange={(e) => setDonationReference(e.target.value)}
+                    placeholder="Enter reference or id"
+                    style={{
+                      width: '100%',
+                      height: 44,
+                      background: 'hsl(var(--container-low))',
+                      border: '1px solid hsl(var(--border))',
+                      color: 'hsl(var(--on-surface))',
+                      fontSize: 13,
+                      fontFamily: "'Public Sans', sans-serif",
+                      padding: '0 12px',
+                      outline: 'none',
+                    }}
+                  />
+                  <p
+                    style={{
+                      margin: '8px 0 0',
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                      lineHeight: 1.4,
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Use the contribution reference shown after submission or the donation ID from
+                    your payment record.
+                  </p>
+                </div>
+                <div
+                  id="sidebar-receipt-preview"
+                  style={{
+                    minHeight: 56,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt="receipt preview"
+                      style={{
+                        width: 96,
+                        height: 64,
+                        objectFit: 'cover',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px solid hsl(var(--border))',
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: 96,
+                        height: 64,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'hsl(var(--container-low))',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px dashed hsl(var(--border))',
+                      }}
+                    >
+                      <span style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                        No preview
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginBottom: 12 }}>
+                Optional: attach external receipts or view the deployment ledger.
+              </p>
+
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', width: '100%' }}>
+                <button
+                  onClick={onOpenAudit}
+                  className="btn btn-primary btn-sm"
+                  style={{ flex: 1 }}
+                >
+                  View ledger
+                </button>
+
+                <input
+                  id="sidebar-receipt-input"
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.pdf"
+                  style={{ display: 'none' }}
+                />
+                <label
+                  htmlFor="sidebar-receipt-input"
+                  className="btn btn-sm btn-outline"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}
+                >
+                  {uploading ? 'Uploading...' : 'Attach'}
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </aside>
@@ -386,7 +577,7 @@ export function MobilizationProtocol({
         <div
           id="donor-section"
           style={{
-            background: '#fff',
+            background: 'hsl(var(--card))',
             border: '1px solid hsl(var(--border))',
             padding: 'clamp(24px, 5vw, 40px)',
             display: 'flex',
@@ -654,7 +845,7 @@ export function MobilizationProtocol({
         <div
           id="link-section"
           style={{
-            background: '#fff',
+            background: 'hsl(var(--card))',
             border: '1px solid hsl(var(--border))',
             padding: 'clamp(24px, 5vw, 40px)',
             display: 'flex',
@@ -762,7 +953,7 @@ export function MobilizationProtocol({
                   style={{
                     width: '100%',
                     height: 48,
-                    background: '#fff',
+                    background: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
                     color: 'hsl(var(--on-surface))',
                     fontSize: 14,
@@ -840,7 +1031,7 @@ export function MobilizationProtocol({
         <div
           id="receipt-section"
           style={{
-            background: '#fff',
+            background: 'hsl(var(--card))',
             border: '1px solid hsl(var(--border))',
             padding: 'clamp(24px, 5vw, 40px)',
             display: 'flex',
@@ -879,79 +1070,21 @@ export function MobilizationProtocol({
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 32, flex: 1 }}>
-            <div
-              style={{
-                border: '2px dashed hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
-                padding: 48,
-                textAlign: 'center',
-                transition: 'all 0.3s ease',
-                position: 'relative',
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <input
-                type="file"
-                form="donationForm"
-                accept=".jpg,.jpeg,.png,.pdf"
-                onFocus={() => setActiveStep(4)}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  opacity: 0,
-                  cursor: 'pointer',
-                  zIndex: 10,
-                }}
-                id="receipt"
-                aria-label="Upload payment receipt"
-                required
-              />
-              <div
-                style={{
-                  width: 64,
-                  height: 64,
-                  background: '#fff',
-                  border: '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px',
-                  transition: 'transform 0.5s ease',
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 24, color: 'hsl(var(--on-surface-muted))' }}
-                >
-                  download
-                </span>
-              </div>
+            <div style={{ padding: 16, textAlign: 'left' }}>
               <p
                 style={{
                   fontSize: 13,
                   color: 'hsl(var(--on-surface))',
                   fontWeight: 500,
-                  letterSpacing: '-0.01em',
-                  marginBottom: 4,
-                  fontFamily: "'Public Sans', sans-serif",
+                  marginBottom: 6,
                 }}
               >
-                Synchronize receipt
+                Receipts (optional)
               </p>
-              <p
-                style={{
-                  fontSize: 11,
-                  color: 'hsl(var(--on-surface-muted))',
-                  fontWeight: 500,
-                  margin: 0,
-                }}
-              >
-                Jpg, png, or pdf
+              <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+                If you paid outside the site, attach your receipt via the Audit trail panel in the
+                Deployment protocol sidebar. Receipts are optional and not required to submit the
+                form.
               </p>
             </div>
 
@@ -1009,6 +1142,7 @@ export function MobilizationProtocol({
             <button
               type="submit"
               form="donationForm"
+              className="btn btn-primary"
               style={{
                 width: '100%',
                 height: 56,
@@ -1017,14 +1151,6 @@ export function MobilizationProtocol({
                 justifyContent: 'center',
                 gap: 12,
                 padding: '0 32px',
-                background: 'hsl(var(--primary))',
-                color: 'hsl(var(--on-surface))',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--button-font-weight)',
-                fontSize: 13,
-                borderRadius: 'var(--button-radius)',
-                border: 'none',
-                cursor: 'pointer',
                 textTransform: 'lowercase',
                 boxShadow: '0 12px 32px -12px rgba(0,107,63,0.3)',
               }}
