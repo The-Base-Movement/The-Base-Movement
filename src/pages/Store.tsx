@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ShareModal } from '@/components/ShareModal'
 import SEO from '@/components/SEO'
 import type { Product } from '@/types/product'
@@ -38,13 +38,13 @@ export default function Store() {
       title: `Check out the ${product.name} at The Base Movement Store!`,
       url:
         (typeof window !== 'undefined' ? window.location.origin : '') +
-        '/store/product/' +
-        product.slug,
+        `${basePath}/product/${product.slug}`,
     })
     setIsShareModalOpen(true)
   }
 
   const itemsPerPage = 9
+  const location = useLocation()
 
   useEffect(() => {
     let isMounted = true
@@ -73,6 +73,9 @@ export default function Store() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   )
+
+  const basePath = location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'
+  const checkoutPath = `${basePath}/checkout`
 
   const CartItems = () => (
     <>
@@ -182,7 +185,13 @@ export default function Store() {
   )
 
   return (
-    <div className="min-h-screen bg-white" style={{ paddingBottom: cartCount > 0 ? 64 : 0 }}>
+    <div
+      style={{
+        background: 'hsl(var(--background))',
+        minHeight: '100vh',
+        paddingBottom: cartCount > 0 ? 64 : 0,
+      }}
+    >
       <SEO
         title="Movement Store"
         description="Wear the colors. Fund the cause. 100% of proceeds support youth jobs programs."
@@ -204,7 +213,7 @@ export default function Store() {
                 </p>
               </div>
               <Link
-                to="/store/wishlist"
+                to={`${basePath}/wishlist`}
                 className="btn btn-outline btn-sm shrink-0 relative"
                 style={{ gap: 6 }}
               >
@@ -264,7 +273,10 @@ export default function Store() {
           </section>
 
           <aside className="relative hidden lg:block">
-            <div className="lg:sticky lg:top-8 bg-white border border-border rounded-[6px] overflow-hidden flex flex-col">
+            <div
+              className="lg:sticky lg:top-8 border border-border rounded-[6px] overflow-hidden flex flex-col"
+              style={{ background: 'hsl(var(--card))' }}
+            >
               <h3 className="font-meta font-medium text-[16px] px-[18px] py-[18px] border-b border-border flex items-center justify-between m-0">
                 Your cart
                 <span className="bg-primary text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
@@ -274,11 +286,14 @@ export default function Store() {
               <div className="px-[18px] max-h-[320px] overflow-y-auto">
                 <CartItems />
               </div>
-              <div className="p-[18px] bg-stone-50/80 border-t border-border">
+              <div
+                className="p-[18px] border-t border-border"
+                style={{ background: 'hsl(var(--surface))' }}
+              >
                 <CartSummary />
               </div>
               <div className="p-[18px] pt-3.5 pb-4">
-                <Link to="/store/checkout" className="btn btn-accent w-full" style={{ height: 56 }}>
+                <Link to={checkoutPath} className="btn btn-accent w-full" style={{ height: 56 }}>
                   Checkout securely →
                 </Link>
                 <div className="flex gap-1.5 justify-center mt-3 opacity-40">
@@ -316,8 +331,11 @@ export default function Store() {
           )}
 
           <div
-            className="lg:hidden fixed left-0 right-0 bottom-[56px] z-50 bg-white rounded-t-[14px] shadow-2xl transition-transform duration-300 ease-out"
-            style={{ transform: isCartDrawerOpen ? 'translateY(0)' : 'translateY(100%)' }}
+            className="lg:hidden fixed left-0 right-0 bottom-[56px] z-50 rounded-t-[14px] shadow-2xl transition-transform duration-300 ease-out"
+            style={{
+              background: 'hsl(var(--card))',
+              transform: isCartDrawerOpen ? 'translateY(0)' : 'translateY(100%)',
+            }}
           >
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-9 h-1 rounded-full bg-stone-200" />
@@ -341,12 +359,15 @@ export default function Store() {
             <div className="px-4 max-h-[38vh] overflow-y-auto">
               <CartItems />
             </div>
-            <div className="px-4 py-3 bg-stone-50/80 border-t border-border">
+            <div
+              className="px-4 py-3 border-t border-border"
+              style={{ background: 'hsl(var(--surface))' }}
+            >
               <CartSummary />
             </div>
             <div className="px-4 pt-3 pb-5">
               <Link
-                to="/store/checkout"
+                to={checkoutPath}
                 onClick={() => setIsCartDrawerOpen(false)}
                 className="btn btn-accent w-full"
                 style={{ height: 48 }}
@@ -409,7 +430,7 @@ export default function Store() {
             </button>
             <div className="w-px h-8 bg-white/10 shrink-0" />
             <Link
-              to="/store/checkout"
+              to={checkoutPath}
               className="px-5 h-full flex items-center font-medium text-white text-sm shrink-0 hover:opacity-90 transition-opacity"
               style={{
                 fontFamily: "'Public Sans', sans-serif",

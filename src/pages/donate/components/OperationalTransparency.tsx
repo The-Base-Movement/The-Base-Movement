@@ -90,7 +90,7 @@ export function OperationalTransparency({
           <div
             style={{
               padding: '12px 24px',
-              background: '#fff',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               textAlign: 'center',
               borderRadius: 4,
@@ -238,7 +238,7 @@ export function OperationalTransparency({
                   height: 38,
                   paddingLeft: 36,
                   paddingRight: 12,
-                  background: '#fff',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 4,
                   fontSize: 13,
@@ -266,7 +266,7 @@ export function OperationalTransparency({
       {/* Tab content */}
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--card))',
           border: '1px solid hsl(var(--border))',
           borderRadius: 4,
           overflow: 'hidden',

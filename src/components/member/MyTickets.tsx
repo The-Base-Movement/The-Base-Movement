@@ -38,7 +38,6 @@ function relativeTime(iso: string): string {
 
 export default function MyTickets() {
   const [userId, setUserId] = useState<string | null>(null)
-  const [userRole, setUserRole] = useState<string | null>(null)
   const [showSubmit, setShowSubmit] = useState(false)
   const [selectedTicket, setSelectedTicket] = useState<HelpdeskTicket | null>(null)
   const [commentBody, setCommentBody] = useState('')
@@ -50,16 +49,6 @@ export default function MyTickets() {
     })
   }, [])
 
-  useEffect(() => {
-    if (!userId) return
-    supabase
-      .from('users')
-      .select('role')
-      .eq('id', userId)
-      .single()
-      .then(({ data }) => setUserRole(data?.role ?? null))
-  }, [userId])
-
   const {
     tickets,
     departments,
@@ -69,7 +58,7 @@ export default function MyTickets() {
     closeDetail,
     submitTicket,
     postComment,
-  } = useMemberHelpdesk(userId ?? '')
+  } = useMemberHelpdesk(userId)
 
   if (!userId) {
     return (
@@ -505,7 +494,6 @@ export default function MyTickets() {
       {showSubmit && (
         <SubmitTicketModal
           departments={departments}
-          userRole={userRole}
           onClose={() => setShowSubmit(false)}
           onSubmit={submitTicket}
         />

@@ -39,6 +39,13 @@ export const COLORS: {
   { value: 'teal', bg: '#F0FDFA', border: '#5EEAD4', pin: '#0D9488', label: 'Teal' },
 ]
 
+export const NOTE_INK = {
+  title: '#1F2937',
+  body: '#374151',
+  muted: '#6B7280',
+  placeholder: '#9CA3AF',
+}
+
 export function colorFor(v: NoteColor) {
   return COLORS.find((c) => c.value === v) ?? COLORS[0]
 }

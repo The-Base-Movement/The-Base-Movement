@@ -106,7 +106,10 @@ export function MovementJourney() {
   }, [user?.id])
 
   return (
-    <div className="card card-pad road bg-white border border-border rounded-[4px] p-4 sm:p-6">
+    <div
+      className="card card-pad road border border-border rounded-[4px] p-4 sm:p-6"
+      style={{ background: 'hsl(var(--card))' }}
+    >
       <h3 className="font-meta text-[14px] font-semibold tracking-tight text-on-surface mb-[14px]">
         My movement journey
       </h3>

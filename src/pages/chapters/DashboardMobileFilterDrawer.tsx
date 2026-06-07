@@ -26,7 +26,7 @@ export function DashboardMobileFilterDrawer({
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--card))',
           width: 300,
           height: '100%',
           overflowY: 'auto',

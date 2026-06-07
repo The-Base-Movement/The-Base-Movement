@@ -302,7 +302,7 @@ export function useHelpdesk(departmentId: string) {
 }
 
 // ─── Member hook (read own tickets + submit) ──────────────────────────────────
-export function useMemberHelpdesk(userId: string) {
+export function useMemberHelpdesk(userId: string | null) {
   const [tickets, setTickets] = useState<HelpdeskTicket[]>([])
   const [departments, setDepartments] = useState<HelpdeskDepartment[]>([])
   const [loading, setLoading] = useState(true)
@@ -313,6 +313,11 @@ export function useMemberHelpdesk(userId: string) {
   } | null>(null)
 
   const fetchMyTickets = useCallback(async () => {
+    if (!userId) {
+      setTickets([])
+      setLoading(false)
+      return
+    }
     setLoading(true)
     const { data, error } = await supabase
       .from('helpdesk_tickets')
@@ -347,9 +352,17 @@ export function useMemberHelpdesk(userId: string) {
   }, [])
 
   useEffect(() => {
+    if (!userId) {
+      const clearTickets = async () => {
+        setTickets([])
+        setLoading(false)
+      }
+      void clearTickets()
+      return
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchMyTickets()
-  }, [fetchMyTickets])
+  }, [fetchMyTickets, userId])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -414,6 +427,10 @@ export function useMemberHelpdesk(userId: string) {
       priority: 'low' | 'medium' | 'high'
       files: File[]
     }) => {
+      if (!userId) {
+        toast.error('Unable to submit ticket. User not signed in.')
+        return false
+      }
       const { data: ticket, error } = await supabase
         .from('helpdesk_tickets')
         .insert({
@@ -460,6 +477,10 @@ export function useMemberHelpdesk(userId: string) {
 
   const postComment = useCallback(
     async (ticketId: string, body: string) => {
+      if (!userId) {
+        toast.error('Unable to post comment. User not signed in.')
+        return false
+      }
       const { error } = await supabase.from('helpdesk_comments').insert({
         ticket_id: ticketId,
         author_id: userId,

@@ -121,7 +121,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 440,

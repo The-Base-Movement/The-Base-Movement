@@ -81,7 +81,7 @@ export default function Cart() {
                   <div
                     key={`${item.id}-${item.selectedSize}-${item.selectedColor}`}
                     style={{
-                      background: '#fff',
+                      background: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 'var(--radius-md)',
                       padding: '16px 20px',
@@ -289,7 +289,7 @@ export default function Cart() {
               })}
 
               <Link
-                to="/store"
+                to={isDashboard ? '/dashboard/store' : '/store'}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -313,7 +313,7 @@ export default function Cart() {
             <div>
               <div
                 style={{
-                  background: '#fff',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-md)',
                   padding: '20px 24px',
@@ -479,7 +479,7 @@ export default function Cart() {
         ) : (
           <div
             style={{
-              background: '#fff',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               borderRadius: 'var(--radius-lg)',
               padding: '64px 24px',

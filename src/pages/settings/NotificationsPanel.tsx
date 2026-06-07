@@ -91,7 +91,7 @@ export function NotificationsPanel() {
                 style={{
                   width: 14,
                   height: 14,
-                  background: '#fff',
+                  background: 'hsl(var(--card))',
                   borderRadius: '50%',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                 }}

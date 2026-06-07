@@ -203,7 +203,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                       top: dropdownRect.bottom + 4,
                       left: dropdownRect.left,
                       width: dropdownRect.width,
-                      background: '#fff',
+                      background: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 'var(--radius-sm)',
                       boxShadow: '0 8px 24px rgba(0,0,0,0.12)',

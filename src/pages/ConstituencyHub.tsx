@@ -170,26 +170,27 @@ export default function ConstituencyHub() {
       )
 
       // Load members, announcements, activities, and committee in parallel
-      const [{ data: memberData }, { data: announceData }, { data: actData }, committeeData] = await Promise.all([
-        supabase
-          .from('users')
-          .select(
-            'id, registration_number, full_name, phone_number, region, status, joined_at, avatar_url'
-          )
-          .eq('constituency', c.name)
-          .order('joined_at', { ascending: false }),
-        supabase
-          .from('constituency_announcements')
-          .select('*')
-          .eq('constituency_id', c.id)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('constituency_activities')
-          .select('id, title, description, type, activity_date')
-          .eq('constituency_id', c.id)
-          .order('activity_date', { ascending: false }),
-        constituencyService.getCommittee(c.id),
-      ])
+      const [{ data: memberData }, { data: announceData }, { data: actData }, committeeData] =
+        await Promise.all([
+          supabase
+            .from('users')
+            .select(
+              'id, registration_number, full_name, phone_number, region, status, joined_at, avatar_url'
+            )
+            .eq('constituency', c.name)
+            .order('joined_at', { ascending: false }),
+          supabase
+            .from('constituency_announcements')
+            .select('*')
+            .eq('constituency_id', c.id)
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('constituency_activities')
+            .select('id, title, description, type, activity_date')
+            .eq('constituency_id', c.id)
+            .order('activity_date', { ascending: false }),
+          constituencyService.getCommittee(c.id),
+        ])
 
       const mappedMembers = (memberData ?? []).map((u) => ({
         authId: u.id,
@@ -1209,7 +1210,7 @@ export default function ConstituencyHub() {
                       fontSize: 14,
                       fontFamily: "'Public Sans', sans-serif",
                       boxSizing: 'border-box',
-                      background: '#fff',
+                      background: 'hsl(var(--card))',
                       color: 'hsl(var(--on-surface))',
                       cursor: 'pointer',
                     }}

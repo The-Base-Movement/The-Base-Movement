@@ -9,6 +9,7 @@ import { MembersHeader } from './members/MembersHeader'
 import { MembersNoChapter } from './members/MembersNoChapter'
 import { MembersKPIs } from './members/MembersKPIs'
 import { MembersFilterSidebar } from './members/MembersFilterSidebar'
+import MembershipCard from '@/components/MembershipCard'
 
 function isVerified(m: Member) {
   return m.status === 'Active' || m.status === 'Approved' || !m.status
@@ -290,6 +291,7 @@ export default function Members() {
 
       {selectedMember && (
         <div
+          className="member-modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
@@ -303,8 +305,9 @@ export default function Members() {
           onClick={() => setSelectedMember(null)}
         >
           <div
+            className="member-modal-dialog"
             style={{
-              background: '#fff',
+              background: 'hsl(var(--card))',
               borderRadius: 6,
               border: '1px solid hsl(var(--border))',
               width: '100%',
@@ -384,7 +387,21 @@ export default function Members() {
               </button>
             </div>
 
-            <div style={{ padding: '36px 24px 24px' }}>
+            <div className="member-card-embed" style={{ padding: 16 }}>
+              <MembershipCard
+                userName={selectedMember.name}
+                userRegNo={selectedMember.id}
+                region={selectedMember.region}
+                constituency={selectedMember.constituency}
+                chapter={selectedMember.chapter}
+                joinedDate={selectedMember.joined}
+                status={selectedMember.status}
+                avatarUrl={selectedMember.avatarUrl}
+                country={selectedMember.country}
+              />
+            </div>
+
+            <div className="member-details" style={{ padding: '36px 24px 24px' }}>
               <div
                 style={{
                   display: 'flex',
@@ -492,6 +509,39 @@ export default function Members() {
           </div>
         </div>
       )}
+
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          .member-modal-overlay { padding: 16px; }
+          .member-modal-dialog { box-shadow: 0 24px 48px -12px rgba(0,0,0,.18); }
+          .member-card-embed { display: none; }
+          .member-details { display: block; }
+
+          @media (max-width: 640px) {
+            .member-modal-overlay { align-items: flex-start; padding: 0; }
+            .member-modal-dialog {
+              width: 100%;
+              max-width: 100%;
+              height: 100vh;
+              max-height: 100vh;
+              border-radius: 0;
+              overflow-y: auto;
+              transform: translateY(100%);
+              animation: slideUp 320ms cubic-bezier(.22,.9,.35,1) forwards;
+            }
+            .member-modal-dialog > div:first-child { height: 120px; }
+            .member-card-embed { display: block; }
+            .member-details { display: none; }
+
+            @keyframes slideUp {
+              from { transform: translateY(100%); opacity: 0; }
+              to { transform: translateY(0); opacity: 1; }
+            }
+          }
+        `,
+        }}
+      />
     </div>
   )
 }

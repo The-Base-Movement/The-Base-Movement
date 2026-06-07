@@ -40,7 +40,7 @@ export default function DonationListCard({ donation, isActive, onClick }: Props)
       style={{
         padding: '13px 16px',
         borderBottom: '1px solid hsl(var(--border))',
-        background: isActive ? 'rgba(0,107,63,.04)' : '#fff',
+        background: isActive ? 'rgba(0,107,63,.04)' : 'hsl(var(--card))',
         boxShadow: isActive ? 'inset 3px 0 0 hsl(var(--primary))' : undefined,
         cursor: 'pointer',
       }}

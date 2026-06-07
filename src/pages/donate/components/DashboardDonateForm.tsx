@@ -104,7 +104,7 @@ export function DashboardDonateForm({
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
-              background: '#fff',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
               boxSizing: 'border-box',
             }}

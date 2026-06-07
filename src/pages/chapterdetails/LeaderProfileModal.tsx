@@ -31,7 +31,7 @@ export function LeaderProfileModal({
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-sm)',
           border: '1px solid hsl(var(--border))',
           width: '100%',

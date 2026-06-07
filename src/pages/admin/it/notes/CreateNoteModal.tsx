@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import type { NoteColor } from './types'
-import { COLORS, colorFor } from './types'
+import { COLORS, colorFor, NOTE_INK } from './types'
 
 interface CreateModalProps {
   onClose: () => void
@@ -139,7 +139,7 @@ export function CreateNoteModal({ onClose, onSaved }: CreateModalProps) {
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
-                color: 'hsl(var(--on-surface))',
+                color: NOTE_INK.title,
                 background: palette.bg,
                 boxSizing: 'border-box',
                 outline: 'none',
@@ -175,7 +175,7 @@ export function CreateNoteModal({ onClose, onSaved }: CreateModalProps) {
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
-                color: 'hsl(var(--on-surface))',
+                color: NOTE_INK.body,
                 background: palette.bg,
                 boxSizing: 'border-box',
                 outline: 'none',

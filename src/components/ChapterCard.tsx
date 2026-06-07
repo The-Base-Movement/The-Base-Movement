@@ -50,7 +50,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
   return (
     <div
       style={{
-        background: '#fff',
+        background: 'hsl(var(--card))',
         border: '1px solid hsl(var(--border))',
         borderRadius: 6,
         overflow: 'hidden',

@@ -165,7 +165,7 @@ export function PollsSidebar({
           style={{
             width: '100%',
             justifyContent: 'center',
-            background: '#fff',
+            background: 'hsl(var(--card))',
             color: 'hsl(var(--primary))',
             borderColor: 'transparent',
           }}

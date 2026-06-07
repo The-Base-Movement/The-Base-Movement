@@ -22,7 +22,7 @@ export default function MobilizationLeaderboardCard({ entry, index }: Props) {
       style={{
         padding: '13px 16px',
         borderBottom: '1px solid hsl(var(--border))',
-        background: '#fff',
+        background: 'hsl(var(--card))',
       }}
     >
       {/* Row 1: Rank · Chapter Info · Points */}

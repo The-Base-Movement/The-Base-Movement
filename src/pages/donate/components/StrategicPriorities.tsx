@@ -67,7 +67,7 @@ export function StrategicPriorities({
               <div
                 key={c.id}
                 style={{
-                  background: '#fff',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   display: 'flex',
                   flexDirection: 'column',
@@ -261,7 +261,7 @@ export function StrategicPriorities({
               height: 36,
               border: '1px solid hsl(var(--border))',
               borderRadius: 'var(--radius-sm)',
-              background: '#fff',
+              background: 'hsl(var(--card))',
               cursor: page === 0 ? 'not-allowed' : 'pointer',
               opacity: page === 0 ? 0.4 : 1,
               color: 'hsl(var(--on-surface))',
@@ -308,7 +308,7 @@ export function StrategicPriorities({
               height: 36,
               border: '1px solid hsl(var(--border))',
               borderRadius: 'var(--radius-sm)',
-              background: '#fff',
+              background: 'hsl(var(--card))',
               cursor: page === totalPages - 1 ? 'not-allowed' : 'pointer',
               opacity: page === totalPages - 1 ? 0.4 : 1,
               color: 'hsl(var(--on-surface))',

@@ -59,7 +59,7 @@ export function DashboardRequestModal({
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--card))',
           width: '100%',
           maxWidth: 480,
           borderRadius: 8,

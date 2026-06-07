@@ -27,10 +27,27 @@ export default function Navbar() {
   const isLoggedIn = !!session
   const [isOpen, setIsOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isDarkTheme, setIsDarkTheme] = useState(
+    () =>
+      typeof document !== 'undefined' &&
+      document.documentElement.getAttribute('data-theme') === 'dark'
+  )
   const [userAvatar, setUserAvatar] = useState('')
   const [userName, setUserName] = useState('')
   const location = useLocation()
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme')
+    const shouldUseDark = storedTheme === 'dark'
+    if (shouldUseDark) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsDarkTheme(shouldUseDark)
+  }, [])
 
   useEffect(() => {
     if (session?.user) {
@@ -77,10 +94,49 @@ export default function Navbar() {
   const linkActive = (link: (typeof NAV_LINKS)[number]) =>
     isActive(isLoggedIn ? link.dashPath : link.publicPath)
 
+  const toggleTheme = () => {
+    const nextIsDark = !isDarkTheme
+    if (nextIsDark) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    }
+    setIsDarkTheme(nextIsDark)
+    window.dispatchEvent(new Event('admin_theme_changed'))
+  }
+
+  const themeToggle = (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+      style={{
+        width: 36,
+        height: 36,
+        border: '1px solid hsl(var(--border))',
+        borderRadius: 'var(--radius-sm)',
+        background: 'hsl(var(--background))',
+        color: 'hsl(var(--on-surface-muted))',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        flexShrink: 0,
+      }}
+    >
+      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+        {isDarkTheme ? 'light_mode' : 'dark_mode'}
+      </span>
+    </button>
+  )
+
   return (
     <header
       style={{
-        background: '#fff',
+        background: 'hsl(var(--background))',
         borderBottom: '1px solid hsl(var(--border))',
         position: 'sticky',
         top: 0,
@@ -162,6 +218,7 @@ export default function Navbar() {
 
         {/* Desktop auth / user */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }} className="desktop-only">
+          {themeToggle}
           {isLoggedIn ? (
             <div style={{ position: 'relative' }} ref={dropdownRef}>
               <button
@@ -237,7 +294,7 @@ export default function Navbar() {
                     right: 0,
                     top: 'calc(100% + 10px)',
                     width: 220,
-                    background: '#fff',
+                    background: 'hsl(var(--background))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: 'var(--radius-md)',
                     boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
@@ -289,9 +346,7 @@ export default function Navbar() {
                         fontWeight: 500,
                         fontSize: 12,
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                      }
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--card))')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                     >
                       <span
@@ -321,9 +376,7 @@ export default function Navbar() {
                       cursor: 'pointer',
                       textAlign: 'left',
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                    }
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--card))')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
@@ -371,7 +424,7 @@ export default function Navbar() {
         <div
           className="mobile-only"
           style={{
-            background: '#fff',
+            background: 'hsl(var(--background))',
             borderTop: '1px solid hsl(var(--border))',
             padding: '16px 20px 24px',
           }}
@@ -408,6 +461,28 @@ export default function Navbar() {
               gap: 8,
             }}
           >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '8px 14px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'hsl(var(--card))',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                Theme
+              </span>
+              {themeToggle}
+            </div>
             {isLoggedIn ? (
               <>
                 <div
@@ -417,7 +492,7 @@ export default function Navbar() {
                     gap: 12,
                     padding: '10px 14px',
                     borderRadius: 'var(--radius-md)',
-                    background: 'hsl(var(--container-low))',
+                    background: 'hsl(var(--card))',
                   }}
                 >
                   {userAvatar ? (

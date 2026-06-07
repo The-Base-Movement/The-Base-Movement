@@ -44,7 +44,7 @@ export function DeleteConfirmationModal({
         style={{
           width: '100%',
           maxWidth: 440,
-          background: '#fff',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.35)',

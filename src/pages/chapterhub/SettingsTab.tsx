@@ -23,7 +23,7 @@ const inp: CSSProperties = {
   fontSize: 13,
   outline: 'none',
   boxSizing: 'border-box',
-  background: '#fff',
+  background: 'hsl(var(--card))',
   color: 'hsl(var(--on-surface))',
 }
 
@@ -139,7 +139,7 @@ export function SettingsTab({
                 fontSize: 13,
                 outline: 'none',
                 boxSizing: 'border-box',
-                background: '#fff',
+                background: 'hsl(var(--card))',
                 color: 'hsl(var(--on-surface))',
                 resize: 'vertical',
                 lineHeight: 1.6,

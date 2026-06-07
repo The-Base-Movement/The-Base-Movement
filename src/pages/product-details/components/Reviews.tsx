@@ -188,7 +188,7 @@ export function Reviews({ product }: ReviewsProps) {
               rows={4}
               style={{
                 width: '100%',
-                background: '#fff',
+                background: 'hsl(var(--card))',
                 border: '1px solid #e2e2e2',
                 padding: '12px 14px',
                 fontSize: 13,

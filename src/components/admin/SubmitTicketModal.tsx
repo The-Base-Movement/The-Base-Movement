@@ -15,7 +15,7 @@ const inputSt: React.CSSProperties = {
   width: '100%',
   padding: '0 12px',
   border: '1px solid hsl(var(--border))',
-  background: 'hsl(var(--container-low))',
+  background: 'hsl(var(--background))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-medium, 500)',
@@ -79,7 +79,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
         style={{
           width: '100%',
           maxWidth: 480,
-          background: '#fff',
+          background: 'hsl(var(--surface))',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid hsl(var(--border))',
           boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
@@ -91,7 +91,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
           style={{
             padding: '18px 24px',
             borderBottom: '1px solid hsl(var(--border))',
-            background: 'hsl(var(--container-low))',
+            background: 'hsl(var(--card))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -238,7 +238,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
           style={{
             padding: '16px 24px',
             borderTop: '1px solid hsl(var(--border))',
-            background: 'hsl(var(--container-low))',
+            background: 'hsl(var(--card))',
             display: 'flex',
             gap: 10,
           }}

@@ -151,7 +151,7 @@ export function AdminTopbar({
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
-              background: 'hsl(var(--container-low))',
+              background: 'hsl(var(--background))',
               color: 'hsl(var(--on-surface))',
               outline: 'none',
               boxSizing: 'border-box',
@@ -171,9 +171,9 @@ export function AdminTopbar({
                   top: 'calc(100% + 6px)',
                   left: 0,
                   right: 0,
-                  background: '#fff',
+                  background: 'hsl(var(--background))',
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: 6,
+                  borderRadius: 'var(--radius-md)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
                   zIndex: 50,
                   overflow: 'hidden',
@@ -183,7 +183,7 @@ export function AdminTopbar({
                   style={{
                     padding: '8px 12px',
                     borderBottom: '1px solid hsl(var(--border))',
-                    background: 'hsl(var(--container-low))',
+                    background: 'hsl(var(--card))',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -235,7 +235,7 @@ export function AdminTopbar({
                           color: 'inherit',
                         }}
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                          (e.currentTarget.style.background = 'hsl(var(--card))')
                         }
                         onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                       >
@@ -243,8 +243,8 @@ export function AdminTopbar({
                           style={{
                             width: 30,
                             height: 30,
-                            borderRadius: 4,
-                            background: 'hsl(var(--container-low))',
+                            borderRadius: 'var(--radius-sm)',
+                            background: 'hsl(var(--card))',
                             border: '1px solid hsl(var(--border))',
                             display: 'flex',
                             alignItems: 'center',
@@ -318,7 +318,7 @@ export function AdminTopbar({
                             color: 'hsl(var(--on-surface-muted))',
                             padding: '2px 6px',
                             border: '1px solid hsl(var(--border))',
-                            borderRadius: 3,
+                            borderRadius: 'var(--radius-xs)',
                             flexShrink: 0,
                           }}
                         >
@@ -345,7 +345,7 @@ export function AdminTopbar({
                 <div
                   style={{
                     padding: '8px 12px',
-                    background: 'hsl(var(--container-low))',
+                    background: 'hsl(var(--card))',
                     borderTop: '1px solid hsl(var(--border))',
                     textAlign: 'center',
                   }}
@@ -363,7 +363,7 @@ export function AdminTopbar({
                       style={{
                         padding: '1px 5px',
                         border: '1px solid hsl(var(--border))',
-                        borderRadius: 3,
+                        borderRadius: 'var(--radius-xs)',
                         fontFamily: "'Public Sans', sans-serif",
                         fontSize: 10,
                       }}
@@ -461,8 +461,8 @@ export function AdminTopbar({
                   padding: '0 3px',
                   background: 'hsl(var(--destructive))',
                   color: '#fff',
-                  borderRadius: 99,
-                  border: '1.5px solid #fff',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1.5px solid hsl(var(--card))',
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 8,
@@ -488,9 +488,9 @@ export function AdminTopbar({
                 style={{
                   top: windowWidth < 640 ? 80 : 'calc(100% + 12px)',
                   width: windowWidth < 640 ? 'auto' : 320,
-                  background: '#fff',
+                  background: 'hsl(var(--background))',
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: 8,
+                  borderRadius: 'var(--radius-md)',
                   boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                   zIndex: 50,
                   overflow: 'hidden',
@@ -505,7 +505,7 @@ export function AdminTopbar({
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    background: 'hsl(var(--container-low))',
+                    background: 'hsl(var(--card))',
                   }}
                 >
                   <span
@@ -547,7 +547,9 @@ export function AdminTopbar({
                         style={{
                           padding: '14px 18px',
                           borderBottom: '1px solid hsl(var(--border))',
-                          background: note.is_read ? 'transparent' : 'rgba(206, 17, 38, 0.03)',
+                          background: note.is_read
+                            ? 'transparent'
+                            : 'hsl(var(--destructive) / 0.08)',
                           cursor: note.is_read ? 'default' : 'pointer',
                           display: 'flex',
                           gap: 12,
@@ -557,9 +559,9 @@ export function AdminTopbar({
                           style={{
                             width: 32,
                             height: 32,
-                            borderRadius: 6,
+                            borderRadius: 'var(--radius-sm)',
                             background: note.is_read
-                              ? 'hsl(var(--container-low))'
+                              ? 'hsl(var(--card))'
                               : 'hsl(var(--destructive))',
                             color: note.is_read ? 'hsl(var(--on-surface-muted))' : '#fff',
                             display: 'flex',
@@ -665,7 +667,7 @@ export function AdminTopbar({
                     padding: '12px',
                     textAlign: 'center',
                     borderTop: '1px solid hsl(var(--border))',
-                    background: 'hsl(var(--container-low))',
+                    background: 'hsl(var(--card))',
                     textDecoration: 'none',
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-medium, 500)',
@@ -692,11 +694,11 @@ export function AdminTopbar({
               gap: 10,
               padding: '5px 8px',
               border: '1px solid transparent',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
               background: 'none',
               cursor: 'pointer',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--card))')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
           >
             {/* Name + role — hidden on mobile */}
@@ -787,9 +789,9 @@ export function AdminTopbar({
                   right: 0,
                   top: 'calc(100% + 6px)',
                   width: 220,
-                  background: '#fff',
+                  background: 'hsl(var(--background))',
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: 6,
+                  borderRadius: 'var(--radius-md)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
                   zIndex: 50,
                   overflow: 'hidden',
@@ -836,9 +838,7 @@ export function AdminTopbar({
                       fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 12,
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                    }
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--card))')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
@@ -865,9 +865,7 @@ export function AdminTopbar({
                     cursor: 'pointer',
                     textAlign: 'left',
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--card))')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>

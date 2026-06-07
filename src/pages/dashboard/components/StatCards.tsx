@@ -77,7 +77,7 @@ function Tile({
 
 const tileStyles = `
   .tile {
-    background: #fff;
+    background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     border-radius: 4px;
     padding: 12px 16px 14px 20px;

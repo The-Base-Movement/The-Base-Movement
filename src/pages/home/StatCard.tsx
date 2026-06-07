@@ -54,7 +54,7 @@ export function StatCard({
     <div
       ref={cardRef}
       style={{
-        background: '#fff',
+        background: 'hsl(var(--card))',
         border: '1px solid #dfe4dd',
         borderRadius: 'var(--radius-md)',
         padding: '22px 22px 20px',

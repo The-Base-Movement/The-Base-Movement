@@ -239,7 +239,7 @@ export function LiveContributionFeed() {
               <div
                 style={{
                   padding: '11px 14px',
-                  background: '#fff',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 4,
                   display: 'flex',

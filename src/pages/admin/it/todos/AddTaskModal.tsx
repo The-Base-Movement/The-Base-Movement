@@ -125,7 +125,7 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
           style={{
             padding: '18px 24px',
             borderBottom: '1px solid hsl(var(--border))',
-            background: 'hsl(var(--container-low))',
+            background: 'hsl(var(--card))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -322,7 +322,7 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
                             color: 'hsl(var(--on-surface))',
                           }}
                           onMouseEnter={(e) =>
-                            (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                            (e.currentTarget.style.background = 'hsl(var(--card))')
                           }
                           onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                         >
@@ -347,7 +347,7 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
           style={{
             padding: '14px 24px',
             borderTop: '1px solid hsl(var(--border))',
-            background: 'hsl(var(--container-low))',
+            background: 'hsl(var(--card))',
             display: 'flex',
             gap: 10,
           }}

@@ -99,7 +99,7 @@ export function NetworkStructureSection() {
           <article
             aria-label="Ghana Network: Constituency membership"
             style={{
-              background: '#fff',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               borderRadius: 'var(--radius-lg)',
               overflow: 'hidden',
@@ -259,7 +259,7 @@ export function NetworkStructureSection() {
           <article
             aria-label="Diaspora Network: Chapter membership"
             style={{
-              background: '#fff',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               borderRadius: 'var(--radius-lg)',
               overflow: 'hidden',
@@ -420,7 +420,7 @@ export function NetworkStructureSection() {
         <div
           style={{
             padding: '18px 24px',
-            background: '#fff',
+            background: 'hsl(var(--card))',
             border: '1px solid hsl(var(--border))',
             borderRadius: 'var(--radius-md)',
             display: 'flex',

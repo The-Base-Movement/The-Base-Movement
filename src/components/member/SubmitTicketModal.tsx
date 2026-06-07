@@ -3,7 +3,7 @@ import type { HelpdeskDepartment } from '@/components/admin/Helpdesk/types'
 
 interface Props {
   departments: HelpdeskDepartment[]
-  userRole: string | null
+  userRole?: string | null
   onClose: () => void
   onSubmit: (payload: {
     department_id: string

@@ -53,7 +53,7 @@ export function VictoriesSection({ pastCampaigns }: VictoriesSectionProps) {
           <div
             key={c.id}
             style={{
-              background: '#fff',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               padding: 24,
               display: 'flex',

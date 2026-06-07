@@ -52,7 +52,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
               <div
                 key={poll.id}
                 style={{
-                  background: '#fff',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 6,
                   padding: 22,

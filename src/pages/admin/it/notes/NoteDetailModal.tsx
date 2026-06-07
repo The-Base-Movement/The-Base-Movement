@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import type { Note, Comment } from './types'
-import { colorFor, fmtDate } from './types'
+import { colorFor, fmtDate, NOTE_INK } from './types'
 
 interface DetailModalProps {
   note: Note
@@ -119,6 +119,7 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
             borderBottom: `3px solid ${palette.border}`,
             padding: '18px 24px 16px',
             flexShrink: 0,
+            color: NOTE_INK.body,
           }}
         >
           <div
@@ -157,14 +158,14 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 17,
-                    color: 'hsl(var(--on-surface))',
+                    color: NOTE_INK.title,
                     lineHeight: 1.3,
                   }}
                 >
                   {note.title}
                 </p>
               )}
-              <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+              <p style={{ margin: 0, fontSize: 11, color: NOTE_INK.muted }}>
                 {note.author_name} · {fmtDate(note.created_at)}
               </p>
             </div>
@@ -180,7 +181,7 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
             >
               <span
                 className="material-symbols-outlined"
-                style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}
+                style={{ fontSize: 20, color: NOTE_INK.muted }}
               >
                 close
               </span>
@@ -198,7 +199,7 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 14,
-                color: 'hsl(var(--on-surface))',
+                color: NOTE_INK.body,
                 lineHeight: 1.7,
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',

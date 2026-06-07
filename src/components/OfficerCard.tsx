@@ -95,7 +95,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
           height: 24,
           borderRadius: '50%',
           border: `5px solid ${tierColor}`,
-          background: '#fff',
+          background: 'hsl(var(--card))',
           zIndex: 10,
           boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
         }}
@@ -112,7 +112,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
       >
         <div
           style={{
-            background: '#fff',
+            background: 'hsl(var(--card))',
             borderRadius: 16,
             padding: '48px 24px 24px',
             WebkitMaskImage: 'radial-gradient(circle at 50% 0px, transparent 18px, black 19px)',

@@ -492,7 +492,7 @@ export default function RegistrationForm({
         display: 'flex',
         flexDirection: 'column',
         margin: '0 auto',
-        background: '#fff',
+        background: 'hsl(var(--card))',
         borderRadius: isMobile ? 8 : undefined,
       }}
     >

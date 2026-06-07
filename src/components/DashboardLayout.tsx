@@ -56,6 +56,18 @@ export default function DashboardLayout() {
   }, [])
 
   useEffect(() => {
+    const storedTheme = localStorage.getItem('theme')
+    const adminDarkMode = localStorage.getItem('admin_dark_mode')
+    const shouldUseDark = storedTheme === 'dark' || adminDarkMode === 'true'
+    if (shouldUseDark) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+    }
+    setIsDarkTheme(shouldUseDark)
+  }, [])
+
+  useEffect(() => {
     const checkAdmin = async () => {
       if (!session?.user?.id) return
       const adminData = await adminService.getAdminData(session.user.id)
@@ -835,6 +847,7 @@ export default function DashboardLayout() {
               {/* Donate shortcut */}
               <Link
                 to="/dashboard/donate"
+                className="hidden md:flex donate-button"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -842,7 +855,6 @@ export default function DashboardLayout() {
                   padding: '0 14px',
                   height: 36,
                   background: 'hsl(var(--accent))',
-                  color: 'hsl(var(--on-surface))',
                   borderRadius: 4,
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: 'var(--font-weight-medium, 500)',
@@ -851,7 +863,6 @@ export default function DashboardLayout() {
                   flexShrink: 0,
                   whiteSpace: 'nowrap',
                 }}
-                className="hidden md:flex"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                   volunteer_activism
@@ -1004,7 +1015,7 @@ export default function DashboardLayout() {
                         right: 0,
                         top: 'calc(100% + 6px)',
                         zIndex: 50,
-                        background: '#fff',
+                        background: 'hsl(var(--background))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 6,
                         width: 320,
@@ -1080,7 +1091,9 @@ export default function DashboardLayout() {
                                 gap: 10,
                                 padding: '11px 14px',
                                 borderBottom: '1px solid hsl(var(--border))',
-                                background: n.is_read ? '#fff' : 'hsl(var(--container-low))',
+                                background: n.is_read
+                                  ? 'hsl(var(--card))'
+                                  : 'hsl(var(--container-low))',
                               }}
                             >
                               <span
@@ -1258,7 +1271,7 @@ export default function DashboardLayout() {
                         right: 0,
                         top: 'calc(100% + 6px)',
                         zIndex: 50,
-                        background: '#fff',
+                        background: 'hsl(var(--background))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 6,
                         minWidth: 210,

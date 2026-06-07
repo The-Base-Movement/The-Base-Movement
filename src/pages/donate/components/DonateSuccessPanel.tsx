@@ -72,7 +72,7 @@ export function DonateSuccessPanel({ variant, onNewContribution }: DonateSuccess
       style={{
         maxWidth: 640,
         margin: '80px auto 0',
-        background: '#fff',
+        background: 'hsl(var(--card))',
         border: '1px solid hsl(var(--border))',
         padding: 'clamp(32px, 8vw, 64px)',
         textAlign: 'center',

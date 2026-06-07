@@ -89,7 +89,7 @@ function ProfileCard({ member, onClose }: { member: ChapterMember; onClose: () =
           right: 0,
           bottom: 0,
           zIndex: 101,
-          background: '#fff',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
           padding: '24px 20px 36px',
           boxShadow: '0 -8px 40px rgba(0,0,0,0.18)',

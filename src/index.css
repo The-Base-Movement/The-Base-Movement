@@ -268,6 +268,80 @@
     font-size: var(--p-size);
   }
 
+  :root[data-theme='dark'] .public-layout {
+    background: hsl(var(--background));
+    color: hsl(var(--on-surface));
+  }
+
+  :root[data-theme='dark'] .public-layout .bg-white,
+  :root[data-theme='dark'] .public-layout .bg-stone-50,
+  :root[data-theme='dark'] .public-layout .bg-stone-50\/50,
+  :root[data-theme='dark'] .public-layout .bg-slate-50,
+  :root[data-theme='dark'] .public-layout .bg-slate-50\/50,
+  :root[data-theme='dark'] .bg-white,
+  :root[data-theme='dark'] .bg-stone-50,
+  :root[data-theme='dark'] .bg-stone-100,
+  :root[data-theme='dark'] .bg-slate-50,
+  :root[data-theme='dark'] .bg-slate-100 {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  :root[data-theme='dark'] .public-layout .bg-stone-100,
+  :root[data-theme='dark'] .public-layout .bg-slate-100 {
+    background-color: hsl(var(--surface-variant)) !important;
+  }
+
+  :root[data-theme='dark'] .public-layout .text-stone-900,
+  :root[data-theme='dark'] .public-layout .text-stone-800,
+  :root[data-theme='dark'] .public-layout .text-slate-900,
+  :root[data-theme='dark'] .public-layout .text-slate-800,
+  :root[data-theme='dark'] .text-stone-900,
+  :root[data-theme='dark'] .text-stone-800,
+  :root[data-theme='dark'] .text-slate-900,
+  :root[data-theme='dark'] .text-slate-800 {
+    color: hsl(var(--on-surface)) !important;
+  }
+
+  :root[data-theme='dark'] .public-layout .text-stone-600,
+  :root[data-theme='dark'] .public-layout .text-stone-500,
+  :root[data-theme='dark'] .public-layout .text-stone-400,
+  :root[data-theme='dark'] .public-layout .text-slate-600,
+  :root[data-theme='dark'] .public-layout .text-slate-500,
+  :root[data-theme='dark'] .text-stone-600,
+  :root[data-theme='dark'] .text-stone-500,
+  :root[data-theme='dark'] .text-stone-400,
+  :root[data-theme='dark'] .text-slate-600,
+  :root[data-theme='dark'] .text-slate-500,
+  :root[data-theme='dark'] .text-slate-400 {
+    color: hsl(var(--on-surface-muted)) !important;
+  }
+
+  :root[data-theme='dark'] .public-layout .text-stone-300,
+  :root[data-theme='dark'] .public-layout .text-stone-200,
+  :root[data-theme='dark'] .public-layout .text-slate-300,
+  :root[data-theme='dark'] .public-layout .text-slate-200 {
+    color: hsl(var(--outline-variant)) !important;
+  }
+
+  :root[data-theme='dark'] .public-layout .border-stone-200,
+  :root[data-theme='dark'] .public-layout .border-stone-100,
+  :root[data-theme='dark'] .public-layout .border-slate-200,
+  :root[data-theme='dark'] .public-layout .border-slate-100,
+  :root[data-theme='dark'] .border-stone-200,
+  :root[data-theme='dark'] .border-stone-100,
+  :root[data-theme='dark'] .border-slate-200,
+  :root[data-theme='dark'] .border-slate-100 {
+    border-color: hsl(var(--border)) !important;
+  }
+
+  .donate-button {
+    color: hsl(var(--on-surface));
+  }
+
+  :root[data-theme='dark'] .donate-button {
+    color: hsl(var(--accent-foreground));
+  }
+
   button,
   .button {
     border-radius: var(--button-radius, 0.125rem);

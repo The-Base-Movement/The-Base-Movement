@@ -108,7 +108,7 @@ export function PublicSearchFilter({
                     left: 0,
                     right: 0,
                     zIndex: 50,
-                    background: '#fff',
+                    background: 'hsl(var(--card))',
                     border: '1px solid #e5e7eb',
                     borderRadius: 4,
                     boxShadow: '0 8px 24px rgba(0,0,0,0.1)',

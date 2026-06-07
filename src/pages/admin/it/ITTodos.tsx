@@ -220,7 +220,7 @@ export default function ITTodos() {
               gap: 8,
               padding: '10px 14px',
               borderBottom: '1px solid hsl(var(--border))',
-              background: 'hsl(var(--container-low))',
+              background: 'hsl(var(--card))',
             }}
           >
             <select
@@ -257,7 +257,7 @@ export default function ITTodos() {
               display: 'flex',
               alignItems: 'center',
               borderBottom: '1px solid hsl(var(--border))',
-              background: 'hsl(var(--container-low))',
+              background: 'hsl(var(--card))',
             }}
           >
             <div style={{ display: 'flex', flex: 1 }}>
@@ -312,7 +312,12 @@ export default function ITTodos() {
         {/* Quick-add bar */}
         <form
           onSubmit={handleQuickAdd}
-          style={{ display: 'flex', gap: 0, borderBottom: '1px solid hsl(var(--border))' }}
+          style={{
+            display: 'flex',
+            gap: 0,
+            borderBottom: '1px solid hsl(var(--border))',
+            background: 'hsl(var(--card))',
+          }}
         >
           <label htmlFor="quick-add-task" style={{ display: 'none' }}>
             Quick-add a task
@@ -346,7 +351,7 @@ export default function ITTodos() {
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
-              background: 'hsl(var(--container-low))',
+              background: 'hsl(var(--card))',
               outline: 'none',
             }}
           />
@@ -370,7 +375,7 @@ export default function ITTodos() {
               style={{
                 height: 52,
                 borderBottom: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
+                background: 'hsl(var(--card))',
                 opacity: 0.5 - i * 0.07,
               }}
             />

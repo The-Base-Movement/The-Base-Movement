@@ -22,7 +22,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
     >
       <div
         style={{
-          background: '#fff',
+          background: 'hsl(var(--card))',
           width: '100%',
           maxWidth: 600,
           borderRadius: 8,
@@ -71,7 +71,7 @@ export function ImpactActivityModal({ allActivity, onClose }: Props) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: '#fff',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               cursor: 'pointer',

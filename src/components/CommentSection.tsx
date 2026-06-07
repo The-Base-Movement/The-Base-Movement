@@ -300,7 +300,7 @@ export function CommentSection({ postId }: { postId: string }) {
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  background: '#fff',
+                  background: 'hsl(var(--card))',
                   border: '1px solid #e2e2e2',
                   padding: '12px 14px',
                   fontSize: 13,
@@ -493,7 +493,7 @@ export function CommentSection({ postId }: { postId: string }) {
                       style={{
                         flex: 1,
                         minWidth: 0,
-                        background: '#fff',
+                        background: 'hsl(var(--card))',
                         border: '1px solid #e2e2e2',
                         padding: '10px 12px',
                         fontSize: 12,

@@ -22,7 +22,7 @@ export function CategoryFilter({
           className={cn(
             'px-[14px] py-[6px] rounded-full border font-meta font-medium text-[11px] cursor-pointer transition-all',
             activeCategory === cat
-              ? 'bg-on-surface text-white border-on-surface'
+              ? 'bg-primary text-white border-primary'
               : 'bg-white text-on-surface border-border hover:border-primary hover:text-primary'
           )}
         >

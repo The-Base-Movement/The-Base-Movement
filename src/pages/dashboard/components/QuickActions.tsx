@@ -32,7 +32,10 @@ export function QuickActions() {
   }
 
   return (
-    <div className="bg-white border border-border rounded-[4px] p-6 quick h-full">
+    <div
+      className="border border-border rounded-[4px] p-6 quick h-full"
+      style={{ background: 'hsl(var(--card))' }}
+    >
       <h3 className="font-meta text-[14px] font-semibold tracking-tight text-on-surface mb-[14px]">
         Quick actions
       </h3>
@@ -55,7 +58,7 @@ export function QuickActions() {
           className="qa animate-in fade-in slide-in-from-right-4 duration-500"
           style={{
             border: '1px solid hsl(var(--border))',
-            background: '#fff',
+            background: 'hsl(var(--card))',
             textAlign: 'left',
             cursor: 'pointer',
           }}
@@ -73,7 +76,7 @@ export function QuickActions() {
           __html: `
         .quick h3 { font-size: 14px; font-weight: var(--font-weight-semibold, 600); margin-bottom: 14px; font-family: 'Public Sans', sans-serif; }
         .quick .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .qa { display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; border: 1px solid hsl(var(--border)); border-radius: 4px; background: #fff; align-items: flex-start; transition: all .15s; cursor: pointer; text-decoration: none; }
+        .qa { display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; border: 1px solid hsl(var(--border)); border-radius: 4px; background: hsl(var(--card)); align-items: flex-start; transition: all .15s; cursor: pointer; text-decoration: none; }
         .qa:hover { border-color: hsl(var(--primary)); transform: translateY(-1px); box-shadow: 0 8px 20px -8px rgba(0, 107, 63, 0.2); }
         .qa .ic { width: 36px; height: 36px; border-radius: 6px; background: hsl(var(--container-low)); display: flex; align-items: center; justify-content: center; color: hsl(var(--primary)); }
         .qa .ic .material-symbols-outlined { font-size: 20px; }

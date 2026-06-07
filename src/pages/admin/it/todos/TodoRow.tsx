@@ -13,6 +13,8 @@ export function TodoRow({ todo, onToggleDone, onCycleStatus, onDelete }: TodoRow
   const done = todo.status === 'done'
   const overdue = isOverdue(todo.due_date) && !done
   const soon = isDueSoon(todo.due_date) && !done
+  const rowBg = done ? 'hsl(var(--card))' : 'hsl(var(--background))'
+  const rowHoverBg = 'hsl(var(--card))'
 
   return (
     <div
@@ -22,15 +24,15 @@ export function TodoRow({ todo, onToggleDone, onCycleStatus, onDelete }: TodoRow
         gap: 10,
         padding: '12px 16px',
         borderBottom: '1px solid hsl(var(--border))',
-        background: done ? 'hsl(var(--container-low))' : '#fff',
+        background: rowBg,
         transition: 'background 0.1s',
         opacity: done ? 0.65 : 1,
       }}
       onMouseEnter={(e) => {
-        if (!done) e.currentTarget.style.background = 'hsl(var(--container-low))'
+        if (!done) e.currentTarget.style.background = rowHoverBg
       }}
       onMouseLeave={(e) => {
-        if (!done) e.currentTarget.style.background = '#fff'
+        if (!done) e.currentTarget.style.background = rowBg
       }}
     >
       {/* Done toggle */}
@@ -93,7 +95,7 @@ export function TodoRow({ todo, onToggleDone, onCycleStatus, onDelete }: TodoRow
               gap: 3,
               padding: '1px 7px',
               borderRadius: 'var(--radius-pill)',
-              background: 'hsl(var(--container-low))',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               fontSize: 10,
               fontWeight: 'var(--font-weight-medium, 500)',

@@ -1,5 +1,5 @@
 import type { Note } from './types'
-import { colorFor, tiltFor, fmtDate } from './types'
+import { colorFor, tiltFor, fmtDate, NOTE_INK } from './types'
 
 interface NoteCardProps {
   note: Note
@@ -26,6 +26,7 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
         position: 'relative',
         overflow: 'hidden',
         breakInside: 'avoid',
+        color: NOTE_INK.body,
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'rotate(0deg) translateY(-4px)'
@@ -63,7 +64,7 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 13,
-            color: 'hsl(var(--on-surface))',
+            color: NOTE_INK.title,
             lineHeight: 1.3,
           }}
         >
@@ -78,7 +79,7 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
           fontFamily: "'Public Sans', sans-serif",
           fontWeight: 'var(--font-weight-normal, 400)',
           fontSize: 12,
-          color: 'hsl(var(--on-surface))',
+          color: NOTE_INK.body,
           lineHeight: 1.6,
           display: '-webkit-box',
           WebkitLineClamp: 5,
@@ -94,7 +95,7 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
       <div
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}
       >
-        <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.3 }}>
+        <span style={{ fontSize: 10, color: NOTE_INK.muted, lineHeight: 1.3 }}>
           {note.author_name}
           <br />
           {fmtDate(note.created_at)}

@@ -14,7 +14,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
       style={{
         display: 'flex',
         flexDirection: 'column',
-        background: '#fff',
+        background: 'hsl(var(--card))',
         border: '1px solid hsl(var(--border))',
         borderRadius: 'var(--radius-md)',
         padding: '16px',
