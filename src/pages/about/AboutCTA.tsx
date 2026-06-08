@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Button } from '@/components/buttons/ui/neon-button'
 
 const TRUST_SIGNALS = [
   { icon: 'groups', value: '10,000+', label: 'Patriots' },
@@ -17,150 +16,242 @@ export function AboutCTA() {
       ([e]) => {
         if (e.isIntersecting) setVisible(true)
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     )
     if (ref.current) obs.observe(ref.current)
     return () => obs.disconnect()
   }, [])
+
+  const reveal = (delay: number): React.CSSProperties => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0)' : 'translateY(20px)',
+    transition: `opacity 0.65s ease ${delay}ms, transform 0.65s ease ${delay}ms`,
+  })
 
   return (
     <section
       aria-label="Join The Base Movement"
       ref={ref as React.RefObject<HTMLElement>}
       style={{
+        position: 'relative',
+        minHeight: 600,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        overflow: 'hidden',
+        padding: 'clamp(56px, 8vw, 96px) clamp(24px, 5vw, 64px)',
         background: 'hsl(var(--on-surface))',
         borderRadius: 'var(--radius-lg)',
-        position: 'relative',
-        overflow: 'hidden',
-        padding: 'clamp(40px, 6vw, 72px) clamp(24px, 5vw, 64px)',
-        textAlign: 'center',
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: 'opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s',
       }}
     >
-      {/* Gold accent bar */}
+      {/* Radial gold mesh overlay */}
       <div
         aria-hidden="true"
         style={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 3,
-          background: 'hsl(var(--accent))',
+          inset: 0,
+          backgroundImage:
+            'radial-gradient(circle at 50% 50%, rgba(218,165,32,0.07) 0%, transparent 65%)',
+          pointerEvents: 'none',
         }}
       />
 
-      {/* Headline */}
-      <h2
+      {/* Content stack */}
+      <div
         style={{
-          fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 'var(--font-weight-medium, 500)',
-          fontSize: 'clamp(1.6rem, 4vw, 2.4rem)',
-          color: 'hsl(var(--card))',
-          margin: '0 0 12px',
-          letterSpacing: '-0.02em',
-          lineHeight: 1.2,
-        }}
-      >
-        Ready to Join the Movement?
-      </h2>
-
-      {/* Subtext */}
-      <p
-        style={{
-          fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 'var(--font-weight-normal, 400)',
-          fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-          color: 'rgba(255,255,255,0.6)',
-          margin: '0 auto 32px',
-          maxWidth: 480,
-          lineHeight: 1.6,
-        }}
-      >
-        Add your name. Strengthen the cause. Ghana First.
-      </p>
-
-      {/* Trust signals */}
-      <ul
-        style={{
-          listStyle: 'none',
-          margin: '0 auto 36px',
-          padding: 0,
+          position: 'relative',
+          zIndex: 1,
+          maxWidth: 720,
+          width: '100%',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          gap: '0',
-          maxWidth: 480,
         }}
       >
-        {TRUST_SIGNALS.map((signal, i) => (
-          <li
-            key={signal.label}
+        {/* Editorial anchor label */}
+        <div
+          style={{
+            borderTop: '3px solid hsl(var(--accent))',
+            paddingTop: 20,
+            marginBottom: 28,
+            ...reveal(0),
+          }}
+        >
+          <span
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '0 20px',
-              borderRight:
-                i < TRUST_SIGNALS.length - 1 ? '1px solid rgba(255,255,255,0.15)' : 'none',
-              opacity: visible ? 1 : 0,
-              transform: visible ? 'translateY(0)' : 'translateY(12px)',
-              transition: `opacity 0.55s ease ${i * 120}ms, transform 0.55s ease ${i * 120}ms`,
+              fontFamily: "'Public Sans', sans-serif",
+              fontSize: 10,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'hsl(var(--accent))',
             }}
           >
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-              style={{ fontSize: 18, color: 'hsl(var(--accent))' }}
-            >
-              {signal.icon}
-            </span>
-            <span
+            National Mobilization
+          </span>
+        </div>
+
+        {/* Headline */}
+        <h2
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+            color: 'hsl(var(--card))',
+            margin: '0 0 16px',
+            letterSpacing: '-0.03em',
+            lineHeight: 1.1,
+            ...reveal(80),
+          }}
+        >
+          Ready to Join the Movement?
+        </h2>
+
+        {/* Subtext */}
+        <p
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-normal, 400)',
+            fontSize: 'clamp(0.875rem, 1.8vw, 1rem)',
+            color: 'rgba(255,255,255,0.6)',
+            margin: '0 0 40px',
+            maxWidth: 480,
+            lineHeight: 1.65,
+            ...reveal(160),
+          }}
+        >
+          Add your name. Strengthen the cause. Ghana First. Join a network of patriots dedicated to
+          building a resilient, sovereign foundation.
+        </p>
+
+        {/* Trust signals row */}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            borderTop: '1px solid rgba(255,255,255,0.12)',
+            borderBottom: '1px solid rgba(255,255,255,0.12)',
+            padding: '28px 0',
+            marginBottom: 40,
+            ...reveal(240),
+          }}
+        >
+          {TRUST_SIGNALS.map((signal, i) => (
+            <div
+              key={signal.label}
               style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontVariantNumeric: 'tabular-nums',
+                flex: '1 1 120px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 24px',
+                borderRight:
+                  i < TRUST_SIGNALS.length - 1 ? '1px solid rgba(255,255,255,0.12)' : 'none',
               }}
             >
+              <span
+                className="material-symbols-outlined"
+                aria-hidden="true"
+                style={{ fontSize: 22, color: 'hsl(var(--accent))' }}
+              >
+                {signal.icon}
+              </span>
               <strong
                 style={{
-                  display: 'block',
-                  fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 'clamp(1.1rem, 2.5vw, 1.35rem)',
                   fontWeight: 'var(--font-weight-medium, 500)',
                   color: 'hsl(var(--accent))',
                   lineHeight: 1.1,
                   letterSpacing: '-0.01em',
+                  fontVariantNumeric: 'tabular-nums',
                 }}
               >
                 {signal.value}
               </strong>
               <span
                 style={{
-                  fontSize: '10px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 10,
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'rgba(255,255,255,0.5)',
+                  color: 'rgba(255,255,255,0.45)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
                 }}
               >
                 {signal.label}
               </span>
-            </span>
-          </li>
-        ))}
-      </ul>
+            </div>
+          ))}
+        </div>
 
-      {/* CTA */}
-      <Link to="/register" style={{ display: 'inline-block' }}>
-        <Button variant="accent" size="lg">
-          Join the Base
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            arrow_forward
-          </span>
-        </Button>
-      </Link>
+        {/* CTA button + disclaimer */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 16,
+            ...reveal(320),
+          }}
+        >
+          <Link to="/register" style={{ display: 'inline-block' }}>
+            <button
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 12,
+                background: 'hsl(var(--accent))',
+                color: 'hsl(var(--on-surface))',
+                border: 'none',
+                borderRadius: 'var(--radius-pill)',
+                padding: '15px 36px',
+                fontFamily: "'Public Sans', sans-serif",
+                fontSize: 13,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                boxShadow: '0 8px 32px rgba(218,165,32,0.18)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.04)'
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(218,165,32,0.28)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(218,165,32,0.18)'
+              }}
+            >
+              Join the Base
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                arrow_forward
+              </span>
+            </button>
+          </Link>
+
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontSize: 10,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'rgba(255,255,255,0.22)',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              margin: 0,
+            }}
+          >
+            Privacy Protected · No Spam · Pure Sovereignty
+          </p>
+        </div>
+      </div>
     </section>
   )
 }
