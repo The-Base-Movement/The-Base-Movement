@@ -786,7 +786,7 @@ export interface Order {
   total_amount: number
   status: 'Pending' | 'Processing' | 'Dispatched' | 'Delivered' | 'Cancelled'
   payment_method: string
-  payment_status: 'Unpaid' | 'Paid' | 'Refunded'
+  payment_status: 'Unpaid' | 'Paid' | 'Failed' | 'Refunded'
   created_at: string
   updated_at?: string
   dispatched_at?: string

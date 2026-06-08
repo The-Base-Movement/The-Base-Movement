@@ -6,11 +6,15 @@ import SEO from '@/components/SEO'
 import { Skeleton } from '@/components/states'
 import { useBranding } from '@/hooks/useBranding'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { openHubtelCheckout } from '@/components/payment/hubtelCheckout'
 
 export default function OrderSummary() {
   const { settings } = useBranding()
   const location = useLocation()
-  const orderId = location.state?.orderId
+  const queryOrderId = new URLSearchParams(location.search).get('orderId')
+  const orderId = location.state?.orderId ?? queryOrderId
+  const checkoutUrl = location.state?.checkoutUrl as string | undefined
+  const awaitingPayment = Boolean(location.state?.awaitingPayment)
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -83,6 +87,8 @@ export default function OrderSummary() {
     year: 'numeric',
   })
   const orderNumber = order.id.substring(0, 8).toUpperCase()
+  const paymentStatus = order.payment_status || 'Unpaid'
+  const isPaid = paymentStatus === 'Paid'
 
   return (
     <main className="bg-off-white min-h-screen">
@@ -119,9 +125,13 @@ export default function OrderSummary() {
                     <p className="text-[8px] font-bold tracking-tight opacity-80">Official store</p>
                   </div>
                 </div>
-                <h1 className="font-h1 text-h3 mb-1 tracking-tight">Order confirmed</h1>
+                <h1 className="font-h1 text-h3 mb-1 tracking-tight">
+                  {isPaid ? 'Order confirmed' : 'Order received'}
+                </h1>
                 <p className="font-meta text-micro opacity-90 tracking-tight">
-                  Your support drives the movement forward
+                  {isPaid
+                    ? 'Your support drives the movement forward'
+                    : 'Complete payment in Hubtel to confirm this purchase'}
                 </p>
               </div>
             </div>
@@ -140,10 +150,20 @@ export default function OrderSummary() {
                   </div>
                   <div>
                     <p className="text-micro font-bold text-stone-400 tracking-tight mb-1 sm:text-right">
-                      Date
+                      Payment
                     </p>
-                    <p className="font-bold text-stone-900 sm:text-right">{date}</p>
+                    <p
+                      className={`font-bold sm:text-right ${
+                        isPaid ? 'text-brand-green' : 'text-stone-900'
+                      }`}
+                    >
+                      {paymentStatus}
+                    </p>
                   </div>
+                </div>
+                <div>
+                  <p className="text-micro font-bold text-stone-400 tracking-tight mb-1">Date</p>
+                  <p className="font-bold text-stone-900">{date}</p>
                 </div>
               </div>
 
@@ -209,7 +229,7 @@ export default function OrderSummary() {
                   </div>
                   <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                     <span className="font-h3 text-lg tracking-tight">
-                      Total paid via {order.payment_method?.toUpperCase()}
+                      Total {isPaid ? 'paid' : 'due'} via {order.payment_method?.toUpperCase()}
                     </span>
                     <span className="font-h3 text-2xl text-brand-green whitespace-nowrap">
                       ₵{Number(order.total_amount).toFixed(2)}
@@ -220,6 +240,34 @@ export default function OrderSummary() {
 
               {/* Next Steps */}
               <div className="space-y-6">
+                {!isPaid && (
+                  <div className="flex items-start gap-4 p-6 border border-amber-200 rounded-sm bg-amber-50 shadow-sm">
+                    <div className="w-10 h-10 bg-white flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-amber-600">payments</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-stone-900 text-sm mb-1 tracking-tight">
+                        Payment awaiting confirmation
+                      </p>
+                      <p className="text-xs text-stone-600 leading-relaxed font-medium">
+                        Complete the Hubtel checkout window. This order will update after Hubtel
+                        confirms payment.
+                      </p>
+                      {checkoutUrl && awaitingPayment && (
+                        <button
+                          type="button"
+                          className="btn btn-outline mt-4"
+                          onClick={() => openHubtelCheckout(checkoutUrl)}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                            open_in_new
+                          </span>
+                          Reopen Hubtel checkout
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-start gap-4 p-6 border border-stone-100 rounded-sm bg-white shadow-sm">
                   <div className="w-10 h-10 bg-brand-green/10 flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-brand-green">mail</span>

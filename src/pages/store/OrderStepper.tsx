@@ -14,7 +14,7 @@ const steps = [
   {
     num: '03',
     title: 'Payment',
-    text: 'MTN MoMo · Vodafone Cash · card · PayPal for diaspora.',
+    text: 'Hubtel checkout supports mobile money, bank card, wallets, and GhQR.',
     color: 'var(--charcoal)',
   },
   {

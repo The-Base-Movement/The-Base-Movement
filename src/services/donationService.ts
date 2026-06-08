@@ -496,25 +496,58 @@ class DonationService {
   }
 
   async getMemberDonationStats(
-    phone: string
+    member: string | { authId?: string | null; phone?: string | null }
   ): Promise<{ total: number; count: number; lastMonth: number }> {
-    const { data, error } = await supabase
-      .from('donations')
-      .select('amount, created_at')
-      .eq('phone', phone)
-      .eq('status', 'Verified')
+    const authId = typeof member === 'string' ? null : member.authId?.trim() || null
+    const phone = typeof member === 'string' ? member.trim() : member.phone?.trim() || null
 
-    if (error || !data) return { total: 0, count: 0, lastMonth: 0 }
+    if (!authId && !phone) return { total: 0, count: 0, lastMonth: 0 }
 
     const now = new Date()
-    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+    const yearStart = new Date(Date.UTC(now.getFullYear(), 0, 1)).toISOString()
+    const monthStart = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1))
 
-    const stats = data.reduce(
+    const queries = []
+    if (authId) {
+      queries.push(
+        supabase
+          .from('donations')
+          .select('id, amount, created_at')
+          .eq('member_id', authId)
+          .eq('status', 'Verified')
+          .gte('created_at', yearStart)
+      )
+    }
+    if (phone) {
+      queries.push(
+        supabase
+          .from('donations')
+          .select('id, amount, created_at')
+          .eq('phone', phone)
+          .eq('status', 'Verified')
+          .gte('created_at', yearStart)
+      )
+    }
+
+    const responses = await Promise.all(queries)
+    const rows = new Map<string, { amount: number | string; created_at: string }>()
+
+    for (const { data, error } of responses) {
+      if (error) {
+        console.warn('[DATABASE] Failed to fetch member donation stats:', error)
+        continue
+      }
+      for (const row of data || []) {
+        rows.set(row.id, row)
+      }
+    }
+
+    const stats = Array.from(rows.values()).reduce(
       (acc, d) => {
         const amt = Number(d.amount)
         acc.total += amt
         acc.count += 1
-        if (new Date(d.created_at) >= oneMonthAgo) {
+        if (new Date(d.created_at) >= monthStart) {
           acc.lastMonth += amt
         }
         return acc

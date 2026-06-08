@@ -13,6 +13,7 @@ import SEO from '@/components/SEO'
 import { discordService } from '@/services/discordService'
 import { DeliveryForm } from './checkout/DeliveryForm'
 import { PaymentMethodSelector } from './checkout/PaymentMethodSelector'
+import { initiateHubtelCheckout, openHubtelCheckout } from '@/components/payment/hubtelCheckout'
 
 export default function Checkout() {
   const navigate = useNavigate()
@@ -21,7 +22,10 @@ export default function Checkout() {
   const { cart, clearCart } = useStore()
   const { session } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card'>('momo')
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [paymentState, setPaymentState] = useState<'idle' | 'starting' | 'checkout' | 'failed'>(
+    'idle'
+  )
   const [isDiaspora, setIsDiaspora] = useState(false)
   const [dbCountries, setDbCountries] = useState<{ name: string; is_diaspora: boolean }[]>([])
   const [dbRegions, setDbRegions] = useState<Region[]>([])
@@ -96,6 +100,8 @@ export default function Checkout() {
       return
     }
     setIsSubmitting(true)
+    setPaymentState('starting')
+    setCheckoutUrl(null)
     try {
       const { data: order, error: orderError } = await supabase
         .from('store_orders')
@@ -108,13 +114,14 @@ export default function Checkout() {
           city: formData.city,
           country: formData.country,
           region_or_state: isDiaspora ? formData.stateProvince : formData.region,
-          payment_method: paymentMethod,
+          payment_method: 'Hubtel',
           subtotal,
           shipping_fee: shipping,
           total_amount: total,
           points_redeemed: usePoints ? pointsToRedeem : 0,
           points_value_ghs: appliedPointsValue,
           status: 'Pending',
+          payment_status: 'Unpaid',
         })
         .select('id')
         .single()
@@ -134,15 +141,6 @@ export default function Checkout() {
       const { error: itemsError } = await supabase.from('store_order_items').insert(orderItems)
       if (itemsError) throw itemsError
 
-      if (usePoints && session?.user?.id) {
-        await supabase.from('member_points').insert({
-          user_id: session.user.id,
-          points: -pointsToRedeem,
-          reason: `Store Redemption: Order #${order.id.substring(0, 8)}`,
-          reference_id: order.id,
-        })
-      }
-
       if (session?.user?.id) {
         await userActivityService.logActivity(
           session.user.id,
@@ -151,23 +149,52 @@ export default function Checkout() {
           { order_id: order.id }
         )
       }
+
+      const summaryPath = isDashboard ? '/dashboard/store/summary' : '/store/summary'
+      const summaryUrl = `${window.location.origin}${summaryPath}?orderId=${order.id}`
+      const url = await initiateHubtelCheckout({
+        reference: order.id,
+        amount: total,
+        currency: 'GHS',
+        name: formData.fullName,
+        phone: formData.phone,
+        email: formData.email,
+        returnUrl: summaryUrl,
+        cancellationUrl: window.location.href,
+        metadata: {
+          orderId: order.id,
+          memberId: session?.user?.id,
+          itemCount: cart.length,
+          pointsRedeemed: usePoints ? pointsToRedeem : 0,
+          pointsValueGhs: appliedPointsValue,
+          country: formData.country,
+          regionOrState: isDiaspora ? formData.stateProvince : formData.region,
+        },
+      })
+
+      setCheckoutUrl(url)
+      setPaymentState('checkout')
       discordService.storeOrderPlaced(
         order.id,
         formData.fullName,
         total,
         cart.length,
-        paymentMethod === 'momo' ? 'Mobile Money (MoMo)' : 'Card',
+        'Hubtel secure checkout',
         isDiaspora ? formData.stateProvince : formData.region
       )
-      trackEvent('store_purchase', { total: total, items: cart.length })
-      toast.success('Order placed successfully! Check your email for details.')
+      trackEvent('store_payment_started', { total, items: cart.length, provider: 'Hubtel' })
+      toast.success('Secure checkout opened. Complete payment to confirm your order.')
+      const popup = openHubtelCheckout(url)
+      if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
       clearCart()
-      const path = isDashboard ? '/dashboard/store/summary' : '/store/summary'
-      navigate(path, { state: { orderId: order.id } })
+      navigate(summaryPath, {
+        state: { orderId: order.id, checkoutUrl: url, awaitingPayment: true },
+      })
     } catch (err: unknown) {
       console.error('Checkout failed:', err)
+      setPaymentState('failed')
       const errorMessage =
-        err instanceof Error ? err.message : 'Failed to process checkout. Please try again.'
+        err instanceof Error ? err.message : 'Failed to start secure checkout. Please try again.'
       toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
@@ -221,7 +248,7 @@ export default function Checkout() {
               dbRegions={dbRegions}
               onChange={handleChange}
             />
-            <PaymentMethodSelector paymentMethod={paymentMethod} onSelect={setPaymentMethod} />
+            <PaymentMethodSelector />
           </div>
 
           <div className="lg:col-span-4">
@@ -329,12 +356,32 @@ export default function Checkout() {
 
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || paymentState === 'checkout'}
                 className="btn btn-primary w-full disabled:opacity-60"
                 style={{ height: 56 }}
               >
-                {isSubmitting ? 'Processing Order...' : 'Complete Purchase'}
+                {paymentState === 'starting'
+                  ? 'Opening secure checkout...'
+                  : paymentState === 'checkout'
+                    ? 'Checkout opened'
+                    : paymentState === 'failed'
+                      ? 'Try secure checkout again'
+                      : 'Finish payment'}
               </button>
+
+              {checkoutUrl && (
+                <button
+                  type="button"
+                  className="btn btn-outline w-full mt-3"
+                  onClick={() => openHubtelCheckout(checkoutUrl)}
+                  style={{ height: 46, justifyContent: 'center' }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 17 }}>
+                    open_in_new
+                  </span>
+                  Reopen Hubtel checkout
+                </button>
+              )}
 
               <div className="mt-8 space-y-4">
                 <div

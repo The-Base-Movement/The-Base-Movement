@@ -73,8 +73,15 @@ export default function Dashboard() {
         // Fetch additional stats
         try {
           const [donations, rank] = await Promise.all([
-            donationService.getMemberDonationStats(liveMember.phone),
-            gamificationService.getMemberRank(liveMember.authId || liveMember.id),
+            donationService.getMemberDonationStats({
+              authId: liveMember.authId,
+              phone: liveMember.phone,
+            }),
+            gamificationService.getNetworkRank({
+              platform: liveMember.platform,
+              constituency: liveMember.constituency,
+              chapter: liveMember.chapter,
+            }),
           ])
           setContributionStats({ total: donations.total, lastMonth: donations.lastMonth })
           setRankInfo({ rank: rank.rank, delta: rank.delta })
@@ -169,7 +176,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Lower row: feed + journey */}
+        {/* Lower row: feed + journey/activity stack */}
         <div className="dash-lower">
           <div className="dash-card-feed panel feed" style={{ padding: 24 }}>
             <h3
@@ -213,16 +220,17 @@ export default function Dashboard() {
             </h3>
             <ActivityFeed />
           </div>
-          <div className="dash-card-journey">
-            <MovementJourney />
+          <div className="dash-side-stack">
+            <div className="dash-card-journey">
+              <MovementJourney />
+            </div>
+            {user && (
+              <div className="dash-card-recent-activity">
+                <RecentActivityPanel userId={user.id} />
+              </div>
+            )}
           </div>
         </div>
-
-        {user && (
-          <div className="dash-card-recent-activity" style={{ marginTop: 20 }}>
-            <RecentActivityPanel userId={user.id} />
-          </div>
-        )}
       </div>
 
       <style
@@ -244,6 +252,15 @@ export default function Dashboard() {
           grid-template-columns: 1.4fr 1fr;
           gap: 20px;
         }
+        .dash-side-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          height: 100%;
+        }
+        .dash-card-recent-activity {
+          flex: 1;
+        }
 
         @media (max-width: 768px) {
           .dash-welcome-name { font-size: 22px !important; }
@@ -252,12 +269,13 @@ export default function Dashboard() {
           .dash-content { display: flex; flex-direction: column; gap: 20px; }
           .dash-hero    { display: contents; }
           .dash-lower   { display: contents; }
+          .dash-side-stack { display: contents; }
 
           .dash-card-membership { order: 1; }
           .dash-card-journey    { order: 2; }
           .dash-card-feed       { order: 3; }
           .dash-card-actions    { order: 4; }
-          .dash-card-recent-activity { order: 5; margin-top: 0 !important; }
+          .dash-card-recent-activity { order: 5; }
         }
       `,
         }}

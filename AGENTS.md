@@ -128,6 +128,36 @@ The Base Movement is a Ghana political movement membership platform with three s
 - Run `npm run build` after routing, SSR/prerender, deployment, public SEO, or cross-surface changes.
 - Run only the smallest relevant validation for the task.
 
+# Playwright / Browser Rules
+
+Use Playwright only for browser-specific verification:
+
+- Rendered UI behavior.
+- Form interactions.
+- Responsive layout checks.
+- Console/runtime errors.
+- Login/admin flows.
+- Broken links/buttons.
+
+Do not use Playwright for:
+
+- Reading source code.
+- Scanning the project.
+- Understanding folder structure.
+- Creating documentation.
+- Creating skills.
+- Normal code edits.
+
+When using Playwright:
+
+- Open only the target page.
+- Do not crawl unrelated pages.
+- Prefer accessibility snapshots over screenshots.
+- Avoid screenshots unless visual layout matters.
+- Avoid repeated snapshots.
+- Check console/network logs only when debugging runtime issues.
+- Stop after the browser behavior is confirmed.
+
 # Token-Saving Rules
 
 - Use `AGENTS.md` and `.codex/skills` before scanning broadly.

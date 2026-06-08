@@ -163,7 +163,7 @@ export function StatCards({
       color="gold"
       label="Contribution YTD"
       value={`₵${contributionYTD.total.toLocaleString()}`}
-      delta={`+₵${contributionYTD.lastMonth} this month`}
+      delta={`+₵${contributionYTD.lastMonth.toLocaleString()} this month`}
       icon="account_balance_wallet"
     />,
     <Tile
@@ -178,7 +178,7 @@ export function StatCards({
       key="rank"
       color="green"
       label={rankLabel}
-      value={`#${rank.rank.toString().padStart(2, '0')}`}
+      value={rank.rank > 0 ? `#${rank.rank.toString().padStart(2, '0')}` : '—'}
       delta={rank.delta}
       icon="military_tech"
     />,

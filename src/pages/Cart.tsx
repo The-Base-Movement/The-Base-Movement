@@ -454,7 +454,7 @@ export default function Cart() {
                     opacity: 0.4,
                   }}
                 >
-                  {['MoMo', 'Visa', 'Mastercard', 'PayPal'].map((m) => (
+                  {['Mobile Money', 'Bank Card', 'Wallets', 'GhQR'].map((m) => (
                     <span
                       key={m}
                       style={{

@@ -111,12 +111,37 @@ Deno.serve(async (req: Request) => {
             hubtel_reference: transactionId,
           }
 
-      const { error: orderError } = await supabaseAdmin
+      const { data: order, error: orderError } = await supabaseAdmin
         .from('store_orders')
         .update(orderUpdate)
         .eq('id', reference)
+        .select('id, customer_id, points_redeemed')
+        .maybeSingle()
 
       if (orderError) throw orderError
+
+      if (paid && order?.customer_id && Number(order.points_redeemed ?? 0) > 0) {
+        const pointsRedeemed = Number(order.points_redeemed)
+        const { data: existingRedemption, error: redemptionLookupError } = await supabaseAdmin
+          .from('member_points')
+          .select('id')
+          .eq('user_id', order.customer_id)
+          .eq('reference_id', order.id)
+          .lt('points', 0)
+          .maybeSingle()
+
+        if (redemptionLookupError) throw redemptionLookupError
+
+        if (!existingRedemption) {
+          const { error: pointsError } = await supabaseAdmin.from('member_points').insert({
+            user_id: order.customer_id,
+            points: -pointsRedeemed,
+            reason: `Store Redemption: Order #${order.id.substring(0, 8)}`,
+            reference_id: order.id,
+          })
+          if (pointsError) throw pointsError
+        }
+      }
     }
 
     return json({ success: true, paid, reference })

@@ -297,7 +297,7 @@ export default function Store() {
                   Checkout securely →
                 </Link>
                 <div className="flex gap-1.5 justify-center mt-3 opacity-40">
-                  {['MoMo', 'Visa', 'Mastercard', 'PayPal'].map((m) => (
+                  {['Mobile Money', 'Bank Card', 'Wallets', 'GhQR'].map((m) => (
                     <span
                       key={m}
                       className="text-[9px] font-semibold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"
@@ -375,7 +375,7 @@ export default function Store() {
                 Checkout securely →
               </Link>
               <div className="flex gap-1.5 justify-center mt-2.5 opacity-40">
-                {['MoMo', 'Visa', 'Mastercard', 'PayPal'].map((m) => (
+                {['Mobile Money', 'Bank Card', 'Wallets', 'GhQR'].map((m) => (
                   <span
                     key={m}
                     className="text-[9px] font-semibold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"

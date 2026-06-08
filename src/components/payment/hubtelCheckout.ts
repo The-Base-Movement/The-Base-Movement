@@ -16,6 +16,8 @@ export interface HubtelCheckoutRequest {
   email?: string
   reference: string
   metadata?: HubtelCheckoutMetadata
+  returnUrl?: string
+  cancellationUrl?: string
 }
 
 function getCheckoutUrl(payload: unknown): string | null {
@@ -46,8 +48,8 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
       phone: request.phone,
       email: request.email,
       metadata: request.metadata,
-      returnUrl: window.location.href,
-      cancellationUrl: window.location.href,
+      returnUrl: request.returnUrl ?? window.location.href,
+      cancellationUrl: request.cancellationUrl ?? window.location.href,
     },
   })
 

@@ -111,6 +111,20 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    if (type === 'order') {
+      const { data: order, error } = await supabaseAdmin
+        .from('store_orders')
+        .select('id, total_amount, payment_status')
+        .eq('id', reference)
+        .single()
+
+      if (error || !order) throw new Error('Order record was not found')
+      if (order.payment_status === 'Paid') throw new Error('Order has already been paid')
+      if (Math.abs(Number(order.total_amount) - settlement.ghsAmount) > 0.01) {
+        throw new Error('Order amount does not match the payment request')
+      }
+    }
+
     const callbackUrl = `${supabaseUrl}/functions/v1/hubtel-payment-callback`
     const fallbackUrl =
       body.returnUrl ??
@@ -123,7 +137,12 @@ Deno.serve(async (req: Request) => {
     const hubtelPayload = {
       totalAmount: Number(settlement.ghsAmount.toFixed(2)),
       currency: 'GHS',
-      description: type === 'donation' ? 'The Base Movement donation' : 'The Base Movement payment',
+      description:
+        type === 'donation'
+          ? 'The Base Movement donation'
+          : type === 'order'
+            ? 'The Base Movement store order'
+            : 'The Base Movement payment',
       callbackUrl,
       returnUrl: body.returnUrl ?? fallbackUrl,
       cancellationUrl: body.cancellationUrl ?? fallbackUrl,

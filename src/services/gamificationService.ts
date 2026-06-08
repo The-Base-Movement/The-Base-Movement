@@ -98,6 +98,70 @@ class GamificationService {
       return { rank: 99, totalMembers: 1000, delta: 'Stable' }
     }
   }
+
+  async getNetworkRank({
+    platform,
+    constituency,
+    chapter,
+  }: {
+    platform: 'GHANA' | 'DIASPORA'
+    constituency?: string | null
+    chapter?: string | null
+  }): Promise<{ rank: number; activeCount: number; delta: string }> {
+    const groupField = platform === 'DIASPORA' ? 'chapter' : 'constituency'
+    const target = (platform === 'DIASPORA' ? chapter : constituency)?.trim()
+
+    if (!target) {
+      return {
+        rank: 0,
+        activeCount: 0,
+        delta: `${platform === 'DIASPORA' ? 'Chapter' : 'Constituency'} pending`,
+      }
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select(groupField)
+        .eq('platform', platform)
+        .in('status', ['Active', 'Approved'])
+        .is('deleted_at', null)
+
+      if (error) throw error
+
+      const rows = (data || []) as Array<Partial<Record<'constituency' | 'chapter', unknown>>>
+      const counts = new Map<string, { name: string; count: number }>()
+      for (const row of rows) {
+        const name = String(row[groupField] || '').trim()
+        if (!name) continue
+
+        const key = name.toLowerCase()
+        const current = counts.get(key)
+        counts.set(key, { name: current?.name || name, count: (current?.count || 0) + 1 })
+      }
+
+      const ranked = Array.from(counts.values()).sort((a, b) => {
+        if (b.count !== a.count) return b.count - a.count
+        return a.name.localeCompare(b.name)
+      })
+      const targetKey = target.toLowerCase()
+      const targetIndex = ranked.findIndex((item) => item.name.toLowerCase() === targetKey)
+
+      if (targetIndex === -1) {
+        return { rank: 0, activeCount: 0, delta: 'No active members yet' }
+      }
+
+      const activeCount = ranked[targetIndex].count
+      return {
+        rank: targetIndex + 1,
+        activeCount,
+        delta: `${activeCount.toLocaleString()} active member${activeCount === 1 ? '' : 's'}`,
+      }
+    } catch (error) {
+      console.error('[SERVICE] Network rank calculation failed:', error)
+      return { rank: 0, activeCount: 0, delta: 'Rank unavailable' }
+    }
+  }
 }
 
 export const gamificationService = GamificationService.getInstance()
