@@ -103,7 +103,7 @@ export function AboutCTA() {
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-            color: 'hsl(var(--card))',
+            color: 'rgba(255,255,255,0.95)',
             margin: '0 0 16px',
             letterSpacing: '-0.03em',
             lineHeight: 1.1,
