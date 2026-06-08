@@ -43,7 +43,10 @@ export function PublicSidebar({
           ))}
         </div>
       </div>
-      <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
+      <div
+        className="p-8 border-l-4 border-warm-gold text-white"
+        style={{ background: 'hsl(132 9% 10%)' }}
+      >
         <h4 className="font-meta font-medium text-lg tracking-tight mb-4">The Base Weekly</h4>
         <p className="text-xs text-slate-400 leading-relaxed mb-6">
           Get the movement's policy briefs and news delivered directly to your inbox every week.
