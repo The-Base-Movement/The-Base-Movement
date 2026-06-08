@@ -119,7 +119,7 @@ export default function ForgotPassword() {
 
             <h2 className="auth-heading">Recover your account.</h2>
             <p className="auth-subheading">
-              Choose how you would like to reset your password — by SMS code or email link.
+              Choose how you would like to reset your password by SMS code or email link.
             </p>
 
             {/* Method tabs */}
