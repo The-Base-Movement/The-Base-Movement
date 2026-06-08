@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 const TRUST_SIGNALS = [
   { icon: 'groups', value: '10,000+', label: 'Patriots' },
@@ -32,6 +33,7 @@ export function AboutCTA() {
     <section
       aria-label="Join The Base Movement"
       ref={ref as React.RefObject<HTMLElement>}
+      className="about-cta"
       style={{
         position: 'relative',
         minHeight: 600,
@@ -42,7 +44,6 @@ export function AboutCTA() {
         textAlign: 'center',
         overflow: 'hidden',
         padding: 'clamp(56px, 8vw, 96px) clamp(24px, 5vw, 64px)',
-        background: 'hsl(var(--on-surface))',
         borderRadius: 'var(--radius-lg)',
       }}
     >
@@ -70,15 +71,18 @@ export function AboutCTA() {
           alignItems: 'center',
         }}
       >
-        {/* Editorial anchor label */}
+        {/* Editorial anchor */}
         <div
           style={{
-            borderTop: '3px solid hsl(var(--accent))',
-            paddingTop: 20,
             marginBottom: 28,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 12,
             ...reveal(0),
           }}
         >
+          <BrandLine width={96} />
           <span
             style={{
               fontFamily: "'Public Sans', sans-serif",
@@ -86,7 +90,7 @@ export function AboutCTA() {
               fontWeight: 'var(--font-weight-medium, 500)',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
-              color: 'hsl(var(--accent))',
+              color: 'rgba(255,255,255,0.45)',
             }}
           >
             National Mobilization

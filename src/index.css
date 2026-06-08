@@ -412,6 +412,33 @@
       radial-gradient(circle at 50% 18%, hsl(var(--primary) / 0.16), transparent 52%);
   }
 
+  /* ── About CTA section ─────────────────────────────────────────────────── */
+  .about-cta {
+    background: hsl(132 9% 10%);
+  }
+
+  :root[data-theme='dark'] .about-cta {
+    background: hsl(132 9% 8%);
+  }
+
+  /* ── Contact page hero ─────────────────────────────────────────────────── */
+  .contact-hero {
+    background: hsl(132 9% 6%);
+  }
+
+  :root[data-theme='dark'] .contact-hero {
+    background: hsl(132 9% 5%);
+  }
+
+  /* Ensure hero text is always light inside the contact hero */
+  .contact-hero .text-slate-300 {
+    color: rgba(255, 255, 255, 0.75) !important;
+  }
+
+  :root[data-theme='dark'] .contact-hero .text-slate-300 {
+    color: rgba(255, 255, 255, 0.65) !important;
+  }
+
   .donate-button {
     color: hsl(var(--on-surface));
   }
