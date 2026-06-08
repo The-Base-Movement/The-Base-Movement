@@ -28,7 +28,7 @@ BEGIN
             NEW.chapter,
             'Expenditure'::text,
             NEW.amount,
-            COALESCE(reviewer_name, 'Unknown') || ': ' || NEW.description,
+            COALESCE(reviewer_name, 'auto') || ': ' || NEW.description,
             CASE
                 WHEN NEW.request_type = 'InventoryReplenishment' THEN 'Other'::text
                 WHEN NEW.request_type = 'ExpenseReimbursement' THEN 'Other'::text

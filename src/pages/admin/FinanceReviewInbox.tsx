@@ -636,6 +636,7 @@ export default function FinanceReviewInbox() {
                         'Amount',
                         'Status',
                         'Resolved At Tier',
+                        'Approved By',
                         'Reviewed',
                         'Comment',
                       ].map((header) => (
@@ -713,6 +714,15 @@ export default function FinanceReviewInbox() {
                           }}
                         >
                           Tier {request.approval_tier}
+                        </td>
+                        <td
+                          style={{
+                            padding: '10px 16px',
+                            color: 'hsl(var(--on-surface-muted))',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {request.approver_name ?? '—'}
                         </td>
                         <td
                           style={{

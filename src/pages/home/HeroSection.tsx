@@ -19,7 +19,7 @@ export function HeroSection({
   return (
     <section
       aria-labelledby="hero-heading"
-      className="relative bg-on-surface text-white flex items-center overflow-hidden border-b-[8px] border-accent group"
+      className="home-hero relative text-white flex items-center overflow-hidden border-b-[8px] border-accent group"
       style={{ minHeight: 'clamp(560px, 80vh, 780px)' }}
       onMouseMove={onMouseMove}
     >
@@ -29,7 +29,7 @@ export function HeroSection({
             src={heroBgUrl || '/hero-bg.png'}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-40 mix-blend-luminosity z-0 pointer-events-none"
+            className="home-hero-bg absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
           />
           <div
             className="absolute inset-0 z-0 opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
@@ -43,10 +43,10 @@ export function HeroSection({
           />
         </>
       ) : (
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-on-surface to-on-surface/90 opacity-50" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-black to-black/90 opacity-70" />
       )}
 
-      <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent" />
+      <div className="home-hero-shade absolute inset-0 z-0" />
 
       <div className="page-container py-14 md:py-[80px] relative z-10 flex flex-col md:flex-row items-center md:items-center justify-end md:justify-center gap-8 md:gap-12 w-full h-full">
         <div className="flex-1 text-center md:text-left mt-auto md:mt-0">

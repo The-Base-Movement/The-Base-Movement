@@ -339,6 +339,49 @@
     border-color: hsl(var(--border)) !important;
   }
 
+  .home-hero {
+    background: hsl(132 9% 6%);
+  }
+
+  .home-hero-bg {
+    opacity: 0.4;
+    mix-blend-mode: luminosity;
+    filter: grayscale(1);
+  }
+
+  .home-hero-shade {
+    background:
+      linear-gradient(to top, hsl(0 0% 96%) 0%, hsla(0, 0%, 96%, 0.74) 15%, transparent 52%),
+      linear-gradient(to right, hsla(0, 0%, 0%, 0.44), transparent 58%);
+  }
+
+  :root[data-theme='dark'] .home-hero {
+    background: hsl(132 9% 5%);
+  }
+
+  :root[data-theme='dark'] .home-hero-bg {
+    opacity: 0.32;
+    mix-blend-mode: normal;
+    filter: grayscale(1) contrast(1.08) brightness(0.68);
+  }
+
+  :root[data-theme='dark'] .home-hero-shade {
+    background:
+      linear-gradient(
+        to top,
+        hsl(132 9% 5%) 0%,
+        hsla(132, 9%, 5%, 0.94) 12%,
+        hsla(132, 9%, 5%, 0.44) 48%,
+        transparent 74%
+      ),
+      linear-gradient(
+        to right,
+        hsla(132, 9%, 5%, 0.8),
+        hsla(132, 9%, 5%, 0.28) 52%,
+        transparent 82%
+      );
+  }
+
   .donate-button {
     color: hsl(var(--on-surface));
   }

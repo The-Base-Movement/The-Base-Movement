@@ -20,7 +20,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
   return (
     <section
       aria-labelledby="stats-heading"
-      className="py-16 md:py-24 bg-background border-y border-border/40"
+      className="home-stats-section py-16 md:py-24 bg-background border-y border-border/40"
     >
       <div className="page-container">
         <div className="mb-5">
@@ -56,7 +56,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
             deltaIcon="up"
           />
           <StatCard
-            accent="#1A1A1A"
+            accent="hsl(var(--on-surface))"
             eye="Diaspora"
             value={stats.diaspora}
             label="Global Ghanaians supporting from abroad"

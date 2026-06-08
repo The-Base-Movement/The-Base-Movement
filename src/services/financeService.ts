@@ -16,6 +16,7 @@ export interface FinanceRequest {
   category: string
   requester_name?: string
   requester_avatar?: string | null
+  approver_name?: string
 }
 
 export const financeService = {
@@ -25,7 +26,8 @@ export const financeService = {
       .select(
         `
         *,
-        users:requester_id (full_name, avatar_url)
+        users:requester_id (full_name, avatar_url),
+        approver:reviewed_by (full_name)
       `
       )
       .order('created_at', { ascending: false })
@@ -33,10 +35,16 @@ export const financeService = {
     if (error) throw error
 
     return (data ?? []).map(
-      (r: FinanceRequest & { users?: { full_name?: string; avatar_url?: string | null } }) => ({
+      (
+        r: FinanceRequest & {
+          users?: { full_name?: string; avatar_url?: string | null }
+          approver?: { full_name?: string }
+        }
+      ) => ({
         ...r,
         requester_name: r.users?.full_name ?? 'Unknown User',
         requester_avatar: r.users?.avatar_url ?? null,
+        approver_name: r.approver?.full_name ?? (r.reviewed_by === null ? 'auto' : 'Unknown'),
       })
     )
   },

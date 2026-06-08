@@ -584,7 +584,15 @@ export default function FinanceRequests() {
               >
                 <thead>
                   <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                    {['Date', 'Type', 'Chapter', 'Amount', 'Status', 'Officer Comment'].map((h) => (
+                    {[
+                      'Date',
+                      'Type',
+                      'Chapter',
+                      'Amount',
+                      'Status',
+                      'Approved By',
+                      'Officer Comment',
+                    ].map((h) => (
                       <th
                         key={h}
                         style={{
@@ -631,6 +639,9 @@ export default function FinanceRequests() {
                         {fmtAmount(r.amount)}
                       </td>
                       <td style={{ padding: '10px 12px' }}>{statusPill(r.status)}</td>
+                      <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
+                        {r.status !== 'Pending' && r.approver_name ? r.approver_name : '—'}
+                      </td>
                       <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
                         {(r.status === 'Approved' || r.status === 'Rejected') && r.officer_comment
                           ? r.officer_comment

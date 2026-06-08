@@ -55,7 +55,7 @@ export function StatCard({
       ref={cardRef}
       style={{
         background: 'hsl(var(--card))',
-        border: '1px solid #dfe4dd',
+        border: '1px solid hsl(var(--border))',
         borderRadius: 'var(--radius-md)',
         padding: '22px 22px 20px',
         position: 'relative',
@@ -102,7 +102,7 @@ export function StatCard({
           style={{
             fontSize: '9.5px',
             fontWeight: 'var(--font-weight-medium, 500)',
-            color: '#6f7a71',
+            color: 'hsl(var(--on-surface-muted))',
             letterSpacing: '.08em',
             textTransform: 'uppercase',
             fontFamily: "'Public Sans', sans-serif",
@@ -119,7 +119,7 @@ export function StatCard({
           fontSize: '48px',
           letterSpacing: '-.03em',
           lineHeight: '.95',
-          color: '#181d19',
+          color: 'hsl(var(--on-surface))',
           fontVariantNumeric: 'tabular-nums',
         }}
       >
@@ -129,7 +129,7 @@ export function StatCard({
             style={{
               fontSize: '20px',
               fontWeight: 'var(--font-weight-medium, 500)',
-              color: '#6f7a71',
+              color: 'hsl(var(--on-surface-muted))',
               marginLeft: '2px',
               letterSpacing: 0,
             }}
@@ -143,7 +143,7 @@ export function StatCard({
         style={{
           fontSize: '12px',
           fontWeight: 500,
-          color: '#181d19',
+          color: 'hsl(var(--on-surface))',
           letterSpacing: '-.005em',
           lineHeight: 1.4,
           fontFamily: "'Public Sans', sans-serif",
@@ -157,7 +157,7 @@ export function StatCard({
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
-          borderTop: '1px solid #dfe4dd',
+          borderTop: '1px solid hsl(var(--border))',
           paddingTop: '12px',
           marginTop: 'auto',
         }}

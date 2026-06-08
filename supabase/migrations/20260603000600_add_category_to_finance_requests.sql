@@ -29,7 +29,7 @@ BEGIN
             NEW.chapter,
             'Expenditure'::text,
             NEW.amount,
-            COALESCE(reviewer_name, 'Unknown') || ': ' || NEW.description,
+            COALESCE(reviewer_name, 'auto') || ': ' || NEW.description,
             NEW.category,
             NEW.requester_id
         );
