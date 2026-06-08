@@ -52,6 +52,7 @@ const ICON_MAP: Record<ActivityType, string> = {
   chapter_poll_vote: 'ballot',
   feedback: 'forum',
   voter_registration: 'how_to_reg',
+  job_application: 'work',
 }
 
 const SOURCE_COLORS: Record<ActivitySource, string> = {

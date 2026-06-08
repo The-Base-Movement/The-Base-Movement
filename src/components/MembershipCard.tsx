@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { useBranding } from '@/hooks/useBranding'
 
 interface MembershipCardProps {
   userName?: string
@@ -35,8 +34,6 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   city,
   isForDownload = false,
 }) => {
-  const { settings } = useBranding()
-
   // Base styles from design handoff
   const cardStyle: React.CSSProperties = {
     background: '#fff',
@@ -162,24 +159,6 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
       {/* Header */}
       <div style={headStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              background: '#fff',
-              borderRadius: 'var(--radius-sm)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 3,
-            }}
-          >
-            <img
-              src={settings.logo_url}
-              alt="Logo"
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </div>
           <div>
             <h4
               style={{
@@ -362,15 +341,15 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            opacity: 0.04,
+            opacity: 0.06,
             pointerEvents: 'none',
             zIndex: 0,
           }}
         >
           <img
-            src={settings.logo_url}
+            src="/brand/eagle-in-flight.png"
             alt=""
-            style={{ width: '80%', maxWidth: 280, objectFit: 'contain', filter: 'grayscale(1)' }}
+            style={{ width: '90%', maxWidth: 300, objectFit: 'contain' }}
           />
         </div>
       </div>

@@ -34,8 +34,13 @@ export default function OrderSummary() {
   if (loading) {
     return (
       <div
-        className="min-h-screen bg-off-white"
-        style={{ maxWidth: 680, margin: '0 auto', padding: '48px 20px' }}
+        style={{
+          minHeight: '100vh',
+          background: 'hsl(var(--background))',
+          maxWidth: 680,
+          margin: '0 auto',
+          padding: '48px 20px',
+        }}
       >
         <SEO title="Syncing Order..." noindex />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -58,22 +63,61 @@ export default function OrderSummary() {
 
   if (!order) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-off-white">
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'hsl(var(--background))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+        }}
+      >
         <SEO title="Order Not Found" noindex />
-        <div className="max-w-md w-full p-8 text-center bg-white border border-stone-200">
+        <div
+          style={{
+            maxWidth: 400,
+            width: '100%',
+            padding: 32,
+            textAlign: 'center',
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
           <span
-            className="material-symbols-outlined text-stone-200 block mx-auto mb-4"
-            style={{ fontSize: 48 }}
+            className="material-symbols-outlined"
+            style={{
+              fontSize: 48,
+              color: 'hsl(var(--border))',
+              display: 'block',
+              marginBottom: 16,
+            }}
           >
             shopping_bag
           </span>
-          <h2 className="text-xl font-bold font-meta tracking-tight text-stone-900">
+          <h2
+            style={{
+              fontSize: 20,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface))',
+              marginBottom: 8,
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
             Order not found
           </h2>
-          <p className="text-xs text-stone-500 mt-2 mb-6 tracking-tight">
-            The requested order could not be synchronized with the vault.
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              marginBottom: 24,
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            The requested order could not be found.
           </p>
-          <Link to="/store" className="btn btn-primary w-full">
+          <Link to="/dashboard/store" className="btn btn-primary" style={{ width: '100%' }}>
             Back to store
           </Link>
         </div>
@@ -91,240 +135,586 @@ export default function OrderSummary() {
   const isPaid = paymentStatus === 'Paid'
 
   return (
-    <main className="bg-off-white min-h-screen">
-      <SEO title={`Order Confirmed #${orderNumber}`} noindex />
-      <div className="page-container py-12">
+    <main style={{ background: 'hsl(var(--background))', minHeight: '100vh' }}>
+      <SEO title={`Order #${orderNumber}`} noindex />
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px 64px' }}>
         <Breadcrumbs />
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white border border-stone-200 rounded-sm shadow-xl overflow-hidden">
-            {/* Success Header */}
-            <div className="bg-brand-green p-10 text-center text-white relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none flex items-center justify-center rotate-12 scale-150">
+        <div
+          style={{
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-lg)',
+            overflow: 'hidden',
+            marginTop: 16,
+            boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+          }}
+        >
+          {/* ── Green header ── */}
+          <div
+            style={{
+              background: 'hsl(var(--primary))',
+              padding: '40px 32px',
+              textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Eagle watermark */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                pointerEvents: 'none',
+                opacity: 0.07,
+                transform: 'rotate(8deg) scale(1.4)',
+              }}
+            >
+              <img
+                src="/brand/Eagle Head.png"
+                alt=""
+                style={{ width: 260, height: 260, objectFit: 'contain' }}
+                decoding="async"
+                loading="lazy"
+              />
+            </div>
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              {/* Logo badge */}
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  marginBottom: 20,
+                  background: 'rgba(255,255,255,0.12)',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '8px 20px 8px 8px',
+                  backdropFilter: 'blur(4px)',
+                }}
+              >
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    background: '#fff',
+                    borderRadius: 'var(--radius-sm)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 4,
+                    flexShrink: 0,
+                  }}
+                >
+                  <img
+                    src={settings.logo_url}
+                    alt="The Base"
+                    style={{ width: 28, height: 28, objectFit: 'contain' }}
+                    decoding="async"
+                    loading="lazy"
+                  />
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <p
+                    style={{
+                      color: '#fff',
+                      fontSize: 14,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontFamily: "'Public Sans', sans-serif",
+                      lineHeight: 1,
+                      margin: 0,
+                    }}
+                  >
+                    The Base
+                  </p>
+                  <p
+                    style={{
+                      color: 'rgba(255,255,255,0.7)',
+                      fontSize: 9,
+                      fontFamily: "'Public Sans', sans-serif",
+                      margin: '3px 0 0',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                    }}
+                  >
+                    Official store
+                  </p>
+                </div>
+              </div>
+
+              <h1
+                style={{
+                  color: '#fff',
+                  fontSize: 'clamp(22px, 4vw, 30px)',
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontFamily: "'Public Sans', sans-serif",
+                  margin: '0 0 8px',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {isPaid ? 'Order confirmed' : 'Order received'}
+              </h1>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.85)',
+                  fontSize: 12,
+                  fontFamily: "'Public Sans', sans-serif",
+                  margin: 0,
+                }}
+              >
+                {isPaid
+                  ? 'Your support drives the movement forward'
+                  : 'Complete payment in Hubtel to confirm this purchase'}
+              </p>
+            </div>
+          </div>
+
+          {/* ── Body ── */}
+          <div style={{ padding: '32px 28px' }}>
+            {/* Order meta row */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr',
+                gap: 20,
+                paddingBottom: 24,
+                borderBottom: '1px solid hsl(var(--border))',
+                marginBottom: 28,
+              }}
+            >
+              {[
+                { label: 'Order identifier', value: `#${orderNumber}` },
+                { label: 'Date', value: date },
+                {
+                  label: 'Payment',
+                  value: paymentStatus,
+                  color: isPaid ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
+                },
+              ].map((item) => (
+                <div key={item.label}>
+                  <p
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                      color: 'hsl(var(--on-surface-muted))',
+                      margin: '0 0 5px',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: item.color ?? 'hsl(var(--on-surface))',
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      wordBreak: 'break-all',
+                    }}
+                  >
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Items ordered */}
+            <div style={{ position: 'relative', marginBottom: 28 }}>
+              {/* Eagle body watermark */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                  opacity: 0.025,
+                  transform: 'rotate(-8deg)',
+                  zIndex: 0,
+                }}
+              >
                 <img
-                  src={settings.logo_url}
+                  src="/brand/eagle-in-flight.png"
                   alt=""
-                  className="w-64 h-64 object-contain"
+                  style={{ width: 320, height: 320, objectFit: 'contain' }}
                   decoding="async"
                   loading="lazy"
                 />
               </div>
 
-              <div className="relative z-10">
-                <div className="flex items-center justify-center gap-4 mb-6">
-                  <div className="w-14 h-14 bg-white rounded-none flex items-center justify-center shadow-lg p-2">
-                    <img
-                      src={settings.logo_url}
-                      alt="The Base"
-                      className="w-10 h-10 object-contain"
-                      decoding="async"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="text-left border-l border-white/20 pl-4">
-                    <h2 className="font-h1 text-2xl tracking-tight leading-none">The Base</h2>
-                    <p className="text-[8px] font-bold tracking-tight opacity-80">Official store</p>
-                  </div>
-                </div>
-                <h1 className="font-h1 text-h3 mb-1 tracking-tight">
-                  {isPaid ? 'Order confirmed' : 'Order received'}
-                </h1>
-                <p className="font-meta text-micro opacity-90 tracking-tight">
-                  {isPaid
-                    ? 'Your support drives the movement forward'
-                    : 'Complete payment in Hubtel to confirm this purchase'}
-                </p>
-              </div>
-            </div>
+              <h3
+                style={{
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: 'hsl(var(--on-surface-muted))',
+                  margin: '0 0 14px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              >
+                Items ordered
+              </h3>
 
-            <div className="p-6">
-              {/* Order Info Bar */}
-              <div className="flex flex-col gap-6 py-6 border-b border-stone-100 mb-8">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                  <div>
-                    <p className="text-micro font-bold text-stone-400 tracking-tight mb-1">
-                      Order identifier
-                    </p>
-                    <p className="font-bold text-stone-900 break-all sm:break-normal">
-                      #{orderNumber}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-micro font-bold text-stone-400 tracking-tight mb-1 sm:text-right">
-                      Payment
-                    </p>
-                    <p
-                      className={`font-bold sm:text-right ${
-                        isPaid ? 'text-brand-green' : 'text-stone-900'
-                      }`}
-                    >
-                      {paymentStatus}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-micro font-bold text-stone-400 tracking-tight mb-1">Date</p>
-                  <p className="font-bold text-stone-900">{date}</p>
-                </div>
-              </div>
-
-              {/* Order Details */}
-              <div className="space-y-8 mb-12 relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] rotate-[-10deg]">
-                  <img
-                    src={settings.logo_url}
-                    alt=""
-                    className="w-80 h-80 object-contain"
-                    decoding="async"
-                    loading="lazy"
-                  />
-                </div>
-
-                <div className="relative z-10">
-                  <h3 className="font-h3 text-xl text-stone-900 mb-6 tracking-tight">
-                    Items ordered
-                  </h3>
-                  <div className="space-y-4">
-                    {order.items.map((item: OrderItem) => (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 8,
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              >
+                {order.items.map((item: OrderItem) => (
+                  <div
+                    key={item.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 16,
+                      padding: '14px 16px',
+                      background: 'hsl(var(--container-low))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-md)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div
-                        key={item.id}
-                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 bg-stone-50 px-4 rounded-sm"
+                        style={{
+                          width: 44,
+                          height: 44,
+                          background: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: 'var(--radius-sm)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-white flex items-center justify-center border border-stone-100 shrink-0">
-                            <span
-                              className="material-symbols-outlined text-stone-300"
-                              style={{ fontSize: 24 }}
-                            >
-                              shopping_bag
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-bold text-stone-900 text-sm leading-tight tracking-tight">
-                              {item.product_name || 'Official gear'}
-                            </p>
-                            <p className="text-micro font-bold text-stone-400 tracking-tight mt-1">
-                              Quantity: {item.quantity}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="font-bold text-stone-900 text-sm whitespace-nowrap">
-                          ₵{Number(item.price_at_purchase * item.quantity).toFixed(2)}
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: 20, color: 'hsl(var(--border))' }}
+                        >
+                          shopping_bag
+                        </span>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface))',
+                            margin: '0 0 3px',
+                            fontFamily: "'Public Sans', sans-serif",
+                          }}
+                        >
+                          {item.product_name || 'Official gear'}
+                        </p>
+                        <p
+                          style={{
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                            margin: 0,
+                            fontFamily: "'Public Sans', sans-serif",
+                          }}
+                        >
+                          Qty: {item.quantity}
                         </p>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Totals */}
-              <div className="bg-stone-900 p-8 rounded-sm text-white mb-10">
-                <div className="space-y-4">
-                  <div className="flex justify-between text-xs font-meta tracking-tight opacity-60">
-                    <span>Subtotal</span>
-                    <span>₵{Number(order.subtotal).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-xs font-meta tracking-tight opacity-60">
-                    <span>Shipping</span>
-                    <span>₵{Number(order.shipping_fee).toFixed(2)}</span>
-                  </div>
-                  <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                    <span className="font-h3 text-lg tracking-tight">
-                      Total {isPaid ? 'paid' : 'due'} via {order.payment_method?.toUpperCase()}
-                    </span>
-                    <span className="font-h3 text-2xl text-brand-green whitespace-nowrap">
-                      ₵{Number(order.total_amount).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Next Steps */}
-              <div className="space-y-6">
-                {!isPaid && (
-                  <div className="flex items-start gap-4 p-6 border border-amber-200 rounded-sm bg-amber-50 shadow-sm">
-                    <div className="w-10 h-10 bg-white flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-amber-600">payments</span>
                     </div>
-                    <div>
-                      <p className="font-bold text-stone-900 text-sm mb-1 tracking-tight">
-                        Payment awaiting confirmation
-                      </p>
-                      <p className="text-xs text-stone-600 leading-relaxed font-medium">
-                        Complete the Hubtel checkout window. This order will update after Hubtel
-                        confirms payment.
-                      </p>
-                      {checkoutUrl && awaitingPayment && (
-                        <button
-                          type="button"
-                          className="btn btn-outline mt-4"
-                          onClick={() => openHubtelCheckout(checkoutUrl)}
-                        >
-                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                            open_in_new
-                          </span>
-                          Reopen Hubtel checkout
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-                <div className="flex items-start gap-4 p-6 border border-stone-100 rounded-sm bg-white shadow-sm">
-                  <div className="w-10 h-10 bg-brand-green/10 flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-brand-green">mail</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-stone-900 text-sm mb-1 tracking-tight">
-                      Confirmation sent
-                    </p>
-                    <p className="text-xs text-stone-500 leading-relaxed font-medium">
-                      A detailed receipt and tracking information has been sent to{' '}
-                      <span className="font-bold text-stone-900">{order.email}</span>.
+                    <p
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                        margin: 0,
+                        whiteSpace: 'nowrap',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      ₵{Number(item.price_at_purchase * item.quantity).toFixed(2)}
                     </p>
                   </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <button onClick={() => window.print()} className="btn btn-outline flex-1">
-                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                      print
-                    </span>
-                    Print invoice
-                  </button>
-                  <button
-                    onClick={() =>
-                      navigator.share?.({ title: 'The Base Store', url: window.location.href })
-                    }
-                    className="btn btn-outline flex-1"
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                      share
-                    </span>
-                    Share support
-                  </button>
-                </div>
-
-                <Link to="/dashboard" className="btn btn-primary w-full" style={{ height: 56 }}>
-                  Back to dashboard
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                    arrow_forward
-                  </span>
-                </Link>
+                ))}
               </div>
             </div>
-          </div>
 
-          <div className="mt-12 text-center">
-            <p className="text-xs text-stone-400 font-meta tracking-tight flex items-center justify-center flex-wrap gap-1">
-              Problems with your order?{' '}
-              <Link
-                to="/contact"
-                className="text-brand-green font-bold hover:underline whitespace-nowrap"
+            {/* Totals block */}
+            <div
+              style={{
+                background: 'hsl(var(--on-surface))',
+                borderRadius: 'var(--radius-md)',
+                padding: '24px 28px',
+                marginBottom: 24,
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {[
+                  { label: 'Subtotal', value: `₵${Number(order.subtotal).toFixed(2)}` },
+                  { label: 'Shipping', value: `₵${Number(order.shipping_fee).toFixed(2)}` },
+                ].map((row) => (
+                  <div
+                    key={row.label}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: 13,
+                      color: 'rgba(255,255,255,0.55)',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    <span>{row.label}</span>
+                    <span>{row.value}</span>
+                  </div>
+                ))}
+                <div
+                  style={{
+                    borderTop: '1px solid rgba(255,255,255,0.12)',
+                    paddingTop: 16,
+                    marginTop: 4,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: '#fff',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Total {isPaid ? 'paid' : 'due'} via{' '}
+                    {order.payment_method?.toUpperCase() ?? 'HUBTEL'}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 26,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--accent))',
+                      fontFamily: "'Public Sans', sans-serif",
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    ₵{Number(order.total_amount).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Next steps */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {!isPaid && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 14,
+                    padding: '18px 20px',
+                    background: 'rgba(217,119,6,0.08)',
+                    border: '1px solid rgba(217,119,6,0.25)',
+                    borderRadius: 'var(--radius-md)',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      background: 'rgba(217,119,6,0.12)',
+                      borderRadius: 'var(--radius-sm)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 18, color: '#d97706' }}
+                    >
+                      payments
+                    </span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                        margin: '0 0 4px',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      Payment awaiting confirmation
+                    </p>
+                    <p
+                      style={{
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface-muted))',
+                        margin: 0,
+                        fontFamily: "'Public Sans', sans-serif",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      Complete the Hubtel checkout window. This order will update after Hubtel
+                      confirms payment.
+                    </p>
+                    {checkoutUrl && awaitingPayment && (
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        style={{ marginTop: 12 }}
+                        onClick={() => openHubtelCheckout(checkoutUrl)}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                          open_in_new
+                        </span>
+                        Reopen Hubtel checkout
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 14,
+                  padding: '18px 20px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                }}
               >
-                Contact support
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    background: 'hsl(var(--primary) / 0.1)',
+                    borderRadius: 'var(--radius-sm)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 18, color: 'hsl(var(--primary))' }}
+                  >
+                    mail
+                  </span>
+                </div>
+                <div>
+                  <p
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface))',
+                      margin: '0 0 4px',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Confirmation sent
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    A detailed receipt has been sent to{' '}
+                    <span
+                      style={{
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {order.email}
+                    </span>
+                    .
+                  </p>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                <button
+                  onClick={() => window.print()}
+                  className="btn btn-outline"
+                  style={{ flex: 1 }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    print
+                  </span>
+                  Print invoice
+                </button>
+                <button
+                  onClick={() =>
+                    navigator.share?.({ title: 'The Base Store', url: window.location.href })
+                  }
+                  className="btn btn-outline"
+                  style={{ flex: 1 }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    share
+                  </span>
+                  Share
+                </button>
+              </div>
+
+              <Link
+                to="/dashboard"
+                className="btn btn-primary"
+                style={{ height: 52, marginTop: 4, width: '100%', justifyContent: 'center' }}
+              >
+                Back to dashboard
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  arrow_forward
+                </span>
               </Link>
-            </p>
+            </div>
           </div>
         </div>
+
+        <p
+          style={{
+            marginTop: 28,
+            textAlign: 'center',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
+          Problems with your order?{' '}
+          <Link
+            to="/contact"
+            style={{
+              color: 'hsl(var(--primary))',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              textDecoration: 'none',
+            }}
+          >
+            Contact support
+          </Link>
+        </p>
       </div>
     </main>
   )

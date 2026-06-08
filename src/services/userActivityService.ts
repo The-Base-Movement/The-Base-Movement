@@ -14,6 +14,7 @@ export type ActivityType =
   | 'chapter_poll_vote'
   | 'feedback'
   | 'voter_registration'
+  | 'job_application'
 
 export type ActivitySource =
   | 'activity_log'
@@ -459,6 +460,7 @@ function getEstimatedMinutes(actionType: ActivityType): number {
     chapter_poll_vote: 3,
     feedback: 5,
     voter_registration: 6,
+    job_application: 8,
   }
   return minutes[actionType] ?? 2
 }

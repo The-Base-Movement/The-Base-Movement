@@ -75,6 +75,15 @@ import type {
   MemberNote,
 } from '@/types/admin'
 
+// ── Inline types not in admin.ts ─────────────────────────────────────────────
+export interface PasswordResetRecord {
+  id: string
+  phone: string
+  expires_at: string
+  used: boolean
+  created_at: string
+}
+
 // Re-export all types so consumers can import from either location
 export type {
   Member,
@@ -2990,6 +2999,18 @@ class AdminService {
       .from('voter_registrations')
       .insert({ user_id: authId, ...payload })
     return !error
+  }
+
+  // ── Password Reset Audit Log ──────────────────────────────────────────────
+
+  async getPasswordResets(): Promise<PasswordResetRecord[]> {
+    const { data, error } = await supabase
+      .from('password_reset_otps')
+      .select('id, phone, expires_at, used, created_at')
+      .order('created_at', { ascending: false })
+      .limit(500)
+    if (error) throw error
+    return (data ?? []) as PasswordResetRecord[]
   }
 }
 

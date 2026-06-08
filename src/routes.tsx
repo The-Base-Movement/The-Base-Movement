@@ -11,6 +11,7 @@ import VerifiedRoute from './components/VerifiedRoute'
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const VerifyOTP = lazy(() => import('./pages/VerifyOTP'))
 const ChangePassword = lazy(() => import('./pages/ChangePassword'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -83,6 +84,7 @@ const AdminRallyCommand = lazy(() => import('./pages/admin/RallyCommand'))
 const AdminSentimentIntelligence = lazy(() => import('./pages/admin/SentimentIntelligence'))
 const AdminMLIntelligence = lazy(() => import('./pages/admin/MLIntelligence'))
 const AdminNewsletter = lazy(() => import('./pages/admin/Newsletter'))
+const AdminPasswordResets = lazy(() => import('./pages/admin/PasswordResets'))
 const AdminWarRoomCommand = lazy(() => import('./pages/admin/WarRoomCommand'))
 const AdminGroundGameCommand = lazy(() => import('./pages/admin/GroundGameCommand'))
 const AdminDeployMission = lazy(() => import('./pages/admin/DeployMission'))
@@ -93,6 +95,7 @@ const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPrior
 const AdminRolesManager = lazy(() => import('./pages/admin/RolesManager'))
 const AdminNotifications = lazy(() => import('./pages/admin/Notifications'))
 const Jobs = lazy(() => import('./pages/Jobs'))
+const JobDetail = lazy(() => import('./pages/JobDetail'))
 const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
 const AdminJobForm = lazy(() => import('./pages/admin/jobs/JobFormPage'))
 const AdminModeration = lazy(() => import('./pages/admin/Moderation'))
@@ -197,6 +200,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/change-password', element: <ChangePassword /> },
           { path: '/dashboard/activity', element: <Activity /> },
           { path: '/dashboard/jobs', element: <Jobs /> },
+          { path: '/dashboard/jobs/:id', element: <JobDetail /> },
           { path: '/dashboard/liked', element: <LikedPosts /> },
           { path: '/dashboard/my-donations', element: <MyDonations /> },
           { path: '/dashboard/referrals', element: <Referrals /> },
@@ -267,6 +271,7 @@ export const routes: RouteObject[] = [
           { path: '/admin/trash', element: <AdminTrash /> },
           { path: '/admin/roles', element: <AdminRolesManager /> },
           { path: '/admin/notifications', element: <AdminNotifications /> },
+          { path: '/admin/password-resets', element: <AdminPasswordResets /> },
           {
             element: <ITDepartmentLayout />,
             children: [
@@ -300,6 +305,7 @@ export const routes: RouteObject[] = [
       { path: '/donate', element: <Donate /> },
       { path: '/login', element: <Login /> },
       { path: '/forgot-password', element: <ForgotPassword /> },
+      { path: '/reset-password', element: <ResetPassword /> },
       { path: '/verify-otp', element: <VerifyOTP /> },
       { path: '/store', element: <Store /> },
       { path: '/store/product/:slug', element: <ProductDetails /> },
@@ -310,6 +316,7 @@ export const routes: RouteObject[] = [
       { path: '/impact', element: <Impact /> },
       { path: '/polls', element: <Polls /> },
       { path: '/jobs', element: <Jobs /> },
+      { path: '/jobs/:id', element: <JobDetail /> },
       { element: <WithChapters />, children: [{ path: '/chapters', element: <Chapters /> }] },
       { path: '/constituencies', element: <Constituencies /> },
       { path: '/privacy', element: <Privacy /> },
