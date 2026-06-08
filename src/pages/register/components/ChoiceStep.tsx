@@ -74,14 +74,14 @@ export function ChoiceStep({ onSelect, isScanning = false, scanStatus }: ChoiceS
                 <a
                   href="/registration-form-ghana.pdf"
                   download
-                  className="inline-flex items-center justify-center px-4 py-2 bg-primary/10 text-primary text-[11px] font-medium uppercase tracking-wider rounded-sm hover:bg-primary/20 transition-all border border-primary/20"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-primary/10 text-primary text-[11px] font-medium tracking-tight rounded-sm hover:bg-primary/20 transition-all border border-primary/20"
                 >
                   Download Ghana Form
                 </a>
                 <a
                   href="/registration-form-diaspora.pdf"
                   download
-                  className="inline-flex items-center justify-center px-4 py-2 bg-brand-gold/10 text-brand-gold text-[11px] font-medium uppercase tracking-wider rounded-sm hover:bg-brand-gold/20 transition-all border border-brand-gold/20"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-brand-gold/10 text-brand-gold text-[11px] font-medium tracking-tight rounded-sm hover:bg-brand-gold/20 transition-all border border-brand-gold/20"
                 >
                   Download Diaspora Form
                 </a>
@@ -96,7 +96,7 @@ export function ChoiceStep({ onSelect, isScanning = false, scanStatus }: ChoiceS
                     if (e.target.files?.[0]) onSelect('PHYSICAL', e.target.files[0])
                   }}
                 />
-                <div className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-on-surface text-surface text-[12px] font-medium uppercase tracking-wider rounded-sm hover:opacity-90 transition-all shadow-lg select-none">
+                <div className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-on-surface text-surface text-[12px] font-medium tracking-tight rounded-sm hover:opacity-90 transition-all shadow-lg select-none">
                   {isScanning ? (
                     <>
                       <span
