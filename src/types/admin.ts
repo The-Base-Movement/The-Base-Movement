@@ -920,3 +920,44 @@ export interface ConstituencyActivity {
   type: string
   activityDate: string
 }
+
+// ─── Leader Messaging ────────────────────────────────────────────────────────
+
+export interface Conversation {
+  id: string
+  member_id: string
+  leader_id: string
+  scope_type: 'region' | 'constituency' | 'chapter'
+  scope_value: string
+  status: 'open' | 'closed'
+  created_at: string
+  last_message_at: string | null
+}
+
+export interface Message {
+  id: string
+  conversation_id: string
+  sender_type: 'member' | 'leader'
+  sender_id: string
+  content: string
+  read_at: string | null
+  created_at: string
+}
+
+export interface ConversationSummary extends Conversation {
+  unread_count: number
+  last_message_content: string
+  member: {
+    id: string
+    full_name: string
+    registration_number: string
+    avatar_url: string | null
+  } | null
+}
+
+export interface ConversationLeaderInfo {
+  id: string
+  full_name: string
+  role: string
+  avatar_url: string | null
+}
