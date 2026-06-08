@@ -12,13 +12,18 @@ const NAV_LINKS = [
   { label: 'Updates', publicPath: '/blog', dashPath: '/dashboard/blog' },
   { label: 'Polls', publicPath: '/polls', dashPath: '/dashboard/polls' },
   { label: 'The Plan', publicPath: '/our-agenda', dashPath: '/dashboard/agenda' },
-  { label: 'Leadership', publicPath: '/officers', dashPath: '/officers' },
+  { label: 'Leadership', publicPath: '/officers', dashPath: '/dashboard/leadership' },
+  { label: 'Constituencies', publicPath: '/constituencies', dashPath: '/dashboard/constituencies' },
   { label: 'Chapters', publicPath: '/chapters', dashPath: '/dashboard/chapters' },
   { label: 'Jobs', publicPath: '/jobs', dashPath: '/dashboard/jobs' },
   { label: 'Store', publicPath: '/store', dashPath: '/dashboard/store' },
   { label: 'Donate', publicPath: '/donate', dashPath: '/dashboard/donate' },
   { label: 'Contact', publicPath: '/contact', dashPath: '/dashboard/contact' },
 ]
+
+const PRIMARY_NAV_LABELS = new Set(['Home', 'About', 'Updates', 'Donate', 'Contact'])
+const PRIMARY_NAV_LINKS = NAV_LINKS.filter((link) => PRIMARY_NAV_LABELS.has(link.label))
+const MORE_NAV_LINKS = NAV_LINKS.filter((link) => !PRIMARY_NAV_LABELS.has(link.label))
 
 export default function Navbar() {
   const { settings } = useBranding()
@@ -27,6 +32,7 @@ export default function Navbar() {
   const isLoggedIn = !!session
   const [isOpen, setIsOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
   const [isDarkTheme, setIsDarkTheme] = useState(
     () =>
       typeof document !== 'undefined' &&
@@ -36,6 +42,7 @@ export default function Navbar() {
   const [userName, setUserName] = useState('')
   const location = useLocation()
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const moreMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme')
@@ -68,15 +75,29 @@ export default function Navbar() {
     setIsOpen(false)
 
     setIsDropdownOpen(false)
+    setIsMoreMenuOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
     const onOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
         setIsDropdownOpen(false)
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node))
+        setIsMoreMenuOpen(false)
     }
     document.addEventListener('mousedown', onOutside)
     return () => document.removeEventListener('mousedown', onOutside)
+  }, [])
+
+  useEffect(() => {
+    const onEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMoreMenuOpen(false)
+        setIsDropdownOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onEscape)
+    return () => document.removeEventListener('keydown', onEscape)
   }, [])
 
   const handleLogout = async () => {
@@ -93,6 +114,8 @@ export default function Navbar() {
 
   const linkActive = (link: (typeof NAV_LINKS)[number]) =>
     isActive(isLoggedIn ? link.dashPath : link.publicPath)
+
+  const moreMenuActive = MORE_NAV_LINKS.some((link) => linkActive(link))
 
   const toggleTheme = () => {
     const nextIsDark = !isDarkTheme
@@ -179,8 +202,8 @@ export default function Navbar() {
         </div>
 
         {/* Desktop nav links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }} className="desktop-only">
-          {NAV_LINKS.map((link) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }} className="desktop-only">
+          {PRIMARY_NAV_LINKS.map((link) => (
             <Link
               key={link.label}
               to={linkPath(link)}
@@ -214,6 +237,107 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <div
+            ref={moreMenuRef}
+            style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}
+          >
+            <button
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={isMoreMenuOpen}
+              onClick={() => setIsMoreMenuOpen((value) => !value)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                border: 'none',
+                borderBottom: moreMenuActive
+                  ? '2px solid hsl(var(--primary))'
+                  : '2px solid transparent',
+                padding: '0 0 2px',
+                background: 'none',
+                color: moreMenuActive ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                cursor: 'pointer',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 12,
+                letterSpacing: '.01em',
+                transition: 'color 0.15s, border-color 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                if (!moreMenuActive) {
+                  e.currentTarget.style.color = 'hsl(var(--primary))'
+                  e.currentTarget.style.borderBottomColor = 'hsl(var(--primary) / 40%)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!moreMenuActive) {
+                  e.currentTarget.style.color = 'hsl(var(--on-surface-muted))'
+                  e.currentTarget.style.borderBottomColor = 'transparent'
+                }
+              }}
+            >
+              More
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                expand_more
+              </span>
+            </button>
+
+            {isMoreMenuOpen && (
+              <div
+                role="menu"
+                aria-label="More navigation links"
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 12px)',
+                  right: 0,
+                  width: 220,
+                  padding: 6,
+                  background: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: '0 12px 30px rgba(0,0,0,0.12)',
+                  zIndex: 60,
+                }}
+              >
+                {MORE_NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.label}
+                    to={linkPath(link)}
+                    role="menuitem"
+                    onClick={() => setIsMoreMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 10,
+                      padding: '10px 12px',
+                      borderRadius: 'var(--radius-sm)',
+                      textDecoration: 'none',
+                      color: linkActive(link) ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
+                      background: linkActive(link) ? 'hsl(var(--primary) / 8%)' : 'transparent',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 12,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!linkActive(link)) e.currentTarget.style.background = 'hsl(var(--card))'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!linkActive(link)) e.currentTarget.style.background = 'transparent'
+                    }}
+                  >
+                    {link.label}
+                    {linkActive(link) && (
+                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                        check
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Desktop auth / user */}

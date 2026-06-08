@@ -311,6 +311,7 @@ export const routes: RouteObject[] = [
       { path: '/polls', element: <Polls /> },
       { path: '/jobs', element: <Jobs /> },
       { element: <WithChapters />, children: [{ path: '/chapters', element: <Chapters /> }] },
+      { path: '/constituencies', element: <Constituencies /> },
       { path: '/privacy', element: <Privacy /> },
       { path: '/terms', element: <Terms /> },
       { path: '/press', element: <Press /> },
