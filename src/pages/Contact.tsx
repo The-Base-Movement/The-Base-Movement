@@ -14,6 +14,12 @@ export default function Contact() {
     email: '',
     phone: '',
     platform: '',
+    // Ghana fields
+    region: '',
+    constituency: '',
+    // Diaspora fields
+    country: '',
+    chapter: '',
     message: '',
   })
 
@@ -30,6 +36,10 @@ export default function Contact() {
       metadata: {
         phone: formData.phone,
         platform: formData.platform,
+        ...(formData.region && { region: formData.region }),
+        ...(formData.constituency && { constituency: formData.constituency }),
+        ...(formData.country && { country: formData.country }),
+        ...(formData.chapter && { chapter: formData.chapter }),
       },
     })
 
@@ -42,7 +52,23 @@ export default function Contact() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { id, value } = e.target
+    // When platform changes, clear all platform-specific sub-fields
+    if (id === 'platform') {
+      setFormData((prev) => ({
+        ...prev,
+        platform: value,
+        region: '',
+        constituency: '',
+        country: '',
+        chapter: '',
+      }))
+      return
+    }
     setFormData((prev) => ({ ...prev, [id]: value }))
+  }
+
+  const handleFieldChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   return (
@@ -53,8 +79,7 @@ export default function Contact() {
         canonical="/contact"
       />
       {/* Header */}
-      <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
+      <div className="contact-hero text-white pt-24 pb-16 relative overflow-hidden">
         <div className="page-container relative z-10 text-center">
           <Breadcrumbs variant="dark" />
           <h1 className="text-white text-5xl md:text-7xl font-medium tracking-tighter mb-4">
@@ -110,6 +135,7 @@ export default function Contact() {
                 <ContactForm
                   formData={formData}
                   handleChange={handleChange}
+                  onFieldChange={handleFieldChange}
                   handleSubmit={handleSubmit}
                 />
               )}

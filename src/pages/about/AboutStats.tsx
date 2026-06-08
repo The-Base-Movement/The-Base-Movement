@@ -66,12 +66,12 @@ function StatCard({
       ref={ref}
       style={{
         background: 'hsl(var(--card))',
-        border: '1px solid #dfe4dd',
+        border: '1px solid hsl(var(--border))',
         borderRadius: 'var(--radius-md)',
         padding: '22px 22px 20px',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 4px 20px -2px rgba(0,0,0,.04)',
+        boxShadow: '0 4px 20px -2px rgba(0,0,0,.06)',
         display: 'flex',
         flexDirection: 'column',
         gap: '14px',
@@ -81,11 +81,11 @@ function StatCard({
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)'
-        e.currentTarget.style.boxShadow = '0 12px 30px -8px rgba(0,0,0,.10)'
+        e.currentTarget.style.boxShadow = '0 12px 30px -8px rgba(0,0,0,.14)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = ''
-        e.currentTarget.style.boxShadow = '0 4px 20px -2px rgba(0,0,0,.04)'
+        e.currentTarget.style.boxShadow = '0 4px 20px -2px rgba(0,0,0,.06)'
       }}
     >
       {/* Top accent bar */}
@@ -117,7 +117,7 @@ function StatCard({
           style={{
             fontSize: '9.5px',
             fontWeight: 'var(--font-weight-medium, 500)',
-            color: '#6f7a71',
+            color: 'hsl(var(--on-surface-muted))',
             letterSpacing: '.08em',
             textTransform: 'uppercase',
             fontFamily: "'Public Sans', sans-serif",
@@ -134,7 +134,7 @@ function StatCard({
           fontSize: '48px',
           letterSpacing: '-.03em',
           lineHeight: '.95',
-          color: '#181d19',
+          color: 'hsl(var(--on-surface))',
           fontVariantNumeric: 'tabular-nums',
         }}
       >
@@ -144,7 +144,7 @@ function StatCard({
             style={{
               fontSize: '20px',
               fontWeight: 'var(--font-weight-medium, 500)',
-              color: '#6f7a71',
+              color: 'hsl(var(--on-surface-muted))',
               marginLeft: '2px',
               letterSpacing: 0,
             }}
@@ -158,7 +158,7 @@ function StatCard({
         style={{
           fontSize: '12px',
           fontWeight: 500,
-          color: '#181d19',
+          color: 'hsl(var(--on-surface))',
           letterSpacing: '-.005em',
           lineHeight: 1.4,
           fontFamily: "'Public Sans', sans-serif",
@@ -172,7 +172,7 @@ function StatCard({
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
-          borderTop: '1px solid #dfe4dd',
+          borderTop: '1px solid hsl(var(--border))',
           paddingTop: '12px',
           marginTop: 'auto',
         }}
@@ -243,7 +243,7 @@ export function AboutStats({ stats }: AboutStatsProps) {
         delay={80}
       />
       <StatCard
-        accent="#1A1A1A"
+        accent="hsl(var(--on-surface))"
         eye="Diaspora"
         value={stats.diaspora}
         label="Global Ghanaians supporting from abroad"
