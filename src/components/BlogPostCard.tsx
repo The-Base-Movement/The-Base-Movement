@@ -35,9 +35,17 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#181d19] to-[#181d19]/90">
-            <span className="font-['Public_Sans',sans-serif] font-medium text-[64px] text-white/[0.06] tracking-[-0.04em] leading-none select-none">
-              {post.title.charAt(0)}
+          <div
+            className="w-full h-full flex flex-col items-center justify-center gap-3"
+            style={{ background: 'hsl(132 9% 10%)' }}
+          >
+            <div className="flex h-[5px] w-14" aria-hidden="true">
+              <div className="flex-1 bg-[#CE1126]" />
+              <div className="flex-1 bg-[#DAA520]" />
+              <div className="flex-1 bg-[#006B3F]" />
+            </div>
+            <span className="text-[9px] font-medium tracking-[0.18em] uppercase text-white/30 font-['Public_Sans',sans-serif]">
+              The Base
             </span>
           </div>
         )}
