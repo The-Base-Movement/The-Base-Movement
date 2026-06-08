@@ -74,18 +74,18 @@ export default function Officers() {
         description="Meet the dedicated executives and officers driving our strategic vision and national mobilization."
       />
 
-      <section className="bg-on-surface text-white py-20 md:py-32 relative overflow-hidden">
+      <section className="leadership-hero text-white py-20 md:py-32 relative overflow-hidden">
         {!lowBandwidthMode && (
           <div
-            className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+            className="leadership-hero-bg absolute inset-0 z-0 pointer-events-none"
             style={{
               backgroundImage: `url('${settings.hero_bg_url || '/hero-bg.png'}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'grayscale(100%) contrast(1.2)',
             }}
           />
         )}
+        <div className="leadership-hero-shade absolute inset-0 z-0 pointer-events-none" />
         <div className="page-container relative z-10 text-center">
           <Breadcrumbs variant="dark" />
           <ScrollReveal direction="down" duration={1000}>
