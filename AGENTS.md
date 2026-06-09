@@ -168,3 +168,27 @@ When using Playwright:
 - Read specific line ranges when possible.
 - Summarize diffs instead of dumping code.
 - Stop after the requested task is complete.
+
+## Headroom Usage
+
+Headroom may be used only as an agent-side token optimization layer for Codex, Claude, Gemini, Copilot, or other compatible coding agents.
+
+It may be used for:
+
+- terminal outputs
+- logs
+- file reads
+- docs scans
+- tool outputs
+- repo summaries
+- repeated context-heavy agent sessions
+
+It must not be used as:
+
+- frontend/runtime app dependency
+- KPI/dashboard dependency
+- styling system
+- production feature dependency
+- replacement for AGENTS.md, CLAUDE.md, GEMINI.md, project-map.md, or workflow/skill files
+
+Do not install or configure Headroom unless explicitly requested.
