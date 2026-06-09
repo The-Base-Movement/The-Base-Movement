@@ -25,25 +25,31 @@ export default function DashboardMessages() {
   // Load or create conversation on mount
   useEffect(() => {
     if (!user) return
+    let isMounted = true
     void (async () => {
       const conv = await messagingService.getOrCreateConversation(user.id)
+      if (!isMounted) return
       setConversation(conv)
       if (conv) {
         const [msgs, leader] = await Promise.all([
           messagingService.getMessages(conv.id),
           messagingService.getLeaderInfo(conv.leader_id),
         ])
+        if (!isMounted) return
         setMessages(msgs)
         setLeaderInfo(leader)
         void messagingService.markAsRead(conv.id, 'member')
       }
       setLoading(false)
     })()
+    return () => {
+      isMounted = false
+    }
   }, [user])
 
   // Realtime subscription
   useEffect(() => {
-    if (!conversation) return
+    if (!conversation?.id) return
     const unsub = messagingService.subscribeToMessages(conversation.id, (msg) => {
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev
@@ -54,7 +60,7 @@ export default function DashboardMessages() {
       }
     })
     return unsub
-  }, [conversation])
+  }, [conversation?.id])
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -149,7 +155,7 @@ export default function DashboardMessages() {
   }
 
   const isClosed = conversation.status === 'closed'
-  const leaderInitial = leaderInfo?.full_name.charAt(0).toUpperCase() ?? '?'
+  const leaderInitial = leaderInfo?.full_name?.charAt(0)?.toUpperCase() || '?'
 
   return (
     <div className="main" style={{ padding: '24px 20px' }}>

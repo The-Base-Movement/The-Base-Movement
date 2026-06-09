@@ -24,6 +24,7 @@ export default function AdminMessages() {
   const [activeConv, setActiveConv] = useState<ConversationSummary | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingMessages, setLoadingMessages] = useState(false)
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -40,15 +41,22 @@ export default function AdminMessages() {
   // Load thread when active conversation changes
   useEffect(() => {
     if (!activeConv) return
+    let cancelled = false
     void (async () => {
+      setLoadingMessages(true)
       const msgs = await messagingService.getMessages(activeConv.id)
+      if (cancelled) return
       setMessages(msgs)
+      setLoadingMessages(false)
       void messagingService.markAsRead(activeConv.id, 'leader')
       // Clear unread badge in the list
       setConversations((prev) =>
         prev.map((c) => (c.id === activeConv.id ? { ...c, unread_count: 0 } : c))
       )
     })()
+    return () => {
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConv?.id])
 
@@ -154,6 +162,7 @@ export default function AdminMessages() {
                   onClick={() => {
                     setActiveConv(conv)
                     setMessages([])
+                    setLoadingMessages(true)
                   }}
                   style={{
                     width: '100%',
@@ -363,7 +372,18 @@ export default function AdminMessages() {
                   gap: 12,
                 }}
               >
-                {messages.length === 0 && (
+                {loadingMessages ? (
+                  <p
+                    style={{
+                      textAlign: 'center',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 13,
+                      marginTop: 32,
+                    }}
+                  >
+                    Loading…
+                  </p>
+                ) : messages.length === 0 ? (
                   <p
                     style={{
                       textAlign: 'center',
@@ -374,7 +394,7 @@ export default function AdminMessages() {
                   >
                     No messages yet.
                   </p>
-                )}
+                ) : null}
                 {messages.map((msg) => (
                   <ChatBubble
                     key={msg.id}
