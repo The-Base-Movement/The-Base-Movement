@@ -91,6 +91,12 @@ export const getNavGroups = (
         label: 'Leadership hub',
         permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
       },
+      {
+        to: '/admin/messages',
+        icon: 'chat',
+        label: 'Messages',
+        permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
+      },
     ],
   },
   {

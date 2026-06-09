@@ -125,6 +125,8 @@ const AdminConstituencies = lazy(() => import('./pages/admin/Constituencies'))
 const AdminConstituencyLeadHub = lazy(() => import('./pages/admin/ConstituencyLeadHub'))
 const ConstituencyHub = lazy(() => import('./pages/ConstituencyHub'))
 const NotificationsPage = lazy(() => import('./pages/Notifications'))
+const DashboardMessages = lazy(() => import('./pages/dashboard/Messages'))
+const AdminMessages = lazy(() => import('./pages/admin/Messages'))
 
 export const routes: RouteObject[] = [
   {
@@ -205,6 +207,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/my-donations', element: <MyDonations /> },
           { path: '/dashboard/referrals', element: <Referrals /> },
           { path: '/dashboard/notifications', element: <NotificationsPage /> },
+          { path: '/dashboard/messages', element: <DashboardMessages /> },
           { path: '/dashboard/tickets', element: <MyTickets /> },
         ],
       },
@@ -230,6 +233,7 @@ export const routes: RouteObject[] = [
           { path: '/admin/sentiment-intelligence', element: <AdminSentimentIntelligence /> },
           { path: '/admin/ml-intelligence', element: <AdminMLIntelligence /> },
           { path: '/admin/newsletter', element: <AdminNewsletter /> },
+          { path: '/admin/messages', element: <AdminMessages /> },
           { path: '/admin/war-room', element: <AdminWarRoomCommand /> },
           { path: '/admin/ground-game', element: <AdminGroundGameCommand /> },
           { path: '/admin/ground-game/deploy', element: <AdminDeployMission /> },

@@ -144,6 +144,7 @@ export default function Sidebar({
         { to: '/dashboard/referrals', icon: 'group_add', label: 'Referrals' },
         { to: '/dashboard/my-donations', icon: 'volunteer_activism', label: 'My Donations' },
         { to: '/dashboard/tickets', icon: 'confirmation_number', label: 'My Tickets' },
+        { to: '/dashboard/messages', icon: 'chat', label: 'Messages' },
         { to: '/dashboard/settings', icon: 'settings', label: 'Settings' },
       ],
     },
