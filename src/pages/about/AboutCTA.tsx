@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { ButtonAccent } from '@/components/buttons/ButtonAccent'
 
 const TRUST_SIGNALS = [
   { icon: 'groups', value: '10,000+', label: 'Patriots' },
@@ -205,40 +206,22 @@ export function AboutCTA() {
             ...reveal(320),
           }}
         >
-          <Link to="/register" style={{ display: 'inline-block' }}>
-            <button
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 12,
-                background: 'hsl(var(--accent))',
-                color: 'hsl(var(--on-surface))',
-                border: 'none',
-                borderRadius: 'var(--radius-pill)',
-                padding: '15px 36px',
-                fontFamily: "'Public Sans', sans-serif",
-                fontSize: 14,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                letterSpacing: '0.01em',
-                cursor: 'pointer',
-                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-                boxShadow: '0 8px 32px rgba(218,165,32,0.18)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.04)'
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(218,165,32,0.28)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)'
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(218,165,32,0.18)'
-              }}
-            >
+          <ButtonAccent
+            asChild
+            size="lg"
+            style={{
+              borderRadius: 'var(--radius-pill)',
+              gap: 12,
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            <Link to="/register">
               Join the Base
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                 arrow_forward
               </span>
-            </button>
-          </Link>
+            </Link>
+          </ButtonAccent>
 
           <p
             style={{
