@@ -18,6 +18,7 @@ interface HubtelButtonProps {
   onStarted?: () => void
   onCheckoutReady?: (checkoutUrl: string) => void
   onError?: () => void
+  onPaymentComplete?: (success: boolean, reference: string) => void
   disabled?: boolean
   autoOpen?: boolean
 }
@@ -33,6 +34,7 @@ export default function HubtelButton({
   onStarted,
   onCheckoutReady,
   onError,
+  onPaymentComplete,
   disabled,
   autoOpen,
 }: HubtelButtonProps) {
@@ -69,6 +71,17 @@ export default function HubtelButton({
     const t = setTimeout(() => void startPayment(), 50)
     return () => clearTimeout(t)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const handler = (e: MessageEvent<{ type?: string; success?: boolean; reference?: string }>) => {
+      if (e.origin !== window.location.origin) return
+      if (e.data?.type !== 'hubtel_complete') return
+      setLoading(false)
+      onPaymentComplete?.(e.data.success ?? false, e.data.reference ?? '')
+    }
+    window.addEventListener('message', handler)
+    return () => window.removeEventListener('message', handler)
+  }, [onPaymentComplete])
 
   if (autoOpen) return null
 

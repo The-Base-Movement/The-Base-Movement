@@ -48,8 +48,8 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
       phone: request.phone,
       email: request.email,
       metadata: request.metadata,
-      returnUrl: request.returnUrl ?? window.location.href,
-      cancellationUrl: request.cancellationUrl ?? window.location.href,
+      returnUrl: request.returnUrl ?? `${window.location.origin}/payment-complete`,
+      cancellationUrl: request.cancellationUrl ?? `${window.location.origin}/payment-complete`,
     },
   })
 
