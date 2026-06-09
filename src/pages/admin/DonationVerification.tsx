@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
+import { supabase } from '@/lib/supabase'
 import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -161,6 +162,14 @@ export default function FinancialAudit() {
       toast.success(
         action === 'Verified' ? `${name} — contribution approved.` : `${name} — flagged for review.`
       )
+      if (action === 'Verified') {
+        // Fire-and-forget: generate receipt + send email. Non-fatal if it fails.
+        supabase.functions
+          .invoke('send-donation-receipt', { body: { donationId } })
+          .catch((err: unknown) => {
+            console.error('[Admin] Receipt send failed:', err)
+          })
+      }
       setSelectedDonation(null)
       fetchData(true)
     } else {
