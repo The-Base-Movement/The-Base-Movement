@@ -96,6 +96,15 @@ Deno.serve(async (req: Request) => {
       .select('id')
       .maybeSingle()
 
+    // Fire receipt generation + email for successful Hubtel donations (non-fatal)
+    if (paid && donation) {
+      supabaseAdmin.functions
+        .invoke('send-donation-receipt', { body: { donationId: reference } })
+        .catch((e: unknown) => {
+          console.error('[HUBTEL-CALLBACK] Receipt invocation failed:', e)
+        })
+    }
+
     if (donationError) throw donationError
 
     if (!donation) {
