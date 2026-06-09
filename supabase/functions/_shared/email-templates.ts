@@ -343,3 +343,85 @@ export function csvImportWelcomeEmail(d: CsvImportWelcomeEmailData): string {
   </div>
 ${SHELL_CLOSE}`
 }
+
+// ---------------------------------------------------------------------------
+// Donation receipt — downloadable HTML (printable, no email shell)
+// ---------------------------------------------------------------------------
+
+export interface DonationReceiptHtmlData {
+  name: string // "Kwame Mensah"
+  amount: string // "₵50.00"
+  method: string // "Hubtel" | "Mobile Money" | "Bank Transfer" etc.
+  reference: string // internal donation reference
+  hubtelReference?: string // Hubtel transaction ID if available
+  date: string // "09 Jun 2026 · 14:08 GMT"
+}
+
+export function donationReceiptHtml(d: DonationReceiptHtmlData): string {
+  const rows = [
+    { label: 'Donor', value: d.name },
+    { label: 'Amount', value: d.amount },
+    { label: 'Payment Method', value: d.method },
+    { label: 'Date', value: d.date },
+    { label: 'Reference', value: d.reference },
+    ...(d.hubtelReference ? [{ label: 'Transaction ID', value: d.hubtelReference }] : []),
+    { label: 'Status', value: '✓ Verified', green: true },
+  ]
+
+  const rowHtml = rows
+    .map(
+      (r) =>
+        `<div class="row">
+          <span class="label">${r.label}</span>
+          <span class="value${(r as { green?: boolean }).green ? ' green' : ''}">${r.value}</span>
+        </div>`
+    )
+    .join('')
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Donation Receipt – ${d.reference}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Public Sans',Arial,sans-serif;background:#f6fbf4;color:#181d19;padding:40px 20px}
+  .receipt{max-width:520px;margin:0 auto;background:#fff;border:1px solid #dfe4dd;border-radius:8px;overflow:hidden}
+  .hdr{background:#006B3F;padding:28px 32px;color:#fff}
+  .hdr h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .hdr p{font-size:12px;opacity:.8;margin-top:4px}
+  .body{padding:28px 32px}
+  .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+  .row:last-child{border-bottom:none}
+  .label{color:#6f7a71;font-weight:500}
+  .value{font-weight:600;text-align:right}
+  .value.green{color:#006B3F}
+  .total{background:#f6fbf4;border-radius:4px;padding:14px 16px;margin-top:16px;display:flex;justify-content:space-between;align-items:center}
+  .total .tl{font-weight:700;font-size:14px}
+  .total .tv{font-size:20px;font-weight:800;color:#006B3F}
+  .ftr{padding:16px 32px;border-top:1px solid #dfe4dd;font-size:11px;color:#6f7a71;text-align:center;line-height:1.6}
+  @media print{body{background:#fff;padding:0}.receipt{border:none;border-radius:0;max-width:100%}}
+</style>
+</head>
+<body>
+<div class="receipt">
+  <div class="hdr">
+    <h1>Donation Receipt</h1>
+    <p>The Base Movement · Official Payment Confirmation</p>
+  </div>
+  <div class="body">
+    ${rowHtml}
+    <div class="total">
+      <span class="tl">Total Paid</span>
+      <span class="tv">${d.amount}</span>
+    </div>
+  </div>
+  <div class="ftr">
+    The Base Movement · Accra, Ghana · thebasemovement.com<br/>
+    This receipt is valid proof of your contribution.
+  </div>
+</div>
+</body>
+</html>`
+}
