@@ -316,24 +316,26 @@ export default function MyDonations() {
                       borderBottom: '1px solid hsl(var(--border))',
                     }}
                   >
-                    {['Date', 'Campaign', 'Amount', 'Method', 'Reference', 'Status'].map((h) => (
-                      <th
-                        key={h}
-                        style={{
-                          padding: '11px 18px',
-                          textAlign: 'left',
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-medium, 500)',
-                          fontSize: 9,
-                          textTransform: 'uppercase',
-                          color: 'hsl(var(--on-surface-muted))',
-                          letterSpacing: '0.05em',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {h}
-                      </th>
-                    ))}
+                    {['Date', 'Campaign', 'Amount', 'Method', 'Reference', 'Status', 'Receipt'].map(
+                      (h) => (
+                        <th
+                          key={h}
+                          style={{
+                            padding: '11px 18px',
+                            textAlign: 'left',
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 9,
+                            textTransform: 'uppercase',
+                            color: 'hsl(var(--on-surface-muted))',
+                            letterSpacing: '0.05em',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {h}
+                        </th>
+                      )
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -397,6 +399,32 @@ export default function MyDonations() {
                       </td>
                       <td style={{ padding: '12px 18px' }}>
                         <StatusPill status={d.status} />
+                      </td>
+                      <td style={{ padding: '12px 18px' }}>
+                        {d.status === 'Verified' && d.receiptUrl ? (
+                          <a
+                            href={d.receiptUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-outline btn-sm"
+                            style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                              download
+                            </span>
+                            Receipt
+                          </a>
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: 12,
+                              color: 'hsl(var(--on-surface-muted))',
+                              fontFamily: "'Public Sans', sans-serif",
+                            }}
+                          >
+                            {d.status === 'Verified' ? '—' : 'Pending'}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -465,6 +493,20 @@ export default function MyDonations() {
                     <span>·</span>
                     <span style={{ fontFamily: 'monospace' }}>{d.reference}</span>
                   </div>
+                  {d.status === 'Verified' && d.receiptUrl && (
+                    <a
+                      href={d.receiptUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline btn-sm"
+                      style={{ textDecoration: 'none', marginTop: 8, alignSelf: 'flex-start' }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        download
+                      </span>
+                      Download Receipt
+                    </a>
+                  )}
                 </div>
               ))}
             </div>
