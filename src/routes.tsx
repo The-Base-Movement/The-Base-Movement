@@ -38,6 +38,7 @@ const Wishlist = lazy(() => import('./pages/Wishlist'))
 const VerifyID = lazy(() => import('./pages/VerifyID'))
 const Press = lazy(() => import('./pages/Press'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+const PaymentComplete = lazy(() => import('./pages/PaymentComplete'))
 const RegistrationFormPreview = lazy(() => import('./pages/RegistrationFormPreview'))
 const PreviewOfficer = lazy(() => import('./pages/PreviewOfficer'))
 const Officers = lazy(() => import('./pages/Officers'))
@@ -327,6 +328,7 @@ export const routes: RouteObject[] = [
       { path: '/terms', element: <Terms /> },
       { path: '/press', element: <Press /> },
       { path: '/verify/:id', element: <VerifyID /> },
+      { path: '/payment-complete', element: <PaymentComplete /> },
       { path: '/admin-login', element: <AdminLogin /> },
       { path: '/preview-officer', element: <PreviewOfficer /> },
       { path: '/officers', element: <Officers /> },
