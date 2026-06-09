@@ -1,7 +1,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { convertToHubtelGhs, parseGhsExchangeRates } from './currency.ts'
-import { normalizeHubtelPhone } from './phone.ts'
+import { normalizeHubtelPhone, isGhanaPhone } from './phone.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -134,6 +134,8 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('SITE_URL') ??
       'https://thebasemovement.com'
 
+    const normalizedPhone = normalizeHubtelPhone(phone)
+
     const hubtelPayload = {
       totalAmount: Number(settlement.ghsAmount.toFixed(2)),
       currency: 'GHS',
@@ -149,9 +151,9 @@ Deno.serve(async (req: Request) => {
       merchantAccountNumber: accountNumber,
       clientReference: reference,
       customerName: name,
-      customerPhoneNumber: normalizeHubtelPhone(phone),
+      customerPhoneNumber: normalizedPhone,
       customerEmail: body.email || 'donations@thebasemovement.com',
-      channels: ['mobilemoney', 'card'],
+      channels: isGhanaPhone(normalizedPhone) ? ['mobilemoney', 'card'] : ['card'],
       metadata: {
         ...(body.metadata ?? {}),
         sourceAmount: settlement.sourceAmount,

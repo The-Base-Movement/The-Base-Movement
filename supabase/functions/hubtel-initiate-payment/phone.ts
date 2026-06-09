@@ -10,3 +10,8 @@ export function normalizeHubtelPhone(phone: string) {
   if (digits.startsWith('233')) return `+${digits}`
   return `+${digits}`
 }
+
+/** Returns true if the normalised phone number is a Ghana (+233) number. */
+export function isGhanaPhone(normalizedPhone: string): boolean {
+  return normalizedPhone.startsWith('+233')
+}
