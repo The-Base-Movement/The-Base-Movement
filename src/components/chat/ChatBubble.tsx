@@ -3,7 +3,6 @@ import { formatDistanceToNow } from 'date-fns'
 
 interface ChatBubbleProps {
   content: string
-  senderType: 'member' | 'leader'
   isSelf: boolean // true when this bubble belongs to the current logged-in user
   timestamp: string
   senderName?: string // shown above the bubble when isSelf is false
@@ -39,9 +38,11 @@ export function ChatBubble({ content, isSelf, timestamp, senderName }: ChatBubbl
       <div
         style={{
           padding: '10px 14px',
-          borderRadius: isSelf ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
+          borderRadius: isSelf
+            ? 'var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-lg)'
+            : 'var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-xs)',
           background: isSelf ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
-          color: isSelf ? '#ffffff' : 'hsl(var(--on-surface))',
+          color: isSelf ? 'hsl(var(--card))' : 'hsl(var(--on-surface))',
           fontSize: 13.5,
           fontFamily: "'Public Sans', sans-serif",
           fontWeight: 'var(--font-weight-medium, 500)',

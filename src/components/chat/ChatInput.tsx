@@ -81,6 +81,7 @@ export function ChatInput({
         className="btn btn-primary btn-sm"
         onClick={handleSend}
         disabled={disabled || !value.trim()}
+        aria-label="Send message"
         style={{ flexShrink: 0, height: 36, display: 'flex', alignItems: 'center', gap: 4 }}
       >
         <span className="material-symbols-outlined" style={{ fontSize: 18 }}>

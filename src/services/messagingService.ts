@@ -10,6 +10,7 @@ import type {
 
 class MessagingService {
   private static instance: MessagingService
+  private channels = new Map<string, RealtimeChannel>()
   private constructor() {}
 
   public static getInstance(): MessagingService {
@@ -61,6 +62,15 @@ class MessagingService {
       .select()
       .single()
     if (error) {
+      // If conflict (unique violation on member_id), another caller won — fetch their row
+      if (error.code === '23505') {
+        const { data: existing2 } = await supabase
+          .from('conversations')
+          .select('*')
+          .eq('member_id', memberUserId)
+          .maybeSingle()
+        return existing2 as Conversation | null
+      }
       console.warn('[MessagingService] createConversation failed:', error)
       return null
     }
@@ -137,10 +147,7 @@ class MessagingService {
       console.warn('[MessagingService] sendMessage failed:', error)
       return null
     }
-    await supabase
-      .from('conversations')
-      .update({ last_message_at: new Date().toISOString() })
-      .eq('id', conversationId)
+    // last_message_at is bumped by DB trigger update_conversation_last_message_at() — no client update needed
     return data as Message
   }
 
@@ -163,6 +170,13 @@ class MessagingService {
    * Returns an unsubscribe function — call it on component unmount.
    */
   subscribeToMessages(conversationId: string, onMessage: (msg: Message) => void): () => void {
+    // Clean up any existing channel for this conversation (guards against React Strict Mode double-invoke)
+    const existing = this.channels.get(conversationId)
+    if (existing) {
+      void supabase.removeChannel(existing)
+      this.channels.delete(conversationId)
+    }
+
     const channel: RealtimeChannel = supabase
       .channel(`messages:${conversationId}`)
       .on(
@@ -178,8 +192,12 @@ class MessagingService {
         }
       )
       .subscribe()
+
+    this.channels.set(conversationId, channel)
+
     return () => {
       void supabase.removeChannel(channel)
+      this.channels.delete(conversationId)
     }
   }
 
@@ -199,6 +217,7 @@ class MessagingService {
 
   /** Admin side: all conversations for this leader with unread counts */
   async getLeaderConversations(leaderAdminId: string): Promise<ConversationSummary[]> {
+    // TODO: v2 — replace with DB view for unread counts at scale (current join fetches all messages per conversation)
     const { data, error } = await supabase
       .from('conversations')
       .select(
@@ -250,17 +269,21 @@ class MessagingService {
 
   /** Close a conversation — RLS allows only the leader to do this */
   async closeConversation(conversationId: string): Promise<void> {
-    await supabase.from('conversations').update({ status: 'closed' }).eq('id', conversationId)
+    const { error } = await supabase
+      .from('conversations')
+      .update({ status: 'closed' })
+      .eq('id', conversationId)
+    if (error) console.warn('[MessagingService] closeConversation failed:', error)
   }
 
   /** Fetch the leader's display info for the conversation header */
   async getLeaderInfo(leaderId: string): Promise<ConversationLeaderInfo | null> {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('admins')
       .select('id, full_name, role, avatar_url')
       .eq('id', leaderId)
-      .single()
-    if (error) return null
+      .maybeSingle()
+    if (!data) return null
     return data as ConversationLeaderInfo
   }
 }
