@@ -1,0 +1,27 @@
+{
+  "name": "The Base Movement",
+  "short_name": "The Base",
+  "description": "Ghana First — the official platform for Base Movement patriots.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a6b3c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/branding/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/branding/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["politics", "social", "news"],
+  "lang": "en-GH",
+  "scope": "/"
+}

@@ -1,0 +1,654 @@
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { sessionStore } from '@/lib/sessionStore'
+import { Link } from 'react-router-dom'
+import { adminService } from '@/services/adminService'
+import type { DonationDetail } from '@/types/admin'
+import { useAuth } from '@/context/AuthContext'
+import SEO from '@/components/SEO'
+
+function StatusPill({ status }: { status: string }) {
+  const cls = status === 'Verified' ? 'pill-ok' : status === 'Rejected' ? 'pill-err' : 'pill-warn'
+  return <span className={`pill ${cls}`}>{status}</span>
+}
+
+function fmt(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+function fmtAmount(amount: string) {
+  const n = parseFloat(amount)
+  return isNaN(n) ? amount : `₵ ${n.toLocaleString()}`
+}
+
+function downloadCSV(donations: DonationDetail[], name: string) {
+  const headers = ['Date', 'Campaign', 'Amount', 'Method', 'Reference', 'Status']
+  const rows = donations.map((d) => [
+    fmt(d.date),
+    d.campaignTitle || 'Strategic Fund',
+    parseFloat(d.amount || '0').toFixed(2),
+    d.method || '',
+    d.reference,
+    d.status,
+  ])
+  const csv = [headers, ...rows]
+    .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+    .join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `the-base-donations-${name.replace(/\s+/g, '-').toLowerCase()}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+export default function MyDonations() {
+  const { session } = useAuth()
+  const [donations, setDonations] = useState<DonationDetail[]>([])
+  const [loading, setLoading] = useState(true)
+  const [receiptViewUrl, setReceiptViewUrl] = useState<string | null>(null)
+  const [receiptViewRef, setReceiptViewRef] = useState<string>('receipt')
+  const [receiptHtml, setReceiptHtml] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!receiptViewUrl) return
+    fetch(receiptViewUrl)
+      .then((r) => r.text())
+      .then(setReceiptHtml)
+      .catch(() => setReceiptHtml('<p>Failed to load receipt.</p>'))
+  }, [receiptViewUrl])
+  useEffect(() => {
+    if (!session?.user) return
+    adminService.getPersonalDonationHistory(session.user.id).then((data) => {
+      setDonations(data)
+      setLoading(false)
+    })
+  }, [session])
+
+  const totalVerified = donations
+    .filter((d) => d.status === 'Verified')
+    .reduce((s, d) => s + parseFloat(d.amount || '0'), 0)
+  const pendingCount = donations.filter((d) => d.status === 'Pending').length
+  const verifiedCount = donations.filter((d) => d.status === 'Verified').length
+
+  const kpis = [
+    {
+      label: 'Total Contributions',
+      value: donations.length,
+      bar: 'hsl(var(--on-surface))',
+    },
+    {
+      label: 'Total Verified',
+      value: `₵ ${totalVerified.toLocaleString()}`,
+      bar: 'hsl(var(--primary))',
+    },
+    {
+      label: 'Verified',
+      value: verifiedCount,
+      bar: 'hsl(var(--primary))',
+    },
+    {
+      label: 'Pending',
+      value: pendingCount,
+      bar: 'hsl(var(--accent))',
+    },
+  ]
+
+  return (
+    <>
+      <SEO title="My Donations" noindex />
+      <div className="main">
+        {/* Header */}
+        <div
+          style={{
+            marginBottom: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            gap: 14,
+          }}
+        >
+          <div style={{ maxWidth: 620 }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 18,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+                fontFamily: "'Public Sans', sans-serif",
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                volunteer_activism
+              </span>
+              My Donations
+            </h2>
+            <p
+              style={{
+                margin: '4px 0 0',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              Your contribution history
+            </p>
+          </div>
+          <div
+            className="actions"
+            style={{
+              width: '100%',
+              display: 'grid',
+              gridTemplateColumns: donations.length > 0 ? 'repeat(2, minmax(0, 1fr))' : '1fr',
+              gap: 10,
+            }}
+          >
+            {donations.length > 0 && (
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => downloadCSV(donations, sessionStore.getItem('userName') || 'member')}
+                style={{ justifyContent: 'center', width: '100%' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  download
+                </span>
+                Export CSV
+              </button>
+            )}
+            <Link
+              to="/dashboard/donate"
+              className="btn btn-primary btn-sm"
+              style={{ textDecoration: 'none', justifyContent: 'center', width: '100%' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                add
+              </span>
+              New Donation
+            </Link>
+          </div>
+        </div>
+
+        {/* KPIs */}
+        {!loading && donations.length > 0 && (
+          <div className="kpis" style={{ marginBottom: 20 }}>
+            {kpis.map((k) => (
+              <div
+                key={k.label}
+                className="panel"
+                style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 3,
+                    background: k.bar,
+                  }}
+                />
+                <p
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'hsl(var(--on-surface-muted))',
+                    margin: '0 0 6px',
+                  }}
+                >
+                  {k.label}
+                </p>
+                <p
+                  style={{
+                    fontSize: 'var(--kpi-num-size)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                    margin: 0,
+                  }}
+                >
+                  {k.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Content */}
+        {loading ? (
+          <div className="panel" style={{ overflow: 'hidden' }}>
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                style={{
+                  padding: '14px 18px',
+                  borderBottom: i < 3 ? '1px solid hsl(var(--border))' : 'none',
+                  display: 'flex',
+                  gap: 12,
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    width: 80,
+                    height: 12,
+                    borderRadius: 4,
+                    background: 'hsl(var(--border))',
+                    opacity: 0.6,
+                  }}
+                />
+                <div
+                  style={{
+                    flex: 1,
+                    height: 12,
+                    borderRadius: 4,
+                    background: 'hsl(var(--border))',
+                    opacity: 0.4,
+                  }}
+                />
+                <div
+                  style={{
+                    width: 60,
+                    height: 12,
+                    borderRadius: 4,
+                    background: 'hsl(var(--border))',
+                    opacity: 0.4,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        ) : donations.length === 0 ? (
+          <div
+            className="panel"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '64px 24px',
+              textAlign: 'center',
+              gap: 12,
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.3 }}
+            >
+              volunteer_activism
+            </span>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 14,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              No donations yet
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 12,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                maxWidth: 280,
+                lineHeight: 1.6,
+              }}
+            >
+              Your contributions to the movement will appear here once you make your first donation.
+            </p>
+            <Link
+              to="/dashboard/donate"
+              className="btn btn-primary btn-sm"
+              style={{ marginTop: 8, textDecoration: 'none' }}
+            >
+              Make a Donation
+            </Link>
+          </div>
+        ) : (
+          <div className="panel" style={{ overflow: 'hidden' }}>
+            {/* Desktop table */}
+            <div className="desktop-only" style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr
+                    style={{
+                      background: 'hsl(var(--container-low))',
+                      borderBottom: '1px solid hsl(var(--border))',
+                    }}
+                  >
+                    {['Date', 'Campaign', 'Amount', 'Method', 'Reference', 'Status', 'Receipt'].map(
+                      (h) => (
+                        <th
+                          key={h}
+                          style={{
+                            padding: '11px 18px',
+                            textAlign: 'left',
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 9,
+                            textTransform: 'uppercase',
+                            color: 'hsl(var(--on-surface-muted))',
+                            letterSpacing: '0.05em',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {h}
+                        </th>
+                      )
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {donations.map((d) => (
+                    <tr key={d.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          whiteSpace: 'nowrap',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                        }}
+                      >
+                        {fmt(d.date)}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                        }}
+                      >
+                        {d.campaignTitle || 'Strategic Fund'}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {fmtAmount(d.amount)}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                        }}
+                      >
+                        {d.method || '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 18px',
+                          fontFamily: 'monospace',
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {d.reference}
+                      </td>
+                      <td style={{ padding: '12px 18px' }}>
+                        <StatusPill status={d.status} />
+                      </td>
+                      <td style={{ padding: '12px 18px' }}>
+                        {d.status === 'Verified' && d.receiptUrl ? (
+                          <button
+                            className="btn btn-outline btn-sm"
+                            style={{ whiteSpace: 'nowrap' }}
+                            onClick={() => {
+                              setReceiptViewUrl(d.receiptUrl!)
+                              setReceiptViewRef(d.reference || 'receipt')
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                              receipt
+                            </span>
+                            View Receipt
+                          </button>
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: 12,
+                              color: 'hsl(var(--on-surface-muted))',
+                              fontFamily: "'Public Sans', sans-serif",
+                            }}
+                          >
+                            {d.status === 'Verified' ? '—' : 'Pending'}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="mobile-only">
+              {donations.map((d, i) => (
+                <div
+                  key={d.id}
+                  style={{
+                    padding: '14px 16px',
+                    borderBottom:
+                      i < donations.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 6,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 8,
+                    }}
+                  >
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      {fmtAmount(d.amount)}
+                    </p>
+                    <StatusPill status={d.status} />
+                  </div>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                    }}
+                  >
+                    {d.campaignTitle || 'Strategic Fund'}
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 12,
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    <span>{fmt(d.date)}</span>
+                    <span>·</span>
+                    <span>{d.method || '—'}</span>
+                    <span>·</span>
+                    <span style={{ fontFamily: 'monospace' }}>{d.reference}</span>
+                  </div>
+                  {d.status === 'Verified' && d.receiptUrl && (
+                    <button
+                      className="btn btn-outline btn-sm"
+                      style={{ marginTop: 8, alignSelf: 'flex-start' }}
+                      onClick={() => {
+                        setReceiptViewUrl(d.receiptUrl!)
+                        setReceiptViewRef(d.reference || 'receipt')
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        receipt
+                      </span>
+                      View Receipt
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Receipt viewer modal */}
+      {receiptViewUrl &&
+        createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 1000,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 16,
+              background: 'rgba(0,0,0,.82)',
+              backdropFilter: 'blur(4px)',
+            }}
+            onClick={() => setReceiptViewUrl(null)}
+          >
+            <div
+              style={{
+                maxWidth: 720,
+                width: '100%',
+                background: 'hsl(var(--card))',
+                borderRadius: 'var(--radius-lg)',
+                overflow: 'hidden',
+                boxShadow: '0 30px 80px rgba(0,0,0,.4)',
+                display: 'flex',
+                flexDirection: 'column',
+                maxHeight: '90vh',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div
+                style={{
+                  padding: '14px 20px',
+                  borderBottom: '1px solid hsl(var(--border))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexShrink: 0,
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 14,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  Donation Receipt
+                </div>
+                <button
+                  aria-label="Close receipt"
+                  onClick={() => setReceiptViewUrl(null)}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--container-low))',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    close
+                  </span>
+                </button>
+              </div>
+
+              {/* Receipt viewer */}
+              <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
+                <iframe
+                  srcDoc={receiptHtml ?? ''}
+                  title="Donation Receipt"
+                  style={{ width: '100%', height: '65vh', border: 'none', display: 'block' }}
+                />
+              </div>
+
+              {/* Footer */}
+              <div
+                style={{
+                  padding: '12px 20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  gap: 8,
+                  borderTop: '1px solid hsl(var(--border))',
+                  flexShrink: 0,
+                }}
+              >
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    if (!receiptHtml) return
+                    const blob = new Blob([receiptHtml], { type: 'text/html' })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = `receipt-${receiptViewRef}.html`
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    download
+                  </span>
+                  Download
+                </button>
+                <button className="btn btn-outline btn-sm" onClick={() => setReceiptViewUrl(null)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+    </>
+  )
+}

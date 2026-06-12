@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f4f4f2"/>
+  <!-- subtle grid lines -->
+  <line x1="0" y1="100" x2="200" y2="100" stroke="#e8e8e4" stroke-width="1"/>
+  <line x1="100" y1="0" x2="100" y2="200" stroke="#e8e8e4" stroke-width="1"/>
+  <!-- body / torso -->
+  <ellipse cx="100" cy="148" rx="46" ry="30" fill="#d4d4ce"/>
+  <!-- head -->
+  <circle cx="100" cy="88" r="30" fill="#d4d4ce"/>
+  <!-- pen accent mark -->
+  <rect x="93" y="150" width="14" height="2" rx="1" fill="#2d6a4f" opacity="0.6"/>
+  <rect x="93" y="155" width="9" height="2" rx="1" fill="#2d6a4f" opacity="0.4"/>
+</svg>

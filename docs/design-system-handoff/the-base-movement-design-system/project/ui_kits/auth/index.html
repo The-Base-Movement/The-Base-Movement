@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Auth & onboarding — The Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:var(--container-low); padding:32px; }
+  .frames { display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; max-width:1280px; margin:0 auto; }
+  .frame { background:#fff; border:1px solid var(--border); border-radius:8px; overflow:hidden;
+    box-shadow:0 12px 32px -12px rgba(0,0,0,.1); display:flex; flex-direction:column; }
+  .frame .lbl { padding:10px 16px; background:#181d19; color:#fff; font-family:'Public Sans'; font-weight:800;
+    font-size:11px; letter-spacing:.06em; text-transform:uppercase; display:flex; justify-content:space-between; align-items:center; }
+  .frame .lbl span { color:var(--accent); font-size:9.5px; }
+
+  /* Login screen */
+  .login { padding:32px 28px; flex:1; display:flex; flex-direction:column; }
+  .login .brand { display:flex; align-items:center; gap:10px; margin-bottom:32px; }
+  .login .brand img { width:36px; }
+  .login .brand h1 { font-family:'Public Sans'; font-weight:800; font-size:18px; letter-spacing:-.01em; }
+  .login .brand span { display:block; font-size:9.5px; color:var(--primary); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .login h2 { font-family:'Public Sans'; font-weight:800; font-size:24px; letter-spacing:-.02em; margin-bottom:6px; }
+  .login .sub { font-size:13px; color:var(--on-surface-muted); margin-bottom:22px; }
+  .login .field { margin-bottom:14px; }
+  .login .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .login .row label { display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--on-surface); font-family:'Public Sans'; font-weight:700; }
+  .login .row label input { width:14px; height:14px; accent-color:var(--primary); }
+  .login .row a { color:var(--primary); font-size:11.5px; font-family:'Public Sans'; font-weight:800; }
+  .login .btn { width:100%; }
+  .login .alt { text-align:center; margin-top:20px; padding-top:20px; border-top:1px solid var(--border); font-size:12px; color:var(--on-surface-muted); }
+  .login .alt a { color:var(--primary); font-family:'Public Sans'; font-weight:800; }
+  .login .or { display:flex; align-items:center; gap:10px; margin:18px 0; font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .login .or::before, .login .or::after { content:""; flex:1; height:1px; background:var(--border); }
+  .social { display:flex; gap:8px; }
+  .social .btn { flex:1; background:#fff; color:var(--on-surface); border:1px solid var(--border); }
+  .social .btn:hover { border-color:var(--primary); }
+
+  /* Register multi-step */
+  .reg { flex:1; display:flex; flex-direction:column; }
+  .reg-head { padding:22px 28px 14px; }
+  .reg-head h2 { font-family:'Public Sans'; font-weight:800; font-size:22px; letter-spacing:-.02em; margin-bottom:4px; }
+  .reg-head p { font-size:12px; color:var(--on-surface-muted); }
+  .stepper { display:flex; gap:6px; padding:0 28px 18px; }
+  .stepper .s { flex:1; height:4px; background:var(--border); border-radius:99px; }
+  .stepper .s.done { background:var(--primary); }
+  .stepper .s.cur { background:linear-gradient(to right, var(--primary) 60%, var(--border) 60%); }
+  .reg-body { padding:0 28px 18px; flex:1; }
+  .reg-body .grp { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+  .reg-body .field { margin-bottom:12px; }
+  .reg-body .seg { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  .reg-body .seg button { padding:14px; background:#fff; border:1px solid var(--border); border-radius:6px; text-align:left; cursor:pointer; }
+  .reg-body .seg button.on { border-color:var(--primary); background:rgba(0,107,63,.04); box-shadow:inset 0 0 0 1px var(--primary); }
+  .reg-body .seg button .ic { width:34px; height:34px; background:var(--container-low); border-radius:6px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; color:var(--primary); }
+  .reg-body .seg button.on .ic { background:var(--primary); color:#fff; }
+  .reg-body .seg button .ic .material-symbols-outlined { font-size:18px; }
+  .reg-body .seg button b { display:block; font-family:'Public Sans'; font-weight:800; font-size:13px; }
+  .reg-body .seg button span { font-size:11px; color:var(--on-surface-muted); }
+  .reg-body .strength { display:flex; gap:4px; margin-top:6px; margin-bottom:6px; }
+  .reg-body .strength span { flex:1; height:3px; background:var(--border); border-radius:99px; }
+  .reg-body .strength span.f1 { background:var(--brand-red); }
+  .reg-body .strength span.f2 { background:var(--brand-gold); }
+  .reg-body .strength span.f3 { background:var(--brand-green); }
+  .reg-body .hint { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .reg-body .hint b { color:var(--primary); }
+  .reg-foot { padding:18px 28px 22px; display:flex; gap:8px; border-top:1px solid var(--border); background:var(--container-low); }
+  .reg-foot .btn { flex:1; }
+
+  /* Verify ID */
+  .verify { padding:28px; flex:1; display:flex; flex-direction:column; }
+  .verify .top { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .verify .top .num { width:30px; height:30px; background:var(--accent); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Public Sans'; font-weight:800; font-size:13px; }
+  .verify h2 { font-family:'Public Sans'; font-weight:800; font-size:22px; letter-spacing:-.02em; margin-bottom:6px; }
+  .verify p { font-size:12.5px; color:var(--on-surface-muted); margin-bottom:18px; line-height:1.5; }
+  .verify .upload { background:var(--container-low); border:2px dashed var(--outline-variant); border-radius:8px; padding:24px; text-align:center; margin-bottom:14px; cursor:pointer; }
+  .verify .upload:hover { border-color:var(--primary); background:rgba(0,107,63,.03); }
+  .verify .upload .material-symbols-outlined { font-size:36px; color:var(--primary); }
+  .verify .upload b { display:block; font-family:'Public Sans'; font-weight:800; font-size:13px; margin-top:6px; }
+  .verify .upload span { font-size:11px; color:var(--on-surface-muted); }
+  .verify .uploaded { background:rgba(0,107,63,.04); border:1px solid var(--primary); border-radius:8px; padding:14px; margin-bottom:14px; display:flex; align-items:center; gap:12px; }
+  .verify .uploaded .ic { width:36px; height:36px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .verify .uploaded .ic .material-symbols-outlined { font-size:20px; }
+  .verify .uploaded b { font-family:'Public Sans'; font-weight:800; font-size:12.5px; display:block; }
+  .verify .uploaded span { font-size:10.5px; color:var(--on-surface-muted); }
+  .verify .uploaded .x { margin-left:auto; color:var(--on-surface-muted); }
+  .verify .checks { background:#fff; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:18px; }
+  .verify .checks .ck { display:flex; align-items:center; gap:8px; padding:6px 0; font-size:12px; font-family:'Public Sans'; font-weight:700; }
+  .verify .checks .ck .material-symbols-outlined { font-size:16px; color:var(--primary); }
+  .verify .checks .ck.pending .material-symbols-outlined { color:var(--accent); animation:spin 1.5s linear infinite; }
+  @keyframes spin { from { transform:rotate(0deg);} to { transform:rotate(360deg);} }
+  .verify .submit { margin-top:auto; }
+  .verify .submit .btn { width:100%; }
+
+  .foot-note { font-family:'Public Sans'; font-weight:700; font-size:10px; color:var(--on-surface-muted); text-align:center; margin-top:14px; letter-spacing:.04em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div class="frames">
+
+  <!-- LOGIN -->
+  <div class="frame">
+    <div class="lbl">01 · Login <span>Returning patriot</span></div>
+    <div class="login">
+      <div class="brand">
+        <img src="../../assets/logo.png">
+        <div>
+          <h1>The Base</h1>
+          <span>Member portal</span>
+        </div>
+      </div>
+      <h2>Welcome back, patriot.</h2>
+      <p class="sub">Sign in to your member account to continue.</p>
+      <div class="field">
+        <span class="lbl" style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">Email or Reg. no.</span>
+        <input class="input" value="kwesi@thebase.gh">
+      </div>
+      <div class="field">
+        <span class="lbl" style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">Password</span>
+        <input class="input" type="password" value="••••••••">
+      </div>
+      <div class="row">
+        <label><input type="checkbox" checked>Keep me signed in</label>
+        <a>Forgot password?</a>
+      </div>
+      <button class="btn btn-primary btn-lg">Sign in →</button>
+      <div class="or">Or continue with</div>
+      <div class="social">
+        <button class="btn"><span class="material-symbols-outlined" style="font-size:16px">smartphone</span>MoMo</button>
+        <button class="btn">G</button>
+        <button class="btn">f</button>
+      </div>
+      <div class="alt">
+        New to the movement? <a>Create an account →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="frame">
+    <div class="lbl">02 · Register <span>Step 2 of 4</span></div>
+    <div class="reg">
+      <div class="reg-head">
+        <h2>Tell us about you</h2>
+        <p>Used to assign you to your local branch.</p>
+      </div>
+      <div class="stepper">
+        <div class="s done"></div>
+        <div class="s cur"></div>
+        <div class="s"></div>
+        <div class="s"></div>
+      </div>
+      <div class="reg-body">
+        <span style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:8px">I am joining as</span>
+        <div class="seg">
+          <button class="on">
+            <div class="ic"><span class="material-symbols-outlined">place</span></div>
+            <b>Base Ghana</b>
+            <span>Living in Ghana</span>
+          </button>
+          <button>
+            <div class="ic"><span class="material-symbols-outlined">public</span></div>
+            <b>Base Diaspora</b>
+            <span>Living abroad</span>
+          </button>
+        </div>
+
+        <div class="grp">
+          <div class="field">
+            <span style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">First name</span>
+            <input class="input" value="Kwesi">
+          </div>
+          <div class="field">
+            <span style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">Last name</span>
+            <input class="input" value="Owusu">
+          </div>
+        </div>
+
+        <div class="grp">
+          <div class="field">
+            <span style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">Region</span>
+            <select class="select"><option>Greater Accra</option></select>
+          </div>
+          <div class="field">
+            <span style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">Constituency</span>
+            <select class="select"><option>Ablekuma North</option></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <span style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">Mobile · for MoMo verify</span>
+          <input class="input" value="+233 24 412 8890">
+        </div>
+
+        <div class="field">
+          <span style="font-family:'Public Sans';font-size:10.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px">Set password</span>
+          <input class="input" type="password" value="•••••••••••">
+          <div class="strength"><span class="f1"></span><span class="f2"></span><span class="f3"></span><span></span></div>
+          <div class="hint">Strong · <b>good</b> for a member account</div>
+        </div>
+      </div>
+      <div class="reg-foot">
+        <button class="btn btn-outline">← Back</button>
+        <button class="btn btn-primary" style="flex:2">Continue to verify ID →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY ID -->
+  <div class="frame">
+    <div class="lbl">03 · Verify ID <span>Step 3 of 4</span></div>
+    <div class="verify">
+      <div class="top">
+        <div class="num">3</div>
+        <div>
+          <h2 style="margin:0">Verify your ID</h2>
+        </div>
+      </div>
+      <p>Upload a clear photo of your <b>Ghana Card</b> (or passport for Diaspora). We use this only to confirm one membership per citizen.</p>
+
+      <div class="uploaded">
+        <div class="ic"><span class="material-symbols-outlined">check</span></div>
+        <div>
+          <b>ghana-card-front.jpg</b>
+          <span>Front side · 2.4 MB</span>
+        </div>
+        <span class="material-symbols-outlined x">close</span>
+      </div>
+
+      <div class="upload">
+        <span class="material-symbols-outlined">photo_camera</span>
+        <b>Add back side of card</b>
+        <span>JPG or PNG, up to 8 MB</span>
+      </div>
+
+      <div class="checks">
+        <div class="ck"><span class="material-symbols-outlined">check_circle</span>Photo is clear and unobstructed</div>
+        <div class="ck"><span class="material-symbols-outlined">check_circle</span>Name matches your registration</div>
+        <div class="ck pending"><span class="material-symbols-outlined">progress_activity</span>OCR running — checking card number…</div>
+      </div>
+
+      <div class="foot-note">Reviewed manually within 24h · Your card photo is encrypted at rest.</div>
+
+      <div class="submit">
+        <button class="btn btn-gold btn-lg">Submit for verification →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

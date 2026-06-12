@@ -1,0 +1,9 @@
+import { Button, type ButtonProps } from '@/components/buttons/ui/neon-button'
+
+export function ButtonAccent({ children, ...props }: ButtonProps) {
+  return (
+    <Button variant="accent" {...props}>
+      {children}
+    </Button>
+  )
+}
