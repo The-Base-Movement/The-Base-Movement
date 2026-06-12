@@ -2,10 +2,18 @@
 // Secrets: MNOTIFY_API_KEY (required), MNOTIFY_SENDER_ID (defaults to the
 // registered & approved sender ID "THE BASE" — max 11 chars).
 
-/** MNotify expects Ghana numbers without a leading plus: 233XXXXXXXXX. */
+/**
+ * MNotify expects numbers without a leading plus, e.g. 233XXXXXXXXX.
+ * Numbers stored with an explicit country code (+32..., 0044...) pass through
+ * unchanged so diaspora members are reachable; Ghana rules only apply to
+ * local-format numbers (024..., 233...).
+ */
 export function normalizeGhanaPhone(raw: string): string {
-  const digits = raw.trim().replace(/\D/g, '')
+  const trimmed = raw.trim()
+  const digits = trimmed.replace(/\D/g, '')
+  if (digits.startsWith('00')) return digits.slice(2) // 0032... → 32...
   if (digits.startsWith('233')) return digits
+  if (trimmed.startsWith('+')) return digits // non-Ghana country code
   if (digits.startsWith('0')) return `233${digits.slice(1)}`
   return `233${digits}`
 }
