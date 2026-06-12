@@ -2,6 +2,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { sendSms } from '../_shared/sms.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -30,10 +31,6 @@ serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     // @ts-expect-error: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    // @ts-expect-error: Deno global
-    const atApiKey = Deno.env.get('AT_API_KEY')
-    // @ts-expect-error: Deno global
-    const atUsername = Deno.env.get('AT_USERNAME')
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -84,33 +81,14 @@ serve(async (req: Request) => {
       throw new Error(`Failed to store OTP: ${otpError.message}`)
     }
 
-    // 4. Send SMS via Africa's Talking API
-    if (atApiKey && atUsername) {
-      try {
-        const smsRes = await fetch('https://api.africastalking.com/version1/messaging', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            apiKey: atApiKey,
-          },
-          body: new URLSearchParams({
-            username: atUsername,
-            to: normalizedPhone,
-            message: `Your The Base Movement verification OTP code is: ${otp}. Valid for 10 minutes.`,
-            from: 'THEBASE',
-          }),
-        })
-        if (!smsRes.ok) {
-          const smsErrText = await smsRes.text()
-          console.error(`[OTP-SMS] Africa's Talking returned error:`, smsErrText)
-        }
-      } catch (smsErr) {
-        console.error(`[OTP-SMS] Network dispatch error:`, smsErr)
-      }
-    } else {
+    // 4. Send SMS via MNotify
+    const sms = await sendSms(
+      [normalizedPhone],
+      `Your The Base Movement verification OTP code is: ${otp}. Valid for 10 minutes.`
+    )
+    if (!sms.ok) {
       console.warn(
-        `[OTP-DEBUG] SMS provider credentials missing. Plaintext OTP for ${user.full_name} (${normalizedPhone}) is: ${otp}`
+        `[OTP-DEBUG] SMS dispatch failed (${sms.detail}). Plaintext OTP for ${user.full_name} (${normalizedPhone}) is: ${otp}`
       )
     }
 
