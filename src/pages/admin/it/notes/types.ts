@@ -10,6 +10,7 @@ export interface Note {
   author_id: string
   author_name: string
   created_at: string
+  archived_at: string | null
   comment_count: number
 }
 

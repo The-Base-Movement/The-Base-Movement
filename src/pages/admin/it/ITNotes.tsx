@@ -23,6 +23,8 @@ export default function ITNotes() {
   const [createOpen, setCreateOpen] = useState(false)
   const [activeNote, setActiveNote] = useState<Note | null>(null)
   const [colorFilter, setColorFilter] = useState<NoteColor | ''>('')
+  const [search, setSearch] = useState('')
+  const [showArchived, setShowArchived] = useState(false)
 
   useITLayout(
     'Team Noticeboard',
@@ -40,7 +42,9 @@ export default function ITNotes() {
     try {
       const { data, error } = await supabase
         .from('it_notes')
-        .select('id, title, content, color_theme, author_id, created_at, it_note_comments(count)')
+        .select(
+          'id, title, content, color_theme, author_id, created_at, archived_at, it_note_comments(count)'
+        )
         .order('created_at', { ascending: false })
       if (error) throw error
 
@@ -65,6 +69,7 @@ export default function ITNotes() {
           author_id: n.author_id,
           author_name: nameMap[n.author_id] ?? 'Unknown',
           created_at: n.created_at,
+          archived_at: n.archived_at ?? null,
           comment_count: Array.isArray(n.it_note_comments)
             ? ((n.it_note_comments[0] as { count?: number })?.count ?? 0)
             : 0,
@@ -82,11 +87,22 @@ export default function ITNotes() {
     loadNotes()
   }, [loadNotes])
 
-  const displayed = colorFilter ? notes.filter((n) => n.color_theme === colorFilter) : notes
+  const archivedCount = notes.filter((n) => n.archived_at).length
+  const query = search.trim().toLowerCase()
+  const displayed = notes.filter((n) => {
+    if (showArchived ? !n.archived_at : n.archived_at) return false
+    if (colorFilter && n.color_theme !== colorFilter) return false
+    if (!query) return true
+    return (
+      (n.title ?? '').toLowerCase().includes(query) ||
+      n.content.toLowerCase().includes(query) ||
+      n.author_name.toLowerCase().includes(query)
+    )
+  })
 
   return (
     <div>
-      {/* Colour filter bar */}
+      {/* Search + colour filter bar */}
       <div
         style={{
           display: 'flex',
@@ -96,6 +112,42 @@ export default function ITNotes() {
           flexWrap: 'wrap',
         }}
       >
+        <div style={{ position: 'relative', width: isMobile ? '100%' : 240 }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 16,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            search
+          </span>
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search notes…"
+            style={{
+              width: '100%',
+              height: 32,
+              padding: '0 12px 0 32px',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-pill)',
+              background: 'hsl(var(--card))',
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface))',
+              boxSizing: 'border-box',
+              outline: 'none',
+            }}
+          />
+        </div>
         <button
           onClick={() => setColorFilter('')}
           style={{
@@ -132,8 +184,18 @@ export default function ITNotes() {
             }}
           />
         ))}
+        <button
+          onClick={() => setShowArchived((v) => !v)}
+          className={showArchived ? 'btn btn-sm btn-active-tab' : 'btn btn-sm btn-inactive-tab'}
+          style={{ marginLeft: 'auto' }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+            inventory_2
+          </span>
+          Archived{archivedCount > 0 ? ` · ${archivedCount}` : ''}
+        </button>
         {notes.length > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+          <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
             {displayed.length} {displayed.length === 1 ? 'note' : 'notes'}
           </span>
         )}
@@ -177,11 +239,15 @@ export default function ITNotes() {
             sticky_note_2
           </span>
           <p style={{ margin: '0 0 16px', fontSize: 14 }}>
-            {colorFilter
-              ? `No ${colorFilter} notes on the board.`
-              : 'The board is empty — pin the first note!'}
+            {query
+              ? `No notes match "${search.trim()}".`
+              : showArchived
+                ? 'No archived notes.'
+                : colorFilter
+                  ? `No ${colorFilter} notes on the board.`
+                  : 'The board is empty — pin the first note!'}
           </p>
-          {!colorFilter && (
+          {!colorFilter && !query && !showArchived && (
             <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
               <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                 add
@@ -220,6 +286,10 @@ export default function ITNotes() {
           note={activeNote}
           onClose={() => setActiveNote(null)}
           onCommentAdded={loadNotes}
+          onMutated={() => {
+            setActiveNote(null)
+            loadNotes()
+          }}
         />
       )}
     </div>
