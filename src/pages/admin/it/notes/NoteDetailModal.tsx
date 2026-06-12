@@ -9,14 +9,18 @@ interface DetailModalProps {
   note: Note
   onClose: () => void
   onCommentAdded?: () => void
+  /** Called after the note is archived, unarchived or deleted */
+  onMutated?: () => void
 }
 
-export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalProps) {
+export function NoteDetailModal({ note, onClose, onCommentAdded, onMutated }: DetailModalProps) {
   const palette = colorFor(note.color_theme)
   const [comments, setComments] = useState<Comment[]>([])
   const [loadingComments, setLoadingComments] = useState(true)
   const [newComment, setNewComment] = useState('')
   const [posting, setPosting] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [mutating, setMutating] = useState(false)
 
   const loadComments = useCallback(async () => {
     try {
@@ -57,6 +61,51 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
   useEffect(() => {
     loadComments()
   }, [loadComments])
+
+  async function handleArchiveToggle() {
+    setMutating(true)
+    try {
+      // .select() reveals whether RLS actually matched the row — an update the
+      // caller isn't allowed to make succeeds silently with zero rows
+      const { data, error } = await supabase
+        .from('it_notes')
+        .update({ archived_at: note.archived_at ? null : new Date().toISOString() })
+        .eq('id', note.id)
+        .select('id')
+      if (error) throw error
+      if (!data?.length) throw new Error('Only the author or an admin can archive this note')
+      toast.success(note.archived_at ? 'Note restored to the board' : 'Note archived')
+      onMutated?.()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update note')
+    } finally {
+      setMutating(false)
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirmDelete) {
+      setConfirmDelete(true)
+      return
+    }
+    setMutating(true)
+    try {
+      const { data, error } = await supabase
+        .from('it_notes')
+        .delete()
+        .eq('id', note.id)
+        .select('id')
+      if (error) throw error
+      if (!data?.length) throw new Error('Only the author or an admin can delete this note')
+      toast.success('Note deleted')
+      onMutated?.()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete note')
+      setConfirmDelete(false)
+    } finally {
+      setMutating(false)
+    }
+  }
 
   async function handlePostComment() {
     if (!newComment.trim()) return
@@ -167,25 +216,84 @@ export function NoteDetailModal({ note, onClose, onCommentAdded }: DetailModalPr
               )}
               <p style={{ margin: 0, fontSize: 11, color: NOTE_INK.muted }}>
                 {note.author_name} · {fmtDate(note.created_at)}
+                {note.archived_at ? ' · Archived' : ''}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                flexShrink: 0,
-                display: 'flex',
-              }}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 20, color: NOTE_INK.muted }}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+              <button
+                onClick={handleArchiveToggle}
+                disabled={mutating}
+                title={note.archived_at ? 'Restore to board' : 'Archive note'}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: mutating ? 'wait' : 'pointer',
+                  display: 'flex',
+                  padding: 4,
+                }}
               >
-                close
-              </span>
-            </button>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 19, color: NOTE_INK.muted }}
+                >
+                  {note.archived_at ? 'unarchive' : 'inventory_2'}
+                </span>
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={mutating}
+                title={confirmDelete ? 'Click again to permanently delete' : 'Delete note'}
+                style={{
+                  background: confirmDelete ? 'hsl(var(--destructive))' : 'none',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  cursor: mutating ? 'wait' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: confirmDelete ? '4px 8px' : 4,
+                }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 19,
+                    color: confirmDelete ? '#fff' : 'hsl(var(--destructive))',
+                  }}
+                >
+                  delete
+                </span>
+                {confirmDelete && (
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: '#fff',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Confirm?
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={onClose}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  padding: 4,
+                }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 20, color: NOTE_INK.muted }}
+                >
+                  close
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 
