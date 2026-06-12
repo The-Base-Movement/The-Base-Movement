@@ -112,7 +112,11 @@ export default function ITNotes() {
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ position: 'relative', width: isMobile ? '100%' : 240 }}>
+        <div
+          style={
+            isMobile ? { position: 'relative', flex: 1 } : { position: 'relative', width: 240 }
+          }
+        >
           <span
             className="material-symbols-outlined"
             style={{
@@ -166,6 +170,8 @@ export default function ITNotes() {
         >
           All
         </button>
+        {/* On mobile: search + All share the first row, colour dots wrap below */}
+        {isMobile && <div style={{ width: '100%', height: 0 }} />}
         {COLORS.map((c) => (
           <button
             key={c.value}
