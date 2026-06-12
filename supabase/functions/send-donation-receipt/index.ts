@@ -2,6 +2,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-templates.ts'
+import { sendSms } from '../_shared/sms.ts'
 
 const SITE_BASE = 'https://thebasemovement.creativeutil.com'
 
@@ -165,46 +166,16 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // ── 3. Send SMS via Africa's Talking ──────────────────────────────────────
+    // ── 3. Send SMS via MNotify ───────────────────────────────────────────────
     const rawPhone = row.users?.phone_number
     if (rawPhone) {
-      // @ts-expect-error: Deno global
-      const atApiKey: string | undefined = Deno.env.get('AT_API_KEY')
-      // @ts-expect-error: Deno global
-      const atUsername: string | undefined = Deno.env.get('AT_USERNAME')
-      // @ts-expect-error: Deno global
-      const atSenderId: string | undefined = Deno.env.get('AFRICASTALKING_SENDER_ID')
-
-      if (atApiKey && atUsername) {
-        try {
-          const phone = normalizePhone(rawPhone)
-          const smsBody = new URLSearchParams({
-            username: atUsername,
-            to: phone,
-            message: `Hi ${row.full_name.split(' ')[0]}! Your ${amountStr} contribution to The Base Movement is confirmed. Ref: ${row.reference}.${receiptUrl ? ` Download receipt: ${receiptUrl}` : ''} Thank you, Patriot!`,
-          })
-          if (atSenderId) smsBody.set('from', atSenderId)
-
-          const smsRes = await fetch('https://api.africastalking.com/version1/messaging', {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/x-www-form-urlencoded',
-              apiKey: atApiKey,
-            },
-            body: smsBody,
-          })
-          if (!smsRes.ok) {
-            const errText = await smsRes.text()
-            console.error('[RECEIPT-SMS] AT error:', errText)
-          } else {
-            console.log('[RECEIPT-SMS] Sent to', phone)
-          }
-        } catch (smsErr) {
-          console.error('[RECEIPT-SMS] Dispatch error:', smsErr)
-        }
-      } else {
-        console.warn('[RECEIPT-SMS] AT credentials missing — skipping SMS')
+      const phone = normalizePhone(rawPhone)
+      const sms = await sendSms(
+        [phone],
+        `Hi ${row.full_name.split(' ')[0]}! Your ${amountStr} contribution to The Base Movement is confirmed. Ref: ${row.reference}.${receiptUrl ? ` Download receipt: ${receiptUrl}` : ''} Thank you, Patriot!`
+      )
+      if (sms.ok) {
+        console.log('[RECEIPT-SMS] Sent to', phone)
       }
     } else {
       console.warn('[RECEIPT-SMS] No phone for member_id', row.member_id)

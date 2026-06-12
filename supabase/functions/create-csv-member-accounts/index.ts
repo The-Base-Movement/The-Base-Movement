@@ -3,6 +3,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { csvImportWelcomeEmail } from '../_shared/email-templates.ts'
+import { sendSms } from '../_shared/sms.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -38,10 +39,6 @@ serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     // @ts-expect-error: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    // @ts-expect-error: Deno global
-    const atApiKey = Deno.env.get('AT_API_KEY')
-    // @ts-expect-error: Deno global
-    const atUsername = Deno.env.get('AT_USERNAME')
     // @ts-expect-error: Deno global
     const sgKey = Deno.env.get('SENDGRID_API_KEY')
 
@@ -117,36 +114,14 @@ serve(async (req: Request) => {
           continue
         }
 
-        // 3. Send SMS via Africa's Talking API if secrets are loaded
-        if (atApiKey && atUsername) {
-          try {
-            const smsRes = await fetch('https://api.africastalking.com/version1/messaging', {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                apiKey: atApiKey,
-              },
-              body: new URLSearchParams({
-                username: atUsername,
-                to: normalizedPhone,
-                message: `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at thebasemovement.creativeutil.com/login and change your password.\n- The Base`,
-                from: 'THEBASE',
-              }),
-            })
-            if (!smsRes.ok) {
-              const smsErr = await smsRes.text()
-              console.error(
-                `[CSV-IMPORT] Africa's Talking SMS failed for ${member.reg_no}:`,
-                smsErr
-              )
-            }
-          } catch (smsErr) {
-            console.error(`[CSV-IMPORT] SMS dispatch network error for ${member.reg_no}:`, smsErr)
-          }
-        } else {
+        // 3. Send SMS via MNotify
+        const sms = await sendSms(
+          [normalizedPhone],
+          `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at thebasemovement.creativeutil.com/login and change your password.\n- The Base`
+        )
+        if (!sms.ok) {
           console.warn(
-            `[CSV-IMPORT] AT_API_KEY or AT_USERNAME not set. Generated credentials for ${member.name} (${member.reg_no}):\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}`
+            `[CSV-IMPORT] SMS failed for ${member.reg_no} (${sms.detail}). Generated credentials for ${member.name}:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}`
           )
         }
 
