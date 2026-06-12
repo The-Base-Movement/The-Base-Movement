@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Your Password</title>
+    <!-- tailwind cdn -->
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            @apply bg-gray-100;
+        }
+        .container {
+            @apply flex flex-col items-center justify-center w-full;
+        }
+        .container h1 {
+            @apply text-2xl font-bold mb-4;
+        }
+        .container img {
+            @apply w-24;
+        }
+        .container p {
+            @apply text-base mb-4;
+        }
+        .container a {
+            @apply text-base font-bold text-decoration-none;
+        }
+        .container a:hover {
+            @apply text-decoration-underline;
+        }
+        .container .footer {
+            @apply text-sm mt-4 text-center;
+        }
+        .container .footer a {
+            @apply text-decoration-none;
+        }
+    </style>
+</head>
+
+    <body>
+    <div class="container"> 
+        <img src="https://thebasemovement.creativeutil.com/branding/logo.png" alt="The Base Movement" width="120"
+            class="block border-0 outline-none text-decoration-none w-24 mb-4 mt-4">
+        <h1 class="text-2xl font-bold mb-4">Reset Your Password</h1>
+        <p class="text-base mb-4">Follow this link to reset the password for your user:</p>
+        <a href="{{ .ConfirmationURL }}" class="text-base font-bold text-decoration-none bg-black text-white px-4 py-2 rounded-md block w-full text-center">Reset Password</a>
+        <p class="text-sm mt-4 text-center">If the button doesn't work, copy and paste the link below into your browser:</p>
+        <p class="text-sm mt-4 text-center">{{ .ConfirmationURL }}</p>
+        <p class="text-sm mt-4 text-center">If you did not request a password reset, you can safely ignore this email.</p>
+        <p class="text-sm mt-4 text-center">Need help? Contact us at <a href="mailto:support@thebasemovement.creativeutil.com" class="text-decoration-none text-blue-500">support@thebasemovement.creativeutil.com</a>.</p>
+    </div>
+</body>
+
+</html>

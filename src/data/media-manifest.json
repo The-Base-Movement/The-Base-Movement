@@ -1,0 +1,15 @@
+{
+  "lastUpdated": "2026-05-08T20:06:00.000Z",
+  "branding": [
+    "/branding/logo.png",
+    "/branding/favicon.ico"
+  ],
+  "publicAssets": [
+    "/branding/base-banner-image.png",
+    "/branding/founder-image.jpg",
+    "/branding/hero-background-image.png",
+    "/branding/og-image.png",
+    "/branding/party-headquarters-image.webp",
+    "/branding/twitter-card.png"
+  ]
+}

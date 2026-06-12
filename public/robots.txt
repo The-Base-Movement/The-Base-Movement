@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /login
+Allow: /
+
+Sitemap: https://thebasemovement.com/sitemap.xml

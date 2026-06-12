@@ -1,0 +1,175 @@
+/**
+ * Auth Service
+ * Handles integration with Supabase Auth.
+ */
+
+import { supabase } from '@/lib/supabase'
+import type { Session, User, AuthResponse } from '@supabase/supabase-js'
+
+export interface AuthSession {
+  session: Session | null
+  user: User | null
+}
+
+class AuthService {
+  private static instance: AuthService
+  private currentSession: Session | null = null
+
+  private constructor() {
+    // Initialize session state
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      this.currentSession = session
+    })
+
+    // Listen for auth changes
+    supabase.auth.onAuthStateChange((_event, session) => {
+      this.currentSession = session
+    })
+  }
+
+  public static getInstance(): AuthService {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService()
+    }
+    return AuthService.instance
+  }
+
+  async login(identifier: string, password: string): Promise<AuthResponse['data']> {
+    const isPhone = /^\+?[0-9]+$/.test(identifier.replace(/\s+/g, ''))
+
+    if (isPhone) {
+      let formattedPhone = identifier.replace(/\s+/g, '')
+      if (formattedPhone.startsWith('0')) {
+        formattedPhone = '+233' + formattedPhone.substring(1)
+      } else if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone
+      }
+
+      // Fast path: native Phone Auth is disabled, so phone accounts normally
+      // authenticate via the generated placeholder email
+      const dummyEmail = `${formattedPhone.replace('+', '')}@thebase.org`
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: dummyEmail,
+        password,
+      })
+
+      if (!error) {
+        this.currentSession = data.session
+        return data
+      }
+
+      // Fallback: members promoted to admin have their auth email switched to
+      // a real address (assign-admin-email), so the placeholder no longer
+      // exists. The phone-login edge function resolves phone → auth email
+      // server-side and signs in there.
+      const { data: fnData, error: fnError } = await supabase.functions.invoke('phone-login', {
+        body: { phone: formattedPhone, password },
+      })
+
+      if (fnError || !fnData?.access_token) {
+        throw new Error(error.message || 'Login failed')
+      }
+
+      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+        access_token: fnData.access_token,
+        refresh_token: fnData.refresh_token,
+      })
+      if (sessionError) {
+        throw new Error(sessionError.message || 'Login failed')
+      }
+
+      this.currentSession = sessionData.session
+      return sessionData
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email: identifier, password })
+
+    if (error) {
+      throw new Error(error.message || 'Login failed')
+    }
+
+    this.currentSession = data.session
+    return data
+  }
+
+  async signInWithGoogle(): Promise<void> {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: (typeof window !== 'undefined' ? window.location.origin : '') + '/dashboard',
+      },
+    })
+
+    if (error) {
+      throw new Error(error.message || 'Google Sign-In failed')
+    }
+  }
+
+  async signUp(
+    email: string,
+    password: string,
+    name: string,
+    image?: string
+  ): Promise<AuthResponse['data']> {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: name,
+          avatar_url: image,
+        },
+      },
+    })
+
+    if (error) {
+      throw new Error(error.message || 'Registration failed')
+    }
+
+    this.currentSession = data.session
+    return data
+  }
+
+  async logout() {
+    this.currentSession = null
+    await supabase.auth.signOut({ scope: 'local' })
+  }
+
+  getToken(): string | null {
+    return this.currentSession?.access_token || null
+  }
+
+  isAuthenticated(): boolean {
+    return this.currentSession !== null
+  }
+
+  getUser() {
+    return this.currentSession?.user || null
+  }
+
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+
+    if (error) {
+      throw new Error(error.message || 'Failed to update password')
+    }
+  }
+
+  async updateProfile(updates: {
+    full_name?: string
+    avatar_url?: string
+    phone?: string
+  }): Promise<void> {
+    const { error } = await supabase.auth.updateUser({
+      data: updates,
+    })
+
+    if (error) {
+      throw new Error(error.message || 'Failed to update profile')
+    }
+  }
+}
+
+export const authService = AuthService.getInstance()
