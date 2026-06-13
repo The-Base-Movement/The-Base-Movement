@@ -49,7 +49,7 @@ export function AgendaCovenant({ isLoggedIn }: AgendaCovenantProps) {
             fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 15,
             lineHeight: 1.7,
-            color: 'rgba(255,255,255,0.75)',
+            color: 'hsl(var(--on-surface-muted))',
             margin: 0,
           }}
         >
@@ -63,7 +63,7 @@ export function AgendaCovenant({ isLoggedIn }: AgendaCovenantProps) {
             fontWeight: 'var(--font-weight-normal, 400)',
             fontSize: 15,
             lineHeight: 1.7,
-            color: 'rgba(255,255,255,0.75)',
+            color: 'hsl(var(--on-surface-muted))',
             margin: 0,
           }}
         >

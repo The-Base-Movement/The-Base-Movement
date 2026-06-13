@@ -1,5 +1,6 @@
 import { type AgendaPillar } from './agendaData'
 import { useBranding } from '@/hooks/useBranding'
+import { formatAgendaNumber } from './agendaNumber'
 
 interface AgendaDesktopNavProps {
   activeSection: string
@@ -20,7 +21,7 @@ export function AgendaDesktopNav({ activeSection, pillars }: AgendaDesktopNavPro
               href={`#${pillar.id}`}
               className={`block py-2 text-sm transition-all ${activeSection === pillar.id ? 'sticky-nav-active' : 'text-slate-600 hover:text-primary border-l-3 border-transparent pl-4'}`}
             >
-              {pillar.number}. {pillar.title}
+              {formatAgendaNumber(pillar.number)}. {pillar.title}
             </a>
           ))}
         </nav>

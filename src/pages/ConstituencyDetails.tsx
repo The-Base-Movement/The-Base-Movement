@@ -1225,7 +1225,7 @@ export default function ConstituencyDetails() {
               <p
                 style={{
                   fontSize: 12,
-                  color: 'rgba(255,255,255,0.65)',
+                  color: 'hsl(var(--on-surface-muted))',
                   lineHeight: 1.6,
                   marginBottom: 16,
                   fontFamily: "'Public Sans', sans-serif",

@@ -1,4 +1,5 @@
 import { type AgendaPillar } from './agendaData'
+import { formatAgendaNumber } from './agendaNumber'
 
 interface AgendaSubnavProps {
   pillars: AgendaPillar[]
@@ -82,7 +83,7 @@ export function AgendaSubnav({ pillars, activeSection, progress, onSelect }: Age
                   transition: 'color 0.15s',
                 }}
               >
-                {pillar.number}. {label}
+                {formatAgendaNumber(pillar.number)}. {label}
               </button>
             )
           })}

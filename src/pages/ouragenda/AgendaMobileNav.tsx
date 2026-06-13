@@ -1,4 +1,5 @@
 import { type AgendaPillar } from './agendaData'
+import { formatAgendaNumber } from './agendaNumber'
 
 interface AgendaMobileNavProps {
   activeSection: string
@@ -24,11 +25,10 @@ export function AgendaMobileNav({ activeSection, pillars }: AgendaMobileNavProps
             <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
               {pillar.icon}
             </span>
-            {pillar.number}
+            {formatAgendaNumber(pillar.number)}
           </a>
         ))}
       </div>
     </div>
   )
 }
-

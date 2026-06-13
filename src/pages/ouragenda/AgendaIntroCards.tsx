@@ -1,4 +1,5 @@
 import { type AgendaPillar } from './agendaData'
+import { formatAgendaNumber } from './agendaNumber'
 
 interface AgendaIntroCardsProps {
   pillars: AgendaPillar[]
@@ -61,124 +62,128 @@ export function AgendaIntroCards({ pillars, onSelect }: AgendaIntroCardsProps) {
         className="agenda-overview-grid"
         style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}
       >
-        {pillars.map((pillar) => (
-          <button
-            key={pillar.id}
-            onClick={() => handleSelect(pillar.id)}
-            style={{
-              textDecoration: 'none',
-              display: 'block',
-              textAlign: 'left',
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              width: '100%',
-            }}
-          >
-            <div
+        {pillars.map((pillar) => {
+          const aimNumber = formatAgendaNumber(pillar.number)
+
+          return (
+            <button
+              key={pillar.id}
+              onClick={() => handleSelect(pillar.id)}
               style={{
-                borderRadius: 'var(--radius-md)',
-                overflow: 'hidden',
-                border: '1px solid hsl(var(--border))',
-                borderTop: `3px solid ${pillar.color}`,
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                background: 'hsl(var(--background))',
-                height: '100%',
-              }}
-              onMouseEnter={(e) => {
-                const d = e.currentTarget as HTMLDivElement
-                d.style.transform = 'translateY(-2px)'
-                d.style.boxShadow = '0 16px 32px -8px rgba(0,0,0,.1)'
-              }}
-              onMouseLeave={(e) => {
-                const d = e.currentTarget as HTMLDivElement
-                d.style.transform = ''
-                d.style.boxShadow = ''
+                textDecoration: 'none',
+                display: 'block',
+                textAlign: 'left',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                width: '100%',
               }}
             >
-              <div style={{ padding: '20px 22px', background: 'hsl(var(--container-low))' }}>
-                <div
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 44,
-                    letterSpacing: '-0.04em',
-                    lineHeight: 1,
-                    opacity: 0.15,
-                    color: pillar.color,
-                    userSelect: 'none',
-                  }}
-                >
-                  {pillar.number}
+              <div
+                style={{
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                  border: '1px solid hsl(var(--border))',
+                  borderTop: `3px solid ${pillar.color}`,
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  background: 'hsl(var(--background))',
+                  height: '100%',
+                }}
+                onMouseEnter={(e) => {
+                  const d = e.currentTarget as HTMLDivElement
+                  d.style.transform = 'translateY(-2px)'
+                  d.style.boxShadow = '0 16px 32px -8px rgba(0,0,0,.1)'
+                }}
+                onMouseLeave={(e) => {
+                  const d = e.currentTarget as HTMLDivElement
+                  d.style.transform = ''
+                  d.style.boxShadow = ''
+                }}
+              >
+                <div style={{ padding: '20px 22px', background: 'hsl(var(--container-low))' }}>
+                  <div
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 44,
+                      letterSpacing: '-0.04em',
+                      lineHeight: 1,
+                      opacity: 0.15,
+                      color: pillar.color,
+                      userSelect: 'none',
+                    }}
+                  >
+                    {aimNumber}
+                  </div>
+                  <span
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 10,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      color: pillar.color,
+                      display: 'block',
+                      marginBottom: 8,
+                    }}
+                  >
+                    Aim {aimNumber}
+                  </span>
+                  <h3
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 15,
+                      letterSpacing: '-0.01em',
+                      lineHeight: 1.3,
+                      margin: 0,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {pillar.title}
+                  </h3>
                 </div>
-                <span
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 10,
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    color: pillar.color,
-                    display: 'block',
-                    marginBottom: 8,
-                  }}
-                >
-                  Aim {pillar.number}
-                </span>
-                <h3
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 15,
-                    letterSpacing: '-0.01em',
-                    lineHeight: 1.3,
-                    margin: 0,
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                >
-                  {pillar.title}
-                </h3>
-              </div>
-              <div style={{ padding: '16px 22px', borderTop: '1px solid hsl(var(--border))' }}>
-                <p
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-normal, 400)',
-                    fontSize: 13,
-                    color: 'hsl(var(--on-surface-muted))',
-                    lineHeight: 1.6,
-                    marginBottom: 12,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {pillar.summary}
-                </p>
-                <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-                  {pillar.objectives.map((obj, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        padding: '3px 8px',
-                        borderRadius: 'var(--radius-xs)',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 10,
-                        background: 'hsl(var(--container-low))',
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      {obj.title.split(' ').slice(0, 3).join(' ')}
-                    </span>
-                  ))}
+                <div style={{ padding: '16px 22px', borderTop: '1px solid hsl(var(--border))' }}>
+                  <p
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-normal, 400)',
+                      fontSize: 13,
+                      color: 'hsl(var(--on-surface-muted))',
+                      lineHeight: 1.6,
+                      marginBottom: 12,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {pillar.summary}
+                  </p>
+                  <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                    {pillar.objectives.map((obj, i) => (
+                      <span
+                        key={i}
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: 'var(--radius-xs)',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 10,
+                          background: 'hsl(var(--container-low))',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {obj.title.split(' ').slice(0, 3).join(' ')}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </button>
-        ))}
+            </button>
+          )
+        })}
       </div>
 
       <style>{`
