@@ -5,6 +5,7 @@ import type { Swiper as SwiperType } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { type AgendaPillar } from './agendaData'
+import { formatAgendaNumber } from './agendaNumber'
 
 interface AgendaPillarsContentProps {
   pillars: AgendaPillar[]
@@ -13,6 +14,8 @@ interface AgendaPillarsContentProps {
 }
 
 function PillarBody({ pillar }: { pillar: AgendaPillar }) {
+  const aimNumber = formatAgendaNumber(pillar.number)
+
   return (
     <>
       {/* Watermark + header */}
@@ -39,7 +42,7 @@ function PillarBody({ pillar }: { pillar: AgendaPillar }) {
             userSelect: 'none',
           }}
         >
-          {pillar.number}
+          {aimNumber}
         </div>
         <div style={{ paddingTop: 8 }}>
           <span
@@ -54,7 +57,7 @@ function PillarBody({ pillar }: { pillar: AgendaPillar }) {
               marginBottom: 10,
             }}
           >
-            Aim {pillar.number}
+            Aim {aimNumber}
           </span>
           <h2
             style={{
@@ -241,7 +244,8 @@ export function AgendaPillarsContent({
             </span>
             {canPrev && (
               <span>
-                {pillars[activeIndex - 1].number}. {pillars[activeIndex - 1].title.slice(0, 28)}
+                {formatAgendaNumber(pillars[activeIndex - 1].number)}.{' '}
+                {pillars[activeIndex - 1].title.slice(0, 28)}
                 {pillars[activeIndex - 1].title.length > 28 ? '…' : ''}
               </span>
             )}
@@ -291,7 +295,8 @@ export function AgendaPillarsContent({
           >
             {canNext && (
               <span>
-                {pillars[activeIndex + 1].number}. {pillars[activeIndex + 1].title.slice(0, 28)}
+                {formatAgendaNumber(pillars[activeIndex + 1].number)}.{' '}
+                {pillars[activeIndex + 1].title.slice(0, 28)}
                 {pillars[activeIndex + 1].title.length > 28 ? '…' : ''}
               </span>
             )}

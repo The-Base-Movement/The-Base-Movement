@@ -8,7 +8,7 @@ interface AgendaHeaderProps {
 
 export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
   const stats = [
-    { value: pillarsCount < 10 ? `0${pillarsCount}` : `${pillarsCount}`, label: 'Core aims' },
+    { value: `${pillarsCount}`, label: 'Core aims' },
     { value: '16', label: 'Regions covered' },
     { value: '2026', label: 'Publication date' },
   ]
@@ -39,7 +39,7 @@ export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
           zIndex: 1,
         }}
       >
-        <Breadcrumbs variant="dark" />
+        <Breadcrumbs />
 
         <div
           className="agenda-hero-inner"
@@ -88,7 +88,7 @@ export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 'clamp(0.95rem, 1.5vw, 1.1rem)',
-                color: 'rgba(255,255,255,0.75)',
+                color: 'hsl(var(--on-surface-muted))',
                 maxWidth: 520,
                 lineHeight: 1.65,
                 margin: '0 0 36px',
@@ -117,7 +117,7 @@ export function AgendaHeader({ pillarsCount }: AgendaHeaderProps) {
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 11,
-                      color: 'rgba(255,255,255,0.5)',
+                      color: 'hsl(var(--on-surface-muted))',
                       letterSpacing: '0.06em',
                       textTransform: 'uppercase',
                       marginTop: 4,
