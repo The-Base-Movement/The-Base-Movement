@@ -15,6 +15,88 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "/admin/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/checkout",
+      "destination": "/store/checkout",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard/checkout",
+      "destination": "/dashboard/store/checkout",
+      "permanent": true
+    },
+    {
+      "source": "/members",
+      "destination": "/dashboard/members",
+      "permanent": true
+    },
+    {
+      "source": "/settings",
+      "destination": "/dashboard/settings",
+      "permanent": true
+    },
+    {
+      "source": "/agenda",
+      "destination": "/our-agenda",
+      "permanent": true
+    },
+    {
+      "source": "/the-plan",
+      "destination": "/our-agenda",
+      "permanent": true
+    },
+    {
+      "source": "/join",
+      "destination": "/register",
+      "permanent": true
+    },
+    {
+      "source": "/membership",
+      "destination": "/register",
+      "permanent": true
+    },
+    {
+      "source": "/signin",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/sign-in",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/member-login",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/news",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/updates",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/terms-and-conditions",
+      "destination": "/terms",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
