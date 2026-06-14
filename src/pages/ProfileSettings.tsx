@@ -266,7 +266,17 @@ export default function ProfileSettings() {
       try {
         const blob = dataURLtoBlob(avatarUrl)
         if (blob) {
-          const fileName = adminService.generateAvatarPath(regNo)
+          // The avatars bucket RLS keys writes to a folder named after the auth
+          // user id, so the path must be {userId}/…, not the registration number.
+          const {
+            data: { user: authUser },
+          } = await supabase.auth.getUser()
+          if (!authUser) {
+            toast.error('Your session has expired. Please sign in again.')
+            setLoading(false)
+            return
+          }
+          const fileName = adminService.generateAvatarPath(authUser.id)
           const { error: uploadError } = await adminService.uploadAvatar(fileName, blob)
           if (uploadError) {
             toast.error('Failed to upload profile photo. Please try again.')
