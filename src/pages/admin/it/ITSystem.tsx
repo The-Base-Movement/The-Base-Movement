@@ -5,6 +5,7 @@ import { useITLayout } from './ITLayoutContext'
 import type { DbStats } from './system/types'
 import { HealthCard } from './system/HealthCard'
 import { AuditLogTable } from './system/AuditLogTable'
+import { MaintenanceControl } from './system/MaintenanceControl'
 
 export default function ITSystem() {
   const { setCurrentLabel } = usePageLabel()
@@ -71,6 +72,9 @@ export default function ITSystem() {
 
   return (
     <div>
+      {/* Maintenance mode toggle */}
+      <MaintenanceControl />
+
       {/* Telemetry Health Indicator panels */}
       <div className="kpis" style={{ gridTemplateColumns: 'repeat(3,1fr)', marginBottom: 28 }}>
         <HealthCard
