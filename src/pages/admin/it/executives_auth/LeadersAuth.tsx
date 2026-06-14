@@ -1,14 +1,16 @@
-import { type CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from '../ITLayoutContext'
 import {
   deviceTrackingService,
-  DEVICE_ACTIVITY_ACTIONS,
   type AdminDevice,
   type DeviceActivity,
   type DeviceType,
 } from '@/services/deviceTrackingService'
+import { ActivityTable, DetailModal, Row } from './activityComponents'
+import { fmt } from './shared'
 
 const SLOTS: { type: DeviceType; icon: string; label: string }[] = [
   { type: 'desktop', icon: 'computer', label: 'Laptop / Desktop' },
@@ -16,35 +18,11 @@ const SLOTS: { type: DeviceType; icon: string; label: string }[] = [
   { type: 'mobile', icon: 'smartphone', label: 'Mobile' },
 ]
 
-const ACTION_PILL: Record<string, { cls: string; label: string }> = {
-  enrolled: { cls: 'pill-ok', label: 'Enrolled' },
-  verified: { cls: 'pill-ok', label: 'Verified' },
-  step_up_passed: { cls: 'pill-ok', label: 'Step-up passed' },
-  step_up_required: { cls: 'pill-warn', label: 'Step-up required' },
-  blocked: { cls: 'pill-err', label: 'Blocked' },
-  slot_reset: { cls: 'pill-mute', label: 'Slot reset' },
-}
-
-const PAGE_SIZE = 25
-
-function fmt(ts: string): string {
-  return new Date(ts).toLocaleString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-function fmtFull(ts: string): string {
-  return new Date(ts).toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'medium' })
-}
-
-function actionLabel(action: string): string {
-  return ACTION_PILL[action]?.label ?? action
-}
+/** Activities shown on the summary page before "View all activities". */
+const RECENT_LIMIT = 10
 
 export default function LeadersAuth() {
+  const navigate = useNavigate()
   const { setCurrentLabel } = usePageLabel()
   useEffect(() => setCurrentLabel('Leaders Auth'), [setCurrentLabel])
   useITLayout(
@@ -58,13 +36,8 @@ export default function LeadersAuth() {
   const [loading, setLoading] = useState(true)
   const [resetting, setResetting] = useState<string | null>(null)
 
-  // Activity feed (filtered + paginated)
   const [activity, setActivity] = useState<DeviceActivity[]>([])
-  const [filterAdmin, setFilterAdmin] = useState('all')
-  const [filterAction, setFilterAction] = useState('all')
   const [activityLoading, setActivityLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [hasMore, setHasMore] = useState(false)
   const [detail, setDetail] = useState<DeviceActivity | null>(null)
 
   const loadDevices = useCallback(async () => {
@@ -84,39 +57,23 @@ export default function LeadersAuth() {
     }
   }, [])
 
-  // offset/append passed explicitly so "load more" never reads a stale length.
-  const loadActivity = useCallback(
-    async (offset: number, append: boolean) => {
-      if (append) setLoadingMore(true)
-      else setActivityLoading(true)
-      try {
-        const rows = await deviceTrackingService.getActivity({
-          adminId: filterAdmin === 'all' ? undefined : filterAdmin,
-          action: filterAction === 'all' ? undefined : filterAction,
-          limit: PAGE_SIZE,
-          offset,
-        })
-        setActivity((prev) => (append ? [...prev, ...rows] : rows))
-        setHasMore(rows.length === PAGE_SIZE)
-      } catch (err) {
-        console.error(err)
-        toast.error('Failed to load activity')
-      } finally {
-        setActivityLoading(false)
-        setLoadingMore(false)
-      }
-    },
-    [filterAdmin, filterAction]
-  )
+  const loadActivity = useCallback(async () => {
+    setActivityLoading(true)
+    try {
+      const rows = await deviceTrackingService.getActivity({ limit: RECENT_LIMIT })
+      setActivity(rows)
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to load activity')
+    } finally {
+      setActivityLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     loadDevices()
-  }, [loadDevices])
-
-  // Reload the feed whenever a filter changes (resets pagination).
-  useEffect(() => {
-    loadActivity(0, false)
-  }, [loadActivity])
+    loadActivity()
+  }, [loadDevices, loadActivity])
 
   const handleReset = async (device: AdminDevice) => {
     if (
@@ -129,7 +86,7 @@ export default function LeadersAuth() {
     try {
       await deviceTrackingService.resetSlot(device.id)
       toast.success('Device slot reset')
-      await Promise.all([loadDevices(), loadActivity(0, false)])
+      await Promise.all([loadDevices(), loadActivity()])
     } catch (err) {
       console.error(err)
       toast.error('Failed to reset device slot')
@@ -155,8 +112,6 @@ export default function LeadersAuth() {
     { label: 'Logins today', value: stats.loginsToday, bar: 'hsl(var(--accent))' },
     { label: 'Alerts', value: stats.alerts, bar: 'hsl(var(--destructive))' },
   ]
-
-  const filtered = filterAdmin !== 'all' || filterAction !== 'all'
 
   return (
     <div className="main">
@@ -346,12 +301,9 @@ export default function LeadersAuth() {
         </div>
       </div>
 
-      {/* Activity feed */}
+      {/* Recent activity (latest 10) */}
       <div className="panel">
-        <div
-          className="ph"
-          style={{ flexWrap: 'wrap', gap: 12, alignItems: 'flex-end', rowGap: 12 }}
-        >
+        <div className="ph" style={{ flexWrap: 'wrap', gap: 12, alignItems: 'center', rowGap: 12 }}>
           <div>
             <h3
               style={{
@@ -361,279 +313,40 @@ export default function LeadersAuth() {
                 color: 'hsl(var(--on-surface))',
               }}
             >
-              Login activity
+              Recent activity
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-              Device checks, enrolments and alerts, most recent first.
+              The latest {RECENT_LIMIT} device checks, enrolments and alerts.
             </p>
           </div>
 
-          {/* Filters */}
-          <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexWrap: 'wrap' }}>
-            <select
-              value={filterAdmin}
-              onChange={(e) => setFilterAdmin(e.target.value)}
-              style={selectStyle}
-            >
-              <option value="all">All leaders</option>
-              {grouped.map((g) => (
-                <option key={g.admin_id} value={g.admin_id}>
-                  {g.name}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterAction}
-              onChange={(e) => setFilterAction(e.target.value)}
-              style={selectStyle}
-            >
-              <option value="all">All activity</option>
-              {DEVICE_ACTIVITY_ACTIONS.map((a) => (
-                <option key={a} value={a}>
-                  {actionLabel(a)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr>
-                {['Admin', 'Device', 'Event', 'IP', 'Location', 'When', ''].map((h, i) => (
-                  <th
-                    key={i}
-                    style={{
-                      textAlign: i === 6 ? 'right' : 'left',
-                      padding: '10px 16px',
-                      fontSize: 11,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      color: 'hsl(var(--on-surface-muted))',
-                      borderBottom: '1px solid hsl(var(--border))',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {activity.length === 0 && !activityLoading ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    style={{
-                      padding: 24,
-                      color: 'hsl(var(--on-surface-muted))',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {filtered ? 'No activity matches these filters.' : 'No activity yet.'}
-                  </td>
-                </tr>
-              ) : (
-                activity.map((a) => {
-                  const pill = ACTION_PILL[a.action] ?? { cls: 'pill-mute', label: a.action }
-                  return (
-                    <tr key={a.id}>
-                      <td style={cellStyle}>{a.admin_name}</td>
-                      <td style={{ ...cellStyle, color: 'hsl(var(--on-surface-muted))' }}>
-                        {a.device_type ?? '—'}
-                      </td>
-                      <td style={cellStyle}>
-                        <span className={`pill ${pill.cls}`}>{pill.label}</span>
-                      </td>
-                      <td
-                        style={{
-                          ...cellStyle,
-                          fontFamily: 'monospace',
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        {a.ip_address ?? '—'}
-                      </td>
-                      <td style={{ ...cellStyle, color: 'hsl(var(--on-surface-muted))' }}>
-                        {a.location ?? '—'}
-                      </td>
-                      <td
-                        style={{
-                          ...cellStyle,
-                          whiteSpace: 'nowrap',
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        {fmt(a.created_at)}
-                      </td>
-                      <td style={{ ...cellStyle, textAlign: 'right' }}>
-                        <button
-                          className="btn btn-ghost btn-sm"
-                          onClick={() => setDetail(a)}
-                          style={{ padding: '4px 10px' }}
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <div style={{ padding: '14px 16px', textAlign: 'center' }}>
-          {activityLoading ? (
-            <span style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>Loading…</span>
-          ) : hasMore ? (
-            <button
-              className="btn btn-outline btn-sm"
-              disabled={loadingMore}
-              onClick={() => loadActivity(activity.length, true)}
-            >
-              {loadingMore ? 'Loading…' : 'Load more'}
-            </button>
-          ) : (
-            activity.length > 0 && (
-              <span style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-                End of activity
-              </span>
-            )
-          )}
-        </div>
-      </div>
-
-      {detail && <DetailModal entry={detail} onClose={() => setDetail(null)} />}
-    </div>
-  )
-}
-
-const selectStyle: CSSProperties = {
-  height: 32,
-  padding: '0 10px',
-  fontSize: 12,
-  fontFamily: "'Public Sans', sans-serif",
-  color: 'hsl(var(--on-surface))',
-  background: 'hsl(var(--card))',
-  border: '1px solid hsl(var(--border))',
-  borderRadius: 'var(--radius-sm)',
-  boxSizing: 'border-box',
-}
-
-const cellStyle: CSSProperties = {
-  padding: '10px 16px',
-  borderBottom: '1px solid hsl(var(--border))',
-  color: 'hsl(var(--on-surface))',
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: 8,
-        padding: '3px 0',
-        fontSize: 12,
-      }}
-    >
-      <span style={{ color: 'hsl(var(--on-surface-muted))' }}>{label}</span>
-      <span style={{ color: 'hsl(var(--on-surface))', textAlign: 'right', wordBreak: 'break-all' }}>
-        {value}
-      </span>
-    </div>
-  )
-}
-
-function DetailModal({ entry, onClose }: { entry: DeviceActivity; onClose: () => void }) {
-  const fingerprint =
-    entry.metadata && typeof entry.metadata.fingerprint_hash === 'string'
-      ? entry.metadata.fingerprint_hash
-      : null
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.45)',
-        zIndex: 100,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: "'Public Sans', sans-serif",
-      }}
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          background: 'hsl(var(--card))',
-          border: '1px solid hsl(var(--border))',
-          borderRadius: 'var(--radius-lg)',
-          padding: 24,
-          width: 'min(460px, 92vw)',
-          maxHeight: '85vh',
-          overflowY: 'auto',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 16,
-          }}
-        >
-          <h3
-            style={{
-              margin: 0,
-              fontSize: 16,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            Activity detail
-          </h3>
           <button
-            className="btn btn-ghost btn-sm"
-            onClick={onClose}
-            style={{ padding: '4px 8px' }}
-            aria-label="Close"
+            className="btn btn-outline btn-sm"
+            style={{ marginLeft: 'auto' }}
+            onClick={() => navigate('/admin/it-department/leaders-auth/activity')}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-              close
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              history
             </span>
+            View all activities
           </button>
         </div>
 
-        <Row label="Leader" value={entry.admin_name} />
-        <Row label="Event" value={actionLabel(entry.action)} />
-        <Row label="Device type" value={entry.device_type ?? '—'} />
-        <Row label="IP address" value={entry.ip_address ?? '—'} />
-        <Row label="Location" value={entry.location ?? '—'} />
-        <Row label="When" value={fmtFull(entry.created_at)} />
-        {fingerprint && <Row label="Fingerprint" value={fingerprint} />}
-        <div style={{ marginTop: 10 }}>
-          <p style={{ margin: '0 0 4px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-            User agent
-          </p>
-          <p
-            style={{
-              margin: 0,
-              fontSize: 12,
-              color: 'hsl(var(--on-surface))',
-              wordBreak: 'break-all',
-              background: 'hsl(var(--container-low))',
-              padding: 10,
-              borderRadius: 'var(--radius-sm)',
-            }}
-          >
-            {entry.user_agent ?? '—'}
-          </p>
-        </div>
+        <ActivityTable
+          rows={activity}
+          loading={activityLoading}
+          emptyText="No activity yet."
+          onView={setDetail}
+        />
+
+        {activityLoading && (
+          <div style={{ padding: '14px 16px', textAlign: 'center' }}>
+            <span style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>Loading…</span>
+          </div>
+        )}
       </div>
+
+      {detail && <DetailModal entry={detail} onClose={() => setDetail(null)} />}
     </div>
   )
 }
