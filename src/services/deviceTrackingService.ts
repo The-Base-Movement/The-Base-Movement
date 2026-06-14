@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
+import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
 
 // Roles whose devices we bind. Keep in sync with TRACKED_ROLES in the
 // capture-admin-device edge function. Add a role here to start tracking it.
@@ -20,6 +21,8 @@ export interface EvaluateResult {
   decision: DeviceDecision
   device_id?: string
   webauthn_required?: boolean
+  /** The fingerprint hash computed for this device (used for step-up rebind). */
+  fingerprint_hash?: string
 }
 
 export interface AdminDevice {
@@ -128,7 +131,7 @@ export const deviceTrackingService = {
       },
     })
     if (error) throw error
-    return data as EvaluateResult
+    return { ...(data as EvaluateResult), fingerprint_hash }
   },
 
   /** IT view: all registered device slots, with the admin's display name. */
@@ -168,6 +171,61 @@ export const deviceTrackingService = {
   async resetSlot(deviceId: string): Promise<void> {
     const { error } = await supabase.rpc('reset_admin_device_slot', { p_device_id: deviceId })
     if (error) throw error
+  },
+
+  /**
+   * Enrol a platform biometric (Windows Hello / Face ID / Touch ID) for a device
+   * slot. `rebind` + `fingerprintHash` re-bind the slot to a new fingerprint when
+   * enrolling during a step-up on a slot that had no passkey yet.
+   */
+  async enrolBiometric(
+    deviceId: string | undefined,
+    opts?: { rebind?: boolean; fingerprintHash?: string }
+  ): Promise<boolean> {
+    const begin = await supabase.functions.invoke('webauthn', {
+      body: { action: 'register-begin', device_id: deviceId },
+    })
+    if (begin.error) throw begin.error
+    const attResp = await startRegistration({ optionsJSON: begin.data.options })
+    const complete = await supabase.functions.invoke('webauthn', {
+      body: {
+        action: 'register-complete',
+        credential: attResp,
+        device_id: deviceId,
+        rebind: opts?.rebind ?? false,
+        fingerprint_hash: opts?.fingerprintHash,
+      },
+    })
+    if (complete.error) throw complete.error
+    return complete.data?.verified === true
+  },
+
+  /**
+   * Step-up: verify the device's biometric. Returns 'verified' on success,
+   * 'needs_enrol' if no passkey exists yet for this admin (caller should enrol),
+   * or 'failed'. On success for a known slot the server rebinds the fingerprint.
+   */
+  async stepUpBiometric(
+    deviceId: string,
+    fingerprintHash: string
+  ): Promise<'verified' | 'needs_enrol' | 'failed'> {
+    const begin = await supabase.functions.invoke('webauthn', {
+      body: { action: 'authenticate-begin', device_id: deviceId },
+    })
+    if (begin.error) throw begin.error
+    if (begin.data?.noCredentials) return 'needs_enrol'
+
+    const authResp = await startAuthentication({ optionsJSON: begin.data.options })
+    const complete = await supabase.functions.invoke('webauthn', {
+      body: {
+        action: 'authenticate-complete',
+        credential: authResp,
+        device_id: deviceId,
+        fingerprint_hash: fingerprintHash,
+      },
+    })
+    if (complete.error) throw complete.error
+    return complete.data?.verified === true ? 'verified' : 'failed'
   },
 }
 
