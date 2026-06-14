@@ -11,9 +11,17 @@ interface DetailModalProps {
   onCommentAdded?: () => void
   /** Called after the note is archived, unarchived or deleted */
   onMutated?: () => void
+  /** Open the editor for this note */
+  onEdit?: () => void
 }
 
-export function NoteDetailModal({ note, onClose, onCommentAdded, onMutated }: DetailModalProps) {
+export function NoteDetailModal({
+  note,
+  onClose,
+  onCommentAdded,
+  onMutated,
+  onEdit,
+}: DetailModalProps) {
   const palette = colorFor(note.color_theme)
   const [comments, setComments] = useState<Comment[]>([])
   const [loadingComments, setLoadingComments] = useState(true)
@@ -220,6 +228,26 @@ export function NoteDetailModal({ note, onClose, onCommentAdded, onMutated }: De
               </p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+              {onEdit && !note.archived_at && (
+                <button
+                  onClick={onEdit}
+                  title="Edit note"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    padding: 4,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 19, color: NOTE_INK.muted }}
+                  >
+                    edit
+                  </span>
+                </button>
+              )}
               <button
                 onClick={handleArchiveToggle}
                 disabled={mutating}
@@ -307,7 +335,7 @@ export function NoteDetailModal({ note, onClose, onCommentAdded, onMutated }: De
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 14,
-                color: NOTE_INK.body,
+                color: 'hsl(var(--on-surface))',
                 lineHeight: 1.7,
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
