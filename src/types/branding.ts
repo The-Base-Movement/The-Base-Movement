@@ -32,6 +32,11 @@ export interface BrandingSettings {
   button_destructive_hover_bg_color?: string
   button_active_tab_hover_bg_color?: string
   button_inactive_tab_hover_bg_color?: string
+
+  // Maintenance mode (toggled by IT from the System Monitor page)
+  maintenance_mode?: boolean
+  maintenance_title?: string
+  maintenance_message?: string
   [key: string]: unknown
 }
 
@@ -71,4 +76,5 @@ export const defaultSettings: BrandingSettings = {
   button_destructive_hover_bg_color: '0 85% 35%',
   button_active_tab_hover_bg_color: '156 100% 15%',
   button_inactive_tab_hover_bg_color: '0 0% 95%',
+  maintenance_mode: false,
 }
