@@ -193,6 +193,43 @@ export const deviceTrackingService = {
     }))
   },
 
+  /**
+   * Count of each activity action (optionally for one leader) — powers the
+   * activity-breakdown pie chart on the full activity page.
+   */
+  async getActivityActionCounts(adminId?: string): Promise<Record<string, number>> {
+    const entries = await Promise.all(
+      DEVICE_ACTIVITY_ACTIONS.map(async (action) => {
+        let q = supabase
+          .from('admin_device_activity')
+          .select('id', { count: 'exact', head: true })
+          .eq('action', action)
+        if (adminId) q = q.eq('admin_id', adminId)
+        const { count } = await q
+        return [action, count ?? 0] as const
+      })
+    )
+    return Object.fromEntries(entries)
+  },
+
+  /**
+   * Fetch every activity row matching a filter (paged internally, capped) for
+   * CSV/Excel export. Defaults to a 5,000-row safety cap.
+   */
+  async getAllActivity(
+    filter: { adminId?: string; action?: string } = {},
+    max = 5000
+  ): Promise<DeviceActivity[]> {
+    const pageSize = 1000
+    const out: DeviceActivity[] = []
+    for (let offset = 0; offset < max; offset += pageSize) {
+      const rows = await this.getActivity({ ...filter, limit: pageSize, offset })
+      out.push(...rows)
+      if (rows.length < pageSize) break
+    }
+    return out
+  },
+
   /** KPI counts that must stay accurate even when the feed is paginated. */
   async getActivityStats(): Promise<{ loginsToday: number; alerts: number }> {
     const startOfDay = new Date()
