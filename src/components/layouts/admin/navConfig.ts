@@ -340,6 +340,12 @@ export const getNavGroups = (
         permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
       },
       {
+        to: '/admin/redirects',
+        icon: 'alt_route',
+        label: 'Redirects',
+        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+      },
+      {
         to: '/admin/trash',
         icon: 'delete',
         label: 'Audit trash',
