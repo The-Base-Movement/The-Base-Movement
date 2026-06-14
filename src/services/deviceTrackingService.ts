@@ -50,8 +50,27 @@ export interface DeviceActivity {
   action: string
   ip_address: string | null
   location: string | null
+  user_agent: string | null
+  metadata: Record<string, unknown> | null
   created_at: string
 }
+
+export interface ActivityFilter {
+  adminId?: string
+  action?: string
+  limit?: number
+  offset?: number
+}
+
+/** Actions an activity row can carry — used for the activity feed filter. */
+export const DEVICE_ACTIVITY_ACTIONS = [
+  'enrolled',
+  'verified',
+  'step_up_required',
+  'step_up_passed',
+  'slot_reset',
+  'blocked',
+] as const
 
 export function isDeviceTrackedRole(role: string | null | undefined): boolean {
   return !!role && (DEVICE_TRACKED_ROLES as readonly string[]).includes(role)
@@ -151,13 +170,20 @@ export const deviceTrackingService = {
     }))
   },
 
-  /** IT view: recent device activity feed. */
-  async getActivity(limit = 100): Promise<DeviceActivity[]> {
-    const { data, error } = await supabase
+  /** IT view: device activity feed, filterable by admin and action, paginated. */
+  async getActivity(opts: ActivityFilter = {}): Promise<DeviceActivity[]> {
+    const { adminId, action, limit = 25, offset = 0 } = opts
+    let query = supabase
       .from('admin_device_activity')
-      .select('id, admin_id, device_type, action, ip_address, location, created_at')
+      .select(
+        'id, admin_id, device_type, action, ip_address, location, user_agent, metadata, created_at'
+      )
       .order('created_at', { ascending: false })
-      .limit(limit)
+      .range(offset, offset + limit - 1)
+    if (adminId) query = query.eq('admin_id', adminId)
+    if (action) query = query.eq('action', action)
+
+    const { data, error } = await query
     if (error) throw error
     const rows = data ?? []
     const names = await resolveNames(rows.map((r) => r.admin_id).filter(Boolean) as string[])
@@ -165,6 +191,24 @@ export const deviceTrackingService = {
       ...(r as Omit<DeviceActivity, 'admin_name'>),
       admin_name: r.admin_id ? (names.get(r.admin_id) ?? 'Unknown admin') : 'System',
     }))
+  },
+
+  /** KPI counts that must stay accurate even when the feed is paginated. */
+  async getActivityStats(): Promise<{ loginsToday: number; alerts: number }> {
+    const startOfDay = new Date()
+    startOfDay.setHours(0, 0, 0, 0)
+    const [logins, alerts] = await Promise.all([
+      supabase
+        .from('admin_device_activity')
+        .select('id', { count: 'exact', head: true })
+        .in('action', ['verified', 'enrolled'])
+        .gte('created_at', startOfDay.toISOString()),
+      supabase
+        .from('admin_device_activity')
+        .select('id', { count: 'exact', head: true })
+        .in('action', ['step_up_required', 'blocked']),
+    ])
+    return { loginsToday: logins.count ?? 0, alerts: alerts.count ?? 0 }
   },
 
   /** IT recovery action: clear a device slot so the user can re-enrol. */

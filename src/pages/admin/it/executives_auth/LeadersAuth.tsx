@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { type CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from '../ITLayoutContext'
 import {
   deviceTrackingService,
+  DEVICE_ACTIVITY_ACTIONS,
   type AdminDevice,
   type DeviceActivity,
   type DeviceType,
@@ -24,6 +25,8 @@ const ACTION_PILL: Record<string, { cls: string; label: string }> = {
   slot_reset: { cls: 'pill-mute', label: 'Slot reset' },
 }
 
+const PAGE_SIZE = 25
+
 function fmt(ts: string): string {
   return new Date(ts).toLocaleString('en-GB', {
     day: '2-digit',
@@ -31,6 +34,14 @@ function fmt(ts: string): string {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+function fmtFull(ts: string): string {
+  return new Date(ts).toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'medium' })
+}
+
+function actionLabel(action: string): string {
+  return ACTION_PILL[action]?.label ?? action
 }
 
 export default function LeadersAuth() {
@@ -43,19 +54,28 @@ export default function LeadersAuth() {
   )
 
   const [devices, setDevices] = useState<AdminDevice[]>([])
-  const [activity, setActivity] = useState<DeviceActivity[]>([])
+  const [stats, setStats] = useState({ loginsToday: 0, alerts: 0 })
   const [loading, setLoading] = useState(true)
   const [resetting, setResetting] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
+  // Activity feed (filtered + paginated)
+  const [activity, setActivity] = useState<DeviceActivity[]>([])
+  const [filterAdmin, setFilterAdmin] = useState('all')
+  const [filterAction, setFilterAction] = useState('all')
+  const [activityLoading, setActivityLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+  const [detail, setDetail] = useState<DeviceActivity | null>(null)
+
+  const loadDevices = useCallback(async () => {
     setLoading(true)
     try {
-      const [d, a] = await Promise.all([
+      const [d, s] = await Promise.all([
         deviceTrackingService.getDevices(),
-        deviceTrackingService.getActivity(100),
+        deviceTrackingService.getActivityStats(),
       ])
       setDevices(d)
-      setActivity(a)
+      setStats(s)
     } catch (err) {
       console.error(err)
       toast.error('Failed to load device data')
@@ -64,9 +84,39 @@ export default function LeadersAuth() {
     }
   }, [])
 
+  // offset/append passed explicitly so "load more" never reads a stale length.
+  const loadActivity = useCallback(
+    async (offset: number, append: boolean) => {
+      if (append) setLoadingMore(true)
+      else setActivityLoading(true)
+      try {
+        const rows = await deviceTrackingService.getActivity({
+          adminId: filterAdmin === 'all' ? undefined : filterAdmin,
+          action: filterAction === 'all' ? undefined : filterAction,
+          limit: PAGE_SIZE,
+          offset,
+        })
+        setActivity((prev) => (append ? [...prev, ...rows] : rows))
+        setHasMore(rows.length === PAGE_SIZE)
+      } catch (err) {
+        console.error(err)
+        toast.error('Failed to load activity')
+      } finally {
+        setActivityLoading(false)
+        setLoadingMore(false)
+      }
+    },
+    [filterAdmin, filterAction]
+  )
+
   useEffect(() => {
-    load()
-  }, [load])
+    loadDevices()
+  }, [loadDevices])
+
+  // Reload the feed whenever a filter changes (resets pagination).
+  useEffect(() => {
+    loadActivity(0, false)
+  }, [loadActivity])
 
   const handleReset = async (device: AdminDevice) => {
     if (
@@ -79,7 +129,7 @@ export default function LeadersAuth() {
     try {
       await deviceTrackingService.resetSlot(device.id)
       toast.success('Device slot reset')
-      await load()
+      await Promise.all([loadDevices(), loadActivity(0, false)])
     } catch (err) {
       console.error(err)
       toast.error('Failed to reset device slot')
@@ -99,23 +149,14 @@ export default function LeadersAuth() {
     return [...map.entries()].map(([admin_id, v]) => ({ admin_id, ...v }))
   }, [devices])
 
-  const kpis = useMemo(() => {
-    const today = new Date().toDateString()
-    const loginsToday = activity.filter(
-      (a) =>
-        (a.action === 'verified' || a.action === 'enrolled') &&
-        new Date(a.created_at).toDateString() === today
-    ).length
-    const alerts = activity.filter(
-      (a) => a.action === 'step_up_required' || a.action === 'blocked'
-    ).length
-    return [
-      { label: 'Tracked admins', value: grouped.length, bar: 'hsl(var(--on-surface))' },
-      { label: 'Registered devices', value: devices.length, bar: 'hsl(var(--primary))' },
-      { label: 'Logins today', value: loginsToday, bar: 'hsl(var(--accent))' },
-      { label: 'Alerts', value: alerts, bar: 'hsl(var(--destructive))' },
-    ]
-  }, [grouped, devices, activity])
+  const kpis = [
+    { label: 'Tracked admins', value: grouped.length, bar: 'hsl(var(--on-surface))' },
+    { label: 'Registered devices', value: devices.length, bar: 'hsl(var(--primary))' },
+    { label: 'Logins today', value: stats.loginsToday, bar: 'hsl(var(--accent))' },
+    { label: 'Alerts', value: stats.alerts, bar: 'hsl(var(--destructive))' },
+  ]
+
+  const filtered = filterAdmin !== 'all' || filterAction !== 'all'
 
   return (
     <div className="main">
@@ -197,10 +238,7 @@ export default function LeadersAuth() {
             grouped.map((g) => (
               <div
                 key={g.admin_id}
-                style={{
-                  padding: '14px 0',
-                  borderBottom: '1px solid hsl(var(--border))',
-                }}
+                style={{ padding: '14px 0', borderBottom: '1px solid hsl(var(--border))' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                   <span
@@ -310,7 +348,10 @@ export default function LeadersAuth() {
 
       {/* Activity feed */}
       <div className="panel">
-        <div className="ph">
+        <div
+          className="ph"
+          style={{ flexWrap: 'wrap', gap: 12, alignItems: 'flex-end', rowGap: 12 }}
+        >
           <div>
             <h3
               style={{
@@ -326,17 +367,45 @@ export default function LeadersAuth() {
               Device checks, enrolments and alerts, most recent first.
             </p>
           </div>
+
+          {/* Filters */}
+          <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexWrap: 'wrap' }}>
+            <select
+              value={filterAdmin}
+              onChange={(e) => setFilterAdmin(e.target.value)}
+              style={selectStyle}
+            >
+              <option value="all">All leaders</option>
+              {grouped.map((g) => (
+                <option key={g.admin_id} value={g.admin_id}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={filterAction}
+              onChange={(e) => setFilterAction(e.target.value)}
+              style={selectStyle}
+            >
+              <option value="all">All activity</option>
+              {DEVICE_ACTIVITY_ACTIONS.map((a) => (
+                <option key={a} value={a}>
+                  {actionLabel(a)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr>
-                {['Admin', 'Device', 'Event', 'IP', 'Location', 'When'].map((h) => (
+                {['Admin', 'Device', 'Event', 'IP', 'Location', 'When', ''].map((h, i) => (
                   <th
-                    key={h}
+                    key={i}
                     style={{
-                      textAlign: 'left',
+                      textAlign: i === 6 ? 'right' : 'left',
                       padding: '10px 16px',
                       fontSize: 11,
                       textTransform: 'uppercase',
@@ -352,17 +421,17 @@ export default function LeadersAuth() {
               </tr>
             </thead>
             <tbody>
-              {activity.length === 0 && !loading ? (
+              {activity.length === 0 && !activityLoading ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     style={{
                       padding: 24,
                       color: 'hsl(var(--on-surface-muted))',
                       textAlign: 'center',
                     }}
                   >
-                    No activity yet.
+                    {filtered ? 'No activity matches these filters.' : 'No activity yet.'}
                   </td>
                 </tr>
               ) : (
@@ -370,59 +439,42 @@ export default function LeadersAuth() {
                   const pill = ACTION_PILL[a.action] ?? { cls: 'pill-mute', label: a.action }
                   return (
                     <tr key={a.id}>
-                      <td
-                        style={{
-                          padding: '10px 16px',
-                          borderBottom: '1px solid hsl(var(--border))',
-                        }}
-                      >
-                        {a.admin_name}
-                      </td>
-                      <td
-                        style={{
-                          padding: '10px 16px',
-                          borderBottom: '1px solid hsl(var(--border))',
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
+                      <td style={cellStyle}>{a.admin_name}</td>
+                      <td style={{ ...cellStyle, color: 'hsl(var(--on-surface-muted))' }}>
                         {a.device_type ?? '—'}
                       </td>
-                      <td
-                        style={{
-                          padding: '10px 16px',
-                          borderBottom: '1px solid hsl(var(--border))',
-                        }}
-                      >
+                      <td style={cellStyle}>
                         <span className={`pill ${pill.cls}`}>{pill.label}</span>
                       </td>
                       <td
                         style={{
-                          padding: '10px 16px',
-                          borderBottom: '1px solid hsl(var(--border))',
+                          ...cellStyle,
                           fontFamily: 'monospace',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
                         {a.ip_address ?? '—'}
                       </td>
-                      <td
-                        style={{
-                          padding: '10px 16px',
-                          borderBottom: '1px solid hsl(var(--border))',
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
+                      <td style={{ ...cellStyle, color: 'hsl(var(--on-surface-muted))' }}>
                         {a.location ?? '—'}
                       </td>
                       <td
                         style={{
-                          padding: '10px 16px',
-                          borderBottom: '1px solid hsl(var(--border))',
+                          ...cellStyle,
                           whiteSpace: 'nowrap',
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
                         {fmt(a.created_at)}
+                      </td>
+                      <td style={{ ...cellStyle, textAlign: 'right' }}>
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          onClick={() => setDetail(a)}
+                          style={{ padding: '4px 10px' }}
+                        >
+                          View
+                        </button>
                       </td>
                     </tr>
                   )
@@ -431,9 +483,49 @@ export default function LeadersAuth() {
             </tbody>
           </table>
         </div>
+
+        <div style={{ padding: '14px 16px', textAlign: 'center' }}>
+          {activityLoading ? (
+            <span style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>Loading…</span>
+          ) : hasMore ? (
+            <button
+              className="btn btn-outline btn-sm"
+              disabled={loadingMore}
+              onClick={() => loadActivity(activity.length, true)}
+            >
+              {loadingMore ? 'Loading…' : 'Load more'}
+            </button>
+          ) : (
+            activity.length > 0 && (
+              <span style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                End of activity
+              </span>
+            )
+          )}
+        </div>
       </div>
+
+      {detail && <DetailModal entry={detail} onClose={() => setDetail(null)} />}
     </div>
   )
+}
+
+const selectStyle: CSSProperties = {
+  height: 32,
+  padding: '0 10px',
+  fontSize: 12,
+  fontFamily: "'Public Sans', sans-serif",
+  color: 'hsl(var(--on-surface))',
+  background: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-sm)',
+  boxSizing: 'border-box',
+}
+
+const cellStyle: CSSProperties = {
+  padding: '10px 16px',
+  borderBottom: '1px solid hsl(var(--border))',
+  color: 'hsl(var(--on-surface))',
 }
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -451,6 +543,97 @@ function Row({ label, value }: { label: string; value: string }) {
       <span style={{ color: 'hsl(var(--on-surface))', textAlign: 'right', wordBreak: 'break-all' }}>
         {value}
       </span>
+    </div>
+  )
+}
+
+function DetailModal({ entry, onClose }: { entry: DeviceActivity; onClose: () => void }) {
+  const fingerprint =
+    entry.metadata && typeof entry.metadata.fingerprint_hash === 'string'
+      ? entry.metadata.fingerprint_hash
+      : null
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.45)',
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: "'Public Sans', sans-serif",
+      }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: 'hsl(var(--card))',
+          border: '1px solid hsl(var(--border))',
+          borderRadius: 'var(--radius-lg)',
+          padding: 24,
+          width: 'min(460px, 92vw)',
+          maxHeight: '85vh',
+          overflowY: 'auto',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 16,
+          }}
+        >
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 16,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface))',
+            }}
+          >
+            Activity detail
+          </h3>
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={onClose}
+            style={{ padding: '4px 8px' }}
+            aria-label="Close"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              close
+            </span>
+          </button>
+        </div>
+
+        <Row label="Leader" value={entry.admin_name} />
+        <Row label="Event" value={actionLabel(entry.action)} />
+        <Row label="Device type" value={entry.device_type ?? '—'} />
+        <Row label="IP address" value={entry.ip_address ?? '—'} />
+        <Row label="Location" value={entry.location ?? '—'} />
+        <Row label="When" value={fmtFull(entry.created_at)} />
+        {fingerprint && <Row label="Fingerprint" value={fingerprint} />}
+        <div style={{ marginTop: 10 }}>
+          <p style={{ margin: '0 0 4px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+            User agent
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 12,
+              color: 'hsl(var(--on-surface))',
+              wordBreak: 'break-all',
+              background: 'hsl(var(--container-low))',
+              padding: 10,
+              borderRadius: 'var(--radius-sm)',
+            }}
+          >
+            {entry.user_agent ?? '—'}
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
