@@ -2,18 +2,21 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
-import type { NoteColor } from './types'
+import type { Note, NoteColor } from './types'
 import { COLORS, colorFor, NOTE_INK } from './types'
 
 interface CreateModalProps {
+  /** When provided, the modal edits this note instead of creating a new one. */
+  note?: Note
   onClose: () => void
   onSaved: () => void
 }
 
-export function CreateNoteModal({ onClose, onSaved }: CreateModalProps) {
-  const [color, setColor] = useState<NoteColor>('yellow')
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+export function CreateNoteModal({ note, onClose, onSaved }: CreateModalProps) {
+  const isEdit = !!note
+  const [color, setColor] = useState<NoteColor>(note?.color_theme ?? 'yellow')
+  const [title, setTitle] = useState(note?.title ?? '')
+  const [content, setContent] = useState(note?.content ?? '')
   const [saving, setSaving] = useState(false)
 
   async function handleSave() {
@@ -23,18 +26,36 @@ export function CreateNoteModal({ onClose, onSaved }: CreateModalProps) {
     }
     setSaving(true)
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-      const { error } = await supabase.from('it_notes').insert({
-        title: title.trim() || null,
-        content: content.trim(),
-        color_theme: color,
-        author_id: user.id,
-      })
-      if (error) throw error
-      toast.success('Note pinned to the board')
+      if (isEdit && note) {
+        // .select() reveals whether RLS matched — an update the caller isn't
+        // allowed to make would otherwise succeed silently with zero rows.
+        const { data, error } = await supabase
+          .from('it_notes')
+          .update({
+            title: title.trim() || null,
+            content: content.trim(),
+            color_theme: color,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', note.id)
+          .select('id')
+        if (error) throw error
+        if (!data?.length) throw new Error('Only the author or an admin can edit this note')
+        toast.success('Note updated')
+      } else {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) throw new Error('Not authenticated')
+        const { error } = await supabase.from('it_notes').insert({
+          title: title.trim() || null,
+          content: content.trim(),
+          color_theme: color,
+          author_id: user.id,
+        })
+        if (error) throw error
+        toast.success('Note pinned to the board')
+      }
       onSaved()
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Failed to save note')
@@ -194,7 +215,7 @@ export function CreateNoteModal({ onClose, onSaved }: CreateModalProps) {
               disabled={saving || !content.trim()}
               style={{ flex: 1 }}
             >
-              {saving ? 'Pinning…' : 'Pin note'}
+              {saving ? (isEdit ? 'Saving…' : 'Pinning…') : isEdit ? 'Save changes' : 'Pin note'}
             </button>
           </div>
         </div>

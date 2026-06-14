@@ -22,6 +22,7 @@ export default function ITNotes() {
   const [loading, setLoading] = useState(true)
   const [createOpen, setCreateOpen] = useState(false)
   const [activeNote, setActiveNote] = useState<Note | null>(null)
+  const [editNote, setEditNote] = useState<Note | null>(null)
   const [colorFilter, setColorFilter] = useState<NoteColor | ''>('')
   const [search, setSearch] = useState('')
   const [showArchived, setShowArchived] = useState(false)
@@ -287,11 +288,25 @@ export default function ITNotes() {
           }}
         />
       )}
+      {editNote && (
+        <CreateNoteModal
+          note={editNote}
+          onClose={() => setEditNote(null)}
+          onSaved={() => {
+            setEditNote(null)
+            loadNotes()
+          }}
+        />
+      )}
       {activeNote && (
         <NoteDetailModal
           note={activeNote}
           onClose={() => setActiveNote(null)}
           onCommentAdded={loadNotes}
+          onEdit={() => {
+            setEditNote(activeNote)
+            setActiveNote(null)
+          }}
           onMutated={() => {
             setActiveNote(null)
             loadNotes()
