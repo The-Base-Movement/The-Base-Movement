@@ -4,25 +4,26 @@ import { adminService } from '@/services/adminService'
 import {
   deviceTrackingService,
   isDeviceTrackedRole,
-  type DeviceDecision,
+  type EvaluateResult,
 } from '@/services/deviceTrackingService'
+import BiometricPrompt from '@/components/BiometricPrompt'
 
 /**
- * Runs the device-binding capture for privileged admin roles once they enter the
- * admin area (rendered by ProtectedAdminRoute after the 2FA gate passes).
+ * Device-binding capture for privileged admin roles, rendered by
+ * ProtectedAdminRoute after the 2FA gate.
  *
- * Design notes:
  *  - Runs once per browser session (sessionStorage flag), like the 2FA gate.
- *  - Non-blocking + fail-open: enrol/verify happen silently; any error lets the
- *    admin through. We never lock out an admin because of a capture hiccup.
- *  - Only a slot explicitly marked `blocked` shows a stop screen.
- *  - `step_up_required` currently passes through (logged for IT); it becomes the
- *    WebAuthn biometric challenge once that piece is wired in.
+ *  - Non-blocking + fail-open: any error lets the admin through; only a slot
+ *    explicitly marked `blocked` shows a stop screen.
+ *  - When the decision needs a passkey step (enrol a new/unenrolled device, or
+ *    step-up on an unknown device) a BiometricPrompt overlay is shown. The user
+ *    already passed 2FA, so the prompt is skippable and never locks anyone out.
  */
 const CAPTURE_KEY = 'admin_device_captured'
 
 export default function AdminDeviceCapture() {
   const [blocked, setBlocked] = useState(false)
+  const [prompt, setPrompt] = useState<EvaluateResult | null>(null)
   const ran = useRef(false)
 
   useEffect(() => {
@@ -41,12 +42,21 @@ export default function AdminDeviceCapture() {
         }
 
         const res = await deviceTrackingService.evaluateCurrentDevice()
-        const decision: DeviceDecision | undefined = res?.decision
-        if (res?.tracked && decision === 'blocked') {
+
+        if (res?.tracked && res.decision === 'blocked') {
           setBlocked(true)
           return // do not set the flag — re-check on next entry
         }
-        // enrolled | verified | step_up_required (interim) -> allow
+
+        const needsPasskey =
+          res?.tracked &&
+          (res.decision === 'step_up_required' || (res.webauthn_required && !!res.device_id))
+
+        if (needsPasskey) {
+          setPrompt(res) // resolve via the BiometricPrompt overlay
+          return
+        }
+
         sessionStorage.setItem(CAPTURE_KEY, '1')
       } catch (err) {
         // Fail open: never block admin access on a capture error.
@@ -115,5 +125,18 @@ export default function AdminDeviceCapture() {
     )
   }
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      {prompt && (
+        <BiometricPrompt
+          result={prompt}
+          onDone={() => {
+            sessionStorage.setItem(CAPTURE_KEY, '1')
+            setPrompt(null)
+          }}
+        />
+      )}
+    </>
+  )
 }
