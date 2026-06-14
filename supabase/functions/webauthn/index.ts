@@ -44,6 +44,36 @@ function clientIp(req: Request): string | null {
   return req.headers.get('cf-connecting-ip') ?? req.headers.get('x-real-ip') ?? null
 }
 
+// Best-effort geo lookup (ipwho.is, then ip-api.com); never throws.
+async function geoLocate(ip: string | null): Promise<string | null> {
+  if (!ip) return null
+  try {
+    const res = await fetch(`https://ipwho.is/${ip}`)
+    if (res.ok) {
+      const g = await res.json()
+      if (g && g.success !== false) {
+        const parts = [g.city, g.region, g.country].filter(Boolean)
+        if (parts.length) return parts.join(', ')
+      }
+    }
+  } catch {
+    // fall through
+  }
+  try {
+    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`)
+    if (res.ok) {
+      const g = await res.json()
+      if (g && g.status === 'success') {
+        const parts = [g.city, g.regionName, g.country].filter(Boolean)
+        if (parts.length) return parts.join(', ')
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null
+}
+
 // Origin allowlist: localhost (any port) for dev, plus configured production
 // origins. RP ID is the hostname of the validated origin.
 function resolveRp(origin: string | null): { rpID: string; origin: string } | null {
@@ -173,11 +203,12 @@ serve(async (req: Request) => {
       // Step-up enrolment (a known slot whose fingerprint changed but had no
       // passkey yet): rebind the slot to the new fingerprint after enrolling.
       if (deviceId && body.rebind && body.fingerprint_hash) {
+        const ip = clientIp(req)
         await supabase.rpc('confirm_admin_device_step_up', {
           p_device_id: deviceId,
           p_fingerprint_hash: body.fingerprint_hash,
-          p_ip: clientIp(req),
-          p_location: null,
+          p_ip: ip,
+          p_location: await geoLocate(ip),
           p_user_agent: req.headers.get('user-agent'),
         })
       }
@@ -278,11 +309,12 @@ serve(async (req: Request) => {
       const deviceId = body.device_id ?? ch.device_id ?? null
       let stepUp = null
       if (deviceId && body.fingerprint_hash) {
+        const ip = clientIp(req)
         const { data } = await supabase.rpc('confirm_admin_device_step_up', {
           p_device_id: deviceId,
           p_fingerprint_hash: body.fingerprint_hash,
-          p_ip: clientIp(req),
-          p_location: null,
+          p_ip: ip,
+          p_location: await geoLocate(ip),
           p_user_agent: req.headers.get('user-agent'),
         })
         stepUp = data
