@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import AdminTwoFactorGate from '@/components/AdminTwoFactorGate'
+import AdminDeviceCapture from '@/components/AdminDeviceCapture'
 
 /**
  * Session flag set after a successful 2FA verification when entering /admin/*.
@@ -77,5 +78,7 @@ export default function ProtectedAdminRoute() {
     )
   }
 
-  return <Outlet />
+  // Device-binding capture for tracked roles runs inside this wrapper, which
+  // renders the admin <Outlet /> once done (non-blocking / fail-open).
+  return <AdminDeviceCapture />
 }
