@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { sessionStore } from '@/lib/sessionStore'
+import type { JobSelection } from '@/services/jobTaxonomyService'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type {
   Member,
@@ -303,8 +304,19 @@ class MemberService {
     }
   }
 
-  async updateMemberProfile(regNo: string, profile: Partial<Member>): Promise<boolean> {
-    const updateData: Record<string, string | null | undefined> = {}
+  async updateMemberProfile(
+    regNo: string,
+    profile: Partial<Member> & { job?: JobSelection }
+  ): Promise<boolean> {
+    const updateData: Record<string, string | number | null | undefined> = {}
+    if (profile.job) {
+      updateData.job_industry_id = profile.job.industryId
+      updateData.job_sub_category_id = profile.job.subCategoryId
+      updateData.job_role_id = profile.job.isOther ? null : profile.job.roleId
+      updateData.job_custom_title = profile.job.isOther
+        ? profile.job.customTitle.trim() || null
+        : null
+    }
     if (profile.name) updateData.full_name = profile.name
     if (profile.email) updateData.email = profile.email
     if (profile.phone && profile.phone !== 'N/A') updateData.phone_number = profile.phone
@@ -327,7 +339,10 @@ class MemberService {
     if (profile.country) updateData.country = profile.country
     if (profile.profession) updateData.profession = profile.profession
     if (profile.city) updateData.city = profile.city
-    if (profile.residentialAddress) updateData.residential_address = profile.residentialAddress
+    // Optional field: use `!== undefined` (not truthy) so a member can also
+    // CLEAR their residential address later, not just set/change it.
+    if (profile.residentialAddress !== undefined)
+      updateData.residential_address = profile.residentialAddress || null
 
     const { error } = await supabase
       .from('users')
