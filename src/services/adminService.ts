@@ -1077,11 +1077,14 @@ class AdminService {
   }
 
   /**
-   * Generates a standardized avatar path following the pattern: {userId}/{timestamp}.webp
-   * This ensures compliance with RLS policies that often restrict updates to user-owned folders.
+   * Generates a standardized avatar path: {userId}/{timestamp}.webp
+   * The user-id folder satisfies the `avatars` storage RLS (both INSERT and
+   * UPDATE are restricted to a folder named after auth.uid()), and the timestamp
+   * busts the CDN/browser cache so a replaced photo actually shows. `userId` is
+   * the member's auth user id — NOT their registration number.
    */
-  generateAvatarPath(regNo: string): string {
-    return `${regNo}.webp`
+  generateAvatarPath(userId: string): string {
+    return `${userId}/${Date.now()}.webp`
   }
 
   getAvatarPublicUrl(fileName: string): string {

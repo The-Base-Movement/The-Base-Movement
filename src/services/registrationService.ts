@@ -62,7 +62,8 @@ export const registrationService = {
           : await (await fetch(avatarSource)).blob()
 
         if (croppedBlob) {
-          const fileName = adminService.generateAvatarPath(regNo)
+          // Owner-folder path ({userId}/…) so it passes the avatars storage RLS.
+          const fileName = adminService.generateAvatarPath(authData.user.id)
           const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
           if (!uploadError) {
             finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
