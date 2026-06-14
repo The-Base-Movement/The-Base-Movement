@@ -351,7 +351,10 @@ class AdminService {
     return memberService.getTotalMemberCount()
   }
 
-  async updateMemberProfile(regNo: string, profile: Partial<Member>): Promise<boolean> {
+  async updateMemberProfile(
+    regNo: string,
+    profile: Partial<Member> & { job?: import('@/services/jobTaxonomyService').JobSelection }
+  ): Promise<boolean> {
     return memberService.updateMemberProfile(regNo, profile)
   }
 

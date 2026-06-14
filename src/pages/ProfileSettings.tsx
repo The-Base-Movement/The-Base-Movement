@@ -12,6 +12,11 @@ import { MembershipCardPanel } from './settings/MembershipCardPanel'
 import { VerificationStatusPanel } from './settings/VerificationStatusPanel'
 import { VoterRegistrationPanel } from './settings/VoterRegistrationPanel'
 import { PersonalInfoForm } from './settings/PersonalInfoForm'
+import {
+  jobTaxonomyService,
+  emptyJobSelection,
+  type JobSelection,
+} from '@/services/jobTaxonomyService'
 import { PerformancePrefsPanel } from './settings/PerformancePrefsPanel'
 import { ProfileSettingsHeader } from './settings/ProfileSettingsHeader'
 import { DangerZonePanel } from './settings/DangerZonePanel'
@@ -141,6 +146,7 @@ export default function ProfileSettings() {
     residentialAddress: '',
   })
 
+  const [job, setJob] = useState<JobSelection>(emptyJobSelection)
   const [availableChapters, setAvailableChapters] = useState<string[]>([])
   const [dbCountries, setDbCountries] = useState<
     { name: string; dialing_code: string; is_diaspora: boolean }[]
@@ -204,6 +210,14 @@ export default function ProfileSettings() {
           setAvatarUrl(profile.avatarUrl)
           sessionStore.setItem('userAvatar', profile.avatarUrl)
         }
+
+        // Preload the saved job selection for editing.
+        const { data: jobRow } = await supabase
+          .from('users')
+          .select('job_industry_id, job_sub_category_id, job_role_id, job_custom_title')
+          .eq('registration_number', profile.id)
+          .maybeSingle()
+        if (jobRow) setJob(jobTaxonomyService.toSelection(jobRow))
       }
 
       setLoading(false)
@@ -303,6 +317,7 @@ export default function ProfileSettings() {
         country: form.country,
         city: form.city,
         residentialAddress: form.residentialAddress,
+        job,
       })
 
       const {
@@ -389,6 +404,8 @@ export default function ProfileSettings() {
             availableChapters={availableChapters}
             onChange={handleChange}
             onFormSet={setForm}
+            job={job}
+            onJobChange={setJob}
           />
 
           <PerformancePrefsPanel

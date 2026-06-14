@@ -2,6 +2,8 @@ import { cn } from '@/lib/utils'
 import type { Area } from 'react-easy-crop'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
 import { PhotoCropStep } from './PhotoCropStep'
+import { JobSelector } from '@/components/JobSelector'
+import { emptyJobSelection } from '@/services/jobTaxonomyService'
 
 interface RegistrationFormProps {
   platform: string
@@ -505,49 +507,42 @@ export function RegistrationForm(props: RegistrationFormProps) {
             {formStep === 4 && (
               <div className="space-y-4 animate-in fade-in duration-500">
                 <div className="space-y-4 animate-in fade-in duration-0">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="input-2f7edd"
-                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                      >
-                        Profession
-                      </label>
-                      <input
-                        name="name-2f7edd"
-                        id="input-2f7edd"
-                        value={formData.profession}
-                        onChange={(e) => onInputChange('profession', e.target.value)}
-                        className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                        placeholder="e.g. Teacher"
-                        autoComplete="organization-title"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="select-231c1b"
-                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                      >
-                        Education Level
-                      </label>
-                      <select
-                        name="name-231c1b"
-                        id="select-231c1b"
-                        value={formData.educationLevel}
-                        onChange={(e) => onInputChange('educationLevel', e.target.value)}
-                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
-                      >
-                        <option value="">Select</option>
-                        <option value="None">None</option>
-                        <option value="Primary">Primary</option>
-                        <option value="JHS">JHS / Middle School</option>
-                        <option value="SHS">SHS / Secondary</option>
-                        <option value="Diploma">Diploma / HND</option>
-                        <option value="Bachelors">Bachelor's Degree</option>
-                        <option value="Masters">Master's Degree</option>
-                        <option value="Doctorate">Doctorate / PhD</option>
-                      </select>
-                    </div>
+                  {/* Job selection — dependent Industry → Sub-Category → Job Role */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                      Profession
+                    </label>
+                    <JobSelector
+                      value={formData.job ?? emptyJobSelection}
+                      onChange={(j) => onInputChange('job', j)}
+                      onLabelChange={(label) => onInputChange('profession', label)}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="select-231c1b"
+                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                    >
+                      Education Level
+                    </label>
+                    <select
+                      name="name-231c1b"
+                      id="select-231c1b"
+                      value={formData.educationLevel}
+                      onChange={(e) => onInputChange('educationLevel', e.target.value)}
+                      className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                    >
+                      <option value="">Select</option>
+                      <option value="None">None</option>
+                      <option value="Primary">Primary</option>
+                      <option value="JHS">JHS / Middle School</option>
+                      <option value="SHS">SHS / Secondary</option>
+                      <option value="Diploma">Diploma / HND</option>
+                      <option value="Bachelors">Bachelor's Degree</option>
+                      <option value="Masters">Master's Degree</option>
+                      <option value="Doctorate">Doctorate / PhD</option>
+                    </select>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">

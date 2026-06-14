@@ -1,5 +1,7 @@
 import { labelStyle, inputStyle, selectStyle } from './shared'
 import { SelIcon } from './SelIcon'
+import { JobSelector } from '@/components/JobSelector'
+import type { JobSelection } from '@/services/jobTaxonomyService'
 
 interface FormState {
   fullName: string
@@ -27,6 +29,8 @@ interface Props {
   availableChapters: string[]
   onChange: (field: string, value: string) => void
   onFormSet: (updater: (prev: FormState) => FormState) => void
+  job: JobSelection
+  onJobChange: (next: JobSelection) => void
 }
 
 export function PersonalInfoForm({
@@ -37,6 +41,8 @@ export function PersonalInfoForm({
   availableChapters,
   onChange,
   onFormSet,
+  job,
+  onJobChange,
 }: Props) {
   return (
     <div className="panel">
@@ -166,18 +172,13 @@ export function PersonalInfoForm({
             </div>
           </div>
 
-          {/* Profession */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="input-281364" style={labelStyle}>
-              Profession
-            </label>
-            <input
-              name="name-281364"
-              id="input-281364"
-              value={form.profession}
-              onChange={(e) => onChange('profession', e.target.value)}
-              placeholder="E.g. Teacher, Engineer, Student"
-              style={inputStyle}
+          {/* Profession — dependent Industry → Sub-Category → Job Role (full width) */}
+          <div className="profile-form-full" style={{ display: 'flex', flexDirection: 'column' }}>
+            <label style={labelStyle}>Profession</label>
+            <JobSelector
+              value={job}
+              onChange={onJobChange}
+              onLabelChange={(label) => onChange('profession', label)}
             />
           </div>
 
