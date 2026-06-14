@@ -164,7 +164,7 @@ export function MembershipFormBody({ platform, formTitle, logoUrl }: MembershipF
           </div>
           <div className="space-y-2">
             <p className="text-micro font-bold tracking-tight text-stone-500">
-              Residential address*
+              Residential address (optional)
             </p>
             <div className="h-8 border-b-2 border-stone-100" />
           </div>

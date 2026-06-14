@@ -697,14 +697,17 @@ export default function RegistrationForm({
                       }}
                     >
                       Residential address{' '}
-                      <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+                      <span
+                        style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}
+                      >
+                        (optional)
+                      </span>
                     </label>
                     <input
                       aria-label="Street, House Number, City"
                       name="name-f8cc39"
                       id="input-f8cc39"
-                      placeholder="Street, House Number, City"
-                      required
+                      placeholder="Street, House Number, City (optional)"
                       value={formData.residentialAddress}
                       onChange={(e) => handleChange('residentialAddress', e.target.value)}
                       style={{

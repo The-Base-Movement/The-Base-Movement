@@ -84,7 +84,7 @@ export default function Login() {
                   htmlFor="input-80a9bc"
                   className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                 >
-                  Email or Phone
+                  Email, Phone, or Reg. No.
                 </label>
                 <input
                   name="email"
@@ -94,7 +94,7 @@ export default function Login() {
                   className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="kwesi@thebase.gh or 054..."
+                  placeholder="kwesi@thebase.gh, 054..., or TBM-DI-267388"
                   required
                 />
               </div>
