@@ -64,3 +64,7 @@ GEMINI.md
 .cache_ggshield
 components.json
 skills-lock.json
+
+# Sensitive local artifacts (never commit)
+docs/base-movement-auth/
+docs/leaders-auth-activity-*.csv
