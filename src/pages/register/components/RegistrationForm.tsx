@@ -576,21 +576,17 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         htmlFor="input-36e963"
                         className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                       >
-                        Residential Address{' '}
-                        {platform === 'DIASPORA' && (
-                          <span className="opacity-50 lowercase">(Optional)</span>
-                        )}
+                        Residential Address <span className="opacity-50 lowercase">(Optional)</span>
                       </label>
                       <input
                         name="name-36e963"
                         id="input-36e963"
-                        required={platform === 'GHANA'}
                         value={formData.residentialAddress}
                         onChange={(e) => onInputChange('residentialAddress', e.target.value)}
                         className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                         placeholder={
                           platform === 'GHANA'
-                            ? 'House no., street, area'
+                            ? 'House no., street, area (optional)'
                             : 'City address (optional)'
                         }
                         autoComplete="street-address"

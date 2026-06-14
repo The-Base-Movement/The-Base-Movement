@@ -35,10 +35,12 @@ class AuthService {
   }
 
   async login(identifier: string, password: string): Promise<AuthResponse['data']> {
-    const isPhone = /^\+?[0-9]+$/.test(identifier.replace(/\s+/g, ''))
+    const trimmedIdentifier = identifier.trim()
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedIdentifier)
+    const isPhone = /^\+?[0-9]+$/.test(trimmedIdentifier.replace(/\s+/g, ''))
 
     if (isPhone) {
-      let formattedPhone = identifier.replace(/\s+/g, '')
+      let formattedPhone = trimmedIdentifier.replace(/\s+/g, '')
       if (formattedPhone.startsWith('0')) {
         formattedPhone = '+233' + formattedPhone.substring(1)
       } else if (!formattedPhone.startsWith('+')) {
@@ -63,7 +65,7 @@ class AuthService {
       // exists. The phone-login edge function resolves phone → auth email
       // server-side and signs in there.
       const { data: fnData, error: fnError } = await supabase.functions.invoke('phone-login', {
-        body: { phone: formattedPhone, password },
+        body: { identifier: trimmedIdentifier, phone: formattedPhone, password },
       })
 
       if (fnError || !fnData?.access_token) {
@@ -82,9 +84,50 @@ class AuthService {
       return sessionData
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email: identifier, password })
+    if (!isEmail) {
+      const { data: fnData, error: fnError } = await supabase.functions.invoke('phone-login', {
+        body: { identifier: trimmedIdentifier, password },
+      })
+
+      if (fnError || !fnData?.access_token) {
+        throw new Error('Invalid login credentials')
+      }
+
+      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+        access_token: fnData.access_token,
+        refresh_token: fnData.refresh_token,
+      })
+      if (sessionError) {
+        throw new Error(sessionError.message || 'Login failed')
+      }
+
+      this.currentSession = sessionData.session
+      return sessionData
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: trimmedIdentifier,
+      password,
+    })
 
     if (error) {
+      const { data: fnData, error: fnError } = await supabase.functions.invoke('phone-login', {
+        body: { identifier: trimmedIdentifier, password },
+      })
+
+      if (!fnError && fnData?.access_token) {
+        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+          access_token: fnData.access_token,
+          refresh_token: fnData.refresh_token,
+        })
+        if (sessionError) {
+          throw new Error(sessionError.message || 'Login failed')
+        }
+
+        this.currentSession = sessionData.session
+        return sessionData
+      }
+
       throw new Error(error.message || 'Login failed')
     }
 

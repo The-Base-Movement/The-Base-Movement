@@ -401,14 +401,13 @@ export function PersonalInfoForm({
           <div className="profile-form-full" style={{ display: 'flex', flexDirection: 'column' }}>
             <label htmlFor="input-048091" style={labelStyle}>
               Residential Address{' '}
-              {userPlatform === 'GHANA' && (
-                <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-              )}
+              <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                (optional)
+              </span>
             </label>
             <input
               name="name-048091"
               id="input-048091"
-              required={userPlatform === 'GHANA'}
               value={form.residentialAddress}
               onChange={(e) => onChange('residentialAddress', e.target.value)}
               placeholder="Physical address for mobilization and logistics"
