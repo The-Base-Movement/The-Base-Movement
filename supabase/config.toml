@@ -3,3 +3,6 @@ verify_jwt = false
 
 [functions.hubtel-payment-callback]
 verify_jwt = false
+
+[functions.phone-login]
+verify_jwt = false
