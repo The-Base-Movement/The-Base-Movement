@@ -22,23 +22,23 @@ function isMaintenanceOn(value: unknown): boolean {
 
 interface MaintenanceGateProps {
   children: ReactNode
-  /** When true, the current viewer is staff and bypasses the gate. */
-  bypass?: boolean
 }
 
 /**
  * Wraps a layout's content. When IT enables maintenance mode (the
- * `maintenance_mode` site setting), public visitors and members see the
- * maintenance splash instead. Staff bypass it, and auth routes stay open.
+ * `maintenance_mode` site setting), public visitors AND members see the
+ * maintenance splash instead — no bypass. Only the admin backend (`/admin/*`,
+ * which is never wrapped by this gate) and the auth routes stay reachable, so
+ * staff can still log in and switch maintenance back off.
  */
-export function MaintenanceGate({ children, bypass = false }: MaintenanceGateProps) {
+export function MaintenanceGate({ children }: MaintenanceGateProps) {
   const { settings } = useBranding()
   const { pathname } = useLocation()
 
   const on = isMaintenanceOn(settings.maintenance_mode)
   const allowed = ALWAYS_ALLOWED.some((p) => pathname.startsWith(p))
 
-  if (!on || bypass || allowed) return <>{children}</>
+  if (!on || allowed) return <>{children}</>
 
   const title =
     typeof settings.maintenance_title === 'string' ? settings.maintenance_title : undefined

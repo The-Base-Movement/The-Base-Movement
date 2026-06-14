@@ -402,7 +402,7 @@ export default function DashboardLayout() {
   }
 
   return (
-    <MaintenanceGate bypass={isAdmin}>
+    <MaintenanceGate>
       <div className="bg-surface text-on-surface font-body-md min-h-screen">
         <SEO noindex />
         <a
