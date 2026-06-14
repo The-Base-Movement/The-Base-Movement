@@ -7,6 +7,8 @@ export interface NavItem {
   pill?: string
   superAdminOnly?: boolean
   executiveOnly?: boolean
+  /** When set, the item is visible only to these exact roles (overrides other gates). */
+  allowedRoles?: string[]
   permission?: {
     action: AdminPermission['action']
     resource: AdminPermission['resource']
@@ -94,6 +96,19 @@ export const getNavGroups = (
         icon: 'shield',
         label: 'Leadership hub',
         permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
+      },
+      {
+        to: '/admin/jobs-analytics',
+        icon: 'work',
+        label: 'Jobs analytics',
+        allowedRoles: [
+          'ADMIN',
+          'SUPER_ADMIN',
+          'FOUNDER',
+          'IT_MANAGER',
+          'MOVEMENT_LEADER',
+          'FINANCE_OFFICER',
+        ],
       },
       {
         to: '/admin/messages',
