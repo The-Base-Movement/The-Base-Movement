@@ -16,6 +16,7 @@ import {
   emptyJobSelection,
   type JobSelection,
 } from '@/services/jobTaxonomyService'
+import { formatGhsAmount } from '@/lib/currency'
 import { toast } from 'sonner'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
@@ -249,6 +250,10 @@ export default function AdminMemberDetail() {
       setMsgBody('')
     }
   }
+
+  // Lifetime contribution = sum of this member's cleared (confirmed) donations.
+  const clearedDonations = donations.filter((d) => d.cleared)
+  const lifetimeContribution = clearedDonations.reduce((sum, d) => sum + (Number(d.amount) || 0), 0)
 
   const tabs = [
     { id: 'activity' as const, label: 'Activity', count: logs.length },
@@ -626,7 +631,13 @@ export default function AdminMemberDetail() {
         {/* Quick stats */}
         <div className="member-quick-stats">
           {[
-            { label: 'Lifetime contribution', val: '₵0', sub: 'No donations yet' },
+            {
+              label: 'Lifetime contribution',
+              val: formatGhsAmount(lifetimeContribution),
+              sub: clearedDonations.length
+                ? `${clearedDonations.length} cleared donation${clearedDonations.length === 1 ? '' : 's'}`
+                : 'No donations yet',
+            },
             { label: 'Polls voted', val: pollVotes.length || '—', sub: 'Poll activity' },
             { label: 'Chapter activity', val: '—', sub: 'Events attended YTD' },
             {
