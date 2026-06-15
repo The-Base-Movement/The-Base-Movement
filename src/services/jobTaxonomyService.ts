@@ -62,9 +62,36 @@ export interface JobAnalyticsRow {
   is_custom: boolean
 }
 
-// The taxonomy is small (7/35/175) and immutable at runtime — load once and cache.
+// The taxonomy is small (7/35/175) — load once and cache; writes invalidate it.
 let cache: JobTaxonomy | null = null
 let inflight: Promise<JobTaxonomy> | null = null
+
+/** Next append position: max(sort_order)+1 within an optional parent scope. */
+async function nextSortOrder(
+  table: 'job_industries' | 'job_sub_categories' | 'job_roles',
+  parentCol?: string,
+  parentId?: number
+): Promise<number> {
+  let q = supabase
+    .from(table)
+    .select('sort_order')
+    .order('sort_order', { ascending: false })
+    .limit(1)
+  if (parentCol && parentId != null) q = q.eq(parentCol, parentId)
+  const { data, error } = await q
+  if (error) throw error
+  return ((data?.[0]?.sort_order as number | undefined) ?? 0) + 1
+}
+
+/** Derive a short uppercase code from a sub-category name (fallback when none given). */
+function deriveCode(name: string): string {
+  const slug = name
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+  return slug || 'SUBCAT'
+}
 
 export const jobTaxonomyService = {
   async getTaxonomy(): Promise<JobTaxonomy> {
@@ -101,6 +128,121 @@ export const jobTaxonomyService = {
     const { data, error } = await supabase.rpc('get_job_analytics_rows')
     if (error) throw error
     return (data ?? []) as JobAnalyticsRow[]
+  },
+
+  /** Drop the in-memory cache so the next getTaxonomy() refetches (call after writes). */
+  invalidate(): void {
+    cache = null
+    inflight = null
+  },
+
+  /** Force a fresh taxonomy load, bypassing the cache. */
+  async refresh(): Promise<JobTaxonomy> {
+    this.invalidate()
+    return this.getTaxonomy()
+  },
+
+  // ---- Admin CRUD (RLS-gated to is_admin()). Each write invalidates the cache. ----
+
+  async createIndustry(name: string): Promise<void> {
+    const sort_order = await nextSortOrder('job_industries')
+    const { error } = await supabase
+      .from('job_industries')
+      .insert({ name: name.trim(), sort_order })
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async updateIndustry(id: number, name: string): Promise<void> {
+    const { error } = await supabase
+      .from('job_industries')
+      .update({ name: name.trim() })
+      .eq('id', id)
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async deleteIndustry(id: number): Promise<void> {
+    const { error } = await supabase.from('job_industries').delete().eq('id', id)
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async createSubCategory(industryId: number, name: string, code?: string): Promise<void> {
+    const sort_order = await nextSortOrder('job_sub_categories', 'industry_id', industryId)
+    const { error } = await supabase.from('job_sub_categories').insert({
+      industry_id: industryId,
+      name: name.trim(),
+      code: (code?.trim() || deriveCode(name)).slice(0, 20),
+      sort_order,
+    })
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async updateSubCategory(id: number, patch: { name?: string; code?: string }): Promise<void> {
+    const update: Record<string, string> = {}
+    if (patch.name !== undefined) update.name = patch.name.trim()
+    if (patch.code !== undefined) update.code = patch.code.trim().slice(0, 20)
+    const { error } = await supabase.from('job_sub_categories').update(update).eq('id', id)
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async deleteSubCategory(id: number): Promise<void> {
+    const { error } = await supabase.from('job_sub_categories').delete().eq('id', id)
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async createRole(subCategoryId: number, name: string, level: string): Promise<void> {
+    const sort_order = await nextSortOrder('job_roles', 'sub_category_id', subCategoryId)
+    const { error } = await supabase.from('job_roles').insert({
+      sub_category_id: subCategoryId,
+      name: name.trim(),
+      level: level.trim() || 'Mid',
+      sort_order,
+    })
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async updateRole(id: number, patch: { name?: string; level?: string }): Promise<void> {
+    const update: Record<string, string> = {}
+    if (patch.name !== undefined) update.name = patch.name.trim()
+    if (patch.level !== undefined) update.level = patch.level.trim()
+    const { error } = await supabase.from('job_roles').update(update).eq('id', id)
+    if (error) throw error
+    this.invalidate()
+  },
+
+  async deleteRole(id: number): Promise<void> {
+    const { error } = await supabase.from('job_roles').delete().eq('id', id)
+    if (error) throw error
+    this.invalidate()
+  },
+
+  /**
+   * Member-usage counts per taxonomy id, derived from the role-gated analytics RPC
+   * (so it correctly sees every member, not just the caller's own row). Used to warn
+   * before deleting an in-use entry — the DB also hard-blocks such deletes via FK.
+   */
+  async getUsageCounts(): Promise<{
+    industries: Record<number, number>
+    subCategories: Record<number, number>
+    roles: Record<number, number>
+  }> {
+    const rows = await this.getAnalyticsRows()
+    const industries: Record<number, number> = {}
+    const subCategories: Record<number, number> = {}
+    const roles: Record<number, number> = {}
+    for (const r of rows) {
+      if (r.industry_id != null) industries[r.industry_id] = (industries[r.industry_id] ?? 0) + 1
+      if (r.sub_category_id != null)
+        subCategories[r.sub_category_id] = (subCategories[r.sub_category_id] ?? 0) + 1
+      if (r.role_id != null) roles[r.role_id] = (roles[r.role_id] ?? 0) + 1
+    }
+    return { industries, subCategories, roles }
   },
 
   /** Resolve saved DB ids back into a JobSelection for prefilling edit forms. */

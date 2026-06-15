@@ -111,6 +111,12 @@ export const getNavGroups = (
         ],
       },
       {
+        to: '/admin/job-taxonomy',
+        icon: 'account_tree',
+        label: 'Job taxonomy',
+        allowedRoles: ['ADMIN', 'SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER'],
+      },
+      {
         to: '/admin/messages',
         icon: 'chat',
         label: 'Messages',

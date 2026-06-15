@@ -26,6 +26,9 @@ export default defineConfig([
       'no-console': ['warn', { allow: ['error', 'warn'] }],
       // Unused vars as errors (already enforced by tsconfig but belt-and-suspenders)
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      // Added to react-hooks v7.1 recommended; the established load-in-effect data
+      // fetching pattern trips it repo-wide. Warn (don't block) — tighten over time.
+      'react-hooks/set-state-in-effect': 'warn',
     },
   },
 ])
