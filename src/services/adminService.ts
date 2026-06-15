@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { PostgrestError, RealtimeChannel } from '@supabase/supabase-js'
 import { compressForUpload } from '@/lib/imageUtils'
+import { isUuid } from '@/lib/supabaseFilters'
 import { authService } from './authService'
 import { memberService } from './memberService'
 import { logisticsService } from './logisticsService'
@@ -1172,10 +1173,28 @@ class AdminService {
       const { data: urlData } = supabase.storage.from('donation-receipts').getPublicUrl(data.path)
       const publicUrl = urlData?.publicUrl || ''
 
+      // Resolve the target donation by reference or id using parameterized
+      // lookups (never interpolate user input into a raw .or() filter — that
+      // would let a crafted reference broaden the UPDATE to every row). The id
+      // lookup is guarded by a UUID check so a non-UUID reference can't trigger
+      // a cast error.
+      const ref = donationReference.trim()
+      const byRef = await supabase.from('donations').select('id').eq('reference', ref)
+      let targetIds = (byRef.data ?? []).map((d) => d.id as string)
+      if (targetIds.length === 0 && isUuid(ref)) {
+        const byId = await supabase.from('donations').select('id').eq('id', ref)
+        targetIds = (byId.data ?? []).map((d) => d.id as string)
+      }
+
+      if (targetIds.length === 0) {
+        console.error('[UPLOAD] No donation matched reference or id:', donationReference)
+        return false
+      }
+
       const { data: updatedDonations, error: updateErr } = await supabase
         .from('donations')
         .update({ receipt_url: publicUrl })
-        .or(`reference.eq.${donationReference},id.eq.${donationReference}`)
+        .in('id', targetIds)
         .select('id')
 
       if (updateErr) {

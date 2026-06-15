@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { compressForUpload } from '@/lib/imageUtils'
+import { sanitizeOrTerm } from '@/lib/supabaseFilters'
 import type {
   Job,
   JobApplication,
@@ -24,12 +25,13 @@ class JobService {
       .order('created_at', { ascending: false })
 
     if (filters.search) {
-      query = query.or(`title.ilike.%${filters.search}%,organization.ilike.%${filters.search}%`)
+      const term = sanitizeOrTerm(filters.search)
+      query = query.or(`title.ilike.%${term}%,organization.ilike.%${term}%`)
     }
     if (filters.category) query = query.eq('category', filters.category)
     if (filters.job_type) query = query.eq('job_type', filters.job_type)
     if (filters.platform_filter && filters.platform_filter !== 'ALL') {
-      query = query.or(`platform_filter.eq.ALL,platform_filter.eq.${filters.platform_filter}`)
+      query = query.in('platform_filter', ['ALL', filters.platform_filter])
     }
 
     const { data, error } = await query
@@ -64,7 +66,8 @@ class JobService {
       .order('created_at', { ascending: false })
 
     if (filters.search) {
-      query = query.or(`title.ilike.%${filters.search}%,organization.ilike.%${filters.search}%`)
+      const term = sanitizeOrTerm(filters.search)
+      query = query.or(`title.ilike.%${term}%,organization.ilike.%${term}%`)
     }
     if (filters.category) query = query.eq('category', filters.category)
     if (filters.job_type) query = query.eq('job_type', filters.job_type)

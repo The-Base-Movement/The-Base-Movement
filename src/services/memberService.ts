@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { sessionStore } from '@/lib/sessionStore'
+import { sanitizeOrTerm } from '@/lib/supabaseFilters'
 import type { JobSelection } from '@/services/jobTaxonomyService'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type {
@@ -659,8 +660,9 @@ class MemberService {
         }
         query = query.in('id', memberIds)
       } else {
+        const term = sanitizeOrTerm(searchTerm)
         query = query.or(
-          `full_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,registration_number.ilike.%${searchTerm}%`
+          `full_name.ilike.%${term}%,phone_number.ilike.%${term}%,registration_number.ilike.%${term}%`
         )
       }
     }
