@@ -418,6 +418,7 @@ class AdminService {
         created_at,
         polls (
           title,
+          question,
           poll_number
         ),
         poll_options (
@@ -437,8 +438,9 @@ class AdminService {
       id: string
       created_at: string
       polls: {
-        title: string
-        poll_number: number
+        title: string | null
+        question: string | null
+        poll_number: number | null
       } | null
       poll_options: {
         label: string
@@ -447,7 +449,7 @@ class AdminService {
 
     return ((data as unknown as PollVoteJoined[]) || []).map((v) => ({
       id: v.id,
-      pollTitle: v.polls?.title || 'Unknown Poll',
+      pollTitle: v.polls?.title || v.polls?.question || 'Unknown Poll',
       pollNumber: v.polls?.poll_number || 0,
       choice: v.poll_options?.label || 'Unknown',
       date: v.created_at,
