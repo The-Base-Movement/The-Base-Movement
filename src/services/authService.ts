@@ -14,6 +14,9 @@ export interface AuthSession {
 class AuthService {
   private static instance: AuthService
   private currentSession: Session | null = null
+  // Guards against recording the same sign-in twice (SIGNED_IN can fire more than
+  // once for one login, e.g. across tabs); keyed by the session access token.
+  private lastLoggedToken: string | null = null
 
   private constructor() {
     // Initialize session state
@@ -22,8 +25,21 @@ class AuthService {
     })
 
     // Listen for auth changes
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
       this.currentSession = session
+      if (event === 'SIGNED_IN' && session?.access_token) {
+        this.recordSession(session.access_token)
+      }
+    })
+  }
+
+  // Fire-and-forget: record where/how the member signed in. Never blocks or throws
+  // into the auth flow — a failed log must not affect login.
+  private recordSession(accessToken: string): void {
+    if (this.lastLoggedToken === accessToken) return
+    this.lastLoggedToken = accessToken
+    supabase.functions.invoke('log-member-session').catch((err) => {
+      console.warn('[auth] failed to record session:', err)
     })
   }
 
@@ -174,6 +190,21 @@ class AuthService {
   }
 
   async logout() {
+    // Mark this member's active session(s) as ended before signing out (while the
+    // JWT is still valid for the RLS update). Best-effort — never blocks logout.
+    const uid = this.currentSession?.user?.id
+    if (uid) {
+      try {
+        await supabase
+          .from('member_sessions')
+          .update({ is_current: false })
+          .eq('member_id', uid)
+          .eq('is_current', true)
+      } catch (err) {
+        console.warn('[auth] failed to end session record:', err)
+      }
+    }
+    this.lastLoggedToken = null
     this.currentSession = null
     await supabase.auth.signOut({ scope: 'local' })
   }
