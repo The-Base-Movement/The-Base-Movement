@@ -5,7 +5,6 @@ import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import SEO from '@/components/SEO'
-import { useBranding } from '@/hooks/useBranding'
 import { toast } from 'sonner'
 import { DashboardPageHeader } from './blog/DashboardPageHeader'
 import { CategoryFilterBar } from './blog/CategoryFilterBar'
@@ -19,7 +18,6 @@ import { PublicCTA } from './blog/PublicCTA'
 import { PublicSearchFilter } from './blog/PublicSearchFilter'
 
 export default function Blog() {
-  const { settings } = useBranding()
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
@@ -250,9 +248,7 @@ export default function Blog() {
                 onSearchChange={handleSearchChange}
               />
 
-              {featured && (
-                <PublicFeaturedPost post={featured} baseUrl={baseUrl} logoUrl={settings.logo_url} />
-              )}
+              {featured && <PublicFeaturedPost post={featured} baseUrl={baseUrl} />}
 
               <section>
                 <div className="flex flex-col lg:flex-row gap-12">

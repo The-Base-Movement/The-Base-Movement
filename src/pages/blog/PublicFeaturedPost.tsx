@@ -4,10 +4,9 @@ import type { BlogPost } from '@/services/adminService'
 interface PublicFeaturedPostProps {
   post: BlogPost
   baseUrl: string
-  logoUrl: string
 }
 
-export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPostProps) {
+export function PublicFeaturedPost({ post, baseUrl }: PublicFeaturedPostProps) {
   return (
     <section className="mb-16">
       <p className="font-meta text-xs text-warm-gold tracking-tight mb-6">Featured</p>
@@ -22,10 +21,17 @@ export function PublicFeaturedPost({ post, baseUrl, logoUrl }: PublicFeaturedPos
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
-              <img src={logoUrl} alt="The Base" className="w-16 h-16 opacity-20 mb-4 grayscale" />
-              <span className="text-micro font-medium text-white/20 tracking-tight">
-                The Base Editorial
+            <div
+              className="w-full h-full flex flex-col items-center justify-center gap-3"
+              style={{ background: 'hsl(132 9% 10%)' }}
+            >
+              <div className="flex h-[6px] w-20" aria-hidden="true">
+                <div className="flex-1 bg-[#CE1126]" />
+                <div className="flex-1 bg-[#DAA520]" />
+                <div className="flex-1 bg-[#006B3F]" />
+              </div>
+              <span className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/30 font-['Public_Sans',sans-serif]">
+                The Base
               </span>
             </div>
           )}
