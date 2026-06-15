@@ -131,7 +131,6 @@ export function EditModal({
               { key: 'constituency', label: 'Constituency', type: 'text' },
               { key: 'country', label: 'Country', type: 'text' },
               { key: 'chapter', label: 'Chapter', type: 'text' },
-              { key: 'profession', label: 'Profession', type: 'text' },
               { key: 'city', label: 'City / Town', type: 'text' },
               { key: 'residentialAddress', label: 'Residential address', type: 'text' },
             ] as const
@@ -236,7 +235,7 @@ export function EditModal({
           <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
             <p
               style={{
-                margin: '0 0 12px',
+                margin: '0 0 4px',
                 fontSize: 11,
                 fontWeight: 'var(--font-weight-medium, 500)',
                 textTransform: 'uppercase',
@@ -246,6 +245,16 @@ export function EditModal({
               }}
             >
               Job selection
+            </p>
+            <p
+              style={{
+                margin: '0 0 12px',
+                fontSize: 11.5,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              Sets the member’s profession. Current: {form.profession || '—'}
             </p>
             <JobSelector
               idPrefix="edit-job"
