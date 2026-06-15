@@ -157,6 +157,7 @@ export default function ProfileSettings() {
   const [avatarCrop, setAvatarCrop] = useState({ x: 0, y: 0 })
   const [avatarZoom, setAvatarZoom] = useState(1)
   const [avatarCropPixels, setAvatarCropPixels] = useState<Area | null>(null)
+  const [avatarSaving, setAvatarSaving] = useState(false)
 
   useEffect(() => {
     async function loadProfile() {
@@ -245,25 +246,52 @@ export default function ProfileSettings() {
 
   const handleApplyAvatarCrop = async () => {
     if (!avatarDraftUrl) return
+    setAvatarSaving(true)
     try {
       const blob = avatarCropPixels
         ? await getCroppedImg(avatarDraftUrl, avatarCropPixels)
         : await (await fetch(avatarDraftUrl)).blob()
       if (!blob) throw new Error('Unable to crop selected image')
 
-      const previewUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result as string)
-        reader.onerror = () => reject(reader.error)
-        reader.readAsDataURL(blob)
-      })
+      // Persist the photo immediately so it is saved even if the member never
+      // clicks "Save" on the profile form (the uploader lives in a separate
+      // panel from the form). The avatars bucket RLS keys writes to a folder
+      // named after the auth user id, so the path must be {userId}/….
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser()
+      const regNo = sessionStore.getItem('userRegNo')
+      if (!authUser || !regNo) {
+        toast.error('Your session has expired. Please sign in again.')
+        return
+      }
 
-      setAvatarUrl(previewUrl)
-      sessionStore.setItem('userAvatar', previewUrl)
+      const previousAvatarUrl = avatarUrl
+      const fileName = adminService.generateAvatarPath(authUser.id)
+      const { error: uploadError } = await adminService.uploadAvatar(fileName, blob)
+      if (uploadError) {
+        toast.error('Failed to upload profile photo. Please try again.')
+        return
+      }
+      const publicUrl = adminService.getAvatarPublicUrl(fileName)
+
+      await adminService.updateMemberProfile(regNo, { avatarUrl: publicUrl })
+
+      // Remove the superseded photo so old files don't pile up in storage.
+      // Best-effort; only runs after the new avatar is safely persisted.
+      await adminService.deleteAvatarByPublicUrl(previousAvatarUrl)
+
+      setAvatarUrl(publicUrl)
+      sessionStore.setItem('userAvatar', publicUrl)
       window.dispatchEvent(new Event('storage'))
       setAvatarDraftUrl(null)
-    } catch {
-      toast.error('Failed to crop profile photo. Please try another image.')
+      toast.success('Profile photo updated')
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : 'Failed to save profile photo. Please try again.'
+      )
+    } finally {
+      setAvatarSaving(false)
     }
   }
 
@@ -304,6 +332,8 @@ export default function ProfileSettings() {
         }
       } catch {
         toast.error('Failed to upload profile photo')
+        setLoading(false)
+        return
       }
     }
 
@@ -523,11 +553,17 @@ export default function ProfileSettings() {
                   type="button"
                   className="btn btn-outline"
                   onClick={() => setAvatarDraftUrl(null)}
+                  disabled={avatarSaving}
                 >
                   Cancel
                 </button>
-                <button type="button" className="btn btn-primary" onClick={handleApplyAvatarCrop}>
-                  Apply photo
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleApplyAvatarCrop}
+                  disabled={avatarSaving}
+                >
+                  {avatarSaving ? 'Saving…' : 'Apply photo'}
                 </button>
               </div>
             </div>

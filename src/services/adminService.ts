@@ -1113,6 +1113,24 @@ class AdminService {
     return data.publicUrl
   }
 
+  /**
+   * Deletes a previously-uploaded avatar from the `avatars` bucket given its
+   * public URL. Used when a member replaces their photo so the superseded file
+   * does not linger as an orphan. Best-effort: a failure here is logged, not
+   * thrown, since the new avatar has already been saved. Only removes objects
+   * inside the `avatars` bucket; ignores blank, data:, or foreign URLs.
+   */
+  async deleteAvatarByPublicUrl(publicUrl: string | null | undefined): Promise<void> {
+    if (!publicUrl) return
+    const marker = '/avatars/'
+    const idx = publicUrl.indexOf(marker)
+    if (idx === -1) return
+    const path = decodeURIComponent(publicUrl.slice(idx + marker.length).split('?')[0])
+    if (!path) return
+    const { error } = await supabase.storage.from('avatars').remove([path])
+    if (error) console.error('[AVATAR] Failed to remove old avatar:', error)
+  }
+
   async uploadBrandingAsset(
     fileName: string,
     blob: Blob
