@@ -24,17 +24,19 @@ export function PublicSidebar({
   return (
     <aside className="hidden lg:block lg:w-1/3 space-y-12 lg:sticky lg:top-8 lg:self-start">
       <div>
-        <h2 className="text-stone-900 font-medium tracking-tight mb-6">Categories</h2>
-        <div className="bg-white border border-slate-200 p-8 space-y-2">
+        <h2 className="text-[hsl(var(--on-surface))] font-medium tracking-tight mb-6">
+          Categories
+        </h2>
+        <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] p-8 space-y-2">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => onCategoryChange(cat)}
-              className={`w-full flex items-center justify-between p-3 text-xs font-medium tracking-tight transition-all group ${activeCategory === cat ? 'bg-brand-green/10 text-brand-green' : 'text-slate-600 hover:bg-slate-50 hover:text-brand-green'}`}
+              className={`w-full flex items-center justify-between p-3 text-xs font-medium tracking-tight transition-all group ${activeCategory === cat ? 'bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))]' : 'text-[hsl(var(--on-surface-muted))] hover:bg-[hsl(var(--container-low))] hover:text-[hsl(var(--primary))]'}`}
             >
               {cat === 'All' ? 'All Articles' : cat}
               <span
-                className={`text-micro font-meta transition-colors ${activeCategory === cat ? 'text-brand-green' : 'text-slate-300 group-hover:text-brand-green'}`}
+                className={`text-micro font-meta transition-colors ${activeCategory === cat ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--on-surface-muted))] group-hover:text-[hsl(var(--primary))]'}`}
               >
                 {cat === 'All' ? posts.length : posts.filter((p) => p.category === cat).length}{' '}
                 Posts
