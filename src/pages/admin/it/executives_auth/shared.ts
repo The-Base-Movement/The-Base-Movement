@@ -33,7 +33,54 @@ export function fmtFull(ts: string): string {
 }
 
 export function actionLabel(action: string): string {
-  return ACTION_PILL[action]?.label ?? action
+  return ACTION_PILL[action]?.label ?? prettifyAction(action)
+}
+
+/** Turn an audit action/resource token like "UPDATE_MEMBER" into "Update member". */
+export function prettifyAction(token: string): string {
+  const clean = token.replace(/[_/]+/g, ' ').trim().toLowerCase()
+  return clean.charAt(0).toUpperCase() + clean.slice(1)
+}
+
+/** Leading type of a "TYPE/id" resource string (e.g. "MEMBERS/TBM-1" → "MEMBERS"). */
+export function resourceType(resource: string | null | undefined): string {
+  if (!resource) return '—'
+  return prettifyAction(resource.split('/')[0])
+}
+
+/** Pill styling for an audit-log status. */
+export function statusPill(status: string | null | undefined): { cls: string; label: string } {
+  switch (status) {
+    case 'Success':
+      return { cls: 'pill-ok', label: 'Success' }
+    case 'Failure':
+      return { cls: 'pill-err', label: 'Failure' }
+    case 'Warning':
+      return { cls: 'pill-warn', label: 'Warning' }
+    default:
+      return { cls: 'pill-mute', label: status ?? '—' }
+  }
+}
+
+export function sourceLabel(source: string | null | undefined): string {
+  return source === 'action' ? 'In-app' : 'Device'
+}
+
+/** Stable colour for a dynamic pie slice keyed by its label. */
+const PIE_PALETTE = [
+  'hsl(var(--primary))',
+  'hsl(var(--accent))',
+  'hsl(190 60% 42%)',
+  'hsl(156 55% 45%)',
+  'hsl(var(--destructive))',
+  'hsl(270 50% 55%)',
+  'hsl(28 80% 52%)',
+  'hsl(210 55% 50%)',
+  'hsl(var(--on-surface-muted))',
+]
+
+export function pieColor(key: string, index: number): string {
+  return ACTION_COLOR[key] ?? PIE_PALETTE[index % PIE_PALETTE.length]
 }
 
 export const selectStyle: CSSProperties = {

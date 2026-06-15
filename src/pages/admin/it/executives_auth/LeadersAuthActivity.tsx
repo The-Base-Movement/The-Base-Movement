@@ -5,13 +5,22 @@ import { toast } from 'sonner'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from '../ITLayoutContext'
 import {
-  deviceTrackingService,
-  DEVICE_ACTIVITY_ACTIONS,
-  type AdminDevice,
-  type DeviceActivity,
-} from '@/services/deviceTrackingService'
+  leaderActivityService,
+  type LeaderAccount,
+  type LeaderActivityBucket,
+  type LeaderActivityCategory,
+  type LeaderActivityRow,
+} from '@/services/leaderActivityService'
 import { ActivityTable, DetailModal } from './activityComponents'
-import { ACTION_COLOR, actionLabel, fmtFull, selectStyle } from './shared'
+import {
+  actionLabel,
+  fmtFull,
+  pieColor,
+  prettifyAction,
+  resourceType,
+  selectStyle,
+  sourceLabel,
+} from './shared'
 
 const PAGE_SIZE = 25
 
@@ -21,29 +30,52 @@ function csvCell(value: string): string {
   return value
 }
 
-function downloadCsv(rows: DeviceActivity[]) {
-  const header = ['Leader', 'Device', 'Event', 'IP address', 'Location', 'When', 'User agent']
-  const body = rows.map((r) => [
-    r.admin_name,
-    r.device_type ?? '',
-    actionLabel(r.action),
-    r.ip_address ?? '',
-    r.location ?? '',
-    fmtFull(r.created_at),
-    r.user_agent ?? '',
-  ])
+function downloadCsv(rows: LeaderActivityRow[]) {
+  const header = [
+    'Leader',
+    'Role',
+    'Type',
+    'Event',
+    'Target',
+    'Status',
+    'IP address',
+    'Location',
+    'When',
+    'User agent',
+  ]
+  const body = rows.map((r) => {
+    const isAction = r.source === 'action'
+    return [
+      r.admin_name,
+      r.role ? prettifyAction(r.role) : '',
+      sourceLabel(r.source),
+      isAction ? prettifyAction(r.action) : actionLabel(r.action),
+      isAction ? (r.resource ?? '') : (r.device_type ?? ''),
+      isAction ? (r.status ?? '') : actionLabel(r.action),
+      r.ip_address ?? '',
+      r.location ?? '',
+      fmtFull(r.created_at),
+      r.user_agent ?? '',
+    ]
+  })
   const csv = [header, ...body].map((cols) => cols.map(csvCell).join(',')).join('\r\n')
   // Leading BOM so Excel reads UTF-8 correctly.
   const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `leaders-auth-activity-${new Date().toISOString().slice(0, 10)}.csv`
+  a.download = `leaders-activity-${new Date().toISOString().slice(0, 10)}.csv`
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
 }
+
+const CATEGORIES: { value: 'all' | LeaderActivityCategory; label: string }[] = [
+  { value: 'all', label: 'All activity' },
+  { value: 'action', label: 'In-app actions' },
+  { value: 'device', label: 'Device & auth' },
+]
 
 export default function LeadersAuthActivity() {
   const navigate = useNavigate()
@@ -52,48 +84,39 @@ export default function LeadersAuthActivity() {
   useITLayout(
     'All Activity',
     'history',
-    'Complete device activity log for privileged admin roles — statistics, filters and export.'
+    'Every action and device event by privileged admin roles — statistics, filters and export.'
   )
 
-  const [leaders, setLeaders] = useState<{ admin_id: string; name: string }[]>([])
-  const [counts, setCounts] = useState<Record<string, number>>({})
-  const [stats, setStats] = useState({ loginsToday: 0, alerts: 0 })
+  const [leaders, setLeaders] = useState<LeaderAccount[]>([])
+  const [breakdown, setBreakdown] = useState<LeaderActivityBucket[]>([])
 
-  const [activity, setActivity] = useState<DeviceActivity[]>([])
+  const [activity, setActivity] = useState<LeaderActivityRow[]>([])
   const [filterAdmin, setFilterAdmin] = useState('all')
-  const [filterAction, setFilterAction] = useState('all')
+  const [filterCategory, setFilterCategory] = useState<'all' | LeaderActivityCategory>('all')
   const [activityLoading, setActivityLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(false)
   const [exporting, setExporting] = useState(false)
-  const [detail, setDetail] = useState<DeviceActivity | null>(null)
+  const [detail, setDetail] = useState<LeaderActivityRow | null>(null)
 
-  // Leaders list (for the filter) + day stats — loaded once.
+  // Leader accounts (for the filter) — loaded once.
   useEffect(() => {
     ;(async () => {
       try {
-        const [devices, s] = await Promise.all([
-          deviceTrackingService.getDevices(),
-          deviceTrackingService.getActivityStats(),
-        ])
-        const map = new Map<string, string>()
-        for (const d of devices as AdminDevice[]) map.set(d.admin_id, d.admin_name)
-        setLeaders([...map.entries()].map(([admin_id, name]) => ({ admin_id, name })))
-        setStats(s)
+        setLeaders(await leaderActivityService.getAccounts())
       } catch (err) {
         console.error(err)
       }
     })()
   }, [])
 
-  // Pie breakdown — recomputed when the leader filter changes.
+  // Breakdown — recomputed when the leader filter changes.
   useEffect(() => {
     ;(async () => {
       try {
-        const c = await deviceTrackingService.getActivityActionCounts(
-          filterAdmin === 'all' ? undefined : filterAdmin
+        setBreakdown(
+          await leaderActivityService.getBreakdown(filterAdmin === 'all' ? undefined : filterAdmin)
         )
-        setCounts(c)
       } catch (err) {
         console.error(err)
       }
@@ -106,9 +129,9 @@ export default function LeadersAuthActivity() {
       if (append) setLoadingMore(true)
       else setActivityLoading(true)
       try {
-        const rows = await deviceTrackingService.getActivity({
+        const rows = await leaderActivityService.getActivity({
           adminId: filterAdmin === 'all' ? undefined : filterAdmin,
-          action: filterAction === 'all' ? undefined : filterAction,
+          category: filterCategory === 'all' ? undefined : filterCategory,
           limit: PAGE_SIZE,
           offset,
         })
@@ -122,19 +145,20 @@ export default function LeadersAuthActivity() {
         setLoadingMore(false)
       }
     },
-    [filterAdmin, filterAction]
+    [filterAdmin, filterCategory]
   )
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadActivity(0, false)
   }, [loadActivity])
 
   const handleExport = async () => {
     setExporting(true)
     try {
-      const rows = await deviceTrackingService.getAllActivity({
+      const rows = await leaderActivityService.getAllActivity({
         adminId: filterAdmin === 'all' ? undefined : filterAdmin,
-        action: filterAction === 'all' ? undefined : filterAction,
+        category: filterCategory === 'all' ? undefined : filterCategory,
       })
       if (rows.length === 0) {
         toast.error('Nothing to export for these filters')
@@ -150,25 +174,36 @@ export default function LeadersAuthActivity() {
     }
   }
 
-  const pieData = useMemo(
-    () =>
-      DEVICE_ACTIVITY_ACTIONS.map((action) => ({
-        action,
-        label: actionLabel(action),
-        value: counts[action] ?? 0,
-        color: ACTION_COLOR[action] ?? 'hsl(var(--on-surface-muted))',
-      })).filter((d) => d.value > 0),
-    [counts]
-  )
+  // Pie data from the breakdown, honouring the category filter.
+  const pieData = useMemo(() => {
+    const filtered =
+      filterCategory === 'all' ? breakdown : breakdown.filter((b) => b.source === filterCategory)
+    return filtered.map((b, i) => ({
+      key: `${b.source}:${b.label}`,
+      label: b.source === 'device' ? actionLabel(b.label) : resourceType(b.label),
+      value: b.value,
+      color: pieColor(b.label, i),
+    }))
+  }, [breakdown, filterCategory])
+
   const totalEvents = useMemo(() => pieData.reduce((sum, d) => sum + d.value, 0), [pieData])
 
-  const filtered = filterAdmin !== 'all' || filterAction !== 'all'
+  const actionTotal = useMemo(
+    () => breakdown.filter((b) => b.source === 'action').reduce((s, b) => s + b.value, 0),
+    [breakdown]
+  )
+  const deviceTotal = useMemo(
+    () => breakdown.filter((b) => b.source === 'device').reduce((s, b) => s + b.value, 0),
+    [breakdown]
+  )
+
+  const filtered = filterAdmin !== 'all' || filterCategory !== 'all'
 
   const kpis = [
-    { label: 'Total events', value: totalEvents, bar: 'hsl(var(--on-surface))' },
-    { label: 'Logins today', value: stats.loginsToday, bar: 'hsl(var(--primary))' },
-    { label: 'Alerts', value: stats.alerts, bar: 'hsl(var(--destructive))' },
-    { label: 'Tracked leaders', value: leaders.length, bar: 'hsl(var(--accent))' },
+    { label: 'Total events', value: actionTotal + deviceTotal, bar: 'hsl(var(--on-surface))' },
+    { label: 'In-app actions', value: actionTotal, bar: 'hsl(var(--primary))' },
+    { label: 'Device & auth', value: deviceTotal, bar: 'hsl(var(--accent))' },
+    { label: 'Tracked leaders', value: leaders.length, bar: 'hsl(var(--destructive))' },
   ]
 
   return (
@@ -259,7 +294,7 @@ export default function LeadersAuthActivity() {
               Activity breakdown
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-              Share of each tracked event{filterAdmin !== 'all' ? ' for the selected leader' : ''}.
+              Share of each event type{filterAdmin !== 'all' ? ' for the selected leader' : ''}.
             </p>
           </div>
         </div>
@@ -302,7 +337,7 @@ export default function LeadersAuthActivity() {
                       stroke="none"
                     >
                       {pieData.map((d) => (
-                        <Cell key={d.action} fill={d.color} />
+                        <Cell key={d.key} fill={d.color} />
                       ))}
                     </Pie>
                     <Tooltip
@@ -328,7 +363,7 @@ export default function LeadersAuthActivity() {
               <div style={{ display: 'grid', gap: 8 }}>
                 {pieData.map((d) => (
                   <div
-                    key={d.action}
+                    key={d.key}
                     style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}
                   >
                     <span
@@ -384,7 +419,7 @@ export default function LeadersAuthActivity() {
               Activity log
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-              Every device check, enrolment and alert, most recent first.
+              Every action and device event, most recent first.
             </p>
           </div>
 
@@ -410,14 +445,13 @@ export default function LeadersAuthActivity() {
               ))}
             </select>
             <select
-              value={filterAction}
-              onChange={(e) => setFilterAction(e.target.value)}
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value as 'all' | LeaderActivityCategory)}
               style={selectStyle}
             >
-              <option value="all">All activity</option>
-              {DEVICE_ACTIVITY_ACTIONS.map((a) => (
-                <option key={a} value={a}>
-                  {actionLabel(a)}
+              {CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
                 </option>
               ))}
             </select>

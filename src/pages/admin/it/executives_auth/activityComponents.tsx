@@ -1,5 +1,15 @@
-import type { DeviceActivity } from '@/services/deviceTrackingService'
-import { ACTION_PILL, actionLabel, cellStyle, fmt, fmtFull } from './shared'
+import type { LeaderActivityRow } from '@/services/leaderActivityService'
+import {
+  ACTION_PILL,
+  actionLabel,
+  cellStyle,
+  fmt,
+  fmtFull,
+  prettifyAction,
+  resourceType,
+  sourceLabel,
+  statusPill,
+} from './shared'
 
 export function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -20,6 +30,24 @@ export function Row({ label, value }: { label: string; value: string }) {
   )
 }
 
+// Rows without a `source` (device-only summary page) are treated as device events.
+function isAction(row: LeaderActivityRow): boolean {
+  return row.source === 'action'
+}
+
+function eventText(row: LeaderActivityRow): string {
+  return isAction(row) ? prettifyAction(row.action) : actionLabel(row.action)
+}
+
+function targetText(row: LeaderActivityRow): string {
+  return isAction(row) ? resourceType(row.resource) : (row.device_type ?? '—')
+}
+
+function rowPill(row: LeaderActivityRow): { cls: string; label: string } {
+  if (isAction(row)) return statusPill(row.status)
+  return ACTION_PILL[row.action] ?? { cls: 'pill-mute', label: row.action }
+}
+
 /** Shared activity table used by both the summary and full-activity pages. */
 export function ActivityTable({
   rows,
@@ -27,40 +55,42 @@ export function ActivityTable({
   emptyText,
   onView,
 }: {
-  rows: DeviceActivity[]
+  rows: LeaderActivityRow[]
   loading: boolean
   emptyText: string
-  onView: (entry: DeviceActivity) => void
+  onView: (entry: LeaderActivityRow) => void
 }) {
   return (
     <div style={{ overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead>
           <tr>
-            {['Admin', 'Device', 'Event', 'IP', 'Location', 'When', ''].map((h, i) => (
-              <th
-                key={i}
-                style={{
-                  textAlign: i === 6 ? 'right' : 'left',
-                  padding: '10px 16px',
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  color: 'hsl(var(--on-surface-muted))',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {h}
-              </th>
-            ))}
+            {['Leader', 'Type', 'Event', 'Target', 'Status', 'IP', 'Location', 'When', ''].map(
+              (h, i) => (
+                <th
+                  key={i}
+                  style={{
+                    textAlign: i === 8 ? 'right' : 'left',
+                    padding: '10px 16px',
+                    fontSize: 11,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'hsl(var(--on-surface-muted))',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {h}
+                </th>
+              )
+            )}
           </tr>
         </thead>
         <tbody>
           {rows.length === 0 && !loading ? (
             <tr>
               <td
-                colSpan={7}
+                colSpan={9}
                 style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', textAlign: 'center' }}
               >
                 {emptyText}
@@ -68,12 +98,16 @@ export function ActivityTable({
             </tr>
           ) : (
             rows.map((a) => {
-              const pill = ACTION_PILL[a.action] ?? { cls: 'pill-mute', label: a.action }
+              const pill = rowPill(a)
               return (
-                <tr key={a.id}>
+                <tr key={`${a.source ?? 'device'}-${a.id}`}>
                   <td style={cellStyle}>{a.admin_name}</td>
                   <td style={{ ...cellStyle, color: 'hsl(var(--on-surface-muted))' }}>
-                    {a.device_type ?? '—'}
+                    {sourceLabel(a.source)}
+                  </td>
+                  <td style={cellStyle}>{eventText(a)}</td>
+                  <td style={{ ...cellStyle, color: 'hsl(var(--on-surface-muted))' }}>
+                    {targetText(a)}
                   </td>
                   <td style={cellStyle}>
                     <span className={`pill ${pill.cls}`}>{pill.label}</span>
@@ -118,11 +152,12 @@ export function ActivityTable({
   )
 }
 
-export function DetailModal({ entry, onClose }: { entry: DeviceActivity; onClose: () => void }) {
+export function DetailModal({ entry, onClose }: { entry: LeaderActivityRow; onClose: () => void }) {
   const fingerprint =
     entry.metadata && typeof entry.metadata.fingerprint_hash === 'string'
       ? entry.metadata.fingerprint_hash
       : null
+  const action = isAction(entry)
   return (
     <div
       style={{
@@ -180,30 +215,44 @@ export function DetailModal({ entry, onClose }: { entry: DeviceActivity; onClose
         </div>
 
         <Row label="Leader" value={entry.admin_name} />
-        <Row label="Event" value={actionLabel(entry.action)} />
-        <Row label="Device type" value={entry.device_type ?? '—'} />
+        {entry.role && <Row label="Role" value={prettifyAction(entry.role)} />}
+        <Row label="Type" value={action ? 'In-app action' : 'Device / auth event'} />
+        <Row
+          label="Event"
+          value={action ? prettifyAction(entry.action) : actionLabel(entry.action)}
+        />
+        {action ? (
+          <>
+            {entry.resource && <Row label="Target" value={entry.resource} />}
+            {entry.status && <Row label="Status" value={entry.status} />}
+          </>
+        ) : (
+          <Row label="Device type" value={entry.device_type ?? '—'} />
+        )}
         <Row label="IP address" value={entry.ip_address ?? '—'} />
         <Row label="Location" value={entry.location ?? '—'} />
         <Row label="When" value={fmtFull(entry.created_at)} />
         {fingerprint && <Row label="Fingerprint" value={fingerprint} />}
-        <div style={{ marginTop: 10 }}>
-          <p style={{ margin: '0 0 4px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-            User agent
-          </p>
-          <p
-            style={{
-              margin: 0,
-              fontSize: 12,
-              color: 'hsl(var(--on-surface))',
-              wordBreak: 'break-all',
-              background: 'hsl(var(--container-low))',
-              padding: 10,
-              borderRadius: 'var(--radius-sm)',
-            }}
-          >
-            {entry.user_agent ?? '—'}
-          </p>
-        </div>
+        {entry.user_agent && (
+          <div style={{ marginTop: 10 }}>
+            <p style={{ margin: '0 0 4px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+              User agent
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 12,
+                color: 'hsl(var(--on-surface))',
+                wordBreak: 'break-all',
+                background: 'hsl(var(--container-low))',
+                padding: 10,
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
+              {entry.user_agent}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )
