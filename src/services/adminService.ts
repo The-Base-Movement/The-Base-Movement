@@ -476,6 +476,22 @@ class AdminService {
     }))
   }
 
+  /** Count of a member's field-action check-ins so far this calendar year (YTD). */
+  async getMemberEventAttendanceYtd(authId: string): Promise<number> {
+    const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString()
+    const { count, error } = await supabase
+      .from('field_action_attendance')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', authId)
+      .gte('check_in_time', yearStart)
+
+    if (error) {
+      console.error('[ADMIN] Error fetching member event attendance:', error)
+      return 0
+    }
+    return count ?? 0
+  }
+
   async getMemberNotes(authId: string): Promise<MemberNote[]> {
     const { data, error } = await supabase
       .from('member_notes')

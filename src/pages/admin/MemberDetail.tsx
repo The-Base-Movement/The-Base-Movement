@@ -48,6 +48,7 @@ export default function AdminMemberDetail() {
   const [pollVotes, setPollVotes] = useState<MemberPollVote[]>([])
   const [sessions, setSessions] = useState<MemberSession[]>([])
   const [notes, setNotes] = useState<MemberNote[]>([])
+  const [eventsYtd, setEventsYtd] = useState(0)
   const [newNoteContent, setNewNoteContent] = useState('')
   const [isSubmittingNote, setIsSubmittingNote] = useState(false)
 
@@ -84,6 +85,7 @@ export default function AdminMemberDetail() {
         adminService.getMemberPollVotes(targetId).then(setPollVotes),
         adminService.getMemberSessions(targetId).then(setSessions),
         adminService.getMemberNotes(targetId).then(setNotes),
+        adminService.getMemberEventAttendanceYtd(targetId).then(setEventsYtd),
       ])
     })
   }, [memberId])
@@ -639,7 +641,7 @@ export default function AdminMemberDetail() {
                 : 'No donations yet',
             },
             { label: 'Polls voted', val: pollVotes.length || '—', sub: 'Poll activity' },
-            { label: 'Chapter activity', val: '—', sub: 'Events attended YTD' },
+            { label: 'Chapter activity', val: eventsYtd || '—', sub: 'Events attended YTD' },
             {
               label: 'Membership tier',
               val: member.type || 'Citizen',
