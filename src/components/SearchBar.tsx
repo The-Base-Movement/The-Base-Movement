@@ -47,7 +47,7 @@ export function SearchBar({
           height: isDashboard ? 36 : 40,
           paddingLeft: 34,
           paddingRight: value ? 32 : 12,
-          border: `1px solid ${isDashboard ? 'hsl(var(--border))' : '#e5e7eb'}`,
+          border: `1px solid hsl(var(--border))`,
           borderRadius: 'var(--radius-sm)',
           fontFamily: "'Public Sans', sans-serif",
           fontWeight: 'var(--font-weight-medium, 500)',

@@ -22,7 +22,8 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
   return (
     <article
       aria-labelledby={`blog-post-title-${post.id}`}
-      className="bg-white border border-[var(--border,#e5e7eb)] rounded-[6px] overflow-hidden group hover:-translate-y-[2px] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,.1)] hover:border-[var(--primary)] transition-all duration-200 flex flex-col h-full cursor-pointer"
+      style={{ background: 'hsl(var(--card))' }}
+      className="border border-[hsl(var(--border))] rounded-[6px] overflow-hidden group hover:-translate-y-[2px] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,.1)] hover:border-[hsl(var(--primary))] transition-all duration-200 flex flex-col h-full cursor-pointer"
     >
       {/* Image with category pill overlay */}
       <div className="aspect-[16/10] bg-stone-100 relative overflow-hidden flex items-center justify-center">

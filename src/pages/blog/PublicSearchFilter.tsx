@@ -55,7 +55,7 @@ export function PublicSearchFilter({
             gap: 6,
             background: !isFiltered ? 'hsl(var(--primary))' : 'transparent',
             color: !isFiltered ? '#fff' : 'hsl(var(--on-surface-muted))',
-            borderColor: !isFiltered ? 'hsl(var(--primary))' : '#e5e7eb',
+            borderColor: !isFiltered ? 'hsl(var(--primary))' : 'hsl(var(--border))',
           }}
         >
           All
@@ -83,7 +83,7 @@ export function PublicSearchFilter({
                 gap: 6,
                 background: isFiltered ? 'hsl(var(--primary))' : 'transparent',
                 color: isFiltered ? '#fff' : 'hsl(var(--on-surface-muted))',
-                borderColor: isFiltered ? 'hsl(var(--primary))' : '#e5e7eb',
+                borderColor: isFiltered ? 'hsl(var(--primary))' : 'hsl(var(--border))',
                 boxSizing: 'border-box',
               }}
             >
@@ -109,7 +109,7 @@ export function PublicSearchFilter({
                     right: 0,
                     zIndex: 50,
                     background: 'hsl(var(--card))',
-                    border: '1px solid #e5e7eb',
+                    border: '1px solid hsl(var(--border))',
                     borderRadius: 4,
                     boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
                     overflow: 'hidden',
@@ -134,14 +134,14 @@ export function PublicSearchFilter({
                           justifyContent: 'space-between',
                           gap: 12,
                           background: active ? 'rgba(0,107,63,0.06)' : 'transparent',
-                          color: active ? 'var(--brand-green)' : '#374151',
+                          color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
                           fontFamily: "'Public Sans', sans-serif",
                           fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 13,
                           border: 'none',
                           cursor: 'pointer',
                           borderLeft: active
-                            ? '3px solid var(--brand-green)'
+                            ? '3px solid hsl(var(--primary))'
                             : '3px solid transparent',
                           boxSizing: 'border-box',
                         }}

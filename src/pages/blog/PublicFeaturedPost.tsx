@@ -10,7 +10,10 @@ export function PublicFeaturedPost({ post, baseUrl }: PublicFeaturedPostProps) {
   return (
     <section className="mb-16">
       <p className="font-meta text-xs text-warm-gold tracking-tight mb-6">Featured</p>
-      <div className="grid md:grid-cols-2 gap-0 bg-white border border-slate-200 shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
+      <div
+        className="grid md:grid-cols-2 gap-0 border border-[hsl(var(--border))] shadow-sm overflow-hidden group hover:shadow-lg transition-shadow"
+        style={{ background: 'hsl(var(--card))' }}
+      >
         <div className="overflow-hidden bg-stone-100" style={{ aspectRatio: '16/9' }}>
           {post.imageUrl ? (
             <img
@@ -38,11 +41,11 @@ export function PublicFeaturedPost({ post, baseUrl }: PublicFeaturedPostProps) {
         </div>
         <div className="p-6 md:p-10 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-4">
-            <span className="px-2.5 py-1 rounded-sm text-xs font-medium tracking-tight border bg-stone-50 text-stone-500 border-stone-100">
+            <span className="px-2.5 py-1 rounded-sm text-xs font-medium tracking-tight border bg-[hsl(var(--container-low))] text-[hsl(var(--on-surface-muted))] border-[hsl(var(--border))]">
               {post.category}
             </span>
-            <span className="mx-2 text-stone-300 opacity-50">|</span>
-            <span className="text-xs text-slate-400 font-meta font-medium">
+            <span className="mx-2 text-[hsl(var(--on-surface-muted))] opacity-50">|</span>
+            <span className="text-xs text-[hsl(var(--on-surface-muted))] font-meta font-medium">
               {post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
                     day: 'numeric',
@@ -53,19 +56,21 @@ export function PublicFeaturedPost({ post, baseUrl }: PublicFeaturedPostProps) {
             </span>
           </div>
           <Link to={`${baseUrl}/${post.slug}`}>
-            <h2 className="text-xl md:text-2xl font-medium text-charcoal-dark tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
+            <h2 className="text-xl md:text-2xl font-medium text-[hsl(var(--on-surface))] tracking-tight leading-tight mb-4 hover:text-[hsl(var(--primary))] transition-colors">
               {post.title}
             </h2>
           </Link>
-          <p className="text-slate-500 text-sm leading-relaxed mb-6">{post.excerpt}</p>
+          <p className="text-[hsl(var(--on-surface-muted))] text-sm leading-relaxed mb-6">
+            {post.excerpt}
+          </p>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="text-xs font-medium text-stone-500 tracking-tight">
+            <div className="text-xs font-medium text-[hsl(var(--on-surface-muted))] tracking-tight">
               {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName}{' '}
               <span className="mx-2 opacity-50">|</span> {post.readTime}
             </div>
             <Link
               to={`${baseUrl}/${post.slug}`}
-              className="flex items-center gap-2 text-brand-green font-medium text-xs hover:underline"
+              className="flex items-center gap-2 text-[hsl(var(--primary))] font-medium text-xs hover:underline"
             >
               Read article{' '}
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
