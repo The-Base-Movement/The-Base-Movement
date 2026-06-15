@@ -692,7 +692,8 @@ export default function AdminMemberDetail() {
                 style={{
                   marginLeft: 6,
                   padding: '1px 7px',
-                  background: '#f1f5ee',
+                  background: 'hsl(var(--destructive))',
+                  color: '#fff',
                   borderRadius: 99,
                   fontSize: 9,
                   fontFamily: "'Public Sans', sans-serif",
