@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { BlogPost } from '@/types/admin'
 
@@ -7,6 +8,7 @@ interface BlogPostCardProps {
 }
 
 export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
+  const [hover, setHover] = useState(false)
   const formattedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
         day: 'numeric',
@@ -22,8 +24,17 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
   return (
     <article
       aria-labelledby={`blog-post-title-${post.id}`}
-      style={{ background: 'hsl(var(--card))' }}
-      className="border border-[hsl(var(--border))] rounded-[6px] overflow-hidden group hover:-translate-y-[2px] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,.1)] hover:border-[hsl(var(--primary))] transition-all duration-200 flex flex-col h-full cursor-pointer"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: 'hsl(var(--card))',
+        border: `1px solid ${hover ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
+        borderRadius: 'var(--radius-md)',
+        transform: hover ? 'translateY(-2px)' : 'none',
+        boxShadow: hover ? '0 16px 32px -8px rgba(0,0,0,.1)' : 'none',
+        transition: 'all 0.2s',
+      }}
+      className="overflow-hidden group flex flex-col h-full cursor-pointer"
     >
       {/* Image with category pill overlay */}
       <div className="aspect-[16/10] bg-stone-100 relative overflow-hidden flex items-center justify-center">

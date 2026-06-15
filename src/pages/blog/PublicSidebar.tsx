@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { BlogPost } from '@/services/adminService'
 
 interface PublicSidebarProps {
@@ -21,28 +22,50 @@ export function PublicSidebar({
   publicSubmitting,
   onPublicSubscribe,
 }: PublicSidebarProps) {
+  const [hoverCat, setHoverCat] = useState<string | null>(null)
+
   return (
     <aside className="hidden lg:block lg:w-1/3 space-y-12 lg:sticky lg:top-8 lg:self-start">
       <div>
-        <h2 className="text-[hsl(var(--on-surface))] font-medium tracking-tight mb-6">
+        <h2 className="font-medium tracking-tight mb-6" style={{ color: 'hsl(var(--on-surface))' }}>
           Categories
         </h2>
-        <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] p-8 space-y-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => onCategoryChange(cat)}
-              className={`w-full flex items-center justify-between p-3 text-xs font-medium tracking-tight transition-all group ${activeCategory === cat ? 'bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))]' : 'text-[hsl(var(--on-surface-muted))] hover:bg-[hsl(var(--container-low))] hover:text-[hsl(var(--primary))]'}`}
-            >
-              {cat === 'All' ? 'All Articles' : cat}
-              <span
-                className={`text-micro font-meta transition-colors ${activeCategory === cat ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--on-surface-muted))] group-hover:text-[hsl(var(--primary))]'}`}
+        <div
+          className="p-8 space-y-2"
+          style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+        >
+          {categories.map((cat) => {
+            const active = activeCategory === cat
+            const highlighted = active || hoverCat === cat
+            return (
+              <button
+                key={cat}
+                onClick={() => onCategoryChange(cat)}
+                onMouseEnter={() => setHoverCat(cat)}
+                onMouseLeave={() => setHoverCat(null)}
+                className="w-full flex items-center justify-between p-3 text-xs font-medium tracking-tight transition-all"
+                style={{
+                  background: active
+                    ? 'hsl(var(--primary) / 0.1)'
+                    : hoverCat === cat
+                      ? 'hsl(var(--container-low))'
+                      : 'transparent',
+                  color: highlighted ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                }}
               >
-                {cat === 'All' ? posts.length : posts.filter((p) => p.category === cat).length}{' '}
-                Posts
-              </span>
-            </button>
-          ))}
+                {cat === 'All' ? 'All Articles' : cat}
+                <span
+                  className="text-micro font-meta transition-colors"
+                  style={{
+                    color: highlighted ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  {cat === 'All' ? posts.length : posts.filter((p) => p.category === cat).length}{' '}
+                  Posts
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
       <div
