@@ -137,23 +137,30 @@ export default function ChapterDetails() {
         if (!pollData?.length) return
         setPolls(pollData as ChapterPoll[])
         const pollIds = pollData.map((p) => p.id)
-        const { data: votes } = await supabase
-          .from('chapter_poll_votes')
-          .select('poll_id, candidate_id, voter_id')
-          .in('poll_id', pollIds)
-        if (votes) {
+        // Tallies come from a SECURITY DEFINER RPC that returns counts only
+        // (never voter_id), so individual ballots stay private. Raw vote rows
+        // are RLS-restricted to the viewer's own votes.
+        const { data: results } = await supabase.rpc('get_chapter_poll_results', {
+          p_poll_ids: pollIds,
+        })
+        if (results) {
           const counts: Record<string, number> = {}
-          votes.forEach((v) => {
-            counts[v.candidate_id] = (counts[v.candidate_id] || 0) + 1
+          ;(results as { candidate_id: string; votes: number }[]).forEach((r) => {
+            counts[r.candidate_id] = (counts[r.candidate_id] || 0) + Number(r.votes)
           })
           setVoteCounts(counts)
-          if (authUserId) {
+        }
+        if (authUserId) {
+          const { data: mine } = await supabase
+            .from('chapter_poll_votes')
+            .select('poll_id, candidate_id')
+            .eq('voter_id', authUserId)
+            .in('poll_id', pollIds)
+          if (mine) {
             const myVotes: Record<string, string> = {}
-            votes
-              .filter((v) => v.voter_id === authUserId)
-              .forEach((v) => {
-                myVotes[v.poll_id] = v.candidate_id
-              })
+            ;(mine as { poll_id: string; candidate_id: string }[]).forEach((v) => {
+              myVotes[v.poll_id] = v.candidate_id
+            })
             setUserVotes(myVotes)
           }
         }
