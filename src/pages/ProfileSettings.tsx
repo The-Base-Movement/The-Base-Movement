@@ -12,6 +12,7 @@ import { MembershipCardPanel } from './settings/MembershipCardPanel'
 import { VerificationStatusPanel } from './settings/VerificationStatusPanel'
 import { VoterRegistrationPanel } from './settings/VoterRegistrationPanel'
 import { PersonalInfoForm } from './settings/PersonalInfoForm'
+import { KycDocuments } from '@/components/KycDocuments'
 import {
   jobTaxonomyService,
   emptyJobSelection,
@@ -123,6 +124,7 @@ export default function ProfileSettings() {
   const [userRegNo] = useState(() => sessionStore.getItem('userRegNo') || '')
   const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [authId, setAuthId] = useState<string | null>(null)
 
   const [form, setForm] = useState<FormState>({
     fullName: '',
@@ -171,6 +173,7 @@ export default function ProfileSettings() {
       const {
         data: { user },
       } = await supabase.auth.getUser()
+      setAuthId(user?.id ?? null)
 
       let profile = regNo ? await adminService.getMemberProfile(regNo) : null
       if (!profile && user?.id) {
@@ -391,6 +394,7 @@ export default function ProfileSettings() {
             onAvatarChange={handleAvatarChange}
           />
           <VerificationStatusPanel />
+          {authId && <KycDocuments userId={authId} />}
           <VoterRegistrationPanel region={form.region} constituency={form.constituency} />
         </div>
 

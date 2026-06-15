@@ -1,6 +1,8 @@
 import { Fragment, useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { type Member, adminService } from '@/services/adminService'
+import { kycService, type KycStatus } from '@/services/kycService'
+import { KycDocuments } from '@/components/KycDocuments'
 import { toast } from 'sonner'
 
 interface IdentityTabProps {
@@ -12,6 +14,7 @@ interface IdentityTabProps {
 export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
   const [nationalId, setNationalId] = useState<string | null>(null)
   const [revealing, setRevealing] = useState(false)
+  const [kycStatus, setKycStatus] = useState<KycStatus>('not_uploaded')
 
   // Polling station state
   const [psCode, setPsCode] = useState<string | null>(null)
@@ -39,6 +42,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
       setPsStatus(reg?.registration_status || null)
       setPsLoaded(true)
     })
+    kycService.get(member.authId).then((k) => setKycStatus(k?.status ?? 'not_uploaded'))
   }, [member.authId])
 
   useEffect(() => {
@@ -550,6 +554,11 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
             )}
           </div>
         </div>
+        {member.authId && (
+          <div style={{ marginBottom: 20 }}>
+            <KycDocuments userId={member.authId} showVerifyControls />
+          </div>
+        )}
       </div>
       <div>
         <div className="panel" style={{ marginBottom: 20 }}>
@@ -579,7 +588,18 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                 label: 'Region assigned',
                 detail: member.region || 'unassigned',
               },
-              { ok: false, label: 'Ghana Card not uploaded', detail: 'review' },
+              {
+                ok: kycStatus === 'verified',
+                label:
+                  kycStatus === 'verified'
+                    ? 'Ghana Card verified'
+                    : kycStatus === 'not_uploaded'
+                      ? 'Ghana Card not uploaded'
+                      : kycStatus === 'failed'
+                        ? 'Ghana Card verification failed'
+                        : 'Ghana Card awaiting review',
+                detail: kycStatus.replace('_', ' '),
+              },
             ].map((c, i, arr) => (
               <div
                 key={i}
