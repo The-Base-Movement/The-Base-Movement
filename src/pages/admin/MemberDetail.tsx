@@ -11,6 +11,11 @@ import {
   type MemberNote,
 } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
+import {
+  jobTaxonomyService,
+  emptyJobSelection,
+  type JobSelection,
+} from '@/services/jobTaxonomyService'
 import { toast } from 'sonner'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
@@ -47,6 +52,8 @@ export default function AdminMemberDetail() {
 
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [editForm, setEditForm] = useState<Partial<Member>>({})
+  const [jobSelection, setJobSelection] = useState<JobSelection>(emptyJobSelection)
+  const [jobDirty, setJobDirty] = useState(false)
   const [isSavingEdit, setIsSavingEdit] = useState(false)
 
   const [isVerifyOpen, setIsVerifyOpen] = useState(false)
@@ -119,6 +126,15 @@ export default function AdminMemberDetail() {
       city: member.city,
       residentialAddress: member.residentialAddress,
     })
+    setJobSelection(
+      jobTaxonomyService.toSelection({
+        job_industry_id: member.jobIndustryId,
+        job_sub_category_id: member.jobSubCategoryId,
+        job_role_id: member.jobRoleId,
+        job_custom_title: member.jobCustomTitle,
+      })
+    )
+    setJobDirty(false)
     setIsEditOpen(true)
   }
 
@@ -126,10 +142,21 @@ export default function AdminMemberDetail() {
     if (!member) return
     setIsSavingEdit(true)
     try {
-      await adminService.updateMemberProfile(member.id, editForm)
+      // Only send `job` when the admin actually changed it, so an untouched edit
+      // never wipes an existing selection.
+      const payload = jobDirty ? { ...editForm, job: jobSelection } : editForm
+      await adminService.updateMemberProfile(member.id, payload)
       toast.success('Member profile updated.')
       setIsEditOpen(false)
-      setMember({ ...member, ...editForm } as Member)
+      const jobPatch: Partial<Member> = jobDirty
+        ? {
+            jobIndustryId: jobSelection.industryId,
+            jobSubCategoryId: jobSelection.subCategoryId,
+            jobRoleId: jobSelection.isOther ? null : jobSelection.roleId,
+            jobCustomTitle: jobSelection.isOther ? jobSelection.customTitle.trim() || null : null,
+          }
+        : {}
+      setMember({ ...member, ...editForm, ...jobPatch } as Member)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to update profile.')
     } finally {
@@ -713,6 +740,16 @@ export default function AdminMemberDetail() {
         onClose={() => setIsEditOpen(false)}
         isSaving={isSavingEdit}
         chapters={chapters.map((c) => c.name)}
+        jobSelection={jobSelection}
+        onJobChange={(next) => {
+          setJobSelection(next)
+          setJobDirty(true)
+        }}
+        onJobLabelChange={(label) => {
+          // Keep the denormalised profession in sync, but never clear it on the
+          // selector's initial empty fire.
+          if (label) setEditForm((f) => ({ ...f, profession: label }))
+        }}
       />
 
       <VerifyModal
@@ -794,6 +831,8 @@ export default function AdminMemberDetail() {
                   borderRadius: 'var(--radius-sm)',
                   fontSize: 13,
                   fontFamily: "'Public Sans', sans-serif",
+                  background: 'hsl(var(--card))',
+                  color: 'hsl(var(--on-surface))',
                   boxSizing: 'border-box',
                 }}
               />
@@ -825,6 +864,8 @@ export default function AdminMemberDetail() {
                   borderRadius: 'var(--radius-sm)',
                   fontSize: 13,
                   fontFamily: "'Public Sans', sans-serif",
+                  background: 'hsl(var(--card))',
+                  color: 'hsl(var(--on-surface))',
                   resize: 'vertical',
                   boxSizing: 'border-box',
                 }}

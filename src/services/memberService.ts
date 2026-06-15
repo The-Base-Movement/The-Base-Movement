@@ -122,7 +122,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title'
       )
       .eq('registration_number', regNo)
       .maybeSingle()
@@ -153,6 +153,10 @@ class MemberService {
       city: data.city || undefined,
       residentialAddress: data.residential_address || undefined,
       ageRange: data.age_range || undefined,
+      jobIndustryId: data.job_industry_id ?? null,
+      jobSubCategoryId: data.job_sub_category_id ?? null,
+      jobRoleId: data.job_role_id ?? null,
+      jobCustomTitle: data.job_custom_title ?? null,
     }
   }
 

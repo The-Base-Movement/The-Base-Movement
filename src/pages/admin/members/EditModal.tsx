@@ -1,5 +1,7 @@
 import { createPortal } from 'react-dom'
 import { type Member } from '@/services/adminService'
+import { JobSelector } from '@/components/JobSelector'
+import { type JobSelection } from '@/services/jobTaxonomyService'
 
 interface EditModalProps {
   isOpen: boolean
@@ -10,6 +12,9 @@ interface EditModalProps {
   onClose: () => void
   isSaving: boolean
   chapters?: string[]
+  jobSelection: JobSelection
+  onJobChange: (next: JobSelection) => void
+  onJobLabelChange: (label: string) => void
 }
 
 export function EditModal({
@@ -21,6 +26,9 @@ export function EditModal({
   onClose,
   isSaving,
   chapters,
+  jobSelection,
+  onJobChange,
+  onJobLabelChange,
 }: EditModalProps) {
   if (!isOpen || !member) return null
   return createPortal(
@@ -214,6 +222,8 @@ export function EditModal({
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-normal, 400)',
                     fontSize: 13,
+                    background: 'hsl(var(--surface))',
+                    color: 'hsl(var(--on-surface))',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -221,6 +231,29 @@ export function EditModal({
               )}
             </div>
           ))}
+
+          {/* Structured job selection — keeps the denormalised profession in sync */}
+          <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
+            <p
+              style={{
+                margin: '0 0 12px',
+                fontSize: 11,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              Job selection
+            </p>
+            <JobSelector
+              idPrefix="edit-job"
+              value={jobSelection}
+              onChange={onJobChange}
+              onLabelChange={onJobLabelChange}
+            />
+          </div>
         </div>
         <div
           style={{

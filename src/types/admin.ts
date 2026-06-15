@@ -18,6 +18,10 @@ export interface Member {
   profession?: string
   city?: string
   residentialAddress?: string
+  jobIndustryId?: number | null
+  jobSubCategoryId?: number | null
+  jobRoleId?: number | null
+  jobCustomTitle?: string | null
   registrationSource?: 'digital' | 'scan' | 'admin'
   deletedAt?: string
 }
