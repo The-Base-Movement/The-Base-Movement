@@ -1,5 +1,6 @@
 import type { Factor } from '@supabase/supabase-js'
 import { createPortal } from 'react-dom'
+import { QRCodeSVG } from 'qrcode.react'
 
 interface PasswordForm {
   currentPassword: string
@@ -9,7 +10,7 @@ interface PasswordForm {
 
 interface MfaEnrollData {
   id: string
-  qr: string
+  uri: string
 }
 
 interface SecuritySettingsTabProps {
@@ -289,12 +290,14 @@ export function SecuritySettingsTab({
                       border: '1px solid hsl(var(--border))',
                     }}
                   >
-                    <img
-                      src={mfaEnrollData.qr}
-                      alt="MFA QR Code"
-                      style={{ width: 192, height: 192 }}
-                      decoding="async"
-                      loading="lazy"
+                    <QRCodeSVG
+                      value={mfaEnrollData.uri}
+                      size={192}
+                      level="M"
+                      marginSize={2}
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                      style={{ display: 'block' }}
                     />
                   </div>
                   <div style={{ textAlign: 'center' }}>

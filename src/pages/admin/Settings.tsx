@@ -31,9 +31,10 @@ type SettingsTab =
 interface SupabaseAuthWithMFA {
   mfa: {
     listFactors: () => Promise<{ data: { all: Factor[] }; error: AuthError | null }>
-    enroll: (params: {
-      factorType: 'totp'
-    }) => Promise<{ data: { id: string; totp: { qr_code: string } }; error: AuthError | null }>
+    enroll: (params: { factorType: 'totp'; friendlyName?: string; issuer?: string }) => Promise<{
+      data: { id: string; totp: { qr_code: string; secret: string; uri: string } }
+      error: AuthError | null
+    }>
     challenge: (params: {
       factorId: string
     }) => Promise<{ data: { id: string }; error: AuthError | null }>
@@ -74,11 +75,14 @@ export default function AdminSettings() {
   const [mfaFactors, setMfaFactors] = useState<Factor[]>([])
   const [showMfaDialog, setShowMfaDialog] = useState(false)
   const [mfaStep, setMfaStep] = useState<'qr' | 'verify'>('qr')
-  const [mfaEnrollData, setMfaEnrollData] = useState<{ id: string; qr: string } | null>(null)
+  const [mfaEnrollData, setMfaEnrollData] = useState<{ id: string; uri: string } | null>(null)
   const [mfaCode, setMfaCode] = useState('')
   const [siteSettings, setSiteSettings] = useState<Record<string, unknown>>({})
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Synchronous re-entrancy guard so a double-click can't run the enroll cleanup
+  // twice and delete the factor the first call just created (see MfaSetupNag).
+  const mfaEnrollingRef = useRef(false)
 
   const [profileForm, setProfileForm] = useState({
     fullName: '',
@@ -152,16 +156,34 @@ export default function AdminSettings() {
   }, [])
 
   const handleStartMfaEnroll = async () => {
+    if (mfaEnrollingRef.current) return
+    mfaEnrollingRef.current = true
     try {
-      const { data, error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.enroll({
+      const auth = supabase.auth as unknown as SupabaseAuthWithMFA
+      // Drop any dangling unverified factors first — each enroll mints a fresh
+      // secret, so a leftover unverified factor makes the scanned code verify
+      // against the wrong secret and collides on the default friendly name.
+      const existing = await auth.mfa.listFactors()
+      if (!existing.error) {
+        await Promise.all(
+          (existing.data?.all ?? [])
+            .filter((f) => f.factor_type === 'totp' && f.status === 'unverified')
+            .map((f) => auth.mfa.unenroll({ factorId: f.id }))
+        )
+      }
+      const { data, error } = await auth.mfa.enroll({
         factorType: 'totp',
+        friendlyName: `Authenticator (${new Date().toISOString()})`,
+        issuer: 'The Base Movement',
       })
       if (error) throw error
-      setMfaEnrollData({ id: data.id, qr: data.totp.qr_code })
+      setMfaEnrollData({ id: data.id, uri: data.totp.uri })
       setMfaStep('qr')
       setShowMfaDialog(true)
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : 'Failed to start MFA enrollment')
+    } finally {
+      mfaEnrollingRef.current = false
     }
   }
 

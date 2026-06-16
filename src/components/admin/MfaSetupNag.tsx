@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 import type { AuthError, Session, User } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
@@ -12,12 +13,14 @@ const NAG_INTERVAL_MS = 5 * 60 * 1000 // re-prompt every 5 minutes until enrolle
 interface SupabaseAuthWithMFA {
   mfa: {
     listFactors: () => Promise<{
-      data: { totp?: { status: string }[] } | null
+      data: { totp?: { id: string; status: string }[] } | null
       error: AuthError | null
     }>
-    enroll: (params: {
-      factorType: 'totp'
-    }) => Promise<{ data: { id: string; totp: { qr_code: string } }; error: AuthError | null }>
+    enroll: (params: { factorType: 'totp'; friendlyName?: string; issuer?: string }) => Promise<{
+      data: { id: string; totp: { qr_code: string; secret: string; uri: string } }
+      error: AuthError | null
+    }>
+    unenroll: (params: { factorId: string }) => Promise<{ data: unknown; error: AuthError | null }>
     challenge: (params: {
       factorId: string
     }) => Promise<{ data: { id: string }; error: AuthError | null }>
@@ -45,9 +48,16 @@ export function MfaSetupNag() {
   const location = useLocation()
   const [visible, setVisible] = useState(false)
   const [step, setStep] = useState<Step>('intro')
-  const [enrollData, setEnrollData] = useState<{ id: string; qr: string } | null>(null)
+  const [enrollData, setEnrollData] = useState<{ id: string; uri: string; secret: string } | null>(
+    null
+  )
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)
+  // Synchronous re-entrancy guard: `busy` state is async-stale, so a second
+  // handleActivate (nag re-arm, re-render, double-click) could slip past it and
+  // its cleanup would delete the factor the first run just enrolled. This ref
+  // blocks that immediately.
+  const enrollingRef = useRef(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Suppress the popup while they're on the settings page actually enrolling.
   // Kept in a ref (updated in an effect) so the timer callback reads the latest
@@ -123,16 +133,42 @@ export function MfaSetupNag() {
 
   // "Set up 2FA now" — begin enrollment immediately, inline.
   const handleActivate = async () => {
+    if (enrollingRef.current) return // already enrolling — don't double-run the cleanup
+    enrollingRef.current = true
     setBusy(true)
     try {
-      const { data, error } = await mfaAuth().mfa.enroll({ factorType: 'totp' })
+      const auth = mfaAuth()
+      // Clear out any dangling unverified TOTP factors first. Each enroll mints a
+      // fresh secret, so leftover unverified factors (from an earlier attempt)
+      // cause the scanned code to be checked against the wrong secret — and
+      // collide on the default friendly name. Remove them BEFORE enrolling so the
+      // QR we show is always the one we verify against. (A factor already reaped
+      // server-side 404s here, which unenroll returns as an error, not a throw.)
+      const existing = await auth.mfa.listFactors()
+      if (!existing.error) {
+        await Promise.all(
+          (existing.data?.totp ?? [])
+            .filter((f) => f.status === 'unverified')
+            .map((f) => auth.mfa.unenroll({ factorId: f.id }))
+        )
+      }
+      const { data, error } = await auth.mfa.enroll({
+        factorType: 'totp',
+        friendlyName: `Authenticator (${new Date().toISOString()})`,
+        issuer: 'The Base Movement',
+      })
       if (error) throw error
-      setEnrollData({ id: data.id, qr: data.totp.qr_code })
+      // Render the QR ourselves from the otpauth:// URI. Supabase's totp.qr_code
+      // is an `image/svg+xml;utf-8,…` data URI whose unescaped `#` hex colors get
+      // parsed as a URL fragment, so the browser drops half the SVG and the QR
+      // becomes unscannable. Generating from the URI sidesteps that entirely.
+      setEnrollData({ id: data.id, uri: data.totp.uri, secret: data.totp.secret })
       setCode('')
       setStep('qr')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to start 2FA enrollment')
     } finally {
+      enrollingRef.current = false
       setBusy(false)
     }
   }
@@ -277,11 +313,14 @@ export function MfaSetupNag() {
                 border: '1px solid hsl(var(--border))',
               }}
             >
-              <img
-                src={enrollData.qr}
-                alt="2FA QR code"
-                style={{ width: 192, height: 192, display: 'block' }}
-                decoding="async"
+              <QRCodeSVG
+                value={enrollData.uri}
+                size={192}
+                level="M"
+                marginSize={2}
+                bgColor="#ffffff"
+                fgColor="#000000"
+                style={{ display: 'block' }}
               />
             </div>
             <p
@@ -295,7 +334,52 @@ export function MfaSetupNag() {
               }}
             >
               Use Google Authenticator, Authy, or any TOTP app, then continue.
+              <br />
+              First delete any old &ldquo;The Base Movement&rdquo; entry — a stale one gives invalid
+              codes.
             </p>
+
+            {/* Manual-entry fallback: lets the admin add a clean entry by hand if
+                the camera scan misfires or the app shows confusing duplicates. */}
+            <details style={{ width: '100%' }}>
+              <summary
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 11.5,
+                  color: 'hsl(var(--primary))',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  listStyle: 'none',
+                }}
+              >
+                Can&apos;t scan? Enter this key manually
+              </summary>
+              <code
+                onClick={() => {
+                  void navigator.clipboard?.writeText(enrollData.secret)
+                  toast.success('Setup key copied')
+                }}
+                title="Click to copy"
+                style={{
+                  display: 'block',
+                  marginTop: 10,
+                  padding: '10px 12px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: 'monospace',
+                  fontSize: 13,
+                  letterSpacing: '0.12em',
+                  wordBreak: 'break-all',
+                  textAlign: 'center',
+                  color: 'hsl(var(--on-surface))',
+                  cursor: 'copy',
+                }}
+              >
+                {enrollData.secret}
+              </code>
+            </details>
+
             <div style={{ display: 'flex', gap: 10, width: '100%' }}>
               <button
                 className="btn btn-outline"
