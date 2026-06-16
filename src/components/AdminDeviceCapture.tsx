@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
+import { authService } from '@/services/authService'
 import {
   deviceTrackingService,
   isDeviceTrackedRole,
@@ -134,6 +135,14 @@ export default function AdminDeviceCapture() {
           onDone={() => {
             sessionStorage.setItem(CAPTURE_KEY, '1')
             setPrompt(null)
+          }}
+          onCancel={async () => {
+            // Mandatory ISP-change re-verify was declined → sign out, do not enter.
+            try {
+              await authService.logout()
+            } finally {
+              window.location.assign('/login')
+            }
           }}
         />
       )}

@@ -37,10 +37,13 @@ function clientIp(req: Request): string | null {
   return req.headers.get('cf-connecting-ip') ?? req.headers.get('x-real-ip') ?? null
 }
 
-// Best-effort geo lookup; never blocks the capture if it fails. Tries
-// ipwho.is (https, no key) first, then ip-api.com as a fallback.
-async function geoLocate(ip: string | null): Promise<string | null> {
-  if (!ip) return null
+// Best-effort geo + ISP lookup; never blocks the capture if it fails. Tries
+// ipwho.is (https, no key) first, then ip-api.com as a fallback. Returns the
+// network operator (ISP/org) so the device gate can detect an ISP change.
+async function geoLocate(
+  ip: string | null
+): Promise<{ location: string | null; isp: string | null }> {
+  if (!ip) return { location: null, isp: null }
 
   try {
     const res = await fetch(`https://ipwho.is/${ip}`)
@@ -48,7 +51,8 @@ async function geoLocate(ip: string | null): Promise<string | null> {
       const g = await res.json()
       if (g && g.success !== false) {
         const parts = [g.city, g.region, g.country].filter(Boolean)
-        if (parts.length) return parts.join(', ')
+        const isp = g.connection?.isp || g.connection?.org || null
+        return { location: parts.length ? parts.join(', ') : null, isp }
       }
     }
   } catch {
@@ -56,19 +60,61 @@ async function geoLocate(ip: string | null): Promise<string | null> {
   }
 
   try {
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`)
+    const res = await fetch(
+      `http://ip-api.com/json/${ip}?fields=status,country,regionName,city,isp,org`
+    )
     if (res.ok) {
       const g = await res.json()
       if (g && g.status === 'success') {
         const parts = [g.city, g.regionName, g.country].filter(Boolean)
-        if (parts.length) return parts.join(', ')
+        return { location: parts.length ? parts.join(', ') : null, isp: g.isp || g.org || null }
       }
     }
   } catch {
-    // ignore — geo is non-essential
+    // ignore — geo/ISP is best-effort
   }
 
-  return null
+  return { location: null, isp: null }
+}
+
+// Fire a #alerts Discord notice when a device is blocked (an unrecognised device
+// tried to reach a privileged dashboard). Non-fatal.
+async function alertBlocked(
+  supabaseUrl: string,
+  serviceKey: string,
+  role: string,
+  ip: string | null,
+  location: string | null
+) {
+  try {
+    await fetch(`${supabaseUrl}/functions/v1/discord-notify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({
+        channel: 'alerts',
+        embeds: [
+          {
+            title: '🔴 Blocked device login attempt',
+            description:
+              'An unrecognised device tried to access a privileged dashboard and was blocked.',
+            color: 0xce1126,
+            fields: [
+              { name: 'Role', value: role, inline: true },
+              { name: 'IP', value: ip ?? '—', inline: true },
+              { name: 'Location', value: location ?? '—', inline: true },
+            ],
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      }),
+    })
+  } catch (e) {
+    console.error('[capture-admin-device] alert failed:', e)
+  }
 }
 
 serve(async (req: Request) => {
@@ -113,7 +159,7 @@ serve(async (req: Request) => {
     // 4. Authoritative server-side signals.
     const ip = clientIp(req)
     const userAgent = req.headers.get('user-agent')
-    const location = await geoLocate(ip)
+    const { location, isp } = await geoLocate(ip)
 
     // 5. Enrol-or-validate.
     const { data, error } = await supabase.rpc('evaluate_admin_device', {
@@ -127,11 +173,16 @@ serve(async (req: Request) => {
       p_ip: ip,
       p_location: location,
       p_user_agent: userAgent,
+      p_isp: isp,
     })
 
     if (error) {
       console.error('[capture-admin-device] rpc error:', error)
       return json({ error: 'Failed to evaluate device' }, 500)
+    }
+
+    if (data?.decision === 'blocked') {
+      await alertBlocked(supabaseUrl, serviceKey, admin.role, ip, location)
     }
 
     return json({ tracked: true, ...data })

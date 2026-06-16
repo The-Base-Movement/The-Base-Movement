@@ -45,33 +45,38 @@ function clientIp(req: Request): string | null {
 }
 
 // Best-effort geo lookup (ipwho.is, then ip-api.com); never throws.
-async function geoLocate(ip: string | null): Promise<string | null> {
-  if (!ip) return null
+async function geoLocate(
+  ip: string | null
+): Promise<{ location: string | null; isp: string | null }> {
+  if (!ip) return { location: null, isp: null }
   try {
     const res = await fetch(`https://ipwho.is/${ip}`)
     if (res.ok) {
       const g = await res.json()
       if (g && g.success !== false) {
         const parts = [g.city, g.region, g.country].filter(Boolean)
-        if (parts.length) return parts.join(', ')
+        const isp = g.connection?.isp || g.connection?.org || null
+        return { location: parts.length ? parts.join(', ') : null, isp }
       }
     }
   } catch {
     // fall through
   }
   try {
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`)
+    const res = await fetch(
+      `http://ip-api.com/json/${ip}?fields=status,country,regionName,city,isp,org`
+    )
     if (res.ok) {
       const g = await res.json()
       if (g && g.status === 'success') {
         const parts = [g.city, g.regionName, g.country].filter(Boolean)
-        if (parts.length) return parts.join(', ')
+        return { location: parts.length ? parts.join(', ') : null, isp: g.isp || g.org || null }
       }
     }
   } catch {
     // ignore
   }
-  return null
+  return { location: null, isp: null }
 }
 
 // Origin allowlist: localhost (any port) for dev, plus configured production
@@ -204,12 +209,14 @@ serve(async (req: Request) => {
       // passkey yet): rebind the slot to the new fingerprint after enrolling.
       if (deviceId && body.rebind && body.fingerprint_hash) {
         const ip = clientIp(req)
+        const { location, isp } = await geoLocate(ip)
         await supabase.rpc('confirm_admin_device_step_up', {
           p_device_id: deviceId,
           p_fingerprint_hash: body.fingerprint_hash,
           p_ip: ip,
-          p_location: await geoLocate(ip),
+          p_location: location,
           p_user_agent: req.headers.get('user-agent'),
+          p_isp: isp,
         })
       }
 
@@ -310,12 +317,14 @@ serve(async (req: Request) => {
       let stepUp = null
       if (deviceId && body.fingerprint_hash) {
         const ip = clientIp(req)
+        const { location, isp } = await geoLocate(ip)
         const { data } = await supabase.rpc('confirm_admin_device_step_up', {
           p_device_id: deviceId,
           p_fingerprint_hash: body.fingerprint_hash,
           p_ip: ip,
-          p_location: await geoLocate(ip),
+          p_location: location,
           p_user_agent: req.headers.get('user-agent'),
+          p_isp: isp,
         })
         stepUp = data
       }

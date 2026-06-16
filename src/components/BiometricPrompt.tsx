@@ -9,15 +9,19 @@ import { deviceTrackingService, type EvaluateResult } from '@/services/deviceTra
  *              (falls back to enrolment if no passkey exists anywhere).
  *
  * WebAuthn requires a user gesture, so every ceremony is triggered by a button.
- * Nothing here hard-blocks: the user already passed the 2FA gate to get in, so
- * "skip" lets them proceed (layered model, no lock-outs).
+ *   - enrol mode is non-blocking: "Set up later" lets the user proceed.
+ *   - step-up mode is MANDATORY (it only fires when the device's ISP/network
+ *     changed): the user must re-verify with their biometric to continue, or
+ *     cancel — which signs them out. There is no skip-through.
  */
 export default function BiometricPrompt({
   result,
   onDone,
+  onCancel,
 }: {
   result: EvaluateResult
   onDone: () => void
+  onCancel?: () => void
 }) {
   const isStepUp = result.decision === 'step_up_required'
   const [status, setStatus] = useState<'idle' | 'working' | 'error'>('idle')
@@ -51,17 +55,17 @@ export default function BiometricPrompt({
       if (outcome === 'verified') return onDone()
       if (outcome === 'needs_enrol') return runEnrol(true) // no passkey yet → enrol + rebind
       setStatus('error')
-      setMessage('We could not verify your biometric. Try again, or skip to continue with 2FA.')
+      setMessage('We could not verify your biometric. Try again to continue.')
     } catch (err) {
       console.warn('[biometric] step-up failed:', err)
       setStatus('error')
-      setMessage('Verification was cancelled. Try again, or skip to continue with 2FA.')
+      setMessage('Verification was cancelled. Try again to continue.')
     }
   }
 
   const title = isStepUp ? 'Verify this device' : 'Secure this device'
   const body = isStepUp
-    ? 'We don’t recognise this device for your account. Verify with your biometric (Windows Hello / Face ID) to continue.'
+    ? 'Your network has changed since this device was last verified. Re-verify with your biometric (Windows Hello / Face ID) to continue.'
     : 'Add a biometric (Windows Hello / Face ID / fingerprint) so only your devices can reach the admin panel.'
 
   return (
@@ -144,9 +148,9 @@ export default function BiometricPrompt({
           className="btn btn-ghost"
           style={{ width: '100%' }}
           disabled={status === 'working'}
-          onClick={onDone}
+          onClick={isStepUp ? (onCancel ?? onDone) : onDone}
         >
-          {isStepUp ? 'Skip — continue with 2FA' : 'Set up later'}
+          {isStepUp ? 'Cancel & sign out' : 'Set up later'}
         </button>
       </div>
     </div>
