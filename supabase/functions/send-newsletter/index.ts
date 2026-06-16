@@ -129,6 +129,32 @@ interface Recipient {
   id: string
 }
 
+// Announce a sent newsletter to the #content Discord channel. Non-fatal.
+async function notifyContent(subject: string, recipientCount: number) {
+  try {
+    const url = Deno.env.get('SUPABASE_URL') ?? ''
+    const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    await fetch(`${url}/functions/v1/discord-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        channel: 'content',
+        embeds: [
+          {
+            title: '📨 Newsletter Sent',
+            description: `**${subject}**`,
+            color: 0x5865f2,
+            fields: [{ name: 'Recipients', value: String(recipientCount), inline: true }],
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      }),
+    })
+  } catch (e) {
+    console.error('[NEWSLETTER] Discord notify failed:', e)
+  }
+}
+
 // Fetch {email, id} pairs for a single audience filter, respecting opt-out
 async function fetchRecipientsForFilter(
   supabase: ReturnType<typeof createClient>,
@@ -331,6 +357,8 @@ Deno.serve(async (req) => {
         sent_at: new Date().toISOString(),
       })
       .eq('id', newsletter_id)
+
+    await notifyContent(subject, recipients.length)
 
     return new Response(JSON.stringify({ sent: recipients.length, batches: batchCount }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
