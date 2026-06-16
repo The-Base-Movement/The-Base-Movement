@@ -60,8 +60,9 @@ serve(async (req: Request) => {
     } = await admin.auth.getUser(jwt)
     if (callerError || !caller) return json({ error: 'Not authenticated.' }, 401)
 
+    // Role source of truth is the admins table (public.users has no role column).
     const { data: callerProfile } = await admin
-      .from('users')
+      .from('admins')
       .select('role')
       .eq('id', caller.id)
       .maybeSingle()

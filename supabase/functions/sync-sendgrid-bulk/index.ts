@@ -95,7 +95,13 @@ Deno.serve(async (req: Request) => {
 
     if (error) throw error
 
-    const members: MemberRow[] = data ?? []
+    // Keep only rows with a syntactically valid email. The DB filter excludes
+    // null/'' but whitespace-only or malformed values slip through and SendGrid
+    // rejects the whole batch with "email is required".
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const members: MemberRow[] = (data ?? [])
+      .map((m: MemberRow) => ({ ...m, email: (m.email ?? '').trim() }))
+      .filter((m: MemberRow) => EMAIL_RE.test(m.email))
     const total = members.length
 
     if (total === 0) {
