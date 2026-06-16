@@ -184,6 +184,7 @@ export function useHelpdesk(departmentId: string) {
           message: `Your ticket "${ticket?.subject ?? ''}" has been marked as ${status}.`,
           type: 'Helpdesk',
         })
+        discordService.helpdeskTicketResolved(ticket?.subject ?? '', status)
       }
       await fetchTickets()
       if (detail?.ticket.id === ticketId) await loadDetail(ticketId)

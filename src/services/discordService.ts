@@ -283,4 +283,31 @@ export const discordService = {
       'chapters'
     )
   },
+
+  leaderAppointed(scope: 'Chapter' | 'Constituency', area: string, leaderName: string): void {
+    post(
+      {
+        title: '👑 Leader Appointed',
+        description: `**${leaderName}** now leads the **${area}** ${scope.toLowerCase()}.`,
+        color: 0xdaa520,
+        fields: [{ name: scope, value: area || '—', inline: true }],
+        timestamp: new Date().toISOString(),
+      },
+      'chapters'
+    )
+  },
+
+  // ── #helpdesk (resolution) ─────────────────────────────────────
+  helpdeskTicketResolved(subject: string, status: string): void {
+    post(
+      {
+        title: '🎫 Ticket Resolved',
+        description: `**${subject}**`,
+        color: 0x006b3f,
+        fields: [{ name: 'Status', value: status, inline: true }],
+        timestamp: new Date().toISOString(),
+      },
+      'helpdesk'
+    )
+  },
 }

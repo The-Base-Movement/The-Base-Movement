@@ -363,6 +363,20 @@ class ChapterService {
       return false
     }
 
+    // Announce a new leader appointment (not a clear/removal).
+    if (chapter.leader_id && chapter.leader_name) {
+      let areaName = chapter.name
+      if (!areaName) {
+        const { data: row } = await supabase
+          .from('chapters')
+          .select('name')
+          .eq('id', id)
+          .maybeSingle()
+        areaName = (row?.name as string | undefined) ?? ''
+      }
+      discordService.leaderAppointed('Chapter', areaName, chapter.leader_name)
+    }
+
     return true
   }
 

@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { discordService } from '@/services/discordService'
 import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
 
 export function constituencySlug(name: string): string {
@@ -247,6 +248,17 @@ class ConstituencyService {
     if (error) {
       console.error('[CONSTITUENCY] Update failed:', error)
       return false
+    }
+
+    // Announce a new leader appointment (not a clear/removal).
+    if (patch.leaderId && patch.leaderName) {
+      const { data: c } = await supabase
+        .from('ghana_constituencies')
+        .select('name')
+        .eq('id', id)
+        .maybeSingle()
+      if (c?.name)
+        discordService.leaderAppointed('Constituency', c.name as string, patch.leaderName)
     }
     return true
   }
