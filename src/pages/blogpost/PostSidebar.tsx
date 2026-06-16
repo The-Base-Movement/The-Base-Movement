@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 interface PostSidebarProps {
@@ -76,12 +77,22 @@ export function PostSidebar({
 }: PostSidebarProps) {
   const displayName = authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : authorName
   const displayRole = authorName?.toUpperCase() === 'ADMIN' ? 'Movement Research' : authorRole
+  const [hoverCat, setHoverCat] = useState<string | null>(null)
+  const muted = 'hsl(var(--on-surface-muted))'
 
   return (
     <aside className="lg:col-span-1 space-y-8 order-2 lg:order-1">
       <div className="sticky top-32 space-y-8">
-        <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
-          <p className="text-xs font-medium text-stone-500 tracking-tight mb-0">Authored by</p>
+        <div
+          className="p-6 space-y-4"
+          style={{
+            border: '1px solid hsl(var(--border))',
+            background: 'hsl(var(--container-low))',
+          }}
+        >
+          <p className="text-xs font-medium tracking-tight mb-0" style={{ color: muted }}>
+            Authored by
+          </p>
           <div className="flex items-center gap-3">
             {authorImage ? (
               <img
@@ -112,26 +123,40 @@ export function PostSidebar({
               </div>
             )}
             <div>
-              <p className="text-sm font-medium text-stone-900 leading-none mb-0">{displayName}</p>
-              <p className="text-xs text-stone-500 tracking-tight mt-1.5 mb-0 font-medium">
+              <p
+                className="text-sm font-medium leading-none mb-0"
+                style={{ color: 'hsl(var(--on-surface))' }}
+              >
+                {displayName}
+              </p>
+              <p
+                className="text-xs tracking-tight mt-1.5 mb-0 font-medium"
+                style={{ color: muted }}
+              >
                 {displayRole}
               </p>
             </div>
           </div>
-          <p className="text-xs text-stone-500 leading-relaxed pt-2 mb-0 font-medium">
+          <p className="text-xs leading-relaxed pt-2 mb-0 font-medium" style={{ color: muted }}>
             {authorBio}
           </p>
         </div>
 
         <div className="space-y-4">
-          <p className="text-xs font-medium text-stone-500 tracking-tight">Share this update</p>
+          <p className="text-xs font-medium tracking-tight" style={{ color: muted }}>
+            Share this update
+          </p>
           <div className="grid grid-cols-3 gap-2">
             {SHARE_BUTTONS.map(({ brandColor, key, icon }) => (
               <button
                 key={key}
                 onClick={() => onShare(key)}
-                style={{ color: brandColor, borderColor: `${brandColor}20` }}
-                className="h-12 w-full p-0 border hover:bg-stone-50 rounded-none transition-all duration-300 hover:scale-105 bg-white flex items-center justify-center cursor-pointer"
+                style={{
+                  color: brandColor,
+                  borderColor: `${brandColor}20`,
+                  background: 'hsl(var(--card))',
+                }}
+                className="h-12 w-full p-0 border rounded-none transition-all duration-300 hover:scale-105 flex items-center justify-center cursor-pointer"
               >
                 {icon}
               </button>
@@ -139,23 +164,36 @@ export function PostSidebar({
           </div>
         </div>
 
-        <div className="pt-8 border-t border-stone-100 space-y-6">
-          <p className="text-xs font-medium text-stone-500 tracking-tight mb-0">
+        <div className="pt-8 space-y-6" style={{ borderTop: '1px solid hsl(var(--border))' }}>
+          <p className="text-xs font-medium tracking-tight mb-0" style={{ color: muted }}>
             Explore categories
           </p>
           <div className="space-y-2">
-            {CATEGORIES.map((cat) => (
-              <Link
-                to={`/blog?category=${cat.toLowerCase()}`}
-                key={cat}
-                className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-micro font-medium tracking-tight text-stone-600 hover:text-[var(--brand-green)] transition-all"
-              >
-                {cat}
-                <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 12 }}>
-                  chevron_right
-                </span>
-              </Link>
-            ))}
+            {CATEGORIES.map((cat) => {
+              const hovered = hoverCat === cat
+              return (
+                <Link
+                  to={`/blog?category=${cat.toLowerCase()}`}
+                  key={cat}
+                  onMouseEnter={() => setHoverCat(cat)}
+                  onMouseLeave={() => setHoverCat(null)}
+                  className="flex items-center justify-between p-3 text-micro font-medium tracking-tight transition-all"
+                  style={{
+                    background: hovered ? 'hsl(var(--card))' : 'hsl(var(--container-low))',
+                    border: `1px solid ${hovered ? 'hsl(var(--border))' : 'transparent'}`,
+                    color: hovered ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  {cat}
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 12, color: muted }}
+                  >
+                    chevron_right
+                  </span>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </div>

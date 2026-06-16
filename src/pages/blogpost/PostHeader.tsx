@@ -10,10 +10,16 @@ export function PostHeader({ category, publishedAt, readTime, title, excerpt }: 
   return (
     <header className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-xs font-medium tracking-tight">
+        <span
+          className="px-3 py-1 text-xs font-medium tracking-tight"
+          style={{ background: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))' }}
+        >
           {category}
         </span>
-        <div className="flex items-center gap-4 text-stone-500 text-xs font-medium tracking-tight">
+        <div
+          className="flex items-center gap-4 text-xs font-medium tracking-tight"
+          style={{ color: 'hsl(var(--on-surface-muted))' }}
+        >
           <span className="flex items-center gap-1.5">
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
               calendar_today
@@ -35,9 +41,20 @@ export function PostHeader({ category, publishedAt, readTime, title, excerpt }: 
         </div>
       </div>
 
-      <h1 className="text-stone-900 leading-[1.1] tracking-tighter mb-0">{title}</h1>
+      <h1
+        className="leading-[1.1] tracking-tighter mb-0"
+        style={{ color: 'hsl(var(--on-surface))' }}
+      >
+        {title}
+      </h1>
 
-      <p className="text-stone-500 leading-relaxed font-medium italic border-l-4 border-warm-gold pl-6 py-2 mb-0">
+      <p
+        className="leading-relaxed font-medium italic pl-6 py-2 mb-0"
+        style={{
+          color: 'hsl(var(--on-surface-muted))',
+          borderLeft: '4px solid hsl(var(--accent))',
+        }}
+      >
         {excerpt}
       </p>
     </header>

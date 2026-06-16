@@ -1,12 +1,14 @@
 interface PostHeroImageProps {
   imageUrl: string | null | undefined
   title: string
-  logoUrl: string
 }
 
-export function PostHeroImage({ imageUrl, title, logoUrl }: PostHeroImageProps) {
+export function PostHeroImage({ imageUrl, title }: PostHeroImageProps) {
   return (
-    <div className="relative aspect-[21/9] overflow-hidden border border-stone-200">
+    <div
+      className="relative aspect-[21/9] overflow-hidden"
+      style={{ border: '1px solid hsl(var(--border))' }}
+    >
       {imageUrl ? (
         <img
           src={imageUrl}
@@ -16,15 +18,20 @@ export function PostHeroImage({ imageUrl, title, logoUrl }: PostHeroImageProps) 
           loading="lazy"
         />
       ) : (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
-          <img src={logoUrl} alt="The Base" className="w-32 h-32 opacity-20 mb-6 grayscale" />
-          <span className="text-xs font-medium text-white/20 tracking-tight">
-            The Base editorial
+        <div
+          className="w-full h-full flex flex-col items-center justify-center gap-4"
+          style={{ background: 'hsl(132 9% 10%)' }}
+        >
+          <div className="flex h-2 w-28" aria-hidden="true">
+            <div className="flex-1 bg-[#CE1126]" />
+            <div className="flex-1 bg-[#DAA520]" />
+            <div className="flex-1 bg-[#006B3F]" />
+          </div>
+          <span className="text-xs font-medium tracking-[0.18em] uppercase text-white/30 font-['Public_Sans',sans-serif]">
+            The Base Editorial
           </span>
         </div>
       )}
-      <div className="absolute inset-0 bg-charcoal-dark/10"></div>
     </div>
   )
 }

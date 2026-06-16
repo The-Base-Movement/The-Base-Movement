@@ -23,7 +23,12 @@ export function PostToolbar({
       <div className="flex items-center gap-3">
         <button
           onClick={onShare}
-          className="h-10 px-4 border border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-micro font-medium tracking-tight bg-white flex items-center cursor-pointer"
+          className="h-10 px-4 rounded-none text-micro font-medium tracking-tight flex items-center cursor-pointer"
+          style={{
+            border: '1px solid hsl(var(--border))',
+            color: 'hsl(var(--on-surface-muted))',
+            background: 'hsl(var(--card))',
+          }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 8 }}>
             share
@@ -35,10 +40,11 @@ export function PostToolbar({
             onClick={onLikeToggle}
             disabled={likeLoading}
             title={isLiked ? 'Unlike this post' : 'Like this post'}
-            className="h-10 w-10 p-0 border border-stone-200 hover:bg-stone-50 rounded-none bg-white flex items-center justify-center cursor-pointer transition-colors"
+            className="h-10 w-10 p-0 rounded-none flex items-center justify-center cursor-pointer transition-colors"
             style={{
-              color: isLiked ? 'hsl(var(--destructive))' : 'rgb(87,83,78)',
-              borderColor: isLiked ? 'hsl(var(--destructive))' : undefined,
+              border: `1px solid ${isLiked ? 'hsl(var(--destructive))' : 'hsl(var(--border))'}`,
+              background: 'hsl(var(--card))',
+              color: isLiked ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
               opacity: likeLoading ? 0.5 : 1,
             }}
           >

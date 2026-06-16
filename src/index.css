@@ -2360,6 +2360,28 @@ td.leadership-col-secondary {
 .prose-standard {
   max-width: 75ch;
   line-height: 1.625;
+  /* Theme Tailwind Typography via its own CSS variables so article bodies
+     follow the design-system tokens and adapt to dark mode. Colours live here
+     (design system) rather than as hardcoded prose-* utility classes. */
+  --tw-prose-body: hsl(var(--on-surface-muted));
+  --tw-prose-headings: hsl(var(--on-surface));
+  --tw-prose-bold: hsl(var(--on-surface));
+  --tw-prose-links: hsl(var(--primary));
+  --tw-prose-quotes: hsl(var(--on-surface));
+  --tw-prose-quote-borders: hsl(var(--primary));
+  --tw-prose-bullets: hsl(var(--on-surface-muted));
+  --tw-prose-counters: hsl(var(--on-surface-muted));
+  --tw-prose-captions: hsl(var(--on-surface-muted));
+  --tw-prose-hr: hsl(var(--border));
+  --tw-prose-code: hsl(var(--on-surface));
+  --tw-prose-th-borders: hsl(var(--border));
+  --tw-prose-td-borders: hsl(var(--border));
+}
+
+.prose-standard blockquote {
+  background: hsl(var(--container-low));
+  padding: 2rem;
+  font-style: italic;
 }
 
 .low-bandwidth * {
