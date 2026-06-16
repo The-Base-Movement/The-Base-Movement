@@ -234,7 +234,7 @@ export function CommentSection({ postId }: { postId: string }) {
   }
 
   return (
-    <div className="mt-24 pt-12 border-t border-stone-100">
+    <div className="mt-24 pt-12" style={{ borderTop: '1px solid hsl(var(--border))' }}>
       {/* Header */}
       <div
         style={{
@@ -256,7 +256,7 @@ export function CommentSection({ postId }: { postId: string }) {
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-semibold, 600)',
             fontSize: 18,
-            color: '#1c1c1c',
+            color: 'hsl(var(--on-surface))',
             margin: 0,
             letterSpacing: '-0.01em',
           }}
@@ -265,8 +265,8 @@ export function CommentSection({ postId }: { postId: string }) {
         </h2>
         <span
           style={{
-            background: '#f0f0f0',
-            color: '#555',
+            background: 'hsl(var(--container-low))',
+            color: 'hsl(var(--on-surface-muted))',
             fontFamily: "'Public Sans', sans-serif",
             fontWeight: 'var(--font-weight-medium, 500)',
             fontSize: 11,
@@ -283,8 +283,8 @@ export function CommentSection({ postId }: { postId: string }) {
         <div
           style={{
             marginBottom: 48,
-            background: '#fafafa',
-            border: '1px solid #e7e7e7',
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
             padding: '20px',
           }}
         >
@@ -301,12 +301,12 @@ export function CommentSection({ postId }: { postId: string }) {
                   flex: 1,
                   minWidth: 0,
                   background: 'hsl(var(--card))',
-                  border: '1px solid #e2e2e2',
+                  border: '1px solid hsl(var(--border))',
                   padding: '12px 14px',
                   fontSize: 13,
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: 500,
-                  color: '#374151',
+                  color: 'hsl(var(--on-surface))',
                   outline: 'none',
                   minHeight: 96,
                   resize: 'vertical',
@@ -351,7 +351,7 @@ export function CommentSection({ postId }: { postId: string }) {
           style={{
             marginBottom: 48,
             fontSize: 13,
-            color: '#6b7280',
+            color: 'hsl(var(--on-surface-muted))',
             fontFamily: "'Public Sans', sans-serif",
           }}
         >
@@ -361,7 +361,13 @@ export function CommentSection({ postId }: { postId: string }) {
 
       {/* Comments List */}
       {loadingComments ? (
-        <p style={{ fontSize: 13, color: '#9ca3af', fontFamily: "'Public Sans', sans-serif" }}>
+        <p
+          style={{
+            fontSize: 13,
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
           Loading comments…
         </p>
       ) : (
@@ -388,7 +394,7 @@ export function CommentSection({ postId }: { postId: string }) {
                           fontFamily: "'Public Sans', sans-serif",
                           fontWeight: 'var(--font-weight-semibold, 600)',
                           fontSize: 13,
-                          color: '#1c1c1c',
+                          color: 'hsl(var(--on-surface))',
                           letterSpacing: '-0.01em',
                         }}
                       >
@@ -400,7 +406,7 @@ export function CommentSection({ postId }: { postId: string }) {
                             fontFamily: "'Public Sans', sans-serif",
                             fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 11,
-                            color: '#9ca3af',
+                            color: 'hsl(var(--on-surface-muted))',
                           }}
                         >
                           ↩ {comment.replyTo}
@@ -412,7 +418,7 @@ export function CommentSection({ postId }: { postId: string }) {
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
-                        color: '#9ca3af',
+                        color: 'hsl(var(--on-surface-muted))',
                         flexShrink: 0,
                       }}
                     >
@@ -424,7 +430,7 @@ export function CommentSection({ postId }: { postId: string }) {
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 500,
                       fontSize: 13,
-                      color: '#4b5563',
+                      color: 'hsl(var(--on-surface))',
                       lineHeight: 1.6,
                       margin: '0 0 8px',
                     }}
@@ -475,8 +481,8 @@ export function CommentSection({ postId }: { postId: string }) {
                   style={{
                     marginLeft: 52,
                     marginTop: 12,
-                    background: '#fafafa',
-                    border: '1px solid #e7e7e7',
+                    background: 'hsl(var(--container-low))',
+                    border: '1px solid hsl(var(--border))',
                     padding: '14px',
                   }}
                 >
@@ -494,12 +500,12 @@ export function CommentSection({ postId }: { postId: string }) {
                         flex: 1,
                         minWidth: 0,
                         background: 'hsl(var(--card))',
-                        border: '1px solid #e2e2e2',
+                        border: '1px solid hsl(var(--border))',
                         padding: '10px 12px',
                         fontSize: 12,
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 500,
-                        color: '#374151',
+                        color: 'hsl(var(--on-surface))',
                         outline: 'none',
                         minHeight: 72,
                         resize: 'vertical',
