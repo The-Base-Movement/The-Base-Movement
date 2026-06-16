@@ -156,7 +156,31 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
       }
       const { error: dbError } = await adminService.registerMember(newUser)
       if (dbError) throw dbError
-      toast.success(`${data.fullName} has been added to the directory.`)
+
+      // Provision a login account so the new member can actually sign in
+      // (directory insert alone leaves them without auth). Credentials are sent
+      // by email if present, else SMS.
+      if (data.email || data.contactNumber) {
+        const acct = await adminService.createMemberLogin({
+          reg_no: data.registrationNumber,
+          name: data.fullName,
+          email: data.email,
+          phone: data.contactNumber,
+        })
+        if (acct.created > 0) {
+          toast.success(`${data.fullName} added — login created and credentials sent.`)
+        } else if (acct.skipped > 0) {
+          toast.success(`${data.fullName} added. A login for this email/phone already existed.`)
+        } else {
+          toast.warning(
+            `${data.fullName} was added to the directory, but creating their login failed${acct.error ? `: ${acct.error}` : ''}. They can't sign in yet.`
+          )
+        }
+      } else {
+        toast.warning(
+          `${data.fullName} was added to the directory. No email or phone, so no login was created.`
+        )
+      }
       fetchMembers()
       setIsAdding(false)
     } catch (error: unknown) {

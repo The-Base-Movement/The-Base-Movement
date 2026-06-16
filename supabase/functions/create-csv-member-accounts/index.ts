@@ -18,11 +18,13 @@ function generateTempPassword(length = 10): string {
 }
 
 function normalizePhoneNumber(raw: string): string {
-  const cleaned = raw.trim()
+  const cleaned = (raw ?? '').trim()
+  if (!cleaned) return '' // email-only accounts (e.g. admin/recovery) have no phone
   if (cleaned.startsWith('+')) {
     return cleaned
   }
   const digits = cleaned.replace(/\D/g, '')
+  if (!digits) return ''
   if (digits.startsWith('233')) return `+${digits}`
   if (digits.startsWith('0')) return `+233${digits.slice(1)}`
   return `+233${digits}`
@@ -44,6 +46,30 @@ serve(async (req: Request) => {
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
+    // Only an authenticated admin may mint login accounts. (verify_jwt guarantees
+    // a valid token, but not that the caller is privileged.)
+    const jwt = req.headers.get('Authorization')?.replace('Bearer ', '') ?? ''
+    const {
+      data: { user: caller },
+    } = await supabaseAdmin.auth.getUser(jwt)
+    if (!caller) {
+      return new Response(JSON.stringify({ error: 'Not authenticated.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      })
+    }
+    const { data: callerAdmin } = await supabaseAdmin
+      .from('admins')
+      .select('role')
+      .eq('id', caller.id)
+      .maybeSingle()
+    if (!callerAdmin) {
+      return new Response(JSON.stringify({ error: 'Not authorized.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 403,
+      })
+    }
+
     const { members } = await req.json()
     if (!members || !Array.isArray(members)) {
       return new Response(JSON.stringify({ error: 'Invalid members array in request body.' }), {
@@ -61,21 +87,32 @@ serve(async (req: Request) => {
       const tempPassword = generateTempPassword()
 
       try {
-        // 1. Generate a standard dummy email fallback if missing to bypass Phone-Auth signup restrictions
-        const finalEmail = member.email || `${normalizedPhone.replace('+', '')}@thebase.org`
+        // 1. A phone-only member gets a placeholder email; an email-only member
+        //    (admin/recovery account) gets no phone at all.
+        const finalEmail =
+          member.email || (normalizedPhone ? `${normalizedPhone.replace('+', '')}@thebase.org` : '')
+        if (!finalEmail) {
+          failedUsers.push({ reg_no: member.reg_no, reason: 'No email or phone provided.' })
+          continue
+        }
 
-        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+        const createParams: Record<string, unknown> = {
           email: finalEmail,
-          phone: normalizedPhone,
           password: tempPassword,
           email_confirm: true,
-          phone_confirm: true,
           user_metadata: {
             reg_no: member.reg_no,
             name: member.name,
             must_change_password: true,
           },
-        })
+        }
+        if (normalizedPhone) {
+          createParams.phone = normalizedPhone
+          createParams.phone_confirm = true
+        }
+
+        const { data: authData, error: authError } =
+          await supabaseAdmin.auth.admin.createUser(createParams)
 
         if (authError) {
           if (authError.message.includes('already exists') || authError.status === 400) {
@@ -114,24 +151,13 @@ serve(async (req: Request) => {
           continue
         }
 
-        // 3. Send SMS via MNotify
-        const sms = await sendSms(
-          [normalizedPhone],
-          `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at thebasemovement.creativeutil.com/login and change your password.\n- The Base`
-        )
-        if (!sms.ok) {
-          console.warn(
-            `[CSV-IMPORT] SMS failed for ${member.reg_no} (${sms.detail}). Generated credentials for ${member.name}:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}`
-          )
-        }
-
-        // 4. Send email via SendGrid if member has an email address
-        if (sgKey && member.email) {
+        // 3. Deliver credentials — email if the member has one, else SMS.
+        if (member.email && sgKey) {
           try {
             const html = csvImportWelcomeEmail({
               name: member.name,
               regNo: member.reg_no,
-              phone: normalizedPhone,
+              phone: normalizedPhone || 'N/A',
               tempPassword,
               loginUrl: 'https://thebasemovement.creativeutil.com/login',
             })
@@ -155,9 +181,19 @@ serve(async (req: Request) => {
           } catch (emailErr) {
             console.error(`[CSV-IMPORT] Email dispatch error for ${member.reg_no}:`, emailErr)
           }
-        } else if (!sgKey) {
+        } else if (normalizedPhone) {
+          const sms = await sendSms(
+            [normalizedPhone],
+            `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at thebasemovement.creativeutil.com/login and change your password.\n- The Base`
+          )
+          if (!sms.ok) {
+            console.warn(
+              `[CSV-IMPORT] SMS failed for ${member.reg_no} (${sms.detail}). Generated credentials for ${member.name}:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}`
+            )
+          }
+        } else {
           console.warn(
-            `[CSV-IMPORT] SENDGRID_API_KEY not set — skipping email for ${member.reg_no}`
+            `[CSV-IMPORT] No delivery channel (no email/SENDGRID or phone) for ${member.reg_no}.`
           )
         }
 

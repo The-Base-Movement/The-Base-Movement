@@ -374,6 +374,35 @@ class AdminService {
     return result
   }
 
+  /**
+   * Provision an auth login for an already-inserted member so they can sign in.
+   * Routes through the create-csv-member-accounts edge function (service role:
+   * creates the auth user with a temp password, relinks users.id to the auth id,
+   * and delivers credentials by email if present, else SMS). Matches the member
+   * by registration_number.
+   */
+  async createMemberLogin(member: {
+    reg_no: string
+    name: string
+    email?: string | null
+    phone?: string | null
+  }): Promise<{ created: number; skipped: number; failed: number; error?: string }> {
+    const { data, error } = await supabase.functions.invoke('create-csv-member-accounts', {
+      body: {
+        members: [
+          {
+            reg_no: member.reg_no,
+            name: member.name,
+            email: member.email || '',
+            phone: member.phone || '',
+          },
+        ],
+      },
+    })
+    if (error) return { created: 0, skipped: 0, failed: 1, error: error.message }
+    return data as { created: number; skipped: number; failed: number }
+  }
+
   async bulkRegisterMembers(
     users: User[]
   ): Promise<{ inserted: number; skipped: number; error: PostgrestError | null }> {
