@@ -15,12 +15,12 @@ interface Embed {
   timestamp: string
 }
 
-type DiscordChannel = 'payments' | 'alerts'
+type DiscordChannel = 'payments' | 'alerts' | 'members' | 'content'
 
 function post(embed: Embed, channel?: DiscordChannel): void {
   // Fire-and-forget: route through the server-side proxy Edge Function.
-  // `channel` selects a dedicated webhook (payments/alerts); omitted = default
-  // notifications channel.
+  // `channel` selects a dedicated webhook (payments/alerts/members/content);
+  // omitted = default notifications channel.
   supabase.functions
     .invoke('discord-notify', {
       body: { embeds: [embed], channel },
@@ -32,25 +32,28 @@ function post(embed: Embed, channel?: DiscordChannel): void {
 
 export const discordService = {
   memberRegistered(name: string, platform: string, regionOrCountry: string, regNo: string): void {
-    post({
-      title: '🇬🇭 New Patriot Registered',
-      color: 0x006b3f,
-      fields: [
-        { name: 'Name', value: name || '—', inline: true },
-        {
-          name: 'Network',
-          value: platform === 'GHANA' ? 'Ghana Network' : 'Diaspora Network',
-          inline: true,
-        },
-        {
-          name: platform === 'GHANA' ? 'Region' : 'Country',
-          value: regionOrCountry || '—',
-          inline: true,
-        },
-        { name: 'Reg No', value: regNo, inline: true },
-      ],
-      timestamp: new Date().toISOString(),
-    })
+    post(
+      {
+        title: '🇬🇭 New Patriot Registered',
+        color: 0x006b3f,
+        fields: [
+          { name: 'Name', value: name || '—', inline: true },
+          {
+            name: 'Network',
+            value: platform === 'GHANA' ? 'Ghana Network' : 'Diaspora Network',
+            inline: true,
+          },
+          {
+            name: platform === 'GHANA' ? 'Region' : 'Country',
+            value: regionOrCountry || '—',
+            inline: true,
+          },
+          { name: 'Reg No', value: regNo, inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'members'
+    )
   },
 
   donationSubmitted(
@@ -94,17 +97,20 @@ export const discordService = {
   },
 
   blogPostPublished(title: string, category: string, author: string, slug: string): void {
-    post({
-      title: '📢 New Post Published',
-      description: `**${title}**`,
-      color: 0x5865f2,
-      fields: [
-        { name: 'Category', value: category || '—', inline: true },
-        { name: 'Author', value: author || 'Admin', inline: true },
-      ],
-      footer: { text: `/blog/${slug}` },
-      timestamp: new Date().toISOString(),
-    })
+    post(
+      {
+        title: '📢 New Post Published',
+        description: `**${title}**`,
+        color: 0x5865f2,
+        fields: [
+          { name: 'Category', value: category || '—', inline: true },
+          { name: 'Author', value: author || 'Admin', inline: true },
+        ],
+        footer: { text: `/blog/${slug}` },
+        timestamp: new Date().toISOString(),
+      },
+      'content'
+    )
   },
 
   storeOrderPlaced(
@@ -134,17 +140,20 @@ export const discordService = {
   },
 
   chapterJoined(name: string, regNo: string, chapterName: string, regionOrCountry: string): void {
-    post({
-      title: '📍 Member Joined Chapter',
-      color: 0x006b3f,
-      fields: [
-        { name: 'Patriot', value: name || '—', inline: true },
-        { name: 'Reg No', value: regNo || '—', inline: true },
-        { name: 'Chapter', value: chapterName || '—', inline: true },
-        { name: 'Region/Country', value: regionOrCountry || '—', inline: true },
-      ],
-      timestamp: new Date().toISOString(),
-    })
+    post(
+      {
+        title: '📍 Member Joined Chapter',
+        color: 0x006b3f,
+        fields: [
+          { name: 'Patriot', value: name || '—', inline: true },
+          { name: 'Reg No', value: regNo || '—', inline: true },
+          { name: 'Chapter', value: chapterName || '—', inline: true },
+          { name: 'Region/Country', value: regionOrCountry || '—', inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'members'
+    )
   },
 
   donationVerified(

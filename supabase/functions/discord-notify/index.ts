@@ -20,12 +20,13 @@ serve(async (req: Request) => {
     // notifications webhook. If a channel-specific secret isn't set yet, fall
     // back to the default so messages aren't lost before the channel exists.
     const channel = String(body.channel ?? '').toLowerCase()
-    const secretName =
-      channel === 'payments'
-        ? 'DISCORD_PAYMENTS_WEBHOOK_URL'
-        : channel === 'alerts'
-          ? 'DISCORD_ALERTS_WEBHOOK_URL'
-          : 'DISCORD_WEBHOOK_URL'
+    const channelSecrets: Record<string, string> = {
+      payments: 'DISCORD_PAYMENTS_WEBHOOK_URL',
+      alerts: 'DISCORD_ALERTS_WEBHOOK_URL',
+      members: 'DISCORD_MEMBERS_WEBHOOK_URL',
+      content: 'DISCORD_CONTENT_WEBHOOK_URL',
+    }
+    const secretName = channelSecrets[channel] ?? 'DISCORD_WEBHOOK_URL'
     // @ts-expect-error: Deno global
     let webhookUrl = Deno.env.get(secretName)
     if (!webhookUrl && secretName !== 'DISCORD_WEBHOOK_URL') {
