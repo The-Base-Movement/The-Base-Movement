@@ -1,11 +1,13 @@
 // @ts-nocheck
 // THE BASE: POLL CLOSING SCHEDULER
-// Triggered daily at 08:00 GMT via Supabase cron.
-// Finds polls closing within the next 24 hours that haven't sent a closing
-// notification, marks them notified (optimistic), then calls send-poll-notification
-// for each one.
+// Runs hourly via Supabase cron. Two jobs:
+//   1. Auto-close: any Active poll whose end_date has passed → status 'Closed',
+//      announced to #polls.
+//   2. Closing-soon: Active polls closing within 24h that haven't been notified
+//      are marked (optimistic) and sent to send-poll-notification.
 //
-// Cron: 0 8 * * * (Supabase Dashboard → Database → Cron Jobs)
+// Cron: 0 * * * * (pg_cron). Closing-soon is idempotent via closing_notified,
+// so the hourly cadence does not re-notify.
 // Auto-injected: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -24,6 +26,57 @@ Deno.serve(async (req) => {
 
   const now = new Date().toISOString()
   const in24h = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+
+  // ── Auto-close polls whose scheduled end_date has passed ──────────────────
+  const { data: expired, error: expiredErr } = await supabase
+    .from('polls')
+    .select('id, question, title, total_votes')
+    .eq('status', 'Active')
+    .lte('end_date', now)
+
+  if (expiredErr) {
+    console.error('[POLL-SCHEDULER] Expired query error', expiredErr.message)
+  } else if (expired && expired.length > 0) {
+    const expiredIds = expired.map((p: { id: string }) => p.id)
+    const { error: closeErr } = await supabase
+      .from('polls')
+      .update({ status: 'Closed' })
+      .in('id', expiredIds)
+
+    if (closeErr) {
+      console.error('[POLL-SCHEDULER] Failed to auto-close polls', closeErr.message)
+    } else {
+      // Announce each auto-closed poll to #polls (non-fatal).
+      for (const p of expired as Array<{
+        question: string | null
+        title: string | null
+        total_votes: number | null
+      }>) {
+        await fetch(`${supabaseUrl}/functions/v1/discord-notify`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: serviceKey,
+            Authorization: `Bearer ${serviceKey}`,
+          },
+          body: JSON.stringify({
+            channel: 'polls',
+            embeds: [
+              {
+                title: '🗳️ Poll Closed',
+                description: `**${p.question ?? p.title ?? 'Poll'}**`,
+                color: 0x6f7a71,
+                fields: [{ name: 'Total votes', value: String(p.total_votes ?? 0), inline: true }],
+                footer: { text: 'Auto-closed on schedule' },
+                timestamp: new Date().toISOString(),
+              },
+            ],
+          }),
+        }).catch((e: unknown) => console.error('[POLL-SCHEDULER] Discord notify failed', e))
+      }
+      console.log(`[POLL-SCHEDULER] Auto-closed ${expiredIds.length} poll(s)`)
+    }
+  }
 
   // Find active polls closing within the next 24h that haven't been notified
   const { data: polls, error } = await supabase
