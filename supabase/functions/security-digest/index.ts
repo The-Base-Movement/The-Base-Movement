@@ -21,7 +21,7 @@ const BASELINE = {
   secdef_fns_anon_executable: 29,
   storage_public_listing_policies: 3,
   rls_disabled_tables: 0,
-  always_true_policies: 43,
+  always_true_policies: 42,
   secdef_fns_mutable_search_path: 0,
 }
 
