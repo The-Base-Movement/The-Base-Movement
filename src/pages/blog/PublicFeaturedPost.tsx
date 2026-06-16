@@ -13,7 +13,9 @@ export function PublicFeaturedPost({ post, baseUrl }: PublicFeaturedPostProps) {
 
   return (
     <section className="mb-16">
-      <p className="font-meta text-xs text-warm-gold tracking-tight mb-6">Featured</p>
+      <p className="font-meta text-xs tracking-tight mb-6" style={{ color: 'hsl(var(--accent))' }}>
+        Featured
+      </p>
       <div
         className="grid md:grid-cols-2 gap-0 shadow-sm overflow-hidden group hover:shadow-lg transition-shadow"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}

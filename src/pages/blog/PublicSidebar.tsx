@@ -69,11 +69,15 @@ export function PublicSidebar({
         </div>
       </div>
       <div
-        className="p-8 border-l-4 border-warm-gold text-white"
-        style={{ background: 'hsl(132 9% 10%)' }}
+        className="p-8"
+        style={{
+          background: 'hsl(132 9% 10%)',
+          borderLeft: '4px solid hsl(var(--accent))',
+          color: '#fff',
+        }}
       >
         <h4 className="font-meta font-medium text-lg tracking-tight mb-4">The Base Weekly</h4>
-        <p className="text-xs text-slate-400 leading-relaxed mb-6">
+        <p className="text-xs leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
           Get the movement's policy briefs and news delivered directly to your inbox every week.
         </p>
         <div className="space-y-3">
@@ -85,11 +89,23 @@ export function PublicSidebar({
             placeholder="Email Address"
             value={publicEmail}
             onChange={(e) => onPublicEmailChange(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm"
+            className="w-full text-xs"
+            style={{
+              padding: 12,
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 'var(--radius-sm)',
+              color: '#fff',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
           />
           <button
-            className="w-full h-12 bg-primary text-white text-xs border-none cursor-pointer hover:opacity-90 transition-opacity"
+            className="w-full h-12 text-xs cursor-pointer hover:opacity-90 transition-opacity"
             style={{
+              background: 'hsl(var(--primary))',
+              color: '#fff',
+              border: 'none',
               borderRadius: 'var(--button-radius)',
               fontWeight: 'var(--button-font-weight)',
             }}

@@ -197,7 +197,7 @@ export default function Blog() {
   // ── Public layout ─────────────────────────────────────────────────────────
   return (
     <>
-      <div className="min-h-screen bg-stone-50/50 font-meta">
+      <div className="min-h-screen font-meta" style={{ background: 'hsl(var(--background))' }}>
         <SEO
           title="Updates & Articles"
           description="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement."
@@ -255,7 +255,10 @@ export default function Blog() {
                   <div className="lg:w-2/3">
                     {rest.length > 0 && (
                       <>
-                        <h2 className="text-stone-900 font-medium tracking-tight mb-5 text-base">
+                        <h2
+                          className="font-medium tracking-tight mb-5 text-base"
+                          style={{ color: 'hsl(var(--on-surface))' }}
+                        >
                           Latest articles
                         </h2>
                         <div className="grid sm:grid-cols-2 gap-5 md:gap-8">
@@ -283,7 +286,14 @@ export default function Blog() {
               </section>
 
               {/* Mobile newsletter — below articles, above CTA, desktop-only sidebar handles this */}
-              <div className="lg:hidden mt-10 bg-[#181d19] p-6 border-l-4 border-[hsl(var(--accent))] text-white">
+              <div
+                className="lg:hidden mt-10 p-6"
+                style={{
+                  background: '#181d19',
+                  borderLeft: '4px solid hsl(var(--accent))',
+                  color: '#fff',
+                }}
+              >
                 <p
                   style={{
                     fontFamily: "'Public Sans', sans-serif",

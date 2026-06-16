@@ -3,18 +3,24 @@ import { Link } from 'react-router-dom'
 export function PublicCTA() {
   return (
     <section
-      className="py-16 md:py-20 px-6 md:px-12 text-white text-center relative overflow-hidden"
+      className="py-16 md:py-20 px-6 md:px-12 text-center relative overflow-hidden"
       style={{
+        color: '#fff',
         background: `linear-gradient(135deg, hsl(156 100% 14%) 0%, hsl(0 0% 8%) 45%, hsl(45 60% 18%) 100%)`,
       }}
     >
       {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-brand-green" />
-      <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">Join the conversation</p>
+      <div
+        className="absolute top-0 left-0 right-0 h-1"
+        style={{ background: 'hsl(var(--primary))' }}
+      />
+      <p className="font-meta tracking-tight text-xs mb-3" style={{ color: 'hsl(var(--accent))' }}>
+        Join the conversation
+      </p>
       <h2 className="font-meta font-medium text-3xl tracking-tight mb-4">
         Become a member. Shape the narrative.
       </h2>
-      <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
+      <p className="max-w-md mx-auto mb-8 text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
         Registered members get early access to analysis, policy briefs and updates directly from our
         research desk.
       </p>
