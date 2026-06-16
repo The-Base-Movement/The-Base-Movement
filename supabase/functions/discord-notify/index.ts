@@ -25,6 +25,11 @@ serve(async (req: Request) => {
       alerts: 'DISCORD_ALERTS_WEBHOOK_URL',
       members: 'DISCORD_MEMBERS_WEBHOOK_URL',
       content: 'DISCORD_CONTENT_WEBHOOK_URL',
+      leaders: 'DISCORD_LEADERS_WEBHOOK_URL',
+      broadcasts: 'DISCORD_BROADCASTS_WEBHOOK_URL',
+      polls: 'DISCORD_POLLS_WEBHOOK_URL',
+      helpdesk: 'DISCORD_HELPDESK_WEBHOOK_URL',
+      chapters: 'DISCORD_CHAPTERS_WEBHOOK_URL',
     }
     const secretName = channelSecrets[channel] ?? 'DISCORD_WEBHOOK_URL'
     // @ts-expect-error: Deno global

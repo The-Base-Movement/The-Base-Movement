@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { discordService } from '@/services/discordService'
 import type {
   HelpdeskDepartment,
   HelpdeskTicket,
@@ -469,6 +470,7 @@ export function useMemberHelpdesk(userId: string | null) {
       }
 
       toast.success('Ticket submitted')
+      discordService.helpdeskTicketSubmitted(payload.subject.trim(), payload.priority)
       await fetchMyTickets()
       return true
     },

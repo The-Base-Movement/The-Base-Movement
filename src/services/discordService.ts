@@ -15,7 +15,15 @@ interface Embed {
   timestamp: string
 }
 
-type DiscordChannel = 'payments' | 'alerts' | 'members' | 'content'
+type DiscordChannel =
+  | 'payments'
+  | 'alerts'
+  | 'members'
+  | 'content'
+  | 'broadcasts'
+  | 'polls'
+  | 'helpdesk'
+  | 'chapters'
 
 function post(embed: Embed, channel?: DiscordChannel): void {
   // Fire-and-forget: route through the server-side proxy Edge Function.
@@ -194,6 +202,85 @@ export const discordService = {
         timestamp: new Date().toISOString(),
       },
       'alerts'
+    )
+  },
+
+  // ── #broadcasts ────────────────────────────────────────────────
+  broadcastSent(title: string, priority: string, target: string, recipientCount: number): void {
+    post(
+      {
+        title: '📡 Broadcast Sent',
+        description: `**${title}**`,
+        color: 0xda5520,
+        fields: [
+          { name: 'Priority', value: priority || 'Normal', inline: true },
+          { name: 'Target', value: target || 'All', inline: true },
+          { name: 'Recipients', value: String(recipientCount), inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'broadcasts'
+    )
+  },
+
+  // ── #polls ─────────────────────────────────────────────────────
+  pollOpened(question: string, region: string, endDate: string): void {
+    post(
+      {
+        title: '🗳️ New Poll Opened',
+        description: `**${question}**`,
+        color: 0x006b3f,
+        fields: [
+          { name: 'Region', value: region || 'National', inline: true },
+          { name: 'Closes', value: endDate || '—', inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'polls'
+    )
+  },
+
+  pollClosed(question: string, totalVotes: number): void {
+    post(
+      {
+        title: '🗳️ Poll Closed',
+        description: `**${question}**`,
+        color: 0x6f7a71,
+        fields: [{ name: 'Total votes', value: String(totalVotes), inline: true }],
+        timestamp: new Date().toISOString(),
+      },
+      'polls'
+    )
+  },
+
+  // ── #helpdesk ──────────────────────────────────────────────────
+  helpdeskTicketSubmitted(subject: string, priority: string): void {
+    post(
+      {
+        title: '🎫 New Support Ticket',
+        description: `**${subject}**`,
+        color: priority === 'high' ? 0xce1126 : 0x5865f2,
+        fields: [{ name: 'Priority', value: priority || 'medium', inline: true }],
+        timestamp: new Date().toISOString(),
+      },
+      'helpdesk'
+    )
+  },
+
+  // ── #chapters-constituencies ───────────────────────────────────
+  chapterCreated(name: string, country: string, leaderName: string): void {
+    post(
+      {
+        title: '📍 New Chapter Created',
+        description: `**${name}**`,
+        color: 0x006b3f,
+        fields: [
+          { name: 'Country', value: country || '—', inline: true },
+          { name: 'Leader', value: leaderName || '—', inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'chapters'
     )
   },
 }

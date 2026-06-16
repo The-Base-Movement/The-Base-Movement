@@ -322,6 +322,7 @@ class ChapterService {
       return false
     }
 
+    discordService.chapterCreated(chapter.name, chapter.country, chapter.leader_name ?? '')
     return true
   }
 

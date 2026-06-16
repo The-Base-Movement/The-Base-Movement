@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
+import { discordService } from './discordService'
 import type {
   Broadcast,
   Notification,
@@ -81,6 +82,15 @@ class TacticalService {
 
         if (nError) throw nError
       }
+
+      discordService.broadcastSent(
+        broadcast.title,
+        broadcast.priority,
+        broadcast.target_type === 'CONSTITUENCY' || broadcast.target_type === 'REGION'
+          ? `${broadcast.target_type}: ${broadcast.target_value}`
+          : 'All members',
+        members?.length ?? 0
+      )
 
       if (broadcast.priority === 'Urgent') {
         supabase.functions

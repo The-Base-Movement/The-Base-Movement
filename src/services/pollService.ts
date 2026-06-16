@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { Poll, PollStats } from '@/types/admin'
 import { userActivityService } from '@/services/userActivityService'
+import { discordService } from '@/services/discordService'
 
 class PollService {
   private static instance: PollService
@@ -102,6 +103,7 @@ class PollService {
 
       if (optionsError) throw optionsError
 
+      discordService.pollOpened(poll.question, poll.region, poll.endDate)
       return pollData.id
     } catch (err) {
       console.error('[DATABASE] Failed to create poll:', err)
@@ -124,6 +126,15 @@ class PollService {
     if (error) {
       console.error('[DATABASE] Failed to update poll status:', error)
       return false
+    }
+
+    if (status === 'Closed') {
+      const { data: poll } = await supabase
+        .from('polls')
+        .select('question, total_votes')
+        .eq('id', id)
+        .maybeSingle()
+      if (poll) discordService.pollClosed(poll.question, Number(poll.total_votes ?? 0))
     }
     return true
   }
