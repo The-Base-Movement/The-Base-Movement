@@ -15,11 +15,15 @@ interface Embed {
   timestamp: string
 }
 
-function post(embed: Embed): void {
-  // Fire-and-forget: route through the server-side proxy Edge Function
+type DiscordChannel = 'payments' | 'alerts'
+
+function post(embed: Embed, channel?: DiscordChannel): void {
+  // Fire-and-forget: route through the server-side proxy Edge Function.
+  // `channel` selects a dedicated webhook (payments/alerts); omitted = default
+  // notifications channel.
   supabase.functions
     .invoke('discord-notify', {
-      body: { embeds: [embed] },
+      body: { embeds: [embed], channel },
     })
     .catch((err) => {
       console.warn('[DISCORD SERVICE] Failed to send notification through proxy:', err)
@@ -63,13 +67,16 @@ export const discordService = {
       { name: 'Country', value: country || '—', inline: true },
     ]
     if (campaign) fields.push({ name: 'Campaign', value: campaign, inline: true })
-    post({
-      title: '💰 Donation Received',
-      color: 0xfcd116,
-      fields,
-      footer: { text: 'Awaiting verification' },
-      timestamp: new Date().toISOString(),
-    })
+    post(
+      {
+        title: '💰 Donation Received',
+        color: 0xfcd116,
+        fields,
+        footer: { text: 'Awaiting verification' },
+        timestamp: new Date().toISOString(),
+      },
+      'payments'
+    )
   },
 
   memberVerified(regNo: string, name: string, approved: boolean, chapter?: string): void {
@@ -108,19 +115,22 @@ export const discordService = {
     method: string,
     regionOrState: string
   ): void {
-    post({
-      title: '🛒 New Store Order Placed',
-      color: 0x006b3f,
-      fields: [
-        { name: 'Order ID', value: `#${orderId.substring(0, 8).toUpperCase()}`, inline: true },
-        { name: 'Customer', value: name || 'Anonymous', inline: true },
-        { name: 'Total Amount', value: `₵ ${totalAmount.toFixed(2)}`, inline: true },
-        { name: 'Items', value: `${itemCount} item${itemCount === 1 ? '' : 's'}`, inline: true },
-        { name: 'Payment Method', value: method || 'N/A', inline: true },
-        { name: 'Region/State', value: regionOrState || '—', inline: true },
-      ],
-      timestamp: new Date().toISOString(),
-    })
+    post(
+      {
+        title: '🛒 New Store Order Placed',
+        color: 0x006b3f,
+        fields: [
+          { name: 'Order ID', value: `#${orderId.substring(0, 8).toUpperCase()}`, inline: true },
+          { name: 'Customer', value: name || 'Anonymous', inline: true },
+          { name: 'Total Amount', value: `₵ ${totalAmount.toFixed(2)}`, inline: true },
+          { name: 'Items', value: `${itemCount} item${itemCount === 1 ? '' : 's'}`, inline: true },
+          { name: 'Payment Method', value: method || 'N/A', inline: true },
+          { name: 'Region/State', value: regionOrState || '—', inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'payments'
+    )
   },
 
   chapterJoined(name: string, regNo: string, chapterName: string, regionOrCountry: string): void {
@@ -144,18 +154,37 @@ export const discordService = {
     country: string,
     reference: string
   ): void {
-    post({
-      title: '💰 Donation Confirmed ✅',
-      color: 0xfcd116,
-      fields: [
-        { name: 'From', value: name || 'Anonymous', inline: true },
-        { name: 'Amount', value: `₵ ${Number(amount).toLocaleString()}`, inline: true },
-        { name: 'Method', value: method || 'MTN MoMo', inline: true },
-        { name: 'Country', value: country || '—', inline: true },
-        { name: 'Reference', value: reference || '—', inline: true },
-      ],
-      footer: { text: 'Receipt Sent & Dispatched' },
-      timestamp: new Date().toISOString(),
-    })
+    post(
+      {
+        title: '💰 Donation Confirmed ✅',
+        color: 0xfcd116,
+        fields: [
+          { name: 'From', value: name || 'Anonymous', inline: true },
+          { name: 'Amount', value: `₵ ${Number(amount).toLocaleString()}`, inline: true },
+          { name: 'Method', value: method || 'MTN MoMo', inline: true },
+          { name: 'Country', value: country || '—', inline: true },
+          { name: 'Reference', value: reference || '—', inline: true },
+        ],
+        footer: { text: 'Receipt Sent & Dispatched' },
+        timestamp: new Date().toISOString(),
+      },
+      'payments'
+    )
+  },
+
+  // Generic system alert → #alerts channel. Use in catch blocks / failure paths
+  // for things an operator should see immediately (not the weekly digest).
+  alert(title: string, description: string, fields?: Field[]): void {
+    post(
+      {
+        title: `🔴 ${title}`,
+        description,
+        color: 0xce1126,
+        fields,
+        footer: { text: 'Automated alert' },
+        timestamp: new Date().toISOString(),
+      },
+      'alerts'
+    )
   },
 }

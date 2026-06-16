@@ -13,18 +13,33 @@ serve(async (req: Request) => {
   }
 
   try {
+    const body = await req.json()
+    const embeds = body.embeds || (body.embed ? [body.embed] : null)
+
+    // Route to a per-channel webhook. Unknown/absent channel → the default
+    // notifications webhook. If a channel-specific secret isn't set yet, fall
+    // back to the default so messages aren't lost before the channel exists.
+    const channel = String(body.channel ?? '').toLowerCase()
+    const secretName =
+      channel === 'payments'
+        ? 'DISCORD_PAYMENTS_WEBHOOK_URL'
+        : channel === 'alerts'
+          ? 'DISCORD_ALERTS_WEBHOOK_URL'
+          : 'DISCORD_WEBHOOK_URL'
     // @ts-expect-error: Deno global
-    const webhookUrl = Deno.env.get('DISCORD_WEBHOOK_URL')
+    let webhookUrl = Deno.env.get(secretName)
+    if (!webhookUrl && secretName !== 'DISCORD_WEBHOOK_URL') {
+      console.warn(`[DISCORD-NOTIFY] ${secretName} unset; falling back to DISCORD_WEBHOOK_URL.`)
+      // @ts-expect-error: Deno global
+      webhookUrl = Deno.env.get('DISCORD_WEBHOOK_URL')
+    }
     if (!webhookUrl) {
-      console.error('[DISCORD-NOTIFY] DISCORD_WEBHOOK_URL environment secret is not set.')
+      console.error(`[DISCORD-NOTIFY] No webhook configured (looked for ${secretName}).`)
       return new Response(
         JSON.stringify({ error: 'Server-side Discord webhook configuration is missing.' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       )
     }
-
-    const body = await req.json()
-    const embeds = body.embeds || (body.embed ? [body.embed] : null)
 
     if (!embeds || !Array.isArray(embeds) || embeds.length === 0) {
       return new Response(

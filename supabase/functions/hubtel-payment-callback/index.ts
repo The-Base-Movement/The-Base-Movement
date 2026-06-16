@@ -31,6 +31,39 @@ function getString(payload: Record<string, unknown>, keys: string[]) {
   return null
 }
 
+// Fire a #alerts Discord message via the discord-notify proxy. Non-fatal.
+async function sendAlert(
+  title: string,
+  description: string,
+  fields?: { name: string; value: string }[]
+) {
+  try {
+    // @ts-expect-error: Deno global
+    const url = Deno.env.get('SUPABASE_URL') ?? ''
+    // @ts-expect-error: Deno global
+    const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    await fetch(`${url}/functions/v1/discord-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        channel: 'alerts',
+        embeds: [
+          {
+            title: `🔴 ${title}`,
+            description,
+            color: 0xce1126,
+            fields,
+            footer: { text: 'Hubtel payment callback' },
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      }),
+    })
+  } catch (e) {
+    console.error('[HUBTEL-CALLBACK] alert dispatch failed:', e)
+  }
+}
+
 function isSuccessful(payload: Record<string, unknown>) {
   const code = getString(payload, ['ResponseCode', 'responseCode', 'Code', 'code'])
   const status = getString(payload, ['Status', 'status', 'TransactionStatus', 'transactionStatus'])
@@ -129,6 +162,19 @@ Deno.serve(async (req: Request) => {
 
       if (orderError) throw orderError
 
+      // Paid callback that matched neither a donation nor an order: money may
+      // have been received but isn't recorded anywhere. Alert immediately.
+      if (paid && !order) {
+        await sendAlert(
+          'Orphaned Hubtel payment',
+          'A successful payment callback matched no donation or order. Funds may be unrecorded — investigate.',
+          [
+            { name: 'Reference', value: reference },
+            { name: 'Transaction', value: transactionId ?? '—' },
+          ]
+        )
+      }
+
       if (paid && order?.customer_id && Number(order.points_redeemed ?? 0) > 0) {
         const pointsRedeemed = Number(order.points_redeemed)
         const { data: existingRedemption, error: redemptionLookupError } = await supabaseAdmin
@@ -157,6 +203,7 @@ Deno.serve(async (req: Request) => {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     console.error(`[HUBTEL-CALLBACK-ERROR] ${message}`)
+    await sendAlert('Hubtel callback processing error', message)
     return json({ error: message }, 400)
   }
 })
