@@ -222,11 +222,16 @@ export function useHelpdesk(departmentId: string) {
         return false
       }
       toast.success(userId ? 'Ticket assigned' : 'Ticket unassigned')
+      if (userId) {
+        const subject = tickets.find((t) => t.id === ticketId)?.subject ?? ''
+        const assignee = handlers.find((h) => h.id === userId)?.full_name ?? 'a handler'
+        discordService.helpdeskTicketAssigned(subject, assignee)
+      }
       await fetchTickets()
       if (detail?.ticket.id === ticketId) await loadDetail(ticketId)
       return true
     },
-    [fetchTickets, detail, loadDetail]
+    [fetchTickets, detail, loadDetail, tickets, handlers]
   )
 
   const postComment = useCallback(

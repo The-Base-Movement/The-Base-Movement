@@ -204,6 +204,13 @@ class ConstituencyService {
       console.error('[CONSTITUENCY] Add activity failed:', error)
       return false
     }
+
+    const { data: c } = await supabase
+      .from('ghana_constituencies')
+      .select('name')
+      .eq('id', constituencyId)
+      .maybeSingle()
+    discordService.constituencyActivity((c?.name as string) ?? '', activity.title, activity.type)
     return true
   }
 

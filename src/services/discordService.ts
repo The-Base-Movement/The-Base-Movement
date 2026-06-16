@@ -310,4 +310,34 @@ export const discordService = {
       'helpdesk'
     )
   },
+
+  helpdeskTicketAssigned(subject: string, assigneeName: string): void {
+    post(
+      {
+        title: '🎫 Ticket Assigned',
+        description: `**${subject}**`,
+        color: 0x5865f2,
+        fields: [{ name: 'Assigned to', value: assigneeName || '—', inline: true }],
+        timestamp: new Date().toISOString(),
+      },
+      'helpdesk'
+    )
+  },
+
+  // ── #chapters-constituencies (activity log) ────────────────────
+  constituencyActivity(constituencyName: string, title: string, type: string): void {
+    post(
+      {
+        title: '📋 Constituency Activity Logged',
+        description: `**${title}**`,
+        color: 0x006b3f,
+        fields: [
+          { name: 'Constituency', value: constituencyName || '—', inline: true },
+          { name: 'Type', value: type || '—', inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'chapters'
+    )
+  },
 }
