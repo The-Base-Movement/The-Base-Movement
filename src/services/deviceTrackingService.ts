@@ -192,10 +192,10 @@ export const deviceTrackingService = {
   async getDevices(): Promise<AdminDevice[]> {
     const { data, error } = await supabase.rpc('get_admin_device_rows')
     if (error) throw error
-    const rows = data ?? []
-    const ids = rows.map((r) => r.admin_id)
+    const rows = (data ?? []) as AdminDevice[]
+    const ids = rows.map((r: AdminDevice) => r.admin_id)
     const [names, roles] = await Promise.all([resolveNames(ids), resolveRoles(ids)])
-    return rows.map((r) => ({
+    return rows.map((r: AdminDevice) => ({
       ...(r as Omit<AdminDevice, 'admin_name'>),
       // Prefer the admin's CURRENT role over the one snapshotted at enrolment.
       role: roles.get(r.admin_id) ?? r.role,
