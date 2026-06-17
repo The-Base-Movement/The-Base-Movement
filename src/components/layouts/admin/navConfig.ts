@@ -320,9 +320,11 @@ export const getNavGroups = (
       {
         to: '/admin/it-department',
         icon: 'computer',
+        // Visible to the same roles the route guard (ITDepartmentLayout) allows,
+        // so an IT_MANAGER (incl. the break-glass recovery account) can actually
+        // reach the IT pages — especially Leaders Auth to reset device slots.
+        allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER'],
         label: 'IT Department',
-        superAdminOnly: true,
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
         subItems: [
           { to: '/admin/it-department', icon: 'dashboard', label: 'Overview' },
           { to: '/admin/it-department/tickets', icon: 'confirmation_number', label: 'Helpdesk' },
