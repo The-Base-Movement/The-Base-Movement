@@ -30,7 +30,7 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
-type PageState = 'loading' | 'ready' | 'success' | 'invalid'
+type PageState = 'loading' | 'mfa' | 'ready' | 'success' | 'invalid'
 
 export default function ResetPassword() {
   const { settings } = useBranding()
@@ -40,22 +40,48 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
+  // MFA step-up: accounts with TOTP enabled must reach AAL2 before the password
+  // can be changed, so we prompt for the authenticator code first.
+  const [mfaFactorId, setMfaFactorId] = useState<string | null>(null)
+  const [mfaCode, setMfaCode] = useState('')
+  const [isVerifyingMfa, setIsVerifyingMfa] = useState(false)
 
   useEffect(() => {
+    // Once a recovery session exists, decide whether we still need an MFA
+    // step-up (AAL2) before allowing the password change.
+    const prepare = async () => {
+      try {
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        if (aal?.currentLevel === 'aal1' && aal?.nextLevel === 'aal2') {
+          const { data: factors } = await supabase.auth.mfa.listFactors()
+          const totp = factors?.totp?.find((f) => f.status === 'verified') ?? factors?.totp?.[0]
+          if (totp?.id) {
+            setMfaFactorId(totp.id)
+            setPageState('mfa')
+            return
+          }
+        }
+      } catch {
+        // If the AAL/factor lookup fails, fall through and let updateUser surface
+        // any real problem.
+      }
+      setPageState('ready')
+    }
+
     // Supabase fires PASSWORD_RECOVERY when the user clicks the email reset link.
     // The URL fragment contains the access_token which Supabase auto-exchanges.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
-        setPageState('ready')
+        void prepare()
       }
     })
 
     // Also check if there is already a valid session (user may have already exchanged the token)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        setPageState('ready')
+        void prepare()
       } else {
         // Give the listener a moment to fire; if still loading after 3s, token is invalid
         const timeout = setTimeout(() => {
@@ -67,6 +93,29 @@ export default function ResetPassword() {
 
     return () => subscription.unsubscribe()
   }, [])
+
+  const handleVerifyMfa = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!mfaFactorId) return
+    setIsVerifyingMfa(true)
+    try {
+      const { data: challenge, error: cErr } = await supabase.auth.mfa.challenge({
+        factorId: mfaFactorId,
+      })
+      if (cErr) throw cErr
+      const { error: vErr } = await supabase.auth.mfa.verify({
+        factorId: mfaFactorId,
+        challengeId: challenge.id,
+        code: mfaCode.trim(),
+      })
+      if (vErr) throw vErr
+      setPageState('ready')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Invalid code. Please try again.')
+    } finally {
+      setIsVerifyingMfa(false)
+    }
+  }
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -150,6 +199,67 @@ export default function ResetPassword() {
                   Verifying your reset link…
                 </p>
               </div>
+            )}
+
+            {/* MFA step-up: account has TOTP enabled */}
+            {pageState === 'mfa' && (
+              <>
+                <h2 className="auth-heading">Confirm it's you.</h2>
+                <p className="auth-subheading">
+                  This account has two-factor authentication enabled. Enter the 6-digit code from
+                  your authenticator app to continue.
+                </p>
+                <form
+                  onSubmit={handleVerifyMfa}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+                >
+                  <div>
+                    <label htmlFor="mfa-code" style={labelStyle}>
+                      Authentication Code
+                    </label>
+                    <input
+                      id="mfa-code"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                      style={{ ...inputStyle, letterSpacing: '0.4em', textAlign: 'center' }}
+                      value={mfaCode}
+                      onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ''))}
+                      placeholder="000000"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isVerifyingMfa || mfaCode.length < 6}
+                    className="btn btn-primary"
+                    style={{
+                      height: 50,
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
+                      fontSize: 13,
+                    }}
+                  >
+                    {isVerifyingMfa ? (
+                      <>
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
+                        >
+                          progress_activity
+                        </span>{' '}
+                        Verifying…
+                      </>
+                    ) : (
+                      'Verify'
+                    )}
+                  </button>
+                </form>
+              </>
             )}
 
             {/* Invalid / expired link */}
