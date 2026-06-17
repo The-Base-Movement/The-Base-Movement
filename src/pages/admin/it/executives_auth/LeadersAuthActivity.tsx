@@ -473,6 +473,8 @@ export default function LeadersAuthActivity() {
           loading={activityLoading}
           emptyText={filtered ? 'No activity matches these filters.' : 'No activity yet.'}
           onView={setDetail}
+          // ~20 rows tall, capped to the viewport, then the log scrolls in place.
+          maxHeight="min(820px, 65vh)"
         />
 
         <div style={{ padding: '14px 16px', textAlign: 'center' }}>

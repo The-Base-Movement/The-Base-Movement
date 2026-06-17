@@ -54,14 +54,17 @@ export function ActivityTable({
   loading,
   emptyText,
   onView,
+  maxHeight,
 }: {
   rows: LeaderActivityRow[]
   loading: boolean
   emptyText: string
   onView: (entry: LeaderActivityRow) => void
+  /** When set, the table body scrolls internally past this height (header sticks). */
+  maxHeight?: number | string
 }) {
   return (
-    <div style={{ overflowX: 'auto' }}>
+    <div style={{ overflowX: 'auto', overflowY: maxHeight ? 'auto' : undefined, maxHeight }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead>
           <tr>
@@ -78,6 +81,11 @@ export function ActivityTable({
                     color: 'hsl(var(--on-surface-muted))',
                     borderBottom: '1px solid hsl(var(--border))',
                     whiteSpace: 'nowrap',
+                    // Keep the header visible while the body scrolls.
+                    position: maxHeight ? 'sticky' : undefined,
+                    top: maxHeight ? 0 : undefined,
+                    background: 'hsl(var(--card))',
+                    zIndex: 1,
                   }}
                 >
                   {h}
