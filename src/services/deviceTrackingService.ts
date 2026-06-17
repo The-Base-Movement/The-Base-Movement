@@ -163,9 +163,12 @@ export const deviceTrackingService = {
       .order('last_seen', { ascending: false })
     if (error) throw error
     const rows = data ?? []
-    const names = await resolveNames(rows.map((r) => r.admin_id))
+    const ids = rows.map((r) => r.admin_id)
+    const [names, roles] = await Promise.all([resolveNames(ids), resolveRoles(ids)])
     return rows.map((r) => ({
       ...(r as Omit<AdminDevice, 'admin_name'>),
+      // Prefer the admin's CURRENT role over the one snapshotted at enrolment.
+      role: roles.get(r.admin_id) ?? r.role,
       admin_name: names.get(r.admin_id) ?? 'Unknown admin',
     }))
   },
@@ -317,4 +320,12 @@ async function resolveNames(ids: string[]): Promise<Map<string, string>> {
   return new Map(
     (data ?? []).map((u) => [u.id as string, (u.full_name as string) ?? 'Unknown admin'])
   )
+}
+
+/** Current admin role per id (live), so device cards don't show a stale role. */
+async function resolveRoles(ids: string[]): Promise<Map<string, string>> {
+  const unique = [...new Set(ids)]
+  if (unique.length === 0) return new Map()
+  const { data } = await supabase.from('admins').select('id, role').in('id', unique)
+  return new Map((data ?? []).map((a) => [a.id as string, a.role as string]))
 }

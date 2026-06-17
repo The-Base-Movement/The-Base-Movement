@@ -403,6 +403,31 @@ class AdminService {
     return data as { created: number; skipped: number; failed: number }
   }
 
+  /**
+   * Admin-initiated password reset for a member. Sets a fresh temp password via
+   * the admin-reset-password edge function (service role), flags
+   * must_change_password, emails it best-effort, and returns the temp password
+   * so the admin can read it on-screen — no Supabase dashboard required.
+   */
+  async resetMemberPassword(userId: string): Promise<{
+    success: boolean
+    tempPassword?: string
+    emailed?: boolean
+    email?: string | null
+    error?: string
+  }> {
+    const { data, error } = await supabase.functions.invoke('admin-reset-password', {
+      body: { user_id: userId },
+    })
+    if (error) return { success: false, error: error.message }
+    return data as {
+      success: boolean
+      tempPassword?: string
+      emailed?: boolean
+      email?: string | null
+    }
+  }
+
   async bulkRegisterMembers(
     users: User[]
   ): Promise<{ inserted: number; skipped: number; error: PostgrestError | null }> {

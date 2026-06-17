@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import {
+  adminService,
   type Member,
   type AuditLogEntry,
   type MemberDonation,
@@ -65,6 +66,41 @@ export function MemberDetailPanel({
   const [msgTitle, setMsgTitle] = useState('')
   const [msgBody, setMsgBody] = useState('')
   const [isSendingMsg, setIsSendingMsg] = useState(false)
+
+  const [isResetting, setIsResetting] = useState(false)
+  const [resetResult, setResetResult] = useState<{
+    tempPassword: string
+    emailed: boolean
+    email: string | null
+  } | null>(null)
+
+  async function handleResetPassword() {
+    if (
+      !window.confirm(
+        `Reset the login password for ${member.name}? A new temporary password will be generated.`
+      )
+    )
+      return
+    setIsResetting(true)
+    try {
+      const res = await adminService.resetMemberPassword(member.authId ?? member.id)
+      if (res.success && res.tempPassword) {
+        setResetResult({
+          tempPassword: res.tempPassword,
+          emailed: !!res.emailed,
+          email: res.email ?? null,
+        })
+      } else {
+        toast.error(
+          res.error ?? 'Failed to reset password (does this member have a login account?).'
+        )
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to reset password.')
+    } finally {
+      setIsResetting(false)
+    }
+  }
 
   async function handleSendMessage() {
     if (!msgTitle.trim() || !msgBody.trim()) return
@@ -457,6 +493,21 @@ export function MemberDetailPanel({
                   Message
                 </button>
                 <button
+                  className="btn btn-sm"
+                  style={{
+                    background: 'rgba(255,255,255,.08)',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,.18)',
+                  }}
+                  disabled={isResetting}
+                  onClick={handleResetPassword}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    lock_reset
+                  </span>
+                  {isResetting ? 'Resetting…' : 'Reset password'}
+                </button>
+                <button
                   className="btn btn-sm btn-dest"
                   onClick={() => {
                     // flag action placeholder
@@ -691,6 +742,91 @@ export function MemberDetailPanel({
                 disabled={isSendingMsg || !msgTitle.trim() || !msgBody.trim()}
               >
                 {isSendingMsg ? 'Sending…' : 'Send Message'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {resetResult && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 200,
+            background: 'rgba(0,0,0,0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={() => setResetResult(null)}
+        >
+          <div
+            style={{
+              background: 'hsl(var(--card))',
+              borderRadius: 'var(--radius-lg)',
+              padding: '28px 28px 24px',
+              width: '100%',
+              maxWidth: 440,
+              margin: '0 16px',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3
+              style={{
+                margin: '0 0 4px',
+                fontSize: 16,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Temporary password set
+            </h3>
+            <p style={{ margin: '0 0 16px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+              {resetResult.emailed
+                ? `Emailed to ${resetResult.email}. Also shown here once — copy it now.`
+                : 'Copy and share this securely. It is shown only once.'}
+            </p>
+            <code
+              onClick={() => {
+                void navigator.clipboard?.writeText(resetResult.tempPassword)
+                toast.success('Password copied')
+              }}
+              title="Click to copy"
+              style={{
+                display: 'block',
+                padding: '12px 14px',
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: 'monospace',
+                fontSize: 16,
+                letterSpacing: '0.08em',
+                textAlign: 'center',
+                color: 'hsl(var(--on-surface))',
+                cursor: 'copy',
+                wordBreak: 'break-all',
+              }}
+            >
+              {resetResult.tempPassword}
+            </code>
+            <p
+              style={{ margin: '12px 0 18px', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}
+            >
+              The member must change it on first login.
+            </p>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button
+                className="btn btn-sm btn-outline"
+                onClick={() => {
+                  void navigator.clipboard?.writeText(resetResult.tempPassword)
+                  toast.success('Password copied')
+                }}
+              >
+                Copy
+              </button>
+              <button className="btn btn-sm btn-primary" onClick={() => setResetResult(null)}>
+                Done
               </button>
             </div>
           </div>
