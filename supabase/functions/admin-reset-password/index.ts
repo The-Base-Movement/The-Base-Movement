@@ -19,7 +19,14 @@ const corsHeaders = {
 }
 
 const ALLOWED_ROLES = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
-const CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz'
+// Unambiguous character classes (no 0/O/1/l/I). Kept separate so we can
+// guarantee one of each class — some Auth password policies require mixed
+// classes and/or a symbol, and reject passwords that lack them with a 400.
+const UPPER = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
+const LOWER = 'abcdefghjkmnpqrstuvwxyz'
+const DIGITS = '23456789'
+const SYMBOLS = '!@#$%*?-_'
+const ALL = UPPER + LOWER + DIGITS + SYMBOLS
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -28,9 +35,22 @@ function json(body: unknown, status = 200) {
   })
 }
 
-function generateTempPassword(length = 12): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(length))
-  return Array.from(bytes, (b) => CHARSET[b % CHARSET.length]).join('')
+function pick(charset: string): string {
+  return charset[crypto.getRandomValues(new Uint8Array(1))[0] % charset.length]
+}
+
+// Returns a password that always contains at least one upper, lower, digit and
+// symbol, so it satisfies any reasonable Supabase Auth strength requirement.
+function generateTempPassword(length = 14): string {
+  const required = [pick(UPPER), pick(LOWER), pick(DIGITS), pick(SYMBOLS)]
+  const rest = Array.from({ length: Math.max(length - required.length, 0) }, () => pick(ALL))
+  const chars = [...required, ...rest]
+  // Fisher–Yates shuffle so the required chars aren't always at the front.
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = crypto.getRandomValues(new Uint8Array(1))[0] % (i + 1)
+    ;[chars[i], chars[j]] = [chars[j], chars[i]]
+  }
+  return chars.join('')
 }
 
 serve(async (req: Request) => {

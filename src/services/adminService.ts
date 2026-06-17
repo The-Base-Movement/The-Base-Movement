@@ -419,7 +419,21 @@ class AdminService {
     const { data, error } = await supabase.functions.invoke('admin-reset-password', {
       body: { user_id: userId },
     })
-    if (error) return { success: false, error: error.message }
+    if (error) {
+      // functions.invoke surfaces only a generic "non-2xx" message; the real
+      // reason is in the JSON body on error.context (a Response). Read it.
+      let detail = error.message
+      try {
+        const ctx = (error as { context?: Response }).context
+        if (ctx && typeof ctx.json === 'function') {
+          const body = await ctx.json()
+          if (body?.error) detail = body.error
+        }
+      } catch {
+        // body wasn't JSON — keep the generic message
+      }
+      return { success: false, error: detail }
+    }
     return data as {
       success: boolean
       tempPassword?: string
