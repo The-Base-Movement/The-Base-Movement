@@ -239,7 +239,7 @@ export default function OfficerDetail() {
         }}
       >
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <Breadcrumbs variant="dark" />
+          <Breadcrumbs />
         </div>
       </section>
 
@@ -698,7 +698,7 @@ export default function OfficerDetail() {
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 14,
                 fontWeight: 'var(--font-weight-normal, 400)',
-                color: 'rgba(255,255,255,0.65)',
+                color: 'hsl(var(--on-surface-muted))',
                 margin: 0,
               }}
             >
