@@ -88,8 +88,13 @@ serve(async (req: Request) => {
     if (targetErr || !target?.user) return json({ error: 'Target user not found.' }, 404)
 
     const tempPassword = generateTempPassword()
+    // Set the password AND the auth metadata flag in one call. The forced
+    // change-password redirect (DashboardLayout) reads
+    // session.user.user_metadata.must_change_password, so the table column
+    // alone is not enough — this is what actually forces the reset on login.
     const { error: updErr } = await admin.auth.admin.updateUserById(user_id, {
       password: tempPassword,
+      user_metadata: { ...(target.user.user_metadata ?? {}), must_change_password: true },
     })
     if (updErr) return json({ error: `Could not set password: ${updErr.message}` }, 400)
 
