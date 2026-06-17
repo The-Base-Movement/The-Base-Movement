@@ -2,6 +2,7 @@ import type { Dispatch, FormEvent, SetStateAction } from 'react'
 import type { DonationCampaign } from '@/types/admin'
 import type { CurrencyInfo } from '@/lib/currency'
 import { formatCurrencyAmount, formatGhsAmount } from '@/lib/currency'
+import { BankTransferDetails } from './BankTransferDetails'
 
 interface FormData {
   fullName: string
@@ -555,6 +556,9 @@ export function MobilizationProtocol({
               {currency.code !== 'GHS' ? ` · Checkout settles ${formatGhsAmount(ghsAmount)}` : ''}
             </span>
           </div>
+
+          {/* Bank-transfer details fill the panel and give an offline payment path. */}
+          <BankTransferDetails />
         </form>
 
         <aside
