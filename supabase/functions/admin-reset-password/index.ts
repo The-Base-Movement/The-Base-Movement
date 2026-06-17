@@ -1,9 +1,11 @@
 // admin-reset-password
 //
-// Lets a privileged admin reset any member's login password from inside the app
-// (no Supabase dashboard, no reliance on email delivery). Generates a temp
-// password, sets it via the admin API, flags must_change_password, returns the
-// temp password so the admin can read it on-screen, and emails it best-effort.
+// Lets a privileged admin trigger a password reset for any member from inside
+// the app. Generates a Supabase recovery link (server-side, no reliance on
+// Supabase Auth's own email delivery) and emails it to the member via SendGrid.
+// The member clicks the link and lands on /reset-password to choose a new
+// password themselves. The action link is also returned so the admin can copy
+// and share it if email delivery fails (e.g. spam, phone-only members).
 //
 // Caller must be SUPER_ADMIN / FOUNDER / IT_MANAGER.
 // Body: { user_id: string }
@@ -19,38 +21,12 @@ const corsHeaders = {
 }
 
 const ALLOWED_ROLES = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
-// Unambiguous character classes (no 0/O/1/l/I). Kept separate so we can
-// guarantee one of each class — some Auth password policies require mixed
-// classes and/or a symbol, and reject passwords that lack them with a 400.
-const UPPER = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
-const LOWER = 'abcdefghjkmnpqrstuvwxyz'
-const DIGITS = '23456789'
-const SYMBOLS = '!@#$%*?-_'
-const ALL = UPPER + LOWER + DIGITS + SYMBOLS
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     status,
   })
-}
-
-function pick(charset: string): string {
-  return charset[crypto.getRandomValues(new Uint8Array(1))[0] % charset.length]
-}
-
-// Returns a password that always contains at least one upper, lower, digit and
-// symbol, so it satisfies any reasonable Supabase Auth strength requirement.
-function generateTempPassword(length = 14): string {
-  const required = [pick(UPPER), pick(LOWER), pick(DIGITS), pick(SYMBOLS)]
-  const rest = Array.from({ length: Math.max(length - required.length, 0) }, () => pick(ALL))
-  const chars = [...required, ...rest]
-  // Fisher–Yates shuffle so the required chars aren't always at the front.
-  for (let i = chars.length - 1; i > 0; i--) {
-    const j = crypto.getRandomValues(new Uint8Array(1))[0] % (i + 1)
-    ;[chars[i], chars[j]] = [chars[j], chars[i]]
-  }
-  return chars.join('')
 }
 
 serve(async (req: Request) => {
@@ -64,6 +40,8 @@ serve(async (req: Request) => {
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     // @ts-expect-error: Deno global
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
+    // @ts-expect-error: Deno global
+    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://thebasemovement.creativeutil.com'
     const admin = createClient(supabaseUrl, serviceKey)
 
     // Authn + authz the caller.
@@ -87,27 +65,32 @@ serve(async (req: Request) => {
     const { data: target, error: targetErr } = await admin.auth.admin.getUserById(user_id)
     if (targetErr || !target?.user) return json({ error: 'Target user not found.' }, 404)
 
-    const tempPassword = generateTempPassword()
-    // Set the password AND the auth metadata flag in one call. The forced
-    // change-password redirect (DashboardLayout) reads
-    // session.user.user_metadata.must_change_password, so the table column
-    // alone is not enough — this is what actually forces the reset on login.
-    const { error: updErr } = await admin.auth.admin.updateUserById(user_id, {
-      password: tempPassword,
-      user_metadata: { ...(target.user.user_metadata ?? {}), must_change_password: true },
-    })
-    if (updErr) return json({ error: `Could not set password: ${updErr.message}` }, 400)
-
-    await admin
-      .from('users')
-      .update({ must_change_password: true, temp_password_sent_at: new Date().toISOString() })
-      .eq('id', user_id)
-
-    // Best-effort email to a real address (placeholder phone emails are skipped).
+    // A real (non-placeholder) email is required to receive the reset link.
     const email = target.user.email ?? ''
-    let emailed = false
     const realEmail = email && !email.endsWith('@thebase.org') ? email : ''
-    if (sgKey && realEmail) {
+    if (!realEmail) {
+      return json(
+        { error: 'This member has no email address on file, so a reset link cannot be sent.' },
+        400
+      )
+    }
+
+    // Generate the recovery link server-side. redirectTo must be in the project's
+    // allowed redirect URLs (Auth → URL Configuration). The member lands on
+    // /reset-password, which handles the PASSWORD_RECOVERY event.
+    const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+      type: 'recovery',
+      email: realEmail,
+      options: { redirectTo: `${siteUrl}/reset-password` },
+    })
+    if (linkErr || !linkData?.properties?.action_link) {
+      return json({ error: `Could not generate reset link: ${linkErr?.message ?? 'unknown'}` }, 400)
+    }
+    const actionLink = linkData.properties.action_link as string
+
+    // Email the link via SendGrid (best-effort — the link is also returned).
+    let emailed = false
+    if (sgKey) {
       try {
         const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
           method: 'POST',
@@ -115,14 +98,24 @@ serve(async (req: Request) => {
           body: JSON.stringify({
             personalizations: [{ to: [{ email: realEmail }] }],
             from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
-            subject: 'Your Base Movement password was reset',
+            subject: 'Reset your Base Movement password',
             content: [
               {
                 type: 'text/plain',
                 value:
-                  `An administrator reset your login password.\n\n` +
-                  `Email: ${realEmail}\nTemporary password: ${tempPassword}\n\n` +
-                  `Sign in at https://thebasemovement.creativeutil.com/login and change it immediately.`,
+                  `An administrator started a password reset for your account.\n\n` +
+                  `Open this link to choose a new password (valid for 1 hour):\n${actionLink}\n\n` +
+                  `If you didn't expect this, you can ignore this email.`,
+              },
+              {
+                type: 'text/html',
+                value:
+                  `<p>An administrator started a password reset for your account.</p>` +
+                  `<p><a href="${actionLink}" style="display:inline-block;padding:12px 20px;` +
+                  `background:#006B3F;color:#fff;border-radius:8px;text-decoration:none;` +
+                  `font-family:sans-serif">Choose a new password</a></p>` +
+                  `<p style="font-family:sans-serif;font-size:13px;color:#555">` +
+                  `This link is valid for 1 hour. If you didn't expect this, ignore this email.</p>`,
               },
             ],
           }),
@@ -133,7 +126,7 @@ serve(async (req: Request) => {
       }
     }
 
-    return json({ success: true, tempPassword, emailed, email: realEmail || null })
+    return json({ success: true, emailed, email: realEmail, actionLink })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[admin-reset-password] ${msg}`)

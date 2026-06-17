@@ -70,9 +70,9 @@ export function MemberDetailPanel({
   const [isResetting, setIsResetting] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
   const [resetResult, setResetResult] = useState<{
-    tempPassword: string
     emailed: boolean
     email: string | null
+    actionLink: string | null
   } | null>(null)
 
   async function handleResetPassword() {
@@ -80,19 +80,19 @@ export function MemberDetailPanel({
     setIsResetting(true)
     try {
       const res = await adminService.resetMemberPassword(member.authId ?? member.id)
-      if (res.success && res.tempPassword) {
+      if (res.success) {
         setResetResult({
-          tempPassword: res.tempPassword,
           emailed: !!res.emailed,
           email: res.email ?? null,
+          actionLink: res.actionLink ?? null,
         })
       } else {
         toast.error(
-          res.error ?? 'Failed to reset password (does this member have a login account?).'
+          res.error ?? 'Failed to send reset link (does this member have a login account?).'
         )
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to reset password.')
+      toast.error(err instanceof Error ? err.message : 'Failed to send reset link.')
     } finally {
       setIsResetting(false)
     }
@@ -776,11 +776,11 @@ export function MemberDetailPanel({
                 color: 'hsl(var(--on-surface))',
               }}
             >
-              Reset login password?
+              Send a password reset link?
             </h3>
             <p style={{ margin: '0 0 18px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-              A new temporary password will be generated for {member.name}. They must change it on
-              first login.
+              A password-reset link will be emailed to {member.name}. They click it to choose a new
+              password. The link is valid for 1 hour.
             </p>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
               <button
@@ -795,7 +795,7 @@ export function MemberDetailPanel({
                 disabled={isResetting}
                 onClick={handleResetPassword}
               >
-                {isResetting ? 'Resetting…' : 'Reset password'}
+                {isResetting ? 'Sending…' : 'Send reset link'}
               </button>
             </div>
           </div>
@@ -834,51 +834,48 @@ export function MemberDetailPanel({
                 color: 'hsl(var(--on-surface))',
               }}
             >
-              Temporary password set
+              {resetResult.emailed ? 'Reset link sent' : 'Reset link generated'}
             </h3>
             <p style={{ margin: '0 0 16px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
               {resetResult.emailed
-                ? `Emailed to ${resetResult.email}. Also shown here once — copy it now.`
-                : 'Copy and share this securely. It is shown only once.'}
+                ? `A password-reset link was emailed to ${resetResult.email}. It opens the reset form and is valid for 1 hour.`
+                : 'Email could not be sent — copy this link and share it securely. It opens the reset form and is valid for 1 hour.'}
             </p>
-            <code
-              onClick={() => {
-                void navigator.clipboard?.writeText(resetResult.tempPassword)
-                toast.success('Password copied')
-              }}
-              title="Click to copy"
-              style={{
-                display: 'block',
-                padding: '12px 14px',
-                background: 'hsl(var(--container-low))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-sm)',
-                fontFamily: 'monospace',
-                fontSize: 16,
-                letterSpacing: '0.08em',
-                textAlign: 'center',
-                color: 'hsl(var(--on-surface))',
-                cursor: 'copy',
-                wordBreak: 'break-all',
-              }}
-            >
-              {resetResult.tempPassword}
-            </code>
-            <p
-              style={{ margin: '12px 0 18px', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}
-            >
-              The member must change it on first login.
-            </p>
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-              <button
-                className="btn btn-sm btn-outline"
+            {resetResult.actionLink && (
+              <code
                 onClick={() => {
-                  void navigator.clipboard?.writeText(resetResult.tempPassword)
-                  toast.success('Password copied')
+                  void navigator.clipboard?.writeText(resetResult.actionLink ?? '')
+                  toast.success('Link copied')
+                }}
+                title="Click to copy"
+                style={{
+                  display: 'block',
+                  padding: '12px 14px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface))',
+                  cursor: 'copy',
+                  wordBreak: 'break-all',
                 }}
               >
-                Copy
-              </button>
+                {resetResult.actionLink}
+              </code>
+            )}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 18 }}>
+              {resetResult.actionLink && (
+                <button
+                  className="btn btn-sm btn-outline"
+                  onClick={() => {
+                    void navigator.clipboard?.writeText(resetResult.actionLink ?? '')
+                    toast.success('Link copied')
+                  }}
+                >
+                  Copy link
+                </button>
+              )}
               <button className="btn btn-sm btn-primary" onClick={() => setResetResult(null)}>
                 Done
               </button>
