@@ -10,7 +10,9 @@ interface PasswordForm {
 
 interface MfaEnrollData {
   id: string
-  uri: string
+  qr: string
+  secret?: string
+  uri?: string
 }
 
 interface SecuritySettingsTabProps {
@@ -73,6 +75,12 @@ export function SecuritySettingsTab({
   handleVerifyMfa,
 }: SecuritySettingsTabProps) {
   const mfaActive = mfaFactors.length > 0
+  const qrImageSrc =
+    mfaEnrollData?.qr?.startsWith('data:') || mfaEnrollData?.qr?.startsWith('http')
+      ? mfaEnrollData.qr
+      : mfaEnrollData?.qr
+        ? `data:image/svg+xml;utf8,${encodeURIComponent(mfaEnrollData.qr)}`
+        : null
 
   return (
     <div
@@ -290,15 +298,25 @@ export function SecuritySettingsTab({
                       border: '1px solid hsl(var(--border))',
                     }}
                   >
-                    <QRCodeSVG
-                      value={mfaEnrollData.uri}
-                      size={192}
-                      level="M"
-                      marginSize={2}
-                      bgColor="#ffffff"
-                      fgColor="#000000"
-                      style={{ display: 'block' }}
-                    />
+                    {mfaEnrollData.uri ? (
+                      <QRCodeSVG
+                        value={mfaEnrollData.uri}
+                        size={192}
+                        bgColor="transparent"
+                        fgColor="#111827"
+                        includeMargin
+                      />
+                    ) : (
+                      qrImageSrc && (
+                        <img
+                          src={qrImageSrc}
+                          alt="MFA QR Code"
+                          style={{ width: 192, height: 192 }}
+                          decoding="async"
+                          loading="lazy"
+                        />
+                      )
+                    )}
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <p
@@ -325,6 +343,40 @@ export function SecuritySettingsTab({
                       Use Google Authenticator, Authy, or any TOTP app.
                     </p>
                   </div>
+                  {mfaEnrollData.secret && (
+                    <div
+                      style={{
+                        width: '100%',
+                        padding: 12,
+                        background: 'hsl(var(--container-low))',
+                        border: '1px dashed hsl(var(--border))',
+                        borderRadius: 4,
+                        textAlign: 'center',
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface))',
+                          margin: '0 0 6px',
+                        }}
+                      >
+                        Manual setup key
+                      </p>
+                      <code
+                        style={{
+                          fontSize: 12,
+                          letterSpacing: '0.12em',
+                          wordBreak: 'break-all',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {mfaEnrollData.secret}
+                      </code>
+                    </div>
+                  )}
                   <button
                     className="btn btn-primary"
                     style={{ width: '100%', justifyContent: 'center' }}
@@ -345,7 +397,7 @@ export function SecuritySettingsTab({
                       name="mfaCode"
                       id="input-007f09"
                       value={mfaCode}
-                      onChange={(e) => setMfaCode(e.target.value)}
+                      onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       placeholder="000 000"
                       maxLength={6}
                       style={{
@@ -374,7 +426,7 @@ export function SecuritySettingsTab({
                     className="btn btn-primary"
                     style={{ width: '100%', justifyContent: 'center' }}
                     onClick={handleVerifyMfa}
-                    disabled={isSaving || mfaCode.length < 6}
+                    disabled={isSaving || mfaCode.replace(/\D/g, '').length < 6}
                   >
                     {isSaving ? 'Verifying…' : 'Verify and Enable MFA'}
                   </button>

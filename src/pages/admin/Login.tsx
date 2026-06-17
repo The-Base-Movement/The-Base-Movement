@@ -76,6 +76,8 @@ export default function AdminLogin() {
 
   const handleVerifyMfa = async (e: React.FormEvent) => {
     e.preventDefault()
+    const normalizedCode = mfaCode.replace(/\D/g, '').slice(0, 6)
+    if (normalizedCode.length < 6) return
     setIsLoading(true)
     try {
       const challenge = await supabase.auth.mfa.challenge({ factorId: mfaFactorId })
@@ -83,7 +85,7 @@ export default function AdminLogin() {
       const verify = await supabase.auth.mfa.verify({
         factorId: mfaFactorId,
         challengeId: challenge.data.id,
-        code: mfaCode,
+        code: normalizedCode,
       })
       if (verify.error) throw verify.error
 
@@ -353,13 +355,13 @@ export default function AdminLogin() {
                     fontWeight: 'var(--font-weight-semibold, 600)',
                   }}
                   value={mfaCode}
-                  onChange={(e) => setMfaCode(e.target.value)}
+                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={isLoading || mfaCode.length < 6}
+                disabled={isLoading || mfaCode.replace(/\D/g, '').length < 6}
                 className="btn btn-primary"
                 style={{
                   width: '100%',

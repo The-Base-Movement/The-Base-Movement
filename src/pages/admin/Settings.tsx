@@ -31,8 +31,15 @@ type SettingsTab =
 interface SupabaseAuthWithMFA {
   mfa: {
     listFactors: () => Promise<{ data: { all: Factor[] }; error: AuthError | null }>
-    enroll: (params: { factorType: 'totp'; friendlyName?: string; issuer?: string }) => Promise<{
-      data: { id: string; totp: { qr_code: string; secret: string; uri: string } }
+    enroll: (params: {
+      factorType: 'totp'
+      friendlyName?: string
+      issuer?: string
+    }) => Promise<{
+      data: {
+        id: string
+        totp: { qr_code: string; secret?: string; uri?: string }
+      }
       error: AuthError | null
     }>
     challenge: (params: {
@@ -75,7 +82,12 @@ export default function AdminSettings() {
   const [mfaFactors, setMfaFactors] = useState<Factor[]>([])
   const [showMfaDialog, setShowMfaDialog] = useState(false)
   const [mfaStep, setMfaStep] = useState<'qr' | 'verify'>('qr')
-  const [mfaEnrollData, setMfaEnrollData] = useState<{ id: string; uri: string } | null>(null)
+  const [mfaEnrollData, setMfaEnrollData] = useState<{
+    id: string
+    qr: string
+    secret?: string
+    uri?: string
+  } | null>(null)
   const [mfaCode, setMfaCode] = useState('')
   const [siteSettings, setSiteSettings] = useState<Record<string, unknown>>({})
 
@@ -106,7 +118,7 @@ export default function AdminSettings() {
           fullName: data?.name || user.user_metadata?.full_name || '',
           email: data?.email || user.email || '',
           phone: data?.phone || user.user_metadata?.phone || '',
-          avatarUrl: user.user_metadata?.avatar_url || '',
+          avatarUrl: data?.avatarUrl || user.user_metadata?.avatar_url || '',
         })
       }
       try {
@@ -177,7 +189,12 @@ export default function AdminSettings() {
         issuer: 'The Base Movement',
       })
       if (error) throw error
-      setMfaEnrollData({ id: data.id, uri: data.totp.uri })
+      setMfaEnrollData({
+        id: data.id,
+        qr: data.totp.qr_code,
+        secret: data.totp.secret,
+        uri: data.totp.uri,
+      })
       setMfaStep('qr')
       setShowMfaDialog(true)
     } catch (error: unknown) {
@@ -188,7 +205,8 @@ export default function AdminSettings() {
   }
 
   const handleVerifyMfa = async () => {
-    if (!mfaEnrollData || !mfaCode) return
+    const normalizedCode = mfaCode.replace(/\D/g, '').slice(0, 6)
+    if (!mfaEnrollData || normalizedCode.length < 6) return
     setIsSaving(true)
     try {
       const auth = supabase.auth as unknown as SupabaseAuthWithMFA
@@ -197,7 +215,7 @@ export default function AdminSettings() {
       const verify = await auth.mfa.verify({
         factorId: mfaEnrollData.id,
         challengeId: challenge.data.id,
-        code: mfaCode,
+        code: normalizedCode,
       })
       if (verify.error) throw verify.error
       toast.success('MFA successfully enabled!')

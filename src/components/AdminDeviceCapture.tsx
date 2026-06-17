@@ -14,11 +14,12 @@ import BiometricPrompt from '@/components/BiometricPrompt'
  * ProtectedAdminRoute after the 2FA gate.
  *
  *  - Runs once per browser session (sessionStorage flag), like the 2FA gate.
- *  - Non-blocking + fail-open: any error lets the admin through; only a slot
- *    explicitly marked `blocked` shows a stop screen.
- *  - When the decision needs a passkey step (enrol a new/unenrolled device, or
- *    step-up on an unknown device) a BiometricPrompt overlay is shown. The user
- *    already passed 2FA, so the prompt is skippable and never locks anyone out.
+ *  - Unexpected capture errors still fail open so transient API faults do not
+ *    lock out admins.
+ *  - An occupied slot with a different fingerprint is treated as blocked and
+ *    shows the stop screen.
+ *  - When the enrolled device has no passkey yet, a BiometricPrompt overlay is
+ *    shown so the admin can bind Windows Hello / Face ID to the known device.
  */
 const CAPTURE_KEY = 'admin_device_captured'
 
@@ -44,14 +45,12 @@ export default function AdminDeviceCapture() {
 
         const res = await deviceTrackingService.evaluateCurrentDevice()
 
-        if (res?.tracked && res.decision === 'blocked') {
+        if (res?.tracked && (res.decision === 'blocked' || res.decision === 'step_up_required')) {
           setBlocked(true)
           return // do not set the flag — re-check on next entry
         }
 
-        const needsPasskey =
-          res?.tracked &&
-          (res.decision === 'step_up_required' || (res.webauthn_required && !!res.device_id))
+        const needsPasskey = res?.tracked && res.webauthn_required && !!res.device_id
 
         if (needsPasskey) {
           setPrompt(res) // resolve via the BiometricPrompt overlay

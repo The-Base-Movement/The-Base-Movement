@@ -4,6 +4,7 @@ import type { Area } from 'react-easy-crop'
 import { sessionStore } from '@/lib/sessionStore'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
+import { authService } from '@/services/authService'
 import { userActivityService } from '@/services/userActivityService'
 import { dataURLtoBlob, getCroppedImg } from '@/lib/imageUtils'
 import { toast } from 'sonner'
@@ -306,6 +307,7 @@ export default function ProfileSettings() {
 
     setLoading(true)
     let finalAvatarUrl = avatarUrl
+    const normalizedPhone = normalizeProfilePhone(form.countryCode, form.phone)
 
     if (avatarUrl && avatarUrl.startsWith('data:')) {
       try {
@@ -341,7 +343,7 @@ export default function ProfileSettings() {
       await adminService.updateMemberProfile(regNo, {
         name: form.fullName,
         email: form.email,
-        phone: normalizeProfilePhone(form.countryCode, form.phone),
+        phone: normalizedPhone,
         gender: form.gender,
         // Chapter is Diaspora-only; Ghana Network members are organised by constituency
         ...(userPlatform !== 'GHANA' && { chapter: form.chapter }),
@@ -352,6 +354,14 @@ export default function ProfileSettings() {
         residentialAddress: form.residentialAddress,
         job,
       })
+      await authService.updateProfile({
+        full_name: form.fullName,
+        avatar_url: finalAvatarUrl || undefined,
+        phone: normalizedPhone,
+      })
+      if (finalAvatarUrl) {
+        setAvatarUrl(finalAvatarUrl)
+      }
 
       const {
         data: { user },

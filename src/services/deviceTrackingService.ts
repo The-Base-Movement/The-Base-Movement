@@ -21,7 +21,7 @@ export interface EvaluateResult {
   decision: DeviceDecision
   device_id?: string
   webauthn_required?: boolean
-  /** The fingerprint hash computed for this device (used for step-up rebind). */
+  /** The fingerprint hash computed for this device (used for verification logs). */
   fingerprint_hash?: string
 }
 
@@ -153,14 +153,44 @@ export const deviceTrackingService = {
     return { ...(data as EvaluateResult), fingerprint_hash }
   },
 
+  /**
+   * Sensitive admin actions must prove possession of the enrolled platform
+   * authenticator before the mutation is allowed to complete.
+   */
+  async verifySensitiveActionBiometric(): Promise<void> {
+    const result = await this.evaluateCurrentDevice()
+    if (!result.tracked) return
+    if (result.decision === 'blocked' || result.decision === 'step_up_required') {
+      throw new Error('This device is blocked for your account.')
+    }
+    if (!result.device_id || !result.fingerprint_hash) {
+      throw new Error('This device could not be verified for biometric approval.')
+    }
+
+    if (result.webauthn_required) {
+      const enrolled = await this.enrolBiometric(result.device_id, {
+        rebind: false,
+        fingerprintHash: result.fingerprint_hash,
+      })
+      if (!enrolled) throw new Error('Biometric verification failed.')
+      return
+    }
+
+    const outcome = await this.stepUpBiometric(result.device_id, result.fingerprint_hash)
+    if (outcome === 'verified') return
+    if (outcome === 'needs_enrol') {
+      const enrolled = await this.enrolBiometric(result.device_id, {
+        rebind: false,
+        fingerprintHash: result.fingerprint_hash,
+      })
+      if (enrolled) return
+    }
+    throw new Error('Biometric verification failed.')
+  },
+
   /** IT view: all registered device slots, with the admin's display name. */
   async getDevices(): Promise<AdminDevice[]> {
-    const { data, error } = await supabase
-      .from('admin_devices')
-      .select(
-        'id, admin_id, role, device_type, device_name, os_type, browser, ip_address, location, status, webauthn_enrolled, created_at, last_seen'
-      )
-      .order('last_seen', { ascending: false })
+    const { data, error } = await supabase.rpc('get_admin_device_rows')
     if (error) throw error
     const rows = data ?? []
     const ids = rows.map((r) => r.admin_id)
@@ -176,24 +206,14 @@ export const deviceTrackingService = {
   /** IT view: device activity feed, filterable by admin and action, paginated. */
   async getActivity(opts: ActivityFilter = {}): Promise<DeviceActivity[]> {
     const { adminId, action, limit = 25, offset = 0 } = opts
-    let query = supabase
-      .from('admin_device_activity')
-      .select(
-        'id, admin_id, device_type, action, ip_address, location, user_agent, metadata, created_at'
-      )
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
-    if (adminId) query = query.eq('admin_id', adminId)
-    if (action) query = query.eq('action', action)
-
-    const { data, error } = await query
+    const { data, error } = await supabase.rpc('get_admin_device_activity_rows', {
+      p_admin_id: adminId ?? null,
+      p_action: action ?? null,
+      p_limit: limit,
+      p_offset: offset,
+    })
     if (error) throw error
-    const rows = data ?? []
-    const names = await resolveNames(rows.map((r) => r.admin_id).filter(Boolean) as string[])
-    return rows.map((r) => ({
-      ...(r as Omit<DeviceActivity, 'admin_name'>),
-      admin_name: r.admin_id ? (names.get(r.admin_id) ?? 'Unknown admin') : 'System',
-    }))
+    return (data ?? []) as DeviceActivity[]
   },
 
   /**
@@ -201,18 +221,16 @@ export const deviceTrackingService = {
    * activity-breakdown pie chart on the full activity page.
    */
   async getActivityActionCounts(adminId?: string): Promise<Record<string, number>> {
-    const entries = await Promise.all(
-      DEVICE_ACTIVITY_ACTIONS.map(async (action) => {
-        let q = supabase
-          .from('admin_device_activity')
-          .select('id', { count: 'exact', head: true })
-          .eq('action', action)
-        if (adminId) q = q.eq('admin_id', adminId)
-        const { count } = await q
-        return [action, count ?? 0] as const
-      })
-    )
-    return Object.fromEntries(entries)
+    const { data, error } = await supabase.rpc('get_admin_device_activity_counts', {
+      p_admin_id: adminId ?? null,
+    })
+    if (error) throw error
+
+    const out = Object.fromEntries(DEVICE_ACTIVITY_ACTIONS.map((action) => [action, 0]))
+    for (const row of (data ?? []) as { action: string; total: number }[]) {
+      out[row.action] = Number(row.total) || 0
+    }
+    return out
   },
 
   /**
@@ -235,20 +253,16 @@ export const deviceTrackingService = {
 
   /** KPI counts that must stay accurate even when the feed is paginated. */
   async getActivityStats(): Promise<{ loginsToday: number; alerts: number }> {
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
-    const [logins, alerts] = await Promise.all([
-      supabase
-        .from('admin_device_activity')
-        .select('id', { count: 'exact', head: true })
-        .in('action', ['verified', 'enrolled'])
-        .gte('created_at', startOfDay.toISOString()),
-      supabase
-        .from('admin_device_activity')
-        .select('id', { count: 'exact', head: true })
-        .in('action', ['step_up_required', 'blocked']),
-    ])
-    return { loginsToday: logins.count ?? 0, alerts: alerts.count ?? 0 }
+    const { data, error } = await supabase.rpc('get_admin_device_activity_stats')
+    if (error) throw error
+    const row = (data?.[0] ?? { logins_today: 0, alerts: 0 }) as {
+      logins_today: number
+      alerts: number
+    }
+    return {
+      loginsToday: Number(row.logins_today) || 0,
+      alerts: Number(row.alerts) || 0,
+    }
   },
 
   /** IT recovery action: clear a device slot so the user can re-enrol. */
@@ -259,8 +273,8 @@ export const deviceTrackingService = {
 
   /**
    * Enrol a platform biometric (Windows Hello / Face ID / Touch ID) for a device
-   * slot. `rebind` + `fingerprintHash` re-bind the slot to a new fingerprint when
-   * enrolling during a step-up on a slot that had no passkey yet.
+   * slot. The fingerprint hash is forwarded so the backend can log which device
+   * completed the verification ceremony.
    */
   async enrolBiometric(
     deviceId: string | undefined,
@@ -287,7 +301,7 @@ export const deviceTrackingService = {
   /**
    * Step-up: verify the device's biometric. Returns 'verified' on success,
    * 'needs_enrol' if no passkey exists yet for this admin (caller should enrol),
-   * or 'failed'. On success for a known slot the server rebinds the fingerprint.
+   * or 'failed'. On success the server records a fresh verification event.
    */
   async stepUpBiometric(
     deviceId: string,

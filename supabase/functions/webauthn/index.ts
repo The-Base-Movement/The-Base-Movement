@@ -3,7 +3,7 @@
 // Biometric (WebAuthn / passkey) ceremonies for privileged admins, layered on
 // top of device binding. Four actions:
 //   register-begin / register-complete         -> enrol a platform authenticator
-//   authenticate-begin / authenticate-complete -> verify it (used for step-up)
+//   authenticate-begin / authenticate-complete -> verify it for sensitive admin actions
 //
 // The admin is always derived from the verified JWT. The RP ID is derived from
 // the request Origin and validated against an allowlist, so the same code works
@@ -205,8 +205,8 @@ serve(async (req: Request) => {
         await supabase.from('admin_devices').update({ webauthn_enrolled: true }).eq('id', deviceId)
       }
 
-      // Step-up enrolment (a known slot whose fingerprint changed but had no
-      // passkey yet): rebind the slot to the new fingerprint after enrolling.
+      // Record a completed verification ceremony against the known slot without
+      // rewriting the enrolled device fingerprint.
       if (deviceId && body.rebind && body.fingerprint_hash) {
         const ip = clientIp(req)
         const { location, isp } = await geoLocate(ip)
@@ -312,7 +312,7 @@ serve(async (req: Request) => {
         .eq('admin_id', user.id)
         .eq('purpose', 'authentication')
 
-      // If this was a step-up for a known device slot, rebind the new fingerprint.
+      // Record the verification against the known slot for activity/audit use.
       const deviceId = body.device_id ?? ch.device_id ?? null
       let stepUp = null
       if (deviceId && body.fingerprint_hash) {

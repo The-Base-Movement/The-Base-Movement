@@ -5,8 +5,8 @@ import { deviceTrackingService, type EvaluateResult } from '@/services/deviceTra
  * Full-screen biometric prompt shown after device capture when a passkey step is
  * needed. Two modes, driven by the evaluate decision:
  *   - enrol  : device has no passkey yet — offer to set up Windows Hello / Face ID.
- *   - stepup : unknown/changed device — verify identity with the existing passkey
- *              (falls back to enrolment if no passkey exists anywhere).
+ *   - stepup : verify the enrolled device with the existing passkey if a caller
+ *              explicitly requests it.
  *
  * WebAuthn requires a user gesture, so every ceremony is triggered by a button.
  *   - enrol mode is non-blocking: "Set up later" lets the user proceed.
@@ -53,7 +53,7 @@ export default function BiometricPrompt({
         result.fingerprint_hash
       )
       if (outcome === 'verified') return onDone()
-      if (outcome === 'needs_enrol') return runEnrol(true) // no passkey yet → enrol + rebind
+      if (outcome === 'needs_enrol') return runEnrol(false) // no passkey yet → enrol it now
       setStatus('error')
       setMessage('We could not verify your biometric. Try again to continue.')
     } catch (err) {

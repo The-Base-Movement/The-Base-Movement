@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
+import { deviceTrackingService } from '@/services/deviceTrackingService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { toast } from 'sonner'
 import {
@@ -182,6 +183,8 @@ export default function FinanceReviewInbox() {
 
     setActioning(true)
     try {
+      await deviceTrackingService.verifySensitiveActionBiometric()
+
       if (isPassUp(result.outcome)) {
         await financeService.acknowledgeRequest(modal.request.id)
         toast.success(result.message)
@@ -201,6 +204,8 @@ export default function FinanceReviewInbox() {
         toast.warning('This request is no longer available for review')
         setModal(null)
         await loadAll()
+      } else if (msg.toLowerCase().includes('biometric')) {
+        toast.error(msg)
       } else {
         toast.error('Failed to process request')
       }
