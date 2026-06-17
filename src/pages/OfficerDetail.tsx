@@ -364,6 +364,7 @@ export default function OfficerDetail() {
   const [related, setRelated] = useState<OfficerFull[]>([])
   const [tierIndex, setTierIndex] = useState(2)
   const [tierTitle, setTierTitle] = useState('')
+  const [tierColor, setTierColor] = useState<string | null>(null)
   const [stats, setStats] = useState<PublicStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
@@ -397,7 +398,7 @@ export default function OfficerDetail() {
         supabase.from('party_officials').select('*').order('order_index', { ascending: true }),
         supabase
           .from('party_tiers')
-          .select('name, title, order_index')
+          .select('name, title, order_index, accent_color')
           .order('order_index', { ascending: true }),
         adminService.getPublicStats().catch(() => null),
       ])
@@ -423,8 +424,12 @@ export default function OfficerDetail() {
 
       if (tiersRes.data) {
         const idx = tiersRes.data.findIndex((t) => t.name === match.tier)
+        const tier = tiersRes.data[idx === -1 ? 0 : idx] as
+          | { title?: string; accent_color?: string | null }
+          | undefined
         setTierIndex(idx === -1 ? 2 : idx)
-        setTierTitle(tiersRes.data[idx === -1 ? 0 : idx]?.title || match.tier)
+        setTierTitle(tier?.title || match.tier)
+        setTierColor(tier?.accent_color ?? null)
       }
 
       const relatedList = (allOfficersRes.data as OfficerFull[])
@@ -464,7 +469,9 @@ export default function OfficerDetail() {
 
   if (!officer) return null
 
-  const accentColor = TIER_COLOR[tierIndex] ?? 'hsl(var(--primary))'
+  // Prefer the tier's own accent_color from the DB; fall back to the legacy
+  // index map, then brand green.
+  const accentColor = tierColor ?? TIER_COLOR[tierIndex] ?? 'hsl(var(--primary))'
   const firstName = officer.name.split(' ')[0]
   const tierLabel = tierTitle || officer.tier
   const paragraphs = officer.bio ? bioParagraphs(officer.bio) : []
