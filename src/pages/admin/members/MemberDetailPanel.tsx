@@ -68,6 +68,7 @@ export function MemberDetailPanel({
   const [isSendingMsg, setIsSendingMsg] = useState(false)
 
   const [isResetting, setIsResetting] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
   const [resetResult, setResetResult] = useState<{
     tempPassword: string
     emailed: boolean
@@ -75,12 +76,7 @@ export function MemberDetailPanel({
   } | null>(null)
 
   async function handleResetPassword() {
-    if (
-      !window.confirm(
-        `Reset the login password for ${member.name}? A new temporary password will be generated.`
-      )
-    )
-      return
+    setConfirmReset(false)
     setIsResetting(true)
     try {
       const res = await adminService.resetMemberPassword(member.authId ?? member.id)
@@ -500,7 +496,7 @@ export function MemberDetailPanel({
                     border: '1px solid rgba(255,255,255,.18)',
                   }}
                   disabled={isResetting}
-                  onClick={handleResetPassword}
+                  onClick={() => setConfirmReset(true)}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                     lock_reset
@@ -742,6 +738,64 @@ export function MemberDetailPanel({
                 disabled={isSendingMsg || !msgTitle.trim() || !msgBody.trim()}
               >
                 {isSendingMsg ? 'Sending…' : 'Send Message'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmReset && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 200,
+            background: 'rgba(0,0,0,0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={() => setConfirmReset(false)}
+        >
+          <div
+            style={{
+              background: 'hsl(var(--card))',
+              borderRadius: 'var(--radius-lg)',
+              padding: '28px 28px 24px',
+              width: '100%',
+              maxWidth: 440,
+              margin: '0 16px',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3
+              style={{
+                margin: '0 0 4px',
+                fontSize: 16,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Reset login password?
+            </h3>
+            <p style={{ margin: '0 0 18px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+              A new temporary password will be generated for {member.name}. They must change it on
+              first login.
+            </p>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button
+                className="btn btn-sm btn-outline"
+                disabled={isResetting}
+                onClick={() => setConfirmReset(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-sm btn-primary"
+                disabled={isResetting}
+                onClick={handleResetPassword}
+              >
+                {isResetting ? 'Resetting…' : 'Reset password'}
               </button>
             </div>
           </div>
