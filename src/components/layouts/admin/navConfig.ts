@@ -230,7 +230,7 @@ export const getNavGroups = (
         to: '/admin/newsletter',
         icon: 'mail',
         label: 'Newsletter',
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
         to: '/admin/directives',

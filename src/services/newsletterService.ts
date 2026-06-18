@@ -194,55 +194,27 @@ export const newsletterService = {
   },
 
   async deleteNewsletters(ids: string[]): Promise<void> {
-    const { error } = await supabase.from('newsletters').delete().in('id', ids)
+    const { error } = await supabase.functions.invoke('newsletter-admin', {
+      body: { action: 'delete', ids },
+    })
     if (error) throw error
   },
 
   async scheduleNewsletter(payload: ScheduleNewsletterPayload): Promise<void> {
-    const { error } = await supabase.from('newsletters').upsert(
-      {
-        id: payload.newsletter_id,
-        subject: payload.subject,
-        body_html: payload.body_html,
-        audience_type: payload.audience_type,
-        audience_value: payload.audience_value,
-        audience_filters: payload.audience_filters,
-        scheduled_at: payload.scheduled_at,
-        sent_by: payload.sent_by ?? null,
-        status: 'scheduled',
-        error_message: null,
-      },
-      { onConflict: 'id' }
-    )
+    const { error } = await supabase.functions.invoke('newsletter-admin', {
+      body: { action: 'schedule', ...payload },
+    })
     if (error) throw error
   },
 
   async cancelScheduled(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('newsletters')
-      .delete()
-      .eq('id', id)
-      .eq('status', 'scheduled')
+    const { error } = await supabase.functions.invoke('newsletter-admin', {
+      body: { action: 'cancel', newsletter_id: id },
+    })
     if (error) throw error
   },
 
   async createAndSend(payload: SendNewsletterPayload): Promise<{ sent: number; batches: number }> {
-    const { error: insertError } = await supabase.from('newsletters').upsert(
-      {
-        id: payload.newsletter_id,
-        subject: payload.subject,
-        body_html: payload.body_html,
-        audience_type: payload.audience_type,
-        audience_value: payload.audience_value,
-        audience_filters: payload.audience_filters,
-        sent_by: payload.sent_by ?? null,
-        status: 'sent',
-        error_message: null,
-      },
-      { onConflict: 'id' }
-    )
-    if (insertError) throw insertError
-
     const { data, error } = await supabase.functions.invoke('send-newsletter', {
       body: payload,
     })

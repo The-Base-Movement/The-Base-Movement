@@ -10,11 +10,9 @@
 // verify_jwt: false — called by SendGrid, not by a browser session.
 // Required auto-injected: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 //
-// Optional secret: SENDGRID_WEBHOOK_SECRET
-//   If set, the request must include the header X-Webhook-Secret matching this value.
+// Required secret: SENDGRID_WEBHOOK_SECRET
+//   The request must include the header X-Webhook-Secret matching this value.
 //   Set it in both SendGrid (Notifications → "Send Custom Headers") and Supabase secrets.
-//   Without this, the function URL itself acts as the shared secret — recommended to
-//   pair with Supabase's IP allowlist for SendGrid's egress IPs in production.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
@@ -41,14 +39,16 @@ Deno.serve(async (req) => {
     return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
   }
 
-  // --- Optional shared-secret verification ---
+  // --- Required shared-secret verification ---
   const expectedSecret = Deno.env.get('SENDGRID_WEBHOOK_SECRET')
-  if (expectedSecret) {
-    const provided = req.headers.get('x-webhook-secret')
-    if (provided !== expectedSecret) {
-      console.warn('[WEBHOOK] Secret mismatch — rejected')
-      return new Response('Forbidden', { status: 403, headers: corsHeaders })
-    }
+  if (!expectedSecret) {
+    console.error('[WEBHOOK] SENDGRID_WEBHOOK_SECRET is not configured — refusing to process')
+    return new Response('Service Unavailable', { status: 503, headers: corsHeaders })
+  }
+  const provided = req.headers.get('x-webhook-secret')
+  if (provided !== expectedSecret) {
+    console.warn('[WEBHOOK] Secret mismatch — rejected')
+    return new Response('Forbidden', { status: 403, headers: corsHeaders })
   }
 
   let events: SendGridEvent[]

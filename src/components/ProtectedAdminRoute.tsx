@@ -13,6 +13,8 @@ import AdminDeviceCapture from '@/components/AdminDeviceCapture'
 export const ADMIN_GATE_KEY = 'admin_gate_verified'
 
 type GateStatus = 'checking' | 'allowed' | 'challenge'
+const MFA_SETUP_PATH = '/admin/settings'
+const MFA_SETUP_TAB = 'security'
 
 export default function ProtectedAdminRoute() {
   const { session, isLoading } = useAuth()
@@ -35,19 +37,16 @@ export default function ProtectedAdminRoute() {
       try {
         const { data: factors, error } = await supabase.auth.mfa.listFactors()
         if (error) throw error
-        const totp = factors?.totp?.find((f) => f.status === 'verified') ?? factors?.totp?.[0]
+        const totp = factors?.totp?.find((f) => f.status === 'verified')
         if (totp) {
           if (!cancelled) {
             setFactorId(totp.id)
             setStatus('challenge')
           }
         } else {
-          // No 2FA enrolled — same behavior as admin login (no lockout)
           if (!cancelled) setStatus('allowed')
         }
       } catch {
-        // Factor lookup failed — fail open to match previous behavior rather
-        // than locking every admin out on a transient auth API error
         if (!cancelled) setStatus('allowed')
       }
     }
@@ -65,6 +64,18 @@ export default function ProtectedAdminRoute() {
   }
 
   if (status === 'checking') return null
+
+  const tab = new URLSearchParams(location.search).get('tab')
+  const onSecuritySetupPath = location.pathname === MFA_SETUP_PATH && tab === MFA_SETUP_TAB
+
+  // No verified admin factor enrolled: allow only the security settings setup
+  // path; all other admin routes fail closed and redirect into setup.
+  if (!factorId) {
+    if (onSecuritySetupPath) {
+      return <AdminDeviceCapture />
+    }
+    return <Navigate to={`${MFA_SETUP_PATH}?tab=${MFA_SETUP_TAB}`} replace />
+  }
 
   if (status === 'challenge') {
     return (

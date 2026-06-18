@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Navigate } from 'react-router-dom'
 import { newsletterService } from '@/services/newsletterService'
 import type { AudienceFilter, Newsletter } from '@/services/newsletterService'
 import { adminService } from '@/services/adminService'
@@ -7,12 +8,12 @@ import { HistoryPanel } from './newsletter/HistoryPanel'
 
 export default function NewsletterPage() {
   const [newsletters, setNewsletters] = useState<Newsletter[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSending, setIsSending] = useState(false)
-  const [sendResult, setSendResult] = useState<string | null>(null)
-
   const currentUser = adminService.getCurrentUser()
   const canDelete = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'FOUNDER'
+  const canManageNewsletters = adminService.can('MANAGE_BLOGS', 'BLOGS')
+  const [isLoading, setIsLoading] = useState(canManageNewsletters)
+  const [isSending, setIsSending] = useState(false)
+  const [sendResult, setSendResult] = useState<string | null>(null)
 
   const fetchNewsletters = useCallback(async () => {
     setIsLoading(true)
@@ -27,8 +28,10 @@ export default function NewsletterPage() {
   }, [])
 
   useEffect(() => {
-    fetchNewsletters()
-  }, [fetchNewsletters])
+    if (!canManageNewsletters) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchNewsletters()
+  }, [canManageNewsletters, fetchNewsletters])
 
   async function send(
     subject: string,
@@ -167,6 +170,10 @@ export default function NewsletterPage() {
     },
     { label: 'Last sent', value: lastSent, bar: 'hsl(var(--destructive))' },
   ]
+
+  if (!canManageNewsletters) {
+    return <Navigate to="/admin/dashboard" replace />
+  }
 
   return (
     <div className="main">

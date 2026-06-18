@@ -8,6 +8,7 @@
 // Auto-injected:   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { canManageNewsletters, json, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
 const BATCH_SIZE = 1000
 
@@ -201,21 +202,52 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    const { newsletter_id, subject, body_html, audience_type, audience_value, audience_filters } =
-      await req.json()
-
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     if (!sgKey) {
-      return new Response(JSON.stringify({ skipped: true, reason: 'SENDGRID_API_KEY not set' }), {
+      return json({ skipped: true, reason: 'SENDGRID_API_KEY not set' }, 200, corsHeaders)
+    }
+
+    const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceKey)
+
+    const authz = await requireAuthorizedAdmin(req, supabase, canManageNewsletters, {
+      allowServiceRole: true,
+      serviceRoleKey: serviceKey,
+    })
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
       })
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const {
+      newsletter_id,
+      subject,
+      body_html,
+      audience_type,
+      audience_value,
+      audience_filters,
+      sent_by,
+    } = await req.json()
+
+    const baseNewsletterRow = {
+      id: newsletter_id,
+      subject,
+      body_html,
+      audience_type,
+      audience_value: audience_value ?? null,
+      audience_filters: Array.isArray(audience_filters) ? audience_filters : [],
+      sent_by: sent_by ?? authz.callerUserId,
+      error_message: null,
+    }
+
+    const { error: upsertError } = await supabase
+      .from('newsletters')
+      .upsert(baseNewsletterRow, { onConflict: 'id' })
+    if (upsertError) {
+      throw new Error(upsertError.message)
+    }
 
     // Collect unique {email, id} pairs — deduplicated by email via Map
     const recipientMap = new Map<string, string>() // email → id
@@ -286,10 +318,7 @@ Deno.serve(async (req) => {
         .from('newsletters')
         .update({ recipient_count: 0, status: 'sent', sent_at: new Date().toISOString() })
         .eq('id', newsletter_id)
-      return new Response(JSON.stringify({ sent: 0, batches: 0 }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      })
+      return json({ sent: 0, batches: 0 }, 200, corsHeaders)
     }
 
     // Build the base URL for unsubscribe links
@@ -360,10 +389,7 @@ Deno.serve(async (req) => {
 
     await notifyContent(subject, recipients.length)
 
-    return new Response(JSON.stringify({ sent: recipients.length, batches: batchCount }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    })
+    return json({ sent: recipients.length, batches: batchCount }, 200, corsHeaders)
   } catch (err: unknown) {
     const message =
       err instanceof Error
@@ -372,9 +398,6 @@ Deno.serve(async (req) => {
           ? JSON.stringify(err)
           : String(err)
     console.error('[NEWSLETTER-ERROR]', message)
-    return new Response(JSON.stringify({ error: message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    })
+    return json({ error: message }, 500, corsHeaders)
   }
 })

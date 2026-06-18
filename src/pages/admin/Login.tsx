@@ -46,23 +46,19 @@ export default function AdminLogin() {
     try {
       await authService.login(email, password)
 
-      // Check if MFA is required
-      const { data: aal, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
-      if (error) throw error
+      const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors()
+      if (factorsError) throw factorsError
+      const verifiedTotp = factors?.totp?.find((factor) => factor.status === 'verified')
 
-      if (aal.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
-        // User has MFA enrolled, fetch factors and show prompt
-        const { data: factors } = await supabase.auth.mfa.listFactors()
-        if (factors && factors.all && factors.all.length > 0) {
-          setMfaFactorId(factors.all[0].id)
-          setShowMfaPrompt(true)
-          setIsLoading(false)
-          return
-        }
+      if (verifiedTotp) {
+        setMfaFactorId(verifiedTotp.id)
+        setShowMfaPrompt(true)
+        setIsLoading(false)
+        return
       }
 
-      toast.success('Access granted. Welcome to the Command Center.')
-      navigate('/admin')
+      toast.warning('Two-factor authentication must be set up before full admin access is allowed.')
+      navigate('/admin/settings?tab=security')
     } catch (error) {
       toast.error(
         error instanceof Error

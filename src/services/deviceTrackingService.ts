@@ -5,8 +5,10 @@ import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
 // Roles whose devices we bind. Keep in sync with TRACKED_ROLES in the
 // capture-admin-device edge function. Add a role here to start tracking it.
 export const DEVICE_TRACKED_ROLES = [
+  'ADMIN',
   'FOUNDER',
   'FINANCE_OFFICER',
+  'ORGANIZER',
   'EXECUTIVE',
   'SUPER_ADMIN',
   'MOVEMENT_LEADER',
@@ -23,6 +25,11 @@ export interface EvaluateResult {
   webauthn_required?: boolean
   /** The fingerprint hash computed for this device (used for verification logs). */
   fingerprint_hash?: string
+}
+
+export interface SensitiveActionBiometricProof {
+  deviceId: string
+  fingerprintHash: string
 }
 
 export interface AdminDevice {
@@ -157,10 +164,10 @@ export const deviceTrackingService = {
    * Sensitive admin actions must prove possession of the enrolled platform
    * authenticator before the mutation is allowed to complete.
    */
-  async verifySensitiveActionBiometric(): Promise<void> {
+  async verifySensitiveActionBiometric(): Promise<SensitiveActionBiometricProof | null> {
     const result = await this.evaluateCurrentDevice()
-    if (!result.tracked) return
-    if (result.decision === 'blocked' || result.decision === 'step_up_required') {
+    if (!result.tracked) return null
+    if (result.decision === 'blocked') {
       throw new Error('This device is blocked for your account.')
     }
     if (!result.device_id || !result.fingerprint_hash) {
@@ -173,21 +180,22 @@ export const deviceTrackingService = {
         fingerprintHash: result.fingerprint_hash,
       })
       if (!enrolled) throw new Error('Biometric verification failed.')
-      return
+      return { deviceId: result.device_id, fingerprintHash: result.fingerprint_hash }
     }
 
     const outcome = await this.stepUpBiometric(result.device_id, result.fingerprint_hash)
-    if (outcome === 'verified') return
+    if (outcome === 'verified') {
+      return { deviceId: result.device_id, fingerprintHash: result.fingerprint_hash }
+    }
     if (outcome === 'needs_enrol') {
       const enrolled = await this.enrolBiometric(result.device_id, {
         rebind: false,
         fingerprintHash: result.fingerprint_hash,
       })
-      if (enrolled) return
+      if (enrolled) return { deviceId: result.device_id, fingerprintHash: result.fingerprint_hash }
     }
     throw new Error('Biometric verification failed.')
   },
-
   /** IT view: all registered device slots, with the admin's display name. */
   async getDevices(): Promise<AdminDevice[]> {
     const { data, error } = await supabase.rpc('get_admin_device_rows')

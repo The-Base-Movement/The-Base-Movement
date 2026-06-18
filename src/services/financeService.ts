@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import type { SensitiveActionBiometricProof } from './deviceTrackingService'
 
 export interface FinanceRequest {
   id: string
@@ -82,45 +83,34 @@ export const financeService = {
   async reviewRequest(
     requestId: string,
     status: 'Approved' | 'Rejected',
-    comment: string
+    comment: string,
+    biometricProof: SensitiveActionBiometricProof | null
   ): Promise<void> {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error('User not authenticated')
-
-    const { data, error } = await supabase
-      .from('finance_requests')
-      .update({
+    const { data, error } = await supabase.functions.invoke('finance-review', {
+      body: {
+        action: 'review',
+        requestId,
         status,
-        officer_comment: comment,
-        reviewed_by: user.id,
-        reviewed_at: new Date().toISOString(),
-      })
-      .eq('id', requestId)
-      .eq('status', 'Pending')
-      .select('id')
-
+        comment,
+        biometricProof,
+      },
+    })
     if (error) throw error
-    if (!data?.length) throw new Error('Request is no longer available for review')
+    if (!data?.success) throw new Error('Request is no longer available for review')
   },
 
-  async acknowledgeRequest(requestId: string): Promise<void> {
-    const { data: current, error: fetchErr } = await supabase
-      .from('finance_requests')
-      .select('approval_tier')
-      .eq('id', requestId)
-      .eq('status', 'Pending')
-      .single()
-
-    if (fetchErr || !current) throw new Error('Request is no longer available for review')
-
-    const { error } = await supabase
-      .from('finance_requests')
-      .update({ approval_tier: current.approval_tier + 1 })
-      .eq('id', requestId)
-      .eq('status', 'Pending')
-
+  async acknowledgeRequest(
+    requestId: string,
+    biometricProof: SensitiveActionBiometricProof | null
+  ): Promise<void> {
+    const { data, error } = await supabase.functions.invoke('finance-review', {
+      body: {
+        action: 'acknowledge',
+        requestId,
+        biometricProof,
+      },
+    })
     if (error) throw error
+    if (!data?.success) throw new Error('Request is no longer available for review')
   },
 }

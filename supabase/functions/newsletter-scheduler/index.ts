@@ -18,9 +18,24 @@ const corsHeaders = {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
+  }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  const authHeader = req.headers.get('Authorization') ?? ''
+  const jwt = authHeader.replace(/^Bearer\s+/i, '').trim()
+
+  // This endpoint is intended for Supabase Cron or other operator-owned
+  // automation only. Do not allow ordinary authenticated user JWTs to force
+  // service-role newsletter dispatch.
+  if (!jwt || jwt !== serviceKey) {
+    return new Response(JSON.stringify({ error: 'Not authorized.' }), {
+      status: 403,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
 
   const supabase = createClient(supabaseUrl, serviceKey)
 

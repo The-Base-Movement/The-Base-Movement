@@ -146,7 +146,8 @@ export default function FinanceReviewInbox() {
   }
 
   useEffect(() => {
-    loadAll()
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadAll()
   }, [])
 
   function openModal(request: FinanceRequest, action: ModalAction) {
@@ -183,16 +184,16 @@ export default function FinanceReviewInbox() {
 
     setActioning(true)
     try {
-      await deviceTrackingService.verifySensitiveActionBiometric()
-
+      const biometricProof = await deviceTrackingService.verifySensitiveActionBiometric()
       if (isPassUp(result.outcome)) {
-        await financeService.acknowledgeRequest(modal.request.id)
+        await financeService.acknowledgeRequest(modal.request.id, biometricProof)
         toast.success(result.message)
       } else {
         await financeService.reviewRequest(
           modal.request.id,
           modal.action as 'Approved' | 'Rejected',
-          officerComment.trim()
+          officerComment.trim(),
+          biometricProof
         )
         toast.success(result.message)
       }
