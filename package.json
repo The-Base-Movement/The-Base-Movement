@@ -73,7 +73,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dicons": "^1.1.7",
-    "dompurify": "^3.4.7",
+    "dompurify": "^3.4.11",
     "ecc-universal": "github:affaan-m/everything-claude-code",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.39.0",
