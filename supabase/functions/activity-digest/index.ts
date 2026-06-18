@@ -6,6 +6,7 @@
 
 // @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,6 +15,9 @@ const corsHeaders = {
 
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
+  }
 
   try {
     // @ts-expect-error: Deno global
@@ -25,9 +29,14 @@ serve(async (req: Request) => {
 
     if (!webhookUrl) {
       console.error('[ACTIVITY-DIGEST] DISCORD_WEBHOOK_URL is not set.')
-      return new Response(JSON.stringify({ error: 'DISCORD_WEBHOOK_URL secret missing.' }), {
+      return json({ error: 'DISCORD_WEBHOOK_URL secret missing.' }, 500, corsHeaders)
+    }
+
+    const authz = requireServiceRoleCall(req, serviceKey)
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
       })
     }
 
@@ -44,10 +53,7 @@ serve(async (req: Request) => {
     if (!rpcRes.ok) {
       const detail = await rpcRes.text()
       console.error(`[ACTIVITY-DIGEST] RPC error ${rpcRes.status}: ${detail}`)
-      return new Response(JSON.stringify({ error: 'activity RPC failed', detail }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 502,
-      })
+      return json({ error: 'activity RPC failed', detail }, 502, corsHeaders)
     }
 
     const d = await rpcRes.json()
@@ -98,25 +104,13 @@ serve(async (req: Request) => {
     if (!discordRes.ok) {
       const detail = await discordRes.text()
       console.error(`[ACTIVITY-DIGEST] Discord error ${discordRes.status}: ${detail}`)
-      return new Response(
-        JSON.stringify({ error: `Discord returned ${discordRes.status}`, detail }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: discordRes.status,
-        }
-      )
+      return json({ error: `Discord returned ${discordRes.status}`, detail }, discordRes.status, corsHeaders)
     }
 
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    })
+    return json({ success: true }, 200, corsHeaders)
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[ACTIVITY-DIGEST-ERROR] ${msg}`)
-    return new Response(JSON.stringify({ error: msg }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    })
+    return json({ error: msg }, 500, corsHeaders)
   }
 })

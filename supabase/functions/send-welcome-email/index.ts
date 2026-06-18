@@ -7,6 +7,7 @@
 // Required secret: SENDGRID_API_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { canManageMembers, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 import { welcomeEmail } from '../_shared/email-templates.ts'
 
 const corsHeaders = {
@@ -16,11 +17,11 @@ const corsHeaders = {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
+  }
 
   try {
-    const { userId } = await req.json()
-    if (!userId) throw new Error('userId is required')
-
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     if (!sgKey) {
       console.warn('[WELCOME] SENDGRID_API_KEY not set — skipping')
@@ -34,6 +35,17 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+
+    const authz = await requireAuthorizedAdmin(req, supabase, canManageMembers)
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { userId } = await req.json()
+    if (!userId) throw new Error('userId is required')
 
     // Fetch member profile
     const { data: user, error: userErr } = await supabase

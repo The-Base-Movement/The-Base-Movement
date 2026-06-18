@@ -4,6 +4,7 @@ import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7
 const PRIVILEGED_ROLES = new Set(['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE'])
 
 export type AdminPermissions = {
+  can_manage_members?: boolean
   can_post_blog?: boolean
   [key: string]: boolean | undefined
 }
@@ -29,6 +30,34 @@ export function canManageNewsletters(admin: AdminAuthRow | null | undefined): bo
   if (!admin) return false
   if (isPrivilegedAdminRole(admin.role)) return true
   return admin.permissions?.can_post_blog === true
+}
+
+export function canManageMembers(admin: AdminAuthRow | null | undefined): boolean {
+  if (!admin) return false
+  if (isPrivilegedAdminRole(admin.role)) return true
+  return admin.permissions?.can_manage_members === true
+}
+
+export function requireServiceRoleCall(
+  req: Request,
+  serviceRoleKey: string | undefined | null
+): { ok: true } | { ok: false; response: Response } {
+  const authHeader = req.headers.get('Authorization') ?? ''
+  const jwt = authHeader.replace(/^Bearer\s+/i, '').trim()
+
+  if (!serviceRoleKey) {
+    return { ok: false, response: json({ error: 'Service role key is not configured.' }, 500) }
+  }
+
+  if (!jwt) {
+    return { ok: false, response: json({ error: 'Not authenticated.' }, 401) }
+  }
+
+  if (jwt !== serviceRoleKey) {
+    return { ok: false, response: json({ error: 'Not authorized.' }, 403) }
+  }
+
+  return { ok: true }
 }
 
 export async function requireAuthorizedAdmin(

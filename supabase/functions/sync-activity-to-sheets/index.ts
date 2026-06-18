@@ -15,6 +15,7 @@
 // Auto-injected: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -138,8 +139,20 @@ async function appendRows(token: string, sheetId: string, tab: string, rows: str
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
+  }
 
   try {
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const authz = requireServiceRoleCall(req, serviceKey)
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const sheetId = Deno.env.get('SHEET_ID') ?? ''
     const tab = Deno.env.get('SHEET_TAB') ?? 'Activity'
     const saRaw = Deno.env.get('GOOGLE_SERVICE_ACCOUNT') ?? ''
@@ -155,7 +168,7 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      serviceKey ?? ''
     )
 
     // 1. Where did we leave off?
