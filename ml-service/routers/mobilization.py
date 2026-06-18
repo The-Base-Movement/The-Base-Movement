@@ -21,12 +21,16 @@ from __future__ import annotations
 from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from auth import require_admin_access
 from database import get_client
 
-router = APIRouter(prefix="/api/mobilization")
+router = APIRouter(
+    prefix="/api/mobilization",
+    dependencies=[Depends(require_admin_access)],
+)
 
 NOW = datetime.now(timezone.utc)
 T30 = (NOW - timedelta(days=30)).isoformat()

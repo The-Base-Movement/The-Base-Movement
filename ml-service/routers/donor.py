@@ -19,12 +19,16 @@ from __future__ import annotations
 from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Path
 from pydantic import BaseModel
 
+from auth import require_admin_access
 from database import get_client
 
-router = APIRouter(prefix="/api/donor")
+router = APIRouter(
+    prefix="/api/donor",
+    dependencies=[Depends(require_admin_access)],
+)
 
 THIRTY_DAYS_AGO = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
 NINETY_DAYS_AGO = (datetime.now(timezone.utc) - timedelta(days=90)).isoformat()
@@ -190,7 +194,15 @@ async def get_propensity():
 
 
 @router.get("/propensity/{reg_no}", response_model=DonorScore)
-async def get_member_propensity(reg_no: str):
+async def get_member_propensity(
+    reg_no: str = Path(
+        ...,
+        min_length=3,
+        max_length=32,
+        pattern=r"^[A-Za-z0-9-]+$",
+        description="Member registration number.",
+    )
+):
     db = get_client()
 
     member_res = (
