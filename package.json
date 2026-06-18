@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "overrides": {
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.1",
+    "undici": "7.28.0"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -73,7 +74,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dicons": "^1.1.7",
-    "dompurify": "^3.4.7",
+    "dompurify": "^3.4.11",
     "ecc-universal": "github:affaan-m/everything-claude-code",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.39.0",
@@ -109,9 +110,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@prerenderer/prerenderer": "^1.2.5",
-    "@prerenderer/renderer-jsdom": "^1.1.9",
-    "@prerenderer/rollup-plugin": "^0.3.12",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
