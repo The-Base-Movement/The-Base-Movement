@@ -274,9 +274,11 @@ export const deviceTrackingService = {
   },
 
   /** IT recovery action: clear a device slot so the user can re-enrol. */
-  async resetSlot(deviceId: string): Promise<void> {
-    const { error } = await supabase.rpc('reset_admin_device_slot', { p_device_id: deviceId })
-    if (error) throw error
+  async resetSlot(deviceId: string, disableMfa = false): Promise<void> {
+    const result = await supabase.functions.invoke('reset-admin-device-slot', {
+      body: { device_id: deviceId, disable_mfa: disableMfa },
+    })
+    if (result.error) throw result.error
   },
 
   /**

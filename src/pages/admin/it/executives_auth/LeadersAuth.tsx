@@ -82,10 +82,17 @@ export default function LeadersAuth() {
       )
     )
       return
+
+    const disableMfa = window.confirm(
+      `Also disable MFA for ${device.admin_name}? This will remove their verified TOTP/passkey factors and force a fresh setup.`
+    )
+
     setResetting(device.id)
     try {
-      await deviceTrackingService.resetSlot(device.id)
-      toast.success('Device slot reset')
+      await deviceTrackingService.resetSlot(device.id, disableMfa)
+      toast.success(
+        disableMfa ? 'Device slot reset and MFA disabled' : 'Device slot reset'
+      )
       await Promise.all([loadDevices(), loadActivity()])
     } catch (err) {
       console.error(err)
