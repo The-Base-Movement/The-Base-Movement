@@ -25,9 +25,7 @@ export function useITLayout(
   actions?: React.ReactNode
 ) {
   const { setHeader } = useContext(ITLayoutContext)
-  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     setHeader({ title, icon, description, actions })
-  }, [])
-  /* eslint-enable react-hooks/exhaustive-deps */
+  }, [title, icon, description, actions, setHeader])
 }

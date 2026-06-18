@@ -28,13 +28,15 @@ export default function ITDepartmentLayout() {
   })
 
   useEffect(() => {
-    if (checking) {
+    if (checking && !user) {
       adminService.initialize().then((u) => {
         setUser(u)
         setChecking(false)
       })
+    } else if (!checking || user) {
+      setChecking(false)
     }
-  }, [checking])
+  }, [])
 
   if (checking) {
     return (
