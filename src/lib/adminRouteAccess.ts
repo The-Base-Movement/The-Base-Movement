@@ -25,10 +25,27 @@ type AccessDecision = {
 
 const MANUAL_ROUTE_RULES: RouteRule[] = [
   {
+    to: '/admin/notifications',
+    match: 'exact_or_descendant',
+    source: 'personal-admin-notifications',
+  },
+  {
+    to: '/admin/departments',
+    match: 'exact_or_descendant',
+    allowedRoles: ['SUPER_ADMIN', 'FOUNDER'],
+    source: 'department-dashboard-lead-management',
+  },
+  {
     to: '/admin/departments',
     match: 'descendant_only',
     allowedRoles: ['SUPER_ADMIN', 'FOUNDER'],
     source: 'department-dashboard-lead-management',
+  },
+  {
+    to: '/admin/rally-command',
+    match: 'exact_or_descendant',
+    permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+    source: 'field-operations-rally-command',
   },
 ]
 
@@ -108,7 +125,11 @@ export function getAdminRouteAccessDecision(
 
   const rule = getAdminRouteRule(pathname)
   if (!rule) {
-    return { allowed: true, reason: null, rule: null }
+    return {
+      allowed: false,
+      reason: 'This admin route is not mapped to an explicit access policy.',
+      rule: null,
+    }
   }
 
   if (rule.allowedRoles?.length) {
