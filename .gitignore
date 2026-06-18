@@ -39,3 +39,4 @@ tsconfig.*.tsbuildinfo
 # Supabase SQL migrations — kept local only, not tracked in the repo.
 # Applied to the remote DB via the Supabase CLI / MCP, not via VCS.
 supabase/migrations/
+docs/
