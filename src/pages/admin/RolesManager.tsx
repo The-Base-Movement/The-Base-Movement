@@ -47,7 +47,10 @@ const PERMISSION_GROUPS: {
   {
     label: 'Content',
     resource: 'BLOGS',
-    items: [{ action: 'MANAGE_BLOGS', label: 'Write & publish blog posts' }],
+    items: [
+      { action: 'MANAGE_BLOGS', label: 'Write & publish blog posts' },
+      { action: 'MANAGE_NEWSLETTERS', label: 'Compose & send newsletters' },
+    ],
   },
   {
     label: 'Donations',
