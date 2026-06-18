@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
@@ -10,6 +10,7 @@ import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PageLabelProvider } from '@/contexts/PageLabelContext'
+import { getAdminRouteAccessDecision } from '@/lib/adminRouteAccess'
 import type { AdminUser, Notification } from '@/types/admin'
 import { SubmitTicketModal } from '@/components/admin/SubmitTicketModal'
 import { MfaSetupNag } from '@/components/admin/MfaSetupNag'
@@ -19,11 +20,13 @@ import { AdminTopbar } from './admin/AdminTopbar'
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const { settings } = useBranding()
   const { session } = useAuth()
+  const location = useLocation()
   const [isSidebarOpen, setIsSidebarOpen] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth >= 1024 : true
   )
   const navigate = useNavigate()
   const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
+  const [isAuthorizing, setIsAuthorizing] = useState(() => !adminService.getCurrentUser())
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -95,8 +98,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   useEffect(() => {
     const init = async () => {
       const currentUser = await adminService.initialize()
+      setIsAuthorizing(false)
       if (!currentUser) {
-        navigate('/admin-login')
+        setUser(null)
       } else {
         setUser(currentUser)
 
@@ -130,11 +134,11 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       }
     }
     init()
-  }, [navigate, session])
+  }, [session])
 
   // 15-minute inactivity timeout — only sign out after no admin interaction.
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lastActivityAt = useRef(Date.now())
+  const lastActivityAt = useRef(0)
   useEffect(() => {
     const TIMEOUT_MS = 15 * 60 * 1000
     const logoutIfIdle = async () => {
@@ -200,6 +204,30 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     navigate('/admin-login')
   }
 
+  if (isAuthorizing) {
+    return (
+      <div
+        style={{
+          minHeight: '40vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'hsl(var(--on-surface-muted))',
+          fontFamily: "'Public Sans', sans-serif",
+          fontSize: 13,
+        }}
+      >
+        Verifying admin access...
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Navigate to="/admin-login" state={{ from: location }} replace />
+  }
+
+  const accessDecision = getAdminRouteAccessDecision(user, location.pathname)
+
   return (
     <div
       className="h-screen font-meta text-on-surface flex overflow-hidden admin-context"
@@ -257,7 +285,86 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           <PageLabelProvider>
             <div className="max-w-7xl mx-auto w-full">
               <Breadcrumbs />
-              {children || <Outlet />}
+              {accessDecision.allowed ? (
+                children || <Outlet />
+              ) : (
+                <section
+                  className="main"
+                  style={{
+                    padding: '48px 24px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <div
+                    className="panel"
+                    style={{
+                      width: '100%',
+                      maxWidth: 560,
+                      padding: '32px 28px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 56,
+                        height: 56,
+                        margin: '0 auto 16px',
+                        borderRadius: '50%',
+                        background: 'hsl(var(--destructive) / 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 28, color: 'hsl(var(--destructive))' }}
+                      >
+                        lock
+                      </span>
+                    </div>
+                    <h1
+                      style={{
+                        margin: '0 0 8px',
+                        fontFamily: "'Public Sans', sans-serif",
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        fontSize: 20,
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      Access Restricted
+                    </h1>
+                    <p
+                      style={{
+                        margin: '0 0 18px',
+                        fontSize: 13,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      This admin route is mounted, but your role does not meet the required frontend
+                      access rule.
+                    </p>
+                    {accessDecision.reason && (
+                      <p
+                        style={{
+                          margin: '0 0 18px',
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {accessDecision.reason}
+                      </p>
+                    )}
+                    <button
+                      className="btn btn-outline btn-sm"
+                      onClick={() => navigate('/admin/dashboard')}
+                    >
+                      Back to dashboard
+                    </button>
+                  </div>
+                </section>
+              )}
 
               {/* Movement Slogan Footer */}
               <footer
