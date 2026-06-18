@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
@@ -80,9 +80,11 @@ export function AdminSidebar({
       .filter((group) => group.items.length > 0)
   }, [user, pendingVerificationsCount, pendingDonationsCount, unreadMessagesCount])
 
-  // Synchronize active sidebar group with route changes during render to avoid cascading updates
-  if (prevPathname !== location.pathname) {
+  // Synchronize active sidebar group with route changes
+  useEffect(() => {
+    if (prevPathname === location.pathname) return
     setPrevPathname(location.pathname)
+    
     const currentPath = location.pathname
     const activeGroup = filteredNavGroups.find((group) =>
       group.items.some((item) => {
@@ -102,7 +104,7 @@ export function AdminSidebar({
         return nextGroups
       })
     }
-  }
+  }, [location.pathname, filteredNavGroups, prevPathname])
 
   const toggleGroup = (groupLabel: string) => {
     if (!isSidebarOpen) setIsSidebarOpen(true)
