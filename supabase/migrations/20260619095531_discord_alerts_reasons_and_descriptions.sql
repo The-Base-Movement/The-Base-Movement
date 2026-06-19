@@ -63,6 +63,24 @@ BEGIN
     v_decision   := 'verified';
     v_log_action := CASE WHEN v_isp_changed THEN 'isp_change' ELSE 'verified' END;
 
+  ELSIF COALESCE(v_device.user_agent, '') = COALESCE(p_user_agent, '') AND p_user_agent IS NOT NULL THEN
+    -- Fingerprint changed but user-agent matches (same browser/OS). This is common with
+    -- Brave's fingerprint randomization or network changes affecting canvas/WebGL signals.
+    -- Treat as the same device: update the fingerprint hash so future logins succeed.
+    v_isp_changed := COALESCE(v_device.isp, '') <> COALESCE(p_isp, '');
+
+    UPDATE public.admin_devices
+    SET last_seen         = now(),
+        fingerprint_hash  = p_fingerprint_hash,
+        ip_address        = p_ip,
+        location          = p_location,
+        user_agent        = p_user_agent,
+        isp               = p_isp
+    WHERE admin_devices.id = v_device.id
+    RETURNING * INTO v_device;
+    v_decision   := 'verified';
+    v_log_action := CASE WHEN v_isp_changed THEN 'isp_change' ELSE 'verified' END;
+
   ELSE
     v_decision   := 'blocked';
     v_log_action := 'blocked';

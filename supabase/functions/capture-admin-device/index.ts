@@ -92,8 +92,19 @@ async function alertBlocked(
   serviceKey: string,
   role: string,
   ip: string | null,
-  location: string | null
+  location: string | null,
+  reason: string | null = null
 ) {
+  let description = 'An unrecognised device tried to access a privileged dashboard and was blocked.'
+  if (reason === 'slot_blocked') {
+    description = 'This device slot is manually or automatically locked/blocked.'
+  } else if (reason === 'fingerprint_mismatch') {
+    description =
+      'A different device (fingerprint mismatch) attempted to access this occupied slot.'
+  } else if (reason) {
+    description = `Blocked reason: ${reason}`
+  }
+
   try {
     await fetch(`${supabaseUrl}/functions/v1/discord-notify`, {
       method: 'POST',
@@ -107,8 +118,7 @@ async function alertBlocked(
         embeds: [
           {
             title: '🔴 Blocked device login attempt',
-            description:
-              'An unrecognised device tried to access a privileged dashboard and was blocked.',
+            description,
             color: 0xce1126,
             fields: [
               { name: 'Role', value: role, inline: true },
@@ -215,7 +225,7 @@ serve(async (req: Request) => {
     }
 
     if (data?.decision === 'blocked') {
-      await alertBlocked(supabaseUrl, serviceKey, admin.role, ip, location)
+      await alertBlocked(supabaseUrl, serviceKey, admin.role, ip, location, data?.reason)
     }
 
     return json({ tracked: true, ...data })
