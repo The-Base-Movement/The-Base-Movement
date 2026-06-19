@@ -80,6 +80,7 @@ export const DEVICE_ACTIVITY_ACTIONS = [
   'slot_reset',
   'blocked',
   'isp_change',
+  'logout',
 ] as const
 
 export function isDeviceTrackedRole(role: string | null | undefined): boolean {
@@ -349,6 +350,23 @@ export const deviceTrackingService = {
     })
     if (complete.error) throw complete.error
     return complete.data?.verified === true ? 'verified' : 'failed'
+  },
+
+  /**
+   * Logouts for tracked admin roles: records a 'logout' activity row.
+   */
+  async logoutDevice(): Promise<void> {
+    try {
+      const fingerprint_hash = await collectFingerprint()
+      await supabase.functions.invoke('capture-admin-device', {
+        body: {
+          action: 'logout',
+          fingerprint_hash,
+        },
+      })
+    } catch (err) {
+      console.warn('[device-tracking] failed to log logout:', err)
+    }
   },
 }
 

@@ -8,6 +8,7 @@ export const ACTION_PILL: Record<string, { cls: string; label: string }> = {
   isp_change: { cls: 'pill-warn', label: 'ISP change' },
   blocked: { cls: 'pill-err', label: 'Blocked' },
   slot_reset: { cls: 'pill-mute', label: 'Slot reset' },
+  logout: { cls: 'pill-mute', label: 'Logged out' },
 }
 
 /** Brand colour per action — used by the activity-breakdown pie chart. */
@@ -19,6 +20,7 @@ export const ACTION_COLOR: Record<string, string> = {
   isp_change: 'hsl(28 80% 52%)',
   slot_reset: 'hsl(var(--on-surface-muted))',
   blocked: 'hsl(var(--destructive))',
+  logout: 'hsl(var(--on-surface-muted))',
 }
 
 export function fmt(ts: string): string {

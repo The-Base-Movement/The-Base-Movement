@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { supabase } from '@/lib/supabase'
 import type { Session, User } from '@supabase/supabase-js'
 import { userActivityService } from '@/services/userActivityService'
+import { deviceTrackingService } from '@/services/deviceTrackingService'
 
 interface AuthContextValue {
   session: Session | null
@@ -51,8 +52,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     if (user) {
+      try {
+        await deviceTrackingService.logoutDevice()
+      } catch (err) {
+        console.warn('[auth-context] failed to log admin device logout:', err)
+      }
       await userActivityService.logActivity(user.id, 'logout', 'Signed out of account')
     }
+
+    sessionStorage.removeItem('admin_device_captured')
+
     await supabase.auth.signOut({ scope: 'local' })
   }
 

@@ -158,7 +158,32 @@ serve(async (req: Request) => {
 
     // 3. Read client-supplied device descriptors (identifiers, not secrets).
     const body = await req.json().catch(() => ({}))
-    const { device_type, fingerprint_hash, device_name, os_type, browser } = body
+    const { action, device_type, fingerprint_hash, device_name, os_type, browser } = body
+
+    if (action === 'logout') {
+      if (!fingerprint_hash) {
+        return json({ error: 'fingerprint_hash is required for logout' }, 400)
+      }
+      const ip = clientIp(req)
+      const userAgent = req.headers.get('user-agent')
+      const { location, isp } = await geoLocate(ip)
+
+      const { error } = await supabase.rpc('log_admin_device_logout', {
+        p_admin_id: user.id,
+        p_fingerprint_hash: fingerprint_hash,
+        p_ip: ip,
+        p_location: location,
+        p_user_agent: userAgent,
+        p_isp: isp,
+      })
+
+      if (error) {
+        console.error('[capture-admin-device] logout rpc error:', error)
+        return json({ error: 'Failed to log logout' }, 500)
+      }
+
+      return json({ ok: true })
+    }
 
     if (!fingerprint_hash || !DEVICE_TYPES.includes(device_type)) {
       return json({ error: 'device_type and fingerprint_hash are required' }, 400)

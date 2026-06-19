@@ -5,6 +5,7 @@
 
 import { supabase } from '@/lib/supabase'
 import type { Session, User, AuthResponse } from '@supabase/supabase-js'
+import { deviceTrackingService } from './deviceTrackingService'
 
 export interface AuthSession {
   session: Session | null
@@ -195,6 +196,11 @@ class AuthService {
     const uid = this.currentSession?.user?.id
     if (uid) {
       try {
+        await deviceTrackingService.logoutDevice()
+      } catch (err) {
+        console.warn('[auth] failed to log admin device logout:', err)
+      }
+      try {
         await supabase
           .from('member_sessions')
           .update({ is_current: false })
@@ -204,6 +210,9 @@ class AuthService {
         console.warn('[auth] failed to end session record:', err)
       }
     }
+
+    sessionStorage.removeItem('admin_device_captured')
+
     this.lastLoggedToken = null
     this.currentSession = null
     await supabase.auth.signOut({ scope: 'local' })
