@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -30,11 +30,19 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
-type PageState = 'loading' | 'mfa' | 'ready' | 'success' | 'invalid'
+type PageState = 'loading' | 'mfa' | 'ready' | 'success' | 'invalid' | 'verify_click'
 
 export default function ResetPassword() {
   const { settings } = useBranding()
   const navigate = useNavigate()
+
+  // Parse URL query parameters
+  const params = new URLSearchParams(window.location.search)
+  const queryEmail = params.get('email') || ''
+  const queryToken = params.get('token') || ''
+  const queryError = params.get('error') || ''
+  const queryErrorDesc = params.get('error_description') || ''
+
   const [pageState, setPageState] = useState<PageState>('loading')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -45,42 +53,65 @@ export default function ResetPassword() {
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null)
   const [mfaCode, setMfaCode] = useState('')
   const [isVerifyingMfa, setIsVerifyingMfa] = useState(false)
+  const [isVerifyingLink, setIsVerifyingLink] = useState(false)
+
+  const isMounted = useRef(true)
+
+  // Once a recovery session exists, decide whether we still need an MFA
+  // step-up (AAL2) before allowing the password change.
+  const prepare = async () => {
+    try {
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+      if (aal?.currentLevel === 'aal1' && aal?.nextLevel === 'aal2') {
+        const { data: factors } = await supabase.auth.mfa.listFactors()
+        const totp = factors?.totp?.find((f) => f.status === 'verified') ?? factors?.totp?.[0]
+        if (totp?.id) {
+          if (isMounted.current) {
+            setMfaFactorId(totp.id)
+            setPageState('mfa')
+          }
+          return
+        }
+      }
+    } catch {
+      // If the AAL/factor lookup fails, fall through and let updateUser surface
+      // any real problem.
+    }
+    if (isMounted.current) {
+      setPageState('ready')
+    }
+  }
+
+  // Handle the verification link OTP click (prevents prefetchers from consuming it)
+  const handleVerifyLink = async () => {
+    if (!queryEmail || !queryToken) return
+    setIsVerifyingLink(true)
+    setPageState('loading')
+    try {
+      console.warn('[reset-password] Manually verifying custom link OTP...', { email: queryEmail })
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: queryEmail,
+        token: queryToken,
+        type: 'recovery',
+      })
+      if (error) throw error
+      if (data.session) {
+        await prepare()
+      } else {
+        if (isMounted.current) setPageState('invalid')
+      }
+    } catch (err: unknown) {
+      console.error('[verifyOtp error]', err)
+      toast.error(err instanceof Error ? err.message : 'Invalid link or OTP.')
+      if (isMounted.current) setPageState('invalid')
+    } finally {
+      if (isMounted.current) setIsVerifyingLink(false)
+    }
+  }
 
   useEffect(() => {
-    let active = true
+    isMounted.current = true
     let timeout: ReturnType<typeof setTimeout> | null = null
-
-    // Once a recovery session exists, decide whether we still need an MFA
-    // step-up (AAL2) before allowing the password change.
-    const prepare = async () => {
-      try {
-        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
-        if (aal?.currentLevel === 'aal1' && aal?.nextLevel === 'aal2') {
-          const { data: factors } = await supabase.auth.mfa.listFactors()
-          const totp = factors?.totp?.find((f) => f.status === 'verified') ?? factors?.totp?.[0]
-          if (totp?.id) {
-            if (active) {
-              setMfaFactorId(totp.id)
-              setPageState('mfa')
-            }
-            return
-          }
-        }
-      } catch {
-        // If the AAL/factor lookup fails, fall through and let updateUser surface
-        // any real problem.
-      }
-      if (active) {
-        setPageState('ready')
-      }
-    }
-
-    // Parse URL query parameters
-    const params = new URLSearchParams(window.location.search)
-    const queryEmail = params.get('email')
-    const queryToken = params.get('token')
-    const queryError = params.get('error')
-    const queryErrorDesc = params.get('error_description')
 
     // Supabase fires PASSWORD_RECOVERY when the user clicks the email reset link.
     // The URL fragment contains the access_token which Supabase auto-exchanges.
@@ -99,7 +130,7 @@ export default function ResetPassword() {
     const verifyAndPrepare = async () => {
       if (queryError) {
         console.warn('[reset-password] Error query param detected:', queryError, queryErrorDesc)
-        if (active) setPageState('invalid')
+        if (isMounted.current) setPageState('invalid')
         return
       }
 
@@ -115,7 +146,7 @@ export default function ResetPassword() {
           console.warn('[reset-password] Session email mismatch. Signing out old session.')
           await supabase.auth.signOut({ scope: 'local' })
         } else {
-          if (active) {
+          if (isMounted.current) {
             if (timeout) {
               clearTimeout(timeout)
               timeout = null
@@ -126,34 +157,18 @@ export default function ResetPassword() {
         }
       }
 
-      // If custom query email/token are present, verify using verifyOtp
+      // If custom query email/token are present, show verification button to protect against pre-fetching scanners
       if (queryEmail && queryToken) {
-        try {
-          console.warn('[reset-password] Verifying custom link OTP...', {
-            email: queryEmail,
-            token: queryToken,
-          })
-          const { data, error } = await supabase.auth.verifyOtp({
-            email: queryEmail,
-            token: queryToken,
-            type: 'recovery',
-          })
-          if (error) throw error
-          if (data.session) {
-            if (active) void prepare()
-            return
-          }
-        } catch (err: unknown) {
-          console.error('[verifyOtp error]', err)
-          if (active) setPageState('invalid')
-          return
+        if (isMounted.current) {
+          setPageState('verify_click')
         }
+        return
       }
 
       // Give the listener a moment to fire; if still loading after 5s, token is invalid
-      if (active) {
+      if (isMounted.current) {
         timeout = setTimeout(() => {
-          if (active) {
+          if (isMounted.current) {
             setPageState((s) => (s === 'loading' ? 'invalid' : s))
           }
         }, 5000)
@@ -163,10 +178,11 @@ export default function ResetPassword() {
     void verifyAndPrepare()
 
     return () => {
-      active = false
+      isMounted.current = false
       subscription.unsubscribe()
       if (timeout) clearTimeout(timeout)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleVerifyMfa = async (e: React.FormEvent) => {
@@ -394,6 +410,95 @@ export default function ResetPassword() {
                   onClick={() => navigate('/forgot-password')}
                 >
                   Request a new link
+                </button>
+              </div>
+            )}
+
+            {/* Verify Click State */}
+            {pageState === 'verify_click' && (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 14,
+                  padding: '8px 0 16px',
+                }}
+              >
+                <div
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: '50%',
+                    background: 'hsl(var(--primary) / 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 28, color: 'hsl(var(--primary))' }}
+                  >
+                    security
+                  </span>
+                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 15,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                    textAlign: 'center',
+                  }}
+                >
+                  Confirm Reset Request
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface-muted))',
+                    textAlign: 'center',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Verify your request to set a new password for <br />
+                  <strong style={{ color: 'hsl(var(--on-surface))' }}>{queryEmail}</strong>
+                </p>
+                <button
+                  className="btn btn-primary"
+                  style={{
+                    width: '100%',
+                    height: 48,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    fontSize: 13,
+                    marginTop: 8,
+                  }}
+                  disabled={isVerifyingLink}
+                  onClick={handleVerifyLink}
+                >
+                  {isVerifyingLink ? (
+                    <>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
+                      >
+                        progress_activity
+                      </span>{' '}
+                      Verifying…
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                        verified_user
+                      </span>{' '}
+                      Verify & Continue
+                    </>
+                  )}
                 </button>
               </div>
             )}
