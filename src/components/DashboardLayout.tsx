@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import BackToTop from './BackToTop'
@@ -51,9 +51,15 @@ export default function DashboardLayout() {
   const [likedCount, setLikedCount] = useState(0)
   const [referralCount, setReferralCount] = useState(0)
   const [messageCount, setMessageCount] = useState(0)
-  const [isDarkTheme, setIsDarkTheme] = useState(
-    () => document.documentElement.getAttribute('data-theme') === 'dark'
-  )
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    const storedTheme = localStorage.getItem('theme')
+    const adminDarkMode = localStorage.getItem('admin_dark_mode')
+    return (
+      storedTheme === 'dark' ||
+      adminDarkMode === 'true' ||
+      document.documentElement.getAttribute('data-theme') === 'dark'
+    )
+  })
 
   // Inactivity timeout: logout after 30 minutes of inactivity
   const { isWarningVisible, dismissWarning } = useInactivityTimeout({
@@ -113,16 +119,12 @@ export default function DashboardLayout() {
   }, [])
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme')
-    const adminDarkMode = localStorage.getItem('admin_dark_mode')
-    const shouldUseDark = storedTheme === 'dark' || adminDarkMode === 'true'
-    if (shouldUseDark) {
+    if (isDarkTheme) {
       document.documentElement.setAttribute('data-theme', 'dark')
     } else {
       document.documentElement.removeAttribute('data-theme')
     }
-    setIsDarkTheme(shouldUseDark)
-  }, [])
+  }, [isDarkTheme])
 
   // Unread message badge — re-checked on navigation so it clears after reading
   useEffect(() => {
@@ -401,6 +403,24 @@ export default function DashboardLayout() {
     return 'Member Portal'
   }
 
+  const contentFallback = (
+    <section className="panel" style={{ padding: 24, minHeight: 240 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 192,
+          color: 'hsl(var(--on-surface-muted))',
+          fontFamily: "'Public Sans', sans-serif",
+          fontSize: 13,
+        }}
+      >
+        Loading page...
+      </div>
+    </section>
+  )
+
   return (
     <MaintenanceGate>
       <div className="bg-surface text-on-surface font-body-md min-h-screen">
@@ -489,7 +509,9 @@ export default function DashboardLayout() {
 
           <div className="dashboard-body">
             <div style={{ maxWidth: 1440, margin: '0 auto', width: '100%' }}>
-              <Outlet />
+              <Suspense fallback={contentFallback}>
+                <Outlet />
+              </Suspense>
             </div>
           </div>
 

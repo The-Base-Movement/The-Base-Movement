@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { Suspense, useState, useEffect, useRef } from 'react'
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
@@ -227,6 +227,23 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   const accessDecision = getAdminRouteAccessDecision(user, location.pathname)
+  const contentFallback = (
+    <section
+      className="main"
+      style={{
+        padding: '48px 24px',
+        minHeight: 320,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'hsl(var(--on-surface-muted))',
+        fontFamily: "'Public Sans', sans-serif",
+        fontSize: 13,
+      }}
+    >
+      Loading page...
+    </section>
+  )
 
   return (
     <div
@@ -286,7 +303,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             <div className="max-w-7xl mx-auto w-full">
               <Breadcrumbs />
               {accessDecision.allowed ? (
-                children || <Outlet />
+                <Suspense fallback={contentFallback}>{children || <Outlet />}</Suspense>
               ) : (
                 <section
                   className="main"
