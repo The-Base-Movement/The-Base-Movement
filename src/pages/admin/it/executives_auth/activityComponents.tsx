@@ -242,6 +242,12 @@ export function DetailModal({ entry, onClose }: { entry: LeaderActivityRow; onCl
         {entry.isp && <Row label="ISP" value={entry.isp} />}
         <Row label="When" value={fmtFull(entry.created_at)} />
         {fingerprint && <Row label="Fingerprint" value={fingerprint} />}
+        {entry.metadata && typeof entry.metadata.browser === 'string' && (
+          <Row label="Attempted browser" value={entry.metadata.browser} />
+        )}
+        {entry.metadata && typeof entry.metadata.os_type === 'string' && (
+          <Row label="Attempted OS" value={entry.metadata.os_type} />
+        )}
         {entry.user_agent && (
           <div style={{ marginTop: 10 }}>
             <p style={{ margin: '0 0 4px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>

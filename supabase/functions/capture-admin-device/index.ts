@@ -93,7 +93,10 @@ async function alertBlocked(
   role: string,
   ip: string | null,
   location: string | null,
-  reason: string | null = null
+  reason: string | null = null,
+  deviceType: string | null = null,
+  browser: string | null = null,
+  osType: string | null = null
 ) {
   let description = 'An unrecognised device tried to access a privileged dashboard and was blocked.'
   if (reason === 'slot_blocked') {
@@ -122,6 +125,12 @@ async function alertBlocked(
             color: 0xce1126,
             fields: [
               { name: 'Role', value: role, inline: true },
+              { name: 'Device Type', value: deviceType ?? '—', inline: true },
+              {
+                name: 'Browser / OS',
+                value: `${browser ?? '—'} on ${osType ?? '—'}`,
+                inline: true,
+              },
               { name: 'IP', value: ip ?? '—', inline: true },
               { name: 'Location', value: location ?? '—', inline: true },
             ],
@@ -225,7 +234,17 @@ serve(async (req: Request) => {
     }
 
     if (data?.decision === 'blocked') {
-      await alertBlocked(supabaseUrl, serviceKey, admin.role, ip, location, data?.reason)
+      await alertBlocked(
+        supabaseUrl,
+        serviceKey,
+        admin.role,
+        ip,
+        location,
+        data?.reason,
+        device_type,
+        browser,
+        os_type
+      )
     }
 
     return json({ tracked: true, ...data })
