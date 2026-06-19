@@ -61,6 +61,7 @@ interface RpcRow {
   device_type: string | null
   ip_address: string | null
   location: string | null
+  isp: string | null
   user_agent: string | null
   metadata: Record<string, unknown> | null
   created_at: string
@@ -79,6 +80,7 @@ function mapRow(r: RpcRow): LeaderActivityRow {
     device_type: r.device_type,
     ip_address: r.ip_address,
     location: r.location,
+    isp: r.isp,
     user_agent: r.user_agent,
     metadata: r.metadata,
     created_at: r.created_at,

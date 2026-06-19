@@ -5,6 +5,7 @@ export const ACTION_PILL: Record<string, { cls: string; label: string }> = {
   verified: { cls: 'pill-ok', label: 'Verified' },
   step_up_passed: { cls: 'pill-ok', label: 'Step-up passed' },
   step_up_required: { cls: 'pill-warn', label: 'Step-up required' },
+  isp_change: { cls: 'pill-warn', label: 'ISP change' },
   blocked: { cls: 'pill-err', label: 'Blocked' },
   slot_reset: { cls: 'pill-mute', label: 'Slot reset' },
 }
@@ -15,6 +16,7 @@ export const ACTION_COLOR: Record<string, string> = {
   verified: 'hsl(156 55% 45%)',
   step_up_passed: 'hsl(190 60% 42%)',
   step_up_required: 'hsl(var(--accent))',
+  isp_change: 'hsl(28 80% 52%)',
   slot_reset: 'hsl(var(--on-surface-muted))',
   blocked: 'hsl(var(--destructive))',
 }

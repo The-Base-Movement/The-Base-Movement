@@ -57,6 +57,7 @@ export interface DeviceActivity {
   action: string
   ip_address: string | null
   location: string | null
+  isp: string | null
   user_agent: string | null
   metadata: Record<string, unknown> | null
   created_at: string
@@ -77,6 +78,7 @@ export const DEVICE_ACTIVITY_ACTIONS = [
   'step_up_passed',
   'slot_reset',
   'blocked',
+  'isp_change',
 ] as const
 
 export function isDeviceTrackedRole(role: string | null | undefined): boolean {
@@ -107,8 +109,20 @@ function detectOs(): string {
   return 'Unknown'
 }
 
-function detectBrowser(): string {
+async function detectBrowser(): Promise<string> {
   const ua = navigator.userAgent
+
+  // Check if Brave — Brave exposes navigator.brave.isBrave() as its API.
+  if (typeof navigator !== 'undefined' && 'brave' in navigator) {
+    try {
+      const nav = navigator as Navigator & { brave: { isBrave: () => Promise<boolean> } }
+      const isBrave = await nav.brave.isBrave()
+      if (isBrave) return 'Brave'
+    } catch {
+      // ignore
+    }
+  }
+
   if (/Edg\//.test(ua)) return 'Edge'
   if (/OPR\/|Opera/.test(ua)) return 'Opera'
   if (/Chrome\//.test(ua)) return 'Chrome'
@@ -153,7 +167,7 @@ export const deviceTrackingService = {
         fingerprint_hash,
         device_name: `${detectOs()} ${device_type}`,
         os_type: detectOs(),
-        browser: detectBrowser(),
+        browser: await detectBrowser(),
       },
     })
     if (error) throw error
