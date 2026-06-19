@@ -10,7 +10,7 @@ export default function NewsletterPage() {
   const [newsletters, setNewsletters] = useState<Newsletter[]>([])
   const currentUser = adminService.getCurrentUser()
   const canDelete = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'FOUNDER'
-  const canManageNewsletters = adminService.can('MANAGE_BLOGS', 'BLOGS')
+  const canManageNewsletters = adminService.can('MANAGE_NEWSLETTERS', 'NEWSLETTERS')
   const [isLoading, setIsLoading] = useState(canManageNewsletters)
   const [isSending, setIsSending] = useState(false)
   const [sendResult, setSendResult] = useState<string | null>(null)

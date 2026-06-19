@@ -270,6 +270,7 @@ class AdminService {
       if (p.action === 'MANAGE_INVENTORY') dbPermissions.can_manage_store = true
       if (p.action === 'VIEW_AUDIT_LOGS') dbPermissions.can_view_audit_logs = true
       if (p.action === 'MANAGE_BLOGS') dbPermissions.can_post_blog = true
+      if (p.action === 'MANAGE_NEWSLETTERS') dbPermissions.can_manage_newsletters = true
       if (p.action === 'MANAGE_DONATIONS') dbPermissions.can_manage_donations = true
     })
     const { error } = await supabase.rpc('provision_administrator', {
@@ -1759,6 +1760,7 @@ class AdminService {
         can_manage_store?: boolean
         can_view_audit_logs?: boolean
         can_post_blog?: boolean
+        can_manage_newsletters?: boolean
         can_manage_donations?: boolean
       }
       assigned_region: string | null
@@ -1808,6 +1810,9 @@ class AdminService {
     }
     if (dbPermissions.can_post_blog) {
       permissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' })
+    }
+    if (dbPermissions.can_manage_newsletters) {
+      permissions.push({ action: 'MANAGE_NEWSLETTERS', resource: 'NEWSLETTERS' })
     }
     if (dbPermissions.can_manage_donations) {
       permissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
