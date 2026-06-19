@@ -131,7 +131,7 @@ BEGIN
   v_description := CASE
     WHEN NEW.action = 'enrolled' THEN 'A new device has been registered and is pending biometric enrollment.'
     WHEN NEW.action = 'verified' THEN 'Device verified successfully.'
-    WHEN NEW.action = 'step_up_required' THEN 'Biometric step-up verification required (due to ISP or network change).'
+    WHEN NEW.action = 'step_up_required' THEN 'Biometric step-up verification required.'
     WHEN NEW.action = 'step_up_passed' THEN 'Passed biometric step-up verification.'
     WHEN NEW.action = 'slot_reset' THEN 'Device slot cleared by administrator.'
     WHEN NEW.action = 'blocked' THEN 
