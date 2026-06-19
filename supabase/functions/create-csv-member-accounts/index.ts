@@ -49,7 +49,12 @@ serve(async (req: Request) => {
 
     // Verify admin has can_manage_members permission
     const authz = await requireAuthorizedAdmin(req, supabaseAdmin, canManageMembers)
-    if (!authz.ok) return authz.response
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     const { members } = await req.json()
     if (!members || !Array.isArray(members)) {

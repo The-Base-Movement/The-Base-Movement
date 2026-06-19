@@ -29,11 +29,16 @@ serve(async (req: Request) => {
       supabaseAdmin,
       (admin) => admin.role !== null && IT_ROLES.has(admin.role)
     )
-    if (!authz.ok) return authz.response
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     const { device_id: deviceId, disable_mfa: disableMfa = false } = await req.json()
     if (!deviceId || typeof deviceId !== 'string') {
-      return json({ error: 'Device ID is required.' }, 400)
+      return json({ error: 'Device ID is required.' }, 400, corsHeaders)
     }
 
     const { data: device, error: deviceError } = await supabaseAdmin
@@ -44,11 +49,11 @@ serve(async (req: Request) => {
 
     if (deviceError) {
       console.error('[RESET-DEVICE-SLOT] device lookup failed:', deviceError)
-      return json({ error: 'Failed to look up device.' }, 500)
+      return json({ error: 'Failed to look up device.' }, 500, corsHeaders)
     }
 
     if (!device) {
-      return json({ error: 'Device not found.' }, 404)
+      return json({ error: 'Device not found.' }, 404, corsHeaders)
     }
 
     const { error: logError } = await supabaseAdmin.from('admin_device_activity').insert({
@@ -60,7 +65,7 @@ serve(async (req: Request) => {
     })
     if (logError) {
       console.error('[RESET-DEVICE-SLOT] failed to log activity:', logError)
-      return json({ error: 'Failed to log reset activity.' }, 500)
+      return json({ error: 'Failed to log reset activity.' }, 500, corsHeaders)
     }
 
     const { error: deleteError } = await supabaseAdmin
@@ -69,7 +74,7 @@ serve(async (req: Request) => {
       .eq('id', deviceId)
     if (deleteError) {
       console.error('[RESET-DEVICE-SLOT] failed to delete device slot:', deleteError)
-      return json({ error: 'Failed to reset device slot.' }, 500)
+      return json({ error: 'Failed to reset device slot.' }, 500, corsHeaders)
     }
 
     if (disableMfa) {
@@ -77,7 +82,7 @@ serve(async (req: Request) => {
         await supabaseAdmin.auth.admin.mfa.listFactors({ userId: device.admin_id })
       if (listError) {
         console.error('[RESET-DEVICE-SLOT] failed to list MFA factors:', listError)
-        return json({ error: 'Failed to inspect MFA factors.' }, 500)
+        return json({ error: 'Failed to inspect MFA factors.' }, 500, corsHeaders)
       }
 
       const factors = factorsData?.factors ?? []
@@ -91,10 +96,10 @@ serve(async (req: Request) => {
       )
     }
 
-    return json({ ok: true, mfaDisabled: Boolean(disableMfa) })
+    return json({ ok: true, mfaDisabled: Boolean(disableMfa) }, 200, corsHeaders)
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error)
     console.error('[RESET-DEVICE-SLOT] unexpected error:', message)
-    return json({ error: message }, 500)
+    return json({ error: message }, 500, corsHeaders)
   }
 })
