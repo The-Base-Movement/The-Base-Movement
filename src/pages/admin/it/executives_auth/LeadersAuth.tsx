@@ -71,7 +71,9 @@ export default function LeadersAuth() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDevices()
+
     loadActivity()
   }, [loadDevices, loadActivity])
 
@@ -90,9 +92,7 @@ export default function LeadersAuth() {
     setResetting(device.id)
     try {
       await deviceTrackingService.resetSlot(device.id, disableMfa)
-      toast.success(
-        disableMfa ? 'Device slot reset and MFA disabled' : 'Device slot reset'
-      )
+      toast.success(disableMfa ? 'Device slot reset and MFA disabled' : 'Device slot reset')
       await Promise.all([loadDevices(), loadActivity()])
     } catch (err) {
       console.error(err)
@@ -272,6 +272,7 @@ export default function LeadersAuth() {
                               value={`${d.os_type ?? '—'} · ${d.browser ?? '—'}`}
                             />
                             <Row label="IP" value={d.ip_address ?? '—'} />
+                            {d.isp && <Row label="ISP" value={d.isp} />}
                             <Row label="Location" value={d.location ?? '—'} />
                             <Row label="Last seen" value={fmt(d.last_seen)} />
                             <Row

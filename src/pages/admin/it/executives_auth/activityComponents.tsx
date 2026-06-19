@@ -239,6 +239,7 @@ export function DetailModal({ entry, onClose }: { entry: LeaderActivityRow; onCl
         )}
         <Row label="IP address" value={entry.ip_address ?? '—'} />
         <Row label="Location" value={entry.location ?? '—'} />
+        {entry.isp && <Row label="ISP" value={entry.isp} />}
         <Row label="When" value={fmtFull(entry.created_at)} />
         {fingerprint && <Row label="Fingerprint" value={fingerprint} />}
         {entry.user_agent && (

@@ -42,6 +42,7 @@ export interface AdminDevice {
   os_type: string | null
   browser: string | null
   ip_address: string | null
+  isp: string | null
   location: string | null
   status: 'active' | 'blocked'
   webauthn_enrolled: boolean
