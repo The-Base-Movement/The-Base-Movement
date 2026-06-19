@@ -104,6 +104,9 @@ async function alertBlocked(
   } else if (reason === 'fingerprint_mismatch') {
     description =
       'A different device (fingerprint mismatch) attempted to access this occupied slot.'
+  } else if (reason === 'non_brave_browser') {
+    description =
+      'Access attempted using an unauthorized browser. Security policy requires Brave Browser for all privileged admin logins.'
   } else if (reason) {
     description = `Blocked reason: ${reason}`
   }

@@ -25,6 +25,8 @@ export interface EvaluateResult {
   webauthn_required?: boolean
   /** The fingerprint hash computed for this device (used for verification logs). */
   fingerprint_hash?: string
+  /** Block reason returned by evaluate_admin_device, e.g. 'non_brave_browser', 'fingerprint_mismatch', 'slot_blocked'. */
+  reason?: string
 }
 
 export interface SensitiveActionBiometricProof {
