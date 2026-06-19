@@ -293,7 +293,7 @@ export function SecuritySettingsTab({
                   <div
                     style={{
                       padding: 16,
-                      background: 'hsl(var(--container-low))',
+                      background: '#ffffff',
                       borderRadius: 4,
                       border: '1px solid hsl(var(--border))',
                     }}
@@ -302,8 +302,8 @@ export function SecuritySettingsTab({
                       <QRCodeSVG
                         value={mfaEnrollData.uri}
                         size={192}
-                        bgColor="transparent"
-                        fgColor="#111827"
+                        bgColor="#ffffff"
+                        fgColor="#000000"
                         includeMargin
                       />
                     ) : (

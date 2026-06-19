@@ -19,8 +19,12 @@ const MFA_SETUP_TAB = 'security'
 export default function ProtectedAdminRoute() {
   const { session, isLoading } = useAuth()
   const location = useLocation()
-  const [status, setStatus] = useState<GateStatus>('checking')
-  const [factorId, setFactorId] = useState('')
+  const [status, setStatus] = useState<GateStatus>(
+    sessionStorage.getItem(ADMIN_GATE_KEY) === '1' ? 'allowed' : 'checking'
+  )
+  const [factorId, setFactorId] = useState(
+    sessionStorage.getItem(ADMIN_GATE_KEY) === '1' ? 'bypass' : ''
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -30,7 +34,10 @@ export default function ProtectedAdminRoute() {
 
       // Already verified during this admin visit — let them through
       if (sessionStorage.getItem(ADMIN_GATE_KEY) === '1') {
-        if (!cancelled) setStatus('allowed')
+        if (!cancelled) {
+          setFactorId('bypass')
+          setStatus('allowed')
+        }
         return
       }
 
@@ -44,10 +51,16 @@ export default function ProtectedAdminRoute() {
             setStatus('challenge')
           }
         } else {
-          if (!cancelled) setStatus('allowed')
+          if (!cancelled) {
+            setFactorId('')
+            setStatus('allowed')
+          }
         }
       } catch {
-        if (!cancelled) setStatus('allowed')
+        if (!cancelled) {
+          setFactorId('')
+          setStatus('allowed')
+        }
       }
     }
 
@@ -55,7 +68,7 @@ export default function ProtectedAdminRoute() {
     return () => {
       cancelled = true
     }
-  }, [session])
+  }, [session, location.pathname])
 
   if (isLoading) return null
 

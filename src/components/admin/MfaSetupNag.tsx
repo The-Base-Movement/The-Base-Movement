@@ -187,6 +187,7 @@ export function MfaSetupNag() {
         code,
       })
       if (verify.error) throw verify.error
+      sessionStorage.setItem('admin_gate_verified', '1')
       toast.success('Two-factor authentication enabled')
       if (timerRef.current) clearTimeout(timerRef.current)
       close() // 2FA active — dismiss and let the admin continue

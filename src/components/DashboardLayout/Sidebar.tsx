@@ -165,6 +165,7 @@ export default function Sidebar({
       >
         <Link
           to="/"
+          onClick={onClose}
           className="w-14 h-14 md:w-10 md:h-10 bg-white flex items-center justify-center rounded-sm shrink-0 p-1.5"
         >
           <img
@@ -177,6 +178,7 @@ export default function Sidebar({
         {!isSidebarCollapsed && (
           <Link
             to="/"
+            onClick={onClose}
             className="overflow-hidden whitespace-nowrap"
             style={{ textDecoration: 'none' }}
           >
@@ -205,6 +207,7 @@ export default function Sidebar({
         <div className="px-4 mb-4 space-y-2">
           <Link
             to="/"
+            onClick={onClose}
             className="flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-[4px] transition-all group border border-white/5"
           >
             <span className="material-symbols-outlined text-[18px] text-accent">arrow_back</span>
@@ -216,6 +219,7 @@ export default function Sidebar({
           {isAdmin && (
             <Link
               to="/admin/dashboard"
+              onClick={onClose}
               className="md:hidden flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-[4px] transition-all group border border-accent/40"
             >
               <span className="material-symbols-outlined text-[18px] text-accent">
@@ -243,6 +247,7 @@ export default function Sidebar({
                   <Link
                     className={`relative flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                     to={item.to}
+                    onClick={onClose}
                   >
                     <span
                       className={`material-symbols-outlined text-[18px] ${isSidebarCollapsed ? 'mr-0' : 'mr-[10px]'}`}

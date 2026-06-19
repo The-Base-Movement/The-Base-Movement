@@ -31,11 +31,7 @@ type SettingsTab =
 interface SupabaseAuthWithMFA {
   mfa: {
     listFactors: () => Promise<{ data: { all: Factor[] }; error: AuthError | null }>
-    enroll: (params: {
-      factorType: 'totp'
-      friendlyName?: string
-      issuer?: string
-    }) => Promise<{
+    enroll: (params: { factorType: 'totp'; friendlyName?: string; issuer?: string }) => Promise<{
       data: {
         id: string
         totp: { qr_code: string; secret?: string; uri?: string }
@@ -218,6 +214,7 @@ export default function AdminSettings() {
         code: normalizedCode,
       })
       if (verify.error) throw verify.error
+      sessionStorage.setItem('admin_gate_verified', '1')
       toast.success('MFA successfully enabled!')
       setShowMfaDialog(false)
       const { data } = await auth.mfa.listFactors()

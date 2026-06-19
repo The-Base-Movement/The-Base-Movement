@@ -8,6 +8,24 @@ import './index.css'
 
 initSentry()
 
+const PRELOAD_RELOAD_KEY = 'the_base_preload_error_reload_at'
+
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault()
+
+  try {
+    const lastReloadAt = Number(sessionStorage.getItem(PRELOAD_RELOAD_KEY) || '0')
+    const now = Date.now()
+    if (now - lastReloadAt < 30000) return
+
+    sessionStorage.setItem(PRELOAD_RELOAD_KEY, String(now))
+  } catch {
+    // Continue with a reload even if storage is unavailable.
+  }
+
+  window.location.reload()
+})
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

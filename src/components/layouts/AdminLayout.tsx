@@ -136,6 +136,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     init()
   }, [session])
 
+  // Close sidebar on route change on mobile/tablet screens
+  useEffect(() => {
+    if (windowWidth < 1024) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsSidebarOpen(false)
+    }
+  }, [location.pathname, windowWidth])
+
   // 15-minute inactivity timeout — only sign out after no admin interaction.
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastActivityAt = useRef(0)
