@@ -12,6 +12,15 @@ dist
 dist-ssr
 *.local
 
+# Root-level generated and temporary artifacts
+/$null
+/temp_layout.txt
+/fix-css.cjs
+/fix-css-hsl.cjs
+/fix-dark.cjs
+/replace-colors.cjs
+/.cache_ggshield
+
 .env
 .env.*
 !.env.example
@@ -38,6 +47,8 @@ tsconfig.*.tsbuildinfo
 
 # Supabase config
 supabase/config.toml
+supabase/.temp/
+supabase/**/*.sql
 docs/**
 !docs/security_checks/
 !docs/security_checks/remediation_log.md
