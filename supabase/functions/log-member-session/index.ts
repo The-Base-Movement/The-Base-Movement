@@ -31,20 +31,25 @@ function clientIp(req: Request): string | null {
   return req.headers.get('cf-connecting-ip') ?? req.headers.get('x-real-ip') ?? null
 }
 
-// Friendly "Browser on OS" label from a user-agent string.
-function deviceName(ua: string | null): string {
+// Friendly "Browser on OS" label from user-agent and Client Hints headers.
+// Brave intentionally spoofs Chrome in its UA string; use the sec-ch-ua header
+// (which includes a "Brave" brand) for reliable server-side detection.
+function deviceName(ua: string | null, secChUa: string | null): string {
   if (!ua) return 'Unknown device'
-  const browser = /Edg\//.test(ua)
-    ? 'Edge'
-    : /OPR\/|Opera/.test(ua)
-      ? 'Opera'
-      : /Chrome\//.test(ua)
-        ? 'Chrome'
-        : /Firefox\//.test(ua)
-          ? 'Firefox'
-          : /Safari\//.test(ua)
-            ? 'Safari'
-            : 'Browser'
+  const isBrave = secChUa ? /[";]Brave[";]/.test(secChUa) : false
+  const browser = isBrave
+    ? 'Brave'
+    : /Edg\//.test(ua)
+      ? 'Edge'
+      : /OPR\/|Opera/.test(ua)
+        ? 'Opera'
+        : /Chrome\//.test(ua)
+          ? 'Chrome'
+          : /Firefox\//.test(ua)
+            ? 'Firefox'
+            : /Safari\//.test(ua)
+              ? 'Safari'
+              : 'Browser'
   const os = /Windows/.test(ua)
     ? 'Windows'
     : /Android/.test(ua)
@@ -111,7 +116,7 @@ serve(async (req: Request) => {
 
     // 2. Authoritative server-side signals.
     const ip = clientIp(req)
-    const device = deviceName(req.headers.get('user-agent'))
+    const device = deviceName(req.headers.get('user-agent'), req.headers.get('sec-ch-ua'))
     const location = await geoLocate(ip)
 
     // 3. Demote the member's previous current session, then record the new one.
