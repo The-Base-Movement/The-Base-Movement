@@ -86,7 +86,9 @@ serve(async (req: Request) => {
     if (linkErr || !linkData?.properties?.action_link) {
       return json({ error: `Could not generate reset link: ${linkErr?.message ?? 'unknown'}` }, 400)
     }
-    const actionLink = linkData.properties.action_link as string
+    const properties = linkData.properties as Record<string, unknown>
+    const emailOtp = properties.email_otp as string
+    const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(realEmail)}&token=${emailOtp}`
 
     // Email the link via SendGrid (best-effort — the link is also returned).
     let emailed = false
@@ -104,14 +106,14 @@ serve(async (req: Request) => {
                 type: 'text/plain',
                 value:
                   `An administrator started a password reset for your account.\n\n` +
-                  `Open this link to choose a new password (valid for 1 hour):\n${actionLink}\n\n` +
+                  `Open this link to choose a new password (valid for 1 hour):\n${customLink}\n\n` +
                   `If you didn't expect this, you can ignore this email.`,
               },
               {
                 type: 'text/html',
                 value:
                   `<p>An administrator started a password reset for your account.</p>` +
-                  `<p><a href="${actionLink}" style="display:inline-block;padding:12px 20px;` +
+                  `<p><a href="${customLink}" style="display:inline-block;padding:12px 20px;` +
                   `background:#006B3F;color:#fff;border-radius:8px;text-decoration:none;` +
                   `font-family:sans-serif">Choose a new password</a></p>` +
                   `<p style="font-family:sans-serif;font-size:13px;color:#555">` +
@@ -126,7 +128,7 @@ serve(async (req: Request) => {
       }
     }
 
-    return json({ success: true, emailed, email: realEmail, actionLink })
+    return json({ success: true, emailed, email: realEmail, actionLink: customLink })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[admin-reset-password] ${msg}`)

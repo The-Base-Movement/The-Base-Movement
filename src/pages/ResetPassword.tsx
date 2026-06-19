@@ -47,6 +47,9 @@ export default function ResetPassword() {
   const [isVerifyingMfa, setIsVerifyingMfa] = useState(false)
 
   useEffect(() => {
+    let active = true
+    let timeout: ReturnType<typeof setTimeout> | null = null
+
     // Once a recovery session exists, decide whether we still need an MFA
     // step-up (AAL2) before allowing the password change.
     const prepare = async () => {
@@ -56,8 +59,10 @@ export default function ResetPassword() {
           const { data: factors } = await supabase.auth.mfa.listFactors()
           const totp = factors?.totp?.find((f) => f.status === 'verified') ?? factors?.totp?.[0]
           if (totp?.id) {
-            setMfaFactorId(totp.id)
-            setPageState('mfa')
+            if (active) {
+              setMfaFactorId(totp.id)
+              setPageState('mfa')
+            }
             return
           }
         }
@@ -65,33 +70,103 @@ export default function ResetPassword() {
         // If the AAL/factor lookup fails, fall through and let updateUser surface
         // any real problem.
       }
-      setPageState('ready')
+      if (active) {
+        setPageState('ready')
+      }
     }
+
+    // Parse URL query parameters
+    const params = new URLSearchParams(window.location.search)
+    const queryEmail = params.get('email')
+    const queryToken = params.get('token')
+    const queryError = params.get('error')
+    const queryErrorDesc = params.get('error_description')
 
     // Supabase fires PASSWORD_RECOVERY when the user clicks the email reset link.
     // The URL fragment contains the access_token which Supabase auto-exchanges.
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+        if (timeout) {
+          clearTimeout(timeout)
+          timeout = null
+        }
         void prepare()
       }
     })
 
-    // Also check if there is already a valid session (user may have already exchanged the token)
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const verifyAndPrepare = async () => {
+      if (queryError) {
+        console.warn('[reset-password] Error query param detected:', queryError, queryErrorDesc)
+        if (active) setPageState('invalid')
+        return
+      }
+
+      // Check current session
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
       if (session) {
-        void prepare()
-      } else {
-        // Give the listener a moment to fire; if still loading after 3s, token is invalid
-        const timeout = setTimeout(() => {
-          setPageState((s) => (s === 'loading' ? 'invalid' : s))
-        }, 3000)
-        return () => clearTimeout(timeout)
+        // If queryEmail is present, make sure it matches the current session user.
+        // Otherwise, sign out the mismatched user first.
+        if (queryEmail && session.user?.email?.toLowerCase() !== queryEmail.toLowerCase()) {
+          console.warn('[reset-password] Session email mismatch. Signing out old session.')
+          await supabase.auth.signOut({ scope: 'local' })
+        } else {
+          if (active) {
+            if (timeout) {
+              clearTimeout(timeout)
+              timeout = null
+            }
+            void prepare()
+          }
+          return
+        }
       }
-    })
 
-    return () => subscription.unsubscribe()
+      // If custom query email/token are present, verify using verifyOtp
+      if (queryEmail && queryToken) {
+        try {
+          console.warn('[reset-password] Verifying custom link OTP...', {
+            email: queryEmail,
+            token: queryToken,
+          })
+          const { data, error } = await supabase.auth.verifyOtp({
+            email: queryEmail,
+            token: queryToken,
+            type: 'recovery',
+          })
+          if (error) throw error
+          if (data.session) {
+            if (active) void prepare()
+            return
+          }
+        } catch (err: unknown) {
+          console.error('[verifyOtp error]', err)
+          if (active) setPageState('invalid')
+          return
+        }
+      }
+
+      // Give the listener a moment to fire; if still loading after 5s, token is invalid
+      if (active) {
+        timeout = setTimeout(() => {
+          if (active) {
+            setPageState((s) => (s === 'loading' ? 'invalid' : s))
+          }
+        }, 5000)
+      }
+    }
+
+    void verifyAndPrepare()
+
+    return () => {
+      active = false
+      subscription.unsubscribe()
+      if (timeout) clearTimeout(timeout)
+    }
   }, [])
 
   const handleVerifyMfa = async (e: React.FormEvent) => {
