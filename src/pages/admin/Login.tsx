@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import { supabase } from '@/lib/supabase'
@@ -39,6 +39,11 @@ export default function AdminLogin() {
   const [mfaFactorId, setMfaFactorId] = useState('')
   const [mfaCode, setMfaCode] = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => {
+    sessionStorage.removeItem('admin_device_captured')
+    sessionStorage.removeItem('admin_gate_verified')
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
