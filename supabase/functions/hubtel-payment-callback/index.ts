@@ -177,6 +177,7 @@ Deno.serve(async (req: Request) => {
           payment_method: 'Hubtel',
           hubtel_reference: transactionId,
           cleared: true,
+          reference: reference.substring(0, 8).toUpperCase(),
         }
       : {
           status: 'Rejected',
@@ -188,7 +189,9 @@ Deno.serve(async (req: Request) => {
       .from('donations')
       .update(donationUpdate)
       .eq('id', reference)
-      .select('id, full_name, amount, reference, donation_campaigns(title)')
+      .select(
+        'id, full_name, amount, reference, country, payment_method, donation_campaigns(title)'
+      )
       .maybeSingle()
 
     // Fire receipt generation + email for successful Hubtel donations (non-fatal)
@@ -199,17 +202,27 @@ Deno.serve(async (req: Request) => {
           console.error('[HUBTEL-CALLBACK] Receipt invocation failed:', e)
         })
 
-      // Send Discord payment notification
+      // Send Discord payment notification matching the premium client-side style
       const campaignTitle = (donation as any).donation_campaigns?.title || 'Strategic Fund'
       await sendPaymentNotification(
-        'Donation Received',
-        `A successful donation of **₵${Number((donation as any).amount).toFixed(2)}** was processed.`,
-        0x006b3f, // Brand green
+        'Donation Confirmed ✅',
+        `A successful donation was processed.`,
+        0xfcd116, // Premium Gold / Yellow color matching original screenshots
         [
-          { name: 'Donor Name', value: (donation as any).full_name || 'Anonymous Patriot' },
-          { name: 'Campaign', value: campaignTitle },
-          { name: 'Reference', value: (donation as any).reference || '—' },
-          { name: 'Transaction ID', value: transactionId || '—' },
+          { name: 'From', value: (donation as any).full_name || 'Anonymous Patriot', inline: true },
+          {
+            name: 'Amount',
+            value: `₵ ${Number((donation as any).amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+            inline: true,
+          },
+          { name: 'Method', value: (donation as any).payment_method || 'Hubtel', inline: true },
+          { name: 'Country', value: (donation as any).country || 'Ghana', inline: true },
+          {
+            name: 'Reference',
+            value: (donation as any).reference || reference.substring(0, 8).toUpperCase(),
+            inline: true,
+          },
+          { name: 'Campaign', value: campaignTitle, inline: true },
         ]
       )
     }
