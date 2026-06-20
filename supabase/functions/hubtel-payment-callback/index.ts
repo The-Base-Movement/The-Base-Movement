@@ -65,6 +65,40 @@ async function sendAlert(
   }
 }
 
+// Fire a #payments Discord message via the discord-notify proxy. Non-fatal.
+async function sendPaymentNotification(
+  title: string,
+  description: string,
+  color: number,
+  fields?: { name: string; value: string }[]
+) {
+  try {
+    // @ts-expect-error: Deno global
+    const url = Deno.env.get('SUPABASE_URL') ?? ''
+    // @ts-expect-error: Deno global
+    const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    await fetch(`${url}/functions/v1/discord-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        channel: 'payments',
+        embeds: [
+          {
+            title: `💰 ${title}`,
+            description,
+            color,
+            fields,
+            footer: { text: 'Hubtel payment callback' },
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      }),
+    })
+  } catch (e) {
+    console.error('[HUBTEL-CALLBACK] payment notification dispatch failed:', e)
+  }
+}
+
 function isSuccessful(payload: Record<string, unknown>) {
   const code = getString(payload, ['ResponseCode', 'responseCode', 'Code', 'code'])
   const status = getString(payload, ['Status', 'status', 'TransactionStatus', 'transactionStatus'])
@@ -154,7 +188,7 @@ Deno.serve(async (req: Request) => {
       .from('donations')
       .update(donationUpdate)
       .eq('id', reference)
-      .select('id')
+      .select('id, full_name, amount, reference, donation_campaigns(title)')
       .maybeSingle()
 
     // Fire receipt generation + email for successful Hubtel donations (non-fatal)
@@ -164,6 +198,20 @@ Deno.serve(async (req: Request) => {
         .catch((e: unknown) => {
           console.error('[HUBTEL-CALLBACK] Receipt invocation failed:', e)
         })
+
+      // Send Discord payment notification
+      const campaignTitle = (donation as any).donation_campaigns?.title || 'Strategic Fund'
+      await sendPaymentNotification(
+        'Donation Received',
+        `A successful donation of **₵${Number((donation as any).amount).toFixed(2)}** was processed.`,
+        0x006b3f, // Brand green
+        [
+          { name: 'Donor Name', value: (donation as any).full_name || 'Anonymous Patriot' },
+          { name: 'Campaign', value: campaignTitle },
+          { name: 'Reference', value: (donation as any).reference || '—' },
+          { name: 'Transaction ID', value: transactionId || '—' },
+        ]
+      )
     }
 
     if (donationError) throw donationError
@@ -185,7 +233,7 @@ Deno.serve(async (req: Request) => {
         .from('store_orders')
         .update(orderUpdate)
         .eq('id', reference)
-        .select('id, customer_id, points_redeemed')
+        .select('id, customer_id, points_redeemed, full_name, email, total_amount')
         .maybeSingle()
 
       if (orderError) throw orderError
@@ -199,6 +247,21 @@ Deno.serve(async (req: Request) => {
           [
             { name: 'Reference', value: reference },
             { name: 'Transaction', value: transactionId ?? '—' },
+          ]
+        )
+      }
+
+      if (paid && order) {
+        // Send Discord payment notification for store order
+        await sendPaymentNotification(
+          'Store Order Paid',
+          `A store order of **₵${Number((order as any).total_amount).toFixed(2)}** was successfully paid.`,
+          0xdaa520, // Accent / Brand Gold color
+          [
+            { name: 'Customer Name', value: (order as any).full_name || 'Anonymous Patriot' },
+            { name: 'Order ID', value: order.id.substring(0, 8) },
+            { name: 'Email', value: (order as any).email || '—' },
+            { name: 'Transaction ID', value: transactionId || '—' },
           ]
         )
       }
