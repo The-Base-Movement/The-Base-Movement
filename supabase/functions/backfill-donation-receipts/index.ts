@@ -6,6 +6,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptHtml } from '../_shared/email-templates.ts'
 import { isPrivilegedAdminRole, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined
+  }
+  serve(handler: (req: Request) => Response | Promise<Response>): void
+}
+
 const SITE_BASE = 'https://thebasemovement.info'
 
 const corsHeaders = {
@@ -14,11 +21,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
-  // @ts-expect-error: Deno global
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
   const supabaseAdmin = createClient(supabaseUrl, serviceKey)
