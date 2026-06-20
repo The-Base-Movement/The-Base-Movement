@@ -108,7 +108,7 @@ export function welcomeEmail(d: WelcomeEmailData): string {
       <p style="line-height:1.65;color:#444;margin-bottom:14px"><strong>3. Follow your branch.</strong> Your nearest branch, ${d.chapter}, meets every first Saturday. Join the group to stay informed.</p>
       ${ctaButton('Download my membership card', d.cardDownloadUrl, '#DAA520')}
     </div>
-    ${emailFooter(`Ghana First, jobs for the youth! · <a href="#" style="color:#888">Unsubscribe</a> · <a href="#" style="color:#888">Update preferences</a><br>The Base Movement · Accra, Ghana · thebasemovement.creativeutil.com`)}
+    ${emailFooter(`Ghana First, jobs for the youth! · <a href="#" style="color:#888">Unsubscribe</a> · <a href="#" style="color:#888">Update preferences</a><br>The Base Movement · Accra, Ghana · thebasemovement.info`)}
   </div>
 ${SHELL_CLOSE}`
 }
@@ -168,7 +168,7 @@ export function donationReceiptEmail(d: DonationReceiptEmailData): string {
       ${ctaButton('Set up a monthly contribution →', d.monthlyUrl)}
       ${d.receiptPdfUrl ? `<a href="${d.receiptPdfUrl}" style="display:block;background:#fff;color:#006B3F;border:1px solid #dfe4dd;text-align:center;padding:12px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:13px;text-decoration:none;margin-bottom:14px">Download PDF receipt</a>` : ''}
     </div>
-    ${emailFooter(`Questions? Reply to this email or visit <a href="https://thebasemovement.creativeutil.com/contact" style="color:#888">thebasemovement.creativeutil.com/contact</a><br>The Base Movement · Accra, Ghana · <a href="#" style="color:#888">Unsubscribe</a>`)}
+    ${emailFooter(`Questions? Reply to this email or visit <a href="https://thebasemovement.info/contact" style="color:#888">thebasemovement.info/contact</a><br>The Base Movement · Accra, Ghana · <a href="#" style="color:#888">Unsubscribe</a>`)}
   </div>
 ${SHELL_CLOSE}`
 }
@@ -222,7 +222,7 @@ export function broadcastEmail(d: BroadcastEmailData): string {
       ${ctaButton(d.ctaLabel, d.ctaUrl)}
       ${d.secondaryCtaLabel && d.secondaryCtaUrl ? `<hr style="border:0;border-top:1px solid #eee;margin:18px 0">${ctaButton(d.secondaryCtaLabel, d.secondaryCtaUrl, d.secondaryCtaColor ?? '#CE1126')}` : ''}
     </div>
-    ${emailFooter(`You're receiving this because you are a verified member of The Base. · <a href="#" style="color:#888">Unsubscribe</a><br>The Base Movement · Accra, Ghana · thebasemovement.creativeutil.com`)}
+    ${emailFooter(`You're receiving this because you are a verified member of The Base. · <a href="#" style="color:#888">Unsubscribe</a><br>The Base Movement · Accra, Ghana · thebasemovement.info`)}
   </div>
 ${SHELL_CLOSE}`
 }
@@ -339,7 +339,7 @@ export function csvImportWelcomeEmail(d: CsvImportWelcomeEmailData): string {
       </div>
       ${ctaButton('Log in to The Base →', d.loginUrl)}
     </div>
-    ${emailFooter(`You're receiving this because an administrator created your account. · thebasemovement.creativeutil.com`)}
+    ${emailFooter(`You're receiving this because an administrator created your account. · thebasemovement.info`)}
   </div>
 ${SHELL_CLOSE}`
 }
@@ -449,7 +449,7 @@ export function donationReceiptHtml(d: DonationReceiptHtmlData): string {
     </div>
   </div>
   <div class="ftr">
-    The Base Movement · Accra, Ghana · thebasemovement.com<br/>
+    The Base Movement · Accra, Ghana · thebasemovement.info<br/>
     This receipt is valid proof of your contribution to the movement.
   </div>
 </div>

@@ -279,7 +279,7 @@ export function MembershipFormBody({ platform, formTitle, logoUrl }: MembershipF
 
       {/* Footer */}
       <div className="border-t-2 border-stone-100 pt-8 flex justify-between items-center opacity-40 grayscale">
-        <p className="text-micro font-bold tracking-tight">thebasemovement.com</p>
+        <p className="text-micro font-bold tracking-tight">thebasemovement.info</p>
         <p className="text-micro font-bold tracking-tight">
           Submission: hand to chapter head, or upload at /register/upload
         </p>

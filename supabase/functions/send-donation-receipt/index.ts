@@ -5,7 +5,7 @@ import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-temp
 import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
-const SITE_BASE = 'https://thebasemovement.creativeutil.com'
+const SITE_BASE = 'https://thebasemovement.info'
 
 function normalizePhone(raw: string): string {
   const cleaned = raw.trim()
@@ -146,7 +146,7 @@ Deno.serve(async (req: Request) => {
         method: row.payment_method ?? 'N/A',
         reference: row.reference,
         date: dateStr,
-        monthlyUrl: 'https://thebasemovement.com/dashboard/donate',
+        monthlyUrl: 'https://thebasemovement.info/dashboard/donate',
         receiptPdfUrl: receiptUrl ?? undefined,
       })
 
@@ -159,7 +159,7 @@ Deno.serve(async (req: Request) => {
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
           body: JSON.stringify({
             personalizations: [{ to: [{ email: memberEmail }] }],
-            from: { email: 'noreply@thebasemovement.com', name: 'The Base Movement' },
+            from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
             subject: `Your ${amountStr} contribution is confirmed — Receipt ${row.reference}`,
             content: [{ type: 'text/html', value: emailHtml }],
           }),

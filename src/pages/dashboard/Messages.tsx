@@ -231,8 +231,8 @@ export default function DashboardMessages() {
             }}
           >
             Your leader hasn&apos;t been assigned yet. Contact HQ at{' '}
-            <a href="mailto:info@thebasemovement.com" style={{ color: 'hsl(var(--primary))' }}>
-              info@thebasemovement.com
+            <a href="mailto:info@thebasemovement.info" style={{ color: 'hsl(var(--primary))' }}>
+              info@thebasemovement.info
             </a>
           </p>
         </div>

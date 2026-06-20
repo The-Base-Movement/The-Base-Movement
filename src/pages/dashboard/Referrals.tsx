@@ -81,8 +81,8 @@ export default function Referrals() {
 
   const [userRegNo] = useState(() => sessionStore.getItem('userRegNo') ?? '')
   const shareUrl = userRegNo
-    ? `https://thebasemovement.com/register?ref=${userRegNo}`
-    : 'https://thebasemovement.com/register'
+    ? `https://thebasemovement.info/register?ref=${userRegNo}`
+    : 'https://thebasemovement.info/register'
 
   useEffect(() => {
     let cancelled = false

@@ -136,7 +136,7 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('PUBLIC_SITE_URL') ??
       // @ts-expect-error: Deno global
       Deno.env.get('SITE_URL') ??
-      'https://thebasemovement.com'
+      'https://thebasemovement.info'
 
     const normalizedPhone = normalizeHubtelPhone(phone)
     const ghanaPhone = isGhanaPhone(normalizedPhone)
@@ -159,7 +159,7 @@ Deno.serve(async (req: Request) => {
       clientReference: reference,
       customerName: name,
       customerPhoneNumber: hubtelPhone,
-      customerEmail: body.email || 'donations@thebasemovement.com',
+      customerEmail: body.email || 'donations@thebasemovement.info',
       channels: ghanaPhone ? ['mobilemoney', 'card'] : ['card'],
       metadata: {
         ...(body.metadata ?? {}),

@@ -54,7 +54,7 @@ export function ShareModal({
   isOpen,
   onClose,
   title = 'Share & Invite Others',
-  url = 'https://thebasemovement.com/register',
+  url = 'https://thebasemovement.info/register',
 }: ShareModalProps) {
   const [copied, setCopied] = useState(false)
 

@@ -159,7 +159,7 @@ export default function ProductDetails() {
     },
     offers: {
       '@type': 'Offer',
-      url: `https://thebasemovement.com/store/product/${product.slug}`,
+      url: `https://thebasemovement.info/store/product/${product.slug}`,
       priceCurrency: 'GHS',
       price: product.price.replace(/[^0-9.]/g, ''),
       availability:

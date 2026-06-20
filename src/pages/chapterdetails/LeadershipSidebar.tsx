@@ -255,7 +255,7 @@ export function LeadershipSidebar({
             >
               mail
             </span>
-            {email || `${city_or_region.toLowerCase()}@thebasemovement.com`}
+            {email || `${city_or_region.toLowerCase()}@thebasemovement.info`}
           </div>
           <div
             style={{

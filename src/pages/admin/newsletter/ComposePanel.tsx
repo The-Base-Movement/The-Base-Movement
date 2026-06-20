@@ -860,7 +860,7 @@ const EMAIL_TEMPLATES: {
     html: `<h2 style="margin:0 0 12px;font-family:'Public Sans',Arial;font-size:22px;font-weight:800;color:#181d19;line-height:1.3">Headline Goes Here</h2>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Open with a brief summary of the announcement — one or two sentences that explain why this matters to members.</p>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Add your main body text here. Keep it clear, direct, and action-oriented. Members appreciate brevity.</p>
-<a href="https://thebasemovement.com" style="display:inline-block;background:#006B3F;color:#fff;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:8px 0 20px">Read More →</a>`,
+<a href="https://thebasemovement.info" style="display:inline-block;background:#006B3F;color:#fff;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:8px 0 20px">Read More →</a>`,
   },
   {
     id: 'event',
@@ -881,7 +881,7 @@ const EMAIL_TEMPLATES: {
   </tr>
 </table>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Describe the event, what to expect, and why attendance matters. Keep the tone energetic and motivating.</p>
-<a href="https://thebasemovement.com" style="display:inline-block;background:#CE1126;color:#fff;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:8px 0 20px">RSVP Now →</a>`,
+<a href="https://thebasemovement.info" style="display:inline-block;background:#CE1126;color:#fff;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:8px 0 20px">RSVP Now →</a>`,
   },
   {
     id: 'member-update',
@@ -897,7 +897,7 @@ const EMAIL_TEMPLATES: {
   <li>Key point three goes here</li>
 </ul>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Any further details or instructions for members can go here.</p>
-<a href="https://thebasemovement.com/dashboard" style="display:inline-block;background:#006B3F;color:#fff;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:8px 0 20px">Go to Dashboard →</a>`,
+<a href="https://thebasemovement.info/dashboard" style="display:inline-block;background:#006B3F;color:#fff;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:8px 0 20px">Go to Dashboard →</a>`,
   },
   {
     id: 'policy',

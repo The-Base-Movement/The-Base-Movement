@@ -7,7 +7,7 @@
 //
 // The admin is always derived from the verified JWT. The RP ID is derived from
 // the request Origin and validated against an allowlist, so the same code works
-// on localhost today, thebasemovement.creativeutil.com now, and thebasemovement.com
+// on localhost today, thebasemovement.info now, and thebasemovement.info
 // after the migration (just add it to ALLOWED_RP_ORIGINS).
 
 // @ts-expect-error: Deno URL import
@@ -93,7 +93,7 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   if (host === 'localhost' || host === '127.0.0.1') return { rpID: host, origin }
 
   // @ts-expect-error: Deno global
-  const allowed = (Deno.env.get('ALLOWED_RP_ORIGINS') ?? 'https://thebasemovement.creativeutil.com')
+  const allowed = (Deno.env.get('ALLOWED_RP_ORIGINS') ?? 'https://thebasemovement.info')
     .split(',')
     .map((s: string) => s.trim())
     .filter(Boolean)

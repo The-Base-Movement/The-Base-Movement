@@ -6,7 +6,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptHtml } from '../_shared/email-templates.ts'
 import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
-const SITE_BASE = 'https://thebasemovement.creativeutil.com'
+const SITE_BASE = 'https://thebasemovement.info'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

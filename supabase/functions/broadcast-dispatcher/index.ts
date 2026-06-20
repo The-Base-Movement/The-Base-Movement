@@ -72,7 +72,7 @@ Deno.serve(async (req: Request) => {
       body: body ? `<p style="line-height:1.65;color:#444;margin-bottom:14px">${body}</p>` : '',
       region: region ?? targetValue,
       ctaLabel: 'Read the full update →',
-      ctaUrl: 'https://thebasemovement.creativeutil.com/dashboard',
+      ctaUrl: 'https://thebasemovement.info/dashboard',
     })
 
     // @ts-expect-error: Deno global
@@ -89,7 +89,7 @@ Deno.serve(async (req: Request) => {
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
           body: JSON.stringify({
             personalizations: batch.map((email) => ({ to: [{ email }] })),
-            from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
+            from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
             subject: subject ?? 'Movement update',
             content: [{ type: 'text/html', value: html }],
           }),

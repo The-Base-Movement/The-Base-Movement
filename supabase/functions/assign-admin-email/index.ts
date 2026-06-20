@@ -128,7 +128,7 @@ serve(async (req: Request) => {
           headers: { Authorization: `Bearer ${sgKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             personalizations: [{ to: [{ email: newEmail }] }],
-            from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
+            from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
             subject: 'Admin access granted — The Base Movement',
             content: [
               {

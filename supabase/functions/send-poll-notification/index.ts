@@ -109,7 +109,7 @@ Deno.serve(async (req: Request) => {
               voteTarget: row.target_count ?? 5000,
               hoursRemaining,
               options: pollOptions,
-              voteUrl: `https://thebasemovement.creativeutil.com/dashboard/polls/${row.id}`,
+              voteUrl: `https://thebasemovement.info/dashboard/polls/${row.id}`,
             })
             return {
               to: [{ email: member.email as string }],
@@ -125,7 +125,7 @@ Deno.serve(async (req: Request) => {
             body: JSON.stringify({
               personalizations: [{ to: p.to }],
               from: {
-                email: 'noreply@thebasemovement.creativeutil.com',
+                email: 'noreply@thebasemovement.info',
                 name: 'The Base Movement',
               },
               subject: `This poll closes in ${hoursRemaining} hours. Your vote counts.`,

@@ -83,8 +83,8 @@ Deno.serve(async (req) => {
       name: firstName,
       regNo: row.registration_number,
       chapter: row.chapter ?? 'TBM',
-      dashboardUrl: 'https://thebasemovement.creativeutil.com/dashboard',
-      cardDownloadUrl: 'https://thebasemovement.creativeutil.com/dashboard',
+      dashboardUrl: 'https://thebasemovement.info/dashboard',
+      cardDownloadUrl: 'https://thebasemovement.info/dashboard',
       totalMembers: (count ?? 0).toLocaleString('en-GB'),
     })
 
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: row.email }] }],
-        from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
+        from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
         subject: `Welcome to The Base, ${firstName} — you're now a verified member`,
         content: [{ type: 'text/html', value: html }],
       }),

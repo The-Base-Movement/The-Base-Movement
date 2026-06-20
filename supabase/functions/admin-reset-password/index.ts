@@ -41,7 +41,7 @@ serve(async (req: Request) => {
     // @ts-expect-error: Deno global
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     // @ts-expect-error: Deno global
-    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://thebasemovement.creativeutil.com'
+    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://thebasemovement.info'
     const admin = createClient(supabaseUrl, serviceKey)
 
     // Authn + authz the caller.
@@ -99,7 +99,7 @@ serve(async (req: Request) => {
           headers: { Authorization: `Bearer ${sgKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             personalizations: [{ to: [{ email: realEmail }] }],
-            from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
+            from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
             subject: 'Reset your Base Movement password',
             content: [
               {

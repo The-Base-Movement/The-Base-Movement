@@ -301,7 +301,7 @@ export function SettingsTab({
               type="email"
               value={emailDraft}
               onChange={(e) => onEmailChange(e.target.value)}
-              placeholder="chapter@thebasemovement.com"
+              placeholder="chapter@thebasemovement.info"
               style={inp}
             />
           </div>

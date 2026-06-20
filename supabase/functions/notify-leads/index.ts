@@ -66,8 +66,8 @@ Deno.serve(async (req: Request) => {
       name: (record.full_name ?? '').split(' ')[0] || 'Patriot',
       regNo: record.registration_number ?? '',
       chapter: record.chapter ?? '',
-      dashboardUrl: 'https://thebasemovement.creativeutil.com/dashboard',
-      cardDownloadUrl: 'https://thebasemovement.creativeutil.com/dashboard/membership-card',
+      dashboardUrl: 'https://thebasemovement.info/dashboard',
+      cardDownloadUrl: 'https://thebasemovement.info/dashboard/membership-card',
     })
 
     // @ts-expect-error: Deno global
@@ -79,7 +79,7 @@ Deno.serve(async (req: Request) => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
         body: JSON.stringify({
           personalizations: [{ to: [{ email: memberEmail }] }],
-          from: { email: 'noreply@thebasemovement.creativeutil.com', name: 'The Base Movement' },
+          from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
           subject: 'You are now a verified member of The Base.',
           content: [{ type: 'text/html', value: html }],
         }),

@@ -1062,7 +1062,7 @@ export default function ConstituencyDetails() {
                   mail
                 </span>
                 {constituency.email ||
-                  `${constituency.name.toLowerCase().replace(/\s+/g, '')}@thebasemovement.com`}
+                  `${constituency.name.toLowerCase().replace(/\s+/g, '')}@thebasemovement.info`}
               </div>
               <div
                 style={{
