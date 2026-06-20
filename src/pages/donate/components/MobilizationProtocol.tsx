@@ -136,6 +136,7 @@ export function MobilizationProtocol({
   const status = statusCopy(paymentState)
   const quickAmounts = ['50', '100', '250', '500']
   const selectedCampaign = campaigns.find((campaign) => campaign.id === formData.campaignId)
+  const selectedCountry = countries.find((country) => country.name === formData.country)
   const steps = [
     { id: 1, label: 'Amount' },
     { id: 2, label: 'Profile' },
@@ -443,7 +444,8 @@ export function MobilizationProtocol({
                 aria-label="Payment phone"
                 name="donation-phone"
                 id="phone"
-                placeholder="+233 xx xxx xxxx"
+                type="tel"
+                placeholder={`${selectedCountry?.dialing_code || '+'} phone number`}
                 required
                 autoComplete="tel"
                 value={formData.phone}
@@ -456,6 +458,16 @@ export function MobilizationProtocol({
                   padding: '0 12px',
                 }}
               />
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontSize: 11,
+                  lineHeight: 1.4,
+                }}
+              >
+                Use a valid number for {formData.country}; international format is accepted.
+              </p>
             </div>
 
             <div>

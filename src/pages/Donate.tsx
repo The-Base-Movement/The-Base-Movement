@@ -24,6 +24,7 @@ import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { initiateHubtelCheckout, openHubtelCheckout } from '@/components/payment/hubtelCheckout'
 import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
+import { normalizeDonationPhone } from '@/lib/donationPhone'
 
 export default function PublicDonate() {
   const [loading, setLoading] = useState(true)
@@ -169,6 +170,17 @@ export default function PublicDonate() {
       return
     }
 
+    const selectedCountry = countries.find((country) => country.name === formData.country)
+    const normalizedPhone = normalizeDonationPhone({
+      phone: formData.phone,
+      country: formData.country,
+      dialingCode: selectedCountry?.dialing_code,
+    })
+    if (!normalizedPhone.ok) {
+      toast.error(normalizedPhone.error)
+      return
+    }
+
     setPaymentState('starting')
 
     let donationIdToCleanUp: string | null = null
@@ -184,7 +196,7 @@ export default function PublicDonate() {
         .from('donations')
         .insert({
           full_name: formData.fullName.trim(),
-          phone: formData.phone.trim(),
+          phone: normalizedPhone.e164,
           amount: ghsAmount,
           country: formData.country,
           payment_method: 'Hubtel',
@@ -205,7 +217,7 @@ export default function PublicDonate() {
         amount,
         currency: selectedCurrency.code,
         name: formData.fullName,
-        phone: formData.phone,
+        phone: normalizedPhone.e164,
         metadata: {
           donationId: data.id,
           memberId: formData.memberId || undefined,

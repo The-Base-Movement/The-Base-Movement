@@ -139,9 +139,8 @@ Deno.serve(async (req: Request) => {
       'https://thebasemovement.info'
 
     const normalizedPhone = normalizeHubtelPhone(phone)
+    if (!normalizedPhone) throw new Error('Enter a valid international phone number')
     const ghanaPhone = isGhanaPhone(normalizedPhone)
-    // Hubtel rejects non-Ghana numbers even for card-only payments; use a placeholder for diaspora
-    const hubtelPhone = ghanaPhone ? normalizedPhone : '+233000000000'
 
     const hubtelPayload = {
       totalAmount: Number(settlement.ghsAmount.toFixed(2)),
@@ -158,7 +157,7 @@ Deno.serve(async (req: Request) => {
       merchantAccountNumber: accountNumber,
       clientReference: reference,
       customerName: name,
-      customerPhoneNumber: hubtelPhone,
+      customerPhoneNumber: normalizedPhone,
       customerEmail: body.email || 'donations@thebasemovement.info',
       channels: ghanaPhone ? ['mobilemoney', 'card'] : ['card'],
       metadata: {

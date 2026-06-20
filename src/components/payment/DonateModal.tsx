@@ -4,6 +4,8 @@ import { toast } from 'sonner'
 import HubtelButton from './HubtelButton'
 import { useAuth } from '@/context/AuthContext'
 import { openHubtelCheckout } from './hubtelCheckout'
+import { adminService, type Country } from '@/services/adminService'
+import { normalizeDonationPhone } from '@/lib/donationPhone'
 
 interface DonateModalProps {
   isOpen: boolean
@@ -20,9 +22,10 @@ interface ModalForm {
   fullName: string
   phone: string
   email: string
+  country: string
 }
 
-const EMPTY: ModalForm = { amount: '', fullName: '', phone: '', email: '' }
+const EMPTY: ModalForm = { amount: '', fullName: '', phone: '', email: '', country: 'Ghana' }
 
 export default function DonateModal({ isOpen, onClose, context }: DonateModalProps) {
   const { session } = useAuth()
@@ -34,15 +37,15 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
   )
   const [succeeded, setSucceeded] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [countries, setCountries] = useState<Country[]>([])
+  const [paymentPhone, setPaymentPhone] = useState('')
 
   useEffect(() => {
     if (isOpen) {
-      setForm(EMPTY)
-      setPendingDonationId(null)
-      setCheckoutUrl(null)
-      setPaymentState('idle')
-      setSucceeded(false)
-      setSubmitting(false)
+      void adminService
+        .getCountries()
+        .then(setCountries)
+        .catch((error) => console.error('[DonateModal] country load failed:', error))
     }
   }, [isOpen])
 
@@ -81,6 +84,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
     setCheckoutUrl(null)
     setPaymentState('idle')
     setSucceeded(false)
+    setPaymentPhone('')
   }
 
   const handleClose = () => {
@@ -98,15 +102,27 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
       toast.error('Name and phone are required.')
       return
     }
+
+    const selectedCountry = countries.find((country) => country.name === form.country)
+    const normalizedPhone = normalizeDonationPhone({
+      phone: form.phone,
+      country: form.country,
+      dialingCode: selectedCountry?.dialing_code,
+    })
+    if (!normalizedPhone.ok) {
+      toast.error(normalizedPhone.error)
+      return
+    }
+
     setSubmitting(true)
     try {
       const { data, error } = await supabase
         .from('donations')
         .insert({
           full_name: form.fullName.trim(),
-          phone: form.phone.trim(),
+          phone: normalizedPhone.e164,
           amount: parseFloat(form.amount),
-          country: 'Ghana',
+          country: form.country,
           payment_method: 'Hubtel',
           status: 'Pending',
           member_id: session?.user?.id || null,
@@ -117,6 +133,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
         .select('id')
         .single()
       if (error) throw error
+      setPaymentPhone(normalizedPhone.e164)
       setPendingDonationId(data.id)
       setPaymentState('starting')
     } catch (err) {
@@ -144,6 +161,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
   const contextLabel = context
     ? `${context.type === 'chapter' ? 'Chapter' : 'Constituency'}: ${context.name}`
     : 'The Base Movement'
+  const selectedCountry = countries.find((country) => country.name === form.country)
 
   return (
     <div
@@ -254,6 +272,52 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
               onSubmit={handleInitiatePayment}
               style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
             >
+              <div>
+                <label
+                  htmlFor="modal-donation-country"
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 500,
+                    color: 'hsl(var(--on-surface-muted))',
+                    display: 'block',
+                    marginBottom: 6,
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
+                  Country <span style={{ color: 'hsl(var(--destructive))' }}> *</span>
+                </label>
+                <select
+                  id="modal-donation-country"
+                  name="modal-country"
+                  required
+                  autoComplete="country-name"
+                  value={form.country}
+                  onChange={(event) => setForm({ ...form, country: event.target.value })}
+                  style={{
+                    width: '100%',
+                    height: 44,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    padding: '0 12px',
+                    fontSize: 14,
+                    fontFamily: "'Public Sans', sans-serif",
+                    boxSizing: 'border-box',
+                    background: 'hsl(var(--background))',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {countries.length > 0 ? (
+                    countries.map((country) => (
+                      <option key={country.id} value={country.name}>
+                        {country.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="Ghana">Ghana</option>
+                  )}
+                </select>
+              </div>
+
               {(['amount', 'fullName', 'phone', 'email'] as const).map((field) => {
                 const meta: Record<
                   string,
@@ -272,9 +336,9 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                     required: true,
                   },
                   phone: {
-                    label: 'Phone',
+                    label: 'Phone number',
                     type: 'tel',
-                    placeholder: '+233 xx xxx xxxx',
+                    placeholder: `${selectedCountry?.dialing_code || '+'} phone number`,
                     required: true,
                   },
                   email: {
@@ -349,11 +413,12 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                 reference={pendingDonationId}
                 amount={parseFloat(form.amount)}
                 name={form.fullName}
-                phone={form.phone}
+                phone={paymentPhone}
                 email={form.email || undefined}
                 metadata={{
                   donationId: pendingDonationId,
                   memberId: session?.user?.id,
+                  jurisdiction: form.country,
                   context: context ?? undefined,
                 }}
                 onStarted={handleHubtelStarted}

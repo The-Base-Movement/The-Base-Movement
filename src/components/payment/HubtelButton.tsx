@@ -12,6 +12,7 @@ interface HubtelButtonProps {
     donationId?: string
     orderId?: string
     memberId?: string
+    jurisdiction?: string
     context?: { type: 'chapter' | 'constituency'; name: string; id: string }
   }
   label?: string
