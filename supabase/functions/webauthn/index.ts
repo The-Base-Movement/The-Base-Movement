@@ -106,14 +106,17 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   const host = url.hostname
   if (host === 'localhost' || host === '127.0.0.1') return { rpID: host, origin }
 
-  const DEFAULT_ORIGINS = 'https://thebasemovement.info,https://www.thebasemovement.info'
+  // Hardcoded baseline: both bare and www variants are always accepted so a
+  // stale ALLOWED_RP_ORIGINS secret can never exclude the live production URL.
+  const BASELINE = ['https://thebasemovement.info', 'https://www.thebasemovement.info']
   // @ts-expect-error: Deno global
-  const rawOrigins = Deno.env.get('ALLOWED_RP_ORIGINS') ?? DEFAULT_ORIGINS
-  const allowed = rawOrigins
+  const envOrigins = Deno.env.get('ALLOWED_RP_ORIGINS') ?? ''
+  const extra = envOrigins
     .split(',')
     .map((s: string) => s.trim())
     .filter(Boolean)
-  if (!allowed.includes(origin)) return null
+  const allowed = new Set([...BASELINE, ...extra])
+  if (!allowed.has(origin)) return null
 
   // Strip leading 'www.' so the RP ID is the registrable domain. A credential
   // enrolled on www.thebasemovement.info is then also valid on the bare domain
