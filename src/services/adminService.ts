@@ -1793,29 +1793,33 @@ class AdminService {
     const dbPermissions = admin.permissions || {}
     const permissions: AdminPermission[] = []
 
-    if (dbPermissions.can_manage_members) {
-      permissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' })
-    }
-    if (dbPermissions.can_manage_chapters) {
-      permissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' })
-    }
-    if (dbPermissions.can_manage_polls) {
-      permissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' })
-    }
-    if (dbPermissions.can_manage_store) {
-      permissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' })
-    }
-    if (dbPermissions.can_view_audit_logs) {
-      permissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' })
-    }
-    if (dbPermissions.can_post_blog) {
-      permissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' })
-    }
-    if (dbPermissions.can_manage_newsletters) {
-      permissions.push({ action: 'MANAGE_NEWSLETTERS', resource: 'NEWSLETTERS' })
-    }
-    if (dbPermissions.can_manage_donations) {
-      permissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
+    if (Array.isArray(dbPermissions)) {
+      permissions.push(...(dbPermissions as AdminPermission[]))
+    } else {
+      if (dbPermissions.can_manage_members) {
+        permissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' })
+      }
+      if (dbPermissions.can_manage_chapters) {
+        permissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' })
+      }
+      if (dbPermissions.can_manage_polls) {
+        permissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' })
+      }
+      if (dbPermissions.can_manage_store) {
+        permissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' })
+      }
+      if (dbPermissions.can_view_audit_logs) {
+        permissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' })
+      }
+      if (dbPermissions.can_post_blog) {
+        permissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' })
+      }
+      if (dbPermissions.can_manage_newsletters) {
+        permissions.push({ action: 'MANAGE_NEWSLETTERS', resource: 'NEWSLETTERS' })
+      }
+      if (dbPermissions.can_manage_donations) {
+        permissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
+      }
     }
 
     // Normalize role string to match AdminRole type exactly

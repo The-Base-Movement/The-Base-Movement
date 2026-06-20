@@ -30,12 +30,26 @@ export function isPrivilegedAdminRole(role: string | null | undefined): boolean 
 export function canManageNewsletters(admin: AdminAuthRow | null | undefined): boolean {
   if (!admin) return false
   if (isPrivilegedAdminRole(admin.role)) return true
+  if (Array.isArray(admin.permissions)) {
+    return admin.permissions.some(
+      (p) =>
+        p &&
+        typeof p === 'object' &&
+        p.action === 'MANAGE_NEWSLETTERS' &&
+        p.resource === 'NEWSLETTERS'
+    )
+  }
   return admin.permissions?.can_manage_newsletters === true
 }
 
 export function canManageMembers(admin: AdminAuthRow | null | undefined): boolean {
   if (!admin) return false
   if (isPrivilegedAdminRole(admin.role)) return true
+  if (Array.isArray(admin.permissions)) {
+    return admin.permissions.some(
+      (p) => p && typeof p === 'object' && p.action === 'VERIFY_MEMBER' && p.resource === 'MEMBERS'
+    )
+  }
   return admin.permissions?.can_manage_members === true
 }
 
