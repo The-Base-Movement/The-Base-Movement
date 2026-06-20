@@ -318,7 +318,7 @@ serve(async (req: Request) => {
       if (deviceId && body.fingerprint_hash) {
         const ip = clientIp(req)
         const { location, isp } = await geoLocate(ip)
-        const { data } = await supabase.rpc('confirm_admin_device_step_up', {
+        const { data, error: stepUpError } = await supabase.rpc('confirm_admin_device_step_up', {
           p_device_id: deviceId,
           p_fingerprint_hash: body.fingerprint_hash,
           p_ip: ip,
@@ -326,6 +326,10 @@ serve(async (req: Request) => {
           p_user_agent: req.headers.get('user-agent'),
           p_isp: isp,
         })
+        if (stepUpError) {
+          console.error('[webauthn] device step-up confirmation failed:', stepUpError)
+          return json({ verified: false, error: 'Device verification could not be saved' }, 500)
+        }
         stepUp = data
       }
 

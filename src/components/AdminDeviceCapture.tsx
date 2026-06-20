@@ -16,8 +16,9 @@ import BiometricPrompt from '@/components/BiometricPrompt'
  *  - Runs once per browser session (sessionStorage flag), like the 2FA gate.
  *  - Unexpected capture errors still fail open so transient API faults do not
  *    lock out admins.
- *  - An occupied slot with a different fingerprint is treated as blocked and
- *    shows the stop screen.
+ *  - Hard-blocked slots and non-Brave browsers show the stop screen.
+ *  - A changed Brave fingerprint on a biometric-enrolled slot requires a
+ *    successful WebAuthn step-up before the fingerprint can be rebound.
  *  - When the enrolled device has no passkey yet, a BiometricPrompt overlay is
  *    shown so the admin can bind Windows Hello / Face ID to the known device.
  */
@@ -46,13 +47,16 @@ export default function AdminDeviceCapture() {
 
         const res = await deviceTrackingService.evaluateCurrentDevice()
 
-        if (res?.tracked && (res.decision === 'blocked' || res.decision === 'step_up_required')) {
+        if (res?.tracked && res.decision === 'blocked') {
           setBlockReason(res.reason ?? null)
           setBlocked(true)
           return // do not set the flag — re-check on next entry
         }
 
-        const needsPasskey = res?.tracked && res.webauthn_required && !!res.device_id
+        const needsPasskey =
+          res?.tracked &&
+          (res.decision === 'step_up_required' || res.webauthn_required) &&
+          !!res.device_id
 
         if (needsPasskey) {
           setPrompt(res) // resolve via the BiometricPrompt overlay

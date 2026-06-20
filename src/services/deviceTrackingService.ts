@@ -113,10 +113,9 @@ function detectOs(): string {
   return 'Unknown'
 }
 
-async function detectBrowser(): Promise<string> {
-  const ua = navigator.userAgent
-
-  // Check if Brave — Brave exposes navigator.brave.isBrave() as its API.
+async function detectPrivilegedBrowser(): Promise<'Brave' | 'Unsupported'> {
+  // Brave's documented website API is the only accepted browser signal for
+  // privileged device verification. Do not classify or allow other browsers.
   if (typeof navigator !== 'undefined' && 'brave' in navigator) {
     try {
       const nav = navigator as Navigator & { brave: { isBrave: () => Promise<boolean> } }
@@ -126,13 +125,7 @@ async function detectBrowser(): Promise<string> {
       // ignore
     }
   }
-
-  if (/Edg\//.test(ua)) return 'Edge'
-  if (/OPR\/|Opera/.test(ua)) return 'Opera'
-  if (/Chrome\//.test(ua)) return 'Chrome'
-  if (/Firefox\//.test(ua)) return 'Firefox'
-  if (/Safari\//.test(ua)) return 'Safari'
-  return 'Unknown'
+  return 'Unsupported'
 }
 
 async function sha256Hex(input: string): Promise<string> {
@@ -171,7 +164,7 @@ export const deviceTrackingService = {
         fingerprint_hash,
         device_name: `${detectOs()} ${device_type}`,
         os_type: detectOs(),
-        browser: await detectBrowser(),
+        browser: await detectPrivilegedBrowser(),
       },
     })
     if (error) throw error
