@@ -25,6 +25,20 @@ function fmtAmount(amount: string) {
   return isNaN(n) ? amount : `₵ ${n.toLocaleString()}`
 }
 
+function matchesDateFilter(dateStr: string, filter: string) {
+  if (filter === 'all') return true
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffTime = now.getTime() - date.getTime()
+  const diffDays = diffTime / (1000 * 60 * 60 * 24)
+
+  if (filter === 'day') return diffDays <= 1
+  if (filter === 'week') return diffDays <= 7
+  if (filter === 'month') return diffDays <= 30
+  if (filter === 'year') return diffDays <= 365
+  return true
+}
+
 function downloadCSV(donations: DonationDetail[], name: string) {
   const headers = ['Date', 'Campaign', 'Amount', 'Method', 'Reference', 'Status']
   const rows = donations.map((d) => [
@@ -54,6 +68,8 @@ export default function MyDonations() {
   const [receiptViewUrl, setReceiptViewUrl] = useState<string | null>(null)
   const [receiptViewRef, setReceiptViewRef] = useState<string>('receipt')
   const [receiptHtml, setReceiptHtml] = useState<string | null>(null)
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [dateFilter, setDateFilter] = useState<string>('all')
 
   useEffect(() => {
     if (!receiptViewUrl) return
@@ -70,16 +86,22 @@ export default function MyDonations() {
     })
   }, [session])
 
-  const totalVerified = donations
+  const filteredDonations = donations.filter((d) => {
+    const matchesStatus = statusFilter === 'all' || d.status === statusFilter
+    const matchesDate = matchesDateFilter(d.date, dateFilter)
+    return matchesStatus && matchesDate
+  })
+
+  const totalVerified = filteredDonations
     .filter((d) => d.status === 'Verified')
     .reduce((s, d) => s + parseFloat(d.amount || '0'), 0)
-  const pendingCount = donations.filter((d) => d.status === 'Pending').length
-  const verifiedCount = donations.filter((d) => d.status === 'Verified').length
+  const pendingCount = filteredDonations.filter((d) => d.status === 'Pending').length
+  const verifiedCount = filteredDonations.filter((d) => d.status === 'Verified').length
 
   const kpis = [
     {
       label: 'Total Contributions',
-      value: donations.length,
+      value: filteredDonations.length,
       bar: 'hsl(var(--on-surface))',
     },
     {
@@ -151,10 +173,12 @@ export default function MyDonations() {
               gap: 10,
             }}
           >
-            {donations.length > 0 && (
+            {filteredDonations.length > 0 && (
               <button
                 className="btn btn-outline btn-sm"
-                onClick={() => downloadCSV(donations, sessionStore.getItem('userName') || 'member')}
+                onClick={() =>
+                  downloadCSV(filteredDonations, sessionStore.getItem('userName') || 'member')
+                }
                 style={{ justifyContent: 'center', width: '100%' }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
@@ -219,6 +243,128 @@ export default function MyDonations() {
                 </p>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Filter controls */}
+        {!loading && donations.length > 0 && (
+          <div
+            style={{
+              marginBottom: 16,
+              display: 'flex',
+              gap: 12,
+              flexWrap: 'wrap',
+              alignItems: 'center',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  textTransform: 'uppercase',
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                Status:
+              </span>
+              <div style={{ position: 'relative' }}>
+                <select
+                  name="status-filter"
+                  aria-label="Filter by Status"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  style={{
+                    height: 34,
+                    padding: '0 28px 0 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--background))',
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 12,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    cursor: 'pointer',
+                    appearance: 'none',
+                  }}
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="Verified">Verified</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: 'absolute',
+                    right: 6,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface-muted))',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  expand_more
+                </span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  textTransform: 'uppercase',
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                Timeframe:
+              </span>
+              <div style={{ position: 'relative' }}>
+                <select
+                  name="timeframe-filter"
+                  aria-label="Filter by Timeframe"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  style={{
+                    height: 34,
+                    padding: '0 28px 0 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--background))',
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 12,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    cursor: 'pointer',
+                    appearance: 'none',
+                  }}
+                >
+                  <option value="all">All Time</option>
+                  <option value="day">Past 24 Hours</option>
+                  <option value="week">Past Week</option>
+                  <option value="month">Past Month</option>
+                  <option value="year">Past Year</option>
+                </select>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: 'absolute',
+                    right: 6,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface-muted))',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  expand_more
+                </span>
+              </div>
+            </div>
           </div>
         )}
 
@@ -316,6 +462,59 @@ export default function MyDonations() {
               Make a Donation
             </Link>
           </div>
+        ) : filteredDonations.length === 0 ? (
+          <div
+            className="panel"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '64px 24px',
+              textAlign: 'center',
+              gap: 12,
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.3 }}
+            >
+              filter_list_off
+            </span>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 14,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              No matching records
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 12,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                maxWidth: 280,
+                lineHeight: 1.6,
+              }}
+            >
+              Try adjusting your status or timeframe filters to see other contributions.
+            </p>
+            <button
+              onClick={() => {
+                setStatusFilter('all')
+                setDateFilter('all')
+              }}
+              className="btn btn-outline btn-sm"
+              style={{ marginTop: 8 }}
+            >
+              Reset Filters
+            </button>
+          </div>
         ) : (
           <div className="panel" style={{ overflow: 'hidden' }}>
             {/* Desktop table */}
@@ -351,7 +550,7 @@ export default function MyDonations() {
                   </tr>
                 </thead>
                 <tbody>
-                  {donations.map((d) => (
+                  {filteredDonations.map((d) => (
                     <tr key={d.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                       <td
                         style={{
@@ -447,13 +646,13 @@ export default function MyDonations() {
 
             {/* Mobile cards */}
             <div className="mobile-only">
-              {donations.map((d, i) => (
+              {filteredDonations.map((d, i) => (
                 <div
                   key={d.id}
                   style={{
                     padding: '14px 16px',
                     borderBottom:
-                      i < donations.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                      i < filteredDonations.length - 1 ? '1px solid hsl(var(--border))' : 'none',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 6,
