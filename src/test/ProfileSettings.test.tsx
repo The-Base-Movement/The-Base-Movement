@@ -2,11 +2,14 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HelmetProvider } from 'react-helmet-async'
 
-const getUserMock = vi.fn()
-const fromMock = vi.fn()
-const updateMemberProfileMock = vi.fn()
-const updateProfileMock = vi.fn()
-const logActivityMock = vi.fn()
+const { mockGetUser, mockFrom, mockUpdateMemberProfile, mockUpdateProfile, mockLogActivity } =
+  vi.hoisted(() => ({
+    mockGetUser: vi.fn(),
+    mockFrom: vi.fn(),
+    mockUpdateMemberProfile: vi.fn(),
+    mockUpdateProfile: vi.fn(),
+    mockLogActivity: vi.fn(),
+  }))
 
 vi.mock('react-easy-crop', () => ({
   default: () => null,
@@ -34,9 +37,9 @@ vi.mock('@/lib/sessionStore', () => ({
 vi.mock('@/lib/supabase', () => ({
   supabase: {
     auth: {
-      getUser: getUserMock,
+      getUser: mockGetUser,
     },
-    from: fromMock,
+    from: mockFrom,
   },
 }))
 
@@ -61,19 +64,19 @@ vi.mock('@/services/adminService', () => ({
       country: 'Ghana',
     }),
     getMemberProfileByAuthId: vi.fn().mockResolvedValue(null),
-    updateMemberProfile: updateMemberProfileMock,
+    updateMemberProfile: mockUpdateMemberProfile,
   },
 }))
 
 vi.mock('@/services/authService', () => ({
   authService: {
-    updateProfile: updateProfileMock,
+    updateProfile: mockUpdateProfile,
   },
 }))
 
 vi.mock('@/services/userActivityService', () => ({
   userActivityService: {
-    logActivity: logActivityMock,
+    logActivity: mockLogActivity,
   },
 }))
 
@@ -139,15 +142,15 @@ import ProfileSettings from '@/pages/ProfileSettings'
 
 describe('ProfileSettings', () => {
   beforeEach(() => {
-    getUserMock.mockResolvedValue({ data: { user: { id: 'auth-user-1' } } })
-    fromMock.mockReturnValue({
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'auth-user-1' } } })
+    mockFrom.mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn().mockResolvedValue({ data: null }),
     })
-    updateMemberProfileMock.mockResolvedValue(true)
-    updateProfileMock.mockResolvedValue(undefined)
-    logActivityMock.mockResolvedValue(undefined)
+    mockUpdateMemberProfile.mockResolvedValue(true)
+    mockUpdateProfile.mockResolvedValue(undefined)
+    mockLogActivity.mockResolvedValue(undefined)
   })
 
   afterEach(() => {
@@ -166,7 +169,7 @@ describe('ProfileSettings', () => {
     await user.click(await screen.findByRole('button', { name: /save changes/i }))
 
     await waitFor(() => {
-      expect(updateMemberProfileMock).toHaveBeenCalledWith(
+      expect(mockUpdateMemberProfile).toHaveBeenCalledWith(
         'TBM-GH-260001',
         expect.objectContaining({
           avatarUrl: 'https://cdn.example.com/avatar.webp',
@@ -174,7 +177,7 @@ describe('ProfileSettings', () => {
       )
     })
 
-    expect(updateProfileMock).toHaveBeenCalledWith({
+    expect(mockUpdateProfile).toHaveBeenCalledWith({
       full_name: 'Jane Patriot',
       avatar_url: 'https://cdn.example.com/avatar.webp',
       phone: '+233241234567',
