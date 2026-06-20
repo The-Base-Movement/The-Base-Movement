@@ -159,7 +159,6 @@ export default function BiometricPrompt({
             <button
               className="btn btn-ghost"
               style={{ width: '100%' }}
-              disabled={status === 'working'}
               onClick={() => runEnrol(false)}
             >
               Try biometric setup again
