@@ -237,7 +237,7 @@ export default function FinanceDashboard() {
               style={{
                 fontSize: 'var(--kpi-num-size)',
                 fontWeight: 500,
-                color: 'hsl(var(--on-surface))',
+                color: '#ffffff',
                 margin: 0,
                 fontFamily: "'Public Sans', sans-serif",
               }}
