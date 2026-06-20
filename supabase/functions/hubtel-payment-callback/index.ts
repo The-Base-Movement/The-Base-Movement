@@ -82,11 +82,14 @@ Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
+  let payload: Record<string, unknown> = {}
   try {
-    const payload = (await req.json()) as Record<string, unknown>
+    payload = (await req.json()) as Record<string, unknown>
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
       throw new Error('Invalid callback payload')
     }
+
+    console.log('[HUBTEL-CALLBACK] Received payload:', JSON.stringify(payload))
 
     const reference = getString(payload, [
       'ClientReference',
@@ -109,6 +112,18 @@ Deno.serve(async (req: Request) => {
       'paymentId',
       'ExternalTransactionId',
       'externalTransactionId',
+      'transaction_id',
+      'checkout_id',
+      'CheckoutId',
+      'payment_id',
+      'hubtel_transaction_id',
+      'hubtelTransactionId',
+      'transactionReference',
+      'transaction_reference',
+      'TransactionReference',
+      'TransactionRef',
+      'transactionRef',
+      'id',
     ])
 
     // @ts-expect-error: Deno global
@@ -216,7 +231,20 @@ Deno.serve(async (req: Request) => {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     console.error(`[HUBTEL-CALLBACK-ERROR] ${message}`)
-    await sendAlert('Hubtel callback processing error', message)
+
+    let payloadDump = 'No payload'
+    try {
+      if (payload && Object.keys(payload).length > 0) {
+        payloadDump = JSON.stringify(payload, null, 2)
+      }
+    } catch {
+      payloadDump = 'Failed to stringify payload'
+    }
+
+    await sendAlert(
+      'Hubtel callback processing error',
+      `${message}\n\n**Payload:**\n\`\`\`json\n${payloadDump.substring(0, 1000)}\n\`\`\``
+    )
     return json({ error: message }, 400)
   }
 })
