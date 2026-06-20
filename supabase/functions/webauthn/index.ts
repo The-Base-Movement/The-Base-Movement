@@ -92,7 +92,9 @@ async function geoLocate(
 }
 
 // Origin allowlist: localhost (any port) for dev, plus configured production
-// origins. RP ID is the hostname of the validated origin.
+// origins. RP ID is the registrable domain (strip leading www.) so a single
+// credential is valid on both https://thebasemovement.info and
+// https://www.thebasemovement.info per the WebAuthn spec.
 function resolveRp(origin: string | null): { rpID: string; origin: string } | null {
   if (!origin) return null
   let url: URL
@@ -105,11 +107,20 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   if (host === 'localhost' || host === '127.0.0.1') return { rpID: host, origin }
 
   // @ts-expect-error: Deno global
-  const allowed = (Deno.env.get('ALLOWED_RP_ORIGINS') ?? 'https://thebasemovement.info')
+  const allowed = (
+    Deno.env.get('ALLOWED_RP_ORIGINS') ??
+    'https://thebasemovement.info,https://www.thebasemovement.info'
+  )
     .split(',')
     .map((s: string) => s.trim())
     .filter(Boolean)
-  return allowed.includes(origin) ? { rpID: host, origin } : null
+  if (!allowed.includes(origin)) return null
+
+  // Strip leading 'www.' so the RP ID is the registrable domain. A credential
+  // enrolled on www.thebasemovement.info is then also valid on the bare domain
+  // and vice versa, per the WebAuthn origin-validation spec.
+  const rpID = host.startsWith('www.') ? host.slice(4) : host
+  return { rpID, origin }
 }
 
 serve(async (req: Request) => {
