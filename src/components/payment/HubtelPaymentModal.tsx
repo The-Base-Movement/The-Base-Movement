@@ -114,20 +114,7 @@ export function HubtelPaymentModal({
   if (!isOpen || !checkoutUrl) return null
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        background: 'rgba(0, 0, 0, 0.65)',
-      }}
-    >
+    <div className="hubtel-modal-overlay">
       <div
         style={{ position: 'absolute', inset: 0 }}
         onClick={() => {
@@ -141,23 +128,7 @@ export function HubtelPaymentModal({
         }}
       />
 
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: 520,
-          height: '85vh',
-          maxHeight: 760,
-          background: 'hsl(var(--card))',
-          border: '1px solid hsl(var(--border))',
-          boxShadow: '0 24px 64px rgba(0,0,0,0.24)',
-          overflow: 'hidden',
-          borderRadius: 'var(--radius-lg)',
-          display: 'flex',
-          flexDirection: 'column',
-          zIndex: 10,
-        }}
-      >
+      <div className="hubtel-modal-container">
         {/* Header */}
         <div
           style={{

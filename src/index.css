@@ -2410,3 +2410,48 @@ td.leadership-col-secondary {
 .low-bandwidth img {
   image-rendering: -webkit-optimize-contrast;
 }
+
+/* 💳 Hubtel Payment Modal Responsive Styles */
+.hubtel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.65);
+  transition: all 0.3s ease;
+}
+
+.hubtel-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  height: 85vh;
+  max-height: 760px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+@media (max-width: 640px) {
+  .hubtel-modal-overlay {
+    padding: 0;
+  }
+  .hubtel-modal-container {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border: none;
+  }
+}
