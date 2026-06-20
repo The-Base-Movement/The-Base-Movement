@@ -106,11 +106,10 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   const host = url.hostname
   if (host === 'localhost' || host === '127.0.0.1') return { rpID: host, origin }
 
+  const DEFAULT_ORIGINS = 'https://thebasemovement.info,https://www.thebasemovement.info'
   // @ts-expect-error: Deno global
-  const allowed = (
-    Deno.env.get('ALLOWED_RP_ORIGINS') ??
-    'https://thebasemovement.info,https://www.thebasemovement.info'
-  )
+  const rawOrigins = Deno.env.get('ALLOWED_RP_ORIGINS') ?? DEFAULT_ORIGINS
+  const allowed = rawOrigins
     .split(',')
     .map((s: string) => s.trim())
     .filter(Boolean)
