@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { initiateHubtelCheckout, openHubtelCheckout } from './hubtelCheckout'
+import { initiateHubtelCheckout } from './hubtelCheckout'
+import { HubtelPaymentModal } from './HubtelPaymentModal'
 
 interface HubtelButtonProps {
   amount: number
@@ -40,13 +41,15 @@ export default function HubtelButton({
   autoOpen,
 }: HubtelButtonProps) {
   const [loading, setLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [checkoutUrlState, setCheckoutUrlState] = useState<string | null>(null)
 
   const startPayment = async () => {
     if (loading || disabled) return
     setLoading(true)
 
     try {
-      const checkoutUrl = await initiateHubtelCheckout({
+      const url = await initiateHubtelCheckout({
         reference,
         amount,
         name,
@@ -55,10 +58,10 @@ export default function HubtelButton({
         metadata,
       })
 
+      setCheckoutUrlState(url)
+      setIsModalOpen(true)
       onStarted?.()
-      onCheckoutReady?.(checkoutUrl)
-      const popup = openHubtelCheckout(checkoutUrl)
-      if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
+      onCheckoutReady?.(url)
     } catch (err) {
       console.error('[HubtelButton] payment initiation failed:', err)
       toast.error('Could not start secure payment. Please try again.')
@@ -84,20 +87,38 @@ export default function HubtelButton({
     return () => window.removeEventListener('message', handler)
   }, [onPaymentComplete])
 
-  if (autoOpen) return null
-
   return (
-    <button
-      type="button"
-      className="btn btn-primary"
-      disabled={disabled || loading}
-      onClick={startPayment}
-    >
-      {loading ? (
-        <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
-      ) : (
-        label || `Pay GHS ${amount.toFixed(2)}`
+    <>
+      {!autoOpen && (
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={disabled || loading}
+          onClick={startPayment}
+        >
+          {loading ? (
+            <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
+          ) : (
+            label || `Pay GHS ${amount.toFixed(2)}`
+          )}
+        </button>
       )}
-    </button>
+
+      <HubtelPaymentModal
+        isOpen={isModalOpen}
+        checkoutUrl={checkoutUrlState}
+        referenceId={reference}
+        type={metadata?.orderId ? 'order' : 'donation'}
+        onClose={() => {
+          setIsModalOpen(false)
+          setLoading(false)
+        }}
+        onSuccess={() => {
+          setIsModalOpen(false)
+          setLoading(false)
+          onPaymentComplete?.(true, reference)
+        }}
+      />
+    </>
   )
 }

@@ -22,7 +22,8 @@ import { OperationalTransparency } from './donate/components/OperationalTranspar
 import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
 import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { initiateHubtelCheckout, openHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
 
@@ -41,6 +42,7 @@ export default function PublicDonate() {
   const [submitted, setSubmitted] = useState(false)
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [paymentState, setPaymentState] = useState<
     'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
   >('idle')
@@ -144,12 +146,14 @@ export default function PublicDonate() {
         setSubmitted(true)
         setPaymentState('idle')
         setCheckoutUrl(null)
+        setIsPaymentModalOpen(false)
         trackEvent('donation_verified', { donationId: activeDonationId })
         toast.success('Payment confirmed. Thank you for supporting the movement.')
       }
 
       if (data.status === 'Rejected') {
         setPaymentState('failed')
+        setIsPaymentModalOpen(false)
         toast.error('The payment could not be confirmed. Please try again.')
       }
     }
@@ -234,13 +238,12 @@ export default function PublicDonate() {
 
       setCheckoutUrl(url)
       setPaymentState('checkout')
+      setIsPaymentModalOpen(true)
       trackEvent('donation_payment_started', {
         amount,
         currency: selectedCurrency.code,
         ghsAmount,
       })
-      const popup = openHubtelCheckout(url)
-      if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
     } catch {
       if (donationIdToCleanUp) {
         await supabase
@@ -398,7 +401,7 @@ export default function PublicDonate() {
               ghsAmount={ghsDonationAmount}
               campaigns={campaigns}
               onSubmit={handleSubmit}
-              onReopenCheckout={() => checkoutUrl && openHubtelCheckout(checkoutUrl)}
+              onReopenCheckout={() => setIsPaymentModalOpen(true)}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
             />
             <VictoriesSection pastCampaigns={pastCampaigns} />
@@ -440,6 +443,24 @@ export default function PublicDonate() {
           document
             .getElementById('payment-section')
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }}
+      />
+
+      <HubtelPaymentModal
+        isOpen={isPaymentModalOpen}
+        checkoutUrl={checkoutUrl}
+        referenceId={activeDonationId}
+        type="donation"
+        onClose={() => setIsPaymentModalOpen(false)}
+        onSuccess={() => {
+          setSubmitted(true)
+          setPaymentState('idle')
+          setCheckoutUrl(null)
+          setIsPaymentModalOpen(false)
+          if (activeDonationId) {
+            trackEvent('donation_verified', { donationId: activeDonationId })
+          }
+          toast.success('Payment confirmed. Thank you for supporting the movement.')
         }}
       />
     </main>

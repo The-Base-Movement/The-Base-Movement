@@ -6,7 +6,9 @@ import SEO from '@/components/SEO'
 import { Skeleton } from '@/components/states'
 import { useBranding } from '@/hooks/useBranding'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { openHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
+import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
 
 export default function OrderSummary() {
   const { settings } = useBranding()
@@ -17,6 +19,8 @@ export default function OrderSummary() {
   const awaitingPayment = Boolean(location.state?.awaitingPayment)
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(awaitingPayment)
+  const [checkoutUrlState] = useState<string | null>(checkoutUrl || null)
 
   useEffect(() => {
     async function fetchOrder() {
@@ -30,6 +34,50 @@ export default function OrderSummary() {
     }
     fetchOrder()
   }, [orderId])
+
+  useEffect(() => {
+    if (!orderId || (order && order.payment_status === 'Paid')) return
+
+    const table = 'store_orders'
+    const channelName = `order_summary_status_${orderId}`
+
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: table,
+          filter: `id=eq.${orderId}`,
+        },
+        (payload) => {
+          if (payload.new.payment_status === 'Paid') {
+            toast.success('Payment confirmed! Thank you.')
+            void adminService.getOrderSummary(orderId).then(setOrder)
+          }
+        }
+      )
+      .subscribe()
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await adminService.getOrderSummary(orderId)
+        if (data && data.payment_status === 'Paid') {
+          clearInterval(interval)
+          setOrder(data)
+          toast.success('Payment confirmed! Thank you.')
+        }
+      } catch (err) {
+        console.warn('Order summary status check failed:', err)
+      }
+    }, 5000)
+
+    return () => {
+      clearInterval(interval)
+      void supabase.removeChannel(channel)
+    }
+  }, [orderId, order])
 
   if (loading) {
     return (
@@ -572,12 +620,12 @@ export default function OrderSummary() {
                       Complete the Hubtel checkout window. This order will update after Hubtel
                       confirms payment.
                     </p>
-                    {checkoutUrl && awaitingPayment && (
+                    {checkoutUrlState && (
                       <button
                         type="button"
                         className="btn btn-outline btn-sm"
                         style={{ marginTop: 12 }}
-                        onClick={() => openHubtelCheckout(checkoutUrl)}
+                        onClick={() => setIsPaymentModalOpen(true)}
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                           open_in_new
@@ -716,6 +764,22 @@ export default function OrderSummary() {
           </Link>
         </p>
       </div>
+
+      <HubtelPaymentModal
+        isOpen={isPaymentModalOpen}
+        checkoutUrl={checkoutUrlState}
+        referenceId={orderId}
+        type="order"
+        onClose={() => setIsPaymentModalOpen(false)}
+        onSuccess={async () => {
+          setIsPaymentModalOpen(false)
+          if (orderId) {
+            const data = await adminService.getOrderSummary(orderId)
+            setOrder(data)
+          }
+          toast.success('Order payment confirmed! Thank you.')
+        }}
+      />
     </main>
   )
 }

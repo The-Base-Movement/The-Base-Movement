@@ -13,7 +13,7 @@ import SEO from '@/components/SEO'
 import { discordService } from '@/services/discordService'
 import { DeliveryForm } from './checkout/DeliveryForm'
 import { PaymentMethodSelector } from './checkout/PaymentMethodSelector'
-import { initiateHubtelCheckout, openHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
 
 export default function Checkout() {
   const navigate = useNavigate()
@@ -22,7 +22,7 @@ export default function Checkout() {
   const { cart, clearCart } = useStore()
   const { session } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+
   const [paymentState, setPaymentState] = useState<'idle' | 'starting' | 'checkout' | 'failed'>(
     'idle'
   )
@@ -101,7 +101,6 @@ export default function Checkout() {
     }
     setIsSubmitting(true)
     setPaymentState('starting')
-    setCheckoutUrl(null)
     try {
       const { data: order, error: orderError } = await supabase
         .from('store_orders')
@@ -172,7 +171,6 @@ export default function Checkout() {
         },
       })
 
-      setCheckoutUrl(url)
       setPaymentState('checkout')
       discordService.storeOrderPlaced(
         order.id,
@@ -183,9 +181,7 @@ export default function Checkout() {
         isDiaspora ? formData.stateProvince : formData.region
       )
       trackEvent('store_payment_started', { total, items: cart.length, provider: 'Hubtel' })
-      toast.success('Secure checkout opened. Complete payment to confirm your order.')
-      const popup = openHubtelCheckout(url)
-      if (!popup) toast.info('Allow popups or use the checkout button to complete payment.')
+      toast.success('Secure checkout initiated. Complete payment to confirm your order.')
       clearCart()
       navigate(summaryPath, {
         state: { orderId: order.id, checkoutUrl: url, awaitingPayment: true },
@@ -368,20 +364,6 @@ export default function Checkout() {
                       ? 'Try secure checkout again'
                       : 'Finish payment'}
               </button>
-
-              {checkoutUrl && (
-                <button
-                  type="button"
-                  className="btn btn-outline w-full mt-3"
-                  onClick={() => openHubtelCheckout(checkoutUrl)}
-                  style={{ height: 46, justifyContent: 'center' }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 17 }}>
-                    open_in_new
-                  </span>
-                  Reopen Hubtel checkout
-                </button>
-              )}
 
               <div className="mt-8 space-y-4">
                 <div
