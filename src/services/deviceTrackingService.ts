@@ -135,18 +135,36 @@ async function sha256Hex(input: string): Promise<string> {
     .join('')
 }
 
+const DEVICE_UUID_KEY = 'admin_device_uuid'
+
+/**
+ * Returns a stable per-device UUID stored in localStorage. Generated once on
+ * first enrollment and never changed. Brave does not randomise localStorage,
+ * so this survives ISP changes, network reconnects, and browser restarts.
+ */
+function getOrCreateDeviceUuid(): string {
+  let uuid = localStorage.getItem(DEVICE_UUID_KEY)
+  if (!uuid) {
+    uuid = crypto.randomUUID()
+    localStorage.setItem(DEVICE_UUID_KEY, uuid)
+  }
+  return uuid
+}
+
 let fpPromise: Promise<{ get: () => Promise<{ visitorId: string }> }> | null = null
 
 /**
- * Produces a STABLE fingerprint hash. We hash the FingerprintJS visitorId
- * (designed to survive browser updates) plus the OS — deliberately NOT the full
- * user-agent or any per-visit value, so the same device keeps matching itself.
+ * Produces a STABLE fingerprint hash. We anchor the hash with a localStorage
+ * UUID (immune to Brave's per-session canvas/WebGL/audio noise rotation) so the
+ * fingerprint stays consistent across ISP changes and browser restarts on the
+ * same device. FingerprintJS visitorId + OS are included as secondary signals.
  */
 export async function collectFingerprint(): Promise<string> {
+  const deviceUuid = getOrCreateDeviceUuid()
   if (!fpPromise) fpPromise = FingerprintJS.load()
   const fp = await fpPromise
   const { visitorId } = await fp.get()
-  return sha256Hex(`${visitorId}|${detectOs()}`)
+  return sha256Hex(`${deviceUuid}|${visitorId}|${detectOs()}`)
 }
 
 export const deviceTrackingService = {
