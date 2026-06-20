@@ -4,7 +4,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptHtml } from '../_shared/email-templates.ts'
-import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { isPrivilegedAdminRole, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
 const SITE_BASE = 'https://thebasemovement.info'
 
@@ -18,17 +18,31 @@ const corsHeaders = {
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
+  // @ts-expect-error: Deno global
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+  const supabaseAdmin = createClient(supabaseUrl, serviceKey)
+
+  // Authorize caller using admin credentials or service role fallback
+  const authz = await requireAuthorizedAdmin(
+    req,
+    supabaseAdmin,
+    (admin) => isPrivilegedAdminRole(admin.role),
+    {
+      allowServiceRole: true,
+      serviceRoleKey: serviceKey,
+    }
+  )
+
+  if (!authz.ok) {
+    return new Response(await authz.response.text(), {
+      status: authz.response.status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
   const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {}
   const force: boolean = body?.force === true
-
-  // @ts-expect-error: Deno global
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-  const authz = requireServiceRoleCall(req, serviceKey)
-  if (!authz.ok) return authz.response
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-  // @ts-expect-error: Deno global
-  const supabaseAdmin = createClient(supabaseUrl, serviceKey ?? '')
 
   interface DonationRow {
     id: string
