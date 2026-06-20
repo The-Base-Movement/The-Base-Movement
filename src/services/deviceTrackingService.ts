@@ -302,7 +302,7 @@ export const deviceTrackingService = {
     opts?: { rebind?: boolean; fingerprintHash?: string }
   ): Promise<boolean> {
     const begin = await supabase.functions.invoke('webauthn', {
-      body: { action: 'register-begin', device_id: deviceId },
+      body: { action: 'register-begin', device_id: deviceId, rebind: opts?.rebind ?? false },
     })
     if (begin.error) throw begin.error
     const attResp = await startRegistration({ optionsJSON: begin.data.options })

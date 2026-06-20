@@ -24,6 +24,18 @@ import {
 // @ts-expect-error: Deno URL import
 import { isoBase64URL } from 'https://esm.sh/@simplewebauthn/server@13.1.1/helpers'
 
+function jwtAal(jwt: string): string | null {
+  try {
+    const encoded = jwt.split('.')[1]
+    if (!encoded) return null
+    const base64 = encoded.replace(/-/g, '+').replace(/_/g, '/')
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=')
+    return JSON.parse(atob(padded)).aal ?? null
+  } catch {
+    return null
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -125,8 +137,23 @@ serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}))
     const action: string = body.action
 
+    if (body.rebind && jwtAal(jwt) !== 'aal2') {
+      return json({ error: 'MFA verification is required for device recovery' }, 403)
+    }
+
     // -- register-begin ---------------------------------------------------------
     if (action === 'register-begin') {
+      if (body.rebind) {
+        const { data: ownedDevice } = await supabase
+          .from('admin_devices')
+          .select('id')
+          .eq('id', body.device_id)
+          .eq('admin_id', user.id)
+          .eq('status', 'active')
+          .maybeSingle()
+        if (!ownedDevice) return json({ error: 'Active device slot not found' }, 403)
+      }
+
       const { data: profile } = await supabase
         .from('users')
         .select('full_name, email')
@@ -192,14 +219,30 @@ serve(async (req: Request) => {
       const cred = verification.registrationInfo.credential
       const deviceId = body.device_id ?? ch.device_id ?? null
 
-      await supabase.from('admin_webauthn_credentials').insert({
-        admin_id: user.id,
-        device_id: deviceId,
-        credential_id: cred.id,
-        public_key: isoBase64URL.fromBuffer(cred.publicKey),
-        counter: cred.counter,
-        transports: cred.transports ?? null,
-      })
+      if (body.rebind) {
+        const { data: ownedDevice } = await supabase
+          .from('admin_devices')
+          .select('id')
+          .eq('id', deviceId)
+          .eq('admin_id', user.id)
+          .eq('status', 'active')
+          .maybeSingle()
+        if (!ownedDevice) return json({ error: 'Active device slot not found' }, 403)
+      }
+
+      const { data: insertedCredential, error: insertError } = await supabase
+        .from('admin_webauthn_credentials')
+        .insert({
+          admin_id: user.id,
+          device_id: deviceId,
+          credential_id: cred.id,
+          public_key: isoBase64URL.fromBuffer(cred.publicKey),
+          counter: cred.counter,
+          transports: cred.transports ?? null,
+        })
+        .select('id')
+        .single()
+      if (insertError) return json({ error: 'Could not save biometric credential' }, 500)
 
       if (deviceId) {
         await supabase.from('admin_devices').update({ webauthn_enrolled: true }).eq('id', deviceId)
@@ -210,7 +253,7 @@ serve(async (req: Request) => {
       if (deviceId && body.rebind && body.fingerprint_hash) {
         const ip = clientIp(req)
         const { location, isp } = await geoLocate(ip)
-        await supabase.rpc('confirm_admin_device_step_up', {
+        const { error: rebindError } = await supabase.rpc('confirm_admin_device_step_up', {
           p_device_id: deviceId,
           p_fingerprint_hash: body.fingerprint_hash,
           p_ip: ip,
@@ -218,6 +261,10 @@ serve(async (req: Request) => {
           p_user_agent: req.headers.get('user-agent'),
           p_isp: isp,
         })
+        if (rebindError) {
+          await supabase.from('admin_webauthn_credentials').delete().eq('id', insertedCredential.id)
+          return json({ error: 'Device recovery could not be saved' }, 500)
+        }
       }
 
       await supabase

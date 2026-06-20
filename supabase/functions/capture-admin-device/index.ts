@@ -90,7 +90,7 @@ async function geoLocate(
 async function alertBlocked(
   supabaseUrl: string,
   serviceKey: string,
-  role: string,
+  adminName: string,
   ip: string | null,
   location: string | null,
   reason: string | null = null,
@@ -127,7 +127,7 @@ async function alertBlocked(
             description,
             color: 0xce1126,
             fields: [
-              { name: 'Role', value: role, inline: true },
+              { name: 'Leader', value: adminName, inline: true },
               { name: 'Device Type', value: deviceType ?? '—', inline: true },
               {
                 name: 'Browser / OS',
@@ -177,6 +177,13 @@ serve(async (req: Request) => {
       // Not tracked — nothing to capture; client proceeds normally.
       return json({ tracked: false, decision: 'verified' })
     }
+
+    const { data: profile } = await supabase
+      .from('users')
+      .select('full_name')
+      .eq('id', user.id)
+      .maybeSingle()
+    const adminName = profile?.full_name?.trim() || 'Unknown leader'
 
     // 3. Read client-supplied device descriptors (identifiers, not secrets).
     const body = await req.json().catch(() => ({}))
@@ -240,7 +247,7 @@ serve(async (req: Request) => {
       await alertBlocked(
         supabaseUrl,
         serviceKey,
-        admin.role,
+        adminName,
         ip,
         location,
         data?.reason,

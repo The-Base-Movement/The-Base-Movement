@@ -10,9 +10,9 @@ import { deviceTrackingService, type EvaluateResult } from '@/services/deviceTra
  *
  * WebAuthn requires a user gesture, so every ceremony is triggered by a button.
  *   - enrol mode is non-blocking: "Set up later" lets the user proceed.
- *   - step-up mode is MANDATORY (it only fires when the device's ISP/network
- *     changed): the user must re-verify with their biometric to continue, or
- *     cancel — which signs them out. There is no skip-through.
+ *   - step-up mode is MANDATORY when Brave's device fingerprint changes. The
+ *     user must verify the existing biometric, or use the MFA-protected Brave
+ *     reinstall recovery flow to register a replacement credential.
  */
 export default function BiometricPrompt({
   result,
@@ -26,15 +26,17 @@ export default function BiometricPrompt({
   const isStepUp = result.decision === 'step_up_required'
   const [status, setStatus] = useState<'idle' | 'working' | 'error'>('idle')
   const [message, setMessage] = useState('')
+  const [canRecover, setCanRecover] = useState(false)
 
   const runEnrol = async (rebind: boolean) => {
     setStatus('working')
     setMessage('')
     try {
-      await deviceTrackingService.enrolBiometric(result.device_id, {
+      const verified = await deviceTrackingService.enrolBiometric(result.device_id, {
         rebind,
         fingerprintHash: result.fingerprint_hash,
       })
+      if (!verified) throw new Error('Biometric setup was not verified.')
       onDone()
     } catch (err) {
       console.warn('[biometric] enrol failed:', err)
@@ -53,19 +55,23 @@ export default function BiometricPrompt({
         result.fingerprint_hash
       )
       if (outcome === 'verified') return onDone()
-      if (outcome === 'needs_enrol') return runEnrol(false) // no passkey yet → enrol it now
+      if (outcome === 'needs_enrol') return runEnrol(true)
       setStatus('error')
       setMessage('We could not verify your biometric. Try again to continue.')
+      setCanRecover(true)
     } catch (err) {
       console.warn('[biometric] step-up failed:', err)
       setStatus('error')
-      setMessage('Verification was cancelled. Try again to continue.')
+      setMessage(
+        'The previous biometric could not be used. Retry, or recover after reinstalling Brave.'
+      )
+      setCanRecover(true)
     }
   }
 
   const title = isStepUp ? 'Verify this device' : 'Secure this device'
   const body = isStepUp
-    ? 'Your network has changed since this device was last verified. Re-verify with your biometric (Windows Hello / Face ID) to continue.'
+    ? 'Brave needs to confirm this registered device again. Verify with Windows Hello / Face ID to continue.'
     : 'Add a biometric (Windows Hello / Face ID / fingerprint) so only your devices can reach the admin panel.'
 
   return (
@@ -143,6 +149,17 @@ export default function BiometricPrompt({
               ? 'Verify with biometric'
               : 'Enable biometric'}
         </button>
+
+        {isStepUp && canRecover && (
+          <button
+            className="btn btn-secondary"
+            style={{ width: '100%', marginBottom: 10 }}
+            disabled={status === 'working'}
+            onClick={() => runEnrol(true)}
+          >
+            Recover after Brave reinstall
+          </button>
+        )}
 
         <button
           className="btn btn-ghost"
