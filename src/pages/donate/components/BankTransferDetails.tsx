@@ -94,29 +94,10 @@ export function BankTransferDetails() {
               borderTop: i === 0 ? 'none' : '1px solid hsl(var(--border))',
             }}
           >
-            <span
-              style={{
-                flex: '0 0 110px',
-                fontSize: 11,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                color: 'hsl(var(--on-surface-muted))',
-              }}
-            >
-              {row.label}
-            </span>
-            <span
-              style={{
-                flex: 1,
-                minWidth: 0,
-                fontSize: 13,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                wordBreak: 'break-word',
-              }}
-            >
-              {row.value}
-            </span>
+            <div className="bank-details-text-group">
+              <span className="bank-details-label">{row.label}</span>
+              <span className="bank-details-value">{row.value}</span>
+            </div>
             <button
               type="button"
               onClick={() => copy(row.key, row.value)}

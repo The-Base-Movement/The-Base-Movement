@@ -2455,3 +2455,46 @@ td.leadership-col-secondary {
     border: none;
   }
 }
+
+/* 🏦 Bank Transfer Details Responsive Styles */
+.bank-details-text-group {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.bank-details-label {
+  flex: 0 0 110px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: hsl(var(--on-surface-muted));
+}
+
+.bank-details-value {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: var(--font-weight-medium, 500);
+  color: hsl(var(--on-surface));
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .bank-details-text-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .bank-details-label {
+    flex: none;
+    width: auto;
+  }
+  .bank-details-value {
+    flex: none;
+    width: 100%;
+  }
+}
