@@ -74,6 +74,8 @@ export default function BiometricPrompt({
     ? 'Brave needs to confirm this registered device again. Verify with Windows Hello / Face ID to continue.'
     : 'Add a biometric (Windows Hello / Face ID / fingerprint) so only your devices can reach the admin panel.'
 
+  const enrollFailed = !isStepUp && status === 'error'
+
   return (
     <div
       style={{
@@ -102,7 +104,9 @@ export default function BiometricPrompt({
             width: 56,
             height: 56,
             borderRadius: '50%',
-            background: 'hsl(var(--primary) / 0.1)',
+            background: enrollFailed
+              ? 'hsl(var(--destructive) / 0.08)'
+              : 'hsl(var(--primary) / 0.1)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -111,9 +115,12 @@ export default function BiometricPrompt({
         >
           <span
             className="material-symbols-outlined"
-            style={{ fontSize: 28, color: 'hsl(var(--primary))' }}
+            style={{
+              fontSize: 28,
+              color: enrollFailed ? 'hsl(var(--destructive))' : 'hsl(var(--primary))',
+            }}
           >
-            fingerprint
+            {enrollFailed ? 'warning' : 'fingerprint'}
           </span>
         </div>
 
@@ -125,50 +132,75 @@ export default function BiometricPrompt({
             color: 'hsl(var(--on-surface))',
           }}
         >
-          {title}
+          {enrollFailed ? 'Biometric setup failed' : title}
         </p>
         <p style={{ margin: '0 0 20px', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-          {body}
+          {enrollFailed
+            ? 'The biometric setup was cancelled or your device does not support it. You can continue and set it up later from your profile settings.'
+            : body}
         </p>
 
-        {message && (
+        {message && !enrollFailed && (
           <p style={{ margin: '0 0 16px', fontSize: 12, color: 'hsl(var(--destructive))' }}>
             {message}
           </p>
         )}
 
-        <button
-          className="btn btn-primary"
-          style={{ width: '100%', marginBottom: 10 }}
-          disabled={status === 'working'}
-          onClick={() => (isStepUp ? runStepUp() : runEnrol(false))}
-        >
-          {status === 'working'
-            ? 'Waiting for biometric…'
-            : isStepUp
-              ? 'Verify with biometric'
-              : 'Enable biometric'}
-        </button>
+        {/* Enrollment failed: promote Continue as the primary action */}
+        {enrollFailed ? (
+          <>
+            <button
+              className="btn btn-primary"
+              style={{ width: '100%', marginBottom: 10 }}
+              onClick={onDone}
+            >
+              Continue to admin panel
+            </button>
+            <button
+              className="btn btn-ghost"
+              style={{ width: '100%' }}
+              disabled={status === 'working'}
+              onClick={() => runEnrol(false)}
+            >
+              Try biometric setup again
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="btn btn-primary"
+              style={{ width: '100%', marginBottom: 10 }}
+              disabled={status === 'working'}
+              onClick={() => (isStepUp ? runStepUp() : runEnrol(false))}
+            >
+              {status === 'working'
+                ? 'Waiting for biometric…'
+                : isStepUp
+                  ? 'Verify with biometric'
+                  : 'Enable biometric'}
+            </button>
 
-        {isStepUp && canRecover && (
-          <button
-            className="btn btn-secondary"
-            style={{ width: '100%', marginBottom: 10 }}
-            disabled={status === 'working'}
-            onClick={() => runEnrol(true)}
-          >
-            Recover after Brave reinstall
-          </button>
+            {isStepUp && canRecover && (
+              <button
+                className="btn btn-secondary"
+                style={{ width: '100%', marginBottom: 10 }}
+                disabled={status === 'working'}
+                onClick={() => runEnrol(true)}
+              >
+                Recover after Brave reinstall
+              </button>
+            )}
+
+            <button
+              className="btn btn-ghost"
+              style={{ width: '100%' }}
+              disabled={status === 'working'}
+              onClick={isStepUp ? (onCancel ?? onDone) : onDone}
+            >
+              {isStepUp ? 'Cancel & sign out' : 'Set up later'}
+            </button>
+          </>
         )}
-
-        <button
-          className="btn btn-ghost"
-          style={{ width: '100%' }}
-          disabled={status === 'working'}
-          onClick={isStepUp ? (onCancel ?? onDone) : onDone}
-        >
-          {isStepUp ? 'Cancel & sign out' : 'Set up later'}
-        </button>
       </div>
     </div>
   )
