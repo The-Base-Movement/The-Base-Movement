@@ -36,7 +36,7 @@ function getString(payload: Record<string, unknown>, keys: string[]) {
 async function sendAlert(
   title: string,
   description: string,
-  fields?: { name: string; value: string }[]
+  fields?: { name: string; value: string; inline?: boolean }[]
 ) {
   try {
     // @ts-expect-error: Deno global
@@ -70,7 +70,7 @@ async function sendPaymentNotification(
   title: string,
   description: string,
   color: number,
-  fields?: { name: string; value: string }[]
+  fields?: { name: string; value: string; inline?: boolean }[]
 ) {
   try {
     // @ts-expect-error: Deno global
