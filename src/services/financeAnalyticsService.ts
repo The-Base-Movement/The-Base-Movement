@@ -221,6 +221,45 @@ export const financeAnalyticsService = {
       .sort((a, b) => b.amount - a.amount)
   },
 
+  async getIncomeBreakdown(
+    period: FinancePeriod,
+    chapter?: string,
+    groupBy: 'campaign' | 'country' = 'campaign'
+  ): Promise<ExpenseCategory[]> {
+    const start = getPeriodStart(period).toISOString()
+    let query = supabase
+      .from('donations')
+      .select('amount, country, campaign_id, donation_campaigns(title)')
+      .eq('status', 'Verified')
+      .gte('created_at', start)
+    if (chapter) {
+      query = query.eq('chapter', chapter)
+    }
+    const { data, error } = await query
+    if (error) throw new Error(error.message)
+    const entries = data ?? []
+    const totals: Record<string, number> = {}
+    for (const e of entries) {
+      let key = 'General Fund'
+      if (groupBy === 'country') {
+        key = e.country || 'Unknown'
+      } else {
+        const campaign = e.donation_campaigns as { title?: string | null } | null
+        const campaignTitle = campaign?.title || 'General Fund'
+        key = campaignTitle
+      }
+      totals[key] = (totals[key] ?? 0) + Number(e.amount)
+    }
+    const grand = Object.values(totals).reduce((s, v) => s + v, 0)
+    return Object.entries(totals)
+      .map(([category, amount]) => ({
+        category,
+        amount,
+        percent: grand > 0 ? Math.round((amount / grand) * 100) : 0,
+      }))
+      .sort((a, b) => b.amount - a.amount)
+  },
+
   async getRecentTransactions(limit = 20, chapter?: string): Promise<TransactionRow[]> {
     let donQuery = supabase
       .from('donations')

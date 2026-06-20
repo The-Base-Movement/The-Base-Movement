@@ -51,6 +51,12 @@ export default function FinanceDashboard() {
   const [statsError, setStatsError] = useState(false)
   const [cashflow, setCashflow] = useState<CashflowBucket[]>([])
   const [breakdown, setBreakdown] = useState<ExpenseCategory[]>([])
+  const [donationCampaignBreakdown, setDonationCampaignBreakdown] = useState<ExpenseCategory[]>([])
+  const [donationCountryBreakdown, setDonationCountryBreakdown] = useState<ExpenseCategory[]>([])
+  const [breakdownTab, setBreakdownTab] = useState<
+    'expense' | 'income_campaign' | 'income_country'
+  >('expense')
+  const [cashflowTab, setCashflowTab] = useState<'combined' | 'income' | 'expense'>('combined')
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [period, setPeriod] = useState<FinancePeriod>('month')
@@ -66,6 +72,12 @@ export default function FinanceDashboard() {
       return sortOrder === 'asc' ? descA.localeCompare(descB) : descB.localeCompare(descA)
     })
   }, [transactions, sortOrder])
+
+  const currentBreakdownData = useMemo(() => {
+    if (breakdownTab === 'income_campaign') return donationCampaignBreakdown
+    if (breakdownTab === 'income_country') return donationCountryBreakdown
+    return breakdown
+  }, [breakdownTab, breakdown, donationCampaignBreakdown, donationCountryBreakdown])
 
   useEffect(() => {
     Promise.resolve().then(() => {
@@ -92,12 +104,16 @@ export default function FinanceDashboard() {
         return Promise.all([
           financeAnalyticsService.getCashflowData(period, chapter ?? undefined),
           financeAnalyticsService.getExpenseBreakdown(period, chapter ?? undefined),
+          financeAnalyticsService.getIncomeBreakdown(period, chapter ?? undefined, 'campaign'),
+          financeAnalyticsService.getIncomeBreakdown(period, chapter ?? undefined, 'country'),
         ])
       })
-      .then(([cf, bd]) => {
+      .then(([cf, bd, dc, dcnt]) => {
         if (!cancelled) {
           setCashflow(cf)
           setBreakdown(bd)
+          setDonationCampaignBreakdown(dc)
+          setDonationCountryBreakdown(dcnt)
           setChartsLoading(false)
         }
       })
@@ -226,7 +242,7 @@ export default function FinanceDashboard() {
                 fontWeight: 500,
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
-                color: 'rgba(255,255,255,0.45)',
+                color: 'rgba(255,255,255,0.75)',
                 margin: '0 0 8px',
                 fontFamily: "'Public Sans', sans-serif",
               }}
@@ -256,7 +272,7 @@ export default function FinanceDashboard() {
           <p
             style={{
               fontSize: 11,
-              color: 'rgba(255,255,255,0.35)',
+              color: 'rgba(255,255,255,0.65)',
               margin: 0,
               fontFamily: "'Public Sans', sans-serif",
             }}
@@ -402,9 +418,11 @@ export default function FinanceDashboard() {
       <div className="sidebar-main" style={{ marginBottom: 24 }}>
         {/* Expense breakdown donut — sidebar (left) */}
         <div className="panel" style={{ padding: 20 }}>
-          <div className="ph" style={{ marginBottom: 12 }}>
+          <div className="ph" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
             <div>
-              <h3 style={{ margin: 0 }}>Expense Breakdown</h3>
+              <h3 style={{ margin: 0 }}>
+                {breakdownTab === 'expense' ? 'Expense Breakdown' : 'Donation Breakdown'}
+              </h3>
               <p
                 style={{
                   margin: 0,
@@ -413,8 +431,35 @@ export default function FinanceDashboard() {
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                By category
+                {breakdownTab === 'expense'
+                  ? 'By category'
+                  : breakdownTab === 'income_campaign'
+                    ? 'By campaign'
+                    : 'By country'}
               </p>
+            </div>
+            <div style={{ display: 'flex', gap: 4 }}>
+              <button
+                className={`btn btn-sm ${breakdownTab === 'expense' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                onClick={() => setBreakdownTab('expense')}
+                style={{ fontSize: 11, padding: '4px 8px' }}
+              >
+                Expenses
+              </button>
+              <button
+                className={`btn btn-sm ${breakdownTab === 'income_campaign' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                onClick={() => setBreakdownTab('income_campaign')}
+                style={{ fontSize: 11, padding: '4px 8px' }}
+              >
+                Campaigns
+              </button>
+              <button
+                className={`btn btn-sm ${breakdownTab === 'income_country' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                onClick={() => setBreakdownTab('income_country')}
+                style={{ fontSize: 11, padding: '4px 8px' }}
+              >
+                Countries
+              </button>
             </div>
           </div>
 
@@ -429,7 +474,7 @@ export default function FinanceDashboard() {
             >
               Loading…
             </div>
-          ) : breakdown.length === 0 ? (
+          ) : currentBreakdownData.length === 0 ? (
             <div
               style={{
                 textAlign: 'center',
@@ -438,14 +483,16 @@ export default function FinanceDashboard() {
                 fontSize: 13,
               }}
             >
-              No expense data for this period
+              {breakdownTab === 'expense'
+                ? 'No expense data for this period'
+                : 'No donation data for this period'}
             </div>
           ) : (
             <>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
-                    data={breakdown}
+                    data={currentBreakdownData}
                     dataKey="amount"
                     nameKey="category"
                     cx="50%"
@@ -453,7 +500,7 @@ export default function FinanceDashboard() {
                     innerRadius={55}
                     outerRadius={85}
                   >
-                    {breakdown.map((_, i) => (
+                    {currentBreakdownData.map((_, i) => (
                       <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />
                     ))}
                   </Pie>
@@ -462,7 +509,7 @@ export default function FinanceDashboard() {
               </ResponsiveContainer>
 
               <div style={{ marginTop: 12 }}>
-                {breakdown.map((item, i) => (
+                {currentBreakdownData.map((item, i) => (
                   <div
                     key={item.category}
                     style={{
@@ -472,7 +519,9 @@ export default function FinanceDashboard() {
                       padding: '5px 0',
                       fontSize: 12,
                       borderBottom:
-                        i < breakdown.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                        i < currentBreakdownData.length - 1
+                          ? '1px solid hsl(var(--border))'
+                          : 'none',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
                   >
@@ -519,43 +568,79 @@ export default function FinanceDashboard() {
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                Income vs Expenses
+                {cashflowTab === 'combined'
+                  ? 'Income vs Expenses'
+                  : cashflowTab === 'income'
+                    ? 'Donations / Income trend'
+                    : 'Expenditures / Expenses trend'}
               </p>
             </div>
-            <div
-              style={{
-                display: 'flex',
-                gap: 14,
-                fontSize: 12,
-                color: 'hsl(var(--on-surface-muted))',
-                fontFamily: "'Public Sans', sans-serif",
-                flexWrap: 'wrap',
-              }}
-            >
-              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 'var(--radius-xs)',
-                    background: 'hsl(var(--primary))',
-                    display: 'inline-block',
-                  }}
-                />
-                Income
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 'var(--radius-xs)',
-                    background: 'hsl(var(--container-low))',
-                    display: 'inline-block',
-                  }}
-                />
-                Expense
-              </span>
+
+            {/* Cashflow toggles & legends */}
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 14,
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontFamily: "'Public Sans', sans-serif",
+                  flexWrap: 'wrap',
+                }}
+              >
+                {(cashflowTab === 'combined' || cashflowTab === 'income') && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 'var(--radius-xs)',
+                        background: 'hsl(var(--primary))',
+                        display: 'inline-block',
+                      }}
+                    />
+                    Income
+                  </span>
+                )}
+                {(cashflowTab === 'combined' || cashflowTab === 'expense') && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 'var(--radius-xs)',
+                        background: 'hsl(var(--destructive))',
+                        display: 'inline-block',
+                      }}
+                    />
+                    Expense
+                  </span>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: 4 }}>
+                <button
+                  className={`btn btn-sm ${cashflowTab === 'combined' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                  onClick={() => setCashflowTab('combined')}
+                  style={{ fontSize: 11, padding: '4px 8px' }}
+                >
+                  Combined
+                </button>
+                <button
+                  className={`btn btn-sm ${cashflowTab === 'income' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                  onClick={() => setCashflowTab('income')}
+                  style={{ fontSize: 11, padding: '4px 8px' }}
+                >
+                  Income
+                </button>
+                <button
+                  className={`btn btn-sm ${cashflowTab === 'expense' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                  onClick={() => setCashflowTab('expense')}
+                  style={{ fontSize: 11, padding: '4px 8px' }}
+                >
+                  Expenses
+                </button>
+              </div>
             </div>
           </div>
 
@@ -589,18 +674,22 @@ export default function FinanceDashboard() {
                   }
                 />
                 <Tooltip formatter={(val) => [fmt(Number(val))]} />
-                <Bar
-                  dataKey="income"
-                  name="Income"
-                  fill="hsl(var(--primary))"
-                  radius={[3, 3, 0, 0]}
-                />
-                <Bar
-                  dataKey="expense"
-                  name="Expense"
-                  fill="hsl(var(--on-surface))"
-                  radius={[3, 3, 0, 0]}
-                />
+                {(cashflowTab === 'combined' || cashflowTab === 'income') && (
+                  <Bar
+                    dataKey="income"
+                    name="Income"
+                    fill="hsl(var(--primary))"
+                    radius={[3, 3, 0, 0]}
+                  />
+                )}
+                {(cashflowTab === 'combined' || cashflowTab === 'expense') && (
+                  <Bar
+                    dataKey="expense"
+                    name="Expense"
+                    fill="hsl(var(--destructive))"
+                    radius={[3, 3, 0, 0]}
+                  />
+                )}
               </BarChart>
             </ResponsiveContainer>
           )}
