@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import { authService } from '@/services/authService'
-import { supabase } from '@/lib/supabase'
 import {
   deviceTrackingService,
   isDeviceTrackedRole,
@@ -42,14 +41,6 @@ export default function AdminDeviceCapture() {
         // admin first (same pattern as ITDepartmentLayout) before deciding.
         const user = adminService.getCurrentUser() ?? (await adminService.initialize())
         if (!user || !isDeviceTrackedRole(user.role)) {
-          sessionStorage.setItem(CAPTURE_KEY, '1')
-          return
-        }
-
-        // Exclude MFA-secured accounts from biometric capture/checks
-        const { data: factors } = await supabase.auth.mfa.listFactors()
-        const hasMfa = !!factors?.totp?.some((f) => f.status === 'verified')
-        if (hasMfa) {
           sessionStorage.setItem(CAPTURE_KEY, '1')
           return
         }
