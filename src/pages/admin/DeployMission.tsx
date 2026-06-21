@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'

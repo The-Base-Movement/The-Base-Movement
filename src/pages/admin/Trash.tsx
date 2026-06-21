@@ -60,12 +60,18 @@ export default function TrashPage() {
   }, [])
 
   useEffect(() => {
-    loadTrash()
+    const timer = setTimeout(() => {
+      loadTrash()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [loadTrash])
 
   // Clear selection when switching tabs
   useEffect(() => {
-    setSelectedIds(new Set())
+    const timer = setTimeout(() => {
+      setSelectedIds(new Set())
+    }, 0)
+    return () => clearTimeout(timer)
   }, [activeTab])
 
   const handleRestore = async (type: TrashTab, idOrUrl: string) => {

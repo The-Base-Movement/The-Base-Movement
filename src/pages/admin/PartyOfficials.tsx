@@ -69,8 +69,11 @@ export default function PartyOfficials() {
   }
 
   useEffect(() => {
-    fetchTiers()
-    fetchOfficials()
+    const timer = setTimeout(() => {
+      fetchTiers()
+      fetchOfficials()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleOpenModal = (official?: PartyOfficial) => {

@@ -52,11 +52,17 @@ export function AuditLogTable() {
   }, [sortDir, dateFrom, dateTo])
 
   useEffect(() => {
-    loadLogs()
+    const timer = setTimeout(() => {
+      loadLogs()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [loadLogs])
 
   useEffect(() => {
-    setPage(1)
+    const timer = setTimeout(() => {
+      setPage(1)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [search, sevFilter, dateFrom, dateTo])
 
   const filtered = logs.filter((l) => {

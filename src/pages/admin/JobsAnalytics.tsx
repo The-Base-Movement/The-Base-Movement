@@ -113,8 +113,11 @@ export default function JobsAnalytics() {
   }, [])
 
   useEffect(() => {
-    if (authChecked && allowed) load()
-    else if (authChecked && !allowed) setLoading(false)
+    const timer = setTimeout(() => {
+      if (authChecked && allowed) load()
+      else if (authChecked && !allowed) setLoading(false)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [authChecked, allowed, load])
 
   const filtered = useMemo(

@@ -85,9 +85,13 @@ export default function AdminStore() {
   }
 
   useEffect(() => {
-    fetchData()
+    const timer = setTimeout(() => {
+      fetchData()
+    }, 0)
 
-    if (lowBandwidthMode) return
+    if (lowBandwidthMode) {
+      return () => clearTimeout(timer)
+    }
 
     // Subscribe to live inventory updates
     const inventorySub = supabase
@@ -106,6 +110,7 @@ export default function AdminStore() {
       .subscribe()
 
     return () => {
+      clearTimeout(timer)
       inventorySub.unsubscribe()
       requestsSub.unsubscribe()
     }

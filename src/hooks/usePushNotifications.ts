@@ -28,8 +28,10 @@ export function usePushNotifications() {
 
   useEffect(() => {
     if (!isSupported || !user) {
-      setLoading(false)
-      return
+      const timer = setTimeout(() => {
+        setLoading(false)
+      }, 0)
+      return () => clearTimeout(timer)
     }
     let active = true
     supabase

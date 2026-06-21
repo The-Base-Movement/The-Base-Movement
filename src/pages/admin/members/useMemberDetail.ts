@@ -24,29 +24,32 @@ export function useMemberDetail() {
   const [isSubmittingNote, setIsSubmittingNote] = useState(false)
 
   useEffect(() => {
-    if (!selectedMember) {
-      setDetailLogs([])
-      setMemberDonations([])
-      setMemberPollVotes([])
-      setMemberSessions([])
-      setMemberNotes([])
-      return
-    }
-    setActiveDetailTab('activity')
+    const timer = setTimeout(() => {
+      if (!selectedMember) {
+        setDetailLogs([])
+        setMemberDonations([])
+        setMemberPollVotes([])
+        setMemberSessions([])
+        setMemberNotes([])
+        return
+      }
+      setActiveDetailTab('activity')
 
-    adminService
-      .getAuditLogsForResource(`MEMBERS/${selectedMember.id}`)
-      .then(setDetailLogs)
-      .catch(() => {})
+      adminService
+        .getAuditLogsForResource(`MEMBERS/${selectedMember.id}`)
+        .then(setDetailLogs)
+        .catch(() => {})
 
-    const targetId = selectedMember.authId || selectedMember.id
+      const targetId = selectedMember.authId || selectedMember.id
 
-    Promise.allSettled([
-      adminService.getMemberDonations(targetId).then(setMemberDonations),
-      adminService.getMemberPollVotes(targetId).then(setMemberPollVotes),
-      adminService.getMemberSessions(targetId).then(setMemberSessions),
-      adminService.getMemberNotes(targetId).then(setMemberNotes),
-    ])
+      Promise.allSettled([
+        adminService.getMemberDonations(targetId).then(setMemberDonations),
+        adminService.getMemberPollVotes(targetId).then(setMemberPollVotes),
+        adminService.getMemberSessions(targetId).then(setMemberSessions),
+        adminService.getMemberNotes(targetId).then(setMemberNotes),
+      ])
+    }, 0)
+    return () => clearTimeout(timer)
   }, [selectedMember])
 
   const handleAddNote = async () => {

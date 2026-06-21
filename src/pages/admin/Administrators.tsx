@@ -103,15 +103,20 @@ export default function Administrators() {
   }
 
   useEffect(() => {
-    fetchAdmins()
+    const timer = setTimeout(() => {
+      fetchAdmins()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   // Debounced member search
   useEffect(() => {
     if (searchTimer.current) clearTimeout(searchTimer.current)
     if (memberQuery.length < 2) {
-      setMemberResults([])
-      return
+      const timer = setTimeout(() => {
+        setMemberResults([])
+      }, 0)
+      return () => clearTimeout(timer)
     }
     searchTimer.current = setTimeout(async () => {
       setIsMemberSearching(true)
@@ -132,9 +137,11 @@ export default function Administrators() {
   // Phone-registered members can't sign in to the admin panel until a real
   // login email is assigned — check whenever a member is selected
   useEffect(() => {
-    setProvisionEmail('')
-    setNeedsLoginEmail(false)
-    if (!selectedMember) return
+    const timer = setTimeout(() => {
+      setProvisionEmail('')
+      setNeedsLoginEmail(false)
+    }, 0)
+    if (!selectedMember) return () => clearTimeout(timer)
     let cancelled = false
     const memberId = selectedMember.authId ?? selectedMember.id
     adminService
@@ -149,6 +156,7 @@ export default function Administrators() {
       })
     return () => {
       cancelled = true
+      clearTimeout(timer)
     }
   }, [selectedMember])
 

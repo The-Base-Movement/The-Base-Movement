@@ -43,7 +43,11 @@ if (!projectRef && supabaseUrl) {
   }
 }
 
-const PROJECT_REF = projectRef || 'vhlyekyxutwbxlvktnzd'
+const PROJECT_REF = projectRef
+if (!PROJECT_REF) {
+  console.error('Error: SUPABASE_PROJECT_REF or SUPABASE_URL must be specified in env/.env.')
+  process.exit(1)
+}
 
 const sqlFile = process.argv[2]
 if (!sqlFile) {

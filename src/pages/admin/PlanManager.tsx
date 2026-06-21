@@ -37,7 +37,10 @@ export default function PlanManager() {
   }
 
   useEffect(() => {
-    fetchPillars()
+    const timer = setTimeout(() => {
+      fetchPillars()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleOpenModal = (pillar: AgendaPillar | null = null) => {

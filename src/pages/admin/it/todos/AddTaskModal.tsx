@@ -24,8 +24,10 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current)
     if (query.length < 2) {
-      setUsers([])
-      return
+      const resetTimer = setTimeout(() => {
+        setUsers([])
+      }, 0)
+      return () => clearTimeout(resetTimer)
     }
     timer.current = setTimeout(async () => {
       setSearching(true)

@@ -52,7 +52,10 @@ export default function AdminRedirects() {
   }, [])
 
   useEffect(() => {
-    void loadRules()
+    const timer = setTimeout(() => {
+      void loadRules()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [loadRules])
 
   const filteredRules = useMemo(() => {

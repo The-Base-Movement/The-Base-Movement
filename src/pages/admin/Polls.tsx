@@ -106,7 +106,10 @@ export default function PollsManagement() {
   }, [])
 
   useEffect(() => {
-    fetchData()
+    const timer = setTimeout(() => {
+      fetchData()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [fetchData])
 
   // ── Handlers ───────────────────────────────────────────────────

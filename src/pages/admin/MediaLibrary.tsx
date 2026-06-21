@@ -64,12 +64,18 @@ export default function MediaLibrary() {
   }, [])
 
   useEffect(() => {
-    fetchFolders()
+    const timer = setTimeout(() => {
+      fetchFolders()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [fetchFolders])
 
   useEffect(() => {
     if (activeFolder) {
-      loadFiles()
+      const timer = setTimeout(() => {
+        loadFiles()
+      }, 0)
+      return () => clearTimeout(timer)
     }
   }, [activeFolder, loadFiles])
 

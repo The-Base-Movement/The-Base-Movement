@@ -44,7 +44,10 @@ export default function PasswordResets() {
   }, [])
 
   useEffect(() => {
-    load()
+    const timer = setTimeout(() => {
+      load()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [load])
 
   const total = records.length

@@ -83,27 +83,32 @@ export function AdminSidebar({
   // Synchronize active sidebar group with route changes
   useEffect(() => {
     if (prevPathname === location.pathname) return
-    setPrevPathname(location.pathname)
-    
-    const currentPath = location.pathname
-    const activeGroup = filteredNavGroups.find((group) =>
-      group.items.some((item) => {
-        if (item.to === currentPath) return true
-        if (item.subItems?.some((sub) => sub.to === currentPath)) return true
-        if (item.to !== '/admin/dashboard' && currentPath.startsWith(item.to)) return true
-        return false
-      })
-    )
 
-    if (activeGroup) {
-      setOpenGroups((prev) => {
-        const nextGroups: Record<string, boolean> = {}
-        Object.keys(prev).forEach((key) => {
-          nextGroups[key] = key === activeGroup.label
+    const timer = setTimeout(() => {
+      setPrevPathname(location.pathname)
+
+      const currentPath = location.pathname
+      const activeGroup = filteredNavGroups.find((group) =>
+        group.items.some((item) => {
+          if (item.to === currentPath) return true
+          if (item.subItems?.some((sub) => sub.to === currentPath)) return true
+          if (item.to !== '/admin/dashboard' && currentPath.startsWith(item.to)) return true
+          return false
         })
-        return nextGroups
-      })
-    }
+      )
+
+      if (activeGroup) {
+        setOpenGroups((prev) => {
+          const nextGroups: Record<string, boolean> = {}
+          Object.keys(prev).forEach((key) => {
+            nextGroups[key] = key === activeGroup.label
+          })
+          return nextGroups
+        })
+      }
+    }, 0)
+
+    return () => clearTimeout(timer)
   }, [location.pathname, filteredNavGroups, prevPathname])
 
   const toggleGroup = (groupLabel: string) => {

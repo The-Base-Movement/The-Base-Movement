@@ -40,7 +40,9 @@ export default function SentimentIntelligence() {
   }
 
   useEffect(() => {
-    fetchIntelligence()
+    const timer = setTimeout(() => {
+      fetchIntelligence()
+    }, 0)
 
     // Establish live websocket logical replication subscription
     const channel = supabase
@@ -54,6 +56,7 @@ export default function SentimentIntelligence() {
       .subscribe()
 
     return () => {
+      clearTimeout(timer)
       supabase.removeChannel(channel)
     }
   }, [])

@@ -41,26 +41,31 @@ export default function MobilizationMetrics() {
   }
 
   useEffect(() => {
-    fetchData()
+    let ignore = false
+    const timer = setTimeout(() => {
+      if (!ignore) void fetchData()
+    }, 0)
 
     const channel = supabase
       .channel('mobilization-metrics-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'achievements' }, () => {
-        fetchData(true)
+        if (!ignore) void fetchData(true)
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'member_points' }, () => {
-        fetchData(true)
+        if (!ignore) void fetchData(true)
       })
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'member_achievements' },
         () => {
-          fetchData(true)
+          if (!ignore) void fetchData(true)
         }
       )
       .subscribe()
 
     return () => {
+      ignore = true
+      clearTimeout(timer)
       supabase.removeChannel(channel)
     }
   }, [])

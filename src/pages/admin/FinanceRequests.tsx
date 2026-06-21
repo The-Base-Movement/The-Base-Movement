@@ -112,8 +112,11 @@ export default function FinanceRequests() {
   const canReview = currentUser?.role === 'FINANCE_OFFICER' || currentUser?.role === 'SUPER_ADMIN'
 
   useEffect(() => {
-    const u = adminService.getCurrentUser()
-    if (u) setCurrentUser(u)
+    const timer = setTimeout(() => {
+      const u = adminService.getCurrentUser()
+      if (u) setCurrentUser(u)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const [requests, setRequests] = useState<FinanceRequest[]>([])
@@ -138,7 +141,10 @@ export default function FinanceRequests() {
   }
 
   useEffect(() => {
-    loadRequests()
+    const timer = setTimeout(() => {
+      loadRequests()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   async function handleSubmit(e: React.FormEvent) {

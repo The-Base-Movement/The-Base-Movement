@@ -76,12 +76,20 @@ export default function RallyCommand() {
 
   // Runs once on mount — loads all field actions
   useEffect(() => {
-    fetchActions()
+    const timer = setTimeout(() => {
+      fetchActions()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [fetchActions])
 
   // Re-fetches attendance whenever the selected action changes
   useEffect(() => {
-    if (selectedAction) fetchAttendance(selectedAction.id)
+    if (selectedAction) {
+      const timer = setTimeout(() => {
+        fetchAttendance(selectedAction.id)
+      }, 0)
+      return () => clearTimeout(timer)
+    }
   }, [selectedAction, fetchAttendance])
 
   // ── Handlers ───────────────────────────────────────────────────

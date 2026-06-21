@@ -28,13 +28,22 @@ export default function ITDepartmentLayout() {
   })
 
   useEffect(() => {
-    if (checking && !user) {
+    const currentUser = adminService.getCurrentUser()
+    let timer: ReturnType<typeof setTimeout> | undefined
+
+    if (!currentUser) {
       adminService.initialize().then((u) => {
         setUser(u)
         setChecking(false)
       })
-    } else if (!checking || user) {
-      setChecking(false)
+    } else {
+      timer = setTimeout(() => {
+        setChecking(false)
+      }, 0)
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer)
     }
   }, [])
 

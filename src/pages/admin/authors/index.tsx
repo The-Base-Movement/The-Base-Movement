@@ -83,9 +83,12 @@ export default function AdminAuthors() {
   }
 
   useEffect(() => {
-    fetchAuthors()
-    fetchStats()
-    contentService.getAuthorRoles().then(setAuthorRoles)
+    const timer = setTimeout(() => {
+      fetchAuthors()
+      fetchStats()
+      contentService.getAuthorRoles().then(setAuthorRoles)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleDelete = async () => {

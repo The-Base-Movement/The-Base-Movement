@@ -77,7 +77,7 @@ export default function Store() {
   const basePath = location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'
   const checkoutPath = `${basePath}/checkout`
 
-  const CartItems = () => (
+  const renderCartItems = () => (
     <>
       {cart.length === 0 ? (
         <div className="py-12 text-center">
@@ -166,7 +166,7 @@ export default function Store() {
     </>
   )
 
-  const CartSummary = () => (
+  const renderCartSummary = () => (
     <div className="font-meta">
       <div className="flex justify-between py-1 text-[12px] font-medium text-on-surface-muted">
         Subtotal <b className="text-on-surface font-medium">₵{subtotal.toFixed(0)}</b>
@@ -283,14 +283,12 @@ export default function Store() {
                   {cartCount}
                 </span>
               </h3>
-              <div className="px-[18px] max-h-[320px] overflow-y-auto">
-                <CartItems />
-              </div>
+              <div className="px-[18px] max-h-[320px] overflow-y-auto">{renderCartItems()}</div>
               <div
                 className="p-[18px] border-t border-border"
                 style={{ background: 'hsl(var(--surface))' }}
               >
-                <CartSummary />
+                {renderCartSummary()}
               </div>
               <div className="p-[18px] pt-3.5 pb-4">
                 <Link to={checkoutPath} className="btn btn-accent w-full" style={{ height: 56 }}>
@@ -356,14 +354,12 @@ export default function Store() {
                 </span>
               </button>
             </div>
-            <div className="px-4 max-h-[38vh] overflow-y-auto">
-              <CartItems />
-            </div>
+            <div className="px-4 max-h-[38vh] overflow-y-auto">{renderCartItems()}</div>
             <div
               className="px-4 py-3 border-t border-border"
               style={{ background: 'hsl(var(--surface))' }}
             >
-              <CartSummary />
+              {renderCartSummary()}
             </div>
             <div className="px-4 pt-3 pb-5">
               <Link

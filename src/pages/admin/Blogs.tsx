@@ -177,14 +177,23 @@ export default function AdminBlogs() {
   }, [currentUser])
 
   useEffect(() => {
-    fetchMedia()
+    const t = setTimeout(() => {
+      fetchMedia()
+    }, 0)
+    return () => clearTimeout(t)
   }, [fetchMedia])
   useEffect(() => {
-    contentService.getMediaFolders().then(setMediaFolders)
+    const t = setTimeout(() => {
+      contentService.getMediaFolders().then(setMediaFolders)
+    }, 0)
+    return () => clearTimeout(t)
   }, [])
   useEffect(() => {
-    fetchAuthors()
-    fetchPosts()
+    const t = setTimeout(() => {
+      fetchAuthors()
+      fetchPosts()
+    }, 0)
+    return () => clearTimeout(t)
   }, [fetchAuthors, fetchPosts])
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth <= 640)

@@ -26,17 +26,23 @@ if (fs.existsSync(envPath)) {
 }
 
 if (!supabaseUrl) {
-  supabaseUrl = 'https://vhlyekyxutwbxlvktnzd.supabase.co'
+  console.error('Error: SUPABASE_URL must be specified in env/.env.')
+  process.exit(1)
 }
 
-if (!projectRef && supabaseUrl) {
+if (!projectRef) {
   const m = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.(co|net)/)
   if (m) {
     projectRef = m[1]
   }
 }
 
-const PROJECT_REF = projectRef || 'vhlyekyxutwbxlvktnzd'
+const PROJECT_REF = projectRef
+if (!PROJECT_REF) {
+  console.error('Error: Could not determine SUPABASE_PROJECT_REF from SUPABASE_URL.')
+  process.exit(1)
+}
+
 const SUPABASE_URL = supabaseUrl
 
 if (!serviceKey) {

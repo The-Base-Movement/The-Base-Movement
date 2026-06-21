@@ -87,7 +87,10 @@ export default function ITTodos() {
   }, [])
 
   useEffect(() => {
-    load()
+    const timer = setTimeout(() => {
+      load()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [load])
 
   async function handleToggleDone(todo: Todo) {

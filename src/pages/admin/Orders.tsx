@@ -45,7 +45,10 @@ export default function AdminOrders() {
   }
 
   useEffect(() => {
-    loadData()
+    const timer = setTimeout(() => {
+      loadData()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleStatusAdvance = async (order: Order) => {

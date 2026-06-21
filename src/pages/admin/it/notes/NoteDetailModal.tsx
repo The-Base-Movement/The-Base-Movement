@@ -67,7 +67,10 @@ export function NoteDetailModal({
   }, [note.id])
 
   useEffect(() => {
-    loadComments()
+    const timer = setTimeout(() => {
+      loadComments()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [loadComments])
 
   async function handleArchiveToggle() {

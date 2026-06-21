@@ -350,7 +350,10 @@ export function OrgChart() {
   }, [])
 
   useEffect(() => {
-    load()
+    const timer = setTimeout(() => {
+      load()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [load])
 
   async function handleRemoveConfirm() {

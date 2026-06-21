@@ -55,7 +55,10 @@ export default function Chapters() {
   }, [user])
 
   useEffect(() => {
-    setCurrentPage(1)
+    const timer = setTimeout(() => {
+      setCurrentPage(1)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [searchTerm, sortOrder, showActiveOnly])
 
   const filteredChapters = chapters

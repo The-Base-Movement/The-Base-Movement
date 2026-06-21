@@ -90,7 +90,10 @@ export default function ITSecurity() {
   }, [])
 
   useEffect(() => {
-    load()
+    const timer = setTimeout(() => {
+      load()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [load])
 
   function reset() {

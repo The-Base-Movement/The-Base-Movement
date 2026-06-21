@@ -713,7 +713,10 @@ export default function RolesManager() {
   }
 
   useEffect(() => {
-    load()
+    const timer = setTimeout(() => {
+      load()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const filtered = roles.filter(

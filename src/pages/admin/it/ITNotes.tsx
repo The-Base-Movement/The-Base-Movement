@@ -85,7 +85,10 @@ export default function ITNotes() {
   }, [])
 
   useEffect(() => {
-    loadNotes()
+    const timer = setTimeout(() => {
+      loadNotes()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [loadNotes])
 
   const archivedCount = notes.filter((n) => n.archived_at).length

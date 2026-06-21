@@ -71,7 +71,10 @@ export default function ITTickets() {
   }, [])
 
   useEffect(() => {
-    load()
+    const timer = setTimeout(() => {
+      load()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [load])
 
   const updateStatus = async (ticketId: string, newStatus: TicketStatus) => {

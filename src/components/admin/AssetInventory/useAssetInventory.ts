@@ -135,20 +135,19 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
   }, [])
 
   useEffect(() => {
-    fetchAssets()
-  }, [fetchAssets])
-  useEffect(() => {
-    fetchCategories()
-  }, [fetchCategories])
-  useEffect(() => {
-    fetchMembers()
-  }, [fetchMembers])
-  useEffect(() => {
-    fetchRequests()
-  }, [fetchRequests])
-  useEffect(() => {
-    fetchAlerts()
-  }, [fetchAlerts])
+    const t1 = setTimeout(() => fetchAssets(), 0)
+    const t2 = setTimeout(() => fetchCategories(), 0)
+    const t3 = setTimeout(() => fetchMembers(), 0)
+    const t4 = setTimeout(() => fetchRequests(), 0)
+    const t5 = setTimeout(() => fetchAlerts(), 0)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+      clearTimeout(t4)
+      clearTimeout(t5)
+    }
+  }, [fetchAssets, fetchCategories, fetchMembers, fetchRequests, fetchAlerts])
 
   const loadDetail = useCallback(async (assetId: string) => {
     setDetailLoading(true)

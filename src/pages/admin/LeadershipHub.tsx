@@ -126,8 +126,11 @@ export default function LeadershipHub() {
   }, [])
 
   useEffect(() => {
-    fetchApplications()
-    fetchAllLeaders()
+    const timer = setTimeout(() => {
+      fetchApplications()
+      fetchAllLeaders()
+    }, 0)
+    return () => clearTimeout(timer)
   }, [fetchApplications, fetchAllLeaders])
 
   const handleApprove = async (id: string, name: string) => {
