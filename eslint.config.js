@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'public/sw.js', 'supabase/functions/**']),
+  globalIgnores(['dist', 'docs', 'public/sw.js', 'supabase/functions/**']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -29,6 +29,13 @@ export default defineConfig([
       // Added to react-hooks v7.1 recommended; the established load-in-effect data
       // fetching pattern trips it repo-wide. Warn (don't block) — tighten over time.
       'react-hooks/set-state-in-effect': 'warn',
+    },
+  },
+  // Node.js CLI scripts may freely use console
+  {
+    files: ['scripts/**/*.{ts,js,cjs,mjs}'],
+    rules: {
+      'no-console': 'off',
     },
   },
 ])
