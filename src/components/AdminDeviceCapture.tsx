@@ -23,7 +23,7 @@ import BiometricPrompt from '@/components/BiometricPrompt'
  *  - When the enrolled device has no passkey yet, a BiometricPrompt overlay is
  *    shown so the admin can bind Windows Hello / Face ID to the known device.
  */
-const CAPTURE_KEY = 'admin_device_captured'
+export const CAPTURE_KEY = 'admin_device_captured'
 
 export default function AdminDeviceCapture() {
   const [blocked, setBlocked] = useState(false)

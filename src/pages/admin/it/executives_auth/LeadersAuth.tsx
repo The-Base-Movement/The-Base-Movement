@@ -11,6 +11,7 @@ import {
 } from '@/services/deviceTrackingService'
 import { ActivityTable, DetailModal, Row } from './activityComponents'
 import { ResetConfirmationModal } from '@/components/admin/ResetConfirmationModal'
+import { CAPTURE_KEY } from '@/components/AdminDeviceCapture'
 import { fmt } from './shared'
 
 const SLOTS: { type: DeviceType; icon: string; label: string }[] = [
@@ -84,6 +85,9 @@ export default function LeadersAuth() {
     setResetting(device.id)
     try {
       await deviceTrackingService.resetSlot(device.id, true)
+      // Clear the sessionStorage capture flag so the biometric prompt fires
+      // on the next admin navigation without requiring a full logout.
+      sessionStorage.removeItem(CAPTURE_KEY)
       toast.success('Device slot reset and MFA disabled')
       await Promise.all([loadDevices(), loadActivity()])
     } catch (err) {
