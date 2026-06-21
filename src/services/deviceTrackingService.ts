@@ -5,10 +5,8 @@ import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
 // Roles whose devices we bind. Keep in sync with TRACKED_ROLES in the
 // capture-admin-device edge function. Add a role here to start tracking it.
 export const DEVICE_TRACKED_ROLES = [
-  'ADMIN',
   'FOUNDER',
   'FINANCE_OFFICER',
-  'ORGANIZER',
   'EXECUTIVE',
   'SUPER_ADMIN',
   'MOVEMENT_LEADER',
