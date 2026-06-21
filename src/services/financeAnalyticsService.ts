@@ -272,13 +272,21 @@ export const financeAnalyticsService = {
       .eq('transaction_type', 'Expenditure')
       .order('timestamp', { ascending: false })
       .limit(limit)
+    let reqQuery = supabase
+      .from('finance_requests')
+      .select('id, created_at, amount, description, chapter, status')
+      .in('status', ['Pending', 'Rejected'])
+      .order('created_at', { ascending: false })
+      .limit(limit)
     if (chapter) {
       donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
+      reqQuery = reqQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes] = await Promise.all([donQuery, ledQuery])
+    const [donRes, ledRes, reqRes] = await Promise.all([donQuery, ledQuery, reqQuery])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
+    if (reqRes.error) throw new Error(reqRes.error.message)
     const income: TransactionRow[] = (donRes.data ?? []).map((d) => ({
       id: d.id,
       kind: 'income' as const,
@@ -295,8 +303,18 @@ export const financeAnalyticsService = {
       date: l.timestamp,
       chapterOrSource: l.chapter || '—',
       amount: Number(l.amount),
+      status: 'Approved',
     }))
-    return [...income, ...expense]
+    const pendingRejectedExpense: TransactionRow[] = (reqRes.data ?? []).map((r) => ({
+      id: r.id,
+      kind: 'expense' as const,
+      description: r.description || 'Finance Request',
+      date: r.created_at,
+      chapterOrSource: r.chapter || '—',
+      amount: Number(r.amount),
+      status: r.status,
+    }))
+    return [...income, ...expense, ...pendingRejectedExpense]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, limit)
   },

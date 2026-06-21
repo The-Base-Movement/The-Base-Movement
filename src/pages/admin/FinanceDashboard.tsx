@@ -58,20 +58,42 @@ export default function FinanceDashboard() {
   >('expense')
   const [cashflowTab, setCashflowTab] = useState<'combined' | 'income' | 'expense'>('combined')
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [typeFilter, setTypeFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [sortOrder, setSortOrder] = useState<'date_desc' | 'asc' | 'desc'>('date_desc')
   const [period, setPeriod] = useState<FinancePeriod>('month')
   const [chartsLoading, setChartsLoading] = useState(true)
   const [chapter, setChapter] = useState<string | null>(null)
   const [chapters, setChapters] = useState<string[]>([])
   const isMobile = useIsMobile()
 
+  const filteredTransactions = useMemo(() => {
+    let list = [...transactions]
+    if (typeFilter !== 'all') {
+      list = list.filter((tx) => tx.kind === typeFilter)
+    }
+    if (statusFilter !== 'all') {
+      list = list.filter((tx) => {
+        const status = tx.status?.toLowerCase() || ''
+        if (statusFilter === 'approved') {
+          return status === 'verified' || status === 'approved'
+        }
+        return status === statusFilter
+      })
+    }
+    return list
+  }, [transactions, typeFilter, statusFilter])
+
   const sortedTransactions = useMemo(() => {
-    return [...transactions].sort((a, b) => {
+    return [...filteredTransactions].sort((a, b) => {
+      if (sortOrder === 'date_desc') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime()
+      }
       const descA = a.description || ''
       const descB = b.description || ''
       return sortOrder === 'asc' ? descA.localeCompare(descB) : descB.localeCompare(descA)
     })
-  }, [transactions, sortOrder])
+  }, [filteredTransactions, sortOrder])
 
   const currentBreakdownData = useMemo(() => {
     if (breakdownTab === 'income_campaign') return donationCampaignBreakdown
@@ -89,7 +111,7 @@ export default function FinanceDashboard() {
       .then(setStats)
       .catch(() => setStatsError(true))
     financeAnalyticsService
-      .getRecentTransactions(20, chapter ?? undefined)
+      .getRecentTransactions(50, chapter ?? undefined)
       .then(setTransactions)
       .catch(() => {
         /* silent — table shows empty state */
@@ -698,7 +720,14 @@ export default function FinanceDashboard() {
 
       {/* ── Recent Transactions ── */}
       <div className="panel">
-        <div className="ph">
+        <div
+          className="ph"
+          style={{
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'flex-start' : 'center',
+            gap: isMobile ? 12 : undefined,
+          }}
+        >
           <div>
             <h3 style={{ margin: 0 }}>Recent Transactions</h3>
             <p
@@ -712,8 +741,72 @@ export default function FinanceDashboard() {
               Last 20 entries — donations and expenses combined
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <SortToggle value={sortOrder} onChange={setSortOrder} />
+          <div
+            style={{
+              display: 'flex',
+              gap: isMobile ? 10 : 16,
+              alignItems: isMobile ? 'flex-start' : 'center',
+              flexWrap: 'wrap',
+              width: isMobile ? '100%' : 'auto',
+            }}
+          >
+            {/* Type Filter */}
+            <select
+              id="tx-type-filter"
+              name="tx-type-filter"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              style={{
+                padding: '6px 10px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid hsl(var(--border))',
+                fontSize: 12,
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--background))',
+                fontFamily: "'Public Sans', sans-serif",
+                cursor: 'pointer',
+                boxSizing: 'border-box',
+              }}
+            >
+              <option value="all">All Types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expenses</option>
+            </select>
+
+            {/* Status Filter */}
+            <select
+              id="tx-status-filter"
+              name="tx-status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={{
+                padding: '6px 10px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid hsl(var(--border))',
+                fontSize: 12,
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--background))',
+                fontFamily: "'Public Sans', sans-serif",
+                cursor: 'pointer',
+                boxSizing: 'border-box',
+              }}
+            >
+              <option value="all">All Statuses</option>
+              <option value="approved">Approved / Verified</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+              <option value="refunded">Refunded</option>
+            </select>
+
+            <SortToggle
+              value={sortOrder === 'date_desc' ? 'desc' : sortOrder}
+              onChange={() => {
+                if (sortOrder === 'date_desc') setSortOrder('asc')
+                else if (sortOrder === 'asc') setSortOrder('desc')
+                else setSortOrder('date_desc')
+              }}
+              label={sortOrder === 'date_desc' ? 'Newest' : 'A–Z'}
+            />
             <Link
               to="/admin/donations"
               style={{
@@ -739,7 +832,14 @@ export default function FinanceDashboard() {
           </div>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
+        <div
+          style={{
+            overflowX: 'auto',
+            maxHeight: 400,
+            overflowY: 'auto',
+          }}
+          className="thin-scroll"
+        >
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
@@ -765,7 +865,7 @@ export default function FinanceDashboard() {
               </tr>
             </thead>
             <tbody>
-              {sortedTransactions.length === 0 ? (
+              {sortedTransactions.slice(0, 20).length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
@@ -781,7 +881,7 @@ export default function FinanceDashboard() {
                   </td>
                 </tr>
               ) : (
-                sortedTransactions.map((tx) => (
+                sortedTransactions.slice(0, 20).map((tx) => (
                   <tr key={tx.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                     <td
                       style={{
@@ -836,7 +936,7 @@ export default function FinanceDashboard() {
                       {tx.status ? (
                         <span
                           className={
-                            tx.status === 'Verified'
+                            tx.status === 'Verified' || tx.status === 'Approved'
                               ? 'pill pill-ok'
                               : tx.status === 'Pending'
                                 ? 'pill pill-warn'
