@@ -10,6 +10,7 @@ import {
   type DeviceType,
 } from '@/services/deviceTrackingService'
 import { ActivityTable, DetailModal, Row } from './activityComponents'
+import { ResetConfirmationModal } from '@/components/admin/ResetConfirmationModal'
 import { fmt } from './shared'
 
 const SLOTS: { type: DeviceType; icon: string; label: string }[] = [
@@ -35,6 +36,7 @@ export default function LeadersAuth() {
   const [stats, setStats] = useState({ loginsToday: 0, alerts: 0 })
   const [loading, setLoading] = useState(true)
   const [resetting, setResetting] = useState<string | null>(null)
+  const [resetDevice, setResetDevice] = useState<AdminDevice | null>(null)
 
   const [activity, setActivity] = useState<DeviceActivity[]>([])
   const [activityLoading, setActivityLoading] = useState(true)
@@ -77,22 +79,12 @@ export default function LeadersAuth() {
     loadActivity()
   }, [loadDevices, loadActivity])
 
-  const handleReset = async (device: AdminDevice) => {
-    if (
-      !window.confirm(
-        `Reset the ${device.device_type} slot for ${device.admin_name}? They will need to re-register this device on their next login.`
-      )
-    )
-      return
-
-    const disableMfa = window.confirm(
-      `Also disable MFA for ${device.admin_name}? This will remove their verified TOTP/passkey factors and force a fresh setup.`
-    )
-
+  const handleConfirmReset = async (device: AdminDevice) => {
+    setResetDevice(null)
     setResetting(device.id)
     try {
-      await deviceTrackingService.resetSlot(device.id, disableMfa)
-      toast.success(disableMfa ? 'Device slot reset and MFA disabled' : 'Device slot reset')
+      await deviceTrackingService.resetSlot(device.id, true)
+      toast.success('Device slot reset and MFA disabled')
       await Promise.all([loadDevices(), loadActivity()])
     } catch (err) {
       console.error(err)
@@ -283,7 +275,7 @@ export default function LeadersAuth() {
                               className="btn btn-outline-dest btn-sm"
                               style={{ marginTop: 10, width: '100%' }}
                               disabled={resetting === d.id}
-                              onClick={() => handleReset(d)}
+                              onClick={() => setResetDevice(d)}
                             >
                               {resetting === d.id ? 'Resetting…' : 'Reset slot'}
                             </button>
@@ -355,6 +347,19 @@ export default function LeadersAuth() {
       </div>
 
       {detail && <DetailModal entry={detail} onClose={() => setDetail(null)} />}
+
+      <ResetConfirmationModal
+        isOpen={!!resetDevice}
+        onClose={() => setResetDevice(null)}
+        onConfirm={() => {
+          if (resetDevice) {
+            handleConfirmReset(resetDevice)
+          }
+        }}
+        deviceName={resetDevice?.device_type ?? ''}
+        adminName={resetDevice?.admin_name ?? ''}
+        isLoading={resetting === resetDevice?.id}
+      />
     </div>
   )
 }
