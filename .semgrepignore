@@ -1,0 +1,13 @@
+# Semgrep ignore file
+# Exclude documentation/audit folders that contain PoC exploit code samples
+docs/
+node_modules/
+dist/
+build/
+coverage/
+scripts/
+ml-service/
+public/
+supabase/
+*.min.js
+stats.html

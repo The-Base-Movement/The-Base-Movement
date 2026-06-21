@@ -35,6 +35,16 @@ jobs:
 
       - name: Run unit tests
         run: npm run test:run
+        env:
+          VITE_SUPABASE_URL: https://placeholder.supabase.co
+          VITE_SUPABASE_ANON_KEY: placeholder-anon-key
+          VITE_SENTRY_DSN: ''
+          VITE_MAPBOX_TOKEN: ''
+          VITE_TINYMCE_API_KEY: ''
+          VITE_UMAMI_WEBSITE_ID: ''
+          VITE_UMAMI_SHARE_URL: ''
+          VITE_VAPID_PUBLIC_KEY: ''
+          PAYSTACK_PUBLIC_KEY: ''
 
   supply-chain-audit:
     name: Supply Chain Audit
