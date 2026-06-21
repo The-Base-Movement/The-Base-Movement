@@ -206,6 +206,40 @@ async def get_member_propensity(
         description="Member registration number.",
     )
 ):
+    db = get_client()
+
+    member_res = (
+        db.table("users")
+        .select("id, reg_no, full_name, region, constituency, status, joined_at")
+        .eq("reg_no", reg_no)
+        .single()
+        .execute()
+    )
+    member = member_res.data
+
+    donations_res = (
+        db.table("donations")
+        .select("member_id, status, created_at, amount")
+        .eq("member_id", member["id"])
+        .execute()
+    )
+    donations_by_member = {member["id"]: donations_res.data or []}
+
+    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+
+    activity_res = (
+        db.table("user_activity_logs")
+        .select("user_id, action_type")
+        .eq("user_id", member["id"])
+        .in_("action_type", ["login", "poll_vote", "donation"])
+        .gte("created_at", thirty_days_ago)
+        .execute()
+    )
+    activity_by_member = {member["id"]: len(activity_res.data or [])}
+
+    achievers_res = (
+        db.table("member_achievements")
+        .select("user_id")
         .eq("user_id", member["id"])
         .execute()
     )
