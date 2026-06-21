@@ -108,7 +108,6 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_UMAMI_WEBSITE_ID': JSON.stringify(env.UMAMI_WEBSITE_ID),
       'import.meta.env.VITE_UMAMI_SHARE_URL': JSON.stringify(env.UMAMI_SHARE_URL),
       'import.meta.env.VITE_VAPID_PUBLIC_KEY': JSON.stringify(env.VAPID_PUBLIC_KEY),
-      'import.meta.env.PAYSTACK_PUBLIC_KEY': JSON.stringify(env.PAYSTACK_PUBLIC_KEY),
     },
     test: {
       globals: true,

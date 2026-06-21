@@ -44,7 +44,6 @@ jobs:
           VITE_UMAMI_WEBSITE_ID: ''
           VITE_UMAMI_SHARE_URL: ''
           VITE_VAPID_PUBLIC_KEY: ''
-          PAYSTACK_PUBLIC_KEY: ''
 
   supply-chain-audit:
     name: Supply Chain Audit
