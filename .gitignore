@@ -52,3 +52,7 @@ supabase/**/*.sql
 docs/**
 !docs/security_checks/
 !docs/security_checks/remediation_log.md
+
+# Python caching
+__pycache__/
+*.pyc
