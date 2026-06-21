@@ -98,22 +98,7 @@ export default function GroundGameCommand() {
   const rightColRef = useRef<HTMLDivElement>(null)
   const [rightColHeight, setRightColHeight] = useState<number | undefined>(undefined)
 
-  useEffect(() => {
-    fetchData()
-  }, [])
-
-  useEffect(() => {
-    if (!rightColRef.current) return
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setRightColHeight(entry.contentRect.height)
-      }
-    })
-    observer.observe(rightColRef.current)
-    return () => observer.disconnect()
-  }, [fieldAgents, pollingAgents, transportReqs])
-
-  const fetchData = async () => {
+  async function fetchData() {
     setLoading(true)
     try {
       const [c, t, l, v, cm, fa, pa, regions] = await Promise.all([
@@ -140,6 +125,28 @@ export default function GroundGameCommand() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    let ignore = false
+    const timer = setTimeout(() => {
+      if (!ignore) void fetchData()
+    }, 0)
+    return () => {
+      ignore = true
+      clearTimeout(timer)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!rightColRef.current) return
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setRightColHeight(entry.contentRect.height)
+      }
+    })
+    observer.observe(rightColRef.current)
+    return () => observer.disconnect()
+  }, [fieldAgents, pollingAgents, transportReqs])
 
   const handleDispatch = async (id: string) => {
     const ok = await adminService.updateTransportRequest(id, 'DISPATCHED')

@@ -16,19 +16,30 @@ export default function DeployMission() {
   const [constituencies, setConstituencies] = useState<
     { id: string; region_id: string; name: string }[]
   >([])
-  const [filteredConstituencies, setFilteredConstituencies] = useState<
-    { id: string; region_id: string; name: string }[]
-  >([])
   const [selectedRegion, setSelectedRegion] = useState('')
   const [selectedConstituency, setSelectedConstituency] = useState('')
-  const [newCampaign, setNewCampaign] = useState<Partial<CanvassingCampaign>>({
+  const [newCampaign, setNewCampaign] = useState<Partial<CanvassingCampaign>>(() => ({
     title: '',
     description: '',
     goal_contacts: 100,
     status: 'ACTIVE',
     start_date: new Date().toISOString().split('T')[0],
     end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-  })
+  }))
+
+  const filteredConstituencies = useMemo(() => {
+    if (selectedRegion) {
+      const regionId = regions.find((r) => r.name === selectedRegion)?.id
+      return regionId ? constituencies.filter((c) => c.region_id === regionId) : []
+    }
+    return []
+  }, [selectedRegion, regions, constituencies])
+
+  const [prevRegion, setPrevRegion] = useState(selectedRegion)
+  if (selectedRegion !== prevRegion) {
+    setPrevRegion(selectedRegion)
+    setSelectedConstituency('')
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -41,18 +52,6 @@ export default function DeployMission() {
     }
     fetchData()
   }, [])
-
-  useEffect(() => {
-    if (selectedRegion) {
-      const regionId = regions.find((r) => r.name === selectedRegion)?.id
-      setFilteredConstituencies(
-        regionId ? constituencies.filter((c) => c.region_id === regionId) : []
-      )
-    } else {
-      setFilteredConstituencies([])
-    }
-    setSelectedConstituency('')
-  }, [selectedRegion, regions, constituencies])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

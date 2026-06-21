@@ -81,54 +81,102 @@ export default function WarRoomCommand() {
   const [reportLoading, setReportLoading] = useState(false)
   const { lowBandwidthMode } = usePerformance()
 
+  async function fetchWarRoomIntelligence(isBackground = false) {
+    if (!isBackground) setLoading(true)
+    try {
+      const [dirData, incData, narData, regData, pulseData, donData, trendData, broadcastData] =
+        await Promise.all([
+          adminService.getRapidResponseDirectives(),
+          adminService.getCrisisIncidents(),
+          adminService.getMediaCounterNarratives(),
+          adminService.getRegionalStats(),
+          adminService.getMovementPulse(),
+          donationService.getDonationStats(),
+          adminService.getGrowthTrends(),
+          adminService.getBroadcasts(),
+        ])
+      setDirectives(dirData)
+      setIncidents(incData)
+      setNarratives(narData)
+      setRegionalStats(regData)
+      setPulse(pulseData)
+      setDonationStats(donData)
+      const [mCount, cCount] = await Promise.all([
+        adminService.getTotalMemberCount(),
+        supabase
+          .from('chapters')
+          .select('*', { count: 'exact', head: true })
+          .then((res) => res.count || 0),
+      ])
+      setMemberCount(mCount)
+      setChapterCount(cCount)
+      setGrowthTrends(trendData)
+      setBroadcasts(broadcastData || [])
+    } catch (error) {
+      console.error('[WAR_ROOM] Failed to fetch intelligence:', error)
+      if (!isBackground) toast.error('Failed to synchronize with War Room servers.')
+    } finally {
+      if (!isBackground) setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    fetchWarRoomIntelligence()
+    let ignore = false
+    const timer = setTimeout(() => {
+      if (!ignore) void fetchWarRoomIntelligence()
+    }, 0)
 
     if (lowBandwidthMode) {
       // In Low-Bandwidth mode, only poll every 2 minutes and no real-time subscription
       const intervalId = setInterval(() => {
-        fetchWarRoomIntelligence(true)
+        if (!ignore) void fetchWarRoomIntelligence(true)
       }, 120000)
-      return () => clearInterval(intervalId)
+      return () => {
+        ignore = true
+        clearTimeout(timer)
+        clearInterval(intervalId)
+      }
     }
 
     // Establish live connection for realtime War Room updates
     const channel = supabase
       .channel('war-room-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'crisis_incidents' }, () => {
-        fetchWarRoomIntelligence(true)
+        if (!ignore) void fetchWarRoomIntelligence(true)
       })
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'rapid_response_directives' },
         () => {
-          fetchWarRoomIntelligence(true)
+          if (!ignore) void fetchWarRoomIntelligence(true)
         }
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'media_counter_narratives' },
         () => {
-          fetchWarRoomIntelligence(true)
+          if (!ignore) void fetchWarRoomIntelligence(true)
         }
       )
       .on('postgres_changes', { event: '*', schema: 'public', table: 'chapters' }, () => {
-        fetchWarRoomIntelligence(true)
+        if (!ignore) void fetchWarRoomIntelligence(true)
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'regions' }, () => {
-        fetchWarRoomIntelligence(true)
+        if (!ignore) void fetchWarRoomIntelligence(true)
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'broadcasts' }, () => {
-        fetchWarRoomIntelligence(true)
+        if (!ignore) void fetchWarRoomIntelligence(true)
       })
       .subscribe()
 
     // Also poll every 30 seconds as a fallback
     const intervalId = setInterval(() => {
-      fetchWarRoomIntelligence(true)
+      if (!ignore) void fetchWarRoomIntelligence(true)
     }, 30000)
 
     return () => {
+      ignore = true
+      clearTimeout(timer)
       supabase.removeChannel(channel)
       clearInterval(intervalId)
     }
@@ -174,45 +222,6 @@ export default function WarRoomCommand() {
       toast.error('Failed to generate compliance report')
     } finally {
       setReportLoading(false)
-    }
-  }
-
-  const fetchWarRoomIntelligence = async (isBackground = false) => {
-    if (!isBackground) setLoading(true)
-    try {
-      const [dirData, incData, narData, regData, pulseData, donData, trendData, broadcastData] =
-        await Promise.all([
-          adminService.getRapidResponseDirectives(),
-          adminService.getCrisisIncidents(),
-          adminService.getMediaCounterNarratives(),
-          adminService.getRegionalStats(),
-          adminService.getMovementPulse(),
-          donationService.getDonationStats(),
-          adminService.getGrowthTrends(),
-          adminService.getBroadcasts(),
-        ])
-      setDirectives(dirData)
-      setIncidents(incData)
-      setNarratives(narData)
-      setRegionalStats(regData)
-      setPulse(pulseData)
-      setDonationStats(donData)
-      const [mCount, cCount] = await Promise.all([
-        adminService.getTotalMemberCount(),
-        supabase
-          .from('chapters')
-          .select('*', { count: 'exact', head: true })
-          .then((res) => res.count || 0),
-      ])
-      setMemberCount(mCount)
-      setChapterCount(cCount)
-      setGrowthTrends(trendData)
-      setBroadcasts(broadcastData || [])
-    } catch (error) {
-      console.error('[WAR_ROOM] Failed to fetch intelligence:', error)
-      if (!isBackground) toast.error('Failed to synchronize with War Room servers.')
-    } finally {
-      if (!isBackground) setLoading(false)
     }
   }
 

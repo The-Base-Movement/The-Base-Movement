@@ -207,6 +207,46 @@ export default function FinancialAudit() {
     setIsVerifying(null)
   }
 
+  const filteredDonations = useMemo(() => {
+    const list = donations.filter((d) => {
+      const q = searchQuery.toLowerCase()
+      const matchesSearch =
+        d.fullName.toLowerCase().includes(q) ||
+        d.campaignTitle?.toLowerCase().includes(q) ||
+        d.reference.toLowerCase().includes(q) ||
+        d.phone?.toLowerCase().includes(q)
+
+      const amt = parseFloat(d.amount)
+      const matchesAmount =
+        (filters.amountMin === '' || amt >= parseFloat(filters.amountMin)) &&
+        (filters.amountMax === '' || amt <= parseFloat(filters.amountMax))
+
+      const donationDate = new Date(d.date)
+      const matchesDate =
+        (filters.dateFrom === '' || donationDate >= new Date(filters.dateFrom)) &&
+        (filters.dateTo === '' || donationDate <= new Date(filters.dateTo + 'T23:59:59'))
+
+      const matchesCountry =
+        filters.country === 'All' ||
+        (filters.country === 'Ghana' && d.country === 'Ghana') ||
+        (filters.country === 'Diaspora' && d.country !== 'Ghana')
+
+      return (
+        matchesSearch &&
+        matchesMethod(d, filters.method) &&
+        matchesAmount &&
+        matchesDate &&
+        matchesCountry
+      )
+    })
+
+    return list.sort((a, b) => {
+      const nameA = a.fullName || ''
+      const nameB = b.fullName || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [donations, searchQuery, filters, sortOrder])
+
   const handleExport = () => {
     try {
       const headers = [
@@ -269,46 +309,6 @@ export default function FinancialAudit() {
       setIsBackfilling(false)
     }
   }
-
-  const filteredDonations = useMemo(() => {
-    const list = donations.filter((d) => {
-      const q = searchQuery.toLowerCase()
-      const matchesSearch =
-        d.fullName.toLowerCase().includes(q) ||
-        d.campaignTitle?.toLowerCase().includes(q) ||
-        d.reference.toLowerCase().includes(q) ||
-        d.phone?.toLowerCase().includes(q)
-
-      const amt = parseFloat(d.amount)
-      const matchesAmount =
-        (filters.amountMin === '' || amt >= parseFloat(filters.amountMin)) &&
-        (filters.amountMax === '' || amt <= parseFloat(filters.amountMax))
-
-      const donationDate = new Date(d.date)
-      const matchesDate =
-        (filters.dateFrom === '' || donationDate >= new Date(filters.dateFrom)) &&
-        (filters.dateTo === '' || donationDate <= new Date(filters.dateTo + 'T23:59:59'))
-
-      const matchesCountry =
-        filters.country === 'All' ||
-        (filters.country === 'Ghana' && d.country === 'Ghana') ||
-        (filters.country === 'Diaspora' && d.country !== 'Ghana')
-
-      return (
-        matchesSearch &&
-        matchesMethod(d, filters.method) &&
-        matchesAmount &&
-        matchesDate &&
-        matchesCountry
-      )
-    })
-
-    return list.sort((a, b) => {
-      const nameA = a.fullName || ''
-      const nameB = b.fullName || ''
-      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
-    })
-  }, [donations, searchQuery, filters, sortOrder])
 
   function setFilter<K extends keyof FilterState>(key: K, value: FilterState[K]) {
     setFilters((prev) => ({ ...prev, [key]: value }))
