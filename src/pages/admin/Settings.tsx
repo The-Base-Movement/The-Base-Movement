@@ -227,8 +227,6 @@ export default function AdminSettings() {
   }
 
   const handleUnenrollMfa = async (factorId: string) => {
-    if (!confirm('Are you sure you want to disable MFA? This will reduce your account security.'))
-      return
     try {
       const { error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.unenroll({
         factorId,

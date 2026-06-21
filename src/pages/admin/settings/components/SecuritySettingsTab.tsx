@@ -1,6 +1,8 @@
 import type { Factor } from '@supabase/supabase-js'
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { QRCodeSVG } from 'qrcode.react'
+import { ResetConfirmationModal } from '@/components/admin/ResetConfirmationModal'
 
 interface PasswordForm {
   currentPassword: string
@@ -74,6 +76,7 @@ export function SecuritySettingsTab({
   setMfaCode,
   handleVerifyMfa,
 }: SecuritySettingsTabProps) {
+  const [showDisableMfa, setShowDisableMfa] = useState(false)
   const mfaActive = mfaFactors.length > 0
   const qrImageSrc =
     mfaEnrollData?.qr?.startsWith('data:') || mfaEnrollData?.qr?.startsWith('http')
@@ -219,7 +222,7 @@ export function SecuritySettingsTab({
             <button
               className="btn btn-dest btn-sm"
               style={{ alignSelf: 'flex-start' }}
-              onClick={() => handleUnenrollMfa(mfaFactors[0].id)}
+              onClick={() => setShowDisableMfa(true)}
             >
               Disable protection
             </button>
@@ -443,6 +446,20 @@ export function SecuritySettingsTab({
           </>,
           document.body
         )}
+      <ResetConfirmationModal
+        isOpen={showDisableMfa}
+        onClose={() => setShowDisableMfa(false)}
+        onConfirm={() => {
+          setShowDisableMfa(false)
+          handleUnenrollMfa(mfaFactors[0]?.id ?? '')
+        }}
+        title="Disable Two-Factor Authentication"
+        subtitle="Are you sure you want to disable MFA? Your account will no longer require a verification code on sign-in, reducing its security."
+        icon="no_encryption"
+        confirmLabel="Disable MFA"
+        confirmIcon="lock_open"
+        details={[{ label: 'Action', value: 'Remove TOTP protection from your account' }]}
+      />
     </div>
   )
 }

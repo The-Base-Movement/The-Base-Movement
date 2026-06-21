@@ -1,23 +1,62 @@
 import { createPortal } from 'react-dom'
 
+interface DetailRow {
+  label: string
+  value: string
+}
+
 interface ResetConfirmationModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: () => void
-  deviceName: string
-  adminName: string
   isLoading?: boolean
+
+  /** Modal header title */
+  title?: string
+  /** Modal header subtitle / warning copy */
+  subtitle?: string
+  /** Material Symbol icon name shown in the header icon badge */
+  icon?: string
+  /** Confirm button label */
+  confirmLabel?: string
+  /** Confirm button icon (Material Symbol) */
+  confirmIcon?: string
+
+  /**
+   * Generic key/value detail rows shown in the body info card.
+   * Replaces the old deviceName / adminName props.
+   */
+  details?: DetailRow[]
+
+  // ── Legacy props kept for backward-compat with LeadersAuth ──────────────────
+  deviceName?: string
+  adminName?: string
 }
 
 export function ResetConfirmationModal({
   isOpen,
   onClose,
   onConfirm,
+  isLoading = false,
+  title = 'Reset Device Slot & MFA',
+  subtitle = 'Are you sure you want to reset this device slot? This will automatically disable Two-Factor Authentication (MFA) for the user as well. They will need to re-configure MFA and re-register their device upon their next login.',
+  icon = 'lock_reset',
+  confirmLabel = 'Reset Slot & MFA',
+  confirmIcon = 'device_reset',
+  details,
+  // legacy
   deviceName,
   adminName,
-  isLoading = false,
 }: ResetConfirmationModalProps) {
   if (!isOpen) return null
+
+  // Build detail rows: prefer explicit `details`, fall back to legacy props.
+  const rows: DetailRow[] =
+    details ??
+    ([
+      adminName ? { label: 'Leader', value: adminName } : null,
+      deviceName ? { label: 'Device Slot', value: deviceName } : null,
+    ].filter(Boolean) as DetailRow[])
 
   const accentColor = 'hsl(var(--destructive))'
   const accentBg = 'rgba(206,17,38,0.18)'
@@ -77,7 +116,7 @@ export function ResetConfirmationModal({
               className="material-symbols-outlined"
               style={{ fontSize: 22, color: accentColor }}
             >
-              lock_reset
+              {icon}
             </span>
           </div>
           <div>
@@ -91,7 +130,7 @@ export function ResetConfirmationModal({
                 letterSpacing: '-0.01em',
               }}
             >
-              Reset Device Slot & MFA
+              {title}
             </p>
             <p
               style={{
@@ -103,76 +142,53 @@ export function ResetConfirmationModal({
                 lineHeight: 1.5,
               }}
             >
-              Are you sure you want to reset this device slot? This will automatically disable
-              Two-Factor Authentication (MFA) for the user as well. They will need to re-configure
-              MFA and re-register their device upon their next login.
+              {subtitle}
             </p>
           </div>
         </div>
 
         {/* Body */}
         <div style={{ padding: 24 }}>
-          <div
-            style={{
-              background: 'hsl(var(--container-low))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-xs)',
-              padding: '12px 14px',
-              marginBottom: 20,
-            }}
-          >
-            <div style={{ marginBottom: 12 }}>
-              <p
-                style={{
-                  fontSize: 10,
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  color: 'hsl(var(--on-surface-muted))',
-                  letterSpacing: '0.05em',
-                  margin: '0 0 2px',
-                }}
-              >
-                Leader
-              </p>
-              <p
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: 'hsl(var(--on-surface))',
-                  margin: 0,
-                  fontFamily: "'Public Sans', sans-serif",
-                }}
-              >
-                {adminName}
-              </p>
+          {rows.length > 0 && (
+            <div
+              style={{
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-xs)',
+                padding: '12px 14px',
+                marginBottom: 20,
+              }}
+            >
+              {rows.map((row, i) => (
+                <div key={row.label} style={{ marginBottom: i < rows.length - 1 ? 12 : 0 }}>
+                  <p
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      color: 'hsl(var(--on-surface-muted))',
+                      letterSpacing: '0.05em',
+                      margin: '0 0 2px',
+                    }}
+                  >
+                    {row.label}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: 'hsl(var(--on-surface))',
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {row.value}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div>
-              <p
-                style={{
-                  fontSize: 10,
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  color: 'hsl(var(--on-surface-muted))',
-                  letterSpacing: '0.05em',
-                  margin: '0 0 2px',
-                }}
-              >
-                Device Slot
-              </p>
-              <p
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: 'hsl(var(--on-surface))',
-                  margin: 0,
-                  fontFamily: "'Public Sans', sans-serif",
-                  textTransform: 'capitalize',
-                }}
-              >
-                {deviceName}
-              </p>
-            </div>
-          </div>
+          )}
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button
@@ -207,10 +223,10 @@ export function ResetConfirmationModal({
                 </span>
               ) : (
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                  device_reset
+                  {confirmIcon}
                 </span>
               )}
-              {isLoading ? 'Resetting…' : 'Reset Slot & MFA'}
+              {isLoading ? 'Processing…' : confirmLabel}
             </button>
           </div>
         </div>
