@@ -16,20 +16,34 @@ const __dirname = dirname(__filename)
 const fs = { readFileSync, existsSync }
 const path = { resolve }
 
-const PROJECT_REF = 'vhlyekyxutwbxlvktnzd'
-
-// Read token from env or .env file
+// Read token, url and ref from env or .env file
 let token = process.env.SUPABASE_ACCESS_TOKEN
-if (!token) {
-  const envPath = path.resolve(__dirname, '../.env')
-  if (fs.existsSync(envPath)) {
-    const lines = fs.readFileSync(envPath, 'utf8').split('\n')
-    for (const line of lines) {
-      const m = line.match(/^SUPABASE_ACCESS_TOKEN=(.+)/)
-      if (m) { token = m[1].trim(); break }
-    }
+let projectRef = process.env.SUPABASE_PROJECT_REF
+let supabaseUrl = process.env.SUPABASE_URL
+
+const envPath = path.resolve(__dirname, '../.env')
+if (fs.existsSync(envPath)) {
+  const lines = fs.readFileSync(envPath, 'utf8').split('\n')
+  for (const line of lines) {
+    const tokenMatch = line.match(/^SUPABASE_ACCESS_TOKEN=(.+)/)
+    if (tokenMatch && !token) token = tokenMatch[1].trim()
+
+    const refMatch = line.match(/^SUPABASE_PROJECT_REF=(.+)/)
+    if (refMatch && !projectRef) projectRef = refMatch[1].trim()
+
+    const urlMatch = line.match(/^SUPABASE_URL=(.+)/)
+    if (urlMatch && !supabaseUrl) supabaseUrl = urlMatch[1].trim()
   }
 }
+
+if (!projectRef && supabaseUrl) {
+  const m = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.(co|net)/)
+  if (m) {
+    projectRef = m[1]
+  }
+}
+
+const PROJECT_REF = projectRef || 'vhlyekyxutwbxlvktnzd'
 
 const sqlFile = process.argv[2]
 if (!sqlFile) {

@@ -31,13 +31,6 @@ router = APIRouter(
     prefix="/api/mobilization",
     dependencies=[Depends(require_admin_access)],
 )
-
-NOW = datetime.now(timezone.utc)
-T30 = (NOW - timedelta(days=30)).isoformat()
-T60 = (NOW - timedelta(days=60)).isoformat()
-T90 = (NOW - timedelta(days=90)).isoformat()
-
-
 # ── Forecast ────────────────────────────────────────────────────────────────
 
 class RegionForecast(BaseModel):
@@ -73,6 +66,9 @@ def _confidence(total: int, rate: float) -> str:
 
 @router.get("/forecast", response_model=ForecastResponse)
 async def get_forecast():
+    NOW = datetime.now(timezone.utc)
+    T30 = (NOW - timedelta(days=30)).isoformat()
+    T60 = (NOW - timedelta(days=60)).isoformat()
     db = get_client()
 
     # All regions spine
@@ -206,6 +202,9 @@ def _trend(current: float, prev: float) -> str:
 
 @router.get("/sentiment", response_model=SentimentResponse)
 async def get_sentiment():
+    NOW = datetime.now(timezone.utc)
+    T30 = (NOW - timedelta(days=30)).isoformat()
+    T60 = (NOW - timedelta(days=60)).isoformat()
     db = get_client()
 
     regions_res = db.table("ghana_regions").select("name").order("name").execute()

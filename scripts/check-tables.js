@@ -1,8 +1,8 @@
 import fs from 'fs';
 
-const envFile = fs.readFileSync('.env', 'utf-8');
-const tokenMatch = envFile.match(/VITE_NEON_DATA_API_TOKEN=(.*)/);
-const token = tokenMatch ? tokenMatch[1].trim() : null;
+const envFile = fs.existsSync('.env') ? fs.readFileSync('.env', 'utf-8') : '';
+const tokenMatch = envFile.match(/NEON_DATA_API_TOKEN=(.*)/);
+const token = process.env.NEON_DATA_API_TOKEN || (tokenMatch ? tokenMatch[1].trim() : null);
 
 if (!token) {
   console.error("Token not found");

@@ -31,6 +31,15 @@ function normalizePhoneNumber(raw: string): string {
   return `+233${digits}`
 }
 
+async function getDummyEmail(phone: string): Promise<string> {
+  const clean = phone.replace('+', '').trim()
+  const msgBuffer = new TextEncoder().encode(clean)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+  return `${hashHex.slice(0, 16)}@thebase.org`
+}
+
 serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -76,7 +85,7 @@ serve(async (req: Request) => {
         // 1. A phone-only member gets a placeholder email; an email-only member
         //    (admin/recovery account) gets no phone at all.
         const finalEmail =
-          member.email || (normalizedPhone ? `${normalizedPhone.replace('+', '')}@thebase.org` : '')
+          member.email || (normalizedPhone ? await getDummyEmail(normalizedPhone) : '')
         if (!finalEmail) {
           failedUsers.push({ reg_no: member.reg_no, reason: 'No email or phone provided.' })
           continue

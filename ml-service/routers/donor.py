@@ -30,9 +30,6 @@ router = APIRouter(
     dependencies=[Depends(require_admin_access)],
 )
 
-THIRTY_DAYS_AGO = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
-NINETY_DAYS_AGO = (datetime.now(timezone.utc) - timedelta(days=90)).isoformat()
-
 
 class DonorScore(BaseModel):
     member_id: str
@@ -85,9 +82,13 @@ def _score_member(
     uid = member["id"]
     all_donations = donations_by_member.get(uid, [])
     verified = [d for d in all_donations if d["status"] == "Verified"]
-    recent = [d for d in verified if d["created_at"] >= THIRTY_DAYS_AGO]
+    
+    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+    ninety_days_ago = (datetime.now(timezone.utc) - timedelta(days=90)).isoformat()
+
+    recent = [d for d in verified if d["created_at"] >= thirty_days_ago]
     joined_at = member.get("joined_at") or ""
-    is_veteran = bool(joined_at and joined_at <= NINETY_DAYS_AGO)
+    is_veteran = bool(joined_at and joined_at <= ninety_days_ago)
 
     # 1. Donation history (0–0.60)
     donation_score = 0.0
@@ -159,12 +160,14 @@ async def get_propensity():
         if uid:
             donations_by_member.setdefault(uid, []).append(d)
 
+    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+
     # Fetch activity logs (logins + poll votes last 30 days)
     activity_res = (
         db.table("user_activity_logs")
         .select("user_id, action_type")
         .in_("action_type", ["login", "poll_vote", "donation"])
-        .gte("created_at", THIRTY_DAYS_AGO)
+        .gte("created_at", thirty_days_ago)
         .execute()
     )
     activity_by_member: Dict[str, int] = {}
@@ -203,38 +206,6 @@ async def get_member_propensity(
         description="Member registration number.",
     )
 ):
-    db = get_client()
-
-    member_res = (
-        db.table("users")
-        .select("id, reg_no, full_name, region, constituency, status, joined_at")
-        .eq("reg_no", reg_no)
-        .single()
-        .execute()
-    )
-    member = member_res.data
-
-    donations_res = (
-        db.table("donations")
-        .select("member_id, status, created_at, amount")
-        .eq("member_id", member["id"])
-        .execute()
-    )
-    donations_by_member = {member["id"]: donations_res.data or []}
-
-    activity_res = (
-        db.table("user_activity_logs")
-        .select("user_id, action_type")
-        .eq("user_id", member["id"])
-        .in_("action_type", ["login", "poll_vote", "donation"])
-        .gte("created_at", THIRTY_DAYS_AGO)
-        .execute()
-    )
-    activity_by_member = {member["id"]: len(activity_res.data or [])}
-
-    achievers_res = (
-        db.table("member_achievements")
-        .select("user_id")
         .eq("user_id", member["id"])
         .execute()
     )

@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     supabase_service_key: str
     cors_origins: str = "http://localhost:3000"
     port: int = 8000
+    environment: str = "development"
 
     @property
     def cors_origins_list(self) -> List[str]:

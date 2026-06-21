@@ -1,7 +1,12 @@
+import { authService } from './authService'
+
 const ML_BASE = import.meta.env.VITE_ML_SERVICE_URL ?? 'http://localhost:8000'
 
 async function fetchML<T>(path: string): Promise<T> {
-  const res = await fetch(`${ML_BASE}${path}`)
+  const token = authService.getToken()
+  const res = await fetch(`${ML_BASE}${path}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
   if (!res.ok) throw new Error(`ML service error: ${res.status} ${res.statusText}`)
   return res.json() as Promise<T>
 }

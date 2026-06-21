@@ -2,26 +2,42 @@
  * One-time script: creates the constituency_leaders table and its policies.
  * Run with: node scripts/create_constituency_leaders.js
  */
-const SUPABASE_URL = 'https://vhlyekyxutwbxlvktnzd.supabase.co'
-
-// We'll use service_role key from env if available, else fall back to a direct REST call
-// NOTE: we need service_role for DDL — read it from .env manually
 const fs = require('fs')
 const path = require('path')
 
 // Parse .env manually
 const envPath = path.resolve(__dirname, '../.env')
-let serviceKey = null
+let serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || null
+let supabaseUrl = process.env.SUPABASE_URL || null
+let projectRef = process.env.SUPABASE_PROJECT_REF || null
+
 if (fs.existsSync(envPath)) {
   const lines = fs.readFileSync(envPath, 'utf8').split('\n')
   for (const line of lines) {
     const m = line.match(/^VITE_SUPABASE_SERVICE_ROLE_KEY=(.+)/)
-    if (m) { serviceKey = m[1].trim(); break }
-    // also try without VITE_ prefix
+    if (m && !serviceKey) serviceKey = m[1].trim()
     const m2 = line.match(/^SUPABASE_SERVICE_ROLE_KEY=(.+)/)
-    if (m2) { serviceKey = m2[1].trim(); break }
+    if (m2 && !serviceKey) serviceKey = m2[1].trim()
+    const m3 = line.match(/^SUPABASE_URL=(.+)/)
+    if (m3 && !supabaseUrl) supabaseUrl = m3[1].trim()
+    const m4 = line.match(/^SUPABASE_PROJECT_REF=(.+)/)
+    if (m4 && !projectRef) projectRef = m4[1].trim()
   }
 }
+
+if (!supabaseUrl) {
+  supabaseUrl = 'https://vhlyekyxutwbxlvktnzd.supabase.co'
+}
+
+if (!projectRef && supabaseUrl) {
+  const m = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.(co|net)/)
+  if (m) {
+    projectRef = m[1]
+  }
+}
+
+const PROJECT_REF = projectRef || 'vhlyekyxutwbxlvktnzd'
+const SUPABASE_URL = supabaseUrl
 
 if (!serviceKey) {
   console.error('Could not find SUPABASE_SERVICE_ROLE_KEY in .env')
@@ -50,12 +66,12 @@ ALTER TABLE constituency_leaders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "constituency_leaders_select" ON constituency_leaders
   FOR SELECT USING (true);
 
--- Policy: only admins/service_role can insert/update/delete (enforced at app layer)
+-- Policy: only admins/service_role can insert/update/delete (enforced at database layer)
 CREATE POLICY "constituency_leaders_insert" ON constituency_leaders
-  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  FOR INSERT WITH CHECK (auth.uid() IN (SELECT id FROM public.admins));
 
 CREATE POLICY "constituency_leaders_delete" ON constituency_leaders
-  FOR DELETE USING (auth.role() = 'authenticated');
+  FOR DELETE USING (auth.uid() IN (SELECT id FROM public.admins));
 
 -- Create index for fast lookups
 CREATE INDEX IF NOT EXISTS constituency_leaders_constituency_id_idx ON constituency_leaders(constituency_id);
@@ -79,7 +95,7 @@ async function run() {
     // Try using the Postgres direct endpoint
     console.log('\nTrying direct query approach...')
     // Supabase REST doesn't support DDL directly — we need to use the management API
-    const mgmtResponse = await fetch(`https://api.supabase.com/v1/projects/vhlyekyxutwbxlvktnzd/database/query`, {
+    const mgmtResponse = await fetch(`https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

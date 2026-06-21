@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from routers import health, donor, mobilization
 
+is_dev = settings.environment.lower() != "production"
+
 app = FastAPI(
     title="The Base Movement — ML Intelligence API",
     description=(
@@ -12,8 +14,8 @@ app = FastAPI(
         "derived from live Supabase data."
     ),
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if is_dev else None,
+    redoc_url="/redoc" if is_dev else None,
 )
 
 app.add_middleware(
@@ -31,4 +33,5 @@ app.include_router(mobilization.router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=settings.port, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=settings.port, reload=is_dev)
+

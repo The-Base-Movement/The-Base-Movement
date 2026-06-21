@@ -6,6 +6,15 @@ import { sessionStore } from '@/lib/sessionStore'
 import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
 
+async function getDummyEmail(phone: string): Promise<string> {
+  const clean = phone.replace('+', '').trim()
+  const msgBuffer = new TextEncoder().encode(clean)
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+  return `${hashHex.slice(0, 16)}@thebase.org`
+}
+
 export interface SubmitConfig {
   platform: string
   formData: RegistrationFormData
@@ -33,7 +42,7 @@ export const registrationService = {
     const authEmail = formData.email ? formData.email.trim() : null
     const cleanPhone =
       formData.countryCode + formData.contactNumber.replace(/^0+/, '').replace(/\s+/g, '')
-    const dummyEmail = `${cleanPhone.replace('+', '')}@thebase.org`
+    const dummyEmail = await getDummyEmail(cleanPhone)
     const finalAuthEmail = authEmail || dummyEmail
 
     // 1. Sign up user in Supabase Auth

@@ -28,13 +28,16 @@ export default function AdminDeviceCapture() {
   const [blocked, setBlocked] = useState(false)
   const [blockReason, setBlockReason] = useState<string | null>(null)
   const [prompt, setPrompt] = useState<EvaluateResult | null>(null)
+  const [loading, setLoading] = useState(sessionStorage.getItem(CAPTURE_KEY) !== '1')
   const ran = useRef(false)
 
   useEffect(() => {
     if (ran.current) return
     ran.current = true
 
-    if (sessionStorage.getItem(CAPTURE_KEY) === '1') return
+    if (sessionStorage.getItem(CAPTURE_KEY) === '1') {
+      return
+    }
     ;(async () => {
       try {
         // adminService may not be initialised yet at mount — resolve the current
@@ -42,6 +45,7 @@ export default function AdminDeviceCapture() {
         const user = adminService.getCurrentUser() ?? (await adminService.initialize())
         if (!user || !isDeviceTrackedRole(user.role)) {
           sessionStorage.setItem(CAPTURE_KEY, '1')
+          setLoading(false)
           return
         }
 
@@ -50,6 +54,7 @@ export default function AdminDeviceCapture() {
         if (res?.tracked && res.decision === 'blocked') {
           setBlockReason(res.reason ?? null)
           setBlocked(true)
+          setLoading(false)
           return // do not set the flag — re-check on next entry
         }
 
@@ -64,10 +69,12 @@ export default function AdminDeviceCapture() {
         }
 
         sessionStorage.setItem(CAPTURE_KEY, '1')
+        setLoading(false)
       } catch (err) {
         // Fail open: never block admin access on a capture error.
         console.warn('[device-capture] skipped:', err)
         sessionStorage.setItem(CAPTURE_KEY, '1')
+        setLoading(false)
       }
     })()
   }, [])
@@ -150,15 +157,46 @@ export default function AdminDeviceCapture() {
     )
   }
 
+  if (loading && !prompt) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '80vh',
+          fontFamily: "'Public Sans', sans-serif",
+          gap: 16,
+        }}
+      >
+        <span
+          className="material-symbols-outlined"
+          style={{
+            fontSize: 48,
+            color: 'hsl(var(--primary))',
+            animation: 'spin 1.5s linear infinite',
+          }}
+        >
+          sync
+        </span>
+        <p style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+          Verifying device security credentials…
+        </p>
+      </div>
+    )
+  }
+
   return (
     <>
-      <Outlet />
+      {!loading && <Outlet />}
       {prompt && (
         <BiometricPrompt
           result={prompt}
           onDone={() => {
             sessionStorage.setItem(CAPTURE_KEY, '1')
             setPrompt(null)
+            setLoading(false)
           }}
           onCancel={async () => {
             // Mandatory ISP-change re-verify was declined → sign out, do not enter.

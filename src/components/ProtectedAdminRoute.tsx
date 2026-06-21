@@ -19,12 +19,9 @@ const MFA_SETUP_TAB = 'security'
 export default function ProtectedAdminRoute() {
   const { session, isLoading } = useAuth()
   const location = useLocation()
-  const [status, setStatus] = useState<GateStatus>(
-    sessionStorage.getItem(ADMIN_GATE_KEY) === '1' ? 'allowed' : 'checking'
-  )
-  const [factorId, setFactorId] = useState(
-    sessionStorage.getItem(ADMIN_GATE_KEY) === '1' ? 'bypass' : ''
-  )
+  const [status, setStatus] = useState<GateStatus>('checking')
+  const [factorId, setFactorId] = useState('')
+  const [errorState, setErrorState] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -32,34 +29,46 @@ export default function ProtectedAdminRoute() {
     async function checkGate() {
       if (!session) return
 
-      // Already verified during this admin visit — let them through
-      if (sessionStorage.getItem(ADMIN_GATE_KEY) === '1') {
-        if (!cancelled) {
-          setFactorId('bypass')
-          setStatus('allowed')
-        }
-        return
-      }
-
       try {
-        const { data: factors, error } = await supabase.auth.mfa.listFactors()
-        if (error) throw error
+        // Query the server-authoritative AAL and enrolled factors
+        const [aalRes, factorsRes] = await Promise.all([
+          supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+          supabase.auth.mfa.listFactors(),
+        ])
+
+        if (aalRes.error) throw aalRes.error
+        if (factorsRes.error) throw factorsRes.error
+
+        const aal = aalRes.data
+        const factors = factorsRes.data
+
         const totp = factors?.totp?.find((f) => f.status === 'verified')
+
         if (totp) {
-          if (!cancelled) {
-            setFactorId(totp.id)
-            setStatus('challenge')
+          if (aal?.currentLevel === 'aal2') {
+            // MFA is completed and verified
+            if (!cancelled) {
+              setFactorId(totp.id)
+              setStatus('allowed')
+            }
+          } else {
+            // MFA enrolled but not challenged yet in this session
+            if (!cancelled) {
+              setFactorId(totp.id)
+              setStatus('challenge')
+            }
           }
         } else {
+          // No MFA enrolled yet
           if (!cancelled) {
             setFactorId('')
             setStatus('allowed')
           }
         }
-      } catch {
+      } catch (err) {
+        console.error('[MFA Gate] verification error:', err)
         if (!cancelled) {
-          setFactorId('')
-          setStatus('allowed')
+          setErrorState('Security gate verification failed. Please sign in again.')
         }
       }
     }
@@ -74,6 +83,10 @@ export default function ProtectedAdminRoute() {
 
   if (!session) {
     return <Navigate to="/admin-login" state={{ from: location }} replace />
+  }
+
+  if (errorState) {
+    return <Navigate to="/admin-login" state={{ error: errorState }} replace />
   }
 
   if (status === 'checking') return null
@@ -95,7 +108,6 @@ export default function ProtectedAdminRoute() {
       <AdminTwoFactorGate
         factorId={factorId}
         onVerified={() => {
-          sessionStorage.setItem(ADMIN_GATE_KEY, '1')
           setStatus('allowed')
         }}
       />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -39,11 +39,18 @@ export default function AdminLogin() {
   const [mfaFactorId, setMfaFactorId] = useState('')
   const [mfaCode, setMfaCode] = useState('')
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     sessionStorage.removeItem('admin_device_captured')
     sessionStorage.removeItem('admin_gate_verified')
-  }, [])
+
+    if (location.state?.error) {
+      toast.error(location.state.error)
+      // Clear location state to prevent repeating the toast on page refresh
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
