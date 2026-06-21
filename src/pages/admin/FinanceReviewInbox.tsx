@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
-import { deviceTrackingService } from '@/services/deviceTrackingService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { toast } from 'sonner'
 import {
@@ -82,11 +81,13 @@ export default function FinanceReviewInbox() {
 
   const [modal, setModal] = useState<ReviewModal | null>(null)
   const [officerComment, setOfficerComment] = useState('')
+  const [mfaCode, setMfaCode] = useState('')
+  const [factorId, setFactorId] = useState<string | null>(null)
   const [actioning, setActioning] = useState(false)
 
   async function loadAll() {
     try {
-      const [data, settings, adminRows] = await Promise.all([
+      const [data, settings, adminRows, mfaFactors] = await Promise.all([
         financeService.getRequests(),
         adminService.getSiteSettings(),
         supabase
@@ -100,9 +101,15 @@ export default function FinanceReviewInbox() {
             'FOUNDER',
             'ADMIN',
           ]),
+        supabase.auth.mfa.listFactors(),
       ])
 
       setRequests(data)
+      const totp = mfaFactors.data?.totp?.find((f) => f.status === 'verified')
+      if (totp) {
+        setFactorId(totp.id)
+      }
+
       const t1 = parseFloat(String(settings['finance_tier1_max'] ?? '50'))
       const t2 = parseFloat(String(settings['finance_tier2_max'] ?? '100'))
       if (!isNaN(t1)) setTier1Max(t1)
@@ -152,13 +159,22 @@ export default function FinanceReviewInbox() {
 
   function openModal(request: FinanceRequest, action: ModalAction) {
     setOfficerComment('')
+    setMfaCode('')
     setModal({ request, action })
   }
 
   async function handleAction() {
     if (!modal || !userTier) return
+    if (!factorId) {
+      toast.error('You must enroll an Authenticator App (2FA) to verify this action.')
+      return
+    }
     if (modal.action !== 'Acknowledged' && !officerComment.trim()) {
       toast.error('A comment is required')
+      return
+    }
+    if (mfaCode.trim().length < 6) {
+      toast.error('Please enter a 6-digit verification code.')
       return
     }
 
@@ -184,16 +200,16 @@ export default function FinanceReviewInbox() {
 
     setActioning(true)
     try {
-      const biometricProof = await deviceTrackingService.verifySensitiveActionBiometric()
       if (isPassUp(result.outcome)) {
-        await financeService.acknowledgeRequest(modal.request.id, biometricProof)
+        await financeService.acknowledgeRequest(modal.request.id, factorId, mfaCode.trim())
         toast.success(result.message)
       } else {
         await financeService.reviewRequest(
           modal.request.id,
           modal.action as 'Approved' | 'Rejected',
           officerComment.trim(),
-          biometricProof
+          factorId,
+          mfaCode.trim()
         )
         toast.success(result.message)
       }
@@ -205,7 +221,7 @@ export default function FinanceReviewInbox() {
         toast.warning('This request is no longer available for review')
         setModal(null)
         await loadAll()
-      } else if (msg.toLowerCase().includes('biometric')) {
+      } else if (msg.toLowerCase().includes('mfa') || msg.toLowerCase().includes('code')) {
         toast.error(msg)
       } else {
         toast.error('Failed to process request')
@@ -766,11 +782,13 @@ export default function FinanceReviewInbox() {
           modal={modal}
           actioning={actioning}
           officerComment={officerComment}
+          mfaCode={mfaCode}
           userTier={userTier}
           tier1Max={tier1Max}
           tier2Max={tier2Max}
           onClose={() => setModal(null)}
           onCommentChange={setOfficerComment}
+          onMfaCodeChange={setMfaCode}
           onConfirm={handleAction}
           fmtAmount={fmtAmount}
         />

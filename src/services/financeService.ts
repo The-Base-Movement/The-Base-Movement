@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import type { SensitiveActionBiometricProof } from './deviceTrackingService'
 
 export interface FinanceRequest {
   id: string
@@ -84,7 +83,8 @@ export const financeService = {
     requestId: string,
     status: 'Approved' | 'Rejected',
     comment: string,
-    biometricProof: SensitiveActionBiometricProof | null
+    mfaFactorId: string,
+    mfaCode: string
   ): Promise<void> {
     const { data, error } = await supabase.functions.invoke('finance-review', {
       body: {
@@ -92,22 +92,21 @@ export const financeService = {
         requestId,
         status,
         comment,
-        biometricProof,
+        mfaFactorId,
+        mfaCode,
       },
     })
     if (error) throw error
     if (!data?.success) throw new Error('Request is no longer available for review')
   },
 
-  async acknowledgeRequest(
-    requestId: string,
-    biometricProof: SensitiveActionBiometricProof | null
-  ): Promise<void> {
+  async acknowledgeRequest(requestId: string, mfaFactorId: string, mfaCode: string): Promise<void> {
     const { data, error } = await supabase.functions.invoke('finance-review', {
       body: {
         action: 'acknowledge',
         requestId,
-        biometricProof,
+        mfaFactorId,
+        mfaCode,
       },
     })
     if (error) throw error

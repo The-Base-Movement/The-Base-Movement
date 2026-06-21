@@ -6,11 +6,13 @@ interface ActionModalProps {
   modal: ReviewModal
   actioning: boolean
   officerComment: string
+  mfaCode: string
   userTier: 1 | 2 | 3 | null
   tier1Max: number
   tier2Max: number
   onClose: () => void
   onCommentChange: (value: string) => void
+  onMfaCodeChange: (value: string) => void
   onConfirm: () => void
   fmtAmount: (n: number) => string
 }
@@ -19,11 +21,13 @@ export default function ActionModal({
   modal,
   actioning,
   officerComment,
+  mfaCode,
   userTier,
   tier1Max,
   tier2Max,
   onClose,
   onCommentChange,
+  onMfaCodeChange,
   onConfirm,
   fmtAmount,
 }: ActionModalProps) {
@@ -167,6 +171,47 @@ export default function ActionModal({
           </>
         )}
 
+        {/* MFA input (unconditional) */}
+        <div style={{ marginBottom: 20 }}>
+          <label
+            htmlFor="mfa-code"
+            style={{
+              display: 'block',
+              fontSize: 12,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface-muted))',
+              marginBottom: 6,
+            }}
+          >
+            Authenticator Code (2FA) <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+          </label>
+          <input
+            id="mfa-code"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            value={mfaCode}
+            onChange={(event) => onMfaCodeChange(event.target.value.replace(/\D/g, ''))}
+            placeholder="000000"
+            style={{
+              width: '100%',
+              height: 40,
+              padding: '8px 12px',
+              borderRadius: 'var(--radius-sm)',
+              border: '1px solid hsl(var(--border))',
+              background: 'hsl(var(--background))',
+              color: 'hsl(var(--on-surface))',
+              fontSize: 18,
+              boxSizing: 'border-box',
+              fontFamily: "'Public Sans', sans-serif",
+              textAlign: 'center',
+              letterSpacing: '0.3em',
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          />
+        </div>
+
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
           <button className="btn btn-outline" onClick={onClose} disabled={actioning}>
             Cancel
@@ -180,7 +225,11 @@ export default function ActionModal({
                   : 'btn btn-accent'
             }
             onClick={onConfirm}
-            disabled={actioning || (modal.action !== 'Acknowledged' && !officerComment.trim())}
+            disabled={
+              actioning ||
+              mfaCode.length < 6 ||
+              (modal.action !== 'Acknowledged' && !officerComment.trim())
+            }
           >
             {actioning
               ? 'Processing…'

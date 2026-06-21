@@ -15,17 +15,13 @@ type ActingTier = 1 | 2 | 3
 type TierName = 'Bottom' | 'Middle' | 'Top'
 type ApprovalAction = 'Approve' | 'Deny' | 'Acknowledge'
 
-interface BiometricProof {
-  deviceId: string
-  fingerprintHash: string
-}
-
 interface FinanceReviewPayload {
   action: FinanceAction
   requestId: string
   status?: ReviewStatus
   comment?: string
-  biometricProof?: BiometricProof | null
+  mfaFactorId?: string
+  mfaCode?: string
 }
 
 function getActingTier(role: string | null | undefined): ActingTier | null {
@@ -83,35 +79,39 @@ function processFundRequest(
   return { permitted: false, passUp: false, message: 'Invalid request' }
 }
 
-async function requireRecentBiometricProof(
-  supabaseAdmin: ReturnType<typeof createClient>,
-  adminId: string,
-  proof: BiometricProof | null | undefined
+async function verifyMfaCode(
+  supabaseUrl: string,
+  anonKey: string,
+  authHeader: string,
+  factorId: string | undefined,
+  code: string | undefined
 ) {
-  if (!proof?.deviceId || !proof.fingerprintHash) {
-    throw new Error('Fresh biometric verification is required.')
+  if (!factorId || !code) {
+    throw new Error('Authenticator Code (2FA) is required.')
   }
 
-  const cutoff = new Date(Date.now() - 5 * 60 * 1000).toISOString()
-  const { data, error } = await supabaseAdmin
-    .from('admin_device_activity')
-    .select('id, created_at, metadata, admin_devices!inner(id, admin_id, status)')
-    .eq('device_id', proof.deviceId)
-    .eq('action', 'step_up_passed')
-    .eq('admin_devices.admin_id', adminId)
-    .eq('admin_devices.status', 'active')
-    .gte('created_at', cutoff)
-    .order('created_at', { ascending: false })
-    .limit(5)
-
-  if (error) throw new Error('Could not verify biometric approval.')
-
-  const matching = (data ?? []).find((row: { metadata?: { fingerprint_hash?: string } | null }) => {
-    return row.metadata?.fingerprint_hash === proof.fingerprintHash
+  const supabaseUser = createClient(supabaseUrl, anonKey, {
+    global: {
+      headers: {
+        Authorization: authHeader,
+      },
+    },
   })
 
-  if (!matching) {
-    throw new Error('Fresh biometric verification is required.')
+  const { data: challenge, error: challengeError } = await supabaseUser.auth.mfa.challenge({
+    factorId,
+  })
+  if (challengeError) {
+    throw new Error(`MFA challenge failed: ${challengeError.message}`)
+  }
+
+  const { error: verifyError } = await supabaseUser.auth.mfa.verify({
+    factorId,
+    challengeId: challenge.id,
+    code,
+  })
+  if (verifyError) {
+    throw new Error(`Invalid verification code. Please try again.`)
   }
 }
 
@@ -123,8 +123,12 @@ serve(async (req: Request) => {
     return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
   }
 
+  // @ts-expect-error: Deno global
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+  // @ts-expect-error: Deno global
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  // @ts-expect-error: Deno global
+  const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
   const supabaseAdmin = createClient(supabaseUrl, serviceKey)
 
   const authz = await requireAuthorizedAdmin(req, supabaseAdmin, authorizeFinanceReviewer)
@@ -147,7 +151,13 @@ serve(async (req: Request) => {
       return json({ error: 'Not authorized.' }, 403, corsHeaders)
     }
 
-    await requireRecentBiometricProof(supabaseAdmin, authz.callerUserId, payload.biometricProof)
+    await verifyMfaCode(
+      supabaseUrl,
+      anonKey,
+      req.headers.get('Authorization') ?? '',
+      payload.mfaFactorId,
+      payload.mfaCode
+    )
 
     const { data: settingsRows, error: settingsError } = await supabaseAdmin
       .from('site_settings')
@@ -155,7 +165,9 @@ serve(async (req: Request) => {
       .in('key', ['finance_tier1_max', 'finance_tier2_max'])
     if (settingsError) throw new Error(settingsError.message)
 
-    const settings = Object.fromEntries((settingsRows ?? []).map((row) => [row.key, row.value]))
+    const settings = Object.fromEntries(
+      (settingsRows ?? []).map((row: { key: string; value: any }) => [row.key, row.value])
+    )
     const tier1Max = Number(settings.finance_tier1_max ?? 50)
     const tier2Max = Number(settings.finance_tier2_max ?? 100)
 
