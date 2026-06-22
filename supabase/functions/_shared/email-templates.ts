@@ -456,3 +456,40 @@ export function donationReceiptHtml(d: DonationReceiptHtmlData): string {
 </body>
 </html>`
 }
+
+// ---------------------------------------------------------------------------
+// 07 · Incomplete Registration — nudge to complete missing steps
+// ---------------------------------------------------------------------------
+
+export interface IncompleteRegistrationEmailData {
+  name: string
+  missingSteps: string[]
+  profileUrl: string
+}
+
+export function incompleteRegistrationEmail(d: IncompleteRegistrationEmailData): string {
+  const steps = d.missingSteps
+    .map(
+      (s) =>
+        `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eee">
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid #DAA520;flex-shrink:0"></div>
+          <span style="font-size:13px;color:#181d19">${s}</span>
+        </div>`
+    )
+    .join('')
+
+  return `${SHELL_OPEN}
+  ${TOP_BAR}
+  ${emailHeader('ACTION REQUIRED')}
+  <div style="background:#fff;padding:28px">
+    <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:18px;color:#181d19;margin:0 0 8px">Almost there, ${d.name}!</h2>
+    <p style="font-size:13px;color:#666;line-height:1.6;margin:0 0 20px">Your registration is incomplete. Please complete the following steps to activate your membership:</p>
+    <div style="background:#fffdf5;border:1px solid #f0e6c8;border-radius:6px;padding:16px 20px;margin-bottom:20px">
+      ${steps}
+    </div>
+    ${ctaButton('Complete My Registration →', d.profileUrl, '#DAA520')}
+    <p style="font-size:11px;color:#999;text-align:center;margin-top:16px">Complete these steps to unlock your full membership benefits — digital card, voting, and chapter access.</p>
+  </div>
+  ${emailFooter('THE BASE MOVEMENT · GHANA FIRST, JOBS FOR THE YOUTH!')}
+  ${SHELL_CLOSE}`
+}
