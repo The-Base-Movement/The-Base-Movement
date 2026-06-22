@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import type { Chapter } from '@/services/adminService'
 import { adminService } from '@/services/adminService'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { Pagination } from '@/components/Pagination'
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
@@ -481,61 +482,13 @@ export function ChaptersGrid({
         )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div
-          className="pagination-bar"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingTop: 14,
-            borderTop: '1px solid hsl(var(--border))',
-          }}
-        >
-          <span
-            style={{
-              fontSize: 11.5,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-            }}
-          >
-            Showing {(currentPage - 1) * itemsPerPage + 1}–
-            {Math.min(currentPage * itemsPerPage, filteredChapters.length)} of{' '}
-            {filteredChapters.length} chapters
-          </span>
-          <div style={{ display: 'flex', gap: 4 }}>
-            <button
-              className="btn btn-outline btn-sm"
-              disabled={currentPage === 1}
-              onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                chevron_left
-              </span>
-            </button>
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                className={`btn btn-sm ${currentPage === i + 1 ? 'btn-dest' : 'btn-outline'}`}
-                onClick={() => onPageChange(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              className="btn btn-outline btn-sm"
-              disabled={currentPage === totalPages}
-              onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                chevron_right
-              </span>
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        totalItems={filteredChapters.length}
+        pageSize={itemsPerPage}
+      />
     </>
   )
 }

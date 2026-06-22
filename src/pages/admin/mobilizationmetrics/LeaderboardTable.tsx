@@ -2,6 +2,7 @@ import { useState } from 'react'
 import MobilizationLeaderboardCard from '@/components/admin/MobilizationLeaderboardCard'
 import { pillBase, rankStyle } from './utils'
 import type { ChapterLeaderboard } from '@/types/admin'
+import { Pagination } from '@/components/Pagination'
 
 interface LeaderboardTableProps {
   filteredLeaderboard: ChapterLeaderboard[]
@@ -217,141 +218,13 @@ export function LeaderboardTable({ filteredLeaderboard }: LeaderboardTableProps)
         )}
       </div>
 
-      {/* Pagination Footer */}
-      {totalPages > 1 && (
-        <div
-          style={{
-            padding: '12px 20px',
-            borderTop: '1px solid hsl(var(--border))',
-            background: 'hsl(var(--container-low))',
-          }}
-        >
-          {/* Count label — always on its own line */}
-          <span
-            style={{
-              display: 'block',
-              fontFamily: "'Public Sans', sans-serif",
-              fontSize: 11,
-              color: 'hsl(var(--on-surface-muted))',
-              marginBottom: 8,
-            }}
-          >
-            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} regions
-          </span>
-
-          {/* Desktop: numbered page buttons */}
-          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <button
-              className="btn btn-outline btn-sm"
-              style={{
-                height: 28,
-                padding: '0 8px',
-                minWidth: 28,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_left
-              </span>
-            </button>
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const pageNum = i + 1
-              const isActive = pageNum === currentPage
-              return (
-                <button
-                  key={pageNum}
-                  className={isActive ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-                  style={{
-                    height: 28,
-                    width: 28,
-                    padding: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: isActive ? '600' : '400',
-                    fontSize: 11,
-                  }}
-                  onClick={() => setCurrentPage(pageNum)}
-                >
-                  {pageNum}
-                </button>
-              )
-            })}
-            <button
-              className="btn btn-outline btn-sm"
-              style={{
-                height: 28,
-                padding: '0 8px',
-                minWidth: 28,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_right
-              </span>
-            </button>
-          </div>
-
-          {/* Mobile: Prev · X / Y · Next */}
-          <div className="mobile-only" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              className="btn btn-outline btn-sm"
-              style={{
-                height: 32,
-                padding: '0 12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_left
-              </span>
-              Prev
-            </button>
-            <span
-              style={{
-                flex: 1,
-                textAlign: 'center',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 13,
-                color: 'hsl(var(--on-surface))',
-              }}
-            >
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              className="btn btn-outline btn-sm"
-              style={{
-                height: 32,
-                padding: '0 12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_right
-              </span>
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        totalItems={totalItems}
+        pageSize={endIndex - startIndex}
+      />
     </div>
   )
 }

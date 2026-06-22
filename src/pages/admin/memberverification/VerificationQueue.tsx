@@ -3,6 +3,7 @@ import { statusPill, PAGE_SIZE, STATUS_OPTIONS } from './utils'
 import type { PendingVerification } from '@/services/adminService'
 import { Skeleton } from '@/components/states'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { Pagination } from '@/components/Pagination'
 
 interface VerificationQueueProps {
   loading: boolean
@@ -431,72 +432,13 @@ export function VerificationQueue({
         </>
       )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div
-          className="pagination-bar"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '12px 18px',
-            borderTop: '1px solid hsl(var(--border))',
-            background: 'hsl(var(--container-low))',
-          }}
-        >
-          <span
-            style={{
-              fontSize: 11.5,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-              color: 'hsl(var(--on-surface-muted))',
-            }}
-          >
-            {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of{' '}
-            {filtered.length}
-          </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <button
-              className="btn btn-ghost btn-sm"
-              disabled={safePage === 1}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_left
-              </span>
-            </button>
-            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 4,
-                  border: '1px solid hsl(var(--border))',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 11,
-                  cursor: 'pointer',
-                  background: page === safePage ? 'hsl(var(--primary))' : '#fff',
-                  color: page === safePage ? '#fff' : 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              className="btn btn-ghost btn-sm"
-              disabled={safePage === totalPages}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_right
-              </span>
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={safePage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        totalItems={filtered.length}
+        pageSize={PAGE_SIZE}
+      />
     </div>
   )
 }

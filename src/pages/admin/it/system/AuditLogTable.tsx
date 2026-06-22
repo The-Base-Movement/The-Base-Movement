@@ -10,6 +10,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { Pagination } from '@/components/Pagination'
 import type { AuditLog, Severity } from './types'
 import { SEV, PAGE_SIZE } from './types'
 
@@ -314,35 +315,13 @@ export function AuditLogTable() {
               background: 'hsl(var(--container-low))',
             }}
           >
-            <span
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontSize: 11,
-                color: 'hsl(var(--on-surface-muted))',
-              }}
-            >
-              {filtered.length} events · Page {page} of {totalPages}
-            </span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button
-                className="btn btn-outline btn-sm"
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                  chevron_left
-                </span>
-              </button>
-              <button
-                className="btn btn-outline btn-sm"
-                disabled={page === totalPages}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                  chevron_right
-                </span>
-              </button>
-            </div>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              totalItems={filtered.length}
+              pageSize={PAGE_SIZE}
+            />
           </div>
         )}
       </div>

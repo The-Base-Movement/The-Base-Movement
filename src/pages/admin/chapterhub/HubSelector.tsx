@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { Pagination } from '@/components/Pagination'
 
 interface HubSelectorProps {
   chapters: Chapter[]
@@ -254,62 +255,13 @@ export function HubSelector({ chapters }: HubSelectorProps) {
         )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingTop: 20,
-            borderTop: '1px solid hsl(var(--border))',
-            marginTop: 20,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 11.5,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            Showing {(currentPage - 1) * itemsPerPage + 1}–
-            {Math.min(currentPage * itemsPerPage, filteredHubs.length)} of {filteredHubs.length}{' '}
-            regional hubs
-          </span>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <button
-              className="btn btn-outline btn-sm"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_left
-              </span>
-            </button>
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                className={`btn btn-sm ${currentPage === i + 1 ? 'btn-dest' : 'btn-outline'}`}
-                style={{ minWidth: 32 }}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              className="btn btn-outline btn-sm"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                chevron_right
-              </span>
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        totalItems={filteredHubs.length}
+        pageSize={itemsPerPage}
+      />
     </div>
   )
 }

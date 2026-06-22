@@ -4,6 +4,7 @@ import { constituencyService } from '@/services/constituencyService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
 import type { Constituency } from '@/types/admin'
+import { Pagination } from '@/components/Pagination'
 
 const GHANA_REGIONS = [
   'All Regions',
@@ -473,103 +474,13 @@ export default function AdminConstituencies() {
       </div>
 
       {!loading && filtered.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 16,
-            flexWrap: 'wrap',
-            gap: 12,
-          }}
-        >
-          <p
-            style={{
-              fontSize: 12,
-              color: 'hsl(var(--on-surface-muted))',
-              margin: 0,
-              fontFamily: "'Public Sans', sans-serif",
-            }}
-          >
-            Showing {Math.min(filtered.length, (currentPage - 1) * ITEMS_PER_PAGE + 1)} to{' '}
-            {Math.min(filtered.length, currentPage * ITEMS_PER_PAGE)} of {filtered.length}{' '}
-            constituencies
-          </p>
-
-          {totalPages > 1 && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-              }}
-            >
-              <button
-                className="btn btn-outline btn-sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                style={{ justifyContent: 'center' }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                  chevron_left
-                </span>
-              </button>
-              {(() => {
-                const range: (number | string)[] = []
-                const delta = 1
-                for (let i = 1; i <= totalPages; i++) {
-                  if (
-                    i === 1 ||
-                    i === totalPages ||
-                    (i >= currentPage - delta && i <= currentPage + delta)
-                  ) {
-                    range.push(i)
-                  } else if (range[range.length - 1] !== '...') {
-                    range.push('...')
-                  }
-                }
-                return range.map((p, idx) => {
-                  if (p === '...') {
-                    return (
-                      <span
-                        key={`ellipsis-${idx}`}
-                        style={{
-                          padding: '0 8px',
-                          color: 'hsl(var(--on-surface-muted))',
-                          fontSize: 13,
-                        }}
-                      >
-                        ...
-                      </span>
-                    )
-                  }
-                  return (
-                    <button
-                      key={p}
-                      onClick={() => setCurrentPage(p as number)}
-                      className={
-                        currentPage === p ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
-                      }
-                      style={{ minWidth: 32, height: 32, justifyContent: 'center', padding: 0 }}
-                    >
-                      {p}
-                    </button>
-                  )
-                })
-              })()}
-              <button
-                className="btn btn-outline btn-sm"
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                style={{ justifyContent: 'center' }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                  chevron_right
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filtered.length}
+          pageSize={ITEMS_PER_PAGE}
+        />
       )}
     </div>
   )

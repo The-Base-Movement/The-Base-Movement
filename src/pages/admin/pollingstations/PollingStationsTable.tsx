@@ -1,5 +1,6 @@
 import { type Station } from './utils'
 import { DotLoader } from '@/components/states'
+import { Pagination } from '@/components/Pagination'
 
 interface PollingStationsTableProps {
   loading: boolean
@@ -282,65 +283,14 @@ export function PollingStationsTable({
         )}
       </div>
 
-      {/* Pagination */}
-      {!loading && totalPages > 1 && (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 10,
-            padding: '12px 18px',
-            borderTop: '1px solid hsl(var(--border))',
-            fontFamily: "'Public Sans', sans-serif",
-          }}
-        >
-          <span
-            style={{
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 11.5,
-              color: 'hsl(var(--on-surface-muted))',
-            }}
-          >
-            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} of{' '}
-            {totalCount.toLocaleString()} stations
-          </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              className="btn btn-outline btn-sm"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              style={{ opacity: page <= 1 ? 0.4 : 1 }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                chevron_left
-              </span>
-              Previous
-            </button>
-            <span
-              style={{
-                fontWeight: 'var(--font-weight-semibold, 600)',
-                fontSize: 12,
-                color: 'hsl(var(--on-surface))',
-                minWidth: 80,
-                textAlign: 'center',
-              }}
-            >
-              Page {page} of {totalPages}
-            </span>
-            <button
-              className="btn btn-outline btn-sm"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              style={{ opacity: page >= totalPages ? 0.4 : 1 }}
-            >
-              Next
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                chevron_right
-              </span>
-            </button>
-          </div>
-        </div>
+      {!loading && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          totalItems={totalCount}
+          pageSize={pageSize}
+        />
       )}
     </>
   )
