@@ -22,6 +22,9 @@ export interface Member {
   jobSubCategoryId?: number | null
   jobRoleId?: number | null
   jobCustomTitle?: string | null
+  emergencyName?: string
+  emergencyRelationship?: string
+  emergencyPhone?: string
   registrationSource?: 'digital' | 'scan' | 'admin'
   deletedAt?: string
 }

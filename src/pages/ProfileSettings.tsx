@@ -40,6 +40,9 @@ interface FormState {
   country: string
   city: string
   residentialAddress: string
+  emergencyName: string
+  emergencyRelationship: string
+  emergencyPhone: string
 }
 
 function onlyDigits(value: string) {
@@ -147,6 +150,9 @@ export default function ProfileSettings() {
     country: userPlatform === 'GHANA' ? 'Ghana' : '',
     city: '',
     residentialAddress: '',
+    emergencyName: '',
+    emergencyRelationship: '',
+    emergencyPhone: '',
   })
 
   const [job, setJob] = useState<JobSelection>(emptyJobSelection)
@@ -210,6 +216,9 @@ export default function ProfileSettings() {
           country: profileCountry,
           city: profile.city || '',
           residentialAddress: profile.residentialAddress || '',
+          emergencyName: profile.emergencyName || '',
+          emergencyRelationship: profile.emergencyRelationship || '',
+          emergencyPhone: profile.emergencyPhone || '',
         })
         if (profile.avatarUrl) {
           setAvatarUrl(profile.avatarUrl)
@@ -352,6 +361,9 @@ export default function ProfileSettings() {
         country: form.country,
         city: form.city,
         residentialAddress: form.residentialAddress,
+        emergencyName: form.emergencyName,
+        emergencyRelationship: form.emergencyRelationship,
+        emergencyPhone: form.emergencyPhone,
         job,
       })
       await authService.updateProfile({

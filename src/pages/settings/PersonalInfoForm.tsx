@@ -19,6 +19,9 @@ interface FormState {
   country: string
   city: string
   residentialAddress: string
+  emergencyName: string
+  emergencyRelationship: string
+  emergencyPhone: string
 }
 
 interface Props {
@@ -414,6 +417,66 @@ export function PersonalInfoForm({
               placeholder="Physical address for mobilization and logistics"
               style={inputStyle}
             />
+          </div>
+
+          {/* Emergency Contact */}
+          <div
+            className="profile-form-full"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gap: 14,
+              borderTop: '1px solid hsl(var(--border))',
+              paddingTop: 16,
+              marginTop: 8,
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label htmlFor="input-emerg-name" style={labelStyle}>
+                Emergency contact name
+              </label>
+              <input
+                id="input-emerg-name"
+                value={form.emergencyName}
+                onChange={(e) => onChange('emergencyName', e.target.value)}
+                placeholder="Full name"
+                style={inputStyle}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label htmlFor="select-emerg-rel" style={labelStyle}>
+                Relationship
+              </label>
+              <div style={{ position: 'relative' }}>
+                <select
+                  id="select-emerg-rel"
+                  value={form.emergencyRelationship}
+                  onChange={(e) => onChange('emergencyRelationship', e.target.value)}
+                  style={selectStyle}
+                >
+                  <option value="">Select</option>
+                  {['Parent', 'Spouse', 'Sibling', 'Child', 'Friend', 'Other'].map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+                <SelIcon />
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label htmlFor="input-emerg-phone" style={labelStyle}>
+                Emergency phone
+              </label>
+              <input
+                id="input-emerg-phone"
+                type="tel"
+                value={form.emergencyPhone}
+                onChange={(e) => onChange('emergencyPhone', e.target.value)}
+                placeholder="+233 XX XXX XXXX"
+                style={inputStyle}
+              />
+            </div>
           </div>
 
           {/* Bio — full width */}
