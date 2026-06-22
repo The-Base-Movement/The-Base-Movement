@@ -11,7 +11,7 @@ from database import get_client
 class AdminIdentity(BaseModel):
     user_id: str
     role: str | None = None
-    permissions: dict[str, Any] | None = None
+    permissions: list[dict[str, Any]] | dict[str, Any] | None = None
 
 
 def _extract_bearer_token(authorization: str | None) -> str:
