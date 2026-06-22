@@ -96,7 +96,13 @@ export const registrationService = {
       }
     }
 
-    // 3. Insert user profile into database
+    // 3. Determine auto-approval eligibility
+    const hasPhoto = !!finalAvatarUrl
+    const ghanaReady = platform === 'GHANA' && hasPhoto && !!formData.constituency
+    const diasporaReady = platform === 'DIASPORA' && hasPhoto
+    const autoApproved = ghanaReady || diasporaReady
+
+    // 4. Insert user profile into database
     const { error: dbError } = await supabase.from('users').insert({
       id: authData.user?.id,
       national_id: formData.idNumber,
@@ -115,8 +121,8 @@ export const registrationService = {
       job_sub_category_id: formData.job?.subCategoryId ?? null,
       job_role_id: formData.job?.isOther ? null : (formData.job?.roleId ?? null),
       job_custom_title: formData.job?.isOther ? formData.job.customTitle.trim() || null : null,
-      status: 'Pending',
-      verification_status: 'In Review',
+      status: autoApproved ? 'Active' : 'Pending',
+      verification_status: autoApproved ? 'Approved' : 'In Review',
       age_range: formData.ageRange,
       avatar_url: finalAvatarUrl,
       education_level: formData.educationLevel,
