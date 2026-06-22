@@ -6,7 +6,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { pollClosingEmail } from '../_shared/email-templates.ts'
-import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -92,6 +92,8 @@ Deno.serve(async (req: Request) => {
     let sentCount = 0
     const BATCH = 100
 
+    const senderEmail = await getSenderEmail(supabaseAdmin)
+
     for (let i = 0; i < recipients.length; i += BATCH) {
       const batch = recipients.slice(i, i + BATCH)
 
@@ -125,7 +127,7 @@ Deno.serve(async (req: Request) => {
             body: JSON.stringify({
               personalizations: [{ to: p.to }],
               from: {
-                email: 'noreply@thebasemovement.info',
+                email: senderEmail,
                 name: 'The Base Movement',
               },
               subject: `This poll closes in ${hoursRemaining} hours. Your vote counts.`,

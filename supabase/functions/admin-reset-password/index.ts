@@ -14,6 +14,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { getSenderEmail } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -94,12 +95,13 @@ serve(async (req: Request) => {
     let emailed = false
     if (sgKey) {
       try {
+        const senderEmail = await getSenderEmail(admin)
         const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
           method: 'POST',
           headers: { Authorization: `Bearer ${sgKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             personalizations: [{ to: [{ email: realEmail }] }],
-            from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
+            from: { email: senderEmail, name: 'The Base Movement' },
             subject: 'Reset your Base Movement password',
             content: [
               {

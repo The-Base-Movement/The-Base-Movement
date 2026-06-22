@@ -6,7 +6,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { welcomeEmail } from '../_shared/email-templates.ts'
-import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -74,12 +74,13 @@ Deno.serve(async (req: Request) => {
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
 
     if (sgKey && memberEmail) {
+      const senderEmail = await getSenderEmail(supabaseAdmin)
       const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
         body: JSON.stringify({
           personalizations: [{ to: [{ email: memberEmail }] }],
-          from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
+          from: { email: senderEmail, name: 'The Base Movement' },
           subject: 'You are now a verified member of The Base.',
           content: [{ type: 'text/html', value: html }],
         }),

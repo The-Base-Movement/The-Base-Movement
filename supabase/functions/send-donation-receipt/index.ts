@@ -3,7 +3,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
-import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
 
 const SITE_BASE = 'https://thebasemovement.info'
 
@@ -154,12 +154,13 @@ Deno.serve(async (req: Request) => {
       const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
 
       if (sgKey) {
+        const senderEmail = await getSenderEmail(supabaseAdmin)
         const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
           body: JSON.stringify({
             personalizations: [{ to: [{ email: memberEmail }] }],
-            from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
+            from: { email: senderEmail, name: 'The Base Movement' },
             subject: `Your ${amountStr} contribution is confirmed — Receipt ${row.reference}`,
             content: [{ type: 'text/html', value: emailHtml }],
           }),

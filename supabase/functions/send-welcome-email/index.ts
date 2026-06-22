@@ -7,7 +7,7 @@
 // Required secret: SENDGRID_API_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { canManageMembers, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
+import { canManageMembers, requireAuthorizedAdmin, getSenderEmail } from '../_shared/admin-auth.ts'
 import { welcomeEmail } from '../_shared/email-templates.ts'
 
 const corsHeaders = {
@@ -88,6 +88,8 @@ Deno.serve(async (req) => {
       totalMembers: (count ?? 0).toLocaleString('en-GB'),
     })
 
+    const senderEmail = await getSenderEmail(supabase)
+
     const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
       headers: {
@@ -96,7 +98,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: row.email }] }],
-        from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
+        from: { email: senderEmail, name: 'The Base Movement' },
         subject: `Welcome to The Base, ${firstName} — you're now a verified member`,
         content: [{ type: 'text/html', value: html }],
       }),

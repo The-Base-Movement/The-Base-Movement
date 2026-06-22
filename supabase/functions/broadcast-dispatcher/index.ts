@@ -6,7 +6,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { broadcastEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
-import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -80,6 +80,7 @@ Deno.serve(async (req: Request) => {
     const emailRecipients = recipients.filter((u) => u.email).map((u) => u.email as string)
 
     if (sgKey && emailRecipients.length > 0) {
+      const senderEmail = await getSenderEmail(supabaseAdmin)
       // SendGrid supports up to 1000 personalizations per call
       const BATCH = 1000
       for (let i = 0; i < emailRecipients.length; i += BATCH) {
@@ -89,7 +90,7 @@ Deno.serve(async (req: Request) => {
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
           body: JSON.stringify({
             personalizations: batch.map((email) => ({ to: [{ email }] })),
-            from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
+            from: { email: senderEmail, name: 'The Base Movement' },
             subject: subject ?? 'Movement update',
             content: [{ type: 'text/html', value: html }],
           }),

@@ -125,3 +125,26 @@ export async function requireAuthorizedAdmin(
     viaServiceRole: false,
   }
 }
+
+/**
+ * Resolves the SendGrid sender email dynamically.
+ * Resolves in order:
+ * 1. SENDER_EMAIL environment variable
+ * 2. site_settings table (key: newsletter_email)
+ * 3. fallback to 'noreply@thebasemovement.info'
+ */
+export async function getSenderEmail(supabaseAdmin: SupabaseClient): Promise<string> {
+  // @ts-expect-error: Deno supports Deno.env
+  let senderEmail = Deno.env.get('SENDER_EMAIL')
+  if (!senderEmail) {
+    const { data: emailSetting } = await supabaseAdmin
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'newsletter_email')
+      .maybeSingle()
+    if (emailSetting?.value) {
+      senderEmail = emailSetting.value
+    }
+  }
+  return senderEmail || 'noreply@thebasemovement.info'
+}

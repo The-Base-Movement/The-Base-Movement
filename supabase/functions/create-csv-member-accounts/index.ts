@@ -4,7 +4,12 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { csvImportWelcomeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
-import { canManageMembers, json, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
+import {
+  canManageMembers,
+  json,
+  requireAuthorizedAdmin,
+  getSenderEmail,
+} from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -76,6 +81,7 @@ serve(async (req: Request) => {
     const createdUsers = []
     const skippedUsers = []
     const failedUsers = []
+    const senderEmail = sgKey ? await getSenderEmail(supabaseAdmin) : ''
 
     for (const member of members) {
       const normalizedPhone = normalizePhoneNumber(member.phone)
@@ -162,7 +168,7 @@ serve(async (req: Request) => {
               body: JSON.stringify({
                 personalizations: [{ to: [{ email: member.email }] }],
                 from: {
-                  email: 'noreply@thebasemovement.info',
+                  email: senderEmail,
                   name: 'The Base Movement',
                 },
                 subject: 'Your Base Movement account is ready',
