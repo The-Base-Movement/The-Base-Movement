@@ -19,6 +19,26 @@ const corsHeaders = {
 
 const PROFILE_URL = 'https://www.thebasemovement.info/settings'
 
+async function sendDiscordEmbed(channel: string, embed: Record<string, unknown>): Promise<void> {
+  const channelSecrets: Record<string, string> = {
+    alerts: 'DISCORD_ALERTS_WEBHOOK_URL',
+    members: 'DISCORD_MEMBERS_WEBHOOK_URL',
+  }
+  const secretName = channelSecrets[channel] ?? 'DISCORD_WEBHOOK_URL'
+  const webhookUrl = Deno.env.get(secretName) ?? Deno.env.get('DISCORD_WEBHOOK_URL')
+  if (!webhookUrl) return
+
+  try {
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] }),
+    })
+  } catch (err) {
+    console.warn('[DISCORD]', err)
+  }
+}
+
 interface UserRow {
   id: string
   full_name: string
@@ -149,6 +169,20 @@ async function runSecurityScan(supabase: ReturnType<typeof createClient>): Promi
         .eq('id', member.id)
 
       console.log(`[SECURITY] Flagged ${member.registration_number}: ${flags.join(', ')}`)
+
+      await sendDiscordEmbed('alerts', {
+        title: '🚨 Member Flagged by Security Scan',
+        color: 0xce1126,
+        fields: [
+          { name: 'Member', value: member.full_name, inline: true },
+          { name: 'Reg No', value: member.registration_number, inline: true },
+          { name: 'Region', value: member.region || '—', inline: true },
+          { name: 'Flags', value: flags.join('\n') },
+        ],
+        footer: { text: 'Registration Followup · Security Scan' },
+        timestamp: new Date().toISOString(),
+      })
+
       flagged++
     }
   }
@@ -227,6 +261,37 @@ Deno.serve(async (req) => {
     }
 
     console.log('[REGISTRATION-FOLLOWUP]', JSON.stringify(summary))
+
+    // Discord summary — only post if there was activity
+    if (emailsSent > 0 || smsSent > 0 || flaggedCount > 0) {
+      const fields = []
+      if (emailsSent > 0 || smsSent > 0) {
+        fields.push({
+          name: 'Incomplete Nudges Sent',
+          value: `📧 ${emailsSent} email${emailsSent !== 1 ? 's' : ''} · 📱 ${smsSent} SMS`,
+          inline: true,
+        })
+        fields.push({
+          name: 'Members Checked',
+          value: `${incomplete?.length ?? 0}`,
+          inline: true,
+        })
+      }
+      if (flaggedCount > 0) {
+        fields.push({
+          name: 'Security Flags',
+          value: `⚠️ ${flaggedCount} member${flaggedCount !== 1 ? 's' : ''} flagged for manual review`,
+        })
+      }
+
+      await sendDiscordEmbed('members', {
+        title: '📋 Registration Followup Report',
+        color: flaggedCount > 0 ? 0xdaa520 : 0x006b3f,
+        fields,
+        footer: { text: 'Automated · runs every 30 min' },
+        timestamp: new Date().toISOString(),
+      })
+    }
 
     return new Response(JSON.stringify(summary), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
