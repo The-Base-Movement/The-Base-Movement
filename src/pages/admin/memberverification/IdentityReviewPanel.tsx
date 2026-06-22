@@ -255,13 +255,24 @@ export function IdentityReviewPanel({
         </div>
         <div style={{ padding: '14px 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
-            { label: 'Form submitted', done: true },
-            { label: 'Photo uploaded', done: !!selectedMember.photoUrl },
-            {
-              label: 'Regional chapter approval',
-              done: selectedMember.status === 'Approved',
-            },
-          ].map(({ label, done }) => (
+            { label: 'Form submitted', done: true, required: true },
+            { label: 'Photo uploaded', done: !!selectedMember.photoUrl, required: true },
+            ...(selectedMember.platform === 'GHANA'
+              ? [
+                  {
+                    label: `Constituency verified (${selectedMember.constituency || 'Not set'})`,
+                    done: !!selectedMember.constituency,
+                    required: true,
+                  },
+                ]
+              : [
+                  {
+                    label: `Chapter assignment (${selectedMember.chapter || 'Not set'})`,
+                    done: !!selectedMember.chapter,
+                    required: false,
+                  },
+                ]),
+          ].map(({ label, done, required }) => (
             <div
               key={label}
               style={{
@@ -306,6 +317,21 @@ export function IdentityReviewPanel({
               >
                 {label}
               </span>
+              {!required && (
+                <span
+                  style={{
+                    marginLeft: 'auto',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 9,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  Optional
+                </span>
+              )}
             </div>
           ))}
         </div>
