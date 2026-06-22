@@ -1,5 +1,6 @@
 import ScoreBar from '@/pages/admin/mlintelligence/ScoreBar'
 import KpiStrip from '@/pages/admin/mlintelligence/KpiStrip'
+import DonorCharts from '@/pages/admin/mlintelligence/DonorCharts'
 import type { DonorScore, PropensityResponse } from '@/services/mlService'
 
 export type DonorTierFilter = 'All' | 'High' | 'Medium' | 'Low'
@@ -56,6 +57,8 @@ export default function DonorPropensityTab({
         ]}
       />
 
+      <DonorCharts propensity={propensity} />
+
       <div
         style={{
           display: 'flex',
@@ -66,11 +69,23 @@ export default function DonorPropensityTab({
         }}
       >
         <input
-          className="input"
           placeholder="Search by name, ID, region…"
           value={donorSearch}
           onChange={(event) => onSearch(event.target.value)}
-          style={{ flex: 1, minWidth: 200 }}
+          style={{
+            flex: 1,
+            minWidth: 200,
+            height: 36,
+            padding: '0 12px',
+            fontFamily: "'Public Sans', sans-serif",
+            fontSize: 12,
+            color: 'hsl(var(--on-surface))',
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
         />
         {(['All', 'High', 'Medium', 'Low'] as DonorTierFilter[]).map((tier) => (
           <button

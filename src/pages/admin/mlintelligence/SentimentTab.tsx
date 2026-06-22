@@ -1,4 +1,5 @@
 import KpiStrip from '@/pages/admin/mlintelligence/KpiStrip'
+import SentimentCharts from '@/pages/admin/mlintelligence/SentimentCharts'
 import type { RegionSentiment, SentimentResponse } from '@/services/mlService'
 
 const sentimentColor: Record<string, string> = {
@@ -51,6 +52,8 @@ export default function SentimentTab({ sentiment }: Props) {
           },
         ]}
       />
+
+      <SentimentCharts sentiment={sentiment} />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {sentiment.regions.map((region: RegionSentiment) => {

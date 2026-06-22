@@ -1,4 +1,5 @@
 import KpiStrip from '@/pages/admin/mlintelligence/KpiStrip'
+import ForecastCharts from '@/pages/admin/mlintelligence/ForecastCharts'
 import type { ForecastResponse } from '@/services/mlService'
 
 const confidenceColor: Record<string, string> = {
@@ -38,6 +39,8 @@ export default function ForecastTab({ forecast }: Props) {
           },
         ]}
       />
+
+      <ForecastCharts forecast={forecast} />
 
       <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
         <div
