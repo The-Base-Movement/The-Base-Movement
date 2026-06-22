@@ -13,7 +13,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// @ts-expect-error: Deno global
+// @ts-ignore: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') {
@@ -21,6 +21,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // @ts-ignore: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
     const authz = requireServiceRoleCall(req, serviceKey)
     if (!authz.ok) {
@@ -33,11 +34,11 @@ Deno.serve(async (req: Request) => {
     const { pollId, targetRegion } = await req.json()
     if (!pollId) throw new Error('pollId is required')
 
-    // @ts-expect-error: Deno global
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    // @ts-ignore: Deno global
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    // @ts-ignore: Deno global
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
     // Fetch poll data
     const { data: poll, error: pollErr } = await supabaseAdmin
@@ -86,7 +87,7 @@ Deno.serve(async (req: Request) => {
     }
     const recipients = ((members ?? []) as Member[]).filter((m) => m.email)
 
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
 
     let sentCount = 0
@@ -148,9 +149,9 @@ Deno.serve(async (req: Request) => {
     // Push notifications for all matching members — fire and forget
     const memberIds = ((members ?? []) as Member[]).map((m) => m.id)
     if (memberIds.length > 0) {
-      // @ts-expect-error: Deno global
+      // @ts-ignore: Deno global
       const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''
-      // @ts-expect-error: Deno global
+      // @ts-ignore: Deno global
       const serviceKey: string = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       fetch(`${supabaseUrl}/functions/v1/send-push-notification`, {
         method: 'POST',

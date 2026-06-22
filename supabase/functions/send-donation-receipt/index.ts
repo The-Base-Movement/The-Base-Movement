@@ -22,12 +22,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// @ts-expect-error: Deno global
+// @ts-ignore: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
     const authz = requireServiceRoleCall(req, serviceKey)
     if (!authz.ok) return authz.response
@@ -35,8 +35,8 @@ Deno.serve(async (req: Request) => {
     const { donationId } = (await req.json()) as { donationId: string }
     if (!donationId) throw new Error('donationId is required')
 
+    // @ts-ignore: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const supabaseAdmin = createClient(supabaseUrl, serviceKey ?? '')
 
     interface DonationRow {

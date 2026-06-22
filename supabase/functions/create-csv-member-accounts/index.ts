@@ -52,11 +52,11 @@ serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const sgKey = Deno.env.get('SENDGRID_API_KEY')
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
