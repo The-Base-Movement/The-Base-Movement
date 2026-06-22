@@ -340,4 +340,16 @@ export const discordService = {
       'chapters'
     )
   },
+
+  newsletterSubscription(email: string): void {
+    post(
+      {
+        title: '📬 New Newsletter Subscriber',
+        color: 0x006b3f,
+        fields: [{ name: 'Email', value: email, inline: true }],
+        timestamp: new Date().toISOString(),
+      },
+      'content'
+    )
+  },
 }

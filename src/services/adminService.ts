@@ -2968,6 +2968,7 @@ class AdminService {
       } else if (error) {
         throw error
       }
+      discordService.newsletterSubscription(email)
       return true
     } catch (error) {
       console.error('[DATABASE] Newsletter subscription failed:', error)
