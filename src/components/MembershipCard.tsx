@@ -319,8 +319,12 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
               </>
             )}
 
-            <dt style={dtStyle}>Chapter</dt>
-            <dd style={ddStyle}>{chapter || 'Not Specified'}</dd>
+            {country && country !== 'Ghana' && (
+              <>
+                <dt style={dtStyle}>Chapter</dt>
+                <dd style={ddStyle}>{chapter || 'Not Specified'}</dd>
+              </>
+            )}
 
             <dt style={dtStyle}>Joined</dt>
             <dd style={ddStyle}>{joinedDate || '30 Mar 2025'}</dd>
