@@ -20,10 +20,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
   const chartHeight = Math.max(260, sorted.length * 32)
 
   return (
-    <div
-      className="chapters-charts-grid"
-      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}
-    >
+    <div className="chapters-charts-grid twocol" style={{ marginBottom: 14 }}>
       {/* Horizontal bar chart — resource-to-impact */}
       <div className="panel">
         <div className="ph">
@@ -54,7 +51,11 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 data={sorted}
                 margin={{ top: 4, right: 8, bottom: 4, left: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  horizontal={false}
+                  stroke="hsl(var(--border))"
+                />
                 <XAxis
                   type="number"
                   axisLine={false}
@@ -78,14 +79,15 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                   }}
                 />
                 <Tooltip
-                  cursor={{ fill: 'rgba(128,128,128,0.1)' }}
+                  cursor={{ fill: 'hsl(var(--border) / 0.3)' }}
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--surface))',
+                    background: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
-                    borderRadius: 4,
+                    borderRadius: 'var(--radius-md)',
                     fontSize: 10,
                     fontFamily: "'Public Sans'",
                     color: 'hsl(var(--on-surface))',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                   }}
                   itemStyle={{ color: 'hsl(var(--on-surface))' }}
                   formatter={(value: number, name: string) => [
