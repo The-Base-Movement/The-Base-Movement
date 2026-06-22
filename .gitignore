@@ -56,3 +56,6 @@ docs/**
 # Python caching
 __pycache__/
 *.pyc
+
+# ML service tests (kept locally)
+ml-service/tests/

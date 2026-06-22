@@ -2957,9 +2957,17 @@ class AdminService {
     try {
       const { error } = await supabase
         .from('newsletter_subscribers')
-        .upsert({ email, status: 'Active' }, { onConflict: 'email' })
+        .upsert({ email, status: 'Active' }, { onConflict: 'email', ignoreDuplicates: false })
 
-      if (error) throw error
+      if (error && error.code === '42501') {
+        const { error: insertError } = await supabase
+          .from('newsletter_subscribers')
+          .insert({ email, status: 'Active' })
+        if (insertError && insertError.code === '23505') return true
+        if (insertError) throw insertError
+      } else if (error) {
+        throw error
+      }
       return true
     } catch (error) {
       console.error('[DATABASE] Newsletter subscription failed:', error)

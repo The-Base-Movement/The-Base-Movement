@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import { FacebookIcon, InstagramIcon, TikTokIcon, YouTubeIcon } from './icons/SocialIcons'
 import { adminService } from '../services/adminService'
 import { useBranding } from '@/hooks/useBranding'
@@ -38,14 +39,23 @@ export default function Footer() {
   const { settings } = useBranding()
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email) return
-    const success = await adminService.subscribeToNewsletter(email)
+    if (!email.trim() || !email.includes('@')) {
+      toast.error('Please enter a valid email address.')
+      return
+    }
+    setSubmitting(true)
+    const success = await adminService.subscribeToNewsletter(email.trim())
+    setSubmitting(false)
     if (success) {
       setSubscribed(true)
       setEmail('')
+      toast.success("Subscribed! You'll receive updates from The Base.")
+    } else {
+      toast.error('Subscription failed. Please try again.')
     }
   }
 
@@ -302,8 +312,8 @@ export default function Footer() {
                   onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
                   onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
                 />
-                <ButtonPrimary type="submit" className="w-full">
-                  Subscribe
+                <ButtonPrimary type="submit" className="w-full" disabled={submitting}>
+                  {submitting ? 'Subscribing…' : 'Subscribe'}
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                     send
                   </span>
