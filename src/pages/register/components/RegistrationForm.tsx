@@ -511,9 +511,9 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 <div className="space-y-4 animate-in fade-in duration-0">
                   {/* Job selection — dependent Industry → Sub-Category → Job Role */}
                   <div className="space-y-1.5">
-                    <label className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
+                    <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
                       Profession
-                    </label>
+                    </span>
                     <JobSelector
                       value={formData.job ?? emptyJobSelection}
                       onChange={(j) => onInputChange('job', j)}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ChoiceStep } from './register/components/ChoiceStep'
@@ -20,9 +20,20 @@ export default function Register() {
   const [searchParams] = useSearchParams()
   const platformParam = searchParams.get('platform')
   const refParam = searchParams.get('ref')
-  const [step, setStep] = useState<'choice' | 'form'>(platformParam ? 'form' : 'choice')
-  const [formStep, setFormStep] = useState<number>(1)
-  const [platform, setPlatform] = useState(platformParam || 'GHANA')
+  const _savedDraft = (() => {
+    try {
+      const s = sessionStorage.getItem('reg_draft')
+      return s ? JSON.parse(s) : null
+    } catch {
+      return null
+    }
+  })()
+
+  const [step, setStep] = useState<'choice' | 'form'>(
+    platformParam ? 'form' : _savedDraft?.formData ? 'form' : 'choice'
+  )
+  const [formStep, setFormStep] = useState<number>(_savedDraft?.formStep || 1)
+  const [platform, setPlatform] = useState(platformParam || _savedDraft?.platform || 'GHANA')
   const [showPassword, setShowPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
   const [physicalSubmitted, setPhysicalSubmitted] = useState(false)
@@ -40,27 +51,63 @@ export default function Register() {
   const { isLoading, regNumber, submitted, setSubmitted, submitRegistration, cooldown } =
     useRegistrationSubmit()
 
-  const [formData, setFormData] = useState<RegistrationFormData>({
-    idNumber: '',
-    fullName: '',
-    countryCode: '+233',
-    country: 'Ghana',
-    children_count: 0,
-    contactNumber: '',
-    ageRange: '',
-    gender: 'Male',
-    password: '',
-    email: '',
-    residentialAddress: '',
-    region: '',
-    constituency: '',
-    chapter: '',
-    profession: '',
-    educationLevel: '',
-    emergencyContactName: '',
-    emergencyRelationship: '',
-    emergencyNumber: '',
+  const DRAFT_KEY = 'reg_draft'
+
+  const [formData, setFormData] = useState<RegistrationFormData>(() => {
+    const defaults: RegistrationFormData = {
+      idNumber: '',
+      fullName: '',
+      countryCode: '+233',
+      country: 'Ghana',
+      children_count: 0,
+      contactNumber: '',
+      ageRange: '',
+      gender: 'Male',
+      password: '',
+      email: '',
+      residentialAddress: '',
+      region: '',
+      constituency: '',
+      chapter: '',
+      profession: '',
+      educationLevel: '',
+      emergencyContactName: '',
+      emergencyRelationship: '',
+      emergencyNumber: '',
+    }
+    try {
+      const saved = sessionStorage.getItem(DRAFT_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.formData) {
+          return { ...defaults, ...parsed.formData, password: '' }
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    return defaults
   })
+
+  const saveDraft = useCallback(() => {
+    try {
+      const { password: _pw, ...safe } = formData
+      sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({
+          formData: safe,
+          platform,
+          formStep,
+        })
+      )
+    } catch {
+      /* ignore */
+    }
+  }, [formData, platform, formStep])
+
+  useEffect(() => {
+    saveDraft()
+  }, [saveDraft])
 
   const handleChange = <K extends keyof RegistrationFormData>(
     field: K,
@@ -202,6 +249,11 @@ export default function Register() {
   }
 
   if (submitted) {
+    try {
+      sessionStorage.removeItem(DRAFT_KEY)
+    } catch {
+      /* ignore */
+    }
     return (
       <main className="bg-container-low min-h-screen py-12 px-4 flex items-center justify-center">
         <SuccessStep
