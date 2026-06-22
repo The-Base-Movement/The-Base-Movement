@@ -269,14 +269,7 @@ export default function NewsletterAnalytics() {
       </div>
 
       {/* Charts row 1: Subscriber Growth + Audience Breakdown */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
-          gap: 16,
-          marginBottom: 20,
-        }}
-      >
+      <div className="twocol" style={{ marginBottom: 20 }}>
         <div className="panel" style={{ padding: '16px 18px' }}>
           <p style={labelStyle}>Subscriber Growth</p>
           {growthData.length > 0 ? (
@@ -406,14 +399,7 @@ export default function NewsletterAnalytics() {
       </div>
 
       {/* Charts row 2: Send Volume + Delivery Performance */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
-          gap: 16,
-          marginBottom: 20,
-        }}
-      >
+      <div className="twocol" style={{ marginBottom: 20 }}>
         <div className="panel" style={{ padding: '16px 18px' }}>
           <p style={labelStyle}>Send Volume Over Time</p>
           {sendVolumeData.length > 0 ? (
