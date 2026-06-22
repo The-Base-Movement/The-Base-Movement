@@ -76,6 +76,8 @@ export default function SentimentCharts({ sentiment }: Props) {
                 fontSize: 11,
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid hsl(var(--border))',
+                background: 'hsl(var(--card))',
+                color: 'hsl(var(--on-surface))',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
               }}
               formatter={(value: number, _name: string, entry) => {
