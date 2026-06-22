@@ -58,6 +58,10 @@ export const registrationService = {
           'An account with this primary phone number (or email) already exists. Try signing in instead.'
         )
       }
+      if (authError.status === 429 || authError.message?.toLowerCase().includes('rate')) {
+        const seconds = authError.message?.match(/(\d+)\s*second/)?.[1] || '60'
+        throw new Error(`RATE_LIMIT:${seconds}`)
+      }
       throw authError
     }
 

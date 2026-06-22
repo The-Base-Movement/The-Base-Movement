@@ -37,7 +37,7 @@ export default function Register() {
 
   const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapters } =
     useRegistrationData()
-  const { isLoading, regNumber, submitted, setSubmitted, submitRegistration } =
+  const { isLoading, regNumber, submitted, setSubmitted, submitRegistration, cooldown } =
     useRegistrationSubmit()
 
   const [formData, setFormData] = useState<RegistrationFormData>({
@@ -316,6 +316,7 @@ export default function Register() {
           formStep={formStep}
           formData={formData}
           isLoading={isLoading}
+          cooldown={cooldown}
           showPassword={showPassword}
           agreed={agreed}
           dbCountries={dbCountries}

@@ -10,6 +10,7 @@ interface RegistrationFormProps {
   formStep: number
   formData: RegistrationFormData
   isLoading: boolean
+  cooldown: number
   showPassword: boolean
   agreed: boolean
   dbCountries: string[]
@@ -36,6 +37,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
     formStep,
     formData,
     isLoading,
+    cooldown,
     showPassword,
     agreed,
     dbCountries,
@@ -688,13 +690,25 @@ export function RegistrationForm(props: RegistrationFormProps) {
             )}
             <button
               type="submit"
-              disabled={(formStep === 4 && !agreed) || (formStep === 3 && !photoUrl) || isLoading}
+              disabled={
+                (formStep === 4 && !agreed) ||
+                (formStep === 3 && !photoUrl) ||
+                isLoading ||
+                cooldown > 0
+              }
               className={cn(
                 'flex-1 h-[46px] font-medium text-sm tracking-tight border-none cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-60',
                 formStep === 4 ? 'bg-accent text-white' : 'bg-primary text-white'
               )}
             >
-              {isLoading ? (
+              {cooldown > 0 ? (
+                <>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    timer
+                  </span>{' '}
+                  Wait {cooldown}s
+                </>
+              ) : isLoading ? (
                 <>
                   <span
                     className="material-symbols-outlined"
