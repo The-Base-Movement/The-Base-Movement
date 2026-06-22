@@ -24,7 +24,7 @@ const LABEL_OVERRIDES: Record<string, string> = {
   members: 'Members',
   store: 'Store',
   chapters: 'Chapters',
-  'regional-hub': 'Reg.',
+  'chapter-ops': 'Chapter Ops',
   settings: 'Settings',
   trash: 'Trash Vault',
   'media-library': 'Media Library',

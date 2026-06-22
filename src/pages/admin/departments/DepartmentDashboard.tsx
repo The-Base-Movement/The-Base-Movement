@@ -42,7 +42,7 @@ const QUICK_LINKS: Record<string, QuickLink[]> = {
   constituency: [
     { to: '/admin/constituencies', icon: 'location_city', label: 'Constituencies', color: GREEN },
     { to: '/admin/regions', icon: 'map', label: 'Regions', color: GOLD },
-    { to: '/admin/regional-hub', icon: 'hub', label: 'Regional Hub', color: INK },
+    { to: '/admin/chapter-ops', icon: 'hub', label: 'Chapter Operations', color: INK },
     { to: '/admin/ground-game', icon: 'directions_walk', label: 'Ground Game', color: RED },
   ],
   chapter: [

@@ -90,7 +90,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
         {currentHubs.map((h) => (
           <Link
             key={h.id}
-            to={`/admin/regional-hub/${h.id}`}
+            to={`/admin/chapter-ops/${h.id}`}
             className="panel"
             style={{
               textDecoration: 'none',

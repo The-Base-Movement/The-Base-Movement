@@ -223,7 +223,7 @@ export const getNavGroups = (
         permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
       },
       {
-        to: '/admin/regional-hub',
+        to: '/admin/chapter-ops',
         icon: 'hub',
         label: 'Chapter operations',
         permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
