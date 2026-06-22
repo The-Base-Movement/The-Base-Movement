@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { Pagination } from '@/components/Pagination'
 import { supabase } from '@/lib/supabase'
 import {
   PieChart,
@@ -68,6 +69,8 @@ export default function NewsletterAnalytics() {
   const [newsletters, setNewsletters] = useState<NewsletterRow[]>([])
   const [subscribers, setSubscribers] = useState<Subscriber[]>([])
   const [loading, setLoading] = useState(true)
+  const [subPage, setSubPage] = useState(1)
+  const SUB_PAGE_SIZE = 20
 
   useEffect(() => {
     async function load() {
@@ -549,42 +552,51 @@ export default function NewsletterAnalytics() {
                   </td>
                 </tr>
               ) : (
-                subscribers.slice(0, 20).map((s) => (
-                  <tr key={s.id}>
-                    <td
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontSize: 12,
-                        color: 'hsl(var(--on-surface))',
-                      }}
-                    >
-                      {s.email}
-                    </td>
-                    <td>
-                      <span className={s.status === 'Active' ? 'pill pill-ok' : 'pill pill-mute'}>
-                        {s.status}
-                      </span>
-                    </td>
-                    <td
-                      style={{
-                        textAlign: 'right',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontSize: 11,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      {new Date(s.created_at).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </td>
-                  </tr>
-                ))
+                subscribers
+                  .slice((subPage - 1) * SUB_PAGE_SIZE, subPage * SUB_PAGE_SIZE)
+                  .map((s) => (
+                    <tr key={s.id}>
+                      <td
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {s.email}
+                      </td>
+                      <td>
+                        <span className={s.status === 'Active' ? 'pill pill-ok' : 'pill pill-mute'}>
+                          {s.status}
+                        </span>
+                      </td>
+                      <td
+                        style={{
+                          textAlign: 'right',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {new Date(s.created_at).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </td>
+                    </tr>
+                  ))
               )}
             </tbody>
           </table>
         </div>
+        <Pagination
+          currentPage={subPage}
+          totalPages={Math.ceil(subscribers.length / SUB_PAGE_SIZE)}
+          onPageChange={setSubPage}
+          totalItems={subscribers.length}
+          pageSize={SUB_PAGE_SIZE}
+        />
       </div>
     </div>
   )

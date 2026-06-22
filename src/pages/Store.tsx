@@ -15,7 +15,7 @@ import { adminService } from '@/services/adminService'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { CategoryFilter } from './store/CategoryFilter'
 import { ProductGrid } from './store/ProductGrid'
-import { Pagination } from './store/Pagination'
+import { Pagination } from '@/components/Pagination'
 import { OrderStepper } from './store/OrderStepper'
 
 const categories = ['All', 'Apparel', 'Accessories', 'Books', 'Print']
