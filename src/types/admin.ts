@@ -597,6 +597,7 @@ export type AdminRole =
   | 'EXECUTIVE'
   | 'SUPER_ADMIN'
   | 'ADMIN'
+  | 'ADMIN_L2'
   | 'IT_MANAGER'
   | 'FINANCE_OFFICER'
   | 'REGIONAL_DIRECTOR'
