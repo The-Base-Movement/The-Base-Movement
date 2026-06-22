@@ -224,8 +224,8 @@ export const getNavGroups = (
       },
       {
         to: '/admin/regional-hub',
-        icon: 'shield',
-        label: 'Regional hub',
+        icon: 'hub',
+        label: 'Chapter operations',
         permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
       },
       {

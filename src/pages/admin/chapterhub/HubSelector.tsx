@@ -26,9 +26,9 @@ export function HubSelector({ chapters }: HubSelectorProps) {
   return (
     <div className="main">
       <AdminPageHeader
-        title="Regional Hub Command"
-        icon="shield"
-        description="Select a regional chapter to view its operational telemetry and personnel."
+        title="Chapter Operations"
+        icon="hub"
+        description="Select a chapter to view its members, donations, and operational status."
       />
 
       {/* Search */}
@@ -66,10 +66,11 @@ export function HubSelector({ chapters }: HubSelectorProps) {
               paddingRight: 12,
               background: 'hsl(var(--container-low))',
               border: '1px solid hsl(var(--border))',
-              borderRadius: 4,
+              borderRadius: 'var(--radius-sm)',
               fontSize: 13,
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface))',
               outline: 'none',
               boxSizing: 'border-box',
             }}
@@ -94,15 +95,15 @@ export function HubSelector({ chapters }: HubSelectorProps) {
             style={{
               textDecoration: 'none',
               display: 'block',
-              transition: 'transform 0.2s, box-shadow 0.2s',
+              transition: 'transform 0.15s, border-color 0.15s',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-2px)'
-              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.08)'
+              e.currentTarget.style.borderColor = 'hsl(var(--primary))'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'none'
-              e.currentTarget.style.boxShadow = 'none'
+              e.currentTarget.style.borderColor = ''
             }}
           >
             <div style={{ padding: 20 }}>
@@ -111,7 +112,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                   style={{
                     width: 44,
                     height: 44,
-                    borderRadius: 4,
+                    borderRadius: 'var(--radius-sm)',
                     background: 'hsl(var(--container-low))',
                     border: '1px solid hsl(var(--border))',
                     display: 'flex',
