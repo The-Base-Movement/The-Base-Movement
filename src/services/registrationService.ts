@@ -54,9 +54,17 @@ export const registrationService = {
 
     if (authError) {
       if (authError.message?.toLowerCase().includes('already registered')) {
-        throw new Error(
-          'An account with this primary phone number (or email) already exists. Try signing in instead.'
-        )
+        const usedEmail = authEmail && finalAuthEmail === authEmail
+        if (usedEmail) {
+          throw new Error(
+            `An account with the email "${authEmail}" already exists. Please sign in with your email and password instead.`
+          )
+        } else {
+          const displayPhone = formData.countryCode + ' ' + formData.contactNumber
+          throw new Error(
+            `An account with the phone number "${displayPhone}" already exists. Please sign in with your phone number and password instead.`
+          )
+        }
       }
       if (authError.status === 429 || authError.message?.toLowerCase().includes('rate')) {
         const seconds = authError.message?.match(/(\d+)\s*second/)?.[1] || '60'
