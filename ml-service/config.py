@@ -5,7 +5,7 @@ from typing import List
 class Settings(BaseSettings):
     supabase_url: str
     supabase_service_key: str
-    cors_origins: str = "http://localhost:5173,http://localhost:3000,http://localhost:8080"
+    cors_origins: str = "http://localhost:5173,http://localhost:3000,http://localhost:8080,https://www.thebasemovement.info,https://thebasemovement.info"
     port: int = 8000
     environment: str = "development"
 
