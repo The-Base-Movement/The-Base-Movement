@@ -6,12 +6,35 @@
  * theme configuration toggling, real-time alerts dropdown, and user options.
  */
 
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import { CountryBadge } from '@/components/CountryBadge'
 import { getCountryFlag } from '@/lib/utils'
+import { getNavGroups } from '@/components/layouts/admin/navConfig'
 import type { GlobalSearchResult, AdminUser, Notification, AdminPreferences } from '@/types/admin'
+
+interface PageResult {
+  label: string
+  icon: string
+  to: string
+  group: string
+}
+
+function flattenNavItems(groups: ReturnType<typeof getNavGroups>): PageResult[] {
+  const results: PageResult[] = []
+  for (const group of groups) {
+    for (const item of group.items) {
+      results.push({ label: item.label, icon: item.icon, to: item.to, group: group.label })
+      if (item.subItems) {
+        for (const sub of item.subItems) {
+          results.push({ label: sub.label, icon: sub.icon, to: sub.to, group: group.label })
+        }
+      }
+    }
+  }
+  return results
+}
 
 interface AdminTopbarProps {
   isSidebarOpen: boolean
@@ -55,11 +78,23 @@ export function AdminTopbar({
   setSubmitTicketOpen,
   windowWidth,
 }: AdminTopbarProps) {
+  const navigate = useNavigate()
+  const allPages = useMemo(() => flattenNavItems(getNavGroups(0, 0, 0)), [])
+
   // Global Search State
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<GlobalSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+
+  const pageResults = useMemo(() => {
+    if (searchQuery.length < 1) return []
+    const q = searchQuery.toLowerCase()
+    return allPages.filter(
+      (p) => p.label.toLowerCase().includes(q) || p.group.toLowerCase().includes(q)
+    )
+  }, [searchQuery, allPages])
   const [isDarkTheme, setIsDarkTheme] = useState(
     () => document.documentElement.getAttribute('data-theme') === 'dark'
   )
@@ -79,6 +114,7 @@ export function AdminTopbar({
       if (searchQuery.length >= 2) {
         setIsSearching(true)
         setShowSearchResults(true)
+        setActiveIndex(-1)
         try {
           const results = await adminService.globalSearch(searchQuery)
           setSearchResults(results)
@@ -89,7 +125,7 @@ export function AdminTopbar({
         }
       } else {
         setSearchResults([])
-        setShowSearchResults(false)
+        if (searchQuery.length < 1) setShowSearchResults(false)
       }
     }, 300)
 
@@ -154,7 +190,31 @@ export function AdminTopbar({
             placeholder="Search command center…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
+            onFocus={() => searchQuery.length >= 1 && setShowSearchResults(true)}
+            onKeyDown={(e) => {
+              const totalItems = pageResults.length + searchResults.length
+              if (e.key === 'ArrowDown') {
+                e.preventDefault()
+                setActiveIndex((prev) => (prev < totalItems - 1 ? prev + 1 : 0))
+              } else if (e.key === 'ArrowUp') {
+                e.preventDefault()
+                setActiveIndex((prev) => (prev > 0 ? prev - 1 : totalItems - 1))
+              } else if (e.key === 'Enter' && activeIndex >= 0) {
+                e.preventDefault()
+                if (activeIndex < pageResults.length) {
+                  navigate(pageResults[activeIndex].to)
+                } else {
+                  const dbIdx = activeIndex - pageResults.length
+                  if (searchResults[dbIdx]) navigate(searchResults[dbIdx].to)
+                }
+                setShowSearchResults(false)
+                setSearchQuery('')
+                setActiveIndex(-1)
+              } else if (e.key === 'Escape') {
+                setShowSearchResults(false)
+                setActiveIndex(-1)
+              }
+            }}
             style={{
               width: '100%',
               height: 34,
@@ -173,7 +233,7 @@ export function AdminTopbar({
           />
 
           {/* Search results */}
-          {showSearchResults && (
+          {(showSearchResults || pageResults.length > 0) && searchQuery.length >= 1 && (
             <>
               <div
                 style={{ position: 'fixed', inset: 0, zIndex: 40 }}
@@ -213,7 +273,7 @@ export function AdminTopbar({
                       textTransform: 'uppercase',
                     }}
                   >
-                    Global search
+                    Command center
                   </span>
                   {isSearching && (
                     <span
@@ -230,117 +290,236 @@ export function AdminTopbar({
                 </div>
 
                 <div style={{ maxHeight: 380, overflowY: 'auto' }}>
-                  {searchResults.length > 0 ? (
-                    searchResults.map((result) => (
-                      <Link
-                        key={`${result.type}-${result.id}`}
-                        to={result.to}
-                        onClick={() => {
-                          setShowSearchResults(false)
-                          setSearchQuery('')
-                        }}
+                  {pageResults.length > 0 && (
+                    <>
+                      <div
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 10,
-                          padding: '10px 12px',
-                          borderBottom: '1px solid hsl(var(--border))',
-                          textDecoration: 'none',
-                          color: 'inherit',
+                          padding: '6px 12px',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontSize: 9,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface-muted))',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          background: 'hsl(var(--container-low))',
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = 'hsl(var(--card))')
-                        }
-                        onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                       >
-                        <div
+                        Pages
+                      </div>
+                      {pageResults.map((page, idx) => (
+                        <Link
+                          key={page.to}
+                          to={page.to}
+                          onClick={() => {
+                            setShowSearchResults(false)
+                            setSearchQuery('')
+                            setActiveIndex(-1)
+                          }}
                           style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: 'var(--radius-sm)',
-                            background: 'hsl(var(--card))',
-                            border: '1px solid hsl(var(--border))',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
+                            gap: 10,
+                            padding: '10px 12px',
+                            borderBottom: '1px solid hsl(var(--border))',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            background: activeIndex === idx ? 'hsl(var(--card))' : undefined,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'hsl(var(--card))'
+                            setActiveIndex(idx)
+                          }}
+                          onMouseLeave={(e) => {
+                            if (activeIndex !== idx) e.currentTarget.style.background = ''
                           }}
                         >
-                          <span
-                            className="material-symbols-outlined"
-                            style={{ fontSize: 14, color: 'hsl(var(--primary))' }}
-                          >
-                            {result.type === 'Member'
-                              ? 'person'
-                              : result.type === 'Article'
-                                ? 'article'
-                                : result.type === 'Chapter'
-                                  ? 'place'
-                                  : result.type === 'Product'
-                                    ? 'shopping_bag'
-                                    : result.type === 'Broadcast'
-                                      ? 'campaign'
-                                      : 'edit'}
-                          </span>
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
                           <div
                             style={{
-                              fontFamily: "'Public Sans', sans-serif",
-                              fontWeight: 'var(--font-weight-medium, 500)',
-                              fontSize: 12.5,
-                              color: 'hsl(var(--on-surface))',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
+                              width: 30,
+                              height: 30,
+                              borderRadius: 'var(--radius-sm)',
+                              background: 'hsl(var(--primary) / 0.1)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
                             }}
                           >
-                            {result.title}
+                            <span
+                              className="material-symbols-outlined"
+                              style={{ fontSize: 14, color: 'hsl(var(--primary))' }}
+                            >
+                              {page.icon}
+                            </span>
                           </div>
-                          {result.subtitle && (
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <div
                               style={{
                                 fontFamily: "'Public Sans', sans-serif",
                                 fontWeight: 'var(--font-weight-medium, 500)',
-                                fontSize: 10.5,
+                                fontSize: 12.5,
+                                color: 'hsl(var(--on-surface))',
+                              }}
+                            >
+                              {page.label}
+                            </div>
+                            <div
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontSize: 10,
                                 color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
+                              {page.group}
+                            </div>
+                          </div>
+                          <span
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontSize: 9.5,
+                              color: 'hsl(var(--on-surface-muted))',
+                              padding: '2px 6px',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: 'var(--radius-xs)',
+                              flexShrink: 0,
+                            }}
+                          >
+                            Page
+                          </span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+
+                  {searchResults.length > 0 ? (
+                    <>
+                      {pageResults.length > 0 && (
+                        <div
+                          style={{
+                            padding: '6px 12px',
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontSize: 9,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            color: 'hsl(var(--on-surface-muted))',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            background: 'hsl(var(--container-low))',
+                          }}
+                        >
+                          Records
+                        </div>
+                      )}
+                      {searchResults.map((result) => (
+                        <Link
+                          key={`${result.type}-${result.id}`}
+                          to={result.to}
+                          onClick={() => {
+                            setShowSearchResults(false)
+                            setSearchQuery('')
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            padding: '10px 12px',
+                            borderBottom: '1px solid hsl(var(--border))',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background = 'hsl(var(--card))')
+                          }
+                          onMouseLeave={(e) => (e.currentTarget.style.background = '')}
+                        >
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: 'var(--radius-sm)',
+                              background: 'hsl(var(--card))',
+                              border: '1px solid hsl(var(--border))',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                            }}
+                          >
+                            <span
+                              className="material-symbols-outlined"
+                              style={{ fontSize: 14, color: 'hsl(var(--primary))' }}
+                            >
+                              {result.type === 'Member'
+                                ? 'person'
+                                : result.type === 'Article'
+                                  ? 'article'
+                                  : result.type === 'Chapter'
+                                    ? 'place'
+                                    : result.type === 'Product'
+                                      ? 'shopping_bag'
+                                      : result.type === 'Broadcast'
+                                        ? 'campaign'
+                                        : 'edit'}
+                            </span>
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontWeight: 'var(--font-weight-medium, 500)',
+                                fontSize: 12.5,
+                                color: 'hsl(var(--on-surface))',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
-                                marginTop: 2,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 4,
                               }}
                             >
-                              {result.subtitle.split(' · ').map((part, i, arr) => (
-                                <span key={i} className="inline-flex items-center gap-1">
-                                  <CountryBadge flag={getCountryFlag(part)} />
-                                  {i < arr.length - 1 && (
-                                    <span className="mx-1 text-white/20">·</span>
-                                  )}
-                                </span>
-                              ))}
+                              {result.title}
                             </div>
-                          )}
-                        </div>
-                        <span
-                          style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            fontSize: 9.5,
-                            color: 'hsl(var(--on-surface-muted))',
-                            padding: '2px 6px',
-                            border: '1px solid hsl(var(--border))',
-                            borderRadius: 'var(--radius-xs)',
-                            flexShrink: 0,
-                          }}
-                        >
-                          {result.type}
-                        </span>
-                      </Link>
-                    ))
-                  ) : !isSearching ? (
+                            {result.subtitle && (
+                              <div
+                                style={{
+                                  fontFamily: "'Public Sans', sans-serif",
+                                  fontWeight: 'var(--font-weight-medium, 500)',
+                                  fontSize: 10.5,
+                                  color: 'hsl(var(--on-surface-muted))',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  marginTop: 2,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                }}
+                              >
+                                {result.subtitle.split(' · ').map((part, i, arr) => (
+                                  <span key={i} className="inline-flex items-center gap-1">
+                                    <CountryBadge flag={getCountryFlag(part)} />
+                                    {i < arr.length - 1 && (
+                                      <span className="mx-1 text-white/20">·</span>
+                                    )}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <span
+                            style={{
+                              fontFamily: "'Public Sans', sans-serif",
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              fontSize: 9.5,
+                              color: 'hsl(var(--on-surface-muted))',
+                              padding: '2px 6px',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: 'var(--radius-xs)',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {result.type}
+                          </span>
+                        </Link>
+                      ))}
+                    </>
+                  ) : !isSearching && pageResults.length === 0 && searchQuery.length >= 2 ? (
                     <div
                       style={{
                         padding: '28px 16px',
@@ -351,7 +530,7 @@ export function AdminTopbar({
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
-                      No records found for "{searchQuery}"
+                      No results found for "{searchQuery}"
                     </div>
                   ) : null}
                 </div>
