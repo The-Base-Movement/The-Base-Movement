@@ -1,3 +1,20 @@
+/**
+ * SEO Component
+ * -------------------------------------------------------------
+ * Centralized SEO metadata component for all public and dashboard pages.
+ * Wraps `react-helmet-async`'s `<Helmet>` to inject:
+ *
+ * - `<title>` — appends "| The Base Movement" suffix
+ * - `<meta name="description">`
+ * - Robots / canonical tags (suppressed when `noindex` is true)
+ * - Open Graph tags (`og:type`, locale `en_GH`, title, description, image, URL)
+ * - Twitter card tags
+ * - JSON-LD structured data (defaults to a `PoliticalParty` Organization schema;
+ *   override via the `jsonLd` prop for article or other page types)
+ *
+ * `ogImage` defaults to the `og_image_url` branding setting from Supabase.
+ */
+
 import { Helmet } from 'react-helmet-async'
 import { useBranding } from '@/hooks/useBranding'
 

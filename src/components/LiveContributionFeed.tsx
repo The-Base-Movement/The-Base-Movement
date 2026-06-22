@@ -1,3 +1,15 @@
+/**
+ * LiveContributionFeed Component
+ * -------------------------------------------------------------
+ * Shows a real-time scrolling list of recent movement contributions (donations).
+ * On mount it fetches the last 15 donations via `adminService.getPublicDonationFeed`.
+ * When NOT in Low-Bandwidth Mode, a Supabase Realtime subscription is opened so
+ * new donations prepend instantly and the feed auto-scrolls to the top.
+ *
+ * Privacy: contributor names are partially redacted via `maskName`.
+ * Performance: real-time subscription is disabled when `lowBandwidthMode` is on.
+ */
+
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { adminService } from '@/services/adminService'

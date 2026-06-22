@@ -1,9 +1,24 @@
+/**
+ * @file BrandingContext.tsx
+ * @description Provides site branding settings context, allowing components to retrieve primary colors,
+ * fonts, and layout assets loaded dynamically from the backend settings service. Also inserts
+ * a dynamic HTML <style> tag into the <head> using react-helmet-async.
+ */
+
 import React, { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import { Helmet } from 'react-helmet-async'
 import { defaultSettings, type BrandingSettings } from '@/types/branding'
 import { BrandingContext } from '@/hooks/useBranding'
 
+/**
+ * Provider component for the site branding context.
+ * Fetches dynamic branding colors, typography settings, tab configurations, and button designs
+ * from backend service settings and injects them as global CSS variables in the document root.
+ *
+ * @param props - Component props
+ * @param props.children - The child nodes of the branding provider
+ */
 export function BrandingProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<BrandingSettings>(defaultSettings)
 

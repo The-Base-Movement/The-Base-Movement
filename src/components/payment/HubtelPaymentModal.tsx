@@ -1,3 +1,13 @@
+/**
+ * HubtelPaymentModal Component
+ * -------------------------------------------------------------
+ * A modal wrapper containing an iframe pointing to the secure Hubtel payment checkout URL.
+ * Combines:
+ * - Real-time Supabase subscriptions watching updates on 'donations' or 'store_orders' tables
+ * - A fallback polling checker executing status query tasks every 3 seconds
+ * - Interactive cancel/close verification warnings to protect processing states
+ */
+
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -11,6 +21,9 @@ interface HubtelPaymentModalProps {
   onSuccess: () => void
 }
 
+/**
+ * HubtelPaymentModal component definition.
+ */
 export function HubtelPaymentModal({
   isOpen,
   checkoutUrl,

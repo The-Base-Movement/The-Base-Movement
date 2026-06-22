@@ -1,3 +1,10 @@
+/**
+ * Neon Tables Check Script
+ * -------------------------------------------------------------
+ * Checks database tables on Neon by hitting their rest api endpoint
+ * with Neon credentials.
+ */
+
 import fs from 'fs';
 
 const envFile = fs.existsSync('.env') ? fs.readFileSync('.env', 'utf-8') : '';

@@ -1,5 +1,17 @@
+/**
+ * NavConfig Module
+ * -------------------------------------------------------------
+ * Holds structural configuration configurations for the administrative sidebar.
+ * Defines permission gates, role restrictions, and dynamically embeds real-time alerts counts.
+ */
+
 import type { AdminPermission } from '@/types/admin'
 
+/**
+ * NavItem
+ * -------------------------------------------------------------
+ * Represents a single link item configuration in the admin navigation.
+ */
 export interface NavItem {
   to: string
   icon: string
@@ -16,6 +28,7 @@ export interface NavItem {
   subItems?: NavItem[]
 }
 
+// List of routes finance officers are permitted to access
 export const FINANCE_OFFICER_ALLOWED_PATHS = [
   '/admin/departments',
   '/admin/finance-dashboard',
@@ -27,6 +40,7 @@ export const FINANCE_OFFICER_ALLOWED_PATHS = [
   '/admin/finance-requests/review-inbox',
 ]
 
+// List of routes executive roles are permitted to access
 export const EXECUTIVE_ALLOWED_PATHS = [
   '/admin/departments',
   '/admin/executive',
@@ -49,6 +63,12 @@ export const EXECUTIVE_ALLOWED_PATHS = [
   '/admin/members',
 ]
 
+/**
+ * getNavGroups
+ * -------------------------------------------------------------
+ * Dynamic builder yielding navigation groupings grouped under category labels.
+ * Injects count badges for live notifications or queues.
+ */
 export const getNavGroups = (
   pendingVerificationsCount: number,
   pendingDonationsCount: number,

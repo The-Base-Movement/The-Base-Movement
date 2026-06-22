@@ -1,3 +1,10 @@
+/**
+ * Ghana Constituencies SQL Seeder Script
+ * -------------------------------------------------------------
+ * Dynamically builds a SQL file (seed.sql) to seed Ghana's 16 regions
+ * and their corresponding constituencies into the database.
+ */
+
 const fs = require('fs');
 const regions = ['Ahafo', 'Ashanti', 'Bono', 'Bono East', 'Central', 'Eastern', 'Greater Accra', 'North East', 'Northern', 'Oti', 'Savannah', 'Upper East', 'Upper West', 'Volta', 'Western', 'Western North'];
 const regionConstituencies = {

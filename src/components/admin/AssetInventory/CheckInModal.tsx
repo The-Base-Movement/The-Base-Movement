@@ -1,3 +1,10 @@
+/**
+ * CheckInModal Component
+ * -------------------------------------------------------------
+ * Modal prompt asking for confirmation before checking in an asset, followed
+ * by a secondary step to update its current condition and add audit notes.
+ */
+
 import { useState } from 'react'
 import type { AssetCondition } from './types'
 
@@ -40,6 +47,11 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
+/**
+ * CheckInModal
+ * -------------------------------------------------------------
+ * Renders check-in confirmation and intermediate condition status forms.
+ */
 export function CheckInModal({
   assignmentId,
   assetId,

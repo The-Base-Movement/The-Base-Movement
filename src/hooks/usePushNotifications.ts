@@ -1,9 +1,21 @@
+/**
+ * @file usePushNotifications.ts
+ * @description Manages checking support for web push notifications, checking subscription status,
+ * registering service workers, and saving subscriptions to Supabase.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
 
+/**
+ * Helper function to convert base64 VAPID public key string to Uint8Array for PushManager subscription setup.
+ *
+ * @param base64String - Base64 encoded public key string
+ * @returns Uint8Array containing the public key bytes
+ */
 function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -14,6 +26,11 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   return output
 }
 
+/**
+ * Custom hook managing push notifications subscriptions and status for a logged in user.
+ *
+ * @returns Support status, subscription flag, loading indicator, and subscribe/unsubscribe actions.
+ */
 export function usePushNotifications() {
   const { user } = useAuth()
 

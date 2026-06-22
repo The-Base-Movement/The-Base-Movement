@@ -1,3 +1,10 @@
+/**
+ * Helpdesk Component Index
+ * -------------------------------------------------------------
+ * Coordinate container for the IT Helpdesk ticketing system, checking permissions,
+ * managing filter actions, exporting tickets, and displaying detail drawers/modals.
+ */
+
 import { useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import type { AdminRole } from '@/types/admin'
@@ -9,6 +16,11 @@ import type { HelpdeskTicket, HelpdeskProps } from './types'
 
 const SUPER_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER']
 
+/**
+ * exportCSV
+ * -------------------------------------------------------------
+ * Converts ticket array into CSV document format and triggers download.
+ */
 function exportCSV(tickets: HelpdeskTicket[]) {
   const HEADERS = [
     'Subject',
@@ -44,6 +56,12 @@ function exportCSV(tickets: HelpdeskTicket[]) {
   URL.revokeObjectURL(url)
 }
 
+/**
+ * Helpdesk
+ * -------------------------------------------------------------
+ * Main queue list renderer. Performs checks on staff access, exports lists,
+ * manages tab filters, and mounts details side drawer.
+ */
 export function Helpdesk({ departmentId }: HelpdeskProps) {
   const currentUser = adminService.getCurrentUser()
   const userRole = currentUser?.role as AdminRole | undefined

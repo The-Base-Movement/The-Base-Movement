@@ -1,3 +1,10 @@
+/**
+ * RequestAssetModal Component
+ * -------------------------------------------------------------
+ * Modal panel enabling members/staff to request allocation of an available
+ * asset, complete with searchable list, reasons, and return date inputs.
+ */
+
 import { useState, useMemo } from 'react'
 import type { Asset } from './types'
 
@@ -37,6 +44,12 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
+/**
+ * RequestAssetModal
+ * -------------------------------------------------------------
+ * Form modal supporting asset queries, dropdown selections,
+ * input validations, and async form submissions.
+ */
 export function RequestAssetModal({ assets, departmentId, requestedBy, onClose, onSubmit }: Props) {
   const [search, setSearch] = useState('')
   const [selectedAssetId, setSelectedAssetId] = useState('')

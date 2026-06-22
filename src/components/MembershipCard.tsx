@@ -1,3 +1,26 @@
+/**
+ * MembershipCard Component
+ * -------------------------------------------------------------
+ * Renders a physical-card-style digital membership credential for a member.
+ *
+ * Architecture:
+ * - `MembershipCardInner` – the card content (header, photo, DL field list,
+ *   QR code, footer). Has a fixed design size of 520 × 325 px at 1:1.6 ratio.
+ * - `MembershipCard` (default export) – a responsive wrapper that uses a
+ *   ResizeObserver to scale the inner card proportionally to its container
+ *   width using CSS `transform: scale()`.
+ *
+ * The `isForDownload` prop bypasses the scaling wrapper so the card can be
+ * captured at full resolution for PNG / PDF export.
+ *
+ * Ghana / Diaspora branching:
+ * - Ghana members show Region + Constituency fields.
+ * - Diaspora members show Country + optional City fields.
+ *
+ * The QR code deep-links to the public verification page at
+ * `/verify/<reg_no>`, allowing chapter officers to validate a card offline.
+ */
+
 import { useEffect, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 

@@ -1,3 +1,11 @@
+/**
+ * Mobilization Metrics Page Component
+ * -------------------------------------------------------------
+ * Component for tracking and visualizing movement chapter performance.
+ * Integrates real-time subscriptions for points/achievements, and provides
+ * leaderboard search/filters and CSV export functionality.
+ */
+
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
 import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/admin'
@@ -11,6 +19,7 @@ import { MetricsFilters } from './mobilizationmetrics/MetricsFilters'
 import { LeaderboardTable } from './mobilizationmetrics/LeaderboardTable'
 import { MetricsSidebar } from './mobilizationmetrics/MetricsSidebar'
 
+// Main component rendering regional mobilization stats, achievements, and leaderboard
 export default function MobilizationMetrics() {
   const [leaderboard, setLeaderboard] = useState<ChapterLeaderboard[]>([])
   const [achievements, setAchievements] = useState<Achievement[]>([])
@@ -19,6 +28,7 @@ export default function MobilizationMetrics() {
   const [regionFilter, setRegionFilter] = useState('All')
   const [isFilterVisible, setIsFilterVisible] = useState(false)
 
+  // Query performance lists, badge definitions, and national metrics from administrative services
   const fetchData = async (isBackground = false) => {
     if (!isBackground) setLoading(true)
     try {
@@ -70,6 +80,7 @@ export default function MobilizationMetrics() {
     }
   }, [])
 
+  // Export current leaderboard list to browser download as CSV
   const handleExport = () => {
     if (!leaderboard.length) {
       toast.error('No data available to export.')

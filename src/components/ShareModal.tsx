@@ -1,3 +1,21 @@
+/**
+ * ShareModal Component
+ * -------------------------------------------------------------
+ * Portal-based modal for sharing a URL via multiple channels.
+ * Renders into `document.body` so it sits above all other content.
+ *
+ * Channels: WhatsApp, Facebook, X (Twitter), and Email.
+ * `buildLink` constructs the platform-specific share URL with encoded title
+ * and target URL.
+ * `handleCopy` uses the Clipboard API and shows a 2-second "Copied!" state.
+ *
+ * Used from the member dashboard Share & Invite feature and the store
+ * product detail page (`onShare` callback on `ProductCard`).
+ *
+ * The footer renders the three brand colours (red / gold / green) as a 5 px
+ * stripe to reinforce movement branding.
+ */
+
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 

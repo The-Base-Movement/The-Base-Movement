@@ -1,3 +1,10 @@
+/**
+ * Donation Verification & Financial Audit Component
+ * -------------------------------------------------------------
+ * Audit dashboard for verifying pending manual donation submissions,
+ * viewing attached receipts, and approving/flagging/refunding contributions.
+ */
+
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
@@ -60,6 +67,7 @@ const fieldStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
+// Helper function to check if a donation matches a selected payment method option
 function matchesMethod(d: DonationDetail, m: MethodOption): boolean {
   if (m === 'All') return true
   const method = d.method.toLowerCase()
@@ -77,6 +85,7 @@ function matchesMethod(d: DonationDetail, m: MethodOption): boolean {
   return true
 }
 
+// Primary page component managing donation verification flows and state
 export default function FinancialAudit() {
   const [donations, setDonations] = useState<DonationDetail[]>([])
   const [stats, setStats] = useState({
@@ -106,6 +115,7 @@ export default function FinancialAudit() {
     filters.dateTo !== '' ||
     filters.country !== 'All'
 
+  // Fetches current donations and statistics from adminService
   const fetchData = useCallback(
     async (silent = false) => {
       if (!silent) setIsLoading(true)
@@ -148,6 +158,7 @@ export default function FinancialAudit() {
     return () => document.removeEventListener('mousedown', handler)
   }, [showFilters])
 
+  // Handles verifying or rejecting a manual donation record
   const handleVerify = async (
     donationId: string,
     name: string,
@@ -186,6 +197,7 @@ export default function FinancialAudit() {
     setIsVerifying(null)
   }
 
+  // Updates the donation record status to refunded in the database
   const handleRefund = async (donationId: string, name: string) => {
     setIsVerifying(donationId)
     try {

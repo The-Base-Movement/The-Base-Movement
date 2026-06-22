@@ -1,14 +1,18 @@
 /**
- * Fund approval chain logic.
- * Tiers map to roles:
+ * @file fundApproval.ts
+ * @description Pure engine logic for fund approval chains.
+ * Encapsulates limits and roles rules:
  *   Bottom → Finance Officer  (GHS 0 – tier1Max)
  *   Middle → Executives       (GHS tier1Max+1 – tier2Max)
  *   Top    → Founder / Appointed Executives (unlimited)
  */
 
+/** Approval tier names */
 export type ApprovalTierName = 'Bottom' | 'Middle' | 'Top'
+/** Action attempts allowed in approval chain */
 export type ApprovalAction = 'Approve' | 'Deny' | 'Acknowledge'
 
+/** Possible decision outcomes produced by approval validator */
 export type ApprovalOutcome =
   | 'PROCESSED_BOTTOM'
   | 'PROCESSED_MIDDLE'
@@ -18,8 +22,13 @@ export type ApprovalOutcome =
   | 'ERROR_NEEDS_TOP'
   | 'ERROR_INVALID'
 
+/**
+ * Result structure returned by the approval chain rule engine
+ */
 export interface ApprovalResult {
+  /** The decision outcome code */
   outcome: ApprovalOutcome
+  /** Accompanying status message */
   message: string
 }
 
@@ -31,6 +40,7 @@ export interface ApprovalResult {
  * @param action    The action being attempted ('Approve' | 'Deny' | 'Acknowledge')
  * @param tier1Max  Maximum GHS a Bottom-tier officer may approve/deny (default 50)
  * @param tier2Max  Maximum GHS a Middle-tier executive may approve/deny (default 100)
+ * @returns ApprovalResult containing outcome flag and validation explanation message.
  */
 export function processFundRequest(
   tier: ApprovalTierName,
@@ -83,14 +93,24 @@ export function processFundRequest(
   return { outcome: 'ERROR_INVALID', message: 'Error: Invalid request' }
 }
 
-/** Map a numeric approval_tier (1|2|3) to the named tier used by processFundRequest */
+/**
+ * Maps a numeric approval tier (1, 2, or 3) to the named tier used by the rule engine.
+ *
+ * @param n - Approval tier index code
+ * @returns Named ApprovalTierName
+ */
 export function tierNameFromNumber(n: number): ApprovalTierName {
   if (n === 1) return 'Bottom'
   if (n === 2) return 'Middle'
   return 'Top'
 }
 
-/** True when the outcome means the action is permitted and should be executed */
+/**
+ * Determines whether the outcome represents a successful/permitted step.
+ *
+ * @param outcome - The computed ApprovalOutcome
+ * @returns Boolean flag indicating if transaction is allowed.
+ */
 export function isPermitted(outcome: ApprovalOutcome): boolean {
   return (
     outcome === 'PROCESSED_BOTTOM' ||
@@ -100,7 +120,12 @@ export function isPermitted(outcome: ApprovalOutcome): boolean {
   )
 }
 
-/** True when the outcome means the request should move to the next tier */
+/**
+ * Determines whether the outcome requires passing the fund request up to a higher tier.
+ *
+ * @param outcome - The computed ApprovalOutcome
+ * @returns Boolean flag indicating pass-up requirement.
+ */
 export function isPassUp(outcome: ApprovalOutcome): boolean {
   return outcome === 'PASS_UP'
 }

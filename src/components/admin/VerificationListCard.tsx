@@ -1,5 +1,17 @@
+/**
+ * VerificationListCard Component
+ * -------------------------------------------------------------
+ * Displays a single verification item card inside the Admin Verification Dashboard roster.
+ * Represents a member who has submitted biometrics or documents for approval.
+ * Shows member's profile image or initials, name, submission timestamp, ID code,
+ * geographic location details, and status badges.
+ */
+
 import type { PendingVerification } from '@/services/adminService'
 
+/**
+ * Resolves the CSS class name for a given pending verification status.
+ */
 function statusPill(status: PendingVerification['status']) {
   if (status === 'Approved') return 'pill pill-ok'
   if (status === 'In Review') return 'pill pill-warn'
@@ -15,6 +27,9 @@ interface Props {
   onClick: (member: PendingVerification) => void
 }
 
+/**
+ * VerificationListCard component definition.
+ */
 export default function VerificationListCard({ member, isActive, onClick }: Props) {
   const initials = member.name
     .split(' ')

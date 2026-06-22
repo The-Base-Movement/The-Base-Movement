@@ -1,3 +1,13 @@
+/**
+ * ChapterCard Component
+ * -------------------------------------------------------------
+ * Renders a summary card for a single movement chapter.
+ * Displays the chapter header (name, region, status badge), a three-stat grid
+ * (members, events, programs), and a leader avatar row with a Join/Joined CTA.
+ * The colour scheme adapts based on chapter status: green for Active, primary
+ * for Featured, and dark for all other states.
+ */
+
 import { Link } from 'react-router-dom'
 import { type Chapter } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'

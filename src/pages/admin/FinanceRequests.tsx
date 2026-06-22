@@ -1,3 +1,10 @@
+/**
+ * Finance Requests Operations Page
+ * -------------------------------------------------------------
+ * Allows administrative personnel to submit and track budget allocations,
+ * expense reimbursements, and inventory replenishment requests.
+ */
+
 import { useState, useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
@@ -8,12 +15,14 @@ import { toast } from 'sonner'
 
 type RequestType = FinanceRequest['request_type']
 
+// Helper to render formatted badge status pill element for request statuses
 function statusPill(status: FinanceRequest['status']) {
   if (status === 'Approved') return <span className="pill pill-ok">Approved</span>
   if (status === 'Rejected') return <span className="pill pill-err">Rejected</span>
   return <span className="pill pill-warn">Pending</span>
 }
 
+// Utility to format ISO date string into day/month/year representation
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', {
     day: '2-digit',
@@ -22,6 +31,7 @@ function fmtDate(iso: string) {
   })
 }
 
+// Utility to format raw numeric values to Ghanaian Cedi currency string representation
 function fmtAmount(n: number) {
   return `GHS ${n.toLocaleString('en-GH', { minimumFractionDigits: 2 })}`
 }
@@ -40,6 +50,7 @@ const TYPE_LABELS: Record<RequestType, string> = {
 
 // ─── Sub-nav ─────────────────────────────────────────────────────────────────
 
+// Sub-navigation bar component for filtering between request submission and review inbox views
 function FinanceSubNav({ pendingCount }: { pendingCount: number }) {
   const location = useLocation()
   const tabs = [
@@ -107,6 +118,7 @@ function FinanceSubNav({ pendingCount }: { pendingCount: number }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+// Primary page component managing interior finance request submissions and history table
 export default function FinanceRequests() {
   const [currentUser, setCurrentUser] = useState(adminService.getCurrentUser())
   const canReview = currentUser?.role === 'FINANCE_OFFICER' || currentUser?.role === 'SUPER_ADMIN'
@@ -129,6 +141,7 @@ export default function FinanceRequests() {
   const [category, setCategory] = useState('Other')
   const [submitting, setSubmitting] = useState(false)
 
+  // Asynchronously loads all submitted finance requests from the database
   async function loadRequests() {
     try {
       const data = await financeService.getRequests()
@@ -147,6 +160,7 @@ export default function FinanceRequests() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Submits a new budget or reimbursement request form to the database
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const parsed = parseFloat(amount)

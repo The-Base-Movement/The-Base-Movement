@@ -1,3 +1,10 @@
+/**
+ * Helpdesk Type Definitions
+ * -------------------------------------------------------------
+ * Contains TypeScript interfaces and type aliases representing tickets,
+ * departments, comments, attachments, and filter states within the IT helpdesk.
+ */
+
 export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
 export type TicketStatus = 'open' | 'in-progress' | 'resolved' | 'closed'
 

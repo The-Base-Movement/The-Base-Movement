@@ -1,3 +1,10 @@
+/**
+ * Jobs Analytics Page Component
+ * -------------------------------------------------------------
+ * Provides analytical visualization of members' jobs and industries.
+ * Aggregates standard and custom job titles, displaying charts and filter controls.
+ */
+
 import { type CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { toast } from 'sonner'
@@ -46,6 +53,7 @@ interface Filters {
 }
 const EMPTY_FILTERS: Filters = { industryId: null, subCategoryId: null, roleId: null, level: null }
 
+// Helper function to count and aggregate analytics rows by a dynamic group-by key
 function countBy(rows: JobAnalyticsRow[], key: (r: JobAnalyticsRow) => string | null): Slice[] {
   const m = new Map<string, number>()
   for (const r of rows) {
@@ -525,6 +533,7 @@ export default function JobsAnalytics() {
   )
 }
 
+// Helper component to center loading and access restricted states with consistent styling
 function Centered({ children }: { children: React.ReactNode }) {
   return (
     <div
@@ -544,6 +553,7 @@ function Centered({ children }: { children: React.ReactNode }) {
   )
 }
 
+// Chart panel card component rendering a PieChart and custom interactive legend list
 function PieCard({
   title,
   data,

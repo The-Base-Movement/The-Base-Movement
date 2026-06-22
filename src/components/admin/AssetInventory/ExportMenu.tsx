@@ -1,4 +1,10 @@
-// src/components/admin/AssetInventory/ExportMenu.tsx
+/**
+ * ExportMenu Component
+ * -------------------------------------------------------------
+ * Provides an interactive dropdown containing action triggers to download
+ * the current asset list in comma-separated values (CSV) format or PDF format.
+ */
+
 import { useState } from 'react'
 import type { Asset } from './types'
 
@@ -19,6 +25,11 @@ const HEADERS = [
   'Purchase Date',
 ]
 
+/**
+ * assetToRow
+ * -------------------------------------------------------------
+ * Utility to map an Asset object to an array of raw strings.
+ */
 function assetToRow(a: Asset): string[] {
   return [
     a.asset_tag ?? '',
@@ -34,6 +45,11 @@ function assetToRow(a: Asset): string[] {
   ]
 }
 
+/**
+ * exportCSV
+ * -------------------------------------------------------------
+ * Formats asset array into a CSV file string and triggers download in browser.
+ */
 function exportCSV(assets: Asset[]) {
   const rows = [HEADERS, ...assets.map(assetToRow)]
   const csv = rows.map((r) => r.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(',')).join('\n')
@@ -46,6 +62,11 @@ function exportCSV(assets: Asset[]) {
   URL.revokeObjectURL(url)
 }
 
+/**
+ * exportPDF
+ * -------------------------------------------------------------
+ * Renders a tabular landscape document of the asset data and triggers browser PDF save.
+ */
 async function exportPDF(assets: Asset[]) {
   const { jsPDF } = await import('jspdf')
   const { default: autoTable } = await import('jspdf-autotable')
@@ -68,6 +89,11 @@ async function exportPDF(assets: Asset[]) {
   doc.save(`asset-inventory-${new Date().toISOString().slice(0, 10)}.pdf`)
 }
 
+/**
+ * ExportMenu
+ * -------------------------------------------------------------
+ * Main export dropdown component with options to choose between CSV and PDF.
+ */
 export function ExportMenu({ assets }: Props) {
   const [open, setOpen] = useState(false)
 

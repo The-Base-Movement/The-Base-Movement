@@ -1,3 +1,10 @@
+/**
+ * New Broadcast Page Component
+ * -------------------------------------------------------------
+ * Component for composing and sending targeted broadcasts to movement members.
+ * Supports targeting all members, a specific region, or constituency.
+ */
+
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -9,6 +16,7 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { NewBroadcastForm } from './newbroadcast/NewBroadcastForm'
 import { NewBroadcastPreview } from './newbroadcast/NewBroadcastPreview'
 
+// Main component rendering the form and preview layout for dispatching messages
 export default function NewBroadcast() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -38,6 +46,7 @@ export default function NewBroadcast() {
     status: 'Sent',
   })
 
+  // Retrieve geographical configuration for targeting dropdowns
   const fetchData = useCallback(async () => {
     try {
       const [regions, cData] = await Promise.all([
@@ -58,6 +67,7 @@ export default function NewBroadcast() {
     return () => clearTimeout(timer)
   }, [fetchData])
 
+  // Dispatch the broadcast to the target audience via services
   const handleSend = async () => {
     const content = editorRef.current ? editorRef.current.getContent() : newBroadcast.content
     if (!newBroadcast.title || !content || content === '<p></p>') {

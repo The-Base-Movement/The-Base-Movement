@@ -1,3 +1,10 @@
+/**
+ * Skeleton Component
+ * -------------------------------------------------------------
+ * A structural loading placeholder with a moving shimmer animation.
+ * Mimics actual content UI blocks (text lines, circular avatars, buttons, image blocks).
+ */
+
 import type { CSSProperties } from 'react'
 
 type SkeletonVariant =

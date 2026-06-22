@@ -1,3 +1,10 @@
+/**
+ * AssetTable Component
+ * -------------------------------------------------------------
+ * Tabular and grid listing representation of all assets, automatically providing
+ * responsive layouts (desktop table vs. mobile list cards) and management dropdown menus.
+ */
+
 import { useState } from 'react'
 import type { Asset, AssetCondition, AssetAlert } from './types'
 import { AlertBadge } from './AlertBadge'
@@ -24,6 +31,12 @@ interface Props {
   onDelete: (asset: Asset) => void
 }
 
+/**
+ * AssetTable
+ * -------------------------------------------------------------
+ * Main table listing component displaying asset name, category, condition,
+ * status, alerts, actions, and handling mobile view conversions.
+ */
 export function AssetTable({
   assets,
   loading,

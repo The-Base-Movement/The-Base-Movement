@@ -1,3 +1,13 @@
+/**
+ * FullPageState Component
+ * -------------------------------------------------------------
+ * Renders full-page semantic views for system exceptions and status alerts.
+ * Supports:
+ * - '404': Page not found view with dynamic watermarks and home navigation
+ * - '403': Forbidden view with high-security dark theme styling prompting identity/biometrics verification
+ * - 'maintenance': Portal-wide offline update views displaying active dot load indicators
+ */
+
 import { useNavigate } from 'react-router-dom'
 import { DotLoader } from './Spinner'
 

@@ -1,3 +1,11 @@
+/**
+ * AuditLogTable Component
+ * -------------------------------------------------------------
+ * Displays a tabular, paginated interface of system audit logs.
+ * Supports filtering by severity level, full-text action/user search,
+ * sorting by creation date, and customizable date ranges.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
@@ -5,16 +13,31 @@ import { SortToggle } from '@/components/ui/SortToggle'
 import type { AuditLog, Severity } from './types'
 import { SEV, PAGE_SIZE } from './types'
 
+/**
+ * defaultFrom
+ * -------------------------------------------------------------
+ * Helper returning the YYYY-MM-DD format for 7 days in the past.
+ */
 function defaultFrom() {
   const d = new Date()
   d.setDate(d.getDate() - 7)
   return d.toISOString().slice(0, 10)
 }
 
+/**
+ * todayStr
+ * -------------------------------------------------------------
+ * Helper returning the YYYY-MM-DD format for the current date.
+ */
 function todayStr() {
   return new Date().toISOString().slice(0, 10)
 }
 
+/**
+ * AuditLogTable
+ * -------------------------------------------------------------
+ * Renders the system audit log panel with filters and pagination.
+ */
 export function AuditLogTable() {
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [logsLoading, setLogsLoading] = useState(true)
@@ -25,6 +48,12 @@ export function AuditLogTable() {
   const [dateFrom, setDateFrom] = useState(defaultFrom)
   const [dateTo, setDateTo] = useState(todayStr)
 
+  /**
+   * loadLogs
+   * -------------------------------------------------------------
+   * Fetches audit records within a selected time window from the database,
+   * joining the users table to resolve user display names.
+   */
   const loadLogs = useCallback(async () => {
     setLogsLoading(true)
     try {

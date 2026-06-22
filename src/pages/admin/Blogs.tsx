@@ -60,7 +60,7 @@ export default function AdminBlogs() {
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(adminService.getCurrentUser())
   const editorRef = useRef<{ getContent: () => string } | null>(null)
 
-  /* ── View routing — persisted across page refreshes via sessionStorage ── */
+  // View state persisted in sessionStorage
   const isBrowser = typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined'
 
   const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() =>
@@ -81,7 +81,7 @@ export default function AdminBlogs() {
     return saved ? JSON.parse(saved) : EMPTY_FORM
   })
 
-  /* ── List view state ────────────────────────────────────────── */
+  // List view state
   const [searchQuery, setSearchQuery] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -91,7 +91,7 @@ export default function AdminBlogs() {
   const [isMobile, setIsMobile] = useState(() => (isBrowser ? window.innerWidth <= 640 : false))
   const [showMobileFilter, setShowMobileFilter] = useState(false)
 
-  /* ── Editor state ───────────────────────────────────────────── */
+  // Editor and media state
   const [showMediaPanel, setShowMediaPanel] = useState(true)
   const [showIntelPanel, setShowIntelPanel] = useState(true)
   const [mediaFiles, setMediaFiles] = useState<string[]>([])
@@ -103,7 +103,7 @@ export default function AdminBlogs() {
   const { openDelete, modal: deleteModal } = useDeleteModal()
   const { setCurrentLabel } = usePageLabel()
 
-  /* ── Breadcrumb label sync ──────────────────────────────────── */
+  // Sync page header breadcrumb label
   useEffect(() => {
     if (currentView === 'edit') {
       setCurrentLabel(editingPost ? formData.title || 'Untitled Article' : 'New Article')
@@ -114,7 +114,7 @@ export default function AdminBlogs() {
     }
   }, [currentView, editingPost, formData.title, viewPost, setCurrentLabel])
 
-  /* ── Session-storage sync ───────────────────────────────────── */
+  // Sync state to sessionStorage
   useEffect(() => {
     if (isBrowser) sessionStorage.setItem('blogs_currentView', currentView)
   }, [currentView, isBrowser])
@@ -134,7 +134,8 @@ export default function AdminBlogs() {
     if (isBrowser) sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
   }, [formData, isBrowser])
 
-  /* ── Data fetching ──────────────────────────────────────────── */
+  // Data fetching functions
+  // Fetches the list of media library files for the active folder
   const fetchMedia = useCallback(async () => {
     setIsMediaLoading(true)
     try {
@@ -147,6 +148,7 @@ export default function AdminBlogs() {
     }
   }, [activeMediaFolder])
 
+  // Fetches all editorial blog posts from the database
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -159,6 +161,7 @@ export default function AdminBlogs() {
     }
   }, [])
 
+  // Fetches all registered personnel/authors
   const fetchAuthors = useCallback(async () => {
     try {
       const data = await adminService.getAuthors()
@@ -201,7 +204,8 @@ export default function AdminBlogs() {
     return () => window.removeEventListener('resize', fn)
   }, [])
 
-  /* ── Handlers ───────────────────────────────────────────────── */
+  // Event handlers
+  // Sets up the form data for editing a blog post or creating a new one
   const handleEditPost = (post?: BlogPost) => {
     if (post) {
       setEditPost(post)
@@ -232,11 +236,13 @@ export default function AdminBlogs() {
     setCurrentView('edit')
   }
 
+  // Routes to the read-only preview screen for a post
   const handleViewPost = (post: BlogPost) => {
     setViewPost(post)
     setCurrentView('view')
   }
 
+  // Handles creating or updating a post in the database
   const handleSubmit = async () => {
     if (!formData.authorId) {
       toast.error('Author required', {
@@ -281,6 +287,7 @@ export default function AdminBlogs() {
     }
   }
 
+  // Moves an editorial post to the trash vault
   const handleDelete = (post: BlogPost) => {
     openDelete({
       itemName: post.title,
@@ -298,6 +305,7 @@ export default function AdminBlogs() {
     })
   }
 
+  // Updates a post status to published and optionally triggers push notifications
   const handlePublishPost = async (post: BlogPost) => {
     setPosts((prev) =>
       prev.map((p) => (p.id === post.id ? { ...p, status: 'Published' as const } : p))
@@ -329,6 +337,7 @@ export default function AdminBlogs() {
     }
   }
 
+  // Reverts a post status to draft
   const handleUnpublishPost = async (post: BlogPost) => {
     setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: 'Draft' as const } : p)))
     try {
@@ -345,6 +354,7 @@ export default function AdminBlogs() {
     }
   }
 
+  // Uploads a new image file to the current media folder
   const handleUpload = async (file: File) => {
     const url = await contentService.uploadImage(file, activeMediaFolder)
     if (url) {
@@ -369,7 +379,7 @@ export default function AdminBlogs() {
     })
   }, [posts, searchQuery, categoryFilter, statusFilter, sortOrder])
 
-  /* ── View routing ───────────────────────────────────────────── */
+  // View routing
   if (currentView === 'edit') {
     return (
       <BlogEditorView
@@ -410,7 +420,7 @@ export default function AdminBlogs() {
     )
   }
 
-  /* ── List view ──────────────────────────────────────────────── */
+  // List view layout
   return (
     <div className="main">
       <BlogsHeader onWrite={() => handleEditPost()} />

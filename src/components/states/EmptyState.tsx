@@ -1,3 +1,11 @@
+/**
+ * EmptyState Component
+ * -------------------------------------------------------------
+ * A reusable blank slate view representing empty states.
+ * Renders an icon container, a title, explanatory text description,
+ * and optional call-to-action button widgets.
+ */
+
 import type { ReactNode, CSSProperties } from 'react'
 
 interface EmptyStateProps {
@@ -9,6 +17,9 @@ interface EmptyStateProps {
   style?: CSSProperties
 }
 
+/**
+ * EmptyState component definition.
+ */
 export function EmptyState({
   icon,
   title,

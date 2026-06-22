@@ -1,4 +1,22 @@
-﻿import { useNavigate } from 'react-router-dom'
+/**
+ * WelcomeModal Component
+ * -------------------------------------------------------------
+ * First-login welcome modal shown to newly registered members after their
+ * automatic chapter assignment.
+ *
+ * Displays:
+ * - Brand accent bar (red / gold / green)
+ * - Assigned chapter name and region
+ * - Two CTAs:
+ *   1. "Confirm this chapter" → closes the modal (keeps assignment).
+ *   2. "Choose a different chapter" → closes the modal and navigates to
+ *      /dashboard/chapters so the member can join a different one.
+ *
+ * The modal uses Tailwind animate-in classes (zoom-in-95, fade-in). The public
+ * site's design token variables (--brand-red/gold/green) are used for colours.
+ */
+
+import { useNavigate } from 'react-router-dom'
 
 interface WelcomeModalProps {
   isOpen: boolean

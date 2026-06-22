@@ -1,3 +1,19 @@
+/**
+ * SearchBar Component
+ * -------------------------------------------------------------
+ * Accessible, controlled search input with a leading search icon and an inline
+ * clear (×) button that appears when the field is non-empty.
+ *
+ * Variants:
+ * - `dashboard` (default): 36 px height, 12 px font, CSS-variable colours.
+ *   Suitable for admin / member dashboard filter bars.
+ * - `public`: 40 px height, 13 px font, static grey colours.
+ *   Suitable for light-background public pages.
+ *
+ * Generates a unique `inputId` via React's `useId()` to ensure label/input
+ * associations are correct when multiple SearchBars are rendered on one page.
+ */
+
 import { useId } from 'react'
 
 interface SearchBarProps {

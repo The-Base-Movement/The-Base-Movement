@@ -1,11 +1,19 @@
+/**
+ * GhanaGrowthMap Component
+ * -------------------------------------------------------------
+ * SVG Choropleth Map visualization for Ghana's 16 administrative regions.
+ * Displays member density and chapter activation stats using colors and tooltips.
+ * Integrates Framer Motion for interactive zoom-hover effects and Radix Tooltip UI.
+ */
+
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { 
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/buttons/ui/tooltip"
+} from '@/components/buttons/ui/tooltip'
 import type { RegionalStat } from '@/services/adminService'
 
 interface GhanaGrowthMapProps {
@@ -16,7 +24,11 @@ interface GhanaGrowthMapProps {
 // Simplified high-fidelity paths for Ghana's 16 regions
 // Note: These are representative paths for visualization
 const REGION_PATHS = [
-  { id: 'Greater Accra', d: 'M160 380 L180 385 L185 395 L170 400 L160 395 Z', name: 'Greater Accra' },
+  {
+    id: 'Greater Accra',
+    d: 'M160 380 L180 385 L185 395 L170 400 L160 395 Z',
+    name: 'Greater Accra',
+  },
   { id: 'Ashanti', d: 'M100 280 L140 280 L150 320 L120 340 L90 320 Z', name: 'Ashanti' },
   { id: 'Western', d: 'M60 320 L90 320 L80 380 L50 380 L40 350 Z', name: 'Western' },
   { id: 'Central', d: 'M90 320 L120 340 L130 380 L100 390 L80 380 Z', name: 'Central' },
@@ -34,14 +46,27 @@ const REGION_PATHS = [
   { id: 'Western North', d: 'M40 270 L60 270 L70 320 L40 320 Z', name: 'Western North' },
 ]
 
+/**
+ * GhanaGrowthMap Component
+ * Draws map regions and binds hover/click action handlers.
+ */
 export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
+  /**
+   * Indexed lookup map for region statistical details.
+   */
   const statsMap = useMemo(() => {
-    return data.reduce((acc, curr) => {
-      acc[curr.region] = curr
-      return acc
-    }, {} as Record<string, RegionalStat>)
+    return data.reduce(
+      (acc, curr) => {
+        acc[curr.region] = curr
+        return acc
+      },
+      {} as Record<string, RegionalStat>
+    )
   }, [data])
 
+  /**
+   * Computes opacity color intensity based on relative member density.
+   */
   const getIntensity = (region: string) => {
     const stat = statsMap[region]
     if (!stat) return 0.1
@@ -53,16 +78,16 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
     <div className="relative w-full aspect-[3/4] bg-muted/10 flex items-center justify-center p-8 overflow-hidden group rounded-sm border border-border/40">
       {/* Map Background Glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_hsl(var(--accent))_0%,_transparent_70%)] opacity-5 pointer-events-none" />
-      
+
       <TooltipProvider>
-        <svg 
-          viewBox="30 80 200 340" 
+        <svg
+          viewBox="30 80 200 340"
           className="w-full h-full drop-shadow-2xl filter saturate-[0.8] group-hover:saturate-[1.2] transition-all duration-700"
         >
           {REGION_PATHS.map((path) => {
             const stat = statsMap[path.name]
             const intensity = getIntensity(path.name)
-            
+
             return (
               <Tooltip key={path.id}>
                 <TooltipTrigger asChild>
@@ -70,11 +95,11 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                     d={path.d}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      strokeWidth: 2, 
+                    whileHover={{
+                      scale: 1.05,
+                      strokeWidth: 2,
                       stroke: 'hsl(var(--accent))',
-                      zIndex: 50
+                      zIndex: 50,
                     }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     fill={stat ? stat.color : '#e2e8f0'}
@@ -87,28 +112,36 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                 </TooltipTrigger>
                 <TooltipContent className="rounded-sm border-border/10 bg-on-surface text-white p-5 shadow-2xl backdrop-blur-xl">
                   <div className="space-y-3">
-                    <p className="text-micro font-bold text-destructive tracking-tight">{path.name} region</p>
+                    <p className="text-micro font-bold text-destructive tracking-tight">
+                      {path.name} region
+                    </p>
                     <div className="flex justify-between gap-8 items-end">
                       <div>
                         <p className="text-2xl font-bold font-meta tracking-tight">
                           {stat ? stat.memberCount.toLocaleString() : '0'}
                         </p>
-                        <p className="text-micro font-bold text-white/40 tracking-tight mt-1">Total members</p>
+                        <p className="text-micro font-bold text-white/40 tracking-tight mt-1">
+                          Total members
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-bold text-white/80 tracking-tight">
                           {stat ? stat.chapters : '0'}
                         </p>
-                        <p className="text-micro font-bold text-white/40 tracking-tight mt-1">Chapters</p>
+                        <p className="text-micro font-bold text-white/40 tracking-tight mt-1">
+                          Chapters
+                        </p>
                       </div>
                     </div>
                     {stat && (
                       <div className="pt-2 mt-2 border-t border-white/10 flex items-center justify-between">
-                          <span className="text-[8px] font-bold tracking-tight px-2 py-0.5 bg-white/10 rounded">
-                            {stat.performance} impact
-                          </span>
-                          <span className="text-[8px] font-bold text-white/20">Click for details</span>
-                        </div>
+                        <span className="text-[8px] font-bold tracking-tight px-2 py-0.5 bg-white/10 rounded">
+                          {stat.performance} impact
+                        </span>
+                        <span className="text-[8px] font-bold text-white/20">
+                          Click for details
+                        </span>
+                      </div>
                     )}
                   </div>
                 </TooltipContent>
@@ -120,14 +153,16 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
 
       {/* Map Legend */}
       <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-sm">
-        <p className="text-micro font-bold text-on-surface/40 mb-2 tracking-tight">Expansion density</p>
+        <p className="text-micro font-bold text-on-surface/40 mb-2 tracking-tight">
+          Expansion density
+        </p>
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex gap-1">
               {[0.2, 0.4, 0.6, 0.8, 1.0].map((op, i) => (
-                <div 
-                  key={i} 
-                  className="w-4 h-4 rounded-sm" 
+                <div
+                  key={i}
+                  className="w-4 h-4 rounded-sm"
                   style={{ backgroundColor: 'hsl(var(--destructive))', opacity: op }}
                 />
               ))}

@@ -1,12 +1,27 @@
-﻿import { useState, useEffect } from 'react'
+/**
+ * PulseReport Component
+ * -------------------------------------------------------------
+ * Displays real-time mobilization metrics and activity telemetry for the Command Center.
+ * Fetches data via the admin service layer and populates KPI blocks representing
+ * national growth rates, active chapter totals, top regions, and logistics health,
+ * alongside a progress bar matrix for all regional branches.
+ */
+
+import { useState, useEffect } from 'react'
 import { adminService, type MovementPulse } from '@/services/adminService'
 import { cn } from '@/lib/utils'
 
+/**
+ * PulseReport component definition.
+ */
 export function PulseReport() {
   const [pulse, setPulse] = useState<MovementPulse | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /**
+     * Async handler that fetches movement pulse metrics from the database/service layer.
+     */
     async function fetchPulse() {
       try {
         const data = await adminService.getMovementPulse()

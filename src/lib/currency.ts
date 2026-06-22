@@ -1,7 +1,21 @@
+/**
+ * @file currency.ts
+ * @description Provides helper utilities for currency calculation and formatting.
+ * Supports mapping various countries to their local currencies, converting foreign amounts to Ghanaian Cedis (GHS)
+ * using static exchange rates, and formatting numbers as currency strings.
+ */
+
+/**
+ * Currency configuration details representing currency codes, symbols, names, and GHS rates.
+ */
 export interface CurrencyInfo {
+  /** ISO 4217 currency code (e.g. 'GHS', 'USD') */
   code: string
+  /** Visual currency character symbol (e.g. '₵', '$') */
   symbol: string
+  /** Official currency name description (e.g. 'Ghanaian cedi') */
   name: string
+  /** Static conversion factor to Ghanaian Cedis (rate relative to GHS) */
   ghsRate: number
 }
 
@@ -45,11 +59,25 @@ const COUNTRY_CURRENCY: Record<string, CurrencyInfo> = {
   uae: { code: 'AED', symbol: 'د.إ', name: 'UAE dirham', ghsRate: 3.2 },
 }
 
+/**
+ * Resolves the appropriate currency configuration for a given country name.
+ * Defaults to GHS if country is not mapped.
+ *
+ * @param country - The name of the country (case-insensitive)
+ * @returns The resolved CurrencyInfo object.
+ */
 export function getCurrencyForCountry(country?: string | null): CurrencyInfo {
   if (!country) return DEFAULT_CURRENCY
   return COUNTRY_CURRENCY[country.trim().toLowerCase()] ?? DEFAULT_CURRENCY
 }
 
+/**
+ * Formats a numeric amount as a readable string prefixed by currency symbol.
+ *
+ * @param amount - The raw amount (string or number)
+ * @param currency - The currency configuration containing the symbol
+ * @returns Formatted currency string (e.g. '$1,200.00')
+ */
 export function formatCurrencyAmount(amount: string | number, currency: CurrencyInfo) {
   const numeric = Number(amount)
   if (!Number.isFinite(numeric)) return `${currency.symbol}0.00`
@@ -59,12 +87,25 @@ export function formatCurrencyAmount(amount: string | number, currency: Currency
   })}`
 }
 
+/**
+ * Converts a foreign currency amount into equivalent value in Ghanaian Cedis (GHS).
+ *
+ * @param amount - The foreign amount
+ * @param currency - The currency configuration containing the static conversion rate
+ * @returns The equivalent GHS amount (rounded to 2 decimal places)
+ */
 export function convertToGhs(amount: string | number, currency: CurrencyInfo) {
   const numeric = Number(amount)
   if (!Number.isFinite(numeric) || numeric <= 0) return 0
   return Math.round(numeric * currency.ghsRate * 100) / 100
 }
 
+/**
+ * Formats a numeric amount specifically as a Ghanaian Cedi (GHS) string.
+ *
+ * @param amount - The raw amount in GHS
+ * @returns Formatted GHS cedi string (e.g. '₵20.00')
+ */
 export function formatGhsAmount(amount: string | number) {
   return formatCurrencyAmount(amount, DEFAULT_CURRENCY)
 }

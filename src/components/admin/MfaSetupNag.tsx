@@ -1,3 +1,11 @@
+/**
+ * MfaSetupNag Component
+ * -------------------------------------------------------------
+ * A floating nag modal alerting administrators without 2FA set up.
+ * Prompts enrollment of TOTP authentication using Google Authenticator, Authy, etc.
+ * Operates inline (step intro, show QR, verify code) and re-pops every 5 minutes if skipped.
+ */
+
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
@@ -8,8 +16,10 @@ import { useAuth } from '@/context/AuthContext'
 
 const NAG_INTERVAL_MS = 5 * 60 * 1000 // re-prompt every 5 minutes until enrolled
 
-// The installed supabase-js types don't surface the MFA helpers here, so we
-// narrow to just the calls we use (mirrors the cast in admin/Settings.tsx).
+/**
+ * Type declaration for Supabase Multi-Factor Authentication (MFA) client methods.
+ * Limits scope to TOTP listing, enrollment challenges, verification, and unenrollment.
+ */
 interface SupabaseAuthWithMFA {
   mfa: {
     listFactors: () => Promise<{
@@ -32,16 +42,15 @@ interface SupabaseAuthWithMFA {
   }
 }
 
+/**
+ * Casting helper to access MFA methods on supabase.auth.
+ */
 const mfaAuth = () => supabase.auth as unknown as SupabaseAuthWithMFA
 
 type Step = 'intro' | 'qr' | 'verify'
 
 /**
- * Caution popup shown to any admin who has not enrolled a 2FA (TOTP) factor.
- * The whole enrollment (QR + code verification) runs inline here — clicking
- * "Set up 2FA now" starts it immediately, and a successful verify enables 2FA
- * and dismisses the popup so the admin proceeds. Skipping only buys 5 minutes;
- * the reminder keeps re-appearing until a verified factor exists.
+ * MfaSetupNag component definition.
  */
 export function MfaSetupNag() {
   const { session } = useAuth()
@@ -68,6 +77,10 @@ export function MfaSetupNag() {
     onSettingsPageRef.current = onSettingsPage
   }, [onSettingsPage])
 
+  /**
+   * Helper that queries Supabase authentication service to verify if the
+   * current user has enrolled any active (verified) TOTP factors.
+   */
   const isEnrolled = useCallback(async (): Promise<boolean> => {
     try {
       const { data, error } = await mfaAuth().mfa.listFactors()
@@ -83,6 +96,10 @@ export function MfaSetupNag() {
   // callback referencing its own (not-yet-declared) identity.
   const scheduleRecheckRef = useRef<() => void>(() => {})
 
+  /**
+   * Schedules a non-blocking check to verify if enrollment is completed.
+   * If not completed, re-displays the modal warning popup after NAG_INTERVAL_MS.
+   */
   const scheduleRecheck = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(async () => {
@@ -118,7 +135,9 @@ export function MfaSetupNag() {
     }
   }, [session, isEnrolled, scheduleRecheck])
 
-  // Reset the inline flow whenever the popup is dismissed.
+  /**
+   * Closes the setup prompt modal and resets local component state.
+   */
   const close = () => {
     setVisible(false)
     setStep('intro')
@@ -126,12 +145,18 @@ export function MfaSetupNag() {
     setCode('')
   }
 
+  /**
+   * Postpones the setup prompt, dismissing the current view and scheduling a reminder.
+   */
   const remindLater = () => {
     close()
     scheduleRecheck()
   }
 
-  // "Set up 2FA now" — begin enrollment immediately, inline.
+  /**
+   * Initiates TOTP enrollment by cleaning up dangling factors, requesting a new factor,
+   * and preparing the scanned QR parameters.
+   */
   const handleActivate = async () => {
     if (enrollingRef.current) return // already enrolling — don't double-run the cleanup
     enrollingRef.current = true
@@ -173,7 +198,9 @@ export function MfaSetupNag() {
     }
   }
 
-  // Verify the 6-digit code, enable the factor, then proceed.
+  /**
+   * Submits the 6-digit authenticator verification code challenge to complete MFA enrollment.
+   */
   const handleVerify = async () => {
     if (!enrollData || code.length < 6) return
     setBusy(true)

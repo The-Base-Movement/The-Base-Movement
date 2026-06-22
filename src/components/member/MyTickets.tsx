@@ -1,3 +1,12 @@
+/**
+ * MyTickets Component
+ * -------------------------------------------------------------
+ * Member support ticket roster and detailed view dashboard.
+ * Queries tickets submitted by the currently logged-in member.
+ * Allows members to create tickets, view status logs, read admin responses,
+ * and submit reply comments with attachments.
+ */
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useMemberHelpdesk } from '@/components/admin/Helpdesk/useHelpdesk'
@@ -27,6 +36,9 @@ const STATUS_LABEL: Record<TicketStatus, string> = {
   closed: 'Closed',
 }
 
+/**
+ * Formats a creation or update timestamp relative to the current local time.
+ */
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
   const mins = Math.floor(diff / 60000)
@@ -36,6 +48,9 @@ function relativeTime(iso: string): string {
   return `${Math.floor(hrs / 24)}d ago`
 }
 
+/**
+ * MyTickets component definition.
+ */
 export default function MyTickets() {
   const [userId, setUserId] = useState<string | null>(null)
   const [showSubmit, setShowSubmit] = useState(false)

@@ -1,3 +1,10 @@
+/**
+ * Administrators Command Hub Component
+ * -------------------------------------------------------------
+ * Manages administrative credentials, role provisioning, permission editing,
+ * access revocation, and resource audit log analysis for HQ and regional staff.
+ */
+
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -20,12 +27,14 @@ import { AdminsSecurityNote } from './administrators/AdminsSecurityNote'
 
 const REGIONAL_ROLES: string[] = ['REGIONAL_DIRECTOR', 'CONSTITUENCY_LEAD']
 
+// Utility function to format raw uppercase snake_case role strings to title case
 const formatRole = (role: string) =>
   role
     .split('_')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ')
 
+// Primary page component managing administrator accounts and their database states
 export default function Administrators() {
   const [admins, setAdmins] = useState<AdminUser[]>([])
   const [regions, setRegions] = useState<string[]>([])
@@ -65,6 +74,7 @@ export default function Administrators() {
   const [revokeTarget, setRevokeTarget] = useState<AdminUser | null>(null)
   const [isRevoking, setIsRevoking] = useState(false)
 
+  // Fetches current administrators, regions, and roles data from services
   const fetchAdmins = async () => {
     setIsLoading(true)
     try {
@@ -84,9 +94,11 @@ export default function Administrators() {
     }
   }
 
+  // Returns permissions associated with a given role classification
   const getPermsForRole = (roleName: string) =>
     roleList.find((r) => r.name === roleName)?.permissions ?? []
 
+  // Fetches audit logs for a specific administrator ID to display in detail modal
   const fetchLogs = async (adminId: string, adminName: string) => {
     setIsLogsLoading(true)
     setActiveAdminName(adminName)
@@ -160,6 +172,7 @@ export default function Administrators() {
     }
   }, [selectedMember])
 
+  // Provisions a new administrator account with specified role and region
   const handleProvision = async () => {
     if (!selectedMember) return
     const memberId = selectedMember.authId ?? selectedMember.id
@@ -200,6 +213,7 @@ export default function Administrators() {
     }
   }
 
+  // Opens the edit permissions modal for a specific administrator target
   const openEdit = (admin: AdminUser) => {
     setEditTarget(admin)
     setEditRole(admin.role)
@@ -207,6 +221,7 @@ export default function Administrators() {
     setOpenMenuId(null)
   }
 
+  // Submits updated role/permissions/region credentials for an administrator
   const handleEditSubmit = async () => {
     if (!editTarget) return
     setIsEditing(true)
@@ -226,6 +241,7 @@ export default function Administrators() {
     }
   }
 
+  // Revokes administrative access and removes administrative role from a user
   const handleRevoke = async () => {
     if (!revokeTarget) return
     setIsRevoking(true)

@@ -1,3 +1,10 @@
+/**
+ * TicketTable Component
+ * -------------------------------------------------------------
+ * Table listing interface presenting helpdesk support tickets, showing priority badges,
+ * assignment metadata, status indicators, and context action dropdowns.
+ */
+
 import { useState } from 'react'
 import type { HelpdeskTicket, TicketPriority, TicketStatus } from './types'
 
@@ -22,6 +29,11 @@ const STATUS_LABEL: Record<TicketStatus, string> = {
   closed: 'Closed',
 }
 
+/**
+ * relativeTime
+ * -------------------------------------------------------------
+ * Helper function converting an ISO date string to a human-readable relative time representation.
+ */
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
   const mins = Math.floor(diff / 60000)
@@ -40,6 +52,11 @@ interface Props {
   onDelete: (ticket: HelpdeskTicket) => void
 }
 
+/**
+ * TicketTable
+ * -------------------------------------------------------------
+ * Component mapping and mounting support ticket information in tabular rows.
+ */
 export function TicketTable({ tickets, loading, canWrite, onRowClick, onClose, onDelete }: Props) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 

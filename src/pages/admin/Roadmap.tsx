@@ -1,3 +1,10 @@
+/**
+ * Roadmap Page Component
+ * -------------------------------------------------------------
+ * Component for administering the national strategic roadmap.
+ * Supports adding, updating, and removing strategic milestones, categories, and priority statuses.
+ */
+
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -9,6 +16,7 @@ import { RoadmapKPIs } from './roadmap/RoadmapKPIs'
 import { RoadmapTable } from './roadmap/RoadmapTable'
 import { RoadmapFormModal } from './roadmap/RoadmapFormModal'
 
+// Main page component displaying milestones list, KPI metrics, and edit modals
 export default function RoadmapManagement() {
   const [milestones, setMilestones] = useState<Milestone[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -29,6 +37,7 @@ export default function RoadmapManagement() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Fetch all strategic milestones from administrative services
   const fetchData = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -46,6 +55,7 @@ export default function RoadmapManagement() {
     return () => clearTimeout(timer)
   }, [fetchData])
 
+  // Open milestone creation/edit modal and populate inputs
   const handleOpenModal = (milestone: Milestone | null = null) => {
     if (milestone) {
       setEditingMilestone(milestone)
@@ -75,6 +85,7 @@ export default function RoadmapManagement() {
     setShowModal(true)
   }
 
+  // Handle milestone creation/updating submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -99,6 +110,7 @@ export default function RoadmapManagement() {
     }
   }
 
+  // Remove milestone from the database and UI listing
   const handleDelete = (milestone: Milestone) => {
     openDelete({
       itemName: milestone.title,

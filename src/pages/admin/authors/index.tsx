@@ -1,3 +1,10 @@
+/**
+ * Admin Authors Page Component
+ * -------------------------------------------------------------
+ * Component for administering author and contributor records within the blogging portal.
+ * Supports CRUD operations, search and filtering by role, and deleting author records.
+ */
+
 import { useState, useEffect, useMemo } from 'react'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { createPortal } from 'react-dom'
@@ -43,6 +50,7 @@ const selectSt = {
   boxSizing: 'border-box' as const,
 }
 
+// Main page component displaying the roster of authors, query bars, and detail panels
 export default function AdminAuthors() {
   const { lowBandwidthMode } = usePerformance()
   const [authors, setAuthors] = useState<Author[]>([])
@@ -61,6 +69,7 @@ export default function AdminAuthors() {
     null
   )
 
+  // Fetch all registered author profiles from database services
   const fetchAuthors = async () => {
     setIsLoading(true)
     try {
@@ -73,6 +82,7 @@ export default function AdminAuthors() {
     }
   }
 
+  // Retrieve general blogging publication counts
   const fetchStats = async () => {
     try {
       const stats = await adminService.getBlogStats()
@@ -91,6 +101,7 @@ export default function AdminAuthors() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Process the final removal of an author record
   const handleDelete = async () => {
     if (!deleteConfirm) return
     setIsDeleting(true)
@@ -126,7 +137,7 @@ export default function AdminAuthors() {
     })
   }, [authors, searchQuery, roleFilter, sortOrder])
 
-  // ── Layout ──
+  // Render the appropriate layout or form view
   if (formView) {
     return (
       <AuthorForm

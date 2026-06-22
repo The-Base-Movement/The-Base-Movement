@@ -31,6 +31,9 @@ const LINE_COLOR: Record<NonNullable<WingDividerProps['variant']>, string> = {
 
 const EAGLE_SRC = '/branding/icons/eagle-head.png'
 
+/**
+ * WingDivider component definition.
+ */
 export function WingDivider({
   variant = 'default',
   size = 28,

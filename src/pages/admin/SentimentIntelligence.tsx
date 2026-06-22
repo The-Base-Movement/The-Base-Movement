@@ -1,3 +1,10 @@
+/**
+ * Sentiment Intelligence Page Component
+ * -------------------------------------------------------------
+ * Component for monitoring member feedback sentiment analysis and impact projections.
+ * Features logical replication subscription channels for real-time updates.
+ */
+
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
 import type {
@@ -15,12 +22,14 @@ import { SentimentRegionalMetrics } from './sentimentintelligence/SentimentRegio
 import { SentimentLiveFeedback } from './sentimentintelligence/SentimentLiveFeedback'
 import { DotLoader } from '@/components/states'
 
+// Main component rendering sentiment graphs, live feedback lists, and growth projections
 export default function SentimentIntelligence() {
   const [feedback, setFeedback] = useState<MemberFeedback[]>([])
   const [sentimentMetrics, setSentimentMetrics] = useState<SentimentMetrics[]>([])
   const [projections, setProjections] = useState<ImpactProjection[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Fetch sentiment metrics, projections, and raw feedback records
   const fetchIntelligence = async (isBackground = false) => {
     if (!isBackground) setLoading(true)
     try {

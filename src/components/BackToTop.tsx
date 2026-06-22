@@ -1,5 +1,16 @@
+/**
+ * BackToTop Component
+ * -------------------------------------------------------------
+ * Floating navigation shortcut button that appears on scroll.
+ * Monitors window scroll position to toggle visibility past 400px scroll depth.
+ * Triggers a smooth-scroll upward on click.
+ */
+
 import { useState, useEffect } from 'react'
 
+/**
+ * BackToTop component definition.
+ */
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -8,6 +19,9 @@ export default function BackToTop() {
     return false
   })
 
+  /**
+   * Toggles visibility state based on window scroll Y position.
+   */
   const toggleVisibility = () => {
     // Using scrollY for better modern browser support
     if (window.scrollY > 400) {
@@ -17,6 +31,9 @@ export default function BackToTop() {
     }
   }
 
+  /**
+   * Performs a smooth scroll animation back to the top of the window page.
+   */
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -39,7 +56,9 @@ export default function BackToTop() {
       }`}
       aria-label="Back to top"
     >
-      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_upward</span>
+      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+        arrow_upward
+      </span>
     </button>
   )
 }

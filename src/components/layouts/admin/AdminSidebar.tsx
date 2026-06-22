@@ -1,3 +1,11 @@
+/**
+ * Admin Sidebar Navigation Component
+ * -------------------------------------------------------------
+ * Renders the primary sidebar navigation menu for the admin dashboard,
+ * supporting collapsible groups, sub-items, responsive toggling, and
+ * role-based route access controls.
+ */
+
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
@@ -17,6 +25,7 @@ interface AdminSidebarProps {
   unreadMessagesCount?: number
 }
 
+// Sidebar navigation container component containing all admin navigation paths
 export function AdminSidebar({
   isSidebarOpen,
   setIsSidebarOpen,

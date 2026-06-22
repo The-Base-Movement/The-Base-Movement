@@ -1,4 +1,10 @@
-// src/components/chat/ChatInput.tsx
+/**
+ * ChatInput Component
+ * -------------------------------------------------------------
+ * Provides a dynamic, auto-growing textarea input field for chat.
+ * Triggers callback events when messages are submitted (via Enter key or send button).
+ */
+
 import { useRef, useState } from 'react'
 
 interface ChatInputProps {
@@ -7,6 +13,11 @@ interface ChatInputProps {
   placeholder?: string
 }
 
+/**
+ * ChatInput
+ * -------------------------------------------------------------
+ * Text field component with key listeners and submit control.
+ */
 export function ChatInput({
   onSend,
   disabled = false,
@@ -15,6 +26,11 @@ export function ChatInput({
   const [value, setValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  /**
+   * handleSend
+   * -------------------------------------------------------------
+   * Dispatches the text value if valid and resets the textarea's state.
+   */
   const handleSend = () => {
     const trimmed = value.trim()
     if (!trimmed || disabled) return
@@ -25,6 +41,7 @@ export function ChatInput({
     }
   }
 
+  // Key event interceptor to send message on Enter (without Shift)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -32,6 +49,7 @@ export function ChatInput({
     }
   }
 
+  // Value change tracker enforcing height adjustment auto-grow constraints
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value)
     // Auto-grow up to 3 rows (72px)

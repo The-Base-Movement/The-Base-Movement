@@ -1,7 +1,8 @@
 /**
- * scanForm.ts
- * Browser-based form scanner using Tesseract.js (OCR) and PDF.js.
- * No API keys. No server calls. Runs entirely in the browser.
+ * @file scanForm.ts
+ * @description Browser-based form scanner using Tesseract.js (OCR) and PDF.js.
+ * Parses registration forms and auto-extracts values without external API keys.
+ * Runs entirely in the browser.
  */
 
 import { createWorker } from 'tesseract.js'
@@ -27,6 +28,7 @@ const GHANA_REGIONS = [
   'North East',
 ]
 
+/** Callback format to display scanner step progression status messages */
 type ProgressFn = (status: string) => void
 
 // ── Extract text from a File using Tesseract ──────────────────────────────────
@@ -189,6 +191,15 @@ const SCANNABLE_EXTENSIONS = new Set([
 
 const SCAN_TIMEOUT_MS = 90_000
 
+/**
+ * Scans a registration document (Image or PDF) using client-side OCR.
+ * Extracts fields corresponding to standard RegistrationFormData properties.
+ *
+ * @param file - Document image or PDF File
+ * @param onProgress - Optional progression callback logger
+ * @returns Object indicating parsed platform and extracted registration values.
+ * @throws Error if file format is not supported or if scanning execution times out.
+ */
 export async function scanFormFile(
   file: File,
   onProgress?: ProgressFn

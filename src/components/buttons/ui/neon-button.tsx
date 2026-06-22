@@ -1,3 +1,10 @@
+/**
+ * Neon Button Component
+ * -------------------------------------------------------------
+ * Interactive Button component supporting customizable themes, sizes,
+ * Slot composition (Radix UI), and hover neon glow lines styled dynamically.
+ */
+
 import React from 'react'
 import { Slot, Slottable } from '@radix-ui/react-slot'
 import { cn } from '@/lib/utils'
@@ -26,12 +33,19 @@ export interface ButtonProps
     | undefined
 }
 
+/**
+ * Button Component
+ * -------------------------------------------------------------
+ * Main button component with customizable size/style variants, custom branding settings,
+ * and optional hover neon glow gradient tracks.
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, neon, size, variant, asChild = false, children, style, ...props }, ref) => {
     const { settings } = useBranding()
     const isNeonEnabled = neon !== undefined ? neon : (settings.button_neon_enabled ?? true)
     const Comp = asChild ? Slot : 'button'
 
+    // Resolves matching color gradient class based on active variant
     const getGlowColor = () => {
       if (variant === 'destructive') return 'via-brand-red'
       if (variant === 'gold' || variant === 'accent') return 'via-brand-gold'

@@ -1,4 +1,21 @@
-﻿import { useState, useEffect } from 'react'
+/**
+ * MovementRoadmap Component
+ * -------------------------------------------------------------
+ * Renders the national strategic roadmap timeline as a zig-zag milestone list.
+ * Data is fetched from `adminService.getRoadmapForecast()` (the `milestones`
+ * table). If the table is empty, four hardcoded strategic defaults are shown.
+ *
+ * Each milestone renders a coloured circular node (green = first, red = last,
+ * gold = in-between), a detail card with status badge, title, description, and
+ * target / forecasted dates.
+ *
+ * The "In Progress" node pulses using Tailwind's `animate-pulse` and has a
+ * glowing box-shadow to draw attention. Layout alternates left/right on ≥ sm
+ * breakpoints (zig-zag effect). Still uses Tailwind utilities — do not migrate
+ * to the dashboard design system; it lives on the public site.
+ */
+
+import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { adminService, type Milestone } from '@/services/adminService'
 

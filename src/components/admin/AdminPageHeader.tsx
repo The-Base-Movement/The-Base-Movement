@@ -1,3 +1,11 @@
+/**
+ * AdminPageHeader Component
+ * -------------------------------------------------------------
+ * Standard page-header header container used across all Admin Command modules.
+ * Renders consistent titles, Material Symbols icons, BrandLine accents,
+ * description summaries, and quick action headers.
+ */
+
 import React from 'react'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { cn } from '@/lib/utils'

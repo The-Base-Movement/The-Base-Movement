@@ -234,6 +234,10 @@ def insert_to_supabase(record: dict) -> str:
 # ── CLI ────────────────────────────────────────────────────────────────────────
 
 def main():
+    """
+    Main CLI entry point to parse command-line arguments and run batch or
+    single-file form extraction and database insertion.
+    """
     parser = argparse.ArgumentParser(
         description="Scan physical registration forms and extract member data."
     )

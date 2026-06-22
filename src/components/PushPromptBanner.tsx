@@ -1,3 +1,19 @@
+/**
+ * PushPromptBanner Component
+ * -------------------------------------------------------------
+ * Prompts the authenticated member to enable web push notifications.
+ * Only shown if:
+ * - The browser supports push notifications (`isSupported`)
+ * - The member is not already subscribed (`!isSubscribed`)
+ * - The banner has not been previously dismissed or accepted (`!dismissed`)
+ * - Push subscription is not currently loading
+ *
+ * On "Enable notifications": calls `subscribe()` from `usePushNotifications`,
+ * sets `push_prompted` in localStorage to prevent future prompts, and shows a
+ * brief "Notifications enabled" confirmation state before hiding itself.
+ * On "Not now": writes `push_prompted=dismissed` to localStorage.
+ */
+
 import { useState } from 'react'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
 

@@ -1,6 +1,6 @@
 /**
- * ID Document Data Scraping Script
- *
+ * @file idDocumentScraper.ts
+ * @description ID Document Data Scraping Script.
  * Extracts structured data from Ghana Card, Passport, and Voter ID images
  * for registration form auto-population and verification.
  *
@@ -12,76 +12,107 @@
  */
 
 /**
- * OCR Result Structure from Tesseract.js or Cloud Vision API
- * Maps extracted text to standardized field names
+ * OCR Result Structure from Tesseract.js or Cloud Vision API.
+ * Maps extracted text to standardized field names.
  */
 interface OCRResult {
+  /** The full text extracted by OCR */
   rawText: string
+  /** Global OCR processing confidence score (0-100) */
   confidence: number
+  /** Individual parsed layout regions */
   regions: OCRRegion[]
 }
 
+/**
+ * Bounds and metadata representing a text match region
+ */
 interface OCRRegion {
+  /** Bounding box rectangle dimensions */
   boundingBox: { x: number; y: number; width: number; height: number }
+  /** Text matching content */
   text: string
+  /** Recognition confidence score */
   confidence: number
 }
 
 /**
- * Scraped ID Document Data
- * Extracted and normalized from OCR processing
+ * Scraped ID Document Data.
+ * Extracted and normalized from OCR processing.
  */
 export interface ScrapedIDData {
   // Personal Information
+  /** First name extracted from ID document */
   firstName?: string
+  /** Last name extracted from ID document */
   lastName?: string
+  /** Complete full name extracted from ID document */
   fullName?: string
+  /** Date of birth string in YYYY-MM-DD format */
   dateOfBirth?: string // YYYY-MM-DD
+  /** Calculated age based on DOB */
   age?: number
+  /** Gender identifier (typically 'M' or 'F') */
   gender?: string // 'M' | 'F'
+  /** Nationality country name */
   nationality?: string
 
   // ID Information
+  /** Unique Identification document number */
   idNumber?: string
+  /** The type of ID document parsed */
   idType?: 'GHANA_CARD' | 'PASSPORT' | 'VOTER_ID'
+  /** Document issue date string */
   issueDate?: string
+  /** Document expiry date string */
   expiryDate?: string
+  /** Flag indicating whether the ID has expired */
   isExpired?: boolean
+  /** Country of ID issue */
   issuingCountry?: string
+  /** Official issuing department or organization */
   issuingAuthority?: string
 
   // Address Information
+  /** Residential address text */
   residentialAddress?: string
+  /** Residential city */
   city?: string
+  /** Geographical region */
   region?: string
+  /** Postal or zip code */
   postalCode?: string
 
   // Additional Fields (Ghana Card specific)
+  /** Stated profession of the ID holder */
   profession?: string
+  /** Declared place of birth */
   placeOfBirth?: string
+  /** Mother's full name */
   motherName?: string
+  /** Father's full name */
   fatherName?: string
+  /** Marital status */
   maritalStatus?: string
+  /** Blood type (e.g. 'O+', 'AB-') */
   bloodType?: string
 
   // Metadata
+  /** The execution path used to retrieve the data */
   extractionMethod: 'ocr' | 'smile_id' | 'manual'
-  confidence: number // 0-100
+  /** Estimated precision or parsing confidence level percentage (0-100) */
+  confidence: number
+  /** Parser warnings or format issues observed */
   warnings: string[]
+  /** Copy of raw OCR text used during parse */
   rawOCRText?: string
 }
 
 /**
- * GHANA CARD FIELD EXTRACTION
+ * Front/back field parser matching Ghana Card templates.
  *
- * Ghana Card Layout:
- * - Front: Full Name, ID Number (16 chars), Date of Birth, Gender, Blood Type, MRZ line
- * - Back: Address, Profession, Issue Date, Expiry Date, Signature, Photo
- *
- * Key Identifiers:
- * - ID Number Format: XXXXX-XXXX-XXXX-X (check digit validation possible)
- * - MRZ Line: Machine-readable zone for automated parsing
- * - Issue/Expiry: Typically printed near MRZ
+ * @param ocrResult - Text payload matches from OCR
+ * @returns Normalised ScrapedIDData object
  */
 export function scrapeGhanaCard(ocrResult: OCRResult): ScrapedIDData {
   const data: ScrapedIDData = {
@@ -182,17 +213,10 @@ export function scrapeGhanaCard(ocrResult: OCRResult): ScrapedIDData {
 }
 
 /**
- * PASSPORT FIELD EXTRACTION
+ * Front field parser matching standard Passport templates.
  *
- * Passport Layout:
- * - MRZ Line: Machine-readable zone with standardized format
- * - Header: Passport number, issue/expiry dates
- * - Personal: Name, DOB, gender, place of birth
- *
- * Ghana Passport typically has:
- * - 9-character passport number
- * - Issue/Expiry in YYMMDD format
- * - MRZ with encoded data
+ * @param ocrResult - Text payload matches from OCR
+ * @returns Normalised ScrapedIDData object
  */
 export function scrapePassport(ocrResult: OCRResult): ScrapedIDData {
   const data: ScrapedIDData = {
@@ -256,12 +280,10 @@ export function scrapePassport(ocrResult: OCRResult): ScrapedIDData {
 }
 
 /**
- * VOTER ID FIELD EXTRACTION
+ * Front field parser matching standard Voter ID templates.
  *
- * Voter ID Layout:
- * - Voter Registration Number (VRN): 10-digit format
- * - Name, Polling Station
- * - Simple layout, smaller dataset
+ * @param ocrResult - Text payload matches from OCR
+ * @returns Normalised ScrapedIDData object
  */
 export function scrapeVoterID(ocrResult: OCRResult): ScrapedIDData {
   const data: ScrapedIDData = {
@@ -294,8 +316,12 @@ export function scrapeVoterID(ocrResult: OCRResult): ScrapedIDData {
 }
 
 /**
- * MAIN SCRAPER FUNCTION
- * Auto-detects document type and extracts appropriate fields
+ * MAIN SCRAPER FUNCTION.
+ * Auto-detects document type and extracts appropriate fields.
+ *
+ * @param _base64Image - Base64 encoded string of document photo image
+ * @param detectedType - Optional document type indicator override
+ * @returns Extracted ScrapedIDData fields
  */
 export async function scrapeIDDocument(
   _base64Image: string,
@@ -323,7 +349,10 @@ export async function scrapeIDDocument(
 }
 
 /**
- * VALIDATION & SANITY CHECKS
+ * Validates correctness of parsed document fields (existence checks, formatting rules, expired checks).
+ *
+ * @param data - The parsed document fields
+ * @returns Status validation result object containing error lists.
  */
 export function validateScrapedData(data: ScrapedIDData): {
   isValid: boolean

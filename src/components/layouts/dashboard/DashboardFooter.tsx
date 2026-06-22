@@ -1,5 +1,17 @@
+/**
+ * DashboardFooter Component
+ * -------------------------------------------------------------
+ * Footnote section rendering copyright and policies/support links
+ * for the member portal views.
+ */
+
 import { Link } from 'react-router-dom'
 
+/**
+ * DashboardFooter
+ * -------------------------------------------------------------
+ * Member portal footer component.
+ */
 export default function DashboardFooter() {
   return (
     <footer className="mt-16 py-10 px-12 border-t border-border/10 bg-muted/5">

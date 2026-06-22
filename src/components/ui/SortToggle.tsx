@@ -14,6 +14,9 @@ interface SortToggleProps {
   label?: string
 }
 
+/**
+ * SortToggle component definition.
+ */
 export function SortToggle({ value, onChange, label = 'A–Z' }: SortToggleProps) {
   const isAsc = value === 'asc'
 

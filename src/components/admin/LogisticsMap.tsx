@@ -1,10 +1,24 @@
+/**
+ * LogisticsMap Component
+ * -------------------------------------------------------------
+ * GIS integration using Mapbox GL (react-map-gl) to render movement logistics data.
+ * Draws radial dashed lines from the Greater Accra Central Hub to outer regions representing
+ * dispatch routes, and plots regional markers containing fulfillment rates and inventory totals.
+ */
+
 import { useState, useMemo } from 'react'
 import Map, { Marker, NavigationControl, ScaleControl, Source, Layer } from 'react-map-gl/mapbox'
 import type { LinePaint } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
+/**
+ * Coordinate details for the centralized movement logistics warehouse (Greater Accra).
+ */
 const CENTRAL_HUB = { lng: -0.1869, lat: 5.6037, name: 'Greater Accra' }
 
+/**
+ * Coordinate mapping lookup table for Ghana's administrative region markers.
+ */
 const GHANA_REGION_COORDS: Record<string, { lng: number; lat: number }> = {
   Northern: { lng: -0.8393, lat: 9.4007 },
   Ashanti: { lng: -1.6244, lat: 6.6666 },
@@ -31,6 +45,10 @@ interface LogisticsMapProps {
   inventory?: { region: string; total_stock: number }[]
 }
 
+/**
+ * LogisticsMap Component
+ * Interactive map panel displaying GIS paths, region pins, and dispatch indicators.
+ */
 export function LogisticsMap({ data, token, routes = [], inventory = [] }: LogisticsMapProps) {
   const [hoveredMarker, setHoveredMarker] = useState<string | null>(null)
 

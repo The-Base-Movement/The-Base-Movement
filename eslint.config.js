@@ -20,18 +20,17 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
-      // Downgrade any to warn so existing code isn't blocked — tighten over time
+      // Warn when using 'any' to encourage proper TypeScript typing
       '@typescript-eslint/no-explicit-any': 'warn',
-      // Catch accidental console.log left in commits
+      // Warn on console.log statements to avoid leaking logs in production
       'no-console': ['warn', { allow: ['error', 'warn'] }],
-      // Unused vars as errors (already enforced by tsconfig but belt-and-suspenders)
+      // Error on unused variables to keep codebase clean
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      // Added to react-hooks v7.1 recommended; the established load-in-effect data
-      // fetching pattern trips it repo-wide. Warn (don't block) — tighten over time.
+      // Warn when setting state in useEffect to prevent infinite loops
       'react-hooks/set-state-in-effect': 'warn',
     },
   },
-  // Node.js CLI scripts may freely use console
+  // Allow Node.js CLI scripts to use console logs
   {
     files: ['scripts/**/*.{ts,js,cjs,mjs}'],
     rules: {

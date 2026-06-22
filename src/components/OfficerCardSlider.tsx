@@ -1,3 +1,17 @@
+/**
+ * OfficerCardSlider Component
+ * -------------------------------------------------------------
+ * Container for a group of `OfficerCard` elements.
+ * Automatically switches between two layouts:
+ * - Flex-wrap grid: used when the screen is desktop-width AND there are fewer
+ *   than `SLIDER_MIN` (5) cards.
+ * - Swiper carousel: used on mobile (< 768 px) OR when there are ≥ 5 cards.
+ *   The carousel auto-plays every 5 s and shows clickable pagination dots.
+ *
+ * A decorative `HorizontalRail` (dashed top line) is rendered in both modes,
+ * serving as the visual "rail" from which officer lanyard cards hang.
+ */
+
 import { Children, useState, useEffect, type ReactNode } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'

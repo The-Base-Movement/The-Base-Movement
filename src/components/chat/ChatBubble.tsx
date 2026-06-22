@@ -1,4 +1,11 @@
-// src/components/chat/ChatBubble.tsx
+/**
+ * ChatBubble Component
+ * -------------------------------------------------------------
+ * Renders an individual chat bubble item.
+ * Supports bubble styling variations (left/right alignment, container color)
+ * based on whether the message was sent by the current user.
+ */
+
 import { formatDistanceToNow } from 'date-fns'
 
 interface ChatBubbleProps {
@@ -8,6 +15,11 @@ interface ChatBubbleProps {
   senderName?: string // shown above the bubble when isSelf is false
 }
 
+/**
+ * ChatBubble
+ * -------------------------------------------------------------
+ * A styled text balloon presenting a single chat message.
+ */
 export function ChatBubble({ content, isSelf, timestamp, senderName }: ChatBubbleProps) {
   const timeAgo = formatDistanceToNow(new Date(timestamp), { addSuffix: true })
 

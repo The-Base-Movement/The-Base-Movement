@@ -1,3 +1,11 @@
+/**
+ * BankDetailsEditor Component
+ * -------------------------------------------------------------
+ * Provides a management panel for editing movement bank details.
+ * Visible and editable only by eligible roles (like SUPER_ADMIN or FINANCE_OFFICER).
+ * Audits updates into system logs.
+ */
+
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
@@ -76,6 +84,11 @@ export function BankDetailsEditor() {
 
   if (!canEdit) return null
 
+  /**
+   * save
+   * -------------------------------------------------------------
+   * Submits form bank credentials, invokes audit-logging, and displays success toast.
+   */
   const save = async () => {
     setSaving(true)
     try {

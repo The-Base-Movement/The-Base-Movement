@@ -1,18 +1,17 @@
+/**
+ * BiometricPrompt Component
+ * -------------------------------------------------------------
+ * A full-screen dialog handling WebAuthn credential ceremonies (passkeys / fingerprints).
+ * Modes:
+ * - enroll: Binds Windows Hello / Face ID passkeys to the user profile
+ * - step-up: Mandatory verification of biometrics when security context (like Brave fingerprints) changes
+ */
+
 import { useState } from 'react'
 import { deviceTrackingService, type EvaluateResult } from '@/services/deviceTrackingService'
 
 /**
- * Full-screen biometric prompt shown after device capture when a passkey step is
- * needed. Two modes, driven by the evaluate decision:
- *   - enrol  : device has no passkey yet — offer to set up Windows Hello / Face ID.
- *   - stepup : verify the enrolled device with the existing passkey if a caller
- *              explicitly requests it.
- *
- * WebAuthn requires a user gesture, so every ceremony is triggered by a button.
- *   - enrol mode is non-blocking: "Set up later" lets the user proceed.
- *   - step-up mode is MANDATORY when Brave's device fingerprint changes. The
- *     user must verify the existing biometric, or use the MFA-protected Brave
- *     reinstall recovery flow to register a replacement credential.
+ * BiometricPrompt component definition.
  */
 export default function BiometricPrompt({
   result,
@@ -28,6 +27,9 @@ export default function BiometricPrompt({
   const [message, setMessage] = useState('')
   const [canRecover, setCanRecover] = useState(false)
 
+  /**
+   * Invokes WebAuthn navigator credentials API to register/enroll a new biometric credential.
+   */
   const runEnrol = async (rebind: boolean) => {
     setStatus('working')
     setMessage('')
@@ -45,6 +47,9 @@ export default function BiometricPrompt({
     }
   }
 
+  /**
+   * Invokes WebAuthn navigator credentials assertion/challenge API to verify the existing passkey.
+   */
   const runStepUp = async () => {
     if (!result.device_id || !result.fingerprint_hash) return onDone()
     setStatus('working')

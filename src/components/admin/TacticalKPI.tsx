@@ -1,3 +1,12 @@
+/**
+ * TacticalKPI Component
+ * -------------------------------------------------------------
+ * Renders a standardized Key Performance Indicator (KPI) stat card.
+ * Part of the Admin Command Center dashboard metrics display. Supports
+ * trend indicators (arrows), custom labels, tabular number formatting,
+ * and status color variants (red, gold, black, green).
+ */
+
 import React from 'react'
 import { cn } from '@/lib/utils'
 
@@ -15,39 +24,39 @@ interface TacticalKPIProps {
   className?: string
 }
 
-export function TacticalKPI({ 
-  label, 
-  value, 
-  description, 
-  delta, 
-  isDown, 
+/**
+ * TacticalKPI component definition.
+ */
+export function TacticalKPI({
+  label,
+  value,
+  description,
+  delta,
+  isDown,
   variant = 'black',
   trend,
-  className
+  className,
 }: TacticalKPIProps) {
-  const finalDirection = trend ? trend.direction : (isDown ? 'down' : 'up')
-  const finalValue = trend ? trend.value : (delta || "Operational stability")
+  const finalDirection = trend ? trend.direction : isDown ? 'down' : 'up'
+  const finalValue = trend ? trend.value : delta || 'Operational stability'
 
+  /**
+   * Resolves the Material Symbol icon name for the trend arrow.
+   */
   const getIcon = () => {
     if (finalDirection === 'up') return 'north'
     if (finalDirection === 'down') return 'south'
     return 'trending_flat'
   }
   return (
-    <div className={cn("card group cursor-default", variant, className)}>
+    <div className={cn('card group cursor-default', variant, className)}>
       <div className="row">
         <span className="eye">{label}</span>
       </div>
-      <div className="num tnum">
-        {value}
-      </div>
-      {description && (
-        <div className="lbl">
-          {description}
-        </div>
-      )}
+      <div className="num tnum">{value}</div>
+      {description && <div className="lbl">{description}</div>}
       <div className="foot">
-        <div className={cn("delta", finalDirection === 'down' && "text-destructive")}>
+        <div className={cn('delta', finalDirection === 'down' && 'text-destructive')}>
           <span className="material-symbols-outlined" style={{ fontSize: '11px' }}>
             {getIcon()}
           </span>

@@ -1,3 +1,11 @@
+/**
+ * Plan Manager Page Component
+ * -------------------------------------------------------------
+ * Component for managing the movement's policy agenda and strategic pillars.
+ * Handles CRUD operations on pillars and checklist items, ordering index swap updates,
+ * and seeding defaults.
+ */
+
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { planService } from '@/services/planService'
@@ -8,6 +16,7 @@ import PlanEditorModal from '@/pages/admin/PlanManager/PlanEditorModal'
 import PlanManagerHeader from '@/pages/admin/PlanManager/PlanManagerHeader'
 import PlanManagerPillarsPanel from '@/pages/admin/PlanManager/PlanManagerPillarsPanel'
 
+// Main component rendering strategic pillars panel, modals, and sorting triggers
 export default function PlanManager() {
   const [pillars, setPillars] = useState<AgendaPillar[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -24,6 +33,7 @@ export default function PlanManager() {
   const [formSummary, setFormSummary] = useState('')
   const [formObjectives, setFormObjectives] = useState<AgendaObjective[]>([])
 
+  // Query strategic pillars from backend database services
   const fetchPillars = async () => {
     setIsLoading(true)
     try {
@@ -43,6 +53,7 @@ export default function PlanManager() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Open creation or editing modal and populate form inputs
   const handleOpenModal = (pillar: AgendaPillar | null = null) => {
     if (pillar) {
       setEditingPillar(pillar)
@@ -66,6 +77,7 @@ export default function PlanManager() {
     setShowModal(true)
   }
 
+  // Append empty objective group to editor state
   const handleAddObjective = () => {
     setFormObjectives([
       ...formObjectives,
@@ -73,34 +85,40 @@ export default function PlanManager() {
     ])
   }
 
+  // Remove objective group by index
   const handleRemoveObjective = (objIndex: number) => {
     setFormObjectives(formObjectives.filter((_, i) => i !== objIndex))
   }
 
+  // Modify objective title text
   const handleObjectiveTitleChange = (objIndex: number, title: string) => {
     const updated = [...formObjectives]
     updated[objIndex].title = title
     setFormObjectives(updated)
   }
 
+  // Append empty action item checklist detail
   const handleAddChecklistItem = (objIndex: number) => {
     const updated = [...formObjectives]
     updated[objIndex].items.push('New actionable detail')
     setFormObjectives(updated)
   }
 
+  // Remove action checklist detail from objective group
   const handleRemoveChecklistItem = (objIndex: number, itemIndex: number) => {
     const updated = [...formObjectives]
     updated[objIndex].items = updated[objIndex].items.filter((_, i) => i !== itemIndex)
     setFormObjectives(updated)
   }
 
+  // Modify checklist detail text value
   const handleChecklistItemChange = (objIndex: number, itemIndex: number, value: string) => {
     const updated = [...formObjectives]
     updated[objIndex].items[itemIndex] = value
     setFormObjectives(updated)
   }
 
+  // Save new or updated plan pillar definitions to database services
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
@@ -147,6 +165,7 @@ export default function PlanManager() {
     }
   }
 
+  // Remove a plan pillar from backend services and UI state
   const handleDeletePillar = (pillar: AgendaPillar) => {
     openDelete({
       itemName: pillar.title,
@@ -164,6 +183,7 @@ export default function PlanManager() {
     })
   }
 
+  // Change the sort order rank of a strategic pillar (up or down)
   const handleMovePillar = async (index: number, direction: 'up' | 'down') => {
     if (direction === 'up' && index === 0) return
     if (direction === 'down' && index === pillars.length - 1) return
@@ -196,6 +216,7 @@ export default function PlanManager() {
     }
   }
 
+  // Restore the original hardcoded pillars from configuration
   const handleResetToDefaults = async () => {
     if (
       !confirm(

@@ -1,3 +1,11 @@
+/**
+ * NoteDetailModal Component
+ * -------------------------------------------------------------
+ * Displays details of a specific note/bulletin board entry.
+ * Renders comment history, handles adding comments, and provides administrative controls
+ * (archive, restore, delete, edit) matching user permissions.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
@@ -15,6 +23,11 @@ interface DetailModalProps {
   onEdit?: () => void
 }
 
+/**
+ * NoteDetailModal
+ * -------------------------------------------------------------
+ * Portal-based modal component representing the note detail viewer.
+ */
 export function NoteDetailModal({
   note,
   onClose,
@@ -30,6 +43,12 @@ export function NoteDetailModal({
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [mutating, setMutating] = useState(false)
 
+  /**
+   * loadComments
+   * -------------------------------------------------------------
+   * Fetches comment lists for the specific note and resolves their
+   * author profile names.
+   */
   const loadComments = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -73,6 +92,11 @@ export function NoteDetailModal({
     return () => clearTimeout(timer)
   }, [loadComments])
 
+  /**
+   * handleArchiveToggle
+   * -------------------------------------------------------------
+   * Archives or restores the note. Uses RLS check by looking at select() return value.
+   */
   async function handleArchiveToggle() {
     setMutating(true)
     try {
@@ -94,6 +118,11 @@ export function NoteDetailModal({
     }
   }
 
+  /**
+   * handleDelete
+   * -------------------------------------------------------------
+   * Permanently deletes the note after a double-click/two-step confirmation.
+   */
   async function handleDelete() {
     if (!confirmDelete) {
       setConfirmDelete(true)
@@ -118,6 +147,11 @@ export function NoteDetailModal({
     }
   }
 
+  /**
+   * handlePostComment
+   * -------------------------------------------------------------
+   * Inserts a new reply comment to Supabase for the current note.
+   */
   async function handlePostComment() {
     if (!newComment.trim()) return
     setPosting(true)

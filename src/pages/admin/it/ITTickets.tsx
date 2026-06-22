@@ -1,3 +1,10 @@
+/**
+ * IT Tickets Page Component
+ * -------------------------------------------------------------
+ * Component for administering helpdesk support tickets.
+ * Displays KPI metrics, ticket Kanban boards, assignments, and resolution states.
+ */
+
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -11,6 +18,7 @@ export type { ITTicket, TicketStatus, TicketPriority, AdminStub } from './ticket
 import { KanbanBoard } from './tickets/KanbanBoard'
 import { MobileTicketList } from './tickets/MobileTicketList'
 
+// Main support tickets management page component
 export default function ITTickets() {
   const { setCurrentLabel } = usePageLabel()
   const isMobile = useIsMobile()
@@ -27,6 +35,7 @@ export default function ITTickets() {
   const [loading, setLoading] = useState(true)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
+  // Query tickets manifest and system administrators roster from databases
   const load = useCallback(async () => {
     setLoading(true)
     try {
@@ -77,6 +86,7 @@ export default function ITTickets() {
     return () => clearTimeout(timer)
   }, [load])
 
+  // Update status state configuration for a support ticket card
   const updateStatus = async (ticketId: string, newStatus: TicketStatus) => {
     setTickets((prev) => prev.map((t) => (t.id === ticketId ? { ...t, status: newStatus } : t)))
     const { error } = await supabase
@@ -89,6 +99,7 @@ export default function ITTickets() {
     }
   }
 
+  // Assign ticket to a specific administrator or support representative
   const assignTicket = async (ticketId: string, adminId: string | null) => {
     setTickets((prev) =>
       prev.map((t) => {

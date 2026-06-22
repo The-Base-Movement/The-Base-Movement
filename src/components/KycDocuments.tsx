@@ -1,3 +1,18 @@
+/**
+ * KycDocuments Component
+ * -------------------------------------------------------------
+ * Displays and manages the three KYC identity documents required for member
+ * verification: Ghana Card front, Ghana Card back, and selfie.
+ *
+ * Features:
+ * - Loads existing document signed URLs via `kycService`
+ * - Allows uploading / replacing each document (image files only)
+ * - Displays the overall KYC status via a colour-coded `.pill` badge
+ * - Optional `showVerifyControls` prop renders admin buttons to manually
+ *   mark the member as "verified" or "failed" (Phase 1; Smile ID auto-
+ *   verification is planned for Phase 2)
+ */
+
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { kycService, type KycDocKind, type KycStatus, type MemberKyc } from '@/services/kycService'

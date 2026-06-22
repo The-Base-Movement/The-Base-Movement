@@ -1,3 +1,14 @@
+/**
+ * Banner Component
+ * -------------------------------------------------------------
+ * A semantic inline alert banner used to broadcast warning, success, or info states.
+ * Variants:
+ * - error: High visibility red alert
+ * - warn: Gold caution alert
+ * - info: Steel blue alert
+ * - ok: Movement green confirmation alert
+ */
+
 import type { CSSProperties } from 'react'
 
 type BannerVariant = 'error' | 'warn' | 'info' | 'ok'
@@ -40,6 +51,9 @@ const VARIANTS: Record<
   },
 }
 
+/**
+ * Banner component definition.
+ */
 export function Banner({ variant, title, body, onDismiss, style }: BannerProps) {
   const v = VARIANTS[variant]
 

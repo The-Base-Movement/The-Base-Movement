@@ -1,3 +1,10 @@
+/**
+ * IT Projects Page Component
+ * -------------------------------------------------------------
+ * Component for tracking and managing the IT department's projects.
+ * Supports Concept, Backlog, Active, and Completed lifecycle stages.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -9,6 +16,7 @@ import { COLUMNS } from './projects/types'
 import { ProjectCard } from './projects/ProjectCard'
 import { ProjectModal } from './projects/ProjectModal'
 
+// Main projects board page component
 export default function ITProjects() {
   const { setCurrentLabel } = usePageLabel()
   const isMobile = useIsMobile()
@@ -35,6 +43,7 @@ export default function ITProjects() {
     </button>
   )
 
+  // Fetch projects and resolve creator names from users table
   const load = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -81,6 +90,7 @@ export default function ITProjects() {
     return () => clearTimeout(timer)
   }, [load])
 
+  // Move project status inside the lifecycle stages
   async function handleStatusChange(id: string, status: ProjectStatus) {
     try {
       const { error } = await supabase.from('it_projects').update({ status }).eq('id', id)
@@ -91,6 +101,7 @@ export default function ITProjects() {
     }
   }
 
+  // Delete project from database and state
   async function handleDelete(id: string) {
     if (!confirm('Delete this project? This cannot be undone.')) return
     try {

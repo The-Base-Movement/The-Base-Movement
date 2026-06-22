@@ -1,3 +1,11 @@
+/**
+ * IT Department Layout Component
+ * -------------------------------------------------------------
+ * Layout component for the IT Department dashboard section.
+ * Enforces role authorization checking (IT managers, founders, super admins)
+ * and exposes layout context for title/icon headers.
+ */
+
 import { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
@@ -16,6 +24,7 @@ interface ITHeader {
   actions?: React.ReactNode
 }
 
+// Layout component managing IT section authorization gate and sub-routing outlets
 export default function ITDepartmentLayout() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()

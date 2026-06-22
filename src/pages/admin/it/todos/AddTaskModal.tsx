@@ -1,3 +1,10 @@
+/**
+ * AddTaskModal Component
+ * -------------------------------------------------------------
+ * Portal-based modal for creating new IT checklist tasks/todos.
+ * Includes search-as-you-type debounced user search to assign tasks to team members.
+ */
+
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
@@ -10,6 +17,11 @@ interface AddModalProps {
   onSaved: () => void
 }
 
+/**
+ * AddTaskModal
+ * -------------------------------------------------------------
+ * Main interactive modal component to insert a new IT todo.
+ */
 export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
   const [task, setTask] = useState('')
   const [status, setStatus] = useState<TodoStatus>('todo')
@@ -21,6 +33,7 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
   const [saving, setSaving] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Search query listener hook for resolving matching user profiles with debouncing
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current)
     if (query.length < 2) {
@@ -47,6 +60,12 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
     }
   }, [query])
 
+  /**
+   * handleSave
+   * -------------------------------------------------------------
+   * Validates target task parameters, retrieves the current user's session metadata,
+   * inserts the new checklist item row in Supabase, and triggers the reload hook.
+   */
   async function handleSave() {
     if (!task.trim()) {
       toast.error('Task description is required')

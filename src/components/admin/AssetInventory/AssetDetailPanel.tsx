@@ -1,3 +1,10 @@
+/**
+ * AssetDetailPanel Component
+ * -------------------------------------------------------------
+ * Slide-out detail drawer component displaying extensive metadata for a single asset.
+ * Includes tabs for general details, condition logs, checkout histories, and alerts.
+ */
+
 import { useState } from 'react'
 import type { AssetDetail, AssetCondition, AssetAlert } from './types'
 import { MaintenanceTimeline } from './MaintenanceTimeline'
@@ -41,6 +48,11 @@ interface Props {
   onEscalate: (assetId: string, assignmentId: string | null) => Promise<boolean>
 }
 
+/**
+ * Field
+ * -------------------------------------------------------------
+ * Helper component rendering a labeled metadata field.
+ */
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
@@ -61,6 +73,12 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
   )
 }
 
+/**
+ * AssetDetailPanel
+ * -------------------------------------------------------------
+ * Detailed slide-out view panel with tabs showing overview parameters,
+ * maintenance logs, and checkout actions/histories.
+ */
 export function AssetDetailPanel({
   detail,
   loading,

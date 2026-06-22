@@ -1,3 +1,10 @@
+/**
+ * Orders Manifest Page Component
+ * -------------------------------------------------------------
+ * Component for administering merchandise orders, inventory tracking, and supply chain logistics.
+ * Supports CRUD updates via status transitions, cancellation confirmations, and CSV export.
+ */
+
 import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
@@ -12,6 +19,7 @@ import { OrdersFilters } from './orders/OrdersFilters'
 import { OrdersTable } from './orders/OrdersTable'
 import { OrderDetailPanel } from './orders/OrderDetailPanel'
 
+// Main component tracking fulfillment feed, KPI stats, and order selection panels
 export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([])
   const [stats, setStats] = useState<OrderStats | null>(null)
@@ -25,6 +33,7 @@ export default function AdminOrders() {
   const [cancelModal, setCancelModal] = useState<Order | null>(null)
   const [cancelling, setCancelling] = useState(false)
 
+  // Query order lists and general telemetry statistics from admin services
   const loadData = async (silent = false) => {
     if (!silent) setLoading(true)
     else setRefreshing(true)
@@ -51,6 +60,7 @@ export default function AdminOrders() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Advance order to the next status in the state machine (e.g. processing -> dispatched)
   const handleStatusAdvance = async (order: Order) => {
     const next = NEXT_STATUS[order.status]
     if (!next) return
@@ -68,10 +78,12 @@ export default function AdminOrders() {
     setUpdatingId(null)
   }
 
+  // Open the cancel order dialog for a specific order
   const handleCancel = async (order: Order) => {
     setCancelModal(order)
   }
 
+  // Finalize the cancellation of the selected order
   const handleConfirmCancel = async () => {
     if (!cancelModal) return
     setCancelling(true)
@@ -112,6 +124,7 @@ export default function AdminOrders() {
     })
   }, [orders, statusFilter, search, sortOrder])
 
+  // Export current list of filtered orders to a CSV document
   const handleExport = () => {
     try {
       const headers = ['Order ID', 'Customer', 'Email', 'Region', 'Amount', 'Status', 'Date']

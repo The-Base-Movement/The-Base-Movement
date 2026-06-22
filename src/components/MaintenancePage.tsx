@@ -1,3 +1,17 @@
+/**
+ * MaintenancePage Component
+ * -------------------------------------------------------------
+ * Full-viewport maintenance splash page rendered by `MaintenanceGate` when the
+ * site setting `maintenance_mode` is truthy.
+ *
+ * Accepts optional `title` and `message` overrides from the branding settings,
+ * otherwise falls back to the hardcoded defaults. Renders the brand globe,
+ * a heading, a message paragraph, and an animated DotLoader.
+ *
+ * The admin panel is never gated — staff can always reach /admin to toggle
+ * maintenance mode off.
+ */
+
 import { DotLoader } from '@/components/states/Spinner'
 
 interface MaintenancePageProps {

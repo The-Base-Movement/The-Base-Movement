@@ -1,3 +1,10 @@
+/**
+ * Public Movement Store Page Component
+ * -------------------------------------------------------------
+ * Displays the store layout for browsing and purchasing movement merchandise.
+ * Manages fetching products, category filtering, cart drawers, and wishlist logic.
+ */
+
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ShareModal } from '@/components/ShareModal'
@@ -13,6 +20,7 @@ import { OrderStepper } from './store/OrderStepper'
 
 const categories = ['All', 'Apparel', 'Accessories', 'Books', 'Print']
 
+// Primary Store component rendering the shop front and checkout access
 export default function Store() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,6 +41,7 @@ export default function Store() {
   const discount = cart.length > 0 ? 25 : 0
   const total = Math.max(0, subtotal + shipping - discount)
 
+  // Opens share modal with product specific URL and metadata
   const handleShare = (product: Product) => {
     setShareData({
       title: `Check out the ${product.name} at The Base Movement Store!`,
@@ -77,6 +86,7 @@ export default function Store() {
   const basePath = location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'
   const checkoutPath = `${basePath}/checkout`
 
+  // Helper to render the list of items in the shopping cart
   const renderCartItems = () => (
     <>
       {cart.length === 0 ? (
@@ -166,6 +176,7 @@ export default function Store() {
     </>
   )
 
+  // Helper to render the breakdown of cart totals and discount amounts
   const renderCartSummary = () => (
     <div className="font-meta">
       <div className="flex justify-between py-1 text-[12px] font-medium text-on-surface-muted">

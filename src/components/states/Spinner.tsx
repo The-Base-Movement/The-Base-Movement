@@ -1,3 +1,11 @@
+/**
+ * Spinner & DotLoader Components
+ * -------------------------------------------------------------
+ * Exposes reusable visual loading indicators:
+ * - Spinner: A rotating border-top ring with configurable sizes and themes
+ * - DotLoader: A sequence of three bouncing primary-colored dots with optional labels
+ */
+
 import type { CSSProperties } from 'react'
 
 interface SpinnerProps {
@@ -11,6 +19,9 @@ interface DotLoaderProps {
   style?: CSSProperties
 }
 
+/**
+ * Spinner component definition.
+ */
 export function Spinner({ size = 'md', variant = 'primary', style }: SpinnerProps) {
   const dim = size === 'sm' ? 20 : 36
   const bw = size === 'sm' ? 2 : 3
@@ -41,6 +52,9 @@ export function Spinner({ size = 'md', variant = 'primary', style }: SpinnerProp
   )
 }
 
+/**
+ * DotLoader component definition.
+ */
 export function DotLoader({ label, style }: DotLoaderProps) {
   const dot: CSSProperties = {
     width: 8,

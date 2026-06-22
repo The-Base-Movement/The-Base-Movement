@@ -1,3 +1,11 @@
+/**
+ * BlogPostCard Component
+ * -------------------------------------------------------------
+ * Displays a blog post preview card in list / grids.
+ * Includes post image preview (with tricolor brand flag fallback), category tag,
+ * title link, description summary excerpt, author initials/avatar, and formatted publish date.
+ */
+
 import { useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import type { BlogPost } from '@/types/admin'
@@ -9,6 +17,9 @@ interface BlogPostCardProps {
 
 const FONT = "'Public Sans', sans-serif"
 
+/**
+ * BlogPostCard component definition.
+ */
 export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
   const [hover, setHover] = useState(false)
   const formattedDate = post.publishedAt

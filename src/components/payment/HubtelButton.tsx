@@ -1,3 +1,11 @@
+/**
+ * HubtelButton Component
+ * -------------------------------------------------------------
+ * Payment trigger button component that encapsulates Hubtel API checkout logic.
+ * Triggers backend checkout URL requests and mounts the HubtelPaymentModal iframe wrapper.
+ * Listens for cross-origin window messages indicating transaction completions.
+ */
+
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { initiateHubtelCheckout } from './hubtelCheckout'
@@ -25,6 +33,9 @@ interface HubtelButtonProps {
   autoOpen?: boolean
 }
 
+/**
+ * HubtelButton component definition.
+ */
 export default function HubtelButton({
   amount,
   name,
@@ -44,6 +55,10 @@ export default function HubtelButton({
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [checkoutUrlState, setCheckoutUrlState] = useState<string | null>(null)
 
+  /**
+   * Contacts backend checkout endpoint to generate a secure checkout url,
+   * then launches the payment iframe modal.
+   */
   const startPayment = async () => {
     if (loading || disabled) return
     setLoading(true)

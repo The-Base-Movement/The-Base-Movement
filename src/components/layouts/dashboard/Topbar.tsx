@@ -1,3 +1,11 @@
+/**
+ * Dashboard Topbar Component
+ * -------------------------------------------------------------
+ * Top navigation header for the authenticated member dashboard.
+ * Features search-the-movement input, GHS donation shortcuts, theme selection,
+ * real-time notification overlays, and user account navigation dropdowns.
+ */
+
 import type { Dispatch, MouseEvent, SetStateAction } from 'react'
 import { Link, type NavigateFunction } from 'react-router-dom'
 import type { Notification } from '@/types/admin'
@@ -45,6 +53,12 @@ const userMenuItems: UserMenuItem[] = [
   { icon: 'favorite', label: 'My Wishlist', to: '/dashboard/store/wishlist' },
 ]
 
+/**
+ * Topbar
+ * -------------------------------------------------------------
+ * Main member dashboard header component coordinates search queries,
+ * theme options, and notifications dropdown overlays.
+ */
 export default function Topbar({
   getPageTitle,
   isAdmin,
@@ -70,6 +84,7 @@ export default function Topbar({
   wishlist,
   handleLogout,
 }: TopbarProps) {
+  // Theme button mouse hover event animator
   const handleThemeHover = (event: MouseEvent<HTMLButtonElement>, entering: boolean) => {
     event.currentTarget.style.color = entering
       ? 'hsl(var(--on-surface))'
@@ -77,6 +92,7 @@ export default function Topbar({
     event.currentTarget.style.background = entering ? 'hsl(var(--container-low))' : 'none'
   }
 
+  // Dropdown options background hover animator
   const handleMenuHover = (
     event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
     entering: boolean
@@ -84,6 +100,11 @@ export default function Topbar({
     event.currentTarget.style.background = entering ? 'hsl(var(--container-low))' : 'none'
   }
 
+  /**
+   * handleNotificationsClick
+   * -------------------------------------------------------------
+   * Opens the notification list and marks unread items as read in the background.
+   */
   const handleNotificationsClick = () => {
     setOpenNotifications((value) => !value)
     setOpenUserMenu(false)

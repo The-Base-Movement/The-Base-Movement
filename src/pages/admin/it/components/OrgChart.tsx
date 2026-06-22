@@ -1,3 +1,11 @@
+/**
+ * OrgChart Component
+ * -------------------------------------------------------------
+ * Displays and manages the organizational/reporting hierarchy within the IT department.
+ * Features an interactive tree layout with capabilities to set/change the root node (IT Manager),
+ * edit role titles, add subordinates, and remove members with automatic child node re-linking.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -21,6 +29,13 @@ interface TreeNodeProps {
   onEditTitle: (userId: string, currentTitle: string, name: string) => void
 }
 
+/**
+ * OrgNode Component
+ * -------------------------------------------------------------
+ * Represents a single node in the organization chart tree.
+ * Renders user avatar, full name, role title, and control options to edit or remove,
+ * and recursively renders subordinate children nodes.
+ */
 function OrgNode({
   node,
   isRoot = false,
@@ -286,6 +301,13 @@ function OrgNode({
 
 // ─── OrgChart (exported) ──────────────────────────────────────────────────────
 
+/**
+ * OrgChart Component
+ * -------------------------------------------------------------
+ * Main component representing the org chart editor and display.
+ * Fetches IT hierarchy layout, links report lines, maps to full names,
+ * and renders the interactive organization tree.
+ */
 export function OrgChart() {
   const [rows, setRows] = useState<HierarchyRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -306,6 +328,13 @@ export function OrgChart() {
     hasChildren: boolean
   } | null>(null)
 
+  /**
+   * load
+   * -------------------------------------------------------------
+   * Resolves raw database rows representing IT hierarchy.
+   * Matches Auth UUIDs against public user metadata and constructs
+   * the local state.
+   */
   const load = useCallback(async () => {
     setLoading(true)
     try {
@@ -356,6 +385,13 @@ export function OrgChart() {
     return () => clearTimeout(timer)
   }, [load])
 
+  /**
+   * handleRemoveConfirm
+   * -------------------------------------------------------------
+   * Confirms and deletes a selected user node.
+   * If the node has children, updates their reports_to fields to point
+   * to the current node's manager to preserve hierarchy structure.
+   */
   async function handleRemoveConfirm() {
     if (!removeModal) return
     const { userId, name, hasChildren } = removeModal
@@ -376,6 +412,11 @@ export function OrgChart() {
     load()
   }
 
+  /**
+   * handleEditSave
+   * -------------------------------------------------------------
+   * Persists an updated title choice for a given hierarchy node.
+   */
   async function handleEditSave() {
     if (!editModal || !editTitle.trim()) return
     setEditSaving(true)

@@ -1,3 +1,10 @@
+/**
+ * Admin Redirects Page Component
+ * -------------------------------------------------------------
+ * Component for administering URL redirection rules.
+ * Supports path validation, status code configuration, activation toggling, and CRUD operations.
+ */
+
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -15,6 +22,7 @@ const emptyForm: RedirectRulePayload = {
   notes: '',
 }
 
+// Normalizes URL paths by stripping trailing slashes and ensuring leading slashes
 function normalizePath(value: string): string {
   const trimmed = value.trim()
   if (!trimmed) return ''
@@ -23,6 +31,7 @@ function normalizePath(value: string): string {
   return withSlash.length > 1 ? withSlash.replace(/\/+$/, '') : withSlash
 }
 
+// Asserts path validation constraints (such as preventing self-redirect loops)
 function validateForm(form: RedirectRulePayload): string | null {
   const source = normalizePath(form.sourcePath)
   const destination = normalizePath(form.destinationPath)
@@ -36,6 +45,7 @@ function validateForm(form: RedirectRulePayload): string | null {
   return null
 }
 
+// Main page component displaying redirect logs, KPI highlights, and management form panels
 export default function AdminRedirects() {
   const [rules, setRules] = useState<RedirectRule[]>([])
   const [loading, setLoading] = useState(true)
@@ -44,6 +54,7 @@ export default function AdminRedirects() {
   const [search, setSearch] = useState('')
   const [form, setForm] = useState<RedirectRulePayload>(emptyForm)
 
+  // Fetch redirect rules list from database service
   const loadRules = useCallback(async () => {
     setLoading(true)
     const data = await redirectService.getRedirectRules()
@@ -88,11 +99,13 @@ export default function AdminRedirects() {
     },
   ]
 
+  // Reset page form state
   function resetForm() {
     setForm(emptyForm)
     setEditingId(null)
   }
 
+  // Populate form controls to modify an existing redirect rule
   function startEdit(rule: RedirectRule) {
     setEditingId(rule.id)
     setForm({
@@ -106,6 +119,7 @@ export default function AdminRedirects() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  // Handle addition or modification submission
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const errorMessage = validateForm(form)
@@ -146,6 +160,7 @@ export default function AdminRedirects() {
     }
   }
 
+  // Toggle the active state of a redirect rule rule
   async function handleToggle(rule: RedirectRule) {
     const ok = await redirectService.updateRedirectRule(rule.id, {
       sourcePath: rule.sourcePath,
@@ -163,6 +178,7 @@ export default function AdminRedirects() {
     }
   }
 
+  // Delete a redirect rule
   async function handleDelete(rule: RedirectRule) {
     if (!window.confirm(`Delete redirect from "${rule.sourcePath}"?`)) return
     const ok = await redirectService.deleteRedirectRule(rule.id)

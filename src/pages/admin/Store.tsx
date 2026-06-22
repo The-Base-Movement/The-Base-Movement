@@ -1,3 +1,11 @@
+/**
+ * Admin Store Page Component
+ * -------------------------------------------------------------
+ * Component for administering merchandise catalogs, resource supply requests, and logistics audit logs.
+ * Supports CRUD updates on inventory, product image uploading, sorting configurations,
+ * and live websocket data replication.
+ */
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePerformance } from '@/context/PerformanceContext'
@@ -18,6 +26,7 @@ import { ProductFormDialog } from './store/components/ProductFormDialog'
 import { ResourceRequestsTab } from './store/components/ResourceRequestsTab'
 import { LogisticsAuditTab } from './store/components/LogisticsAuditTab'
 
+// Main component compiling inventory tables, tab selectors, and auditing metrics
 export default function AdminStore() {
   const [products, setProducts] = useState<InventoryItem[]>([])
   const [requests, setRequests] = useState<ResourceRequest[]>([])
@@ -38,6 +47,7 @@ export default function AdminStore() {
     direction: 'asc' | 'desc'
   } | null>(null)
 
+  // Upload merchandise product image to catalog bucket partition
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -61,6 +71,7 @@ export default function AdminStore() {
     }
   }
 
+  // Remove a product image URL reference from editing array
   const removeImage = (url: string) => {
     setSelectedProduct((prev) => ({
       ...prev!,
@@ -68,6 +79,7 @@ export default function AdminStore() {
     }))
   }
 
+  // Query product records, resource request forms, and logistics operations history
   const fetchData = async () => {
     setIsLoading(true)
     try {
@@ -116,6 +128,7 @@ export default function AdminStore() {
     }
   }, [lowBandwidthMode])
 
+  // Open product form dialog and initialize template parameters
   const handleOpenModal = (product?: InventoryItem) => {
     setSelectedProduct(
       product || {
@@ -131,6 +144,7 @@ export default function AdminStore() {
     setIsModalOpen(true)
   }
 
+  // Save changes to merchandise item catalog record
   const handleSave = async () => {
     if (!selectedProduct?.name || !selectedProduct?.price) {
       toast.error('Please fill in all required fields')
@@ -158,6 +172,7 @@ export default function AdminStore() {
     setIsSaving(false)
   }
 
+  // Move target merchandise product to trash bin
   const handleDelete = async () => {
     if (!deleteConfirm) return
     setIsDeleting(deleteConfirm.id)
@@ -177,6 +192,7 @@ export default function AdminStore() {
     }
   }
 
+  // Update request fulfillment status (e.g. Approve, Decline)
   const handleStatusUpdate = async (id: string, status: ResourceRequest['status']) => {
     const success = await adminService.updateResourceRequestStatus(id, status)
     if (success) {
@@ -186,6 +202,7 @@ export default function AdminStore() {
     }
   }
 
+  // Configure property sorting configurations
   const handleSort = (key: keyof InventoryItem) => {
     setSortConfig((current) => {
       if (current?.key === key) {

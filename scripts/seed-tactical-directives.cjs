@@ -1,3 +1,10 @@
+/**
+ * Tactical Directives Seeder (CommonJS)
+ * -------------------------------------------------------------
+ * Injects initial/sample active tactical and rapid response directives
+ * into the Supabase database for development and testing.
+ */
+
 require('dotenv').config()
 const { createClient } = require('@supabase/supabase-js')
 
@@ -6,6 +13,7 @@ const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+// Asynchronously injects defined sample directives into the database
 async function seedDirectives() {
   console.log('🚀 [SEED] Initializing Tactical Directive Injection...')
   

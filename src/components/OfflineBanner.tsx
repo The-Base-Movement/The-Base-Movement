@@ -1,3 +1,18 @@
+/**
+ * OfflineBanner Component
+ * -------------------------------------------------------------
+ * Fixed toast-style banner that appears at the top-centre of the viewport when
+ * the browser loses its internet connection.
+ *
+ * Behaviour:
+ * - Offline: banner slides in with a dark background and a gold wifi_off icon.
+ * - Back online: banner transitions to a green background ("Signal Restored")
+ *   and auto-dismisses after 3 seconds.
+ *
+ * Uses native `window` `online` / `offline` events so no polling is needed.
+ * The slide-in animation is defined via an inline `@keyframes slideDown` block.
+ */
+
 import { useState, useEffect } from 'react'
 
 export function OfflineBanner() {

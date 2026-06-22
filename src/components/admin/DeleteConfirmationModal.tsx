@@ -1,3 +1,11 @@
+/**
+ * DeleteConfirmationModal Component
+ * -------------------------------------------------------------
+ * A reusable modal portal for confirming deletions of records, assets,
+ * or user profiles. Supports normal soft-deletion ("Move to trash")
+ * and irreversible permanent deletion.
+ */
+
 import { createPortal } from 'react-dom'
 
 interface DeleteConfirmationModalProps {
@@ -11,6 +19,10 @@ interface DeleteConfirmationModalProps {
   isPermanent?: boolean
 }
 
+/**
+ * Renders a standardized dark/light mode compatible delete confirmation modal.
+ * Uses React Portals to attach to the document body to prevent z-index/overflow issues.
+ */
 export function DeleteConfirmationModal({
   isOpen,
   onClose,

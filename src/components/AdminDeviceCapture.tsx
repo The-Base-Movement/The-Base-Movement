@@ -1,3 +1,11 @@
+/**
+ * AdminDeviceCapture Component
+ * -------------------------------------------------------------
+ * Hardened security capture gate component for privileged admin roles.
+ * Integrates Brave browser enforcement checks, finger-print verification tests,
+ * and Windows Hello/Passkey registration overlays via the BiometricPrompt component.
+ */
+
 import { useEffect, useRef, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
@@ -9,21 +17,11 @@ import {
 } from '@/services/deviceTrackingService'
 import BiometricPrompt from '@/components/BiometricPrompt'
 
-/**
- * Device-binding capture for privileged admin roles, rendered by
- * ProtectedAdminRoute after the 2FA gate.
- *
- *  - Runs once per browser session (sessionStorage flag), like the 2FA gate.
- *  - Unexpected capture errors still fail open so transient API faults do not
- *    lock out admins.
- *  - Hard-blocked slots and non-Brave browsers show the stop screen.
- *  - A changed Brave fingerprint on a biometric-enrolled slot requires a
- *    successful WebAuthn step-up before the fingerprint can be rebound.
- *  - When the enrolled device has no passkey yet, a BiometricPrompt overlay is
- *    shown so the admin can bind Windows Hello / Face ID to the known device.
- */
 export const CAPTURE_KEY = 'admin_device_captured'
 
+/**
+ * AdminDeviceCapture component definition.
+ */
 export default function AdminDeviceCapture() {
   const [blocked, setBlocked] = useState(false)
   const [blockReason, setBlockReason] = useState<string | null>(null)

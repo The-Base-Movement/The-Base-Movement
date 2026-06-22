@@ -1,3 +1,10 @@
+/**
+ * IT Notes Page Component
+ * -------------------------------------------------------------
+ * Component for the IT team noticeboard.
+ * Supports sticky note composition, color categorizations, search filters, and detail views.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -10,6 +17,7 @@ import { NoteDetailModal } from './notes/NoteDetailModal'
 import type { Note, NoteColor } from './notes/types'
 import { COLORS } from './notes/types'
 
+// Main noticeboard page component
 export default function ITNotes() {
   const { setCurrentLabel } = usePageLabel()
   const isMobile = useIsMobile()
@@ -39,6 +47,7 @@ export default function ITNotes() {
     </button>
   )
 
+  // Fetch sticky notes from Supabase database
   const loadNotes = useCallback(async () => {
     try {
       const { data, error } = await supabase

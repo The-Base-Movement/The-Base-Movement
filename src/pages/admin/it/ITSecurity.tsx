@@ -1,3 +1,10 @@
+/**
+ * IT Security Page Component
+ * -------------------------------------------------------------
+ * Component for administering security protocols, policies, and reference PDFs.
+ * Supports PDF document uploads, markdown editing, and accordion listings.
+ */
+
 import { useState, useEffect, useCallback, useContext } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -9,6 +16,7 @@ import { PDFDropZone } from './security/PDFDropZone'
 import { MarkdownEditor } from './security/MarkdownEditor'
 import { AccordionItem } from './security/AccordionItem'
 
+// Main security protocols management page component
 export default function ITSecurity() {
   const { setCurrentLabel } = usePageLabel()
   useEffect(() => {
@@ -51,6 +59,7 @@ export default function ITSecurity() {
   const [saving, setSaving] = useState(false)
   const [progress, setProgress] = useState<string | null>(null)
 
+  // Fetch security protocol records and resolve creator usernames
   const load = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -96,6 +105,7 @@ export default function ITSecurity() {
     return () => clearTimeout(timer)
   }, [load])
 
+  // Clear form state variables
   function reset() {
     setTitle('')
     setVersion('')
@@ -104,6 +114,7 @@ export default function ITSecurity() {
     setProgress(null)
   }
 
+  // Save new protocol details, uploading PDF attachment to storage bucket if present
   async function handleSave() {
     if (!title.trim()) {
       toast.error('Title is required')
@@ -157,6 +168,7 @@ export default function ITSecurity() {
     }
   }
 
+  // Delete target protocol record and remove associated file from storage bucket
   async function handleDelete(id: string, fileUrl: string | null) {
     if (!confirm('Delete this protocol? This cannot be undone.')) return
     try {

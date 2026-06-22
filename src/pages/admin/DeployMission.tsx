@@ -1,3 +1,10 @@
+/**
+ * Deploy Canvassing Mission Component
+ * -------------------------------------------------------------
+ * Form orchestrator to configure, schedule, and launch new field canvassing
+ * and mobilization campaigns in specific regions and constituencies.
+ */
+
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
@@ -9,6 +16,7 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { DeployMissionForm } from './deploymission/DeployMissionForm'
 import { TacticalGuidelinesSidebar } from './deploymission/TacticalGuidelinesSidebar'
 
+// Primary DeployMission component managing campaign creation form state
 export default function DeployMission() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -53,6 +61,7 @@ export default function DeployMission() {
     fetchData()
   }, [])
 
+  // Submits the new campaign creation request to the administration services
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newCampaign.title || !selectedRegion || !selectedConstituency) {

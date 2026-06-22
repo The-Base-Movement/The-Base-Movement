@@ -1,4 +1,20 @@
-﻿import { useState } from 'react'
+/**
+ * ReviewSection Component
+ * -------------------------------------------------------------
+ * Product review widget for the store product detail page.
+ * Renders:
+ * - An aggregate rating row (currently hardcoded to 4.9/5)
+ * - A sticky review submission form (star picker + text area)
+ * - A list of member reviews sorted newest-first
+ *
+ * Reviews are held in local React state — no Supabase persistence yet.
+ * Submitted reviews are appended optimistically with "Verified Member" author.
+ *
+ * Note: production persistence (saving to a `product_reviews` table) and
+ * verified-purchase gating are planned for a future store phase.
+ */
+
+import { useState } from 'react'
 
 interface Review {
   id: string

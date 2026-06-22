@@ -1,3 +1,11 @@
+/**
+ * MobilizationLeaderboardCard Component
+ * -------------------------------------------------------------
+ * Displays a chapter ranking card inside the Admin Command Leaderboard.
+ * Details the chapter's name, region, cumulative mobilization points, active
+ * patriot count, unlocked badges, and highlighted top-3 podium rankings.
+ */
+
 import type { ChapterLeaderboard } from '@/types/admin'
 import { cn } from '@/lib/utils'
 
@@ -6,6 +14,9 @@ interface Props {
   index: number
 }
 
+/**
+ * MobilizationLeaderboardCard component rendering chapter ranking metrics.
+ */
 export default function MobilizationLeaderboardCard({ entry, index }: Props) {
   const rank = index + 1
   const rankStyle =

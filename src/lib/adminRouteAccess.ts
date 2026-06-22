@@ -1,25 +1,50 @@
+/**
+ * @file adminRouteAccess.ts
+ * @description Implements route access permission checks for administrative pages.
+ * Validates active administrator user roles and explicitly mapped permission scopes.
+ */
+
 import { getNavGroups, type NavItem } from '@/components/layouts/admin/navConfig'
 import type { AdminPermission, AdminRole, AdminUser } from '@/types/admin'
 
+/**
+ * Access specifications defined for a particular route
+ */
 type RouteAccessSpec = {
+  /** Optional array of AdminRoles allowed to access the route */
   allowedRoles?: AdminRole[]
+  /** Optional action and resource permission scope required for route access */
   permission?: {
     action: AdminPermission['action']
     resource: AdminPermission['resource']
   }
+  /** Flag showing if route is only accessible by SUPER_ADMIN or FOUNDER roles */
   superAdminOnly?: boolean
+  /** Flag showing if route is only accessible by leadership roles (EXECUTIVE/SUPER_ADMIN/FOUNDER) */
   executiveOnly?: boolean
 }
 
+/**
+ * Route matching rule mapping path spec to access specifications
+ */
 type RouteRule = RouteAccessSpec & {
+  /** Source origin defining the rule (e.g. nav-config) */
   source: string
+  /** URL path target */
   to: string
+  /** Matching strategy for matching pathnames */
   match: 'exact_or_descendant' | 'descendant_only'
 }
 
+/**
+ * Outcome decision object returned by route validation checks
+ */
 type AccessDecision = {
+  /** Indicates if route access is allowed for the user */
   allowed: boolean
+  /** Error description explaining access denial, if applicable */
   reason: string | null
+  /** The matching routing rule applied to compute this decision, if any */
   rule: RouteRule | null
 }
 
@@ -53,6 +78,11 @@ const PRIVILEGED_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE']
 
 const NAV_ROUTE_RULES = buildNavRouteRules()
 
+/**
+ * Recursively parses dynamic admin layout configurations to generate list of route access rules.
+ *
+ * @returns Array of parsed RouteRules.
+ */
 function buildNavRouteRules(): RouteRule[] {
   const groups = getNavGroups(0, 0, 0)
   const rules: RouteRule[] = []
@@ -84,6 +114,9 @@ function buildNavRouteRules(): RouteRule[] {
   return rules
 }
 
+/**
+ * Validates if the target path matches the rule specification path.
+ */
 function matchesRule(rule: RouteRule, pathname: string): boolean {
   if (rule.match === 'descendant_only') {
     return pathname.startsWith(`${rule.to}/`)
@@ -92,10 +125,16 @@ function matchesRule(rule: RouteRule, pathname: string): boolean {
   return pathname === rule.to || pathname.startsWith(`${rule.to}/`)
 }
 
+/**
+ * Formats roles array into readable string representation.
+ */
 function formatRoles(roles: AdminRole[]): string {
   return roles.join(', ')
 }
 
+/**
+ * Validates user specific system-level permission overrides.
+ */
 function hasPermission(
   user: AdminUser,
   permission: NonNullable<RouteAccessSpec['permission']>
@@ -107,6 +146,12 @@ function hasPermission(
   )
 }
 
+/**
+ * Selects the route rule mapping containing the most specific pathname match.
+ *
+ * @param pathname - Current URL path.
+ * @returns Matching RouteRule object, or null if unmapped.
+ */
 export function getAdminRouteRule(pathname: string): RouteRule | null {
   const matches = [...MANUAL_ROUTE_RULES, ...NAV_ROUTE_RULES]
     .filter((rule) => matchesRule(rule, pathname))
@@ -115,6 +160,13 @@ export function getAdminRouteRule(pathname: string): RouteRule | null {
   return matches[0] ?? null
 }
 
+/**
+ * Computes access permission status for an admin user navigating to a target URL pathname.
+ *
+ * @param user - Current authenticated AdminUser data object, or null.
+ * @param pathname - Destination admin site pathname.
+ * @returns AccessDecision object containing resolution status.
+ */
 export function getAdminRouteAccessDecision(
   user: AdminUser | null,
   pathname: string

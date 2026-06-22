@@ -1,3 +1,10 @@
+/**
+ * IT Asset Inventory Custom React Hook
+ * -------------------------------------------------------------
+ * Manages fetching, updating, adding, checking in/out, and requesting IT assets
+ * from the database, coordinating and wrapping all state operations.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -11,12 +18,35 @@ import type {
   AssetAlert,
 } from './types'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildAssetFromRow(row: any): Asset {
-  const openAssignment =
-    (row.asset_assignments ?? []).find(
-      (a: { checked_in_at: string | null }) => a.checked_in_at === null
-    ) ?? null
+export interface AssetRow {
+  id: string
+  name: string
+  category_id: string
+  department_id: string
+  condition: AssetCondition
+  serial_number: string | null
+  description: string | null
+  created_at: string
+  purchase_price: number | null
+  purchase_date: string | null
+  asset_tag: string | null
+  qr_code_url: string | null
+  asset_categories: { name: string; lifespan_years?: number } | null
+  asset_assignments: Array<{
+    id: string
+    assigned_to: string
+    checked_in_at: string | null
+    users: { full_name: string | null } | null
+  }> | null
+}
+
+/**
+ * buildAssetFromRow
+ * -------------------------------------------------------------
+ * Converts database row object representation to a frontend Asset type structure.
+ */
+export function buildAssetFromRow(row: AssetRow): Asset {
+  const openAssignment = (row.asset_assignments ?? []).find((a) => a.checked_in_at === null) ?? null
   return {
     id: row.id,
     name: row.name,
@@ -37,6 +67,11 @@ export function buildAssetFromRow(row: any): Asset {
   }
 }
 
+/**
+ * useAssetInventory
+ * -------------------------------------------------------------
+ * Custom hook managing the inventory of assets for a department or the whole HQ.
+ */
 export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
   const [assets, setAssets] = useState<Asset[]>([])
   const [categories, setCategories] = useState<AssetCategory[]>([])
@@ -74,8 +109,7 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
       setLoading(false)
       return
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setAssets((data ?? []).map((r: any) => buildAssetFromRow(r)))
+    setAssets((data ?? []).map((r) => buildAssetFromRow(r as unknown as AssetRow)))
     if (viewMode === 'master') {
       const depts = [
         ...new Set((data ?? []).map((r: { department_id: string }) => r.department_id)),
@@ -180,7 +214,7 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
       return
     }
     setDetail({
-      asset: buildAssetFromRow(assetRes.data),
+      asset: buildAssetFromRow(assetRes.data as unknown as AssetRow),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       maintenanceLogs: (logsRes.data ?? []).map((r: any) => ({
         id: r.id,

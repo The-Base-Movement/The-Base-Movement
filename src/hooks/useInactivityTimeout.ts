@@ -1,12 +1,31 @@
+/**
+ * @file useInactivityTimeout.ts
+ * @description Custom React hook to track user inactivity. Fires callbacks when the warning threshold
+ * is reached and when the inactivity limit is exceeded. Tracks common mouse/keyboard/touch events.
+ */
+
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+/**
+ * Options parameters for configuring inactivity detection hook
+ */
 interface UseInactivityTimeoutOptions {
+  /** Maximum minutes of inactivity allowed before firing onTimeout */
   inactivityMinutes?: number
+  /** Minutes before the timeout limit to fire onWarning */
   warningMinutes?: number
+  /** Callback fired when the warning threshold is reached */
   onWarning?: () => void
+  /** Callback fired when the inactivity duration threshold is reached */
   onTimeout?: () => void
 }
 
+/**
+ * Hook that sets up inactivity timers and event listeners for keydown/mousedown/scroll/touchstart/click.
+ *
+ * @param options - Configuration options for inactivity check
+ * @returns Object enclosing warning visibility status and the warning dismissal handler.
+ */
 export function useInactivityTimeout({
   inactivityMinutes = 30,
   warningMinutes = 5,

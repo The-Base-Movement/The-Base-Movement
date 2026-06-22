@@ -1,3 +1,10 @@
+/**
+ * @file supabase.ts
+ * @description Configures and exports a singleton client instance for Supabase Database, Auth, Realtime,
+ * and Storage services. Adapts session authentication storage to use sessionStorage by default for security,
+ * and configures concurrency locks safe for multiple browser contexts (Firefox private / Brave).
+ */
+
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL
@@ -15,6 +22,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 // spin up a new auth client, triggering the "Multiple GoTrueClient instances"
 // warning and causing undefined session behavior.
 declare global {
+  /** Singleton caching pointer on the global/window context object to support HMR without multiple clients */
   var __supabase_singleton__: SupabaseClient | undefined
 }
 
@@ -31,6 +39,9 @@ const sessionStorageAdapter = {
   removeItem: (key: string) => (isBrowser ? sessionStorage.removeItem(key) : undefined),
 }
 
+/**
+ * Singleton client instance for interacting with Supabase Backend services.
+ */
 export const supabase = (globalThis.__supabase_singleton__ ??= createClient(
   supabaseUrl,
   supabaseAnonKey,

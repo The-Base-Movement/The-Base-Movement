@@ -1,3 +1,16 @@
+/**
+ * LoadingScreen Component
+ * -------------------------------------------------------------
+ * Full-viewport blocking loader shown while the application shell is
+ * initialising (auth state resolving, lazy chunks loading, etc.).
+ * Renders an animated brand spinner, the "THE BASE" wordmark, a subtitle,
+ * and a bottom progress bar animation.
+ *
+ * Note: this component still uses Tailwind utility classes inherited from an
+ * early iteration of the public site. Do not migrate to the dashboard design
+ * system without aligning with the loading experience across all routes.
+ */
+
 import { Spinner } from '@/components/buttons/ui/spinner'
 
 export function LoadingScreen() {

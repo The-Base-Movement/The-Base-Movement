@@ -1,9 +1,17 @@
+/**
+ * Media Manifest Generator (TypeScript)
+ * -------------------------------------------------------------
+ * Scans the public directory for static media assets (excluding system files)
+ * and generates a JSON manifest file containing a list of asset paths.
+ */
+
 import fs from 'fs'
 import path from 'path'
 
 const publicDir = path.join(process.cwd(), 'public')
 const manifestPath = path.join(process.cwd(), 'src/data/media-manifest.json')
 
+// Recursively scans a directory to find all media file paths relative to the base directory
 function getFiles(dir: string, baseDir: string): string[] {
   let results: string[] = []
   const list = fs.readdirSync(dir)
@@ -27,10 +35,10 @@ function getFiles(dir: string, baseDir: string): string[] {
 try {
   console.log('🔍 Scanning public directory...')
   const files = getFiles(publicDir, publicDir)
-  
+
   const data = {
     lastUpdated: new Date().toISOString(),
-    files: files
+    files: files,
   }
 
   // Ensure directory exists

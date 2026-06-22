@@ -1,3 +1,10 @@
+/**
+ * TicketDetailPanel Component
+ * -------------------------------------------------------------
+ * Slide-out drawer detail panel showing ticket thread comments, internal notes,
+ * priority updates, status selections, handler assignment, and files attachment lists.
+ */
+
 import { useState } from 'react'
 import type {
   HelpdeskTicket,
@@ -54,6 +61,11 @@ const inputStyle: React.CSSProperties = {
   color: 'hsl(var(--on-surface))',
 }
 
+/**
+ * formatDate
+ * -------------------------------------------------------------
+ * Utility to format ISO strings to localized British date/time presentation.
+ */
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString('en-GB', {
     day: 'numeric',
@@ -64,6 +76,12 @@ function formatDate(iso: string) {
   })
 }
 
+/**
+ * TicketDetailPanel
+ * -------------------------------------------------------------
+ * Detailed slide-out drawer containing tab panels to add comments/internal replies,
+ * assign technicians, edit priority levels, and view attachments.
+ */
 export function TicketDetailPanel({
   ticket,
   comments,

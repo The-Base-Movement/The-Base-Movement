@@ -1,3 +1,12 @@
+/**
+ * RegistrationFormProgress Component
+ * -------------------------------------------------------------
+ * Visual step progress bar tracker for the member registration form flow.
+ * Provides a responsive layout:
+ * - A sticky sidebar on desktop showing each stage with checkmarks and highlighted state
+ * - A compact bar track and text summary on mobile screens
+ */
+
 interface RegistrationFormProgressProps {
   formStep: number
   isMobile: boolean
@@ -10,6 +19,9 @@ const STEP_LABELS = [
   'Final Verification',
 ]
 
+/**
+ * RegistrationFormProgress component definition.
+ */
 export function RegistrationFormProgress({ formStep, isMobile }: RegistrationFormProgressProps) {
   if (isMobile) {
     return (

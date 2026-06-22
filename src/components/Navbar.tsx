@@ -1,3 +1,24 @@
+/**
+ * Navbar Component
+ * -------------------------------------------------------------
+ * Primary site navigation used by `PublicLayout` and the public/authenticated
+ * shared header. Renders differently based on auth state:
+ *
+ * - Logged-out: Login + Register buttons; links point to public paths.
+ * - Logged-in: User avatar dropdown (Dashboard, Settings, Sign out);
+ *   all links redirect to dashboard-prefixed equivalents.
+ *
+ * Structure:
+ * - Desktop: brand logo + primary nav links + "More" dropdown + auth actions
+ * - Mobile: hamburger icon → slide-in drawer with all links + theme toggle
+ *
+ * Theme toggle persists preference to localStorage and dispatches the
+ * `admin_theme_changed` event to sync with the admin/dashboard theme listener.
+ *
+ * Nav links are split into PRIMARY_NAV_LINKS (always visible) and
+ * MORE_NAV_LINKS (hidden behind the "More" dropdown to avoid crowding).
+ */
+
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useBranding } from '@/hooks/useBranding'

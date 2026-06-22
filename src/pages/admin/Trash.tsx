@@ -1,3 +1,10 @@
+/**
+ * Trash Page Component
+ * -------------------------------------------------------------
+ * Component for managing the platform's trash vault.
+ * Supports restoration and permanent purge of soft-deleted blogs, products, media, authors, and members.
+ */
+
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { contentService } from '@/services/contentService'
 import { logisticsService } from '@/services/logisticsService'
@@ -20,6 +27,7 @@ const TABS: { value: TrashTab; label: string; icon: string }[] = [
   { value: 'members', label: 'Members', icon: 'person_remove' },
 ]
 
+// Main page component displaying tabs for each soft-deleted resource type and bulk controls
 export default function TrashPage() {
   const [activeTab, setActiveTab] = useState<TrashTab>('blogs')
   const [blogs, setBlogs] = useState<BlogPost[]>([])
@@ -36,6 +44,7 @@ export default function TrashPage() {
 
   const { openDelete, modal: deleteModal } = useDeleteModal()
 
+  // Query soft-deleted data lists in parallel across all core services
   const loadTrash = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -74,6 +83,7 @@ export default function TrashPage() {
     return () => clearTimeout(timer)
   }, [activeTab])
 
+  // Restore a single resource item back to the main catalog/database
   const handleRestore = async (type: TrashTab, idOrUrl: string) => {
     try {
       let success = false
@@ -91,6 +101,7 @@ export default function TrashPage() {
     }
   }
 
+  // Restore all currently selected items in bulk
   const handleBulkRestore = async () => {
     if (selectedIds.size === 0) return
     setIsBulkRestoring(true)
@@ -117,6 +128,7 @@ export default function TrashPage() {
     loadTrash()
   }
 
+  // Permanently delete all selected items in bulk
   const handleBulkDelete = async () => {
     if (selectedIds.size === 0) return
 
@@ -154,6 +166,7 @@ export default function TrashPage() {
     })
   }
 
+  // Calculate remaining retention days before automatic deletion (90 day limit)
   const formatDaysRemaining = (deletedAt: string) => {
     const expiryDate = new Date(new Date(deletedAt).getTime() + 90 * 24 * 60 * 60 * 1000)
     return Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))

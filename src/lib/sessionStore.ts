@@ -1,5 +1,6 @@
 /**
- * sessionStore — thin wrapper over sessionStorage for user profile UI data.
+ * @file sessionStore.ts
+ * @description sessionStore — thin wrapper over sessionStorage for user profile UI data.
  *
  * Security rationale:
  *   localStorage persists indefinitely and is shared across tabs. Storing
@@ -36,7 +37,18 @@ function isUIKey(key: string): key is UIKey {
 
 const isBrowser = typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined'
 
+/**
+ * Tab-scoped session storage utility wrapper.
+ * Encapsulates secure migration strategies from localStorage to sessionStorage
+ * and handles clearing profile settings upon user logout.
+ */
 export const sessionStore = {
+  /**
+   * Retrieves a value from sessionStorage, migrating it from localStorage if not present.
+   *
+   * @param key - The cache storage key to query
+   * @returns String value of item, or null if key does not exist.
+   */
   getItem(key: string): string | null {
     if (!isBrowser) return null
     const fromSession = sessionStorage.getItem(key)
@@ -55,6 +67,12 @@ export const sessionStore = {
     return null
   },
 
+  /**
+   * Caches a value in sessionStorage, removing any duplicates in localStorage.
+   *
+   * @param key - Storage key
+   * @param value - String value to store
+   */
   setItem(key: string, value: string): void {
     if (!isBrowser) return
     sessionStorage.setItem(key, value)
@@ -62,13 +80,21 @@ export const sessionStore = {
     if (isUIKey(key)) localStorage.removeItem(key)
   },
 
+  /**
+   * Deletes a key from both sessionStorage and localStorage.
+   *
+   * @param key - Storage key to remove
+   */
   removeItem(key: string): void {
     if (!isBrowser) return
     sessionStorage.removeItem(key)
     if (isUIKey(key)) localStorage.removeItem(key)
   },
 
-  /** Call on logout to scrub all UI keys from both stores. */
+  /**
+   * Scrubs all predefined UI/auth keys from both storage stores.
+   * Typically executed during user sign-out.
+   */
   clearAll(): void {
     if (!isBrowser) return
     UI_KEYS.forEach((key) => {

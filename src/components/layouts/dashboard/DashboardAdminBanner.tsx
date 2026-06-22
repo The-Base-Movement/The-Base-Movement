@@ -1,9 +1,21 @@
+/**
+ * DashboardAdminBanner Component
+ * -------------------------------------------------------------
+ * Top-mounted notification bar displayed to administrators while browsing
+ * the member portal surfaces. Links back to the command center.
+ */
+
 import { Link } from 'react-router-dom'
 
 interface Props {
   isAdmin: boolean
 }
 
+/**
+ * DashboardAdminBanner
+ * -------------------------------------------------------------
+ * Fixed admin banner component.
+ */
 export default function DashboardAdminBanner({ isAdmin }: Props) {
   if (!isAdmin) return null
 

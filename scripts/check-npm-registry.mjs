@@ -1,5 +1,13 @@
+/**
+ * NPM Registry Security Check Script
+ * -------------------------------------------------------------
+ * Ensures that the NPM registry used during installation is the official,
+ * approved registry (registry.npmjs.org) to prevent dependency hijacking.
+ */
+
 const allowedRegistry = 'https://registry.npmjs.org/'
 
+// Normalizes NPM registry URLs to have consistent trailing slashes for comparison
 function normalizeRegistry(value) {
   if (!value) return ''
   const trimmed = value.trim()

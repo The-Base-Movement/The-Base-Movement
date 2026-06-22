@@ -1,3 +1,10 @@
+/**
+ * AssetInventory Component Index
+ * -------------------------------------------------------------
+ * Coordinate container for the IT Asset Inventory system, checking roles/permissions,
+ * toggling toolbar features, loading lists, and displaying detail drawers/modals.
+ */
+
 import { useState } from 'react'
 import { adminService } from '@/services/adminService'
 import type { AdminRole } from '@/types/admin'
@@ -15,6 +22,12 @@ import { ValueSummary } from './ValueSummary'
 const MASTER_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
 const WRITE_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
 
+/**
+ * AssetInventory
+ * -------------------------------------------------------------
+ * Core wrapper managing toolbar buttons (Add/Request Asset), filters,
+ * alerts resolution, and lists mounting for the IT department view.
+ */
 export function AssetInventory({ departmentId, viewMode }: AssetInventoryProps) {
   const currentUser = adminService.getCurrentUser()
   const userRole = currentUser?.role as AdminRole | undefined

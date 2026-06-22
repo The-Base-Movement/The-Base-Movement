@@ -1,3 +1,21 @@
+/**
+ * ProductCard Component
+ * -------------------------------------------------------------
+ * Renders a product tile for the movement merchandise store.
+ *
+ * Features:
+ * - Animated Framer Motion entrance (`whileInView`, `once: true`)
+ * - Hover image zoom and border highlight
+ * - Overlaid status badges (Coming Soon / Limited Edition / Bestseller)
+ * - Slide-in hover panel with wishlist, share, and Quick Add buttons
+ * - Quick Add: adds the product to the cart via `useStore()` with default
+ *   size/color; shows a Sonner toast with a "View Bag" action
+ * - Wishlist toggle via `isInWishlist` / `addToWishlist` / `removeFromWishlist`
+ * - Star rating row (static 4.8 fallback)
+ * - Price strip with optional strikethrough compare-at price
+ * - URL adapts for `/store/` vs `/dashboard/store/` context
+ */
+
 import { Link } from 'react-router-dom'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'

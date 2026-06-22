@@ -1,3 +1,10 @@
+/**
+ * Broadcasts Command Center Component
+ * -------------------------------------------------------------
+ * Displays historical and urgent broadcast announcements.
+ * Coordinates sending, analytics metrics tracking, and predefined presets.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import type { Broadcast } from '@/services/adminService'
@@ -9,6 +16,7 @@ import { BroadcastKPIs } from './broadcasts/BroadcastKPIs'
 import { BroadcastHistory } from './broadcasts/BroadcastHistory'
 import { BroadcastPresets } from './broadcasts/BroadcastPresets'
 
+// Primary Broadcasts component coordinating system broadcasts and analytics
 export default function Broadcasts() {
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -17,6 +25,7 @@ export default function Broadcasts() {
     Record<string, { total: number; read: number }>
   >({})
 
+  // Fetches push notification delivery metrics (total/read counts) for a broadcast ID
   const fetchMetrics = useCallback(async (id: string) => {
     try {
       const stats = await adminService.getBroadcastMetrics(id)
@@ -26,6 +35,7 @@ export default function Broadcasts() {
     }
   }, [])
 
+  // Synchronizes full broadcast history records from service layer
   const fetchData = useCallback(async () => {
     setIsLoading(true)
     try {

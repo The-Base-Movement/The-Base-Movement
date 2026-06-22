@@ -1,4 +1,23 @@
-﻿import type { Poll } from '@/services/adminService'
+/**
+ * OpinionPollCard Component
+ * -------------------------------------------------------------
+ * Renders a single opinion poll with voting and live results display.
+ *
+ * Modes:
+ * - Not yet voted + logged in: shows clickable option buttons.
+ * - Not yet voted + logged out: shows buttons with a "Members only" label;
+ *   clicking redirects to /login with a toast prompt.
+ * - Already voted OR `showResults` toggled: shows an animated progress bar
+ *   per option with percentage, and highlights the leading option.
+ *
+ * The `variant='public'` prop switches typography to Work Sans (public site
+ * font) instead of Public Sans (dashboard font).
+ *
+ * Delegating voting logic and showResults state to the parent page allows
+ * multiple poll cards to share a single loading / voting state bucket.
+ */
+
+import type { Poll } from '@/services/adminService'
 import { toast } from 'sonner'
 
 interface OpinionPollCardProps {

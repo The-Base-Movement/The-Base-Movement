@@ -1,3 +1,10 @@
+/**
+ * AddCategoryModal Component
+ * -------------------------------------------------------------
+ * Modal interface allowing administrators to define and insert new
+ * asset categories into the database.
+ */
+
 import { useState } from 'react'
 
 interface Props {
@@ -5,6 +12,11 @@ interface Props {
   onSubmit: (name: string) => Promise<boolean>
 }
 
+/**
+ * AddCategoryModal
+ * -------------------------------------------------------------
+ * Renders the dialog form to create a new asset category.
+ */
 export function AddCategoryModal({ onClose, onSubmit }: Props) {
   const [name, setName] = useState('')
   const [saving, setSaving] = useState(false)

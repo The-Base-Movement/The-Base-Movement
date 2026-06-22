@@ -1,3 +1,11 @@
+/**
+ * OrderListCard Component
+ * -------------------------------------------------------------
+ * Displays a single merchandise/materials order card in the Admin Command Logistics section.
+ * Summarizes the requester's name, email, short order ID, total order cost in GHS,
+ * status badge with status-themed icon, shipping location, and inline action buttons.
+ */
+
 import type { Order } from '@/services/adminService'
 
 interface OrderListCardProps {
@@ -10,6 +18,9 @@ interface OrderListCardProps {
   nextStatus?: string
 }
 
+/**
+ * OrderListCard component definition.
+ */
 export function OrderListCard({
   order,
   isSelected,

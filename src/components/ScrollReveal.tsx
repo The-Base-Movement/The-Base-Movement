@@ -1,13 +1,31 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+/**
+ * ScrollReveal Component
+ * -------------------------------------------------------------
+ * Lightweight viewport-entrance animation wrapper using `IntersectionObserver`.
+ * Wraps any children in a `<div>` that starts invisible/offset and transitions
+ * to visible/centred once the element enters the viewport.
+ *
+ * Props:
+ * - `delay` (ms)   – transition-delay before the animation starts
+ * - `duration` (ms) – animation duration (default 800 ms)
+ * - `distance`      – how far the element is offset before revealing
+ * - `direction`     – slide-in from 'up' | 'down' | 'left' | 'right'
+ *
+ * Once revealed, the observer is disconnected so the element stays visible
+ * even when it scrolls out of view (one-shot entrance, no replay).
+ * Uses `willChange: 'opacity, transform'` for GPU compositing.
+ */
+
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 interface ScrollRevealProps {
-  children: ReactNode;
-  delay?: number;
-  duration?: number;
-  distance?: string;
-  direction?: 'up' | 'down' | 'left' | 'right';
-  className?: string;
-  style?: React.CSSProperties;
+  children: ReactNode
+  delay?: number
+  duration?: number
+  distance?: string
+  direction?: 'up' | 'down' | 'left' | 'right'
+  className?: string
+  style?: React.CSSProperties
 }
 
 export function ScrollReveal({
@@ -19,18 +37,18 @@ export function ScrollReveal({
   className = '',
   style = {},
 }: ScrollRevealProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const currentRef = ref.current;
+    const currentRef = ref.current
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
+          setIsVisible(true)
           if (currentRef) {
-            observer.unobserve(currentRef);
+            observer.unobserve(currentRef)
           }
         }
       },
@@ -38,28 +56,32 @@ export function ScrollReveal({
         threshold: 0.05,
         rootMargin: '0px 0px -60px 0px', // trigger slightly before entering the screen for smooth flow
       }
-    );
+    )
 
     if (currentRef) {
-      observer.observe(currentRef);
+      observer.observe(currentRef)
     }
 
     return () => {
       if (currentRef) {
-        observer.unobserve(currentRef);
+        observer.unobserve(currentRef)
       }
-    };
-  }, []);
+    }
+  }, [])
 
   const getTransform = () => {
-    if (isVisible) return 'translate(0, 0)';
+    if (isVisible) return 'translate(0, 0)'
     switch (direction) {
-      case 'up': return `translateY(${distance})`;
-      case 'down': return `translateY(-${distance})`;
-      case 'left': return `translateX(${distance})`;
-      case 'right': return `translateX(-${distance})`;
+      case 'up':
+        return `translateY(${distance})`
+      case 'down':
+        return `translateY(-${distance})`
+      case 'left':
+        return `translateX(${distance})`
+      case 'right':
+        return `translateX(-${distance})`
     }
-  };
+  }
 
   return (
     <div
@@ -76,5 +98,5 @@ export function ScrollReveal({
     >
       {children}
     </div>
-  );
+  )
 }

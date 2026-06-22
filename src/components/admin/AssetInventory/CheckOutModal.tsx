@@ -1,3 +1,10 @@
+/**
+ * CheckOutModal Component
+ * -------------------------------------------------------------
+ * Modal interface allowing administrators to allocate/check out an asset
+ * to a selected member, with optional return dates and handover notes.
+ */
+
 import { useState, useMemo } from 'react'
 
 interface Props {
@@ -35,6 +42,12 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
+/**
+ * CheckOutModal
+ * -------------------------------------------------------------
+ * Dialog form component handles member list searching, dropdown selections,
+ * input state bindings, and checkout action triggers.
+ */
 export function CheckOutModal({ assetId, assetName, members, onClose, onSubmit }: Props) {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState('')

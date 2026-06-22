@@ -1,3 +1,18 @@
+/**
+ * ReadingProgressBar Component
+ * -------------------------------------------------------------
+ * Fixed 4 px stripe across the very top of the viewport indicating how far down
+ * the current public page the visitor has scrolled.
+ *
+ * Only active on public routes (all paths starting with `/` that do NOT start
+ * with `/admin` or `/dashboard`). On excluded routes it returns null and resets
+ * the progress to 0 via a deferred `setTimeout` to avoid a synchronous
+ * setState-in-effect React warning.
+ *
+ * Uses passive scroll + resize listeners for performance.
+ * Gradient: brand-red → brand-gold → brand-green.
+ */
+
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 

@@ -1,4 +1,16 @@
-﻿import { useState, useCallback, useEffect } from 'react'
+/**
+ * RegistrationForm Component
+ * -------------------------------------------------------------
+ * A comprehensive multi-step form to register members.
+ * Collects:
+ * - Basic/Account details (name, phone, password)
+ * - Demographic details (age range, gender, residence address)
+ * - Emergency & Professional info (emergency contacts, job, education)
+ * - Final Verification (cropped passport photos via react-easy-crop, declaration check)
+ * Includes specific adminoverride registration workflows.
+ */
+
+import { useState, useCallback, useEffect } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import { ageRanges, educationLevels } from './RegistrationForm.constants'
@@ -34,6 +46,9 @@ interface RegistrationFormProps {
   onSubmitData?: (data: RegistrationSubmission) => void
 }
 
+/**
+ * RegistrationForm component handling state, file reads, and multi-step submissions.
+ */
 export default function RegistrationForm({
   onClose,
   onSuccess,
@@ -59,10 +74,16 @@ export default function RegistrationForm({
     return () => window.removeEventListener('resize', handler)
   }, [])
 
+  /**
+   * Callback fired by react-easy-crop when the image crop area is updated.
+   */
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
 
+  /**
+   * Event listener reading the uploaded file to render crop viewport.
+   */
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader()
@@ -100,6 +121,9 @@ export default function RegistrationForm({
         .map((constituency) => constituency.name)
     : []
 
+  /**
+   * Updates platform setting (Ghana vs Diaspora) and defaults country selection.
+   */
   const handlePlatformChange = (newPlatform: string) => {
     setPlatform(newPlatform)
     setFormData((prev) => {
@@ -115,6 +139,9 @@ export default function RegistrationForm({
     })
   }
 
+  /**
+   * Universal change handler updating input state and clearing constituency lists.
+   */
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => {
       const newData = { ...prev, [field]: value }
@@ -130,6 +157,9 @@ export default function RegistrationForm({
     })
   }
 
+  /**
+   * Navigates form steps or triggers onSubmitData callback to finalize registration.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formStep < 4) {
@@ -157,6 +187,9 @@ export default function RegistrationForm({
     }
   }
 
+  /**
+   * Steps the form back.
+   */
   const goBack = () => {
     setFormStep((prev) => prev - 1)
   }

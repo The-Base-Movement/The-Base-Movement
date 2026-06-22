@@ -1,5 +1,15 @@
+/**
+ * Analytics Component
+ * -------------------------------------------------------------
+ * Injector component for Umami analytics scripts.
+ * Mounts the tracker script block dynamically to document head in production environments.
+ */
+
 import { useEffect } from 'react'
 
+/**
+ * Analytics component definition.
+ */
 export function Analytics() {
   useEffect(() => {
     if (!import.meta.env.PROD) return

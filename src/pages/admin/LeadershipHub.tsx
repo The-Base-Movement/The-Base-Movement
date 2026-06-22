@@ -1,3 +1,10 @@
+/**
+ * Leadership Hub Page Component
+ * -------------------------------------------------------------
+ * Component for movement vetting, leader application management, compliance audit,
+ * and direct officer appointments.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { adminService } from '@/services/adminService'
@@ -31,6 +38,7 @@ interface AppointedLeader {
   profession: string | null
 }
 
+// Main page component rendering KPI metrics, applications table, and active leadership assignments
 export default function LeadershipHub() {
   const [applications, setApplications] = useState<ChapterApplication[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -54,6 +62,7 @@ export default function LeadershipHub() {
   const [leadersSearch, setLeadersSearch] = useState('')
   const [viewLeader, setViewLeader] = useState<AppointedLeader | null>(null)
 
+  // Fetch candidate chapter leadership applications
   const fetchApplications = useCallback(async (silent = false) => {
     if (!silent) setIsLoading(true)
     try {
@@ -67,6 +76,7 @@ export default function LeadershipHub() {
     }
   }, [])
 
+  // Resolve and cache profile information for all appointed chapter officers
   const fetchAllLeaders = useCallback(async () => {
     const { data: chapters } = await supabase
       .from('chapters')
@@ -133,6 +143,7 @@ export default function LeadershipHub() {
     return () => clearTimeout(timer)
   }, [fetchApplications, fetchAllLeaders])
 
+  // Approve a chapter leadership application and update active application lists
   const handleApprove = async (id: string, name: string) => {
     try {
       const success = await adminService.approveChapterApplication(id)
@@ -152,6 +163,7 @@ export default function LeadershipHub() {
     }
   }
 
+  // Reject a chapter leadership application and decline the officer request
   const handleReject = async (id: string, name: string) => {
     try {
       const success = await adminService.rejectChapterApplication(id)
@@ -167,6 +179,7 @@ export default function LeadershipHub() {
     }
   }
 
+  // Download a plain text compliance audit report for national leaders
   const handleGenerateReport = async () => {
     setIsGenerating(true)
     try {
@@ -189,6 +202,7 @@ export default function LeadershipHub() {
     }
   }
 
+  // Open direct appointment modal and populate active members and chapters
   const openAppointModal = async () => {
     setAppointModal(true)
     setAppointLoading(true)
@@ -211,6 +225,7 @@ export default function LeadershipHub() {
     }
   }
 
+  // Confirm appointment of a member to a specific chapter leadership role
   const handleAppoint = async () => {
     if (!selectedMember) {
       toast.error('Select a member first')
@@ -259,6 +274,7 @@ export default function LeadershipHub() {
     }
   }
 
+  // Remove the currently assigned leader from a chapter, resetting to Unassigned
   const handleRemoveLeader = async (l: AppointedLeader) => {
     const { error } = await supabase
       .from('chapters')

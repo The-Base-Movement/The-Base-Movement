@@ -1,3 +1,24 @@
+/**
+ * ProtectedAdminRoute Component
+ * -------------------------------------------------------------
+ * Route guard for all `/admin/*` pages. Implements a three-phase security gate:
+ *
+ * 1. Auth check: unauthenticated users are redirected to /admin-login.
+ * 2. MFA check (via Supabase `mfa.getAuthenticatorAssuranceLevel` and
+ *    `mfa.listFactors`):
+ *    - No TOTP factor enrolled → redirect to security settings setup, UNLESS
+ *      the current path is already the security setup page.
+ *    - TOTP enrolled but AAL < aal2 → render `AdminTwoFactorGate` challenge.
+ *    - TOTP enrolled and AAL = aal2 → allow.
+ *    - No factor enrolled → allow (MFA is optional until Phase 2 enforcement).
+ * 3. Device capture: `AdminDeviceCapture` wraps the admin `<Outlet />` to
+ *    register the device for tracked roles (fail-open, non-blocking).
+ *
+ * The `ADMIN_GATE_KEY` session flag is set after a successful 2FA challenge
+ * so that navigating within /admin doesn't re-prompt, but crossing from
+ * member → admin always does (DashboardLayout clears the flag on unmount).
+ */
+
 import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'

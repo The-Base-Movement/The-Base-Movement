@@ -1,3 +1,10 @@
+/**
+ * IT Helpdesk Custom React Hooks
+ * -------------------------------------------------------------
+ * Custom hooks managing helpdesk operations, queries, and mutations
+ * for both administrative handlers and individual submitting members.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -12,7 +19,11 @@ import type {
   TicketStatus,
 } from './types'
 
-// ─── Pure mapper (exported for tests) ─────────────────────────────────────────
+/**
+ * buildTicketFromRow
+ * -------------------------------------------------------------
+ * Helper utility to map a raw database ticket response to a typed HelpdeskTicket structure.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildTicketFromRow(row: any): HelpdeskTicket {
   return {
@@ -33,7 +44,11 @@ export function buildTicketFromRow(row: any): HelpdeskTicket {
   }
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+/**
+ * useHelpdesk
+ * -------------------------------------------------------------
+ * Hook managing the administrative queue workspace, comment/status/priority updates, and handler assignment.
+ */
 export function useHelpdesk(departmentId: string) {
   const [tickets, setTickets] = useState<HelpdeskTicket[]>([])
   const [departments, setDepartments] = useState<HelpdeskDepartment[]>([])
@@ -308,7 +323,11 @@ export function useHelpdesk(departmentId: string) {
   }
 }
 
-// ─── Member hook (read own tickets + submit) ──────────────────────────────────
+/**
+ * useMemberHelpdesk
+ * -------------------------------------------------------------
+ * Hook managing member-facing ticket actions (loading, submitting new tickets with files, posting replies).
+ */
 export function useMemberHelpdesk(userId: string | null) {
   const [tickets, setTickets] = useState<HelpdeskTicket[]>([])
   const [departments, setDepartments] = useState<HelpdeskDepartment[]>([])

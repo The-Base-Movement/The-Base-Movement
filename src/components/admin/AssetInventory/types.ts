@@ -1,3 +1,10 @@
+/**
+ * Asset Inventory Type Definitions
+ * -------------------------------------------------------------
+ * Contains TypeScript interfaces and type aliases representing assets,
+ * categories, assignments, maintenance logs, requests, and alerts.
+ */
+
 export type AssetCondition = 'good' | 'fair' | 'damaged'
 export type ViewMode = 'department' | 'master'
 

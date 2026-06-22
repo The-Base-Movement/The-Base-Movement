@@ -1,3 +1,10 @@
+/**
+ * War Room Command Page Component
+ * -------------------------------------------------------------
+ * Real-time monitoring and command dashboard for administrative coordination.
+ * Features live websocket logical replication feeds, crisis response, and auditing report triggers.
+ */
+
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
@@ -25,6 +32,7 @@ import { CrisisIncidentsPanel } from './warroom/CrisisIncidentsPanel'
 import { DigitalDirectivesPanel } from './warroom/DigitalDirectivesPanel'
 import { ComplianceReportModal } from './warroom/ComplianceReportModal'
 
+// GMT Tabular clock aligned to the Accra/Ghana timezone
 function LiveClock() {
   const [time, setTime] = useState(() => new Date())
   useEffect(() => {
@@ -62,6 +70,7 @@ function LiveClock() {
   )
 }
 
+// Main page component compiling live maps, pacing logs, and directive dispatches
 export default function WarRoomCommand() {
   const [directives, setDirectives] = useState<RapidResponseDirective[]>([])
   const [incidents, setIncidents] = useState<CrisisIncident[]>([])
@@ -81,6 +90,7 @@ export default function WarRoomCommand() {
   const [reportLoading, setReportLoading] = useState(false)
   const { lowBandwidthMode } = usePerformance()
 
+  // Fetch War Room directives, incident feeds, counter narratives, and pacing statistics in parallel
   async function fetchWarRoomIntelligence(isBackground = false) {
     if (!isBackground) setLoading(true)
     try {
@@ -182,6 +192,7 @@ export default function WarRoomCommand() {
     }
   }, [lowBandwidthMode])
 
+  // Resolve or contain a crisis incident based on current status
   const handleUpdateIncidentStatus = async (
     id: string,
     currentStatus: CrisisIncident['status']
@@ -195,6 +206,7 @@ export default function WarRoomCommand() {
     }
   }
 
+  // Toggle dispatch state for media counter narrative
   const handleDispatchNarrative = async (
     id: string,
     currentStatus: MediaCounterNarrative['dispatch_status']
@@ -212,6 +224,7 @@ export default function WarRoomCommand() {
     }
   }
 
+  // Compile compliance audit report from backend administrative services
   const handleGenerateReport = async () => {
     setReportLoading(true)
     try {

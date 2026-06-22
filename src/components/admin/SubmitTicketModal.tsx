@@ -1,3 +1,11 @@
+/**
+ * SubmitTicketModal Component
+ * -------------------------------------------------------------
+ * Rendered within a React Portal to collect and post support requests from administrators.
+ * Creates an entry in the Supabase 'it_tickets' table, tracking the ticket's title,
+ * descriptive body, priority level (low, medium, high), and submitting administrator's ID.
+ */
+
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '@/lib/supabase'
@@ -25,6 +33,9 @@ const inputSt: React.CSSProperties = {
   color: 'hsl(var(--on-surface))',
 }
 
+/**
+ * SubmitTicketModal component definition.
+ */
 export function SubmitTicketModal({ userId, onClose }: Props) {
   const [title, setTitle] = useState('')
   const [description, setDesc] = useState('')
@@ -32,6 +43,10 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
+  /**
+   * Submits the ticket payload to the database.
+   * Performs basic character validation and outputs success/failure toasts.
+   */
   const handleSubmit = async () => {
     const t = title.trim()
     const d = description.trim()

@@ -66,6 +66,7 @@ if (!token) {
   process.exit(0)
 }
 
+// Executes the SQL migration by sending it to the Supabase Management API
 async function run() {
   const response = await fetch(`https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query`, {
     method: 'POST',

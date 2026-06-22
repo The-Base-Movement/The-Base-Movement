@@ -1,3 +1,11 @@
+/**
+ * Media Library Page Component
+ * -------------------------------------------------------------
+ * Component for movement media asset management. Handles directory/category views,
+ * vault syncing, new category creation, file ingestion/upload, link copying,
+ * and deleting assets (moving to trash).
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { adminService } from '@/services/adminService'
@@ -10,6 +18,7 @@ import { MediaKPIs } from './medialibrary/MediaKPIs'
 import { StorageUsagePanel } from './medialibrary/StorageUsagePanel'
 import { NewCategoryModal } from './medialibrary/NewCategoryModal'
 
+// Main component rendering media vault assets, search filter, and category switchers
 export default function MediaLibrary() {
   const [files, setFiles] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -26,6 +35,7 @@ export default function MediaLibrary() {
   const [newFolderName, setNewFolderName] = useState('')
   const [isSavingFolder, setIsSavingFolder] = useState(false)
 
+  // Load files contained inside the active category folder
   const loadFiles = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -38,6 +48,7 @@ export default function MediaLibrary() {
     }
   }, [activeFolder])
 
+  // Clear paint cycles and refresh files in active folder
   const handleRefreshClick = useCallback(async () => {
     setIsLoading(true)
     // Yield to the macrotask queue so the browser paints the loading state
@@ -54,6 +65,7 @@ export default function MediaLibrary() {
     }
   }, [activeFolder])
 
+  // Fetch available media categories
   const fetchFolders = useCallback(async () => {
     try {
       const fetched = await contentService.getMediaFolders()
@@ -79,6 +91,7 @@ export default function MediaLibrary() {
     }
   }, [activeFolder, loadFiles])
 
+  // Process folder label input and generate URL slug name
   const handleLabelChange = (val: string) => {
     setNewFolderLabel(val)
     const slug = val
@@ -90,6 +103,7 @@ export default function MediaLibrary() {
     setNewFolderName(slug)
   }
 
+  // Create new folder category in media repository
   const handleCreateFolder = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newFolderLabel || !newFolderName) {
@@ -117,6 +131,7 @@ export default function MediaLibrary() {
     }
   }
 
+  // Upload new image asset to currently active folder
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -139,6 +154,7 @@ export default function MediaLibrary() {
     }
   }
 
+  // Copy selected asset's URL to user clipboard
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url)
     setCopiedUrl(url)
@@ -148,6 +164,7 @@ export default function MediaLibrary() {
 
   const filteredFiles = files.filter((url) => url.toLowerCase().includes(searchQuery.toLowerCase()))
 
+  // Execute deletion of target file and stage in trash bin
   const handleConfirmedDelete = async () => {
     if (!assetToDelete) return
 

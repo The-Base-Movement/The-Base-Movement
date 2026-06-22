@@ -5,7 +5,7 @@
 const fs = require('fs')
 const path = require('path')
 
-// Parse .env manually
+// Load and parse environment variables from local .env file
 const envPath = path.resolve(__dirname, '../.env')
 let serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || null
 let supabaseUrl = process.env.SUPABASE_URL || null
@@ -83,6 +83,7 @@ CREATE POLICY "constituency_leaders_delete" ON constituency_leaders
 CREATE INDEX IF NOT EXISTS constituency_leaders_constituency_id_idx ON constituency_leaders(constituency_id);
 `
 
+// Executes the DDL SQL to create tables and policies on Supabase
 async function run() {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/exec_sql`, {
     method: 'POST',

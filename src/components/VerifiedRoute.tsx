@@ -1,3 +1,20 @@
+/**
+ * VerifiedRoute Component
+ * -------------------------------------------------------------
+ * Route guard that extends `ProtectedRoute` with a member status check.
+ * Only members whose `users.status` is NOT 'Pending' may access the route.
+ *
+ * Flow:
+ * 1. While auth loads → render nothing.
+ * 2. Unauthenticated → redirect to /login.
+ * 3. Auth resolved, status loading → show `DotLoader` spinner.
+ * 4. Status = 'Pending' → show `FullPageState variant="403"` (access denied).
+ * 5. Any other status → render the nested `<Outlet />`.
+ *
+ * Used to gate dashboard pages that require a fully verified membership,
+ * such as the membership card and KYC upload pages.
+ */
+
 import { useEffect, useState } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'

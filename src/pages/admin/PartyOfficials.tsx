@@ -1,3 +1,11 @@
+/**
+ * Party Officials Page Component
+ * -------------------------------------------------------------
+ * Component for administering movement leadership lists and tier structures.
+ * Connects directly to Supabase schemas, handles representative registration,
+ * tier configuration, image upload, and search/sort capabilities.
+ */
+
 import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '@/lib/supabase'
 import { contentService } from '@/services/contentService'
@@ -11,6 +19,7 @@ import { OfficialModal } from './partyofficials/OfficialModal'
 import { TiersModal } from './partyofficials/TiersModal'
 import { ViewModal } from './partyofficials/ViewModal'
 
+// Main component displaying the roster of officials, tiered groups, and modals
 export default function PartyOfficials() {
   const [officials, setOfficials] = useState<PartyOfficial[]>([])
   const [tiers, setTiers] = useState<PartyTier[]>([])
@@ -45,6 +54,7 @@ export default function PartyOfficials() {
     order_index: 0,
   })
 
+  // Fetch registered officials ordered by priority indices
   async function fetchOfficials() {
     const { data, error } = await supabase
       .from('party_officials')
@@ -60,6 +70,7 @@ export default function PartyOfficials() {
     setLoading(false)
   }
 
+  // Fetch tier definitions for sorting leadership
   async function fetchTiers() {
     const { data } = await supabase
       .from('party_tiers')
@@ -76,6 +87,7 @@ export default function PartyOfficials() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Open the direct official addition/edition modal
   const handleOpenModal = (official?: PartyOfficial) => {
     if (official) {
       setFormData(official)
@@ -100,6 +112,7 @@ export default function PartyOfficials() {
     setIsModalOpen(true)
   }
 
+  // Upload representative avatar asset
   const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -121,6 +134,7 @@ export default function PartyOfficials() {
     }
   }
 
+  // Remove official entry
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to remove this official?')) return
     const { error } = await supabase.from('party_officials').delete().eq('id', id)

@@ -1,5 +1,14 @@
+/**
+ * @file sentry.ts
+ * @description Provides a initialization wrapper for Sentry application monitoring in production mode.
+ */
+
 import * as Sentry from '@sentry/react'
 
+/**
+ * Initializes Sentry application instrumentation settings for production logs.
+ * Sets sampling rate metrics and enables BrowserTracing / SessionReplay integrations.
+ */
 export function initSentry() {
   const dsn = import.meta.env.VITE_SENTRY_DSN
   if (!dsn || import.meta.env.DEV) return

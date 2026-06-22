@@ -1,3 +1,21 @@
+/**
+ * OfficerCard Component
+ * -------------------------------------------------------------
+ * Renders a "lanyard-style" profile card for a single movement officer.
+ * The card hangs from a dashed lanyard string with a coloured ring whose hue
+ * is derived from `tierIndex` (0 = executive red, 1 = gold, 2+ = primary green).
+ *
+ * Features:
+ * - Responsive: full-width on mobile, fixed `cardWidth` on desktop
+ * - Top-tier cards are taller (longer lanyard) and wider (340 px vs 300 px)
+ * - Hover lift animation via `isHovered` state
+ * - Bio text is only shown for executive-tier officers
+ * - Social icon links (Facebook, Instagram, LinkedIn, X/Twitter, Email) open in
+ *   a new tab without propagating the click to the card's `onClick` handler
+ *
+ * Used inside `OfficerCardSlider`.
+ */
+
 import { useState, useEffect } from 'react'
 import { XIcon, LinkedInIcon, FacebookIcon, InstagramIcon } from '@/components/icons/SocialIcons'
 

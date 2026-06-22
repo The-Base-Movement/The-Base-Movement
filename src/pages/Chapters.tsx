@@ -1,3 +1,10 @@
+/**
+ * Chapters Hub Page Component
+ * -------------------------------------------------------------
+ * Displays a list of geographical movement chapters/hubs.
+ * Adapts to either public view or authenticated member dashboard layout.
+ */
+
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
@@ -19,6 +26,7 @@ import { PublicMobileFilterDrawer } from './chapters/PublicMobileFilterDrawer'
 import { PublicChapterGrid } from './chapters/PublicChapterGrid'
 import { PublicRequestModal } from './chapters/PublicRequestModal'
 
+// Primary Chapters component routing rendering for public/authenticated chapter directory views
 export default function Chapters() {
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
@@ -84,6 +92,7 @@ export default function Chapters() {
     currentPage * itemsPerPage
   )
 
+  // Submits a new chapter creation request form to database
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)

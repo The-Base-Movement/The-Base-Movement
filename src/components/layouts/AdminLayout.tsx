@@ -1,3 +1,12 @@
+/**
+ * AdminLayout Component
+ * -------------------------------------------------------------
+ * Layout wrapper for the administrative portal pages.
+ * Handles access-control validation, 15-minute inactivity timeouts,
+ * interface density/theme overrides, real-time counters (unread messages,
+ * verifications, donations), and sidebar toggle states.
+ */
+
 import { Suspense, useState, useEffect, useRef } from 'react'
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
@@ -17,6 +26,11 @@ import { MfaSetupNag } from '@/components/admin/MfaSetupNag'
 import { AdminSidebar } from './admin/AdminSidebar'
 import { AdminTopbar } from './admin/AdminTopbar'
 
+/**
+ * AdminLayout
+ * -------------------------------------------------------------
+ * Main shell component wrapping children with admin layout panels.
+ */
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const { settings } = useBranding()
   const { session } = useAuth()
@@ -184,6 +198,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
   }, [navigate])
 
+  /**
+   * handleMarkAsRead
+   * -------------------------------------------------------------
+   * Dispatches command to mark a single notification read in database,
+   * updating state counts on success.
+   */
   const handleMarkAsRead = async (id: string) => {
     try {
       const success = await adminService.markNotificationRead(id)
@@ -196,6 +216,11 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
   }
 
+  /**
+   * handleMarkAllAsRead
+   * -------------------------------------------------------------
+   * Resolves and updates all unread notifications to read status.
+   */
   const handleMarkAllAsRead = async () => {
     try {
       const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id)
@@ -207,6 +232,11 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
   }
 
+  /**
+   * handleLogout
+   * -------------------------------------------------------------
+   * Asynchronously ends user session and redirects to the login screen.
+   */
   const handleLogout = async () => {
     await authService.logout()
     navigate('/admin-login')

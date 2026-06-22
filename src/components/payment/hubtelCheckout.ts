@@ -1,3 +1,10 @@
+/**
+ * Hubtel Checkout Service Helpers
+ * -------------------------------------------------------------
+ * Provides interface models and utility functions to interface with the Hubtel payment gateway.
+ * Invokes the Supabase Edge Function 'hubtel-initiate-payment' and parses checkout targets.
+ */
+
 import { supabase } from '@/lib/supabase'
 
 export interface HubtelCheckoutMetadata {
@@ -20,6 +27,9 @@ export interface HubtelCheckoutRequest {
   cancellationUrl?: string
 }
 
+/**
+ * Traverses dynamic API response payloads to safely extract the checkout URL string.
+ */
 function getCheckoutUrl(payload: unknown): string | null {
   if (!payload || typeof payload !== 'object') return null
   const record = payload as Record<string, unknown>
@@ -33,6 +43,10 @@ function getCheckoutUrl(payload: unknown): string | null {
   return typeof url === 'string' ? url : null
 }
 
+/**
+ * Invokes the Edge Function to initialize a secure payment transaction with Hubtel.
+ * Returns the checkout target URL on success.
+ */
 export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Promise<string> {
   const { data, error } = await supabase.functions.invoke('hubtel-initiate-payment', {
     body: {
@@ -60,6 +74,9 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
   return checkoutUrl
 }
 
+/**
+ * Triggers a centered viewport window pop-up pointing to the checkout URL.
+ */
 export function openHubtelCheckout(checkoutUrl: string): Window | null {
   return window.open(
     checkoutUrl,

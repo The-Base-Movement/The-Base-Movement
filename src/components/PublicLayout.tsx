@@ -1,3 +1,17 @@
+/**
+ * PublicLayout Component
+ * -------------------------------------------------------------
+ * Shell layout for all public-facing pages (`/`, /about, /blog, etc.).
+ * Wraps the route `<Outlet />` with:
+ * - `MaintenanceGate`: hides the public site when maintenance mode is on
+ * - `Navbar`: sticky top navigation bar
+ * - Skip-to-content anchor for keyboard / screen-reader accessibility
+ * - `Footer`: site-wide footer
+ * - `BackToTop`: floating scroll-to-top button
+ *
+ * The admin panel is never wrapped by this layout.
+ */
+
 import { Outlet } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'

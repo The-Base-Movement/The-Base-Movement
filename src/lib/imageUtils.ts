@@ -1,6 +1,18 @@
+/**
+ * @file imageUtils.ts
+ * @description Provides helper utilities for canvas-based image cropping, format compression
+ * using browser-image-compression, and conversion helpers between Blobs/Files and base64 DataURLs.
+ */
+
 import type { Area } from 'react-easy-crop'
 import imageCompression from 'browser-image-compression'
 
+/**
+ * Utility wrapper returning a Promise that resolves to an HTMLImageElement from a URL string.
+ *
+ * @param url - Source image URL
+ * @returns Promise resolving to HTMLImageElement
+ */
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
     const image = new Image()
@@ -10,6 +22,13 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
     image.src = url
   })
 
+/**
+ * Crops an image based on pixel bounding values and returns it as a WEBP Blob.
+ *
+ * @param imageSrc - URL or local storage representation of the image
+ * @param pixelCrop - Coordinates and dimensions representing the cropped section
+ * @returns Promise resolving to cropped image Blob, or null if context creation fails
+ */
 export async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<Blob | null> {
   const image = await createImage(imageSrc)
   const canvas = document.createElement('canvas')
@@ -48,6 +67,14 @@ export async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<
   })
 }
 
+/**
+ * Compresses an input File or Blob using browser-image-compression.
+ * Standardizes output formats to high-quality '.webp'.
+ *
+ * @param input - Original File or Blob image
+ * @param name - Optional filename parameter
+ * @returns Promise resolving to compressed WebP File object
+ */
 export async function compressForUpload(input: File | Blob, name?: string): Promise<File> {
   const fileName = name ?? (input instanceof File ? input.name : 'image')
   const file = input instanceof File ? input : new File([input], fileName, { type: input.type })
@@ -72,6 +99,12 @@ export async function compressForUpload(input: File | Blob, name?: string): Prom
   }
 }
 
+/**
+ * Converts a base64 DataURL representation back to an equivalent Blob.
+ *
+ * @param dataurl - Base64 data url string
+ * @returns Blob containing the parsed byte data, or null if format is invalid
+ */
 export function dataURLtoBlob(dataurl: string) {
   const arr = dataurl.split(',')
   const mimeMatch = arr[0].match(/:(.*?);/)

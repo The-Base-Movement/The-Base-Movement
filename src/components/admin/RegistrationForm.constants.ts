@@ -1,3 +1,10 @@
+/**
+ * RegistrationForm Constants
+ * -------------------------------------------------------------
+ * Defines static lookup arrays for demographic options such as age brackets
+ * and formal educational levels, matching dropdown options in the membership form.
+ */
+
 export const ageRanges = ['16-25', '26-40', '41-60', '60+']
 
 export const educationLevels = [

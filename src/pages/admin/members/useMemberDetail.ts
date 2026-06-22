@@ -1,3 +1,10 @@
+/**
+ * Member Detail Hook
+ * -------------------------------------------------------------
+ * Reusable hook for loading and managing detail views of a selected member record.
+ * Handles fetching activity logs, donation logs, poll votes, session data, and notes.
+ */
+
 import { useState, useEffect } from 'react'
 import {
   adminService,
@@ -10,6 +17,7 @@ import {
 } from '@/services/adminService'
 import { toast } from 'sonner'
 
+// Custom React hook managing member metadata and tabs state
 export function useMemberDetail() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [activeDetailTab, setActiveDetailTab] = useState<
@@ -52,6 +60,7 @@ export function useMemberDetail() {
     return () => clearTimeout(timer)
   }, [selectedMember])
 
+  // Append new administrative note to target member's audit record history log
   const handleAddNote = async () => {
     if (!newNoteContent.trim() || !selectedMember) return
     setIsSubmittingNote(true)

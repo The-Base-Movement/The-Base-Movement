@@ -1,3 +1,11 @@
+/**
+ * Typography Softening Script
+ * -------------------------------------------------------------
+ * Recursively scans components in src/pages/admin and refactors excessive
+ * font weights (700, 800, 900) to conform to the design system's
+ * typography tokens (medium 500, semibold 600).
+ */
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -5,7 +13,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Walk directory recursively
+// Recursively walks a directory and triggers a callback for every file found
 function walkDir(dir, callback) {
   fs.readdirSync(dir).forEach(f => {
     let dirPath = path.join(dir, f);

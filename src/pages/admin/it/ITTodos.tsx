@@ -1,3 +1,10 @@
+/**
+ * IT Todos Page Component
+ * -------------------------------------------------------------
+ * Component for administering the daily IT checklist.
+ * Supports task creation, status cycle progression, quick-adding, and delete capabilities.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -18,6 +25,7 @@ const FILTER_TABS: { label: string; value: TodoStatus | 'all' }[] = [
   { label: 'Done', value: 'done' },
 ]
 
+// Main tasks list page component
 export default function ITTodos() {
   const { setCurrentLabel } = usePageLabel()
   const isMobile = useIsMobile()
@@ -48,6 +56,7 @@ export default function ITTodos() {
   const [quickTask, setQuickTask] = useState('')
   const [quickAdding, setQuickAdding] = useState(false)
 
+  // Fetch to-dos from supabase and map assignee user names
   const load = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -93,6 +102,7 @@ export default function ITTodos() {
     return () => clearTimeout(timer)
   }, [load])
 
+  // Toggle task status between done and todo
   async function handleToggleDone(todo: Todo) {
     const next = todo.status === 'done' ? 'todo' : 'done'
     try {
@@ -104,6 +114,7 @@ export default function ITTodos() {
     }
   }
 
+  // Cycle task status to the next logical stage
   async function handleCycleStatus(todo: Todo) {
     const next = STATUS_CYCLE[todo.status]
     try {
@@ -115,6 +126,7 @@ export default function ITTodos() {
     }
   }
 
+  // Delete a task record
   async function handleDelete(id: string) {
     if (!confirm('Delete this task?')) return
     try {
@@ -126,6 +138,7 @@ export default function ITTodos() {
     }
   }
 
+  // Quickly append a new task with minimal defaults
   async function handleQuickAdd(e: React.FormEvent) {
     e.preventDefault()
     if (!quickTask.trim()) return

@@ -1,3 +1,10 @@
+/**
+ * TicketFilters Component
+ * -------------------------------------------------------------
+ * Render filters block for support tickets, including tabbed selectors for status
+ * with item counts, and dropdown filter options for priority levels.
+ */
+
 import type { TicketFiltersState, TicketStatus, TicketPriority } from './types'
 
 const STATUSES: { value: TicketStatus | 'all'; label: string }[] = [
@@ -14,6 +21,11 @@ interface Props {
   counts: Record<string, number>
 }
 
+/**
+ * TicketFilters
+ * -------------------------------------------------------------
+ * Displays status filters with counts and priority level dropdown filter options.
+ */
 export function TicketFilters({ filters, onChange, counts }: Props) {
   return (
     <div

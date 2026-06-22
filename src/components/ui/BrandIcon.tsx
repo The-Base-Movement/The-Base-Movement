@@ -54,6 +54,9 @@ const BG_STYLES: Record<NonNullable<BrandIconProps['bg']>, React.CSSProperties> 
   },
 }
 
+/**
+ * BrandIcon component definition.
+ */
 export function BrandIcon({ name, size = 32, bg, className, style }: BrandIconProps) {
   const img = (
     <img

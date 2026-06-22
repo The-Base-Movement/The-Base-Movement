@@ -1,3 +1,11 @@
+/**
+ * MemberListCard Component
+ * -------------------------------------------------------------
+ * Displays a summarized member entry card inside the Admin Member Management sidebar/list.
+ * Displays initials or avatar image, member status badge, geographic details (region & constituency),
+ * phone number, and exposes interactive selection checkboxes and action buttons.
+ */
+
 import type { Member } from '@/services/adminService'
 
 interface Props {
@@ -8,6 +16,9 @@ interface Props {
   onAudit: (member: Member) => void
 }
 
+/**
+ * MemberListCard component rendering detailed layout and event triggers.
+ */
 export default function MemberListCard({
   member,
   isSelected,

@@ -1,3 +1,12 @@
+/**
+ * ResetConfirmationModal Component
+ * -------------------------------------------------------------
+ * A reusable modal portal for confirming destructive administrative operations.
+ * Primarily used to confirm resetting a user's device slot and simultaneously
+ * disabling their two-factor authentication (MFA) setup.
+ * Supports legacy inputs for backward compatibility.
+ */
+
 import { createPortal } from 'react-dom'
 
 interface DetailRow {
@@ -33,6 +42,9 @@ interface ResetConfirmationModalProps {
   adminName?: string
 }
 
+/**
+ * ResetConfirmationModal component rendering.
+ */
 export function ResetConfirmationModal({
   isOpen,
   onClose,

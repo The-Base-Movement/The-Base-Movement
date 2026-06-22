@@ -1,3 +1,11 @@
+/**
+ * Dashboard Sidebar Component
+ * -------------------------------------------------------------
+ * Responsive navigation sidebar container for the authenticated member dashboard.
+ * Renders partitioned navigation groups dynamically mapped to constituency/chapter links
+ * based on member location. Includes notification badges for personal metrics.
+ */
+
 import { Link, useLocation } from 'react-router-dom'
 
 interface Settings {
@@ -49,6 +57,12 @@ interface Props {
   initials: string
 }
 
+/**
+ * Sidebar
+ * -------------------------------------------------------------
+ * Main navigation container. Renders links, action triggers,
+ * and user profile info.
+ */
 export default function Sidebar({
   settings,
   isSidebarOpen,
@@ -70,6 +84,8 @@ export default function Sidebar({
   initials,
 }: Props) {
   const location = useLocation()
+
+  // Helper to determine if a route is currently active
   const isActive = (path: string) => location.pathname === path
 
   const groups: NavGroup[] = [

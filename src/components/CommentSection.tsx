@@ -1,3 +1,17 @@
+/**
+ * CommentSection Component
+ * -------------------------------------------------------------
+ * Full-featured comment system for blog post detail pages.
+ * Supports:
+ * - Authenticated member comment posting
+ * - Threaded replies (one level deep, with reply_to_name tracking)
+ * - Relative timestamp display (refreshed every 60 s)
+ * - Comment flagging (sends admin notification via `notifications` table)
+ * - Non-member guest state (prompts sign-in)
+ *
+ * Data is persisted to the `blog_comments` Supabase table.
+ */
+
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'

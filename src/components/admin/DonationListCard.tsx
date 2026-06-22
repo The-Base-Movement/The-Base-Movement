@@ -1,5 +1,17 @@
+/**
+ * DonationListCard Component
+ * -------------------------------------------------------------
+ * Displays a donation record card item in the Admin Finance Dashboard.
+ * Lists the donor name, phone or country, donation amount in GHS, payment method,
+ * transaction reference, status badge, and date.
+ */
+
 import type { DonationDetail } from '@/services/adminService'
 
+/**
+ * Resolves a semantic branding badge styling for a given payment method.
+ * Catches Mobile Money (MoMo), bank/credit cards, and cash methods.
+ */
 function methodBadge(method: string): { bg: string; color: string; label: string } {
   const m = method.toLowerCase()
   if (
@@ -17,6 +29,10 @@ function methodBadge(method: string): { bg: string; color: string; label: string
   return { bg: 'rgba(0,0,0,.05)', color: 'hsl(var(--on-surface-muted))', label: `● ${method}` }
 }
 
+/**
+ * Maps donation statuses (Pending, Verified, Rejected) to corresponding
+ * Tailwind/custom CSS pill status classnames and user-friendly labels.
+ */
 function statusPill(status: string): { cls: string; label: string } {
   if (status === 'Pending') return { cls: 'pill pill-warn', label: 'Pending' }
   if (status === 'Verified') return { cls: 'pill pill-ok', label: 'Cleared' }
@@ -30,6 +46,9 @@ interface Props {
   onClick: (donation: DonationDetail) => void
 }
 
+/**
+ * Renders the interactive donation card summary for the finance list sidebar/panel.
+ */
 export default function DonationListCard({ donation, isActive, onClick }: Props) {
   const mb = methodBadge(donation.method)
   const sp = statusPill(donation.status)

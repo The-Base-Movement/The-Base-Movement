@@ -1,3 +1,10 @@
+/**
+ * @file useOfflineSync.ts
+ * @description Hook to monitor network status (online/offline) and manage syncing of draft registrations
+ * stored in IndexedDB (offline database). Fires toast status notifications upon connectivity events
+ * and registration synchronization success/failure.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import {
@@ -9,13 +16,22 @@ import {
 } from '@/utils/offlineDb'
 import { registrationService } from '@/services/registrationService'
 
+/**
+ * Custom React hook managing resilient offline registration workflows.
+ * Monitors network availability changes, caches pending registrations locally,
+ * and retries syncing queued registrations when network is active.
+ *
+ * @returns State properties (online flags, draft items, synchronization loaders) and sync triggers.
+ */
 export function useOfflineSync() {
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [drafts, setDrafts] = useState<DraftRegistration[]>([])
   const [draftCount, setDraftCount] = useState(0)
   const [isSyncing, setIsSyncing] = useState(false)
 
-  // Load drafts and update count
+  /**
+   * Loads all draft registrations from IndexedDB and updates draftCount state.
+   */
   const loadDrafts = useCallback(async () => {
     try {
       const allDrafts = await getAllDraftRegistrations()
@@ -27,7 +43,13 @@ export function useOfflineSync() {
     }
   }, [])
 
-  // Sync a single draft registration
+  /**
+   * Syncs a single draft registration to the backend database service.
+   * Updates state status to 'syncing' during transaction, and deletes local record upon success.
+   *
+   * @param draft - Draft registration record containing form inputs and uploaded document assets.
+   * @returns Boolean indicating if the sync succeeded.
+   */
   const syncSingleDraft = useCallback(
     async (draft: DraftRegistration): Promise<boolean> => {
       try {
@@ -65,7 +87,9 @@ export function useOfflineSync() {
     [loadDrafts]
   )
 
-  // Trigger sync of all pending/failed drafts
+  /**
+   * Iterates through all cached offline drafts and attempts upload synchronization.
+   */
   const triggerSync = useCallback(async () => {
     if (!navigator.onLine || isSyncing) return
 

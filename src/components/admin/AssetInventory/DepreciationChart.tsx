@@ -1,3 +1,10 @@
+/**
+ * DepreciationChart Component
+ * -------------------------------------------------------------
+ * Visual chart component plotting an asset's projected linear depreciation
+ * curve over its estimated lifetime using the Recharts library.
+ */
+
 import { useMemo } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
@@ -7,6 +14,12 @@ interface Props {
   lifespanYears: number
 }
 
+/**
+ * DepreciationChart
+ * -------------------------------------------------------------
+ * Renders a linear depreciation projection graph based on purchase price,
+ * purchase date, and estimated asset lifespan.
+ */
 export function DepreciationChart({ purchasePrice, purchaseDate, lifespanYears }: Props) {
   const data = useMemo(() => {
     if (lifespanYears <= 0) return []

@@ -1,3 +1,12 @@
+/**
+ * DonateModal Component
+ * -------------------------------------------------------------
+ * Provides a payment interface allowing users to make secure contributions to the movement.
+ * Connects with Supabase to save pending donations and links with Hubtel checkout flows.
+ * Displays input validations (amount, phone format normalization via normalizeDonationPhone),
+ * handles live status polling, and provides custom overlays.
+ */
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -27,6 +36,9 @@ interface ModalForm {
 
 const EMPTY: ModalForm = { amount: '', fullName: '', phone: '', email: '', country: 'Ghana' }
 
+/**
+ * DonateModal component definition.
+ */
 export default function DonateModal({ isOpen, onClose, context }: DonateModalProps) {
   const { session } = useAuth()
   const [form, setForm] = useState<ModalForm>(EMPTY)
@@ -78,6 +90,9 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
 
   if (!isOpen) return null
 
+  /**
+   * Resets the internal state values of the payment modal.
+   */
   const reset = () => {
     setForm(EMPTY)
     setPendingDonationId(null)
@@ -87,11 +102,17 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
     setPaymentPhone('')
   }
 
+  /**
+   * Closes the modal and triggers a state reset.
+   */
   const handleClose = () => {
     reset()
     onClose()
   }
 
+  /**
+   * Insert a pending donation record into the database to initiate Hubtel gateway checkout.
+   */
   const handleInitiatePayment = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.amount || parseFloat(form.amount) <= 0) {
@@ -144,11 +165,17 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
     }
   }
 
+  /**
+   * Triggered when the Hubtel checkout session is opened successfully.
+   */
   const handleHubtelStarted = () => {
     setPaymentState('checkout')
     toast.success('Secure checkout opened. Complete payment to confirm your donation.')
   }
 
+  /**
+   * Handles payment/checkout failure, deleting the local pending record.
+   */
   const handleHubtelError = async () => {
     if (pendingDonationId) {
       await supabase.from('donations').delete().eq('id', pendingDonationId).eq('status', 'Pending')

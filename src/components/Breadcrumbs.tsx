@@ -1,3 +1,14 @@
+/**
+ * Breadcrumbs Component
+ * -------------------------------------------------------------
+ * Global navigation breadcrumb component that maps routing path segment arrays
+ * to user-friendly text labels. Supports:
+ * - Dynamic context roots (Home vs Admin Command Center vs Member Dashboard)
+ * - Custom overrides dictionary map (e.g. blog -> Updates)
+ * - Automatic title resolution fallback from PageLabelContext
+ * - Responsive light vs dark themes (using translucency variables)
+ */
+
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { usePageLabel } from '@/contexts/PageLabelContext'
@@ -48,7 +59,9 @@ const SUPPORTED_PREFIXES = [
   '/register',
 ]
 
-// Root labels and links per context
+/**
+ * Maps pathname prefixes to their respective root landing anchors and names.
+ */
 function getRootContext(pathname: string): { label: string; to: string } {
   if (pathname.startsWith('/admin')) return { label: 'Admin', to: '/admin/dashboard' }
   if (pathname.startsWith('/dashboard')) return { label: 'Dashboard', to: '/dashboard' }
@@ -59,6 +72,15 @@ function getRootContext(pathname: string): { label: string; to: string } {
 // Segments to skip (already shown as root)
 const SKIP_SEGMENTS = new Set(['dashboard', 'admin'])
 
+/**
+ * Resolves a text label for a given path segment string.
+ * @param value - The raw URL segment (e.g., 'media-library')
+ * @param pathname - The full current browser path
+ * @param post - Optional display override for dynamic ID segments
+ * @returns A formatted, human-readable string.
+ *
+ * Strips dash hyphens, capitalizes words, and handles UUID detail codes.
+ */
 function getLabel(value: string, pathname: string, post?: string): string {
   if (value === 'chapters' && pathname.startsWith('/admin')) return 'Chapter Management'
   if (LABEL_OVERRIDES[value]) return LABEL_OVERRIDES[value]

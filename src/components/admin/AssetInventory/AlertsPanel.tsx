@@ -1,3 +1,10 @@
+/**
+ * AlertsPanel Component
+ * -------------------------------------------------------------
+ * Displays active warnings and alerts associated with a specific asset,
+ * providing interactive buttons to resolve the alert or escalate to senior staff.
+ */
+
 import type { AssetAlert } from './types'
 
 interface Props {
@@ -15,6 +22,12 @@ const ALERT_COLOR = {
   missing: 'hsl(var(--destructive))',
 }
 
+/**
+ * AlertsPanel
+ * -------------------------------------------------------------
+ * Panels of active warnings showing issue type, date logged,
+ * and quick-action resolve/escalate triggers.
+ */
 export function AlertsPanel({ alerts, assetId, assignmentId, onResolve, onEscalate }: Props) {
   const assetAlerts = alerts.filter((a) => a.asset_id === assetId && !a.resolved)
 

@@ -1,3 +1,20 @@
+/**
+ * MemberProfileCard Component
+ * -------------------------------------------------------------
+ * Renders a compact, clickable profile card for a movement member.
+ * Used in admin grid views (e.g. member search, chapter members list).
+ *
+ * Displays:
+ * - Avatar (image or person icon fallback)
+ * - Verified / Pending status badge derived from `member.status`
+ * - Name, profession, location (constituency + region or diaspora country)
+ * - Network type (Ghana Network / Diaspora Network)
+ * - Hover lift effect with "View profile" CTA
+ *
+ * Calls `setSelectedMember` on click so the parent page can open a detail
+ * panel or modal for the selected member.
+ */
+
 import type { Member } from '@/types/admin'
 
 interface MemberProfileCardProps {

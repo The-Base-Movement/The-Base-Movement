@@ -1,3 +1,10 @@
+/**
+ * Ground Game Command Page Component
+ * -------------------------------------------------------------
+ * Command center for ground mobilization operations, displaying canvassing campaigns,
+ * field agent deployment rosters, route status, and voter readiness statistics.
+ */
+
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { DotLoader } from '@/components/states'
 import { useNavigate } from 'react-router-dom'
@@ -98,6 +105,7 @@ export default function GroundGameCommand() {
   const rightColRef = useRef<HTMLDivElement>(null)
   const [rightColHeight, setRightColHeight] = useState<number | undefined>(undefined)
 
+  // Asynchronously fetches campaigns, transport requests, canvasser logs, agents and regions
   async function fetchData() {
     setLoading(true)
     try {
@@ -148,6 +156,7 @@ export default function GroundGameCommand() {
     return () => observer.disconnect()
   }, [fieldAgents, pollingAgents, transportReqs])
 
+  // Marks a transport request status as dispatched in database
   const handleDispatch = async (id: string) => {
     const ok = await adminService.updateTransportRequest(id, 'DISPATCHED')
     if (ok) {
@@ -260,6 +269,7 @@ export default function GroundGameCommand() {
       .slice(0, 8)
   }, [modalMemberSearch, constituencyMembers])
 
+  // Opens the field agent appointment modal and resets search state
   const openFieldModal = () => {
     setModalMemberSearch('')
     setModalSelectedMember(null)
@@ -267,11 +277,13 @@ export default function GroundGameCommand() {
     setModal('field')
   }
 
+  // Opens the polling station agent appointment modal for a target voter
   const openStationModal = (row: VoterRow) => {
     setModalStationTarget(row)
     setModal('station')
   }
 
+  // Closes active appointment modal and resets all search states
   const closeModal = () => {
     setModal(null)
     setModalMemberSearch('')
@@ -280,6 +292,7 @@ export default function GroundGameCommand() {
     setModalStationTarget(null)
   }
 
+  // Appoints a selected member as a field agent for a specific constituency
   const handleAppointFieldAgent = async () => {
     if (!modalSelectedMember || !modalConstituency.trim()) return
     setAppointing(true)
@@ -299,6 +312,7 @@ export default function GroundGameCommand() {
     }
   }
 
+  // Appoints a target voter member as a polling station agent in database
   const handleAppointStationAgent = async () => {
     if (!modalStationTarget) return
     setAppointing(true)
@@ -319,6 +333,7 @@ export default function GroundGameCommand() {
     }
   }
 
+  // Removes/de-appoints a field agent from the roster
   const handleRemoveFieldAgent = async (id: string, name: string) => {
     const ok = await adminService.removeFieldAgent(id)
     if (ok) {
@@ -327,6 +342,7 @@ export default function GroundGameCommand() {
     }
   }
 
+  // Removes/de-appoints a polling station agent from the database
   const handleRemovePollingAgent = async (id: string, name: string) => {
     const ok = await adminService.removePollingStationAgent(id)
     if (ok) {

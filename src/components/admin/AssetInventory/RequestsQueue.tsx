@@ -1,3 +1,10 @@
+/**
+ * RequestsQueue Component
+ * -------------------------------------------------------------
+ * Displays a list of pending asset allocation requests, providing action inputs
+ * for reviewers to approve or deny requests with optional comments.
+ */
+
 import { useState } from 'react'
 import type { AssetRequest } from './types'
 
@@ -15,6 +22,12 @@ interface Props {
   onDeny: (requestId: string, note: string, reviewerId: string) => Promise<boolean>
 }
 
+/**
+ * RequestsQueue
+ * -------------------------------------------------------------
+ * Mounts queue list items and handles intermediate approval/denial
+ * states, comment text inputs, and submission events.
+ */
 export function RequestsQueue({ requests, reviewerId, onApprove, onDeny }: Props) {
   const [actionId, setActionId] = useState<string | null>(null)
   const [note, setNote] = useState('')

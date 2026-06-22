@@ -1,3 +1,10 @@
+/**
+ * CheckoutHistory Component
+ * -------------------------------------------------------------
+ * Displays a tabular timeline log of asset assignments, letting administrators
+ * trigger checkout/check-in operations and update state accordingly.
+ */
+
 import { useState } from 'react'
 import type { AssetAssignment, Asset, AssetCondition } from './types'
 import { CheckOutModal } from './CheckOutModal'
@@ -18,6 +25,12 @@ interface Props {
   onUpdateCondition: (condition: AssetCondition, note: string) => Promise<boolean>
 }
 
+/**
+ * CheckoutHistory
+ * -------------------------------------------------------------
+ * Manages allocation histories, renders checkout table, and triggers
+ * checkout and check-in modally.
+ */
 export function CheckoutHistory({
   asset,
   assignments,

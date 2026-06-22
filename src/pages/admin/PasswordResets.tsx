@@ -1,7 +1,15 @@
+/**
+ * Password Resets Page Component
+ * -------------------------------------------------------------
+ * Component for tracking and monitoring phone-based SMS OTP recovery attempts.
+ * Renders audit charts, status-based search filters, and masked phone numbers.
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import type { PasswordResetRecord } from '@/services/adminService'
 
+// Helper function to format ISO timestamps into British standard format
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString('en-GB', {
     day: 'numeric',
@@ -12,11 +20,13 @@ function formatDateTime(iso: string) {
   })
 }
 
+// Helper function to mask phone numbers to protect member privacy
 function maskPhone(phone: string) {
   if (phone.length <= 6) return phone
   return phone.slice(0, 4) + '•••••' + phone.slice(-3)
 }
 
+// Helper function to resolve the current operational state of a password reset record
 function getStatus(r: PasswordResetRecord): 'used' | 'expired' | 'pending' {
   if (r.used) return 'used'
   if (new Date(r.expires_at) < new Date()) return 'expired'
@@ -25,12 +35,14 @@ function getStatus(r: PasswordResetRecord): 'used' | 'expired' | 'pending' {
 
 type StatusFilter = 'all' | 'pending' | 'used' | 'expired'
 
+// Main component rendering password reset audit KPIs and records table
 export default function PasswordResets() {
   const [records, setRecords] = useState<PasswordResetRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<StatusFilter>('all')
   const [search, setSearch] = useState('')
 
+  // Load OTP recovery records from administrative services
   const load = useCallback(async () => {
     setLoading(true)
     try {

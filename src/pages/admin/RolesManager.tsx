@@ -1,3 +1,10 @@
+/**
+ * Roles Manager Page Component
+ * -------------------------------------------------------------
+ * Component for managing system and custom administrator roles and permissions.
+ * Includes detail modals for creating, updating, and deleting roles.
+ */
+
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -112,12 +119,14 @@ const ALL_PERMISSIONS: AdminPermission[] = PERMISSION_GROUPS.flatMap((g) =>
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// Helper function to format SCREAMING_SNAKE_CASE names into Title Case
 const formatName = (name: string) =>
   name
     .split('_')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ')
 
+// Helper function to determine if a permission set contains a specific action and resource
 const hasPermission = (perms: AdminPermission[], action: string, resource: string) =>
   perms.some((p) => p.action === action && p.resource === resource)
 
@@ -146,6 +155,7 @@ interface RoleModalProps {
   onSaved: () => void
 }
 
+// Dialog component for creating or editing system/custom roles and their permission listings
 function RoleModal({ role, onClose, onSaved }: RoleModalProps) {
   const isEdit = !!role
   const [name, setName] = useState(role ? role.name : '')
@@ -570,9 +580,11 @@ interface DeleteModalProps {
   onDeleted: () => void
 }
 
+// Modal component confirming the deletion of a specific custom role
 function DeleteModal({ role, onClose, onDeleted }: DeleteModalProps) {
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Request the role service delete target role
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
@@ -688,6 +700,7 @@ function DeleteModal({ role, onClose, onDeleted }: DeleteModalProps) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
+// Main roles manager list component
 export default function RolesManager() {
   const { setCurrentLabel } = usePageLabel()
 
@@ -702,6 +715,7 @@ export default function RolesManager() {
   const [editTarget, setEditTarget] = useState<AdminRoleRecord | null | 'new'>()
   const [deleteTarget, setDeleteTarget] = useState<AdminRoleRecord | null>(null)
 
+  // Fetch all administrative roles from security services
   const load = async () => {
     setIsLoading(true)
     try {

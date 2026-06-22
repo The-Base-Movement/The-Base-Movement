@@ -1,3 +1,10 @@
+/**
+ * Production Static Site Generation (SSG) Script
+ * -------------------------------------------------------------
+ * Performs static pre-rendering (prerendering) of public SEO routes in the build directory.
+ * Mocking global document/navigator API context to support safe SSR execution.
+ */
+
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -20,6 +27,7 @@ const routesToPrerender = [
   '/press'
 ]
 
+// Main function to run the production SSG build for specified static routes
 async function prerender() {
   console.log('[PRERENDER] Starting production SSG process...')
   

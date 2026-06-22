@@ -1,3 +1,11 @@
+/**
+ * AdminTwoFactorGate Component
+ * -------------------------------------------------------------
+ * Full-screen 2FA gate checking authenticator codes.
+ * Prompts user for a 6-digit verification code, launches a Supabase MFA challenge,
+ * and validates before letting authorized admins access dashboard controls.
+ */
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
@@ -9,14 +17,15 @@ interface AdminTwoFactorGateProps {
 }
 
 /**
- * Full-screen 2FA challenge shown when an authenticated admin crosses from
- * the member side into /admin/*. Verifying the TOTP code re-authenticates
- * the session before the admin panel is rendered.
+ * AdminTwoFactorGate component definition.
  */
 export default function AdminTwoFactorGate({ factorId, onVerified }: AdminTwoFactorGateProps) {
   const [code, setCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  /**
+   * Challenge-verify transaction checking codes.
+   */
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
     if (code.trim().length < 6) return

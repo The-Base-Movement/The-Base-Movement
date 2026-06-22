@@ -1,3 +1,12 @@
+/**
+ * ConstituencyCard Component
+ * -------------------------------------------------------------
+ * Renders a summary card for a single Ghana Network constituency.
+ * Mirrors the ChapterCard layout — header with status badge, 3-stat grid
+ * (members, activities, region prefix), and a coordinator row with a
+ * View / My Area CTA. Colour scheme adapts by status and member count.
+ */
+
 import { Link } from 'react-router-dom'
 import { type Constituency } from '@/types/admin'
 import { constituencySlug } from '@/services/constituencyService'

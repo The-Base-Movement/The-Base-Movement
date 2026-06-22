@@ -1,3 +1,10 @@
+/**
+ * MaintenanceTimeline Component
+ * -------------------------------------------------------------
+ * Lists the historical logs of repairs, checks, and condition updates for
+ * an asset, rendered as a vertical trace timeline.
+ */
+
 import type { MaintenanceLog, AssetCondition } from './types'
 
 const CONDITION_PILL: Record<AssetCondition, string> = {
@@ -16,6 +23,12 @@ interface Props {
   logs: MaintenanceLog[]
 }
 
+/**
+ * MaintenanceTimeline
+ * -------------------------------------------------------------
+ * Timeline flow illustrating when updates were made, by whom,
+ * what the issue/repair was, and the resulting condition state.
+ */
 export function MaintenanceTimeline({ logs }: Props) {
   if (!logs.length) {
     return (

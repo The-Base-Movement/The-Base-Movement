@@ -1,3 +1,10 @@
+/**
+ * AddAssetModal Component
+ * -------------------------------------------------------------
+ * Modal panel offering form elements to record new physical assets
+ * or modify details of an existing one (name, condition, purchase details).
+ */
+
 import { useState } from 'react'
 import type { AssetCategory, AssetCondition, Asset } from './types'
 
@@ -42,6 +49,12 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
+/**
+ * AddAssetModal
+ * -------------------------------------------------------------
+ * Displays form fields to add or update an asset item with category
+ * reference, purchase price, purchase date, serial number, and initial condition.
+ */
 export function AddAssetModal({ categories, editAsset, onClose, onSubmit, onUpdate }: Props) {
   const formPrefix = editAsset ? `edit-asset-${editAsset.id}` : 'add-asset'
   const [name, setName] = useState(editAsset?.name ?? '')

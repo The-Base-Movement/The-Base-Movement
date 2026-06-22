@@ -1,4 +1,10 @@
-// src/components/admin/AssetInventory/PrintLabelView.tsx
+/**
+ * PrintLabelView Component
+ * -------------------------------------------------------------
+ * Provides a printing overlay and layout styling to render and print
+ * physical QR tags and barcode labels for assets.
+ */
+
 import type { Asset, AssetCondition } from './types'
 
 const CONDITION_LABEL: Record<AssetCondition, string> = {
@@ -12,7 +18,17 @@ interface Props {
   onClose: () => void
 }
 
+/**
+ * PrintLabelView
+ * -------------------------------------------------------------
+ * Overlay component controlling print styles and trigger button for browser printing.
+ */
 export function PrintLabelView({ asset, onClose }: Props) {
+  /**
+   * handlePrint
+   * -------------------------------------------------------------
+   * Initiates browser window printing pipeline.
+   */
   function handlePrint() {
     window.print()
   }
@@ -90,6 +106,12 @@ export function PrintLabelView({ asset, onClose }: Props) {
   )
 }
 
+/**
+ * AssetLabel
+ * -------------------------------------------------------------
+ * Component representing the printable layout format of the asset label,
+ * showing the QR code image, name, unique tag number, category, and condition.
+ */
 function AssetLabel({ asset }: { asset: Asset }) {
   return (
     <div

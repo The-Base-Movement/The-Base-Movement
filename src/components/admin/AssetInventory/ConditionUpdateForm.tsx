@@ -1,3 +1,10 @@
+/**
+ * ConditionUpdateForm Component
+ * -------------------------------------------------------------
+ * Form element that allows admins/officers to record changes in asset
+ * condition (e.g. good, fair, damaged) with required audit log notes.
+ */
+
 import { useState } from 'react'
 import type { AssetCondition } from './types'
 
@@ -6,6 +13,11 @@ interface Props {
   onUpdate: (condition: AssetCondition, note: string) => Promise<boolean>
 }
 
+/**
+ * ConditionUpdateForm
+ * -------------------------------------------------------------
+ * Renders a small form panel for modifying condition state & adding note detail.
+ */
 export function ConditionUpdateForm({ currentCondition, onUpdate }: Props) {
   const [condition, setCondition] = useState<AssetCondition>(currentCondition)
   const [note, setNote] = useState('')

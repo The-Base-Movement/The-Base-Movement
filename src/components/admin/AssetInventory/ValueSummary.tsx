@@ -1,3 +1,10 @@
+/**
+ * ValueSummary Component
+ * -------------------------------------------------------------
+ * Displays key financial metrics for the active asset fleet, calculating and
+ * summarizing total purchase value and dynamic estimated current depreciated value.
+ */
+
 import { useMemo } from 'react'
 import type { Asset } from './types'
 
@@ -6,6 +13,11 @@ interface Props {
   categoriesById: Record<string, number> // category_id → lifespan_years
 }
 
+/**
+ * estimateCurrentValue
+ * -------------------------------------------------------------
+ * Computes linear depreciation value based on purchase date and category lifespan.
+ */
 function estimateCurrentValue(asset: Asset, lifespanYears: number): number {
   if (!asset.purchase_price || !asset.purchase_date) return 0
   const ageYears =
@@ -13,6 +25,11 @@ function estimateCurrentValue(asset: Asset, lifespanYears: number): number {
   return Math.max(0, asset.purchase_price * (1 - ageYears / lifespanYears))
 }
 
+/**
+ * ValueSummary
+ * -------------------------------------------------------------
+ * Renders twin KPI cards for total fleet investment vs. depreciated value.
+ */
 export function ValueSummary({ assets, categoriesById }: Props) {
   const { totalPurchase, totalCurrent } = useMemo(() => {
     let tp = 0,

@@ -1,3 +1,13 @@
+/**
+ * SubmitTicketModal Component (Member Surface)
+ * -------------------------------------------------------------
+ * A modal form allowing members to submit new helpdesk support tickets.
+ * Flow:
+ * 1. "dept" step: Displays available departments filtered by user authorization roles.
+ * 2. "form" step: Gathers subject title, description detail, priority rating, and optional file attachments (max 10MB each).
+ * Once completed, triggers onSubmit callback prop.
+ */
+
 import { useState, useRef } from 'react'
 import type { HelpdeskDepartment } from '@/components/admin/Helpdesk/types'
 
@@ -36,6 +46,9 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
+/**
+ * SubmitTicketModal component definition.
+ */
 export function SubmitTicketModal({ departments, userRole, onClose, onSubmit }: Props) {
   const [step, setStep] = useState<'dept' | 'form'>('dept')
   const [selectedDept, setSelectedDept] = useState<HelpdeskDepartment | null>(null)
@@ -51,6 +64,9 @@ export function SubmitTicketModal({ departments, userRole, onClose, onSubmit }: 
     return !!userRole && d.restricted_submitter_roles.includes(userRole)
   })
 
+  /**
+   * Submits the ticket payload and file attachments via the onSubmit prop callback.
+   */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!selectedDept || !subject.trim() || !description.trim()) return
@@ -66,6 +82,9 @@ export function SubmitTicketModal({ departments, userRole, onClose, onSubmit }: 
     if (ok) onClose()
   }
 
+  /**
+   * Filters uploaded file list to enforce a maximum size limit of 10 MB per file.
+   */
   function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const selected = Array.from(e.target.files ?? [])
     const valid = selected.filter((f) => f.size <= 10 * 1024 * 1024)

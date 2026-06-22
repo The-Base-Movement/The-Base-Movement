@@ -1,9 +1,17 @@
+/**
+ * Media Manifest Generator (CommonJS)
+ * -------------------------------------------------------------
+ * Scans the public directory for static media assets (excluding system files)
+ * and generates a JSON manifest file containing a list of asset paths.
+ */
+
 const fs = require('fs');
 const path = require('path');
 
 const publicDir = path.join(process.cwd(), 'public');
 const manifestPath = path.join(process.cwd(), 'src/data/media-manifest.json');
 
+// Recursively scans a directory to find all media file paths relative to the base directory
 function getFiles(dir, baseDir) {
   let results = [];
   const list = fs.readdirSync(dir);

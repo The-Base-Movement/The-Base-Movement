@@ -1,3 +1,11 @@
+/**
+ * AdminTopbar Component
+ * -------------------------------------------------------------
+ * Top navigation header for the administrative Operational Command Center.
+ * Houses global debounced database search, quick IT support ticket requests,
+ * theme configuration toggling, real-time alerts dropdown, and user options.
+ */
+
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
@@ -24,6 +32,11 @@ interface AdminTopbarProps {
   windowWidth: number
 }
 
+/**
+ * AdminTopbar
+ * -------------------------------------------------------------
+ * Main navigation and command bar component for the administrative layout.
+ */
 export function AdminTopbar({
   isSidebarOpen,
   setIsSidebarOpen,
@@ -51,6 +64,7 @@ export function AdminTopbar({
     () => document.documentElement.getAttribute('data-theme') === 'dark'
   )
 
+  // Event listener hook to sync interface theme changes
   useEffect(() => {
     const handleThemeChange = () => {
       setIsDarkTheme(document.documentElement.getAttribute('data-theme') === 'dark')
@@ -59,7 +73,7 @@ export function AdminTopbar({
     return () => window.removeEventListener('admin_theme_changed', handleThemeChange)
   }, [])
 
-  // Debounced global search effect
+  // Debounced effect performing global full-text search against the database (300ms delay)
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (searchQuery.length >= 2) {
