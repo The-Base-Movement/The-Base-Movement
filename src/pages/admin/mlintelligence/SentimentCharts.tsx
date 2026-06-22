@@ -78,11 +78,10 @@ export default function SentimentCharts({ sentiment }: Props) {
                 border: '1px solid hsl(var(--border))',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
               }}
-              formatter={(
-                value: number,
-                _name: string,
-                entry: { payload: (typeof chartData)[0] }
-              ) => [`${value}% (${entry.payload.label})`, 'Sentiment']}
+              formatter={(value: number, _name: string, entry) => {
+                const label = (entry as { payload?: (typeof chartData)[0] }).payload?.label ?? ''
+                return [`${value}% (${label})`, 'Sentiment']
+              }}
             />
             <Bar dataKey="score" radius={[4, 4, 0, 0]} barSize={24}>
               {chartData.map((entry, i) => (
