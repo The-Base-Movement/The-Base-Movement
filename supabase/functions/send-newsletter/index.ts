@@ -325,6 +325,22 @@ Deno.serve(async (req) => {
     // Build the base URL for unsubscribe links
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
 
+    // Fetch sender email dynamically to avoid SendGrid 403 (unverified Sender Identity)
+    let senderEmail = Deno.env.get('SENDER_EMAIL')
+    if (!senderEmail) {
+      const { data: emailSetting } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'newsletter_email')
+        .maybeSingle()
+      if (emailSetting?.value) {
+        senderEmail = emailSetting.value
+      }
+    }
+    if (!senderEmail) {
+      senderEmail = 'noreply@thebasemovement.info'
+    }
+
     // Build branded HTML — footer uses %%UNSUB%% substitution tag
     const html = broadcastEmail({
       subject,
@@ -357,7 +373,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           personalizations,
-          from: { email: 'noreply@thebasemovement.info', name: 'The Base Movement' },
+          from: { email: senderEmail, name: 'The Base Movement' },
           subject,
           content: [{ type: 'text/html', value: html }],
         }),
