@@ -40,7 +40,7 @@ interface Subscriber {
 
 const COLORS = ['#006B3F', '#DAA520', '#CE1126', '#3b82f6', '#8b5cf6', '#9CA3AF']
 
-const tooltipStyle = {
+const tooltipContentStyle = {
   fontFamily: "'Public Sans', sans-serif",
   fontSize: 11,
   borderRadius: 'var(--radius-md)',
@@ -49,6 +49,10 @@ const tooltipStyle = {
   color: 'hsl(var(--on-surface))',
   boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
 }
+
+const tooltipItemStyle = { color: 'hsl(var(--on-surface))' }
+const tooltipLabelStyle = { color: 'hsl(var(--on-surface))', fontWeight: 500, marginBottom: 4 }
+const tooltipCursor = { fill: 'hsl(var(--border) / 0.3)' }
 
 const labelStyle: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
@@ -281,7 +285,12 @@ export default function NewsletterAnalytics() {
                   tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 10 }}
                 />
                 <YAxis tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 10 }} />
-                <Tooltip contentStyle={tooltipStyle} />
+                <Tooltip
+                  contentStyle={tooltipContentStyle}
+                  itemStyle={tooltipItemStyle}
+                  labelStyle={tooltipLabelStyle}
+                  cursor={tooltipCursor}
+                />
                 <Line
                   type="monotone"
                   dataKey="cumulative"
@@ -334,7 +343,12 @@ export default function NewsletterAnalytics() {
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={tooltipStyle} />
+                  <Tooltip
+                    contentStyle={tooltipContentStyle}
+                    itemStyle={tooltipItemStyle}
+                    labelStyle={tooltipLabelStyle}
+                    cursor={tooltipCursor}
+                  />
                 </PieChart>
               </ResponsiveContainer>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
@@ -408,7 +422,12 @@ export default function NewsletterAnalytics() {
                   tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 10 }}
                 />
                 <YAxis tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 10 }} />
-                <Tooltip contentStyle={tooltipStyle} />
+                <Tooltip
+                  contentStyle={tooltipContentStyle}
+                  itemStyle={tooltipItemStyle}
+                  labelStyle={tooltipLabelStyle}
+                  cursor={tooltipCursor}
+                />
                 <Bar
                   dataKey="recipients"
                   fill="#006B3F"
@@ -452,7 +471,12 @@ export default function NewsletterAnalytics() {
                     <Cell fill="#DAA520" />
                     <Cell fill="#CE1126" />
                   </Pie>
-                  <Tooltip contentStyle={tooltipStyle} />
+                  <Tooltip
+                    contentStyle={tooltipContentStyle}
+                    itemStyle={tooltipItemStyle}
+                    labelStyle={tooltipLabelStyle}
+                    cursor={tooltipCursor}
+                  />
                 </PieChart>
               </ResponsiveContainer>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
