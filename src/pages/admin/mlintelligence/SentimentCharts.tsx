@@ -57,44 +57,46 @@ export default function SentimentCharts({ sentiment }: Props) {
         style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column' }}
       >
         <p style={labelStyle}>Sentiment Score by Region</p>
-        <ResponsiveContainer width="100%" style={{ flex: 1, minHeight: 300 }}>
-          <BarChart data={chartData} margin={{ left: 10, right: 10, bottom: 40 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-            <XAxis
-              dataKey="region"
-              tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 9 }}
-              angle={-35}
-              textAnchor="end"
-              interval={0}
-              height={60}
-            />
-            <YAxis
-              domain={[0, 100]}
-              tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 10 }}
-              tickFormatter={(v: number) => `${v}%`}
-            />
-            <Tooltip
-              contentStyle={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontSize: 11,
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--card))',
-                color: 'hsl(var(--on-surface))',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-              }}
-              formatter={(value: number, _name: string, entry) => {
-                const label = (entry as { payload?: (typeof chartData)[0] }).payload?.label ?? ''
-                return [`${value}% (${label})`, 'Sentiment']
-              }}
-            />
-            <Bar dataKey="score" radius={[4, 4, 0, 0]} barSize={24}>
-              {chartData.map((entry, i) => (
-                <Cell key={i} fill={SENTIMENT_COLORS[entry.label] ?? '#9CA3AF'} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        <div style={{ flex: 1, minHeight: 300 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ left: 10, right: 10, bottom: 40 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+              <XAxis
+                dataKey="region"
+                tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 9 }}
+                angle={-35}
+                textAnchor="end"
+                interval={0}
+                height={60}
+              />
+              <YAxis
+                domain={[0, 100]}
+                tick={{ fontFamily: "'Public Sans', sans-serif", fontSize: 10 }}
+                tickFormatter={(v: number) => `${v}%`}
+              />
+              <Tooltip
+                contentStyle={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 11,
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid hsl(var(--border))',
+                  background: 'hsl(var(--card))',
+                  color: 'hsl(var(--on-surface))',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                }}
+                formatter={(value: number, _name: string, entry) => {
+                  const label = (entry as { payload?: (typeof chartData)[0] }).payload?.label ?? ''
+                  return [`${value}% (${label})`, 'Sentiment']
+                }}
+              />
+              <Bar dataKey="score" radius={[4, 4, 0, 0]} barSize={24}>
+                {chartData.map((entry, i) => (
+                  <Cell key={i} fill={SENTIMENT_COLORS[entry.label] ?? '#9CA3AF'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       <div className="panel" style={{ padding: '16px 18px' }}>
