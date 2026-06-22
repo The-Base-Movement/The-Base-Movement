@@ -21,7 +21,7 @@ export default function MLIntelligenceTabs({ tab, onChange }: Props) {
             key={value}
             className={tab === value ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
             onClick={() => onChange(value)}
-            style={{ fontSize: 12 }}
+            style={{ fontSize: 12, flex: 1, justifyContent: 'center' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               {config.icon}

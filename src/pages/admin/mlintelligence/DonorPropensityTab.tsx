@@ -59,22 +59,13 @@ export default function DonorPropensityTab({
 
       <DonorCharts propensity={propensity} />
 
-      <div
-        style={{
-          display: 'flex',
-          gap: 10,
-          marginBottom: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
         <input
           placeholder="Search by name, ID, region…"
           value={donorSearch}
           onChange={(event) => onSearch(event.target.value)}
           style={{
-            flex: 1,
-            minWidth: 200,
+            width: '100%',
             height: 36,
             padding: '0 12px',
             fontFamily: "'Public Sans', sans-serif",
@@ -87,17 +78,20 @@ export default function DonorPropensityTab({
             boxSizing: 'border-box',
           }}
         />
-        {(['All', 'High', 'Medium', 'Low'] as DonorTierFilter[]).map((tier) => (
-          <button
-            key={tier}
-            className={
-              donorTierFilter === tier ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
-            }
-            onClick={() => onTierFilterChange(tier)}
-          >
-            {tier}
-          </button>
-        ))}
+        <div style={{ display: 'flex', gap: 6 }}>
+          {(['All', 'High', 'Medium', 'Low'] as DonorTierFilter[]).map((tier) => (
+            <button
+              key={tier}
+              className={
+                donorTierFilter === tier ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'
+              }
+              style={{ flex: 1, justifyContent: 'center' }}
+              onClick={() => onTierFilterChange(tier)}
+            >
+              {tier}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
