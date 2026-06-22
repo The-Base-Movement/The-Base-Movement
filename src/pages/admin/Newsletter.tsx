@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import { newsletterService } from '@/services/newsletterService'
 import type { AudienceFilter, Newsletter } from '@/services/newsletterService'
 import { adminService } from '@/services/adminService'
@@ -197,6 +197,17 @@ export default function NewsletterPage() {
           >
             Newsletter
           </h1>
+          <div style={{ flex: 1 }} />
+          <Link
+            to="/admin/newsletter/analytics"
+            className="btn btn-outline btn-sm"
+            style={{ gap: 6 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              analytics
+            </span>
+            Analytics
+          </Link>
         </div>
         <p
           style={{
