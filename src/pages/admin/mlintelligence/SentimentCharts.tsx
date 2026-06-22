@@ -52,9 +52,12 @@ export default function SentimentCharts({ sentiment }: Props) {
         marginBottom: 20,
       }}
     >
-      <div className="panel" style={{ padding: '16px 18px' }}>
+      <div
+        className="panel"
+        style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column' }}
+      >
         <p style={labelStyle}>Sentiment Score by Region</p>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" style={{ flex: 1, minHeight: 300 }}>
           <BarChart data={chartData} margin={{ left: 10, right: 10, bottom: 40 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
             <XAxis
