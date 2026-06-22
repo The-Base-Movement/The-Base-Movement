@@ -316,7 +316,9 @@ export function MembersTable({
                         fontWeight: 'var(--font-weight-medium, 500)',
                       }}
                     >
-                      {member.region || '—'}
+                      {member.platform === 'DIASPORA'
+                        ? member.country || '—'
+                        : member.region || '—'}
                     </div>
                     <div
                       style={{
@@ -327,7 +329,9 @@ export function MembersTable({
                         marginTop: 2,
                       }}
                     >
-                      {member.constituency || '—'}
+                      {member.platform === 'DIASPORA'
+                        ? member.chapter || '—'
+                        : member.constituency || '—'}
                     </div>
                   </td>
                   <td style={tdStyle}>
