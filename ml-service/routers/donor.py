@@ -19,7 +19,8 @@ from __future__ import annotations
 from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any
 
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from auth import require_admin_access
@@ -137,63 +138,71 @@ def _score_member(
 
 @router.get("/propensity", response_model=PropensityResponse)
 async def get_propensity():
-    db = get_client()
+    try:
+        db = get_client()
 
-    # Fetch members
-    members_res = (
-        db.table("users")
-        .select("id, reg_no, full_name, region, constituency, status, joined_at")
-        .not_.is_("reg_no", "null")
-        .execute()
-    )
-    members: List[Dict] = members_res.data or []
+        # Fetch members
+        members_res = (
+            db.table("users")
+            .select("id, reg_no:registration_number, full_name, region, constituency, status, joined_at")
+            .not_.is_("registration_number", "null")
+            .execute()
+        )
+        members: List[Dict] = members_res.data or []
 
-    # Fetch all donations in one query
-    donations_res = (
-        db.table("donations")
-        .select("member_id, status, created_at, amount")
-        .execute()
-    )
-    donations_by_member: Dict[str, List[Dict]] = {}
-    for d in donations_res.data or []:
-        uid = d.get("member_id")
-        if uid:
-            donations_by_member.setdefault(uid, []).append(d)
+        # Fetch all donations in one query
+        donations_res = (
+            db.table("donations")
+            .select("member_id, status, created_at, amount")
+            .execute()
+        )
+        donations_by_member: Dict[str, List[Dict]] = {}
+        for d in donations_res.data or []:
+            uid = d.get("member_id")
+            if uid:
+                donations_by_member.setdefault(uid, []).append(d)
 
-    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+        thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
 
-    # Fetch activity logs (logins + poll votes last 30 days)
-    activity_res = (
-        db.table("user_activity_logs")
-        .select("user_id, action_type")
-        .in_("action_type", ["login", "poll_vote", "donation"])
-        .gte("created_at", thirty_days_ago)
-        .execute()
-    )
-    activity_by_member: Dict[str, int] = {}
-    for a in activity_res.data or []:
-        uid = a.get("user_id")
-        if uid:
-            activity_by_member[uid] = activity_by_member.get(uid, 0) + 1
+        # Fetch activity logs (logins + poll votes last 30 days)
+        activity_res = (
+            db.table("user_activity_logs")
+            .select("user_id, action_type")
+            .in_("action_type", ["login", "poll_vote", "donation"])
+            .gte("created_at", thirty_days_ago)
+            .execute()
+        )
+        activity_by_member: Dict[str, int] = {}
+        for a in activity_res.data or []:
+            uid = a.get("user_id")
+            if uid:
+                activity_by_member[uid] = activity_by_member.get(uid, 0) + 1
 
-    # Fetch achievers
-    achievers_res = db.table("member_achievements").select("user_id").execute()
-    achievers = {a["user_id"] for a in achievers_res.data or []}
+        # Fetch achievers
+        achievers_res = db.table("member_achievements").select("user_id").execute()
+        achievers = {a["user_id"] for a in achievers_res.data or []}
 
-    scored = [
-        _score_member(m, donations_by_member, activity_by_member, achievers)
-        for m in members
-    ]
-    scored.sort(key=lambda s: s.score, reverse=True)
+        scored = [
+            _score_member(m, donations_by_member, activity_by_member, achievers)
+            for m in members
+        ]
+        scored.sort(key=lambda s: s.score, reverse=True)
 
-    return PropensityResponse(
-        generated_at=datetime.now(timezone.utc).isoformat(),
-        total_scored=len(scored),
-        high_propensity=sum(1 for s in scored if s.tier == "High"),
-        medium_propensity=sum(1 for s in scored if s.tier == "Medium"),
-        low_propensity=sum(1 for s in scored if s.tier == "Low"),
-        members=scored,
-    )
+        return PropensityResponse(
+            generated_at=datetime.now(timezone.utc).isoformat(),
+            total_scored=len(scored),
+            high_propensity=sum(1 for s in scored if s.tier == "High"),
+            medium_propensity=sum(1 for s in scored if s.tier == "Medium"),
+            low_propensity=sum(1 for s in scored if s.tier == "Low"),
+            members=scored,
+        )
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(
+            status_code=500,
+            content={"detail": f"Propensity scoring failed: {exc}"},
+        )
 
 
 @router.get("/propensity/{reg_no}", response_model=DonorScore)
@@ -206,43 +215,55 @@ async def get_member_propensity(
         description="Member registration number.",
     )
 ):
-    db = get_client()
+    try:
+        db = get_client()
 
-    member_res = (
-        db.table("users")
-        .select("id, reg_no, full_name, region, constituency, status, joined_at")
-        .eq("reg_no", reg_no)
-        .single()
-        .execute()
-    )
-    member = member_res.data
+        member_res = (
+            db.table("users")
+            .select("id, reg_no:registration_number, full_name, region, constituency, status, joined_at")
+            .eq("registration_number", reg_no)
+            .single()
+            .execute()
+        )
+        member = member_res.data
+        if not member:
+            raise HTTPException(status_code=404, detail=f"Member {reg_no} not found")
 
-    donations_res = (
-        db.table("donations")
-        .select("member_id, status, created_at, amount")
-        .eq("member_id", member["id"])
-        .execute()
-    )
-    donations_by_member = {member["id"]: donations_res.data or []}
+        donations_res = (
+            db.table("donations")
+            .select("member_id, status, created_at, amount")
+            .eq("member_id", member["id"])
+            .execute()
+        )
+        donations_by_member = {member["id"]: donations_res.data or []}
 
-    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+        thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
 
-    activity_res = (
-        db.table("user_activity_logs")
-        .select("user_id, action_type")
-        .eq("user_id", member["id"])
-        .in_("action_type", ["login", "poll_vote", "donation"])
-        .gte("created_at", thirty_days_ago)
-        .execute()
-    )
-    activity_by_member = {member["id"]: len(activity_res.data or [])}
+        activity_res = (
+            db.table("user_activity_logs")
+            .select("user_id, action_type")
+            .eq("user_id", member["id"])
+            .in_("action_type", ["login", "poll_vote", "donation"])
+            .gte("created_at", thirty_days_ago)
+            .execute()
+        )
+        activity_by_member = {member["id"]: len(activity_res.data or [])}
 
-    achievers_res = (
-        db.table("member_achievements")
-        .select("user_id")
-        .eq("user_id", member["id"])
-        .execute()
-    )
-    achievers = {a["user_id"] for a in achievers_res.data or []}
+        achievers_res = (
+            db.table("member_achievements")
+            .select("user_id")
+            .eq("user_id", member["id"])
+            .execute()
+        )
+        achievers = {a["user_id"] for a in achievers_res.data or []}
 
-    return _score_member(member, donations_by_member, activity_by_member, achievers)
+        return _score_member(member, donations_by_member, activity_by_member, achievers)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(
+            status_code=500,
+            content={"detail": f"Member propensity scoring failed: {exc}"},
+        )
