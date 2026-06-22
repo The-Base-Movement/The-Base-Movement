@@ -45,11 +45,11 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // @ts-expect-error: Deno global
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    // @ts-ignore: Deno global
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    // @ts-ignore: Deno global
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
     let userQuery = supabaseAdmin.from('users').select('id, full_name, phone_number, email')
     if (targetType === 'REGION') userQuery = userQuery.eq('region', targetValue)
