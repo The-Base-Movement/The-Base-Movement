@@ -13,4 +13,4 @@ async def health():
     except Exception:
         db_status = "unreachable"
 
-    return {"status": "ok", "database": db_status, "version": "1.0.0"}
+    return {"status": "ok", "database": db_status, "version": "1.0.1"}
