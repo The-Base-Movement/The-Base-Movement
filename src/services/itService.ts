@@ -418,6 +418,11 @@ export const itService = {
     if (error) throw error
   },
 
+  async updateHierarchyNode(userId: string, payload: Record<string, unknown>): Promise<void> {
+    const { error } = await supabase.from('it_hierarchy').update(payload).eq('user_id', userId)
+    if (error) throw error
+  },
+
   async getHierarchy() {
     const { data, error } = await supabase
       .from('it_hierarchy')

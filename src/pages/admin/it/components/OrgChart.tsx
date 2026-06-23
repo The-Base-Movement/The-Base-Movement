@@ -391,15 +391,14 @@ export function OrgChart() {
   async function handleEditSave() {
     if (!editModal || !editTitle.trim()) return
     setEditSaving(true)
-    const { error } = await supabase
-      .from('it_hierarchy')
-      .update({ role_title: editTitle.trim() })
-      .eq('user_id', editModal.userId)
-    setEditSaving(false)
-    if (error) {
+    try {
+      await itService.updateHierarchyNode(editModal.userId, { role_title: editTitle.trim() })
+    } catch {
+      setEditSaving(false)
       toast.error('Failed to update title')
       return
     }
+    setEditSaving(false)
     toast.success('Role title updated')
     setEditModal(null)
     load()
