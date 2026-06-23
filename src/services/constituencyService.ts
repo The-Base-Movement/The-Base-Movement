@@ -337,6 +337,31 @@ class ConstituencyService {
     return data ?? []
   }
 
+  async getDonationsByConstituencyName(constituencyName: string) {
+    const { data: members } = await supabase
+      .from('users')
+      .select('id')
+      .eq('constituency', constituencyName)
+    const memberIds = (members ?? []).map((m) => m.id)
+    if (memberIds.length === 0) return []
+    const { data } = await supabase
+      .from('donations')
+      .select('id, full_name, phone, amount, payment_method, status, created_at, reference')
+      .in('member_id', memberIds)
+      .eq('status', 'Verified')
+      .order('created_at', { ascending: false })
+    return (data ?? []) as {
+      id: string
+      full_name: string
+      phone: string
+      amount: number
+      payment_method: string
+      status: string
+      created_at: string
+      reference: string
+    }[]
+  }
+
   async searchUsersByName(query: string, limit = 10) {
     const { data } = await supabase
       .from('users')

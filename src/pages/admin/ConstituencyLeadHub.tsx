@@ -1,10 +1,24 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { constituencyService } from '@/services/constituencyService'
+import { adminService } from '@/services/adminService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { Helpdesk } from '@/components/admin/Helpdesk'
+import { HubDonationsList } from './chapterhub/HubDonationsList'
+import type { ChapterDonation } from './chapterhub/types'
 import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
 import { toast } from 'sonner'
+
+const PHONE_VISIBLE_ROLES = new Set([
+  'CHAPTER_LEAD',
+  'CHAPTER_SECRETARY',
+  'CONSTITUENCY_LEAD',
+  'SUPER_ADMIN',
+  'FOUNDER',
+  'ORGANIZER',
+  'EXECUTIVE',
+  'ADMIN',
+])
 
 type Member = {
   id: string
@@ -30,10 +44,11 @@ export default function AdminConstituencyLeadHub() {
   const [members, setMembers] = useState<Member[]>([])
   const [activities, setActivities] = useState<ConstituencyActivity[]>([])
   const [committee, setCommittee] = useState<ConstituencyLeader[]>([])
+  const [donations, setDonations] = useState<ChapterDonation[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'members' | 'activities' | 'committee' | 'helpdesk'>(
-    'members'
-  )
+  const [activeTab, setActiveTab] = useState<
+    'members' | 'donations' | 'activities' | 'committee' | 'helpdesk'
+  >('members')
   const [modal, setModal] = useState<Modal>(null)
 
   // Activity form
@@ -66,14 +81,16 @@ export default function AdminConstituencyLeadHub() {
         return
       }
       setConstituency(c)
-      const [membersData, acts, comm] = await Promise.all([
+      const [membersData, acts, comm, dons] = await Promise.all([
         constituencyService.getMembersByConstituencyName(c.name),
         constituencyService.getConstituencyActivities(numericId),
         constituencyService.getCommittee(numericId),
+        constituencyService.getDonationsByConstituencyName(c.name),
       ])
       setMembers(membersData)
       setActivities(acts)
       setCommittee(comm)
+      setDonations(dons)
       setLoading(false)
     }
     load()
@@ -414,6 +431,12 @@ export default function AdminConstituencyLeadHub() {
           onClick={() => setActiveTab('members')}
         >
           Members ({members.length})
+        </button>
+        <button
+          className={activeTab === 'donations' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
+          onClick={() => setActiveTab('donations')}
+        >
+          Donations ({donations.length})
         </button>
         <button
           className={activeTab === 'activities' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
@@ -800,6 +823,13 @@ export default function AdminConstituencyLeadHub() {
       )}
 
       {/* Helpdesk tab */}
+      {activeTab === 'donations' && (
+        <HubDonationsList
+          donations={donations}
+          canSeePhone={PHONE_VISIBLE_ROLES.has(adminService.getCurrentUser()?.role ?? '')}
+        />
+      )}
+
       {activeTab === 'helpdesk' && <Helpdesk departmentId="constituency" />}
 
       {/* Assign Committee Member Modal */}
