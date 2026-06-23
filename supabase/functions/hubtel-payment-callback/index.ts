@@ -171,6 +171,17 @@ Deno.serve(async (req: Request) => {
       throw new Error('Missing Hubtel transaction id for successful callback')
     }
 
+    // Idempotency: check if donation is already finalized
+    const { data: existingDonation } = await supabaseAdmin
+      .from('donations')
+      .select('id, status')
+      .eq('id', reference)
+      .maybeSingle()
+
+    if (existingDonation?.status === 'Verified') {
+      return json({ success: true, paid: true, reference, already: true })
+    }
+
     const donationUpdate = paid
       ? {
           status: 'Verified',
@@ -230,6 +241,17 @@ Deno.serve(async (req: Request) => {
     if (donationError) throw donationError
 
     if (!donation) {
+      // Idempotency: check if order is already finalized
+      const { data: existingOrder } = await supabaseAdmin
+        .from('store_orders')
+        .select('id, payment_status')
+        .eq('id', reference)
+        .maybeSingle()
+
+      if (existingOrder?.payment_status === 'Paid') {
+        return json({ success: true, paid: true, reference, already: true })
+      }
+
       const orderUpdate = paid
         ? {
             payment_status: 'Paid',
@@ -240,6 +262,7 @@ Deno.serve(async (req: Request) => {
             payment_status: 'Failed',
             payment_method: 'Hubtel',
             hubtel_reference: transactionId,
+            status: 'Cancelled',
           }
 
       const { data: order, error: orderError } = await supabaseAdmin

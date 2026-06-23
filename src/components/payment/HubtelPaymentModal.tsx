@@ -260,7 +260,7 @@ export function HubtelPaymentModal({
               border: 'none',
               display: iframeLoading ? 'none' : 'block',
             }}
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation"
           />
         </div>
       </div>

@@ -169,7 +169,13 @@ Deno.serve(async (req: Request) => {
       },
       items: [
         {
-          name: type === 'donation' ? 'Donation' : 'Payment',
+          name: type === 'donation' ? 'Donation' : type === 'order' ? 'Store Order' : 'Payment',
+          description:
+            type === 'donation'
+              ? 'Donation to The Base Movement'
+              : type === 'order'
+                ? 'The Base Movement merchandise order'
+                : 'Payment to The Base Movement',
           quantity: 1,
           unitPrice: Number(settlement.ghsAmount.toFixed(2)),
         },
