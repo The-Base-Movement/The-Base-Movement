@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { pollService } from '@/services/pollService'
 import { modalBackdrop, modalBox, modalCloseBtn } from './styles'
 
 interface FeedbackEntry {
@@ -19,15 +19,10 @@ export function FeedbackVaultModal({ onClose }: FeedbackVaultModalProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase
-      .from('member_feedback')
-      .select('id, content, category, created_at')
-      .order('created_at', { ascending: false })
-      .limit(5)
-      .then(({ data }) => {
-        if (data) setEntries(data)
-        setLoading(false)
-      })
+    pollService.getRecentFeedback(5).then((data) => {
+      setEntries(data)
+      setLoading(false)
+    })
   }, [])
 
   return createPortal(

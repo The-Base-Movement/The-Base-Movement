@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
+import { authService } from '@/services/authService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { toast } from 'sonner'
@@ -87,25 +87,15 @@ export default function FinanceReviewInbox() {
 
   async function loadAll() {
     try {
-      const [data, settings, adminRows, mfaFactors] = await Promise.all([
+      const [data, settings, tierData, mfaFactors] = await Promise.all([
         financeService.getRequests(),
         adminService.getSiteSettings(),
-        supabase
-          .from('admins')
-          .select('id, role')
-          .in('role', [
-            'FINANCE_OFFICER',
-            'EXECUTIVE',
-            'ORGANIZER',
-            'SUPER_ADMIN',
-            'FOUNDER',
-            'ADMIN',
-          ]),
-        supabase.auth.mfa.listFactors(),
+        financeService.getFinanceTierLeaders(),
+        authService.listMfaFactors(),
       ])
 
       setRequests(data)
-      const totp = mfaFactors.data?.totp?.find((f) => f.status === 'verified')
+      const totp = mfaFactors?.totp?.find((f) => f.status === 'verified')
       if (totp) {
         setFactorId(totp.id)
       }
@@ -115,21 +105,10 @@ export default function FinanceReviewInbox() {
       if (!isNaN(t1)) setTier1Max(t1)
       if (!isNaN(t2)) setTier2Max(t2)
 
-      const adminList = adminRows.data ?? []
-      if (adminList.length) {
-        const { data: profiles } = await supabase
-          .from('users')
-          .select('id, full_name, avatar_url')
-          .in(
-            'id',
-            adminList.map((admin) => admin.id)
-          )
-
-        const profileMap = Object.fromEntries((profiles ?? []).map((user) => [user.id, user]))
-
+      if (tierData.admins.length) {
         setTierLeaders(
-          adminList.map((admin) => {
-            const profile = profileMap[admin.id]
+          tierData.admins.map((admin) => {
+            const profile = tierData.profiles[admin.id]
             const tier: 1 | 2 | 3 =
               admin.role === 'FINANCE_OFFICER'
                 ? 1

@@ -232,6 +232,17 @@ class PollService {
     return data || []
   }
 
+  async getRecentFeedback(
+    limit = 5
+  ): Promise<{ id: string; content: string; category: string; created_at: string }[]> {
+    const { data } = await supabase
+      .from('member_feedback')
+      .select('id, content, category, created_at')
+      .order('created_at', { ascending: false })
+      .limit(limit)
+    return data ?? []
+  }
+
   async getLatestFeedback(): Promise<{ content: string; category: string } | null> {
     const { data } = await supabase
       .from('member_feedback')

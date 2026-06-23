@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { supabase } from '@/lib/supabase'
+import { contentService } from '@/services/contentService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
@@ -72,37 +72,12 @@ export default function AdminModeration() {
   const loadComments = useCallback(() => {
     void (async () => {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('blog_comments')
-        .select('id, author_name, content, flagged, created_at, post_id, blog_posts(title, slug)')
-        .order('created_at', { ascending: false })
-      if (error) {
+      try {
+        const data = await contentService.getBlogComments()
+        setComments(data)
+      } catch {
         toast.error('Failed to load comments.')
-        setLoading(false)
-        return
       }
-      setComments(
-        (
-          data as unknown as Array<{
-            id: string
-            author_name: string
-            content: string
-            flagged: boolean
-            created_at: string
-            post_id: string
-            blog_posts: { title: string; slug: string } | null
-          }>
-        ).map((r) => ({
-          id: r.id,
-          author_name: r.author_name,
-          content: r.content,
-          flagged: r.flagged,
-          created_at: r.created_at,
-          post_id: r.post_id,
-          post_title: r.blog_posts?.title ?? null,
-          post_slug: r.blog_posts?.slug ?? null,
-        }))
-      )
       setLoading(false)
     })()
   }, [])
@@ -110,36 +85,12 @@ export default function AdminModeration() {
   const loadReviews = useCallback(() => {
     void (async () => {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('id, author_name, rating, content, created_at, product_id, store_inventory(name)')
-        .order('created_at', { ascending: false })
-      if (error) {
+      try {
+        const data = await contentService.getProductReviews()
+        setReviews(data)
+      } catch {
         toast.error('Failed to load reviews.')
-        setLoading(false)
-        return
       }
-      setReviews(
-        (
-          data as unknown as Array<{
-            id: string
-            author_name: string
-            rating: number
-            content: string | null
-            created_at: string
-            product_id: string | null
-            store_inventory: { name: string } | null
-          }>
-        ).map((r) => ({
-          id: r.id,
-          author_name: r.author_name,
-          rating: r.rating,
-          content: r.content,
-          created_at: r.created_at,
-          product_id: r.product_id,
-          product_name: r.store_inventory?.name ?? null,
-        }))
-      )
       setLoading(false)
     })()
   }, [])
@@ -152,37 +103,37 @@ export default function AdminModeration() {
   async function deleteComment(id: string) {
     if (!window.confirm('Delete this comment? This cannot be undone.')) return
     setDeleting(id)
-    const { error } = await supabase.from('blog_comments').delete().eq('id', id)
-    setDeleting(null)
-    if (error) {
+    try {
+      await contentService.deleteComment(id)
+      toast.success('Comment deleted.')
+      setComments((prev) => prev.filter((c) => c.id !== id))
+    } catch {
       toast.error('Failed to delete comment.')
-      return
     }
-    toast.success('Comment deleted.')
-    setComments((prev) => prev.filter((c) => c.id !== id))
+    setDeleting(null)
   }
 
   async function unflagComment(id: string) {
-    const { error } = await supabase.from('blog_comments').update({ flagged: false }).eq('id', id)
-    if (error) {
+    try {
+      await contentService.unflagComment(id)
+      setComments((prev) => prev.map((c) => (c.id === id ? { ...c, flagged: false } : c)))
+      toast.success('Flag cleared.')
+    } catch {
       toast.error('Failed to clear flag.')
-      return
     }
-    setComments((prev) => prev.map((c) => (c.id === id ? { ...c, flagged: false } : c)))
-    toast.success('Flag cleared.')
   }
 
   async function deleteReview(id: string) {
     if (!window.confirm('Delete this review? This cannot be undone.')) return
     setDeleting(id)
-    const { error } = await supabase.from('reviews').delete().eq('id', id)
-    setDeleting(null)
-    if (error) {
+    try {
+      await contentService.deleteReview(id)
+      toast.success('Review deleted.')
+      setReviews((prev) => prev.filter((r) => r.id !== id))
+    } catch {
       toast.error('Failed to delete review.')
-      return
     }
-    toast.success('Review deleted.')
-    setReviews((prev) => prev.filter((r) => r.id !== id))
+    setDeleting(null)
   }
 
   const sortedComments = useMemo(() => {

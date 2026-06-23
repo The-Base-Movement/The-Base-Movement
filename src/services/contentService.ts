@@ -889,6 +889,76 @@ class ContentService {
     }))
   }
 
+  async getBlogComments() {
+    const { data, error } = await supabase
+      .from('blog_comments')
+      .select('id, author_name, content, flagged, created_at, post_id, blog_posts(title, slug)')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return (
+      data as unknown as Array<{
+        id: string
+        author_name: string
+        content: string
+        flagged: boolean
+        created_at: string
+        post_id: string
+        blog_posts: { title: string; slug: string } | null
+      }>
+    ).map((r) => ({
+      id: r.id,
+      author_name: r.author_name,
+      content: r.content,
+      flagged: r.flagged,
+      created_at: r.created_at,
+      post_id: r.post_id,
+      post_title: r.blog_posts?.title ?? null,
+      post_slug: r.blog_posts?.slug ?? null,
+    }))
+  }
+
+  async getProductReviews() {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('id, author_name, rating, content, created_at, product_id, store_inventory(name)')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return (
+      data as unknown as Array<{
+        id: string
+        author_name: string
+        rating: number
+        content: string | null
+        created_at: string
+        product_id: string | null
+        store_inventory: { name: string } | null
+      }>
+    ).map((r) => ({
+      id: r.id,
+      author_name: r.author_name,
+      rating: r.rating,
+      content: r.content,
+      created_at: r.created_at,
+      product_id: r.product_id,
+      product_name: r.store_inventory?.name ?? null,
+    }))
+  }
+
+  async deleteComment(id: string): Promise<void> {
+    const { error } = await supabase.from('blog_comments').delete().eq('id', id)
+    if (error) throw error
+  }
+
+  async unflagComment(id: string): Promise<void> {
+    const { error } = await supabase.from('blog_comments').update({ flagged: false }).eq('id', id)
+    if (error) throw error
+  }
+
+  async deleteReview(id: string): Promise<void> {
+    const { error } = await supabase.from('reviews').delete().eq('id', id)
+    if (error) throw error
+  }
+
   async sendPushNotification(params: {
     userIds: string[] | 'all'
     title: string

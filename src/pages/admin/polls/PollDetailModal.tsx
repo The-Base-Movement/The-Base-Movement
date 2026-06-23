@@ -21,7 +21,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { adminService, type Poll } from '@/services/adminService'
-import { supabase } from '@/lib/supabase'
+import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 import { modalBackdrop, modalBox, modalCloseBtn } from './styles'
 import { statusPill } from './statusPill'
@@ -54,16 +54,12 @@ export function PollDetailModal({ poll, onClose, onDelete, onStatusChange }: Pol
         toast.error('Failed to close poll.')
         return
       }
-      supabase.functions
-        .invoke('send-push-notification', {
-          body: {
-            userIds: 'all',
-            title: 'Poll closed — results are in',
-            body: poll.question.slice(0, 100),
-            url: '/dashboard/polls',
-          },
-        })
-        .catch(console.error)
+      contentService.sendPushNotification({
+        userIds: 'all',
+        title: 'Poll closed — results are in',
+        body: poll.question.slice(0, 100),
+        url: '/dashboard/polls',
+      })
       toast.success('Poll closed.')
       onStatusChange()
       onClose()

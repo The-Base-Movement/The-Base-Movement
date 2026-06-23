@@ -112,4 +112,34 @@ export const financeService = {
     if (error) throw error
     if (!data?.success) throw new Error('Request is no longer available for review')
   },
+
+  async getFinanceTierLeaders(): Promise<{
+    admins: { id: string; role: string }[]
+    profiles: Record<string, { id: string; full_name: string; avatar_url: string | null }>
+  }> {
+    const { data: adminList } = await supabase
+      .from('admins')
+      .select('id, role')
+      .in('role', ['FINANCE_OFFICER', 'EXECUTIVE', 'ORGANIZER', 'SUPER_ADMIN', 'FOUNDER', 'ADMIN'])
+    const admins = (adminList ?? []) as { id: string; role: string }[]
+    const profiles: Record<string, { id: string; full_name: string; avatar_url: string | null }> =
+      {}
+    if (admins.length) {
+      const { data: users } = await supabase
+        .from('users')
+        .select('id, full_name, avatar_url')
+        .in(
+          'id',
+          admins.map((a) => a.id)
+        )
+      for (const u of (users ?? []) as {
+        id: string
+        full_name: string
+        avatar_url: string | null
+      }[]) {
+        profiles[u.id] = u
+      }
+    }
+    return { admins, profiles }
+  },
 }
