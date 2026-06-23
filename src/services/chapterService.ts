@@ -780,6 +780,69 @@ class ChapterService {
       return []
     }
   }
+
+  async getAppointedLeaders(): Promise<
+    {
+      id: string
+      name: string
+      leader_name: string | null
+      leader_id: string | null
+    }[]
+  > {
+    const { data } = await supabase
+      .from('chapters')
+      .select('id, name, leader_name, leader_id')
+      .not('leader_name', 'is', null)
+      .neq('leader_name', 'Unassigned')
+      .order('name', { ascending: true })
+    return (data ?? []) as {
+      id: string
+      name: string
+      leader_name: string | null
+      leader_id: string | null
+    }[]
+  }
+
+  async getLeaderProfiles(leaderIds: string[]) {
+    if (leaderIds.length === 0) return {}
+    const { data } = await supabase
+      .from('users')
+      .select(
+        'id, avatar_url, registration_number, phone_number, status, platform, region, constituency, country, profession'
+      )
+      .in('id', leaderIds)
+    const map: Record<string, Record<string, unknown>> = {}
+    for (const u of data ?? []) map[u.id] = u
+    return map
+  }
+
+  async assignMemberToChapter(userId: string, chapterName: string): Promise<void> {
+    const { error } = await supabase.from('users').update({ chapter: chapterName }).eq('id', userId)
+    if (error) throw error
+  }
+
+  async insertChapterLeader(
+    chapterId: string,
+    leader: {
+      name: string
+      role: string
+      image_url: string | null
+    }
+  ): Promise<void> {
+    const { error } = await supabase.from('chapter_leaders').insert({
+      chapter_id: chapterId,
+      ...leader,
+    })
+    if (error) throw error
+  }
+
+  async removeChapterLeader(chapterId: string): Promise<void> {
+    const { error } = await supabase
+      .from('chapters')
+      .update({ leader_name: 'Unassigned', leader_id: null })
+      .eq('id', chapterId)
+    if (error) throw error
+  }
 }
 
 export const chapterService = ChapterService.getInstance()

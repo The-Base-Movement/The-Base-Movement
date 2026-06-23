@@ -7,8 +7,8 @@
  */
 
 import { useEffect, useState, useMemo } from 'react'
-import { supabase } from '@/lib/supabase'
 import { contentService } from '@/services/contentService'
+import { partyOfficialsService } from '@/services/partyOfficialsService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
@@ -56,27 +56,18 @@ export default function PartyOfficials() {
 
   // Fetch registered officials ordered by priority indices
   async function fetchOfficials() {
-    const { data, error } = await supabase
-      .from('party_officials')
-      .select('*')
-      .order('order_index', { ascending: true })
-      .order('created_at', { ascending: false })
-
-    if (error) {
+    try {
+      const data = await partyOfficialsService.getOfficials()
+      setOfficials(data)
+    } catch {
       toast.error('Failed to load officials')
-    } else {
-      setOfficials(data || [])
     }
     setLoading(false)
   }
 
-  // Fetch tier definitions for sorting leadership
   async function fetchTiers() {
-    const { data } = await supabase
-      .from('party_tiers')
-      .select('*')
-      .order('order_index', { ascending: true })
-    if (data) setTiers(data)
+    const data = await partyOfficialsService.getTiers()
+    setTiers(data)
   }
 
   useEffect(() => {
@@ -137,12 +128,12 @@ export default function PartyOfficials() {
   // Remove official entry
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to remove this official?')) return
-    const { error } = await supabase.from('party_officials').delete().eq('id', id)
-    if (error) {
-      toast.error('Failed to delete official')
-    } else {
+    try {
+      await partyOfficialsService.deleteOfficial(id)
       toast.success('Official deleted successfully')
       fetchOfficials()
+    } catch {
+      toast.error('Failed to delete official')
     }
   }
 
@@ -153,56 +144,38 @@ export default function PartyOfficials() {
       return
     }
 
-    if (isEditing && formData.id) {
-      const { error } = await supabase
-        .from('party_officials')
-        .update({
-          name: formData.name,
-          role: formData.role,
-          tier: formData.tier,
-          region: formData.region || null,
-          bio: formData.bio || null,
-          avatar_url: formData.avatar_url || null,
-          facebook_url: formData.facebook_url || null,
-          instagram_url: formData.instagram_url || null,
-          twitter_url: formData.twitter_url || null,
-          linkedin_url: formData.linkedin_url || null,
-          email: formData.email || null,
-          order_index: formData.order_index,
-        })
-        .eq('id', formData.id)
+    const payload = {
+      name: formData.name,
+      role: formData.role,
+      tier: formData.tier,
+      region: formData.region || null,
+      bio: formData.bio || null,
+      avatar_url: formData.avatar_url || null,
+      facebook_url: formData.facebook_url || null,
+      instagram_url: formData.instagram_url || null,
+      twitter_url: formData.twitter_url || null,
+      linkedin_url: formData.linkedin_url || null,
+      email: formData.email || null,
+      order_index: formData.order_index || 0,
+    }
 
-      if (error) {
-        toast.error('Failed to update official')
-      } else {
+    if (isEditing && formData.id) {
+      try {
+        await partyOfficialsService.updateOfficial(formData.id, payload)
         toast.success('Official updated')
         setIsModalOpen(false)
         fetchOfficials()
+      } catch {
+        toast.error('Failed to update official')
       }
     } else {
-      const { error } = await supabase.from('party_officials').insert([
-        {
-          name: formData.name,
-          role: formData.role,
-          tier: formData.tier,
-          region: formData.region || null,
-          bio: formData.bio || null,
-          avatar_url: formData.avatar_url || null,
-          facebook_url: formData.facebook_url || null,
-          instagram_url: formData.instagram_url || null,
-          twitter_url: formData.twitter_url || null,
-          linkedin_url: formData.linkedin_url || null,
-          email: formData.email || null,
-          order_index: formData.order_index || 0,
-        },
-      ])
-
-      if (error) {
-        toast.error('Failed to create official')
-      } else {
+      try {
+        await partyOfficialsService.createOfficial(payload as Omit<PartyOfficial, 'id'>)
         toast.success('Official created')
         setIsModalOpen(false)
         fetchOfficials()
+      } catch {
+        toast.error('Failed to create official')
       }
     }
   }

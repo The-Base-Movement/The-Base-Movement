@@ -10,8 +10,8 @@ import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { adminService } from '@/services/adminService'
 import type { ChapterApplication } from '@/services/adminService'
 import type { Member, Chapter } from '@/types/admin'
+import { chapterService } from '@/services/chapterService'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 // Modular subcomponents
@@ -78,60 +78,33 @@ export default function LeadershipHub() {
 
   // Resolve and cache profile information for all appointed chapter officers
   const fetchAllLeaders = useCallback(async () => {
-    const { data: chapters } = await supabase
-      .from('chapters')
-      .select('id, name, leader_name, leader_id')
-      .not('leader_name', 'is', null)
-      .neq('leader_name', 'Unassigned')
-      .order('name', { ascending: true })
-    if (!chapters) return
+    const chapters = await chapterService.getAppointedLeaders()
+    if (!chapters.length) return
 
     const leaderIds = chapters.filter((c) => c.leader_id).map((c) => c.leader_id as string)
-    const userMap: Record<
-      string,
-      {
-        avatar_url: string | null
-        registration_number: string | null
-        phone_number: string | null
-        status: string | null
-        platform: string | null
-        region: string | null
-        constituency: string | null
-        country: string | null
-        profession: string | null
-      }
-    > = {}
-
-    if (leaderIds.length > 0) {
-      const { data: users } = await supabase
-        .from('users')
-        .select(
-          'id, avatar_url, registration_number, phone_number, status, platform, region, constituency, country, profession'
-        )
-        .in('id', leaderIds)
-      for (const u of users || []) userMap[u.id] = u
-    }
+    const userMap = await chapterService.getLeaderProfiles(leaderIds)
 
     setAllLeaders(
       chapters
         .filter((c) => c.leader_name)
-        .map((c) => ({
-          id: c.id,
-          chapter_name: c.name,
-          leader_name: c.leader_name,
-          leader_id: c.leader_id,
-          avatar_url: c.leader_id ? (userMap[c.leader_id]?.avatar_url ?? null) : null,
-          registration_number: c.leader_id
-            ? (userMap[c.leader_id]?.registration_number ?? null)
-            : null,
-          phone_number: c.leader_id ? (userMap[c.leader_id]?.phone_number ?? null) : null,
-          status: c.leader_id ? (userMap[c.leader_id]?.status ?? null) : null,
-          platform: c.leader_id ? (userMap[c.leader_id]?.platform ?? null) : null,
-          region: c.leader_id ? (userMap[c.leader_id]?.region ?? null) : null,
-          constituency: c.leader_id ? (userMap[c.leader_id]?.constituency ?? null) : null,
-          country: c.leader_id ? (userMap[c.leader_id]?.country ?? null) : null,
-          profession: c.leader_id ? (userMap[c.leader_id]?.profession ?? null) : null,
-        }))
+        .map((c) => {
+          const profile = c.leader_id ? userMap[c.leader_id] : null
+          return {
+            id: c.id,
+            chapter_name: c.name,
+            leader_name: c.leader_name,
+            leader_id: c.leader_id,
+            avatar_url: (profile?.avatar_url as string | null) ?? null,
+            registration_number: (profile?.registration_number as string | null) ?? null,
+            phone_number: (profile?.phone_number as string | null) ?? null,
+            status: (profile?.status as string | null) ?? null,
+            platform: (profile?.platform as string | null) ?? null,
+            region: (profile?.region as string | null) ?? null,
+            constituency: (profile?.constituency as string | null) ?? null,
+            country: (profile?.country as string | null) ?? null,
+            profession: (profile?.profession as string | null) ?? null,
+          }
+        })
     )
   }, [])
 
@@ -246,15 +219,10 @@ export default function LeadershipHub() {
         ...(appointRole === 'Chapter Leader' ? { status: 'Active' } : {}),
       })
       if (success) {
-        // Automatically assign the newly appointed leader as a member of this chapter so they appear in counts
         if (chapterName) {
-          await supabase
-            .from('users')
-            .update({ chapter: chapterName })
-            .eq('id', selectedMember.authId)
+          await chapterService.assignMemberToChapter(selectedMember.authId, chapterName)
         }
-        await supabase.from('chapter_leaders').insert({
-          chapter_id: selectedChapterId,
+        await chapterService.insertChapterLeader(selectedChapterId, {
           name: selectedMember.name,
           role: appointRole,
           image_url: selectedMember.avatarUrl || null,
@@ -276,16 +244,13 @@ export default function LeadershipHub() {
 
   // Remove the currently assigned leader from a chapter, resetting to Unassigned
   const handleRemoveLeader = async (l: AppointedLeader) => {
-    const { error } = await supabase
-      .from('chapters')
-      .update({ leader_name: 'Unassigned', leader_id: null })
-      .eq('id', l.id)
-    if (error) {
+    try {
+      await chapterService.removeChapterLeader(l.id)
+      setAllLeaders((prev) => prev.filter((x) => x.id !== l.id))
+      toast.success(`${l.leader_name} removed from ${l.chapter_name}.`)
+    } catch {
       toast.error('Failed to remove officer.')
-      return
     }
-    setAllLeaders((prev) => prev.filter((x) => x.id !== l.id))
-    toast.success(`${l.leader_name} removed from ${l.chapter_name}.`)
   }
 
   const filteredApps = applications.filter((app: ChapterApplication) => {

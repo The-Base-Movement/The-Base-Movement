@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { partyOfficialsService } from '@/services/partyOfficialsService'
 import { toast } from 'sonner'
 import { inputSt, type PartyTier } from './utils'
 
@@ -24,41 +24,31 @@ export function TiersModal({
 }: TiersModalProps) {
   const handleDeleteTier = async (id: string) => {
     if (confirm('Are you sure you want to delete this tier?')) {
-      const { error } = await supabase.from('party_tiers').delete().eq('id', id)
-      if (error) {
-        toast.error('Failed to delete tier')
-      } else {
+      try {
+        await partyOfficialsService.deleteTier(id)
         toast.success('Tier deleted')
         fetchTiers()
+      } catch {
+        toast.error('Failed to delete tier')
       }
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (editingTierId) {
-      const { error } = await supabase
-        .from('party_tiers')
-        .update(tierFormData)
-        .eq('id', editingTierId)
-      if (error) {
-        toast.error('Failed to update tier')
-      } else {
+    try {
+      if (editingTierId) {
+        await partyOfficialsService.updateTier(editingTierId, tierFormData)
         toast.success('Tier updated')
-        setTierFormData({ name: '', title: '', description: '', order_index: 0 })
-        setEditingTierId(null)
-        fetchTiers()
-      }
-    } else {
-      const { error } = await supabase.from('party_tiers').insert([tierFormData])
-      if (error) {
-        toast.error('Failed to create tier')
       } else {
+        await partyOfficialsService.createTier(tierFormData)
         toast.success('Tier created')
-        setTierFormData({ name: '', title: '', description: '', order_index: 0 })
-        setEditingTierId(null)
-        fetchTiers()
       }
+      setTierFormData({ name: '', title: '', description: '', order_index: 0 })
+      setEditingTierId(null)
+      fetchTiers()
+    } catch {
+      toast.error(editingTierId ? 'Failed to update tier' : 'Failed to create tier')
     }
   }
 
