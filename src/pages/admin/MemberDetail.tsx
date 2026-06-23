@@ -242,7 +242,7 @@ export default function AdminMemberDetail() {
   }
 
   const handleSendMessage = async () => {
-    if (!msgTitle.trim() || !msgBody.trim() || !member) return
+    if (!msgTitle.trim() || !msgBody.trim() || !member || !member.authId) return
     setIsSendingMsg(true)
     try {
       await tacticalService.sendDirectMessage(member.authId, msgTitle.trim(), msgBody.trim())

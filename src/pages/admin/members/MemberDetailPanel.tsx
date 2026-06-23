@@ -99,7 +99,7 @@ export function MemberDetailPanel({
   }
 
   async function handleSendMessage() {
-    if (!msgTitle.trim() || !msgBody.trim()) return
+    if (!msgTitle.trim() || !msgBody.trim() || !member.authId) return
     setIsSendingMsg(true)
     try {
       await tacticalService.sendDirectMessage(member.authId, msgTitle.trim(), msgBody.trim())
