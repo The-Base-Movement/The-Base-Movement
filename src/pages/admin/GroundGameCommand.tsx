@@ -135,14 +135,8 @@ export default function GroundGameCommand() {
   }
 
   useEffect(() => {
-    let ignore = false
-    const timer = setTimeout(() => {
-      if (!ignore) void fetchData()
-    }, 0)
-    return () => {
-      ignore = true
-      clearTimeout(timer)
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchData()
   }, [])
 
   useEffect(() => {
@@ -175,8 +169,8 @@ export default function GroundGameCommand() {
   const totalGoal = campaigns.reduce((a, c) => a + (c.goal_contacts || 0), 0)
   const routePct =
     totalGoal > 0 && doorsKnocked > 0
-      ? Math.min(99, Math.round((doorsKnocked / totalGoal) * 100))
-      : 76
+      ? Math.min(100, Math.round((doorsKnocked / totalGoal) * 100))
+      : 0
 
   // Leaderboard from fieldLogs
   const lbMap: Record<string, number> = {}
@@ -390,7 +384,7 @@ export default function GroundGameCommand() {
                   fontFamily: "'Public Sans'",
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 12,
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                   cursor: 'pointer',
                   appearance: 'none',
                   outline: 'none',
@@ -476,7 +470,7 @@ export default function GroundGameCommand() {
               fontFamily: "'Public Sans'",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               cursor: 'pointer',
               appearance: 'none',
               outline: 'none',
@@ -548,7 +542,7 @@ export default function GroundGameCommand() {
             />
             <TacticalKPI
               label="Intelligence"
-              value={doorsKnocked > 0 ? `${routePct}%` : '—'}
+              value={routePct > 0 ? `${routePct}%` : '—'}
               variant="green"
               description="Route completion across active campaigns"
               delta={
