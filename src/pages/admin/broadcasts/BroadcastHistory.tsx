@@ -136,7 +136,7 @@ export function BroadcastHistory({
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12,
               outline: 'none',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
               width: '100%',
               boxSizing: 'border-box',

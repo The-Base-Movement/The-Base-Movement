@@ -14,7 +14,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
-  background: 'hsl(var(--surface))',
+  background: 'hsl(var(--card))',
   color: 'hsl(var(--on-surface))',
 }
 

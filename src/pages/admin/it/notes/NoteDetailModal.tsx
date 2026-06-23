@@ -194,7 +194,7 @@ export function NoteDetailModal({
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 560,
@@ -498,7 +498,7 @@ export function NoteDetailModal({
                 fontWeight: 'var(--font-weight-medium, 500)',
                 fontSize: 13,
                 color: 'hsl(var(--on-surface))',
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 boxSizing: 'border-box',
                 outline: 'none',
                 resize: 'none',

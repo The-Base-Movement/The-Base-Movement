@@ -65,7 +65,7 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 480,

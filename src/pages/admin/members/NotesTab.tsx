@@ -37,7 +37,7 @@ export function NotesTab({
             style={{
               width: '100%',
               minHeight: 80,
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
               borderRadius: 4,
               padding: 10,

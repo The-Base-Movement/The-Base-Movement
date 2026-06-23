@@ -1029,7 +1029,7 @@ export default function AdminAuthors() {
                     width: 80,
                     height: 80,
                     borderRadius: '50%',
-                    background: 'hsl(var(--surface))',
+                    background: 'hsl(var(--card))',
                     padding: 4,
                     boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
                   }}
@@ -1063,7 +1063,7 @@ export default function AdminAuthors() {
                     width: 32,
                     height: 32,
                     borderRadius: '50%',
-                    background: 'hsl(var(--surface))',
+                    background: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
                     cursor: 'pointer',
                     display: 'flex',

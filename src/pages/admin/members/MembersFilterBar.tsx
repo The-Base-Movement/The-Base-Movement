@@ -142,7 +142,7 @@ export function MembersFilterBar({
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 12.5,
               outline: 'none',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
             }}
           />

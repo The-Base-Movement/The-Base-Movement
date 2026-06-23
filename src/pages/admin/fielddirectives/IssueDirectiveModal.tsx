@@ -6,7 +6,7 @@ const inputSt: React.CSSProperties = {
   height: 40,
   padding: '0 12px',
   border: '1px solid hsl(var(--border))',
-  background: 'hsl(var(--surface))',
+  background: 'hsl(var(--card))',
   outline: 'none',
   fontFamily: "'Public Sans', sans-serif",
   fontWeight: 'var(--font-weight-normal, 400)',
@@ -62,7 +62,7 @@ export function IssueDirectiveModal({
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-md)',
           width: '100%',
           maxWidth: 600,

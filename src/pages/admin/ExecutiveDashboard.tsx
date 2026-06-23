@@ -177,7 +177,7 @@ export default function ExecutiveDashboard() {
                 alignItems: 'center',
                 gap: 10,
                 padding: '14px 18px',
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 textDecoration: 'none',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",

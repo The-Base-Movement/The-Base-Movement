@@ -317,7 +317,7 @@ export default function AdminStore() {
               display: 'flex',
               gap: 0,
               borderBottom: '1px solid hsl(var(--border))',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               marginBottom: 16,
               overflowX: 'auto',
             }}

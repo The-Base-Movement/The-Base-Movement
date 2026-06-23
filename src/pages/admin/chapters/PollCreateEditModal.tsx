@@ -10,7 +10,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
-  background: 'hsl(var(--surface))',
+  background: 'hsl(var(--card))',
   color: 'hsl(var(--on-surface))',
 }
 
@@ -113,7 +113,7 @@ export function PollCreateEditModal({
         style={{
           width: '100%',
           maxWidth: 540,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 6,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',
@@ -332,7 +332,7 @@ export function PollCreateEditModal({
                         top: 'calc(100% + 4px)',
                         left: 0,
                         right: 0,
-                        background: 'hsl(var(--surface))',
+                        background: 'hsl(var(--card))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 4,
                         zIndex: 20,

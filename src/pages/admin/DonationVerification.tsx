@@ -62,7 +62,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 12.5,
   outline: 'none',
-  background: 'hsl(var(--surface))',
+  background: 'hsl(var(--card))',
   color: 'hsl(var(--on-surface))',
   boxSizing: 'border-box',
 }
@@ -463,7 +463,7 @@ export default function FinancialAudit() {
       {/* Filter bar */}
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           border: '1px solid hsl(var(--border))',
           borderRadius: 'var(--radius-md)',
           padding: '12px 14px',
@@ -582,7 +582,7 @@ export default function FinancialAudit() {
                   right: 0,
                   top: 'calc(100% + 6px)',
                   zIndex: 50,
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-md)',
                   padding: 16,

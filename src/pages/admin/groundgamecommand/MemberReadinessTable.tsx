@@ -188,7 +188,7 @@ export function MemberReadinessTable({
               fontWeight: 'var(--font-weight-medium, 500)',
               boxSizing: 'border-box',
               outline: 'none',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
             }}
           />

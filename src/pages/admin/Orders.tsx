@@ -276,7 +276,7 @@ export default function AdminOrders() {
                   paddingLeft: 30,
                   paddingRight: 12,
                   boxSizing: 'border-box',
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-sm)',
                   fontSize: 13,

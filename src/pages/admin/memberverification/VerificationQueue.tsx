@@ -81,7 +81,7 @@ export function VerificationQueue({
               fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
               outline: 'none',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
             }}
             aria-label="Search members by name, ID, or phone"
@@ -116,7 +116,7 @@ export function VerificationQueue({
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
               outline: 'none',
               cursor: 'pointer',
@@ -162,7 +162,7 @@ export function VerificationQueue({
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-normal, 400)',
               fontSize: 12,
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
               outline: 'none',
               cursor: 'pointer',

@@ -216,7 +216,7 @@ export function BlogEditorView({
             >
               <div
                 style={{
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                   padding: isMobile ? '16px' : '32px 48px',
                   minHeight: isMobile ? 'auto' : 900,
                 }}

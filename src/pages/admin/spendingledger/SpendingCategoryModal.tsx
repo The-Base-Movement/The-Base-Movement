@@ -111,7 +111,7 @@ export function SpendingCategoryModal({
         style={{
           width: '100%',
           maxWidth: 460,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           border: '1px solid hsl(var(--border))',
           borderRadius: 'var(--radius-lg)',
           boxShadow: '0 24px 64px rgba(0,0,0,0.12)',
@@ -158,7 +158,7 @@ export function SpendingCategoryModal({
               width: 32,
               height: 32,
               border: '1px solid hsl(var(--border))',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               borderRadius: 'var(--radius-sm)',
               cursor: 'pointer',
               display: 'flex',

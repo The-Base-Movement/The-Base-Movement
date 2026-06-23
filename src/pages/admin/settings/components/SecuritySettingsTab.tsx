@@ -252,7 +252,7 @@ export function SecuritySettingsTab({
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%,-50%)',
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 borderRadius: 4,
                 padding: 28,
                 width: '90%',

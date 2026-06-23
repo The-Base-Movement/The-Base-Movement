@@ -48,7 +48,7 @@ export function AuditLogsModal({
           position: 'relative',
           width: '100%',
           maxWidth: 600,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
           border: '1px solid hsl(var(--border))',

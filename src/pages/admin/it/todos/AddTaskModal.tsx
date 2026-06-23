@@ -133,7 +133,7 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 460,
@@ -306,7 +306,7 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
                       top: 'calc(100% + 4px)',
                       left: 0,
                       right: 0,
-                      background: 'hsl(var(--surface))',
+                      background: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 'var(--radius-sm)',
                       boxShadow: '0 8px 24px rgba(0,0,0,0.08)',

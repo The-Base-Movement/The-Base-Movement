@@ -41,7 +41,7 @@ export function MobileFilterModal({
           left: 0,
           right: 0,
           zIndex: 70,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
         }}
       >

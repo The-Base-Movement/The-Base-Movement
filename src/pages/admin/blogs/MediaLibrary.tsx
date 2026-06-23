@@ -60,7 +60,7 @@ export function MediaLibrary({
         borderRight: '1px solid hsl(var(--border))',
         display: 'flex',
         flexDirection: 'column',
-        background: 'hsl(var(--surface))',
+        background: 'hsl(var(--card))',
       }}
     >
       {/* Panel header: title, file count, refresh */}

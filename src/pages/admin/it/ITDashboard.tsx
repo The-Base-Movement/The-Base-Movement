@@ -330,7 +330,7 @@ export default function ITDashboard() {
                 alignItems: 'center',
                 gap: 10,
                 padding: '14px 18px',
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 textDecoration: 'none',
                 color: 'hsl(var(--on-surface))',
                 fontFamily: "'Public Sans', sans-serif",
@@ -339,7 +339,7 @@ export default function ITDashboard() {
                 transition: 'background 0.1s',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'hsl(var(--surface))')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'hsl(var(--card))')}
             >
               <span
                 className="material-symbols-outlined"

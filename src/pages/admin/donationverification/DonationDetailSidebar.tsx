@@ -167,7 +167,7 @@ export function DonationDetailSidebar({
   return (
     <aside
       style={{
-        background: 'hsl(var(--surface))',
+        background: 'hsl(var(--card))',
         border: '1px solid hsl(var(--border))',
         borderRadius: 'var(--radius-md)',
         alignSelf: 'start',

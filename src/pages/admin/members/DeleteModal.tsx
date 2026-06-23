@@ -40,7 +40,7 @@ export function DeleteModal({
         style={{
           width: '100%',
           maxWidth: 440,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
         }}

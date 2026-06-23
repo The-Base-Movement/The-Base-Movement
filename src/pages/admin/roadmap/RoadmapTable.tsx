@@ -151,7 +151,7 @@ export function RoadmapTable({
                 fontWeight: 'var(--font-weight-normal, 400)',
                 fontSize: 12,
                 outline: 'none',
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 color: 'hsl(var(--on-surface))',
                 width: 220,
                 boxSizing: 'border-box',
@@ -364,7 +364,7 @@ export function RoadmapTable({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-md)',
                   overflow: 'hidden',
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                 }}
               >
                 {/* Card body */}

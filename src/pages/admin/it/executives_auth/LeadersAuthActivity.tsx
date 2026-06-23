@@ -342,7 +342,7 @@ export default function LeadersAuthActivity() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'hsl(var(--surface))',
+                        backgroundColor: 'hsl(var(--card))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: 4,
                         fontSize: 11,

@@ -285,7 +285,7 @@ export function AdministratorsTable({
                               position: 'absolute',
                               right: 0,
                               top: 'calc(100% + 4px)',
-                              background: 'hsl(var(--surface))',
+                              background: 'hsl(var(--card))',
                               border: '1px solid hsl(var(--border))',
                               borderRadius: 4,
                               zIndex: 50,

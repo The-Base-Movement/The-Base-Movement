@@ -77,7 +77,7 @@ export function SpendingLedgerTable({
               fontWeight: 'var(--font-weight-medium, 500)',
               outline: 'none',
               boxSizing: 'border-box',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               color: 'hsl(var(--on-surface))',
             }}
           />

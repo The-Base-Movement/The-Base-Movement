@@ -56,7 +56,7 @@ export function AppointFieldAgentModal({
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 10,
           width: '100%',
           maxWidth: 480,
@@ -267,7 +267,7 @@ export function AppointFieldAgentModal({
                           i < modalMemberResults.length - 1
                             ? '1px solid hsl(var(--border))'
                             : 'none',
-                        background: 'hsl(var(--surface))',
+                        background: 'hsl(var(--card))',
                       }}
                       onMouseEnter={(e) =>
                         (e.currentTarget.style.background = 'hsl(var(--container-low))')

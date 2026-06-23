@@ -95,7 +95,7 @@ export function ProjectModal({ editing, onClose, onSaved }: ProjectModalProps) {
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 500,

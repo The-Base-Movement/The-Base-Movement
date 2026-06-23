@@ -26,7 +26,7 @@ export function Modal({ title, subtitle, onClose, children }: ModalProps) {
         style={{
           width: '100%',
           maxWidth: 440,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',

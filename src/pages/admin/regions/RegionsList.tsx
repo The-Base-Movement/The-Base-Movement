@@ -110,7 +110,7 @@ export function RegionsList({
                     className="material-symbols-outlined"
                     style={{
                       fontSize: 16,
-                      color: isExpanded ? 'hsl(var(--surface))' : 'hsl(var(--on-surface-muted))',
+                      color: isExpanded ? 'hsl(var(--card))' : 'hsl(var(--on-surface-muted))',
                     }}
                   >
                     location_on
@@ -285,7 +285,7 @@ export function RegionsList({
                           justifyContent: 'space-between',
                           gap: 6,
                           padding: '8px 10px',
-                          background: 'hsl(var(--surface))',
+                          background: 'hsl(var(--card))',
                           border: '1px solid hsl(var(--border))',
                           borderRadius: 4,
                         }}

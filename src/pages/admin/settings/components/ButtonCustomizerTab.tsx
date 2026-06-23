@@ -108,7 +108,7 @@ const ToggleRow = ({
         style={{
           width: 14,
           height: 14,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: '50%',
           boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
         }}

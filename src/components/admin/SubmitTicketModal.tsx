@@ -94,7 +94,7 @@ export function SubmitTicketModal({ userId, onClose }: Props) {
         style={{
           width: '100%',
           maxWidth: 480,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid hsl(var(--border))',
           boxShadow: '0 20px 50px rgba(0,0,0,0.2)',

@@ -56,7 +56,7 @@ export function DirectAppointModal({
         style={{
           width: '100%',
           maxWidth: 520,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',
@@ -350,7 +350,7 @@ export function DirectAppointModal({
                         fontSize: 13,
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 'var(--font-weight-medium, 500)',
-                        background: 'hsl(var(--surface))',
+                        background: 'hsl(var(--card))',
                         color: 'hsl(var(--on-surface))',
                         boxSizing: 'border-box',
                       }}
@@ -392,7 +392,7 @@ export function DirectAppointModal({
                       fontSize: 13,
                       fontFamily: "'Public Sans', sans-serif",
                       fontWeight: 'var(--font-weight-medium, 500)',
-                      background: 'hsl(var(--surface))',
+                      background: 'hsl(var(--card))',
                       color: 'hsl(var(--on-surface))',
                       boxSizing: 'border-box',
                     }}

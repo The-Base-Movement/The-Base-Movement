@@ -39,7 +39,7 @@ export function OfficialModal({
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           width: '100%',
           maxWidth: 900,

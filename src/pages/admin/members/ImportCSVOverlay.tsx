@@ -392,7 +392,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           margin: '0 auto',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -532,7 +532,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     key={h}
                     style={{
                       fontSize: 11,
-                      background: 'hsl(var(--surface))',
+                      background: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 3,
                       padding: '2px 8px',

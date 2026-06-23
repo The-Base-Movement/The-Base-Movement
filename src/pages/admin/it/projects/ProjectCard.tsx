@@ -113,7 +113,7 @@ export function ProjectCard({ project, onEdit, onDelete, onStatusChange }: CardP
                   position: 'absolute',
                   right: 0,
                   top: 'calc(100% + 4px)',
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-md)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.1)',

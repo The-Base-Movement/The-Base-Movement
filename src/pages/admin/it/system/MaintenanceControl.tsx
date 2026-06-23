@@ -131,7 +131,7 @@ export function MaintenanceControl() {
             style={{
               width: 18,
               height: 18,
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               borderRadius: '50%',
               boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
               transition: 'all 0.2s ease',

@@ -40,7 +40,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
             }}
           />
         ) : (

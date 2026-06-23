@@ -30,7 +30,7 @@ export function AuditModal({ isOpen, memberName, logs, onClose }: AuditModalProp
         style={{
           width: '100%',
           maxWidth: 640,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
           maxHeight: '85vh',

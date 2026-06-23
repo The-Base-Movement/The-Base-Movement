@@ -185,7 +185,7 @@ export function ActiveDirectivesList({ directives, onOpenCreate }: ActiveDirecti
                 height: 30,
                 paddingLeft: 28,
                 paddingRight: 8,
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 'var(--radius-xs)',
                 fontSize: 11,

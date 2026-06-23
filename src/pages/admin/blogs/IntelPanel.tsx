@@ -58,7 +58,7 @@ export function IntelPanel({ formData, setFormData }: IntelPanelProps) {
         borderLeft: '1px solid hsl(var(--border))',
         display: 'flex',
         flexDirection: 'column',
-        background: 'hsl(var(--surface))',
+        background: 'hsl(var(--card))',
         overflowY: 'auto',
       }}
     >

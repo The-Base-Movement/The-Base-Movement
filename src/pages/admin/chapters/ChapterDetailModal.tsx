@@ -12,7 +12,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 'var(--font-weight-medium, 500)',
   fontSize: 13,
   outline: 'none',
-  background: 'hsl(var(--surface))',
+  background: 'hsl(var(--card))',
   color: 'hsl(var(--on-surface))',
 }
 
@@ -252,7 +252,7 @@ export function ChapterDetailModal({
                     left: 0,
                     right: 0,
                     zIndex: 50,
-                    background: 'hsl(var(--surface))',
+                    background: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: 4,
                     maxHeight: 200,

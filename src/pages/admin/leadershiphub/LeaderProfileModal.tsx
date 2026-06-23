@@ -42,7 +42,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
         style={{
           width: '100%',
           maxWidth: 400,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',

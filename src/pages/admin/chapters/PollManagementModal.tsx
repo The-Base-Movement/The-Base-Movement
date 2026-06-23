@@ -56,7 +56,7 @@ export function PollManagementModal({
         style={{
           width: '100%',
           maxWidth: 520,
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 6,
           overflow: 'hidden',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',

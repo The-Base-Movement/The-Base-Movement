@@ -282,7 +282,7 @@ export function OfficialsTable({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 6,
                   padding: '14px 16px',
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 10,

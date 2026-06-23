@@ -15,7 +15,7 @@ const fieldStyle: React.CSSProperties = {
   fontWeight: 400,
   fontSize: 13,
   outline: 'none',
-  background: 'hsl(var(--surface))',
+  background: 'hsl(var(--card))',
   color: 'hsl(var(--on-surface))',
 }
 
@@ -196,7 +196,7 @@ export default function AdminLogin() {
             <form
               onSubmit={handleLogin}
               style={{
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 padding: '28px 32px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -311,7 +311,7 @@ export default function AdminLogin() {
             <form
               onSubmit={handleVerifyMfa}
               style={{
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 padding: '28px 32px',
                 display: 'flex',
                 flexDirection: 'column',

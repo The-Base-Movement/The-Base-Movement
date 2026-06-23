@@ -465,7 +465,7 @@ export default function AdminBlogs() {
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 13,
               color: 'hsl(var(--on-surface))',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
               outline: 'none',
               boxSizing: 'border-box',
             }}

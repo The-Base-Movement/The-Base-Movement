@@ -46,7 +46,7 @@ export function AppointStationAgentModal({
     >
       <div
         style={{
-          background: 'hsl(var(--surface))',
+          background: 'hsl(var(--card))',
           borderRadius: 10,
           width: '100%',
           maxWidth: 400,
@@ -111,7 +111,7 @@ export function AppointStationAgentModal({
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
                   letterSpacing: '.04em',
-                  background: 'hsl(var(--surface))',
+                  background: 'hsl(var(--card))',
                   padding: '2px 8px',
                   borderRadius: 4,
                 }}

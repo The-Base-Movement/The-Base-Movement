@@ -301,7 +301,7 @@ export default function PublicDonate() {
   return (
     <main
       className="page-root"
-      style={{ background: 'hsl(var(--surface))', minHeight: '100vh', paddingBottom: 80 }}
+      style={{ background: 'hsl(var(--card))', minHeight: '100vh', paddingBottom: 80 }}
     >
       <header
         style={{

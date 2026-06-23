@@ -184,7 +184,7 @@ export function SituationalAwarenessFeed({ reports, onVerify }: SituationalAware
                 borderRadius: 'var(--radius-sm)',
                 fontFamily: "'Public Sans', sans-serif",
                 fontSize: 12,
-                background: 'hsl(var(--surface))',
+                background: 'hsl(var(--card))',
                 color: 'hsl(var(--on-surface))',
                 boxSizing: 'border-box',
                 outline: 'none',

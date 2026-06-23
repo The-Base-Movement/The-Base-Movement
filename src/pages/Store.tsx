@@ -297,7 +297,7 @@ export default function Store() {
               <div className="px-[18px] max-h-[320px] overflow-y-auto">{renderCartItems()}</div>
               <div
                 className="p-[18px] border-t border-border"
-                style={{ background: 'hsl(var(--surface))' }}
+                style={{ background: 'hsl(var(--card))' }}
               >
                 {renderCartSummary()}
               </div>
@@ -368,7 +368,7 @@ export default function Store() {
             <div className="px-4 max-h-[38vh] overflow-y-auto">{renderCartItems()}</div>
             <div
               className="px-4 py-3 border-t border-border"
-              style={{ background: 'hsl(var(--surface))' }}
+              style={{ background: 'hsl(var(--card))' }}
             >
               {renderCartSummary()}
             </div>
