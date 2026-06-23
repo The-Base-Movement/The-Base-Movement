@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { usePerformance } from '@/context/PerformanceContext'
-import { supabase } from '@/lib/supabase'
+import { memberService } from '@/services/memberService'
 import { AuditModal } from './members/AuditModal'
 import { AssignmentModal } from './members/AssignmentModal'
 import { DeleteModal } from './members/DeleteModal'
@@ -25,9 +25,7 @@ export default function MembersList() {
     setIsSyncingSendGrid(true)
     setSyncResult(null)
     try {
-      const { data, error } = await supabase.functions.invoke('sync-sendgrid-bulk')
-      if (error) throw error
-      const { total, batches } = data as { total: number; batches: number }
+      const { total, batches } = await memberService.syncSendgridBulk()
       setSyncResult(
         `✓ ${total.toLocaleString()} members synced across ${batches} batch${batches !== 1 ? 'es' : ''}.`
       )

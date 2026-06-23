@@ -742,6 +742,12 @@ class MemberService {
 
     return Number(data) || 0
   }
+
+  async syncSendgridBulk(): Promise<{ total: number; batches: number }> {
+    const { data, error } = await supabase.functions.invoke('sync-sendgrid-bulk')
+    if (error) throw error
+    return data as { total: number; batches: number }
+  }
 }
 
 export const memberService = MemberService.getInstance()

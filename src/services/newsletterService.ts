@@ -221,4 +221,33 @@ export const newsletterService = {
     if (error) throw error
     return data as { sent: number; batches: number }
   },
+
+  async getAnalyticsData(): Promise<{
+    newsletters: Newsletter[]
+    subscribers: { id: string; email: string; status: string; created_at: string }[]
+  }> {
+    const [nlRes, subRes] = await Promise.all([
+      supabase
+        .from('newsletters')
+        .select(
+          'id,subject,body_html,recipient_count,delivered_count,bounce_count,open_count,status,error_message,sent_by,sent_at,scheduled_at,created_at,audience_type,audience_value,audience_filters'
+        )
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('newsletter_subscribers')
+        .select('id,email,status,created_at')
+        .order('created_at', { ascending: false }),
+    ])
+    if (nlRes.error) throw nlRes.error
+    if (subRes.error) throw subRes.error
+    return {
+      newsletters: (nlRes.data ?? []) as Newsletter[],
+      subscribers: (subRes.data ?? []) as {
+        id: string
+        email: string
+        status: string
+        created_at: string
+      }[],
+    }
+  },
 }

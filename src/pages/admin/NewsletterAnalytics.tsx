@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { Pagination } from '@/components/Pagination'
-import { supabase } from '@/lib/supabase'
+import { newsletterService } from '@/services/newsletterService'
 import {
   PieChart,
   Pie,
@@ -74,20 +74,9 @@ export default function NewsletterAnalytics() {
 
   useEffect(() => {
     async function load() {
-      const [nlRes, subRes] = await Promise.all([
-        supabase
-          .from('newsletters')
-          .select(
-            'id,subject,recipient_count,delivered_count,bounce_count,open_count,status,audience_type,audience_value,sent_at,created_at'
-          )
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('newsletter_subscribers')
-          .select('id,email,status,created_at')
-          .order('created_at', { ascending: false }),
-      ])
-      setNewsletters((nlRes.data ?? []) as NewsletterRow[])
-      setSubscribers((subRes.data ?? []) as Subscriber[])
+      const data = await newsletterService.getAnalyticsData()
+      setNewsletters(data.newsletters as NewsletterRow[])
+      setSubscribers(data.subscribers)
       setLoading(false)
     }
     load()

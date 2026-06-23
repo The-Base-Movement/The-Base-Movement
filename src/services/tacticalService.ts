@@ -146,6 +146,12 @@ class TacticalService {
     }
   }
 
+  async markAllNotificationsRead(ids: string[]): Promise<void> {
+    await Promise.all(
+      ids.map((id) => supabase.from('notifications').update({ is_read: true }).eq('id', id))
+    )
+  }
+
   async getBroadcastMetrics(broadcastId: string): Promise<{ total: number; read: number }> {
     try {
       const { count: total, error: tError } = await supabase

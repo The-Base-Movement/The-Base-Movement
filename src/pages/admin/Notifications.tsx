@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { adminService } from '@/services/adminService'
-import { supabase } from '@/lib/supabase'
+import { tacticalService } from '@/services/tacticalService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import type { Notification } from '@/types/admin'
 
@@ -63,9 +63,7 @@ export default function AdminNotifications() {
     if (!unreadCount) return
     setMarkingAll(true)
     const unread = items.filter((n) => !n.is_read)
-    await Promise.all(
-      unread.map((n) => supabase.from('notifications').update({ is_read: true }).eq('id', n.id))
-    )
+    await tacticalService.markAllNotificationsRead(unread.map((n) => n.id))
     setItems((prev) => prev.map((n) => ({ ...n, is_read: true })))
     setMarkingAll(false)
   }
