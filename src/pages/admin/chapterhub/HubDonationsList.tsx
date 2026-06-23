@@ -125,7 +125,7 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
             }}
           >
             <tr>
-              {['Donor', 'Amount', 'Method', 'Reference', 'Date', 'Status'].map((h) => (
+              {['Donor', 'Amount', 'Method', 'Reference', 'Date / Time', 'Status'].map((h) => (
                 <th
                   key={h}
                   style={{
@@ -214,13 +214,33 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
                   <td
                     style={{
                       padding: '12px 18px',
-                      fontSize: 12,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface-muted))',
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {new Date(d.created_at).toLocaleDateString('en-GB')}
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {new Date(d.created_at).toLocaleDateString('en-GB')}
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        opacity: 0.7,
+                      }}
+                    >
+                      {new Date(d.created_at).toLocaleTimeString('en-GB', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
                   </td>
                   <td style={{ padding: '12px 18px' }}>
                     <span className={`pill ${donationStatusClass(d.status)}`}>{d.status}</span>
@@ -303,7 +323,11 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
                       fontFamily: "'Public Sans', sans-serif",
                     }}
                   >
-                    {new Date(d.created_at).toLocaleDateString('en-GB')}
+                    {new Date(d.created_at).toLocaleDateString('en-GB')}{' '}
+                    {new Date(d.created_at).toLocaleTimeString('en-GB', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </span>
                   <span
                     style={{
