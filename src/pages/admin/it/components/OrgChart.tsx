@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { HierarchyRow, TreeNode } from '../hierarchy/types'
 import { buildTree } from '../hierarchy/types'
@@ -341,35 +341,8 @@ export function OrgChart() {
       // it_hierarchy.user_id / reports_to reference auth.users, which PostgREST
       // cannot traverse. Fetch hierarchy rows first, then resolve names from
       // public.users in a separate query using the collected UUIDs.
-      const { data: rowData, error } = await supabase
-        .from('it_hierarchy')
-        .select('id, user_id, reports_to, role_title')
-      if (error) throw error
-
-      const allIds = [
-        ...new Set((rowData ?? []).flatMap((r) => [r.user_id, r.reports_to].filter(Boolean))),
-      ] as string[]
-      let nameMap: Record<string, string> = {}
-      let avatarMap: Record<string, string | null> = {}
-      if (allIds.length > 0) {
-        const { data: users } = await supabase
-          .from('users')
-          .select('id, full_name, avatar_url')
-          .in('id', allIds)
-        nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
-        avatarMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.avatar_url ?? null]))
-      }
-
-      setRows(
-        (rowData ?? []).map((r) => ({
-          id: r.id,
-          user_id: r.user_id,
-          reports_to: r.reports_to,
-          role_title: r.role_title,
-          full_name: nameMap[r.user_id] ?? 'Unknown',
-          avatar_url: avatarMap[r.user_id] ?? null,
-        }))
-      )
+      const data = await itService.getHierarchy()
+      setRows(data)
     } catch (err) {
       console.error('[OrgChart] load error', err)
       toast.error('Failed to load hierarchy')
@@ -396,14 +369,12 @@ export function OrgChart() {
     if (!removeModal) return
     const { userId, name, hasChildren } = removeModal
     const row = rows.find((r) => r.user_id === userId)
-    if (hasChildren && row?.reports_to) {
-      await supabase
-        .from('it_hierarchy')
-        .update({ reports_to: row.reports_to })
-        .eq('reports_to', userId)
-    }
-    const { error } = await supabase.from('it_hierarchy').delete().eq('user_id', userId)
-    if (error) {
+    try {
+      if (hasChildren && row?.reports_to) {
+        await itService.relinkHierarchyChildren(userId, row.reports_to)
+      }
+      await itService.deleteHierarchyNode(userId)
+    } catch {
       toast.error('Failed to remove member')
       return
     }

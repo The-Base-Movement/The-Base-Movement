@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -46,36 +46,8 @@ export default function ITProjects() {
   // Fetch projects and resolve creator names from users table
   const load = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('it_projects')
-        .select('id, title, description, status, start_date, end_date, created_at, created_by')
-        .order('created_at', { ascending: false })
-      if (error) throw error
-
-      const creatorIds = [
-        ...new Set((data ?? []).map((p) => p.created_by).filter(Boolean)),
-      ] as string[]
-      let nameMap: Record<string, string> = {}
-      if (creatorIds.length > 0) {
-        const { data: users } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .in('id', creatorIds)
-        nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
-      }
-
-      setProjects(
-        (data ?? []).map((p) => ({
-          id: p.id,
-          title: p.title,
-          description: p.description,
-          status: p.status as ProjectStatus,
-          start_date: p.start_date,
-          end_date: p.end_date,
-          created_at: p.created_at,
-          author_name: nameMap[p.created_by] ?? 'Unknown',
-        }))
-      )
+      const data = await itService.getProjects()
+      setProjects(data.map((p) => ({ ...p, status: p.status as ProjectStatus })))
     } catch {
       toast.error('Failed to load projects')
     } finally {
@@ -93,8 +65,7 @@ export default function ITProjects() {
   // Move project status inside the lifecycle stages
   async function handleStatusChange(id: string, status: ProjectStatus) {
     try {
-      const { error } = await supabase.from('it_projects').update({ status }).eq('id', id)
-      if (error) throw error
+      await itService.updateProjectStatus(id, status)
       setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))
     } catch {
       toast.error('Failed to update status')
@@ -105,8 +76,7 @@ export default function ITProjects() {
   async function handleDelete(id: string) {
     if (!confirm('Delete this project? This cannot be undone.')) return
     try {
-      const { error } = await supabase.from('it_projects').delete().eq('id', id)
-      if (error) throw error
+      await itService.deleteProject(id)
       toast.success('Project deleted')
       setProjects((prev) => prev.filter((p) => p.id !== id))
     } catch {

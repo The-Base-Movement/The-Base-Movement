@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -59,35 +59,8 @@ export default function ITTodos() {
   // Fetch to-dos from supabase and map assignee user names
   const load = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('it_todos')
-        .select('id, task, status, assignee_id, due_date, created_at')
-        .order('created_at', { ascending: false })
-      if (error) throw error
-
-      const assigneeIds = [
-        ...new Set((data ?? []).map((t) => t.assignee_id).filter(Boolean)),
-      ] as string[]
-      let nameMap: Record<string, string> = {}
-      if (assigneeIds.length > 0) {
-        const { data: users } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .in('id', assigneeIds)
-        nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
-      }
-
-      setTodos(
-        (data ?? []).map((t) => ({
-          id: t.id,
-          task: t.task,
-          status: t.status as TodoStatus,
-          assignee_id: t.assignee_id,
-          due_date: t.due_date,
-          created_at: t.created_at,
-          assignee_name: t.assignee_id ? (nameMap[t.assignee_id] ?? null) : null,
-        }))
-      )
+      const data = await itService.getTodos()
+      setTodos(data.map((t) => ({ ...t, status: t.status as TodoStatus })))
     } catch {
       toast.error('Failed to load tasks')
     } finally {
@@ -106,20 +79,17 @@ export default function ITTodos() {
   async function handleToggleDone(todo: Todo) {
     const next = todo.status === 'done' ? 'todo' : 'done'
     try {
-      const { error } = await supabase.from('it_todos').update({ status: next }).eq('id', todo.id)
-      if (error) throw error
+      await itService.updateTodoStatus(todo.id, next)
       setTodos((prev) => prev.map((t) => (t.id === todo.id ? { ...t, status: next } : t)))
     } catch {
       toast.error('Failed to update task')
     }
   }
 
-  // Cycle task status to the next logical stage
   async function handleCycleStatus(todo: Todo) {
     const next = STATUS_CYCLE[todo.status]
     try {
-      const { error } = await supabase.from('it_todos').update({ status: next }).eq('id', todo.id)
-      if (error) throw error
+      await itService.updateTodoStatus(todo.id, next)
       setTodos((prev) => prev.map((t) => (t.id === todo.id ? { ...t, status: next } : t)))
     } catch {
       toast.error('Failed to update status')
@@ -130,8 +100,7 @@ export default function ITTodos() {
   async function handleDelete(id: string) {
     if (!confirm('Delete this task?')) return
     try {
-      const { error } = await supabase.from('it_todos').delete().eq('id', id)
-      if (error) throw error
+      await itService.deleteTodo(id)
       setTodos((prev) => prev.filter((t) => t.id !== id))
     } catch {
       toast.error('Failed to delete task')
@@ -144,13 +113,8 @@ export default function ITTodos() {
     if (!quickTask.trim()) return
     setQuickAdding(true)
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      const { error } = await supabase
-        .from('it_todos')
-        .insert({ task: quickTask.trim(), status: 'todo', created_by: user?.id })
-      if (error) throw error
+      const userId = await itService.getCurrentUserId()
+      await itService.createTodo({ task: quickTask.trim(), status: 'todo', created_by: userId })
       setQuickTask('')
       await load()
     } catch {

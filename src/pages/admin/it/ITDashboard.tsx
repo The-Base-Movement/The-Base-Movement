@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 import { OrgChart } from './components/OrgChart'
@@ -68,58 +68,17 @@ export default function ITDashboard() {
   useEffect(() => {
     async function load() {
       try {
-        const [
-          { count: total },
-          { count: completed },
-          { count: activeTodos },
-          { count: pendingTickets },
-          { count: totalAssets },
-          { count: assignedAssets },
-          { count: damagedAssets },
-          { count: unresolvedAlerts },
-        ] = await Promise.all([
-          supabase.from('it_projects').select('*', { count: 'exact', head: true }),
-          supabase
-            .from('it_projects')
-            .select('*', { count: 'exact', head: true })
-            .eq('status', 'completed'),
-          supabase
-            .from('it_todos')
-            .select('*', { count: 'exact', head: true })
-            .neq('status', 'done'),
-          supabase
-            .from('it_tickets')
-            .select('*', { count: 'exact', head: true })
-            .in('status', ['open', 'in-progress']),
-          supabase
-            .from('assets')
-            .select('*', { count: 'exact', head: true })
-            .eq('department_id', 'it'),
-          supabase
-            .from('asset_assignments')
-            .select('assets!inner(department_id)', { count: 'exact', head: true })
-            .eq('assets.department_id', 'it')
-            .is('checked_in_at', null),
-          supabase
-            .from('assets')
-            .select('*', { count: 'exact', head: true })
-            .eq('department_id', 'it')
-            .eq('condition', 'damaged'),
-          supabase
-            .from('asset_alerts')
-            .select('*', { count: 'exact', head: true })
-            .eq('resolved', false),
-        ])
+        const counts = await itService.getDashboardCounts()
 
         setStats({
-          totalProjects: total ?? 0,
-          completedProjects: completed ?? 0,
-          activeTodos: activeTodos ?? 0,
-          pendingTickets: pendingTickets ?? 0,
-          totalAssets: totalAssets ?? 0,
-          assignedAssets: assignedAssets ?? 0,
-          damagedAssets: damagedAssets ?? 0,
-          unresolvedAlerts: unresolvedAlerts ?? 0,
+          totalProjects: counts.totalProjects,
+          completedProjects: counts.completedProjects,
+          activeTodos: counts.activeTodos,
+          pendingTickets: counts.pendingTickets,
+          totalAssets: counts.totalAssets,
+          assignedAssets: counts.assignedAssets,
+          damagedAssets: counts.damagedAssets,
+          unresolvedAlerts: counts.unresolvedAlerts,
         })
       } catch (err) {
         console.error('[IT Dashboard] Failed to load stats:', err)

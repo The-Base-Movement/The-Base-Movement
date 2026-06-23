@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -50,41 +50,8 @@ export default function ITNotes() {
   // Fetch sticky notes from Supabase database
   const loadNotes = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('it_notes')
-        .select(
-          'id, title, content, color_theme, author_id, created_at, archived_at, it_note_comments(count)'
-        )
-        .order('created_at', { ascending: false })
-      if (error) throw error
-
-      const authorIds = [
-        ...new Set((data ?? []).map((n) => n.author_id).filter(Boolean)),
-      ] as string[]
-      let nameMap: Record<string, string> = {}
-      if (authorIds.length > 0) {
-        const { data: users } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .in('id', authorIds)
-        nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
-      }
-
-      setNotes(
-        (data ?? []).map((n) => ({
-          id: n.id,
-          title: n.title,
-          content: n.content,
-          color_theme: n.color_theme as NoteColor,
-          author_id: n.author_id,
-          author_name: nameMap[n.author_id] ?? 'Unknown',
-          created_at: n.created_at,
-          archived_at: n.archived_at ?? null,
-          comment_count: Array.isArray(n.it_note_comments)
-            ? ((n.it_note_comments[0] as { count?: number })?.count ?? 0)
-            : 0,
-        }))
-      )
+      const data = await itService.getNotes()
+      setNotes(data.map((n) => ({ ...n, color_theme: n.color_theme as NoteColor })))
     } catch (err) {
       toast.error('Failed to load notes')
       console.error(err)

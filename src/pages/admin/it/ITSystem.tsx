@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 import type { DbStats } from './system/types'
@@ -22,7 +22,7 @@ export default function ITSystem() {
   useEffect(() => {
     async function loadHealth() {
       try {
-        const { data } = await supabase.rpc('get_db_stats')
+        const data = await itService.getDbStats()
         if (data) setDbStats(data as DbStats)
       } finally {
         setHealthLoading(false)

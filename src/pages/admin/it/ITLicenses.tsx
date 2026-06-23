@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import { useITLayout } from './ITLayoutContext'
 import { LicenseKpis } from './licenses/LicenseKpis'
@@ -27,15 +27,12 @@ export default function ITLicenses() {
   const [saving, setSaving] = useState(false)
 
   const loadLicenses = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('it_licenses')
-      .select('*')
-      .order('renewal_date', { ascending: true })
-    if (error) {
+    try {
+      const data = await itService.getLicenses()
+      setLicenses(data as License[])
+    } catch {
       toast.error('Failed to load licenses')
-      return
     }
-    setLicenses((data ?? []) as License[])
     setLoading(false)
   }, [])
 
@@ -70,15 +67,14 @@ export default function ITLicenses() {
       url: formData.url?.trim() || null,
       notes: formData.notes?.trim() || null,
     }
-    const { error } =
-      modal!.mode === 'add'
-        ? await supabase.from('it_licenses').insert(payload)
-        : await supabase.from('it_licenses').update(payload).eq('id', modal!.id!)
-    setSaving(false)
-    if (error) {
+    try {
+      await itService.upsertLicense(modal!.mode === 'add' ? null : modal!.id!, payload)
+    } catch {
+      setSaving(false)
       toast.error('Failed to save license')
       return
     }
+    setSaving(false)
     toast.success(modal!.mode === 'add' ? 'License added' : 'License updated')
     setModal(null)
     await loadLicenses()
@@ -87,15 +83,14 @@ export default function ITLicenses() {
   const handleSoftDelete = async () => {
     if (!deleteTarget) return
     setSaving(true)
-    const { error } = await supabase
-      .from('it_licenses')
-      .update({ status: 'Cancelled' })
-      .eq('id', deleteTarget.id)
-    setSaving(false)
-    if (error) {
+    try {
+      await itService.upsertLicense(deleteTarget.id, { status: 'Cancelled' })
+    } catch {
+      setSaving(false)
       toast.error('Failed to cancel license')
       return
     }
+    setSaving(false)
     toast.success(`${deleteTarget.software_name} cancelled`)
     setDeleteTarget(null)
     await loadLicenses()
@@ -104,12 +99,14 @@ export default function ITLicenses() {
   const handleHardDelete = async () => {
     if (!hardDeleteTarget) return
     setSaving(true)
-    const { error } = await supabase.from('it_licenses').delete().eq('id', hardDeleteTarget.id)
-    setSaving(false)
-    if (error) {
+    try {
+      await itService.deleteLicense(hardDeleteTarget.id)
+    } catch {
+      setSaving(false)
       toast.error('Failed to delete license')
       return
     }
+    setSaving(false)
     toast.success(`${hardDeleteTarget.software_name} permanently deleted`)
     setHardDeleteTarget(null)
     await loadLicenses()

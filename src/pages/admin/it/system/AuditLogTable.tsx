@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { Pagination } from '@/components/Pagination'
 import type { AuditLog, Severity } from './types'
@@ -58,15 +58,10 @@ export function AuditLogTable() {
   const loadLogs = useCallback(async () => {
     setLogsLoading(true)
     try {
-      const { data } = await supabase
-        .from('system_audit_logs')
-        .select('*, user:users!user_id(full_name)')
-        .gte('created_at', dateFrom + 'T00:00:00Z')
-        .lte('created_at', dateTo + 'T23:59:59Z')
-        .order('created_at', { ascending: sortDir === 'asc' })
+      const data = await itService.getAuditLogs(dateFrom, dateTo, sortDir)
 
       setLogs(
-        (data ?? []).map((l: Record<string, unknown>) => ({
+        data.map((l: Record<string, unknown>) => ({
           id: l.id as string,
           action: l.action as string,
           user_id: l.user_id as string | null,
