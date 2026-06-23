@@ -126,10 +126,15 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const callbackUrl = await buildSignedHubtelCallbackUrl(
+    const primaryCallback = await buildSignedHubtelCallbackUrl(
       `${supabaseUrl}/functions/v1/hubtel-payment-callback`,
       reference
     )
+    // @ts-expect-error: Deno global
+    const secondaryCallbackBase = Deno.env.get('HUBTEL_SECONDARY_CALLBACK_URL')
+    const secondaryCallback = secondaryCallbackBase
+      ? await buildSignedHubtelCallbackUrl(secondaryCallbackBase, reference)
+      : undefined
     const fallbackUrl =
       body.returnUrl ??
       // @ts-expect-error: Deno global
@@ -151,7 +156,8 @@ Deno.serve(async (req: Request) => {
           : type === 'order'
             ? 'The Base Movement store order'
             : 'The Base Movement payment',
-      callbackUrl,
+      callbackUrl: primaryCallback,
+      ...(secondaryCallback ? { secondaryCallbackUrl: secondaryCallback } : {}),
       returnUrl: body.returnUrl ?? fallbackUrl,
       cancellationUrl: body.cancellationUrl ?? fallbackUrl,
       merchantAccountNumber: accountNumber,

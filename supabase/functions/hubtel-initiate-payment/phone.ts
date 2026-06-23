@@ -1,4 +1,5 @@
-import { parsePhoneNumberFromString } from 'libphonenumber-js/max'
+// @ts-expect-error: Deno npm import
+import { parsePhoneNumberFromString } from 'npm:libphonenumber-js@1.11.20/max'
 
 export function normalizeHubtelPhone(phone: string) {
   const trimmed = phone.trim()
