@@ -170,7 +170,7 @@ export default function PartyOfficials() {
       }
     } else {
       try {
-        await partyOfficialsService.createOfficial(payload as Omit<PartyOfficial, 'id'>)
+        await partyOfficialsService.createOfficial(payload)
         toast.success('Official created')
         setIsModalOpen(false)
         fetchOfficials()

@@ -836,7 +836,7 @@ class ChapterService {
     if (error) throw error
   }
 
-  async removeChapterLeader(chapterId: string): Promise<void> {
+  async unassignChapterLeader(chapterId: string): Promise<void> {
     const { error } = await supabase
       .from('chapters')
       .update({ leader_name: 'Unassigned', leader_id: null })

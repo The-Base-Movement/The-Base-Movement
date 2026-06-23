@@ -20,12 +20,12 @@ export const partyOfficialsService = {
     return (data ?? []) as PartyTier[]
   },
 
-  async createOfficial(official: Omit<PartyOfficial, 'id'>): Promise<void> {
+  async createOfficial(official: Record<string, unknown>): Promise<void> {
     const { error } = await supabase.from('party_officials').insert([official])
     if (error) throw error
   },
 
-  async updateOfficial(id: string, official: Partial<PartyOfficial>): Promise<void> {
+  async updateOfficial(id: string, official: Record<string, unknown>): Promise<void> {
     const { id: _id, ...rest } = official
     void _id
     const { error } = await supabase.from('party_officials').update(rest).eq('id', id)

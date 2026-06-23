@@ -92,7 +92,7 @@ export default function LeadershipHub() {
           return {
             id: c.id,
             chapter_name: c.name,
-            leader_name: c.leader_name,
+            leader_name: c.leader_name!,
             leader_id: c.leader_id,
             avatar_url: (profile?.avatar_url as string | null) ?? null,
             registration_number: (profile?.registration_number as string | null) ?? null,
@@ -219,7 +219,7 @@ export default function LeadershipHub() {
         ...(appointRole === 'Chapter Leader' ? { status: 'Active' } : {}),
       })
       if (success) {
-        if (chapterName) {
+        if (chapterName && selectedMember.authId) {
           await chapterService.assignMemberToChapter(selectedMember.authId, chapterName)
         }
         await chapterService.insertChapterLeader(selectedChapterId, {
@@ -245,7 +245,7 @@ export default function LeadershipHub() {
   // Remove the currently assigned leader from a chapter, resetting to Unassigned
   const handleRemoveLeader = async (l: AppointedLeader) => {
     try {
-      await chapterService.removeChapterLeader(l.id)
+      await chapterService.unassignChapterLeader(l.id)
       setAllLeaders((prev) => prev.filter((x) => x.id !== l.id))
       toast.success(`${l.leader_name} removed from ${l.chapter_name}.`)
     } catch {
