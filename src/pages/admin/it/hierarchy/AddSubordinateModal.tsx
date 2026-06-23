@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { AdminCandidate } from './types'
 import { INPUT_ST } from './types'
@@ -35,12 +35,8 @@ export function AddSubordinateModal({
       }
       setSearching(true)
       try {
-        const { data } = await supabase
-          .from('users')
-          .select('id, full_name, avatar_url')
-          .ilike('full_name', `%${query}%`)
-          .limit(8)
-        const filtered = (data ?? []).filter((u) => !existingUserIds.has(u.id))
+        const data = await itService.searchUsers(query)
+        const filtered = data.filter((u) => !existingUserIds.has(u.id))
         setCandidates(
           filtered.map((u) => ({
             id: u.id,
@@ -67,13 +63,11 @@ export function AddSubordinateModal({
     }
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('it_hierarchy')
-        .upsert(
-          { user_id: selected.id, reports_to: parentUserId, role_title: roleTitle.trim() },
-          { onConflict: 'user_id' }
-        )
-      if (error) throw error
+      await itService.upsertHierarchyNode({
+        user_id: selected.id,
+        reports_to: parentUserId,
+        role_title: roleTitle.trim(),
+      })
       toast.success(`${selected.full_name} added to the hierarchy`)
       onSaved()
     } catch (err: unknown) {

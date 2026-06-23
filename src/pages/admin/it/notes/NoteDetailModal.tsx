@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { Note, Comment } from './types'
 import { colorFor, fmtDate, NOTE_INK } from './types'
@@ -51,33 +51,8 @@ export function NoteDetailModal({
    */
   const loadComments = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('it_note_comments')
-        .select('id, content, created_at, author_id')
-        .eq('note_id', note.id)
-        .order('created_at', { ascending: true })
-      if (error) throw error
-
-      const authorIds = [
-        ...new Set((data ?? []).map((c) => c.author_id).filter(Boolean)),
-      ] as string[]
-      let nameMap: Record<string, string> = {}
-      if (authorIds.length > 0) {
-        const { data: users } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .in('id', authorIds)
-        nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
-      }
-
-      setComments(
-        (data ?? []).map((c) => ({
-          id: c.id,
-          content: c.content,
-          created_at: c.created_at,
-          author_name: nameMap[c.author_id] ?? 'Unknown',
-        }))
-      )
+      const data = await itService.getNoteComments(note.id)
+      setComments(data)
     } catch (err: unknown) {
       console.error('Failed to load comments:', err)
     } finally {
@@ -102,13 +77,8 @@ export function NoteDetailModal({
     try {
       // .select() reveals whether RLS actually matched the row — an update the
       // caller isn't allowed to make succeeds silently with zero rows
-      const { data, error } = await supabase
-        .from('it_notes')
-        .update({ archived_at: note.archived_at ? null : new Date().toISOString() })
-        .eq('id', note.id)
-        .select('id')
-      if (error) throw error
-      if (!data?.length) throw new Error('Only the author or an admin can archive this note')
+      const count = await itService.archiveNote(note.id, !!note.archived_at)
+      if (!count) throw new Error('Only the author or an admin can archive this note')
       toast.success(note.archived_at ? 'Note restored to the board' : 'Note archived')
       onMutated?.()
     } catch (err: unknown) {
@@ -130,13 +100,8 @@ export function NoteDetailModal({
     }
     setMutating(true)
     try {
-      const { data, error } = await supabase
-        .from('it_notes')
-        .delete()
-        .eq('id', note.id)
-        .select('id')
-      if (error) throw error
-      if (!data?.length) throw new Error('Only the author or an admin can delete this note')
+      const count = await itService.deleteNote(note.id)
+      if (!count) throw new Error('Only the author or an admin can delete this note')
       toast.success('Note deleted')
       onMutated?.()
     } catch (err: unknown) {
@@ -156,16 +121,13 @@ export function NoteDetailModal({
     if (!newComment.trim()) return
     setPosting(true)
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-      const { error } = await supabase.from('it_note_comments').insert({
+      const userId = await itService.getCurrentUserId()
+      if (!userId) throw new Error('Not authenticated')
+      await itService.createNoteComment({
         note_id: note.id,
-        author_id: user.id,
+        author_id: userId,
         content: newComment.trim(),
       })
-      if (error) throw error
       setNewComment('')
       await loadComments()
       if (onCommentAdded) {

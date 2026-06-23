@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { Note, NoteColor } from './types'
 import { COLORS, colorFor, NOTE_INK } from './types'
@@ -27,33 +27,23 @@ export function CreateNoteModal({ note, onClose, onSaved }: CreateModalProps) {
     setSaving(true)
     try {
       if (isEdit && note) {
-        // .select() reveals whether RLS matched — an update the caller isn't
-        // allowed to make would otherwise succeed silently with zero rows.
-        const { data, error } = await supabase
-          .from('it_notes')
-          .update({
-            title: title.trim() || null,
-            content: content.trim(),
-            color_theme: color,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', note.id)
-          .select('id')
-        if (error) throw error
-        if (!data?.length) throw new Error('Only the author or an admin can edit this note')
-        toast.success('Note updated')
-      } else {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (!user) throw new Error('Not authenticated')
-        const { error } = await supabase.from('it_notes').insert({
+        const count = await itService.updateNote(note.id, {
           title: title.trim() || null,
           content: content.trim(),
           color_theme: color,
-          author_id: user.id,
+          updated_at: new Date().toISOString(),
         })
-        if (error) throw error
+        if (!count) throw new Error('Only the author or an admin can edit this note')
+        toast.success('Note updated')
+      } else {
+        const userId = await itService.getCurrentUserId()
+        if (!userId) throw new Error('Not authenticated')
+        await itService.createNote({
+          title: title.trim() || null,
+          content: content.trim(),
+          color_theme: color,
+          author_id: userId,
+        })
         toast.success('Note pinned to the board')
       }
       onSaved()

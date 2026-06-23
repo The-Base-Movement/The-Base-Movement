@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { ITTicket, TicketPriority, TicketStatus } from './ITTickets'
 import { relativeTime } from './itTicketUtils'
@@ -46,13 +46,9 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
     let cancelled = false
     async function fetchComments() {
       setLoadingCmts(true)
-      const { data } = await supabase
-        .from('it_ticket_comments')
-        .select('id, body, created_at, author_id, users!author_id(full_name)')
-        .eq('ticket_id', ticket.id)
-        .order('created_at', { ascending: true })
+      const data = await itService.getTicketComments(ticket.id)
       if (!cancelled) {
-        setComments((data ?? []) as unknown as Comment[])
+        setComments(data as unknown as Comment[])
         setLoadingCmts(false)
       }
     }
@@ -70,20 +66,18 @@ export function ITTicketPanel({ ticket, currentUserId, isItStaff, onClose, onUpd
     const trimmed = body.trim()
     if (!trimmed) return
     setPosting(true)
-    const { error } = await supabase
-      .from('it_ticket_comments')
-      .insert({ ticket_id: ticket.id, author_id: currentUserId, body: trimmed })
-    if (error) {
-      toast.error('Failed to post comment')
-    } else {
+    try {
+      await itService.addTicketComment({
+        ticket_id: ticket.id,
+        author_id: currentUserId,
+        body: trimmed,
+      })
       setBody('')
-      const { data } = await supabase
-        .from('it_ticket_comments')
-        .select('id, body, created_at, author_id, users!author_id(full_name)')
-        .eq('ticket_id', ticket.id)
-        .order('created_at', { ascending: true })
-      setComments((data ?? []) as unknown as Comment[])
+      const data = await itService.getTicketComments(ticket.id)
+      setComments(data as unknown as Comment[])
       onUpdated()
+    } catch {
+      toast.error('Failed to post comment')
     }
     setPosting(false)
   }

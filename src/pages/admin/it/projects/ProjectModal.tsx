@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { Project, ProjectStatus } from './types'
 import { COLUMNS } from './types'
@@ -34,17 +34,11 @@ export function ProjectModal({ editing, onClose, onSaved }: ProjectModalProps) {
         end_date: endDate || null,
       }
       if (editing) {
-        const { error } = await supabase.from('it_projects').update(payload).eq('id', editing.id)
-        if (error) throw error
+        await itService.upsertProject(editing.id, payload)
         toast.success('Project updated')
       } else {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        const { error } = await supabase
-          .from('it_projects')
-          .insert({ ...payload, created_by: user?.id })
-        if (error) throw error
+        const userId = await itService.getCurrentUserId()
+        await itService.upsertProject(null, { ...payload, created_by: userId })
         toast.success('Project created')
       }
       onSaved()

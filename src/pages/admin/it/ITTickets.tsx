@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -39,37 +39,13 @@ export default function ITTickets() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const [{ data: rawTickets }, { data: staff }] = await Promise.all([
-        supabase
-          .from('it_tickets')
-          .select(
-            '*, submitter:users!submitted_by(full_name), assignee:users!assigned_to(full_name)'
-          )
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('admins')
-          .select('id, users!admins_id_fkey(full_name)')
-          .in('role', ['SUPER_ADMIN', 'FOUNDER']),
-      ])
-      setItStaff(
-        (staff ?? []).map((s: Record<string, unknown>) => ({
-          id: s.id as string,
-          name: (s.users as { full_name: string } | null)?.full_name ?? 'Unknown',
-        }))
-      )
+      const { tickets: rawTickets, itStaff: staff } = await itService.getTicketsWithStaff()
+      setItStaff(staff)
       setTickets(
-        (rawTickets ?? []).map((t: Record<string, unknown>) => ({
-          id: t.id as string,
-          title: t.title as string,
-          description: t.description as string,
+        rawTickets.map((t) => ({
+          ...t,
           priority: t.priority as TicketPriority,
           status: t.status as TicketStatus,
-          submitted_by: t.submitted_by as string,
-          assigned_to: t.assigned_to as string | null,
-          created_at: t.created_at as string,
-          updated_at: t.updated_at as string,
-          submitter_name: (t.submitter as { full_name: string } | null)?.full_name ?? 'Unknown',
-          assignee_name: (t.assignee as { full_name: string } | null)?.full_name ?? null,
         }))
       )
     } catch (err) {
@@ -89,11 +65,9 @@ export default function ITTickets() {
   // Update status state configuration for a support ticket card
   const updateStatus = async (ticketId: string, newStatus: TicketStatus) => {
     setTickets((prev) => prev.map((t) => (t.id === ticketId ? { ...t, status: newStatus } : t)))
-    const { error } = await supabase
-      .from('it_tickets')
-      .update({ status: newStatus })
-      .eq('id', ticketId)
-    if (error) {
+    try {
+      await itService.updateTicket(ticketId, { status: newStatus })
+    } catch {
       toast.error('Failed to update status')
       load()
     }
@@ -108,11 +82,9 @@ export default function ITTickets() {
         return { ...t, assigned_to: adminId, assignee_name: staffMember?.name ?? null }
       })
     )
-    const { error } = await supabase
-      .from('it_tickets')
-      .update({ assigned_to: adminId })
-      .eq('id', ticketId)
-    if (error) {
+    try {
+      await itService.updateTicket(ticketId, { assigned_to: adminId })
+    } catch {
       toast.error('Failed to assign ticket')
       load()
     }

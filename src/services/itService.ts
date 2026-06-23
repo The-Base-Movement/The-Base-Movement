@@ -221,24 +221,91 @@ export const itService = {
     if (error) throw error
   },
 
+  async updateNote(id: string, payload: Record<string, unknown>): Promise<number> {
+    const { data, error } = await supabase
+      .from('it_notes')
+      .update(payload)
+      .eq('id', id)
+      .select('id')
+    if (error) throw error
+    return data?.length ?? 0
+  },
+
+  async getNoteComments(noteId: string) {
+    const { data, error } = await supabase
+      .from('it_note_comments')
+      .select('id, content, created_at, author_id')
+      .eq('note_id', noteId)
+      .order('created_at', { ascending: true })
+    if (error) throw error
+    const authorIds = [...new Set((data ?? []).map((c) => c.author_id).filter(Boolean))] as string[]
+    let nameMap: Record<string, string> = {}
+    if (authorIds.length > 0) {
+      const { data: users } = await supabase
+        .from('users')
+        .select('id, full_name')
+        .in('id', authorIds)
+      nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
+    }
+    return (data ?? []).map((c) => ({
+      id: c.id as string,
+      content: c.content as string,
+      created_at: c.created_at as string,
+      author_name: nameMap[c.author_id] ?? 'Unknown',
+    }))
+  },
+
   async createNoteComment(payload: Record<string, unknown>): Promise<void> {
     const { error } = await supabase.from('it_note_comments').insert(payload)
     if (error) throw error
   },
 
-  // ── Tickets ──
-  async getTickets() {
+  async archiveNote(id: string, archived: boolean): Promise<number> {
     const { data, error } = await supabase
-      .from('it_tickets')
-      .select('*')
-      .order('created_at', { ascending: false })
+      .from('it_notes')
+      .update({ archived_at: archived ? null : new Date().toISOString() })
+      .eq('id', id)
+      .select('id')
     if (error) throw error
-    return data ?? []
+    return data?.length ?? 0
   },
 
-  async getTicketAdmins() {
-    const { data } = await supabase.from('admins').select('id, users(full_name)')
-    return data ?? []
+  async deleteNote(id: string): Promise<number> {
+    const { data, error } = await supabase.from('it_notes').delete().eq('id', id).select('id')
+    if (error) throw error
+    return data?.length ?? 0
+  },
+
+  // ── Tickets ──
+  async getTicketsWithStaff() {
+    const [{ data: rawTickets }, { data: staff }] = await Promise.all([
+      supabase
+        .from('it_tickets')
+        .select('*, submitter:users!submitted_by(full_name), assignee:users!assigned_to(full_name)')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('admins')
+        .select('id, users!admins_id_fkey(full_name)')
+        .in('role', ['SUPER_ADMIN', 'FOUNDER']),
+    ])
+    const itStaff = (staff ?? []).map((s: Record<string, unknown>) => ({
+      id: s.id as string,
+      name: (s.users as { full_name: string } | null)?.full_name ?? 'Unknown',
+    }))
+    const tickets = (rawTickets ?? []).map((t: Record<string, unknown>) => ({
+      id: t.id as string,
+      title: t.title as string,
+      description: t.description as string,
+      priority: t.priority as string,
+      status: t.status as string,
+      submitted_by: t.submitted_by as string,
+      assigned_to: t.assigned_to as string | null,
+      created_at: t.created_at as string,
+      updated_at: t.updated_at as string,
+      submitter_name: (t.submitter as { full_name: string } | null)?.full_name ?? 'Unknown',
+      assignee_name: (t.assignee as { full_name: string } | null)?.full_name ?? null,
+    }))
+    return { tickets, itStaff }
   },
 
   async updateTicket(id: string, payload: Record<string, unknown>): Promise<void> {
@@ -259,7 +326,7 @@ export const itService = {
   async getTicketComments(ticketId: string) {
     const { data } = await supabase
       .from('it_ticket_comments')
-      .select('*, user:users!user_id(full_name, avatar_url)')
+      .select('id, body, created_at, author_id, users!author_id(full_name)')
       .eq('ticket_id', ticketId)
       .order('created_at', { ascending: true })
     return data ?? []
@@ -271,6 +338,34 @@ export const itService = {
   },
 
   // ── Security ──
+  async getSecurityProtocols() {
+    const { data, error } = await supabase
+      .from('it_security_protocols')
+      .select('id, title, markdown_content, file_url, version, created_at, created_by')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    const creatorIds = [
+      ...new Set((data ?? []).map((p) => p.created_by).filter(Boolean)),
+    ] as string[]
+    let nameMap: Record<string, string> = {}
+    if (creatorIds.length > 0) {
+      const { data: users } = await supabase
+        .from('users')
+        .select('id, full_name')
+        .in('id', creatorIds)
+      nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
+    }
+    return (data ?? []).map((p) => ({
+      id: p.id as string,
+      title: p.title as string,
+      markdown_content: p.markdown_content as string | null,
+      file_url: p.file_url as string | null,
+      version: p.version as string | null,
+      created_at: p.created_at as string,
+      author_name: nameMap[p.created_by] ?? 'Unknown',
+    }))
+  },
+
   async uploadSecurityProtocol(file: File, path: string) {
     const { error } = await supabase.storage.from('it-security-protocols').upload(path, file)
     if (error) throw error
@@ -291,6 +386,24 @@ export const itService = {
   },
 
   // ── Hierarchy ──
+  async searchUsers(query: string, limit = 8) {
+    const { data } = await supabase
+      .from('users')
+      .select('id, full_name, avatar_url')
+      .ilike('full_name', `%${query}%`)
+      .limit(limit)
+    return data ?? []
+  },
+
+  async upsertHierarchyNode(payload: {
+    user_id: string
+    reports_to: string | null
+    role_title: string
+  }): Promise<void> {
+    const { error } = await supabase.from('it_hierarchy').upsert(payload, { onConflict: 'user_id' })
+    if (error) throw error
+  },
+
   async searchAdmins(query: string) {
     const { data } = await supabase
       .from('admins')

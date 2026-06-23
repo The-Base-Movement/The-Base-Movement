@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useCallback, useContext } from 'react'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { ITLayoutContext } from './ITLayoutContext'
 import { SortToggle } from '@/components/ui/SortToggle'
@@ -62,35 +62,8 @@ export default function ITSecurity() {
   // Fetch security protocol records and resolve creator usernames
   const load = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('it_security_protocols')
-        .select('id, title, markdown_content, file_url, version, created_at, created_by')
-        .order('created_at', { ascending: false })
-      if (error) throw error
-
-      const creatorIds = [
-        ...new Set((data ?? []).map((p) => p.created_by).filter(Boolean)),
-      ] as string[]
-      let nameMap: Record<string, string> = {}
-      if (creatorIds.length > 0) {
-        const { data: users } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .in('id', creatorIds)
-        nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
-      }
-
-      setProtocols(
-        (data ?? []).map((p) => ({
-          id: p.id,
-          title: p.title,
-          markdown_content: p.markdown_content,
-          file_url: p.file_url,
-          version: p.version,
-          created_at: p.created_at,
-          author_name: nameMap[p.created_by] ?? 'Unknown',
-        }))
-      )
+      const data = await itService.getSecurityProtocols()
+      setProtocols(data)
     } catch {
       toast.error('Failed to load protocols')
     } finally {
@@ -126,35 +99,26 @@ export default function ITSecurity() {
     }
     setSaving(true)
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
+      const userId = await itService.getCurrentUserId()
+      if (!userId) throw new Error('Not authenticated')
 
       let fileUrl: string | null = null
 
       if (pdfFile) {
         setProgress('Uploading PDF to Supabase Storage…')
         const slug = title.trim().replace(/\s+/g, '-').toLowerCase().slice(0, 40)
-        const path = `${user.id}/${Date.now()}-${slug}.pdf`
-
-        const { error: upErr } = await supabase.storage
-          .from('it-security-protocols')
-          .upload(path, pdfFile, { contentType: 'application/pdf' })
-        if (upErr) throw upErr
-
-        fileUrl = supabase.storage.from('it-security-protocols').getPublicUrl(path).data.publicUrl
+        const path = `${userId}/${Date.now()}-${slug}.pdf`
+        fileUrl = await itService.uploadSecurityProtocol(pdfFile, path)
         setProgress('PDF uploaded — saving record…')
       }
 
-      const { error: insErr } = await supabase.from('it_security_protocols').insert({
+      await itService.createSecurityProtocol({
         title: title.trim(),
         version: version.trim() || null,
         markdown_content: markdown.trim() || null,
         file_url: fileUrl,
-        created_by: user.id,
+        created_by: userId,
       })
-      if (insErr) throw insErr
 
       toast.success('Protocol saved')
       reset()
@@ -172,17 +136,14 @@ export default function ITSecurity() {
   async function handleDelete(id: string, fileUrl: string | null) {
     if (!confirm('Delete this protocol? This cannot be undone.')) return
     try {
+      let storagePath: string | undefined
       if (fileUrl) {
         const BUCKET = 'it-security-protocols'
         const marker = `/storage/v1/object/public/${BUCKET}/`
         const idx = fileUrl.indexOf(marker)
-        if (idx !== -1) {
-          const storagePath = decodeURIComponent(fileUrl.slice(idx + marker.length))
-          await supabase.storage.from(BUCKET).remove([storagePath])
-        }
+        if (idx !== -1) storagePath = decodeURIComponent(fileUrl.slice(idx + marker.length))
       }
-      const { error } = await supabase.from('it_security_protocols').delete().eq('id', id)
-      if (error) throw error
+      await itService.deleteSecurityProtocol(id, storagePath)
       toast.success('Protocol deleted')
       setProtocols((prev) => prev.filter((p) => p.id !== id))
       if (openId === id) setOpenId(null)

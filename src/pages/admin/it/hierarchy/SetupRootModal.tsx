@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { AdminCandidate } from './types'
 import { INPUT_ST } from './types'
@@ -25,13 +25,9 @@ export function SetupRootModal({ onClose, onSaved }: Props) {
       }
       setSearching(true)
       try {
-        const { data } = await supabase
-          .from('users')
-          .select('id, full_name, avatar_url')
-          .ilike('full_name', `%${query}%`)
-          .limit(8)
+        const data = await itService.searchUsers(query)
         setCandidates(
-          (data ?? []).map((u) => ({
+          data.map((u) => ({
             id: u.id,
             full_name: u.full_name,
             role: '',
@@ -52,13 +48,11 @@ export function SetupRootModal({ onClose, onSaved }: Props) {
     }
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('it_hierarchy')
-        .upsert(
-          { user_id: selected.id, reports_to: null, role_title: 'IT Manager' },
-          { onConflict: 'user_id' }
-        )
-      if (error) throw error
+      await itService.upsertHierarchyNode({
+        user_id: selected.id,
+        reports_to: null,
+        role_title: 'IT Manager',
+      })
       toast.success(`${selected.full_name} set as IT Manager`)
       onSaved()
     } catch (err: unknown) {

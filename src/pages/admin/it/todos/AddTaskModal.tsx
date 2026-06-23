@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase } from '@/lib/supabase'
+import { itService } from '@/services/itService'
 import { toast } from 'sonner'
 import type { TodoStatus, UserOption } from './types'
 import { STATUS_CONFIG, ALL_STATUSES } from './types'
@@ -45,12 +45,8 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
     timer.current = setTimeout(async () => {
       setSearching(true)
       try {
-        const { data } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .ilike('full_name', `%${query}%`)
-          .limit(6)
-        setUsers(data ?? [])
+        const data = await itService.searchUsers(query, 6)
+        setUsers(data)
       } finally {
         setSearching(false)
       }
@@ -73,17 +69,14 @@ export function AddTaskModal({ onClose, onSaved }: AddModalProps) {
     }
     setSaving(true)
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      const { error } = await supabase.from('it_todos').insert({
+      const userId = await itService.getCurrentUserId()
+      await itService.createTodo({
         task: task.trim(),
         status,
         assignee_id: selected?.id ?? null,
         due_date: dueDate || null,
-        created_by: user?.id,
+        created_by: userId,
       })
-      if (error) throw error
       toast.success('Task added')
       onSaved()
     } catch (err: unknown) {
