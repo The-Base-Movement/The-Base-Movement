@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
+import { chapterService } from '@/services/chapterService'
 import { donationService } from '@/services/donationService'
 import { usePerformance } from '@/context/PerformanceContext'
 import type {
@@ -113,10 +114,7 @@ export default function WarRoomCommand() {
       setDonationStats(donData)
       const [mCount, cCount] = await Promise.all([
         adminService.getTotalMemberCount(),
-        supabase
-          .from('chapters')
-          .select('*', { count: 'exact', head: true })
-          .then((res) => res.count || 0),
+        chapterService.getTotalChapterCount(),
       ])
       setMemberCount(mCount)
       setChapterCount(cCount)

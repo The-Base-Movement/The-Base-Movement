@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
-import type { Factor, AuthError, Session, User } from '@supabase/supabase-js'
+import type { Factor } from '@supabase/supabase-js'
 import { authService } from '@/services/authService'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -27,28 +26,6 @@ type SettingsTab =
   | 'buttons'
   | 'audit'
   | 'finance'
-
-interface SupabaseAuthWithMFA {
-  mfa: {
-    listFactors: () => Promise<{ data: { all: Factor[] }; error: AuthError | null }>
-    enroll: (params: { factorType: 'totp'; friendlyName?: string; issuer?: string }) => Promise<{
-      data: {
-        id: string
-        totp: { qr_code: string; secret?: string; uri?: string }
-      }
-      error: AuthError | null
-    }>
-    challenge: (params: {
-      factorId: string
-    }) => Promise<{ data: { id: string }; error: AuthError | null }>
-    verify: (params: {
-      factorId: string
-      challengeId: string
-      code: string
-    }) => Promise<{ data: { session: Session | null; user: User | null }; error: AuthError | null }>
-    unenroll: (params: { factorId: string }) => Promise<{ error: AuthError | null }>
-  }
-}
 
 const tabs: { id: SettingsTab; label: string; icon: string }[] = [
   { id: 'profile', label: 'My Profile', icon: 'person' },
@@ -155,10 +132,8 @@ export default function AdminSettings() {
 
   useEffect(() => {
     const fetchMfa = async () => {
-      const { data, error } = await (
-        supabase.auth as unknown as SupabaseAuthWithMFA
-      ).mfa.listFactors()
-      if (!error && data) setMfaFactors(data.all || [])
+      const factors = await authService.listAllMfaFactors()
+      setMfaFactors(factors)
     }
     fetchMfa()
   }, [])
@@ -167,24 +142,10 @@ export default function AdminSettings() {
     if (mfaEnrollingRef.current) return
     mfaEnrollingRef.current = true
     try {
-      const auth = supabase.auth as unknown as SupabaseAuthWithMFA
-      // Drop any dangling unverified factors first — each enroll mints a fresh
-      // secret, so a leftover unverified factor makes the scanned code verify
-      // against the wrong secret and collides on the default friendly name.
-      const existing = await auth.mfa.listFactors()
-      if (!existing.error) {
-        await Promise.all(
-          (existing.data?.all ?? [])
-            .filter((f) => f.factor_type === 'totp' && f.status === 'unverified')
-            .map((f) => auth.mfa.unenroll({ factorId: f.id }))
-        )
-      }
-      const { data, error } = await auth.mfa.enroll({
-        factorType: 'totp',
-        friendlyName: `Authenticator (${new Date().toISOString()})`,
-        issuer: 'The Base Movement',
-      })
-      if (error) throw error
+      const data = await authService.enrollMfa(
+        `Authenticator (${new Date().toISOString()})`,
+        'The Base Movement'
+      )
       setMfaEnrollData({
         id: data.id,
         qr: data.totp.qr_code,
@@ -205,20 +166,11 @@ export default function AdminSettings() {
     if (!mfaEnrollData || normalizedCode.length < 6) return
     setIsSaving(true)
     try {
-      const auth = supabase.auth as unknown as SupabaseAuthWithMFA
-      const challenge = await auth.mfa.challenge({ factorId: mfaEnrollData.id })
-      if (challenge.error) throw challenge.error
-      const verify = await auth.mfa.verify({
-        factorId: mfaEnrollData.id,
-        challengeId: challenge.data.id,
-        code: normalizedCode,
-      })
-      if (verify.error) throw verify.error
+      await authService.challengeAndVerifyMfa(mfaEnrollData.id, normalizedCode)
       sessionStorage.setItem('admin_gate_verified', '1')
       toast.success('MFA successfully enabled!')
       setShowMfaDialog(false)
-      const { data } = await auth.mfa.listFactors()
-      setMfaFactors(data?.all || [])
+      setMfaFactors(await authService.listAllMfaFactors())
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : 'MFA verification failed')
     } finally {
@@ -228,13 +180,9 @@ export default function AdminSettings() {
 
   const handleUnenrollMfa = async (factorId: string) => {
     try {
-      const { error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.unenroll({
-        factorId,
-      })
-      if (error) throw error
+      await authService.unenrollMfa(factorId)
       toast.success('MFA disabled')
-      const { data } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.listFactors()
-      setMfaFactors(data?.all || [])
+      setMfaFactors(await authService.listAllMfaFactors())
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : 'Failed to disable MFA')
     }

@@ -53,6 +53,14 @@ class ChapterService {
     return count || 0
   }
 
+  async getTotalChapterCount(): Promise<number> {
+    const { count, error } = await supabase
+      .from('chapters')
+      .select('*', { count: 'exact', head: true })
+    if (error) return 0
+    return count || 0
+  }
+
   async getChapters(): Promise<Chapter[]> {
     const { data, error } = await supabase
       .from('chapters')

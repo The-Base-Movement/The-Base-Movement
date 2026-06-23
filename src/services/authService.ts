@@ -280,6 +280,35 @@ class AuthService {
     if (verify.error) throw verify.error
     return verify.data
   }
+
+  async listAllMfaFactors() {
+    const { data, error } = await supabase.auth.mfa.listFactors()
+    if (error) return []
+    return data?.all ?? []
+  }
+
+  async enrollMfa(friendlyName: string, issuer: string) {
+    const existing = await supabase.auth.mfa.listFactors()
+    if (!existing.error) {
+      await Promise.all(
+        (existing.data?.all ?? [])
+          .filter((f) => f.factor_type === 'totp' && f.status === 'unverified')
+          .map((f) => supabase.auth.mfa.unenroll({ factorId: f.id }))
+      )
+    }
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: 'totp',
+      friendlyName,
+      issuer,
+    })
+    if (error) throw error
+    return data
+  }
+
+  async unenrollMfa(factorId: string) {
+    const { error } = await supabase.auth.mfa.unenroll({ factorId })
+    if (error) throw error
+  }
 }
 
 export const authService = AuthService.getInstance()
