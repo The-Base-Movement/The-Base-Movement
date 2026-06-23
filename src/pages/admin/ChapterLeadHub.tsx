@@ -1,10 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { adminService } from '@/services/adminService'
 import { chapterOpsService } from './chapterhub/chapterOpsService'
 import type { Chapter } from '@/types/admin'
 import type { ChapterMember, ChapterDonation } from './chapterhub/types'
+
+const PHONE_VISIBLE_ROLES = new Set([
+  'CHAPTER_LEAD',
+  'CHAPTER_SECRETARY',
+  'CONSTITUENCY_LEAD',
+  'SUPER_ADMIN',
+  'FOUNDER',
+  'ORGANIZER',
+  'EXECUTIVE',
+  'ADMIN',
+])
 
 // Sub-components
 import { HubSelector } from './chapterhub/HubSelector'
@@ -56,6 +67,14 @@ export default function AdminChapterLeadHub() {
     load()
   }, [chapterId, setCurrentLabel])
 
+  const currentRole = adminService.getCurrentUser()?.role
+  const canSeePhone = PHONE_VISIBLE_ROLES.has(currentRole ?? '')
+
+  const verifiedDonations = useMemo(
+    () => donations.filter((d) => d.status === 'Verified'),
+    [donations]
+  )
+
   if (isLoading) {
     return (
       <div className="main">
@@ -85,14 +104,13 @@ export default function AdminChapterLeadHub() {
     )
   }
 
-  // If no chapter is selected (or not found), show the selector
   if (!chapter) {
     return <HubSelector chapters={chapters} />
   }
 
   const activeCount = members.filter((m) => m.status === 'Active' || m.status === 'Approved').length
   const pendingCount = members.filter((m) => m.status === 'Pending').length
-  const totalDonated = donations.reduce((s, d) => s + Number(d.amount), 0)
+  const totalDonated = verifiedDonations.reduce((s, d) => s + Number(d.amount), 0)
 
   return (
     <div className="main">
@@ -104,7 +122,7 @@ export default function AdminChapterLeadHub() {
         totalDonated={totalDonated}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        donationsCount={donations.length}
+        donationsCount={verifiedDonations.length}
       />
 
       {activeTab === 'members' && (
@@ -112,10 +130,13 @@ export default function AdminChapterLeadHub() {
           members={members}
           searchQuery={memberSearch}
           setSearchQuery={setMemberSearch}
+          canSeePhone={canSeePhone}
         />
       )}
 
-      {activeTab === 'donations' && <HubDonationsList donations={donations} />}
+      {activeTab === 'donations' && (
+        <HubDonationsList donations={verifiedDonations} canSeePhone={canSeePhone} />
+      )}
 
       {activeTab === 'helpdesk' && <Helpdesk departmentId="chapter" />}
     </div>

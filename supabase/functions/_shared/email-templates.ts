@@ -493,3 +493,38 @@ export function incompleteRegistrationEmail(d: IncompleteRegistrationEmailData):
   ${emailFooter('THE BASE MOVEMENT · GHANA FIRST, JOBS FOR THE YOUTH!')}
   ${SHELL_CLOSE}`
 }
+
+// ── Pending Donation Reminder ──
+
+interface PendingDonationEmailData {
+  name: string
+  amount: string
+  reference: string
+  createdAt: string
+  donateUrl: string
+}
+
+export function pendingDonationEmail(d: PendingDonationEmailData): string {
+  return `${SHELL_OPEN}
+  ${TOP_BAR}
+  ${emailHeader('DONATION PENDING')}
+  <div style="background:#fff;padding:28px">
+    <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:18px;color:#181d19;margin:0 0 8px">Hi ${d.name},</h2>
+    <p style="font-size:13px;color:#666;line-height:1.6;margin:0 0 20px">You started a donation of <strong style="color:#006B3F">GH₵ ${d.amount}</strong> on ${d.createdAt} but it hasn't been completed yet.</p>
+    <div style="background:#fffdf5;border:1px solid #f0e6c8;border-radius:6px;padding:16px 20px;margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee">
+        <span style="font-size:12px;color:#666">Amount</span>
+        <span style="font-size:13px;font-weight:700;color:#006B3F">GH₵ ${d.amount}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0">
+        <span style="font-size:12px;color:#666">Reference</span>
+        <span style="font-size:12px;color:#181d19;font-family:monospace">${d.reference}</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#666;line-height:1.6;margin:0 0 20px">If you still wish to contribute, please complete your payment. If not, no action is needed — the donation will be automatically cancelled after 7 days.</p>
+    ${ctaButton('Complete My Donation →', d.donateUrl, '#006B3F')}
+    <p style="font-size:11px;color:#999;text-align:center;margin-top:16px">Every contribution fuels the movement. Thank you for your support!</p>
+  </div>
+  ${emailFooter('THE BASE MOVEMENT · GHANA FIRST, JOBS FOR THE YOUTH!')}
+  ${SHELL_CLOSE}`
+}

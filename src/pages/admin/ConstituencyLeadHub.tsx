@@ -514,7 +514,7 @@ export default function AdminConstituencyLeadHub() {
                             color: 'hsl(var(--on-surface))',
                           }}
                         >
-                          {m.full_name}
+                          {m.full_name.split(' ')[0]}
                         </span>
                       </div>
                     </td>

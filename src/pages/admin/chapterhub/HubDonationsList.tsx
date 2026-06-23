@@ -4,6 +4,16 @@ import { SortToggle } from '@/components/ui/SortToggle'
 
 interface HubDonationsListProps {
   donations: ChapterDonation[]
+  canSeePhone?: boolean
+}
+
+function firstName(full: string) {
+  return full.split(' ')[0] || full
+}
+
+function maskPhone(phone: string) {
+  if (phone.length <= 4) return '••••'
+  return phone.slice(0, -4).replace(/./g, '•') + phone.slice(-4)
 }
 
 function donationStatusClass(status: string) {
@@ -12,7 +22,7 @@ function donationStatusClass(status: string) {
   return 'pill-mute'
 }
 
-export function HubDonationsList({ donations }: HubDonationsListProps) {
+export function HubDonationsList({ donations, canSeePhone = false }: HubDonationsListProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
@@ -153,7 +163,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                         fontFamily: "'Public Sans', sans-serif",
                       }}
                     >
-                      {d.full_name}
+                      {firstName(d.full_name)}
                     </p>
                     <p
                       style={{
@@ -163,7 +173,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
-                      {d.phone}
+                      {canSeePhone ? d.phone : maskPhone(d.phone)}
                     </p>
                   </td>
                   <td
@@ -257,7 +267,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                         fontFamily: "'Public Sans', sans-serif",
                       }}
                     >
-                      {d.full_name}
+                      {firstName(d.full_name)}
                     </p>
                     <p
                       style={{
@@ -267,7 +277,7 @@ export function HubDonationsList({ donations }: HubDonationsListProps) {
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
-                      {d.phone}
+                      {canSeePhone ? d.phone : maskPhone(d.phone)}
                     </p>
                   </div>
                   <span

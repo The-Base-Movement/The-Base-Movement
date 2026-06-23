@@ -7,6 +7,16 @@ interface HubMembersListProps {
   members: ChapterMember[]
   searchQuery: string
   setSearchQuery: (query: string) => void
+  canSeePhone?: boolean
+}
+
+function firstName(full: string) {
+  return full.split(' ')[0] || full
+}
+
+function maskPhone(phone: string) {
+  if (phone.length <= 4) return '••••'
+  return phone.slice(0, -4).replace(/./g, '•') + phone.slice(-4)
 }
 
 function statusClass(status: string) {
@@ -15,7 +25,12 @@ function statusClass(status: string) {
   return 'pill-mute'
 }
 
-export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMembersListProps) {
+export function HubMembersList({
+  members,
+  searchQuery,
+  setSearchQuery,
+  canSeePhone = false,
+}: HubMembersListProps) {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   const sortedMembers = useMemo(() => {
@@ -189,18 +204,32 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                             fontFamily: "'Public Sans', sans-serif",
                           }}
                         >
-                          {m.name}
+                          {firstName(m.name)}
                         </p>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontSize: 10,
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            color: 'hsl(var(--on-surface-muted))',
-                          }}
-                        >
-                          {m.phone}
-                        </p>
+                        {canSeePhone && (
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 10,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              color: 'hsl(var(--on-surface-muted))',
+                            }}
+                          >
+                            {m.phone}
+                          </p>
+                        )}
+                        {!canSeePhone && m.phone !== 'N/A' && (
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 10,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              color: 'hsl(var(--on-surface-muted))',
+                            }}
+                          >
+                            {maskPhone(m.phone)}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -323,7 +352,7 @@ export function HubMembersList({ members, searchQuery, setSearchQuery }: HubMemb
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {m.name}
+                    {firstName(m.name)}
                   </p>
                   <p
                     style={{
