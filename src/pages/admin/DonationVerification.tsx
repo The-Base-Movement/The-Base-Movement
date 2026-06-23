@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
-import { supabase } from '@/lib/supabase'
+import { donationService } from '@/services/donationService'
 import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -165,12 +165,8 @@ export default function FinancialAudit() {
     action: 'Verified' | 'Rejected'
   ) => {
     setIsVerifying(donationId)
-    // Save internal note if present
     if (internalNote.trim()) {
-      await supabase
-        .from('donations')
-        .update({ verification_notes: internalNote })
-        .eq('id', donationId)
+      await donationService.updateVerificationNotes(donationId, internalNote)
     }
     const success = await adminService.verifyDonation(
       donationId,
@@ -182,12 +178,7 @@ export default function FinancialAudit() {
         action === 'Verified' ? `${name} — contribution approved.` : `${name} — flagged for review.`
       )
       if (action === 'Verified') {
-        // Fire-and-forget: generate receipt + send email. Non-fatal if it fails.
-        supabase.functions
-          .invoke('send-donation-receipt', { body: { donationId } })
-          .catch((err: unknown) => {
-            console.error('[Admin] Receipt send failed:', err)
-          })
+        donationService.sendReceipt(donationId)
       }
       setSelectedDonation(null)
       fetchData(true)
@@ -201,15 +192,10 @@ export default function FinancialAudit() {
   const handleRefund = async (donationId: string, name: string) => {
     setIsVerifying(donationId)
     try {
-      // Save internal note if present
       if (internalNote.trim()) {
-        await supabase
-          .from('donations')
-          .update({ verification_notes: internalNote })
-          .eq('id', donationId)
+        await donationService.updateVerificationNotes(donationId, internalNote)
       }
-      // Update status to Refunded
-      await supabase.from('donations').update({ status: 'Refunded' }).eq('id', donationId)
+      await donationService.markRefunded(donationId)
       toast.success(`${name} — refund initiated.`)
       setSelectedDonation(null)
       fetchData(true)
@@ -301,11 +287,7 @@ export default function FinancialAudit() {
   const handleBackfillReceipts = async (force = false) => {
     setIsBackfilling(true)
     try {
-      const { data, error } = await supabase.functions.invoke('backfill-donation-receipts', {
-        body: { force },
-      })
-      if (error) throw error
-      const result = data as { total: number; processed: number; failed: number }
+      const result = await donationService.backfillReceipts(force)
       if (result.total === 0) {
         toast.success('All verified donations already have receipts.')
       } else {

@@ -844,6 +844,78 @@ class MessagingService {
     return true
   }
 
+  async getDepartmentDashboard(deptId: string): Promise<{
+    dept: Record<string, unknown> | null
+    stats: {
+      open: number
+      inProgress: number
+      urgentOpen: number
+      unassigned: number
+      resolved30d: number
+      total: number
+    }
+  }> {
+    const since30d = new Date(Date.now() - 30 * 86400000).toISOString()
+    const base = () =>
+      supabase
+        .from('helpdesk_tickets')
+        .select('*', { count: 'exact', head: true })
+        .eq('department_id', deptId)
+
+    const [{ data: deptRow }, open, inProgress, urgentOpen, unassigned, resolved30d, total] =
+      await Promise.all([
+        supabase.from('helpdesk_departments').select('*').eq('id', deptId).maybeSingle(),
+        base().eq('status', 'open'),
+        base().eq('status', 'in-progress'),
+        base().in('status', ['open', 'in-progress']).in('priority', ['urgent', 'high']),
+        base().in('status', ['open', 'in-progress']).is('assigned_to', null),
+        base().eq('status', 'resolved').gte('updated_at', since30d),
+        base(),
+      ])
+    return {
+      dept: deptRow as Record<string, unknown> | null,
+      stats: {
+        open: open.count ?? 0,
+        inProgress: inProgress.count ?? 0,
+        urgentOpen: urgentOpen.count ?? 0,
+        unassigned: unassigned.count ?? 0,
+        resolved30d: resolved30d.count ?? 0,
+        total: total.count ?? 0,
+      },
+    }
+  }
+
+  async getUserProfile(
+    userId: string
+  ): Promise<{ id: string; full_name: string; avatar_url: string | null } | null> {
+    const { data } = await supabase
+      .from('users')
+      .select('id, full_name, avatar_url')
+      .eq('id', userId)
+      .maybeSingle()
+    return data as { id: string; full_name: string; avatar_url: string | null } | null
+  }
+
+  async getAdminOptions(): Promise<{ id: string; role: string; full_name: string }[]> {
+    const { data } = await supabase.from('admins').select('id, role, users(full_name)')
+    const rows = (data ?? []) as unknown as {
+      id: string
+      role: string
+      users: { full_name: string | null } | null
+    }[]
+    return rows
+      .map((r) => ({ id: r.id, role: r.role, full_name: r.users?.full_name ?? 'Unknown' }))
+      .sort((a, b) => a.full_name.localeCompare(b.full_name))
+  }
+
+  async updateDepartmentLead(deptId: string, leadId: string | null): Promise<void> {
+    const { error } = await supabase
+      .from('helpdesk_departments')
+      .update({ lead_id: leadId })
+      .eq('id', deptId)
+    if (error) throw error
+  }
+
   async getDepartmentsWithOpenTickets(): Promise<{
     departments: { id: string; name: string; icon: string; sort_order: number }[]
     openCounts: Record<string, number>

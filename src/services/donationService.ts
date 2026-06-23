@@ -480,6 +480,38 @@ class DonationService {
 
     return stats
   }
+
+  async updateVerificationNotes(donationId: string, notes: string): Promise<void> {
+    const { error } = await supabase
+      .from('donations')
+      .update({ verification_notes: notes })
+      .eq('id', donationId)
+    if (error) throw error
+  }
+
+  async sendReceipt(donationId: string): Promise<void> {
+    await supabase.functions
+      .invoke('send-donation-receipt', { body: { donationId } })
+      .catch((err: unknown) => console.error('[DonationService] Receipt send failed:', err))
+  }
+
+  async markRefunded(donationId: string): Promise<void> {
+    const { error } = await supabase
+      .from('donations')
+      .update({ status: 'Refunded' })
+      .eq('id', donationId)
+    if (error) throw error
+  }
+
+  async backfillReceipts(
+    force = false
+  ): Promise<{ total: number; processed: number; failed: number }> {
+    const { data, error } = await supabase.functions.invoke('backfill-donation-receipts', {
+      body: { force },
+    })
+    if (error) throw error
+    return data as { total: number; processed: number; failed: number }
+  }
 }
 
 export const donationService = DonationService.getInstance()

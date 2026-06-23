@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase'
+import { messagingService } from '@/services/messagingService'
 import { adminService } from '@/services/adminService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { Helpdesk } from '@/components/admin/Helpdesk'
@@ -136,45 +136,20 @@ export default function DepartmentDashboard() {
     if (!deptId) return
     let cancelled = false
     async function load() {
-      const since30d = new Date(Date.now() - 30 * 86400000).toISOString()
-      const base = () =>
-        supabase
-          .from('helpdesk_tickets')
-          .select('*', { count: 'exact', head: true })
-          .eq('department_id', deptId as string)
-
-      const [{ data: deptRow }, open, inProgress, urgentOpen, unassigned, resolved30d, total] =
-        await Promise.all([
-          supabase.from('helpdesk_departments').select('*').eq('id', deptId).maybeSingle(),
-          base().eq('status', 'open'),
-          base().eq('status', 'in-progress'),
-          base().in('status', ['open', 'in-progress']).in('priority', ['urgent', 'high']),
-          base().in('status', ['open', 'in-progress']).is('assigned_to', null),
-          base().eq('status', 'resolved').gte('updated_at', since30d),
-          base(),
-        ])
+      const { dept: deptRow, stats: deptStats } = await messagingService.getDepartmentDashboard(
+        deptId as string
+      )
       if (cancelled) return
       const deptData = (deptRow as HelpdeskDepartment) ?? null
       setDept(deptData)
       if (deptData?.lead_id) {
-        const { data: leadRow } = await supabase
-          .from('users')
-          .select('id, full_name, avatar_url')
-          .eq('id', deptData.lead_id)
-          .maybeSingle()
+        const leadRow = await messagingService.getUserProfile(deptData.lead_id)
         if (!cancelled) setLead((leadRow as LeadProfile) ?? null)
       } else {
         setLead(null)
       }
       if (cancelled) return
-      setStats({
-        open: open.count ?? 0,
-        inProgress: inProgress.count ?? 0,
-        urgentOpen: urgentOpen.count ?? 0,
-        unassigned: unassigned.count ?? 0,
-        resolved30d: resolved30d.count ?? 0,
-        total: total.count ?? 0,
-      })
+      setStats(deptStats)
       setLoading(false)
     }
     void load()
@@ -187,17 +162,8 @@ export default function DepartmentDashboard() {
     setSelectedLead(dept?.lead_id ?? '')
     setAppointOpen(true)
     if (adminOptions.length === 0) {
-      const { data } = await supabase.from('admins').select('id, role, users(full_name)')
-      const rows = (data ?? []) as unknown as {
-        id: string
-        role: string
-        users: { full_name: string | null } | null
-      }[]
-      setAdminOptions(
-        rows
-          .map((r) => ({ id: r.id, role: r.role, full_name: r.users?.full_name ?? 'Unknown' }))
-          .sort((a, b) => a.full_name.localeCompare(b.full_name))
-      )
+      const options = await messagingService.getAdminOptions()
+      setAdminOptions(options)
     }
   }
 
@@ -205,13 +171,8 @@ export default function DepartmentDashboard() {
     if (!deptId) return
     setSavingLead(true)
     const newLeadId = selectedLead || null
-    const { error } = await supabase
-      .from('helpdesk_departments')
-      .update({ lead_id: newLeadId })
-      .eq('id', deptId)
-    if (error) {
-      toast.error('Failed to update department lead')
-    } else {
+    try {
+      await messagingService.updateDepartmentLead(deptId, newLeadId)
       toast.success(newLeadId ? 'Department lead appointed' : 'Department lead removed')
       setDept((prev) => (prev ? { ...prev, lead_id: newLeadId } : prev))
       if (newLeadId) {
@@ -221,6 +182,8 @@ export default function DepartmentDashboard() {
         setLead(null)
       }
       setAppointOpen(false)
+    } catch {
+      toast.error('Failed to update department lead')
     }
     setSavingLead(false)
   }
