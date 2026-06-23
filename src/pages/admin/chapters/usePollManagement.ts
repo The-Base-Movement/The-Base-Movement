@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { chapterService } from '@/services/chapterService'
 import { contentService } from '@/services/contentService'
 import type { Chapter } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -60,25 +60,9 @@ export function usePollManagement() {
 
   const fetchChapterPolls = async (chapterId: string) => {
     setLoadingPolls(true)
-    const { data } = await supabase
-      .from('chapter_polls')
-      .select('*, chapter_poll_candidates(*), chapter_poll_votes(id)')
-      .eq('chapter_id', chapterId)
-      .order('created_at', { ascending: false })
+    const polls = await chapterService.getChapterPolls(chapterId)
+    setChapterPolls(polls)
     setLoadingPolls(false)
-    if (data) {
-      setChapterPolls(
-        data.map((p) => ({
-          id: p.id,
-          title: p.title,
-          description: p.description,
-          ends_at: p.ends_at,
-          banner_url: p.banner_url,
-          total_votes: (p.chapter_poll_votes || []).length,
-          candidates: p.chapter_poll_candidates || [],
-        }))
-      )
-    }
   }
 
   const openPollManageModal = (chapter: Chapter) => {
@@ -126,22 +110,9 @@ export function usePollManagement() {
       setShowCandidateDropdown(false)
       return
     }
-    const { data } = await supabase
-      .from('users')
-      .select('id, full_name, avatar_url, registration_number')
-      .ilike('full_name', `%${q}%`)
-      .limit(6)
-    if (data) {
-      setPollCandidateMatches(
-        data.map((u) => ({
-          id: u.id,
-          name: u.full_name,
-          avatar_url: u.avatar_url,
-          registration_number: u.registration_number,
-        }))
-      )
-      setShowCandidateDropdown(true)
-    }
+    const matches = await chapterService.searchUsersForPollCandidate(q)
+    setPollCandidateMatches(matches)
+    setShowCandidateDropdown(true)
   }
 
   const selectPollCandidate = (m: PollCandidateMatch) => {
@@ -172,27 +143,24 @@ export function usePollManagement() {
   }
 
   const handleClosePollEarly = async (pollId: string) => {
-    const { error } = await supabase
-      .from('chapter_polls')
-      .update({ ends_at: new Date().toISOString() })
-      .eq('id', pollId)
-    if (error) {
+    try {
+      await chapterService.closeChapterPollEarly(pollId)
+      toast.success('Poll closed.')
+      fetchChapterPolls(managePollChapterId)
+    } catch {
       toast.error('Failed to close poll.')
-      return
     }
-    toast.success('Poll closed.')
-    fetchChapterPolls(managePollChapterId)
   }
 
   const handleDeletePoll = async (pollId: string) => {
     if (!window.confirm('Delete this poll and all its votes? This cannot be undone.')) return
-    const { error } = await supabase.from('chapter_polls').delete().eq('id', pollId)
-    if (error) {
+    try {
+      await chapterService.deleteChapterPoll(pollId)
+      toast.success('Poll deleted.')
+      fetchChapterPolls(managePollChapterId)
+    } catch {
       toast.error('Failed to delete poll.')
-      return
     }
-    toast.success('Poll deleted.')
-    fetchChapterPolls(managePollChapterId)
   }
 
   const handleCreatePoll = async () => {
@@ -220,68 +188,32 @@ export function usePollManagement() {
       }
     }
 
-    if (editingPollId) {
-      const { error } = await supabase
-        .from('chapter_polls')
-        .update({
-          title: pollTitle.trim(),
-          description: pollDescription.trim() || null,
-          ends_at: new Date(pollEndsAt).toISOString(),
-          banner_url: bannerUrl,
-        })
-        .eq('id', editingPollId)
-      if (error) {
-        toast.error('Failed to update poll.')
-        setIsCreatingPoll(false)
-        return
-      }
-      await supabase.from('chapter_poll_candidates').delete().eq('poll_id', editingPollId)
-      await supabase.from('chapter_poll_candidates').insert(
-        pollCandidates.map((c) => ({
-          poll_id: editingPollId,
-          name: c.name,
-          position: c.position || null,
-          avatar_url: c.avatar_url || null,
-        }))
-      )
-      setIsCreatingPoll(false)
-      toast.success('Poll updated.')
-      setShowPollModal(false)
-      fetchChapterPolls(pollChapterId)
-    } else {
-      const { data: poll, error: pollError } = await supabase
-        .from('chapter_polls')
-        .insert({
-          chapter_id: pollChapterId,
-          title: pollTitle.trim(),
-          description: pollDescription.trim() || null,
-          ends_at: new Date(pollEndsAt).toISOString(),
-          banner_url: bannerUrl,
-        })
-        .select('id')
-        .single()
-      if (pollError || !poll) {
-        toast.error('Failed to create poll.')
-        setIsCreatingPoll(false)
-        return
-      }
-      const { error: candError } = await supabase.from('chapter_poll_candidates').insert(
-        pollCandidates.map((c) => ({
-          poll_id: poll.id,
-          name: c.name,
-          position: c.position || null,
-          avatar_url: c.avatar_url || null,
-        }))
-      )
-      setIsCreatingPoll(false)
-      if (candError) {
-        toast.error('Poll created but failed to add candidates.')
-        return
-      }
-      toast.success(`Poll created for "${pollChapterName}".`)
-      setShowPollModal(false)
-      fetchChapterPolls(pollChapterId)
+    const pollData = {
+      title: pollTitle.trim(),
+      description: pollDescription.trim() || null,
+      ends_at: new Date(pollEndsAt).toISOString(),
+      banner_url: bannerUrl,
     }
+    const candidateData = pollCandidates.map((c) => ({
+      name: c.name,
+      position: c.position || null,
+      avatar_url: c.avatar_url || null,
+    }))
+
+    try {
+      if (editingPollId) {
+        await chapterService.updateChapterPoll(editingPollId, pollData, candidateData)
+        toast.success('Poll updated.')
+      } else {
+        await chapterService.createChapterPoll(pollChapterId, pollData, candidateData)
+        toast.success(`Poll created for "${pollChapterName}".`)
+      }
+      setShowPollModal(false)
+      fetchChapterPolls(pollChapterId)
+    } catch {
+      toast.error(editingPollId ? 'Failed to update poll.' : 'Failed to create poll.')
+    }
+    setIsCreatingPoll(false)
   }
 
   return {

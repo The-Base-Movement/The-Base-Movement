@@ -843,6 +843,96 @@ class ChapterService {
       .eq('id', chapterId)
     if (error) throw error
   }
+
+  async getChapterPolls(chapterId: string) {
+    const { data } = await supabase
+      .from('chapter_polls')
+      .select('*, chapter_poll_candidates(*), chapter_poll_votes(id)')
+      .eq('chapter_id', chapterId)
+      .order('created_at', { ascending: false })
+    return (data ?? []).map((p: Record<string, unknown>) => ({
+      id: p.id as string,
+      title: p.title as string,
+      description: p.description as string | null,
+      ends_at: p.ends_at as string,
+      banner_url: p.banner_url as string | null,
+      total_votes: ((p.chapter_poll_votes as unknown[]) || []).length,
+      candidates:
+        (p.chapter_poll_candidates as {
+          id: string
+          name: string
+          position: string | null
+          avatar_url: string | null
+        }[]) || [],
+    }))
+  }
+
+  async searchUsersForPollCandidate(query: string) {
+    const { data } = await supabase
+      .from('users')
+      .select('id, full_name, avatar_url, registration_number')
+      .ilike('full_name', `%${query}%`)
+      .limit(6)
+    return (data ?? []).map((u: Record<string, unknown>) => ({
+      id: u.id as string,
+      name: u.full_name as string,
+      avatar_url: u.avatar_url as string | null,
+      registration_number: u.registration_number as string,
+    }))
+  }
+
+  async closeChapterPollEarly(pollId: string): Promise<void> {
+    const { error } = await supabase
+      .from('chapter_polls')
+      .update({ ends_at: new Date().toISOString() })
+      .eq('id', pollId)
+    if (error) throw error
+  }
+
+  async deleteChapterPoll(pollId: string): Promise<void> {
+    const { error } = await supabase.from('chapter_polls').delete().eq('id', pollId)
+    if (error) throw error
+  }
+
+  async createChapterPoll(
+    chapterId: string,
+    poll: {
+      title: string
+      description: string | null
+      ends_at: string
+      banner_url: string | null
+    },
+    candidates: { name: string; position: string | null; avatar_url: string | null }[]
+  ): Promise<void> {
+    const { data, error } = await supabase
+      .from('chapter_polls')
+      .insert({ chapter_id: chapterId, ...poll })
+      .select('id')
+      .single()
+    if (error || !data) throw error ?? new Error('Failed to create poll')
+    const { error: candError } = await supabase
+      .from('chapter_poll_candidates')
+      .insert(candidates.map((c) => ({ poll_id: data.id, ...c })))
+    if (candError) throw candError
+  }
+
+  async updateChapterPoll(
+    pollId: string,
+    poll: {
+      title: string
+      description: string | null
+      ends_at: string
+      banner_url: string | null
+    },
+    candidates: { name: string; position: string | null; avatar_url: string | null }[]
+  ): Promise<void> {
+    const { error } = await supabase.from('chapter_polls').update(poll).eq('id', pollId)
+    if (error) throw error
+    await supabase.from('chapter_poll_candidates').delete().eq('poll_id', pollId)
+    await supabase
+      .from('chapter_poll_candidates')
+      .insert(candidates.map((c) => ({ poll_id: pollId, ...c })))
+  }
 }
 
 export const chapterService = ChapterService.getInstance()
