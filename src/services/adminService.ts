@@ -404,6 +404,21 @@ class AdminService {
     return data as { created: number; skipped: number; failed: number }
   }
 
+  async createMemberLoginsBulk(
+    members: { reg_no: string; phone: string; name: string; email?: string }[]
+  ) {
+    const { data, error } = await supabase.functions.invoke('create-csv-member-accounts', {
+      body: { members },
+    })
+    if (error) throw error
+    return data as {
+      created: number
+      skipped: number
+      failed: number
+      failedUsers?: { reg_no: string; error: string }[]
+    }
+  }
+
   /**
    * Admin-initiated password reset for a member. Generates a Supabase recovery
    * link via the admin-reset-password edge function (service role) and emails it

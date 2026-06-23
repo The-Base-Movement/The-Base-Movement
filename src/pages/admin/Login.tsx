@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authService } from '@/services/authService'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 
@@ -58,8 +57,7 @@ export default function AdminLogin() {
     try {
       await authService.login(email, password)
 
-      const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors()
-      if (factorsError) throw factorsError
+      const factors = await authService.listMfaFactors()
       const verifiedTotp = factors?.totp?.find((factor) => factor.status === 'verified')
 
       if (verifiedTotp) {
@@ -88,14 +86,7 @@ export default function AdminLogin() {
     if (normalizedCode.length < 6) return
     setIsLoading(true)
     try {
-      const challenge = await supabase.auth.mfa.challenge({ factorId: mfaFactorId })
-      if (challenge.error) throw challenge.error
-      const verify = await supabase.auth.mfa.verify({
-        factorId: mfaFactorId,
-        challengeId: challenge.data.id,
-        code: normalizedCode,
-      })
-      if (verify.error) throw verify.error
+      await authService.challengeAndVerifyMfa(mfaFactorId, normalizedCode)
 
       // MFA proven at login — don't re-challenge at the admin gate this visit
       sessionStorage.setItem('admin_gate_verified', '1')

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { constituencyService } from '@/services/constituencyService'
-import { supabase } from '@/lib/supabase'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { Helpdesk } from '@/components/admin/Helpdesk'
 import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
@@ -67,16 +66,12 @@ export default function AdminConstituencyLeadHub() {
         return
       }
       setConstituency(c)
-      const [{ data: membersData }, acts, comm] = await Promise.all([
-        supabase
-          .from('users')
-          .select('id, full_name, avatar_url, status, profession, registration_number')
-          .eq('constituency', c.name)
-          .order('full_name', { ascending: true }),
+      const [membersData, acts, comm] = await Promise.all([
+        constituencyService.getMembersByConstituencyName(c.name),
         constituencyService.getConstituencyActivities(numericId),
         constituencyService.getCommittee(numericId),
       ])
-      setMembers(membersData ?? [])
+      setMembers(membersData)
       setActivities(acts)
       setCommittee(comm)
       setLoading(false)
@@ -90,12 +85,8 @@ export default function AdminConstituencyLeadHub() {
         setLeaderOptions([])
         return
       }
-      const { data } = await supabase
-        .from('users')
-        .select('id, full_name, avatar_url')
-        .ilike('full_name', `%${leaderSearch}%`)
-        .limit(10)
-      setLeaderOptions(data ?? [])
+      const data = await constituencyService.searchUsersByName(leaderSearch)
+      setLeaderOptions(data)
     }, 300)
     return () => clearTimeout(t)
   }, [leaderSearch])
@@ -106,12 +97,8 @@ export default function AdminConstituencyLeadHub() {
         setCommitteeMemberOptions([])
         return
       }
-      const { data } = await supabase
-        .from('users')
-        .select('id, full_name, avatar_url')
-        .ilike('full_name', `%${committeeMemberSearch}%`)
-        .limit(10)
-      setCommitteeMemberOptions(data ?? [])
+      const data = await constituencyService.searchUsersByName(committeeMemberSearch)
+      setCommitteeMemberOptions(data)
     }, 300)
     return () => clearTimeout(t)
   }, [committeeMemberSearch])

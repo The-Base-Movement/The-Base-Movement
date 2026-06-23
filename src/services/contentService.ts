@@ -888,6 +888,15 @@ class ContentService {
       isActive: a.is_active as boolean,
     }))
   }
+
+  async sendPushNotification(params: {
+    userIds: string[] | 'all'
+    title: string
+    body: string
+    url?: string
+  }): Promise<void> {
+    await supabase.functions.invoke('send-push-notification', { body: params }).catch(console.error)
+  }
 }
 
 export const contentService = ContentService.getInstance()

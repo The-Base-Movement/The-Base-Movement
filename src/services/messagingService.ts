@@ -843,6 +843,36 @@ class MessagingService {
 
     return true
   }
+
+  async getDepartmentsWithOpenTickets(): Promise<{
+    departments: { id: string; name: string; icon: string; sort_order: number }[]
+    openCounts: Record<string, number>
+  }> {
+    const [{ data: depts }, { data: tickets }] = await Promise.all([
+      supabase
+        .from('helpdesk_departments')
+        .select('*')
+        .eq('active', true)
+        .order('sort_order', { ascending: true }),
+      supabase
+        .from('helpdesk_tickets')
+        .select('department_id')
+        .in('status', ['open', 'in-progress']),
+    ])
+    const counts: Record<string, number> = {}
+    for (const t of (tickets ?? []) as { department_id: string }[]) {
+      counts[t.department_id] = (counts[t.department_id] ?? 0) + 1
+    }
+    return {
+      departments: (depts ?? []) as {
+        id: string
+        name: string
+        icon: string
+        sort_order: number
+      }[],
+      openCounts: counts,
+    }
+  }
 }
 
 export const messagingService = MessagingService.getInstance()

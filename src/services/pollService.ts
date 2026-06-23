@@ -231,6 +231,16 @@ class PollService {
     }
     return data || []
   }
+
+  async getLatestFeedback(): Promise<{ content: string; category: string } | null> {
+    const { data } = await supabase
+      .from('member_feedback')
+      .select('content, category')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    return data
+  }
 }
 
 export const pollService = PollService.getInstance()

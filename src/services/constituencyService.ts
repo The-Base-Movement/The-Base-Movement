@@ -327,6 +327,25 @@ class ConstituencyService {
     }))
   }
 
+  async getMembersByConstituencyName(constituencyName: string) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, full_name, avatar_url, status, profession, registration_number')
+      .eq('constituency', constituencyName)
+      .order('full_name', { ascending: true })
+    if (error) throw error
+    return data ?? []
+  }
+
+  async searchUsersByName(query: string, limit = 10) {
+    const { data } = await supabase
+      .from('users')
+      .select('id, full_name, avatar_url')
+      .ilike('full_name', `%${query}%`)
+      .limit(limit)
+    return data ?? []
+  }
+
   async removeCommitteeMember(memberId: string): Promise<boolean> {
     const { error } = await supabase.from('constituency_leaders').delete().eq('id', memberId)
 

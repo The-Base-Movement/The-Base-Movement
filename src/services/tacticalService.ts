@@ -384,6 +384,16 @@ class TacticalService {
       throw error
     }
   }
+
+  async sendDirectMessage(userId: string, title: string, message: string): Promise<void> {
+    const { error } = await supabase.from('notifications').insert({
+      user_id: userId,
+      title,
+      message,
+      type: 'Direct Message',
+    })
+    if (error) throw error
+  }
 }
 
 export const tacticalService = TacticalService.getInstance()

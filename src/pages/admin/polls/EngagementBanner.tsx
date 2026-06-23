@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { pollService } from '@/services/pollService'
 
 interface EngagementBannerProps {
   onOpenAnalytics: () => void
@@ -10,15 +10,9 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
   const [quote, setQuote] = useState<{ content: string; category: string } | null>(null)
 
   useEffect(() => {
-    supabase
-      .from('member_feedback')
-      .select('content, category')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) setQuote(data)
-      })
+    pollService.getLatestFeedback().then((data) => {
+      if (data) setQuote(data)
+    })
   }, [])
 
   return (

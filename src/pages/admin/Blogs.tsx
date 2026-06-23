@@ -16,7 +16,6 @@ import { createPortal } from 'react-dom'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
-import { supabase } from '@/lib/supabase'
 import type { BlogPost, AdminUser, Author } from '@/types/admin'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
 import { toast } from 'sonner'
@@ -317,16 +316,12 @@ export default function AdminBlogs() {
       })
       if (success) {
         toast.success('Post published.')
-        supabase.functions
-          .invoke('send-push-notification', {
-            body: {
-              userIds: 'all',
-              title: 'New article published',
-              body: post.title.slice(0, 100),
-              url: `/dashboard/blog/${post.id}`,
-            },
-          })
-          .catch(console.error)
+        contentService.sendPushNotification({
+          userIds: 'all',
+          title: 'New article published',
+          body: post.title.slice(0, 100),
+          url: `/dashboard/blog/${post.id}`,
+        })
       } else {
         setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: post.status } : p)))
         toast.error('Failed to publish post.')

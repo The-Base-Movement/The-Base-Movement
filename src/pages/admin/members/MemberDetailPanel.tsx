@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase'
+import { tacticalService } from '@/services/tacticalService'
 import {
   adminService,
   type Member,
@@ -101,20 +101,16 @@ export function MemberDetailPanel({
   async function handleSendMessage() {
     if (!msgTitle.trim() || !msgBody.trim()) return
     setIsSendingMsg(true)
-    const { error } = await supabase.from('notifications').insert({
-      user_id: member.authId,
-      title: msgTitle.trim(),
-      message: msgBody.trim(),
-      type: 'Direct Message',
-    })
-    setIsSendingMsg(false)
-    if (error) {
-      toast.error('Failed to send message.')
-    } else {
+    try {
+      await tacticalService.sendDirectMessage(member.authId, msgTitle.trim(), msgBody.trim())
       toast.success('Message delivered to member.')
       setShowMessageModal(false)
       setMsgTitle('')
       setMsgBody('')
+    } catch {
+      toast.error('Failed to send message.')
+    } finally {
+      setIsSendingMsg(false)
     }
   }
 

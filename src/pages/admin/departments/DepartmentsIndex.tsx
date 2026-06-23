@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
+import { messagingService } from '@/services/messagingService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
-import type { HelpdeskDepartment } from '@/components/admin/Helpdesk/types'
 
 export default function DepartmentsIndex() {
   const { setCurrentLabel } = usePageLabel()
-  const [departments, setDepartments] = useState<HelpdeskDepartment[]>([])
+  const [departments, setDepartments] = useState<
+    { id: string; name: string; icon: string; sort_order: number }[]
+  >([])
   const [openCounts, setOpenCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
 
@@ -16,22 +17,9 @@ export default function DepartmentsIndex() {
 
   useEffect(() => {
     async function load() {
-      const [{ data: depts }, { data: tickets }] = await Promise.all([
-        supabase
-          .from('helpdesk_departments')
-          .select('*')
-          .eq('active', true)
-          .order('sort_order', { ascending: true }),
-        supabase
-          .from('helpdesk_tickets')
-          .select('department_id')
-          .in('status', ['open', 'in-progress']),
-      ])
-      setDepartments((depts ?? []) as HelpdeskDepartment[])
-      const counts: Record<string, number> = {}
-      for (const t of (tickets ?? []) as { department_id: string }[]) {
-        counts[t.department_id] = (counts[t.department_id] ?? 0) + 1
-      }
+      const { departments: depts, openCounts: counts } =
+        await messagingService.getDepartmentsWithOpenTickets()
+      setDepartments(depts)
       setOpenCounts(counts)
       setLoading(false)
     }

@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { adminService } from '@/services/adminService'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import type { User } from '@/types/admin'
 
@@ -320,33 +319,20 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
       // Provision Auth accounts and send passwords via Edge Function
       if (totalInserted > 0) {
         try {
-          const { data: authResult, error: authFuncError } = await supabase.functions.invoke(
-            'create-csv-member-accounts',
-            {
-              body: {
-                members: usersToInsert.map((u) => ({
-                  reg_no: u.registration_number,
-                  phone: u.phone_number,
-                  name: u.full_name,
-                  email: u.email || undefined,
-                })),
-              },
-            }
+          const authResult = await adminService.createMemberLoginsBulk(
+            usersToInsert.map((u) => ({
+              reg_no: u.registration_number,
+              phone: u.phone_number,
+              name: u.full_name,
+              email: u.email || undefined,
+            }))
           )
-
-          if (authFuncError) {
-            console.warn('[CSV-IMPORT-AUTH-ERROR] Edge function failed:', authFuncError)
-            toast.warning(
-              'CSV profiles imported, but automatic account provisioning failed. Please reset passwords manually.'
-            )
-          } else if (authResult) {
-            const { created, skipped, failed, failedUsers } = authResult
-            console.warn(
-              `[CSV-IMPORT-AUTH-SUCCESS] Accounts: ${created} created, ${skipped} skipped, ${failed} failed.`
-            )
-            if (failedUsers && failedUsers.length > 0) {
-              console.error('[CSV-IMPORT-FAILURES] Details:', failedUsers)
-            }
+          const { created, skipped, failed, failedUsers } = authResult
+          console.warn(
+            `[CSV-IMPORT-AUTH-SUCCESS] Accounts: ${created} created, ${skipped} skipped, ${failed} failed.`
+          )
+          if (failedUsers && failedUsers.length > 0) {
+            console.error('[CSV-IMPORT-FAILURES] Details:', failedUsers)
           }
         } catch (authErr) {
           console.warn('[CSV-IMPORT-AUTH-EXCEPTION] Failed to call Edge Function:', authErr)

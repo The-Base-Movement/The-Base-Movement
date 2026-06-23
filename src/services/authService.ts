@@ -262,6 +262,24 @@ class AuthService {
       throw new Error(error.message || 'Failed to update profile')
     }
   }
+
+  async listMfaFactors() {
+    const { data, error } = await supabase.auth.mfa.listFactors()
+    if (error) throw error
+    return data
+  }
+
+  async challengeAndVerifyMfa(factorId: string, code: string) {
+    const challenge = await supabase.auth.mfa.challenge({ factorId })
+    if (challenge.error) throw challenge.error
+    const verify = await supabase.auth.mfa.verify({
+      factorId,
+      challengeId: challenge.data.id,
+      code,
+    })
+    if (verify.error) throw verify.error
+    return verify.data
+  }
 }
 
 export const authService = AuthService.getInstance()
