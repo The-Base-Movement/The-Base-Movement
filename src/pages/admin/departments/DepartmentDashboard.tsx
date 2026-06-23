@@ -140,7 +140,7 @@ export default function DepartmentDashboard() {
         deptId as string
       )
       if (cancelled) return
-      const deptData = (deptRow as HelpdeskDepartment) ?? null
+      const deptData = (deptRow as unknown as HelpdeskDepartment) ?? null
       setDept(deptData)
       if (deptData?.lead_id) {
         const leadRow = await messagingService.getUserProfile(deptData.lead_id)
