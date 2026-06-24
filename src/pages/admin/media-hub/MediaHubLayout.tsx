@@ -141,14 +141,30 @@ export default function MediaHubLayout() {
   return (
     <MediaHubContext.Provider value={{ header, setHeader }}>
       <div style={{ fontFamily: "'Public Sans', sans-serif" }}>
-        {/* Full-width page header */}
-        <AdminPageHeader
-          title={header.title}
-          icon={header.icon}
-          description={header.description}
-          actions={header.actions}
-          style={isMobile ? { padding: '0 14px 16px' } : undefined}
-        />
+        {/* Full-width page header with brand icon */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
+            marginBottom: 4,
+            padding: isMobile ? '0 14px' : undefined,
+          }}
+        >
+          <img
+            src="/media-hub-icon.png"
+            alt="Media Hub"
+            style={{ width: 36, height: 36, objectFit: 'contain', flexShrink: 0 }}
+          />
+          <div style={{ flex: 1 }}>
+            <AdminPageHeader
+              title={header.title}
+              icon={header.icon}
+              description={header.description}
+              actions={header.actions}
+            />
+          </div>
+        </div>
 
         {/* Page content */}
         <div style={isMobile ? { padding: '0 14px 40px' } : undefined}>
