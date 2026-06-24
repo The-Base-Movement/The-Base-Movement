@@ -221,6 +221,8 @@ class AuthService {
     }
 
     sessionStorage.removeItem('admin_device_captured')
+    sessionStorage.removeItem('admin_gate_verified')
+    sessionStorage.removeItem('admin_gate_passed')
 
     this.lastLoggedToken = null
     this.currentSession = null

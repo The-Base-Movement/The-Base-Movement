@@ -106,11 +106,15 @@ export default function ProtectedAdminRoute() {
   if (isLoading) return null
 
   if (!session) {
-    return <Navigate to="/admin-login" state={{ from: location }} replace />
+    sessionStorage.removeItem(ADMIN_GATE_KEY)
+    sessionStorage.removeItem('admin_gate_passed')
+    return <Navigate to="/command" state={{ from: location }} replace />
   }
 
   if (errorState) {
-    return <Navigate to="/admin-login" state={{ error: errorState }} replace />
+    sessionStorage.removeItem(ADMIN_GATE_KEY)
+    sessionStorage.removeItem('admin_gate_passed')
+    return <Navigate to="/command" state={{ error: errorState }} replace />
   }
 
   if (status === 'checking') return null
