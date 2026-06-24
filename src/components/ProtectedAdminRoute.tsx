@@ -132,6 +132,7 @@ export default function ProtectedAdminRoute() {
       <AdminTwoFactorGate
         factorId={factorId}
         onVerified={() => {
+          sessionStorage.setItem(ADMIN_GATE_KEY, '1')
           setStatus('allowed')
         }}
       />
