@@ -352,4 +352,31 @@ export const discordService = {
       'content'
     )
   },
+
+  adminAccessAttempt(success: boolean, ip?: string): void {
+    post(
+      {
+        title: success ? '🔓 Admin Gate Unlocked' : '🚫 Admin Gate Failed Attempt',
+        description: success
+          ? 'Someone entered the correct admin passphrase.'
+          : 'An incorrect passphrase was entered at the admin gate.',
+        color: success ? 0xdaa520 : 0xce1126,
+        fields: [
+          { name: 'IP / Fingerprint', value: ip || 'Unknown', inline: true },
+          {
+            name: 'Time',
+            value: new Date().toLocaleString('en-GB', { timeZone: 'Africa/Accra' }),
+            inline: true,
+          },
+          {
+            name: 'URL',
+            value: typeof window !== 'undefined' ? window.location.href : '—',
+            inline: false,
+          },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'alerts'
+    )
+  },
 }

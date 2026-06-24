@@ -1,6 +1,24 @@
 {
   "headers": [
     {
+      "source": "/command",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" },
+        { "key": "X-Powered-By", "value": "" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, private" },
+        { "key": "Pragma", "value": "no-cache" }
+      ]
+    },
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" },
+        { "key": "X-Powered-By", "value": "" },
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, private" },
+        { "key": "Pragma", "value": "no-cache" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
