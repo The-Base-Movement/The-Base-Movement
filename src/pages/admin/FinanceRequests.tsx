@@ -12,6 +12,9 @@ import { financeService, type FinanceRequest } from '@/services/financeService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { toast } from 'sonner'
+import type { Region, Chapter } from '@/types/admin'
+
+type ScopeType = 'region' | 'chapter'
 
 type RequestType = FinanceRequest['request_type']
 
@@ -135,11 +138,41 @@ export default function FinanceRequests() {
   const [loading, setLoading] = useState(true)
 
   const [reqType, setReqType] = useState<RequestType>('BudgetAllocation')
-  const [chapter, setChapter] = useState('')
+  const [scope, setScope] = useState<ScopeType>('region')
+  const [selectedRegion, setSelectedRegion] = useState('')
+  const [selectedConstituency, setSelectedConstituency] = useState('')
+  const [selectedChapter, setSelectedChapter] = useState('')
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('Other')
   const [submitting, setSubmitting] = useState(false)
+
+  const [regions, setRegions] = useState<Region[]>([])
+  const [chapters, setChapters] = useState<Chapter[]>([])
+
+  useEffect(() => {
+    adminService
+      .getRegions()
+      .then(setRegions)
+      .catch(() => {})
+    adminService
+      .getChapters()
+      .then(setChapters)
+      .catch(() => {})
+  }, [])
+
+  const constituenciesForRegion = useMemo(() => {
+    if (!selectedRegion) return []
+    const r = regions.find((reg) => reg.name === selectedRegion)
+    return r?.constituencies ?? []
+  }, [regions, selectedRegion])
+
+  const chapter = useMemo(() => {
+    if (scope === 'chapter') return selectedChapter
+    if (!selectedRegion) return ''
+    if (selectedConstituency) return `${selectedRegion} — ${selectedConstituency}`
+    return selectedRegion
+  }, [scope, selectedRegion, selectedConstituency, selectedChapter])
 
   // Asynchronously loads all submitted finance requests from the database
   async function loadRequests() {
@@ -164,8 +197,8 @@ export default function FinanceRequests() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const parsed = parseFloat(amount)
-    if (!chapter.trim()) {
-      toast.error('Chapter is required')
+    if (!chapter) {
+      toast.error(scope === 'region' ? 'Region is required' : 'Chapter is required')
       return
     }
     if (isNaN(parsed) || parsed < 0.01) {
@@ -186,7 +219,9 @@ export default function FinanceRequests() {
         category,
       })
       toast.success('Request submitted')
-      setChapter('')
+      setSelectedRegion('')
+      setSelectedConstituency('')
+      setSelectedChapter('')
       setAmount('')
       setDescription('')
       setCategory('Other')
@@ -429,7 +464,6 @@ export default function FinanceRequests() {
 
             <div>
               <label
-                htmlFor="req-chapter"
                 style={{
                   display: 'block',
                   fontSize: 12,
@@ -438,15 +472,16 @@ export default function FinanceRequests() {
                   marginBottom: 6,
                 }}
               >
-                Chapter
+                Region / Chapter
               </label>
-              <input
-                id="req-chapter"
-                name="req-chapter"
-                type="text"
-                value={chapter}
-                onChange={(e) => setChapter(e.target.value)}
-                placeholder="e.g. Accra Central"
+              <select
+                value={scope}
+                onChange={(e) => {
+                  setScope(e.target.value as ScopeType)
+                  setSelectedRegion('')
+                  setSelectedConstituency('')
+                  setSelectedChapter('')
+                }}
                 style={{
                   width: '100%',
                   padding: '8px 12px',
@@ -458,8 +493,131 @@ export default function FinanceRequests() {
                   boxSizing: 'border-box',
                   fontFamily: "'Public Sans', sans-serif",
                 }}
-              />
+              >
+                <option value="region">Region</option>
+                <option value="chapter">Chapter</option>
+              </select>
             </div>
+
+            {scope === 'region' ? (
+              <>
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
+                    Region
+                  </label>
+                  <select
+                    value={selectedRegion}
+                    onChange={(e) => {
+                      setSelectedRegion(e.target.value)
+                      setSelectedConstituency('')
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid hsl(var(--border))',
+                      background: 'hsl(var(--background))',
+                      color: 'hsl(var(--on-surface))',
+                      fontSize: 14,
+                      boxSizing: 'border-box',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    <option value="">Select region</option>
+                    {regions.map((r) => (
+                      <option key={r.id} value={r.name}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {selectedRegion && constituenciesForRegion.length > 0 && (
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        marginBottom: 6,
+                      }}
+                    >
+                      Constituency{' '}
+                      <span style={{ color: 'hsl(var(--on-surface-muted))', fontWeight: 400 }}>
+                        (optional)
+                      </span>
+                    </label>
+                    <select
+                      value={selectedConstituency}
+                      onChange={(e) => setSelectedConstituency(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px solid hsl(var(--border))',
+                        background: 'hsl(var(--background))',
+                        color: 'hsl(var(--on-surface))',
+                        fontSize: 14,
+                        boxSizing: 'border-box',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      <option value="">Entire region</option>
+                      {constituenciesForRegion.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    marginBottom: 6,
+                  }}
+                >
+                  Chapter
+                </label>
+                <select
+                  value={selectedChapter}
+                  onChange={(e) => setSelectedChapter(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--background))',
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 14,
+                    boxSizing: 'border-box',
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
+                  <option value="">Select chapter</option>
+                  {chapters.map((ch) => (
+                    <option key={ch.id} value={ch.name}>
+                      {ch.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <label
@@ -607,7 +765,7 @@ export default function FinanceRequests() {
                     {[
                       'Date',
                       'Type',
-                      'Chapter',
+                      'Region / Chapter',
                       'Amount',
                       'Status',
                       'Approved By',
