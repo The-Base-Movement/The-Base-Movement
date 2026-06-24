@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import { authService } from '@/services/authService'
 import { financeService, type FinanceRequest } from '@/services/financeService'
@@ -19,11 +19,10 @@ import KpiSummary from '@/pages/admin/financeReviewInbox/KpiSummary'
 import type { ModalAction, ReviewModal, TierLeader } from '@/pages/admin/financeReviewInbox/types'
 
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
+  const d = new Date(iso)
+  const date = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  return { date, time }
 }
 
 function fmtAmount(n: number) {
@@ -84,6 +83,12 @@ export default function FinanceReviewInbox() {
   const [mfaCode, setMfaCode] = useState('')
   const [factorId, setFactorId] = useState<string | null>(null)
   const [actioning, setActioning] = useState(false)
+
+  const [detailRequest, setDetailRequest] = useState<FinanceRequest | null>(null)
+  const [resolvedSearch, setResolvedSearch] = useState('')
+  const [resolvedStatusFilter, setResolvedStatusFilter] = useState<'all' | 'Approved' | 'Rejected'>(
+    'all'
+  )
 
   async function loadAll() {
     try {
@@ -220,6 +225,65 @@ export default function FinanceReviewInbox() {
   const otherTierPending = pendingRequests.filter(
     (request) => !userTier || !canActOn(request, userTier)
   )
+
+  const filteredResolved = useMemo(() => {
+    let list = resolvedRequests
+    if (resolvedStatusFilter !== 'all') {
+      list = list.filter((r) => r.status === resolvedStatusFilter)
+    }
+    if (resolvedSearch.trim()) {
+      const q = resolvedSearch.toLowerCase()
+      list = list.filter(
+        (r) =>
+          (r.requester_name ?? '').toLowerCase().includes(q) ||
+          (r.chapter ?? '').toLowerCase().includes(q) ||
+          TYPE_LABELS[r.request_type].toLowerCase().includes(q) ||
+          (r.officer_comment ?? '').toLowerCase().includes(q) ||
+          (r.approver_name ?? '').toLowerCase().includes(q)
+      )
+    }
+    return list
+  }, [resolvedRequests, resolvedStatusFilter, resolvedSearch])
+
+  function exportCsv() {
+    const headers = [
+      'Requester',
+      'Type',
+      'Region / Chapter',
+      'Amount',
+      'Status',
+      'Resolved At Tier',
+      'Approved By',
+      'Reviewed',
+      'Comment',
+      'Description',
+    ]
+    const rows = filteredResolved.map((r) => {
+      const reviewed = r.reviewed_at ? fmtDate(r.reviewed_at) : null
+      return [
+        r.requester_name ?? '',
+        TYPE_LABELS[r.request_type],
+        r.chapter ?? '',
+        r.amount.toFixed(2),
+        r.status,
+        `Tier ${r.approval_tier}`,
+        r.approver_name ?? '',
+        reviewed ? `${reviewed.date} ${reviewed.time}` : '',
+        r.officer_comment ?? '',
+        r.description ?? '',
+      ]
+    })
+    const csv = [headers, ...rows]
+      .map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `finance-resolved-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="main" style={{ fontFamily: "'Public Sans', sans-serif" }}>
@@ -402,7 +466,8 @@ export default function FinanceReviewInbox() {
                                   color: 'hsl(var(--on-surface-muted))',
                                 }}
                               >
-                                Submitted {fmtDate(request.created_at)}
+                                Submitted {fmtDate(request.created_at).date} at{' '}
+                                {fmtDate(request.created_at).time}
                               </p>
                             </div>
 
@@ -555,7 +620,7 @@ export default function FinanceReviewInbox() {
                         · {fmtAmount(request.amount)}
                       </p>
                       <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-                        {request.description} · Submitted {fmtDate(request.created_at)}
+                        {request.description} · Submitted {fmtDate(request.created_at).date}
                       </p>
                     </div>
                     <div style={{ padding: '10px 18px 14px' }}>
@@ -579,6 +644,7 @@ export default function FinanceReviewInbox() {
                 padding: '48px 24px',
                 textAlign: 'center',
                 color: 'hsl(var(--on-surface-muted))',
+                marginBottom: 24,
               }}
             >
               <span
@@ -601,6 +667,7 @@ export default function FinanceReviewInbox() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 10,
+                  flexWrap: 'wrap',
                 }}
               >
                 <span
@@ -620,141 +687,355 @@ export default function FinanceReviewInbox() {
                 >
                   Resolved
                 </p>
+
+                <div
+                  style={{
+                    marginLeft: 'auto',
+                    display: 'flex',
+                    gap: 8,
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Search…"
+                    value={resolvedSearch}
+                    onChange={(e) => setResolvedSearch(e.target.value)}
+                    style={{
+                      padding: '6px 10px',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: 12,
+                      fontFamily: "'Public Sans', sans-serif",
+                      color: 'hsl(var(--on-surface))',
+                      background: 'hsl(var(--background))',
+                      outline: 'none',
+                      width: 160,
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                  <select
+                    value={resolvedStatusFilter}
+                    onChange={(e) =>
+                      setResolvedStatusFilter(e.target.value as 'all' | 'Approved' | 'Rejected')
+                    }
+                    style={{
+                      padding: '6px 10px',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: 12,
+                      fontFamily: "'Public Sans', sans-serif",
+                      color: 'hsl(var(--on-surface))',
+                      background: 'hsl(var(--background))',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    <option value="all">All statuses</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={exportCsv}
+                    title="Export to CSV"
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                      download
+                    </span>
+                    Export
+                  </button>
+                </div>
               </div>
+
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr
-                      style={{
-                        background: 'hsl(var(--container-low))',
-                        borderBottom: '1px solid hsl(var(--border))',
-                      }}
-                    >
-                      {[
-                        'Requester',
-                        'Type',
-                        'Chapter',
-                        'Amount',
-                        'Status',
-                        'Resolved At Tier',
-                        'Approved By',
-                        'Reviewed',
-                        'Comment',
-                      ].map((header) => (
-                        <th
-                          key={header}
-                          style={{
-                            padding: '8px 16px',
-                            textAlign: 'left',
-                            fontSize: 10,
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            color: 'hsl(var(--on-surface-muted))',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {header}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {resolvedRequests.map((request) => (
+                <div style={{ maxHeight: 480, overflowY: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                    <thead>
                       <tr
-                        key={request.id}
-                        style={{ borderBottom: '1px solid hsl(var(--border))' }}
-                        onMouseEnter={(event) =>
-                          (event.currentTarget.style.background = 'hsl(var(--container-low))')
-                        }
-                        onMouseLeave={(event) => (event.currentTarget.style.background = '')}
+                        style={{
+                          background: 'hsl(var(--container-low))',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          position: 'sticky',
+                          top: 0,
+                          zIndex: 1,
+                        }}
                       >
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            color: 'hsl(var(--on-surface))',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <Avatar
-                              url={request.requester_avatar}
-                              name={request.requester_name ?? 'Unknown'}
-                              size={24}
-                            />
-                            {request.requester_name ?? 'Unknown'}
-                          </div>
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            color: 'hsl(var(--on-surface-muted))',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {TYPE_LABELS[request.request_type]}
-                        </td>
-                        <td style={{ padding: '10px 16px', color: 'hsl(var(--on-surface-muted))' }}>
-                          {request.chapter}
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            color: 'hsl(var(--on-surface))',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {fmtAmount(request.amount)}
-                        </td>
-                        <td style={{ padding: '10px 16px' }}>{statusPill(request.status)}</td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            color: 'hsl(var(--on-surface-muted))',
-                          }}
-                        >
-                          Tier {request.approval_tier}
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            color: 'hsl(var(--on-surface-muted))',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {request.approver_name ?? '—'}
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            color: 'hsl(var(--on-surface-muted))',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {request.reviewed_at ? fmtDate(request.reviewed_at) : '—'}
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            color: 'hsl(var(--on-surface-muted))',
-                            maxWidth: 240,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {request.officer_comment ?? '—'}
-                        </td>
+                        {[
+                          'Requester',
+                          'Type',
+                          'Region / Chapter',
+                          'Amount',
+                          'Status',
+                          'Resolved At Tier',
+                          'Approved By',
+                          'Reviewed',
+                          'Comment',
+                        ].map((header) => (
+                          <th
+                            key={header}
+                            style={{
+                              padding: '8px 16px',
+                              textAlign: 'left',
+                              fontSize: 10,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.05em',
+                              color: 'hsl(var(--on-surface-muted))',
+                              whiteSpace: 'nowrap',
+                              background: 'hsl(var(--container-low))',
+                            }}
+                          >
+                            {header}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {filteredResolved.length === 0 ? (
+                        <tr>
+                          <td
+                            colSpan={9}
+                            style={{
+                              padding: '32px 16px',
+                              textAlign: 'center',
+                              color: 'hsl(var(--on-surface-muted))',
+                              fontSize: 13,
+                            }}
+                          >
+                            No matching resolved requests.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredResolved.map((request) => {
+                          const reviewed = request.reviewed_at ? fmtDate(request.reviewed_at) : null
+                          const comment = request.officer_comment ?? '—'
+                          return (
+                            <tr
+                              key={request.id}
+                              onClick={() => setDetailRequest(request)}
+                              style={{
+                                borderBottom: '1px solid hsl(var(--border))',
+                                cursor: 'pointer',
+                              }}
+                              onMouseEnter={(event) =>
+                                (event.currentTarget.style.background = 'hsl(var(--container-low))')
+                              }
+                              onMouseLeave={(event) => (event.currentTarget.style.background = '')}
+                            >
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  fontWeight: 'var(--font-weight-medium, 500)',
+                                  color: 'hsl(var(--on-surface))',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                  <Avatar
+                                    url={request.requester_avatar}
+                                    name={request.requester_name ?? 'Unknown'}
+                                    size={24}
+                                  />
+                                  {request.requester_name ?? 'Unknown'}
+                                </div>
+                              </td>
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  color: 'hsl(var(--on-surface-muted))',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {TYPE_LABELS[request.request_type]}
+                              </td>
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  color: 'hsl(var(--on-surface-muted))',
+                                }}
+                              >
+                                {request.chapter}
+                              </td>
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  color: 'hsl(var(--on-surface))',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {fmtAmount(request.amount)}
+                              </td>
+                              <td style={{ padding: '10px 16px' }}>{statusPill(request.status)}</td>
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  color: 'hsl(var(--on-surface-muted))',
+                                }}
+                              >
+                                Tier {request.approval_tier}
+                              </td>
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  color: 'hsl(var(--on-surface-muted))',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {request.approver_name ?? '—'}
+                              </td>
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  color: 'hsl(var(--on-surface-muted))',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {reviewed ? (
+                                  <>
+                                    <span>{reviewed.date}</span>
+                                    <br />
+                                    <span style={{ fontSize: 11, opacity: 0.7 }}>
+                                      {reviewed.time}
+                                    </span>
+                                  </>
+                                ) : (
+                                  '—'
+                                )}
+                              </td>
+                              <td
+                                style={{
+                                  padding: '10px 16px',
+                                  color: 'hsl(var(--on-surface-muted))',
+                                  maxWidth: 140,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}
+                                title={comment !== '—' ? comment : undefined}
+                              >
+                                {comment}
+                              </td>
+                            </tr>
+                          )
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
         </>
       )}
+
+      {detailRequest &&
+        (() => {
+          const r = detailRequest
+          const reviewed = r.reviewed_at ? fmtDate(r.reviewed_at) : null
+          const submitted = fmtDate(r.created_at)
+          const rows: { label: string; value: React.ReactNode }[] = [
+            {
+              label: 'Requester',
+              value: (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Avatar url={r.requester_avatar} name={r.requester_name ?? 'Unknown'} size={24} />
+                  {r.requester_name ?? 'Unknown'}
+                </div>
+              ),
+            },
+            { label: 'Request Type', value: TYPE_LABELS[r.request_type] },
+            { label: 'Category', value: r.category || '—' },
+            { label: 'Region / Chapter', value: r.chapter || '—' },
+            { label: 'Amount', value: fmtAmount(r.amount) },
+            { label: 'Status', value: statusPill(r.status) },
+            { label: 'Resolved At Tier', value: `Tier ${r.approval_tier}` },
+            { label: 'Submitted', value: `${submitted.date} at ${submitted.time}` },
+            { label: 'Approved By', value: r.approver_name ?? '—' },
+            { label: 'Reviewed', value: reviewed ? `${reviewed.date} at ${reviewed.time}` : '—' },
+            { label: 'Officer Comment', value: r.officer_comment || '—' },
+            { label: 'Description', value: r.description || '—' },
+          ]
+          return (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.45)',
+                zIndex: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onClick={() => setDetailRequest(null)}
+            >
+              <div
+                style={{
+                  background: 'hsl(var(--card))',
+                  borderRadius: 'var(--radius-lg)',
+                  width: '100%',
+                  maxWidth: 540,
+                  maxHeight: '80vh',
+                  overflow: 'auto',
+                  padding: 28,
+                  margin: 16,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 20,
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    Request Details
+                  </h3>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setDetailRequest(null)}
+                    style={{ padding: 4 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                      close
+                    </span>
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {rows.map((row) => (
+                    <div key={row.label}>
+                      <p
+                        style={{
+                          margin: '0 0 2px',
+                          fontSize: 11,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {row.label}
+                      </p>
+                      <div style={{ fontSize: 14, color: 'hsl(var(--on-surface))' }}>
+                        {row.value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )
+        })()}
 
       {modal && (
         <ActionModal
