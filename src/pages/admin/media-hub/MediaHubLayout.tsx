@@ -152,7 +152,7 @@ export default function MediaHubLayout() {
           }}
         >
           <img
-            src="/media-hub-icon.png"
+            src="/branding/media-hub-icon.png"
             alt="Media Hub"
             style={{ width: 36, height: 36, objectFit: 'contain', flexShrink: 0 }}
           />
