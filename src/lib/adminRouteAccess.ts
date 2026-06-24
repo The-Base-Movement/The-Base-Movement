@@ -48,7 +48,24 @@ type AccessDecision = {
   rule: RouteRule | null
 }
 
+const MEDIA_HUB_ROLES: AdminRole[] = [
+  'SUPER_ADMIN',
+  'FOUNDER',
+  'CHIEF_EDITOR',
+  'SENIOR_EDITOR',
+  'EDITOR',
+  'JUNIOR_EDITOR',
+  'REGIONAL_CORRESPONDENT',
+  'COMMUNICATIONS_OFFICER',
+]
+
 const MANUAL_ROUTE_RULES: RouteRule[] = [
+  {
+    to: '/admin/media-hub',
+    match: 'exact_or_descendant',
+    allowedRoles: MEDIA_HUB_ROLES,
+    source: 'media-hub-department',
+  },
   {
     to: '/admin/notifications',
     match: 'exact_or_descendant',
