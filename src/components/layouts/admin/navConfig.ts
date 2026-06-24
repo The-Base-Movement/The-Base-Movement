@@ -411,23 +411,15 @@ export const getNavGroups = (
         label: 'Mission plan',
         permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
       },
-    ],
-  },
-  {
-    label: 'Media Hub',
-    icon: 'newsmode',
-    items: [
       {
         to: '/admin/media-hub',
         icon: 'newsmode',
-        label: 'The Wall',
+        label: 'Media Hub',
         allowedRoles: MEDIA_ROLES,
-      },
-      {
-        to: '/admin/media-hub/assignments',
-        icon: 'assignment',
-        label: 'Assignments',
-        allowedRoles: MEDIA_ROLES,
+        subItems: [
+          { to: '/admin/media-hub', icon: 'dashboard', label: 'The Wall' },
+          { to: '/admin/media-hub/assignments', icon: 'assignment', label: 'Assignments' },
+        ],
       },
     ],
   },
