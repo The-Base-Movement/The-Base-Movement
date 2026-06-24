@@ -39,6 +39,7 @@ export default function AdminLogin() {
   const [showMfaPrompt, setShowMfaPrompt] = useState(false)
   const [mfaFactorId, setMfaFactorId] = useState('')
   const [mfaCode, setMfaCode] = useState('')
+  const [honeypot, setHoneypot] = useState('')
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -59,6 +60,7 @@ export default function AdminLogin() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (honeypot) return
     setIsLoading(true)
     try {
       await authService.login(email, password)
@@ -200,6 +202,16 @@ export default function AdminLogin() {
                 gap: 18,
               }}
             >
+              <input
+                name="website_url"
+                type="text"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0 }}
+              />
               <div style={{ marginBottom: 2 }}>
                 <div
                   style={{

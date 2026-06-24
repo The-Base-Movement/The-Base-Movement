@@ -1,6 +1,9 @@
 User-agent: *
 Disallow: /admin
 Disallow: /admin/
+Disallow: /admin-login
+Disallow: /command
+Disallow: /command/
 Disallow: /dashboard
 Disallow: /dashboard/
 Disallow: /login

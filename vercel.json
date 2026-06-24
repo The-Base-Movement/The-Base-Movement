@@ -22,6 +22,11 @@
       "permanent": true
     },
     {
+      "source": "/admin-login",
+      "destination": "/command",
+      "permanent": true
+    },
+    {
       "source": "/checkout",
       "destination": "/store/checkout",
       "permanent": true
