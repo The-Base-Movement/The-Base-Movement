@@ -13,19 +13,50 @@ export function initSentry() {
   const dsn = import.meta.env.VITE_SENTRY_DSN
   if (!dsn || import.meta.env.DEV) return
 
+  const IGNORED_ERRORS = [
+    'Failed to fetch',
+    'Load failed',
+    'NetworkError',
+    'AbortError',
+    'TypeError: cancelled',
+    'TypeError: Cancelled',
+    'ChunkLoadError',
+    'Loading chunk',
+    'Importing a module script failed',
+    'ResizeObserver loop',
+    'Non-Error promise rejection',
+    'Object Not Found Matching',
+    'instantSearchSDKJSBridgeClearHighlights',
+    'ceCurrentVideo.tele498',
+  ]
+
   Sentry.init({
     dsn,
     environment: import.meta.env.MODE,
     sendDefaultPii: true,
-    // Capture 10% of transactions for performance monitoring
     tracesSampleRate: 0.1,
-    // Capture 5% of sessions for session replay (errors always captured)
     replaysSessionSampleRate: 0.05,
     replaysOnErrorSampleRate: 1.0,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }),
     ],
+    beforeSend(event) {
+      const msg = event.exception?.values?.[0]?.value ?? ''
+      if (IGNORED_ERRORS.some((pattern) => msg.includes(pattern))) return null
+
+      const frames = event.exception?.values?.[0]?.stacktrace?.frames
+      if (
+        frames?.some(
+          (f) => f.filename?.includes('extensions://') || f.filename?.includes('moz-extension://')
+        )
+      ) {
+        return null
+      }
+
+      return event
+    },
+    ignoreErrors: IGNORED_ERRORS,
   })
 }
 
