@@ -354,14 +354,12 @@ export const getNavGroups = (
       {
         to: '/admin/media-hub',
         icon: 'newsmode',
-        label: 'The Wall',
+        label: 'Media Hub',
         allowedRoles: MEDIA_ROLES,
-      },
-      {
-        to: '/admin/media-hub/assignments',
-        icon: 'assignment',
-        label: 'Assignments',
-        allowedRoles: MEDIA_ROLES,
+        subItems: [
+          { to: '/admin/media-hub', icon: 'dashboard', label: 'The Wall' },
+          { to: '/admin/media-hub/assignments', icon: 'assignment', label: 'Assignments' },
+        ],
       },
     ],
   },
