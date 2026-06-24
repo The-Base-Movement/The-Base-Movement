@@ -328,6 +328,42 @@ export const getNavGroups = (
     ],
   },
   {
+    label: 'Media Hub',
+    icon: 'newsmode',
+    items: [
+      {
+        to: '/admin/media-hub',
+        icon: 'newsmode',
+        label: 'The Wall',
+        allowedRoles: [
+          'SUPER_ADMIN',
+          'FOUNDER',
+          'CHIEF_EDITOR',
+          'SENIOR_EDITOR',
+          'EDITOR',
+          'JUNIOR_EDITOR',
+          'REGIONAL_CORRESPONDENT',
+          'COMMUNICATIONS_OFFICER',
+        ],
+      },
+      {
+        to: '/admin/media-hub/assignments',
+        icon: 'assignment',
+        label: 'Assignments',
+        allowedRoles: [
+          'SUPER_ADMIN',
+          'FOUNDER',
+          'CHIEF_EDITOR',
+          'SENIOR_EDITOR',
+          'EDITOR',
+          'JUNIOR_EDITOR',
+          'REGIONAL_CORRESPONDENT',
+          'COMMUNICATIONS_OFFICER',
+        ],
+      },
+    ],
+  },
+  {
     label: 'System',
     icon: 'settings',
     items: [

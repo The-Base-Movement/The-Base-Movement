@@ -24,6 +24,7 @@ type DiscordChannel =
   | 'polls'
   | 'helpdesk'
   | 'chapters'
+  | 'media'
 
 function post(embed: Embed, channel?: DiscordChannel): void {
   // Fire-and-forget: route through the server-side proxy Edge Function.
@@ -377,6 +378,69 @@ export const discordService = {
         timestamp: new Date().toISOString(),
       },
       'alerts'
+    )
+  },
+
+  briefingPosted(title: string, author: string, priority: string): void {
+    const icon = priority === 'urgent' ? '🔴' : priority === 'important' ? '🟡' : '📢'
+    post(
+      {
+        title: `${icon} New Media Briefing`,
+        description: `**${title}**`,
+        color: priority === 'urgent' ? 0xce1126 : priority === 'important' ? 0xdaa520 : 0x006b3f,
+        fields: [
+          { name: 'Author', value: author || '—', inline: true },
+          {
+            name: 'Priority',
+            value: priority.charAt(0).toUpperCase() + priority.slice(1),
+            inline: true,
+          },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'media'
+    )
+  },
+
+  assignmentCreated(title: string, assignee: string, assigner: string, deadline?: string): void {
+    const fields: Field[] = [
+      { name: 'Assigned to', value: assignee || '—', inline: true },
+      { name: 'Assigned by', value: assigner || '—', inline: true },
+    ]
+    if (deadline)
+      fields.push({
+        name: 'Deadline',
+        value: new Date(deadline).toLocaleDateString(),
+        inline: true,
+      })
+    post(
+      {
+        title: '📋 New Story Assignment',
+        description: `**${title}**`,
+        color: 0x5865f2,
+        fields,
+        timestamp: new Date().toISOString(),
+      },
+      'media'
+    )
+  },
+
+  assignmentStatusChanged(title: string, status: string, updatedBy: string): void {
+    const statusEmoji: Record<string, string> = {
+      draft: '📝',
+      in_review: '🔍',
+      published: '✅',
+      cancelled: '❌',
+    }
+    post(
+      {
+        title: `${statusEmoji[status] || '📋'} Assignment Updated`,
+        description: `**${title}** → ${status.replace('_', ' ')}`,
+        color: status === 'published' ? 0x006b3f : status === 'cancelled' ? 0xce1126 : 0x5865f2,
+        fields: [{ name: 'Updated by', value: updatedBy || '—', inline: true }],
+        timestamp: new Date().toISOString(),
+      },
+      'media'
     )
   },
 }

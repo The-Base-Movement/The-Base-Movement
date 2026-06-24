@@ -111,6 +111,9 @@ const AdminExecutiveDashboard = lazy(() => import('./pages/admin/ExecutiveDashbo
 const DepartmentsIndex = lazy(() => import('./pages/admin/departments/DepartmentsIndex'))
 const DepartmentDashboard = lazy(() => import('./pages/admin/departments/DepartmentDashboard'))
 const ITDepartmentLayout = lazy(() => import('./pages/admin/it/ITDepartmentLayout'))
+const MediaHubLayout = lazy(() => import('./pages/admin/media-hub/MediaHubLayout'))
+const MediaWall = lazy(() => import('./pages/admin/media-hub/MediaWall'))
+const MediaAssignments = lazy(() => import('./pages/admin/media-hub/MediaAssignments'))
 const ITDashboard = lazy(() => import('./pages/admin/it/ITDashboard'))
 const ITNotes = lazy(() => import('./pages/admin/it/ITNotes'))
 const ITProjects = lazy(() => import('./pages/admin/it/ITProjects'))
@@ -312,6 +315,14 @@ export const routes: RouteObject[] = [
                 path: '/admin/it-department/leaders-auth/activity',
                 element: <LeadersAuthActivity />,
               },
+            ],
+          },
+          {
+            element: <MediaHubLayout />,
+            children: [
+              { path: '/admin/media-hub', element: <MediaWall /> },
+              { path: '/admin/media-hub/wall', element: <MediaWall /> },
+              { path: '/admin/media-hub/assignments', element: <MediaAssignments /> },
             ],
           },
         ],
