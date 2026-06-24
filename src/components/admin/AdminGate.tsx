@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { supabase } from '@/lib/supabase'
 import { discordService } from '@/services/discordService'
 
 const GATE_KEY = 'admin_gate_passed'
@@ -21,28 +22,38 @@ export function AdminGate({ children }: AdminGateProps) {
   const [error, setError] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const [locked, setLocked] = useState(false)
+  const [checking, setChecking] = useState(false)
 
   if (passed) return <>{children}</>
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (locked) return
+    if (locked || checking) return
+    setChecking(true)
 
-    const passphrase = import.meta.env.VITE_ADMIN_GATE_PASSPHRASE || 'ghana-first-2026'
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('verify-admin-gate', {
+        body: { passphrase: value.trim() },
+      })
 
-    if (value.trim() === passphrase) {
+      if (fnError || !data?.ok) {
+        const next = attempts + 1
+        setAttempts(next)
+        setError(true)
+        discordService.adminAccessAttempt(false)
+        setValue('')
+        if (next >= 5) setLocked(true)
+        return
+      }
+
       sessionStorage.setItem(GATE_KEY, String(Date.now()))
       discordService.adminAccessAttempt(true)
       setPassed(true)
-    } else {
-      const next = attempts + 1
-      setAttempts(next)
+    } catch {
       setError(true)
-      discordService.adminAccessAttempt(false)
       setValue('')
-      if (next >= 5) {
-        setLocked(true)
-      }
+    } finally {
+      setChecking(false)
     }
   }
 
@@ -125,6 +136,7 @@ export function AdminGate({ children }: AdminGateProps) {
               placeholder="Enter passphrase"
               autoFocus
               autoComplete="off"
+              disabled={checking}
               style={{
                 width: '100%',
                 height: 48,
@@ -147,6 +159,7 @@ export function AdminGate({ children }: AdminGateProps) {
             )}
             <button
               type="submit"
+              disabled={checking}
               style={{
                 width: '100%',
                 height: 44,
@@ -157,11 +170,12 @@ export function AdminGate({ children }: AdminGateProps) {
                 borderRadius: 6,
                 fontSize: 13,
                 fontWeight: 600,
-                cursor: 'pointer',
+                cursor: checking ? 'wait' : 'pointer',
                 letterSpacing: '0.03em',
+                opacity: checking ? 0.7 : 1,
               }}
             >
-              Proceed
+              {checking ? 'Verifying…' : 'Proceed'}
             </button>
           </form>
         )}

@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback, useContext } from 'react'
 import { itService } from '@/services/itService'
+import { adminService } from '@/services/adminService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { ITLayoutContext } from './ITLayoutContext'
 import { SortToggle } from '@/components/ui/SortToggle'
@@ -51,6 +52,35 @@ export default function ITSecurity() {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formOpen])
+
+  const [gatePassphrase, setGatePassphrase] = useState('')
+  const [gateLoaded, setGateLoaded] = useState(false)
+  const [gateSaving, setGateSaving] = useState(false)
+  const [showGatePass, setShowGatePass] = useState(false)
+
+  useEffect(() => {
+    adminService.getSiteSettings().then((s) => {
+      const val = s.admin_gate_passphrase
+      if (typeof val === 'string') setGatePassphrase(val)
+      setGateLoaded(true)
+    })
+  }, [])
+
+  const handleSavePassphrase = async () => {
+    if (!gatePassphrase.trim()) {
+      toast.error('Passphrase cannot be empty.')
+      return
+    }
+    setGateSaving(true)
+    try {
+      await adminService.updateSiteSetting('admin_gate_passphrase', gatePassphrase.trim())
+      toast.success('Admin gate passphrase updated.')
+    } catch {
+      toast.error('Failed to update passphrase.')
+    } finally {
+      setGateSaving(false)
+    }
+  }
 
   const [title, setTitle] = useState('')
   const [version, setVersion] = useState('')
@@ -183,6 +213,95 @@ export default function ITSecurity() {
 
   return (
     <div>
+      {/* Admin Gate Passphrase */}
+      <div className="panel" style={{ padding: '20px 24px', marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 20, color: 'hsl(var(--accent))' }}
+          >
+            passkey
+          </span>
+          <div>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: 14,
+                fontWeight: 'var(--font-weight-semibold, 600)',
+                color: 'hsl(var(--on-surface))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              Admin Gate Passphrase
+            </h3>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              Required before the admin login page is visible. Share only with authorized staff.
+            </p>
+          </div>
+        </div>
+        {gateLoaded ? (
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <input
+                type={showGatePass ? 'text' : 'password'}
+                value={gatePassphrase}
+                onChange={(e) => setGatePassphrase(e.target.value)}
+                placeholder="Enter a strong passphrase"
+                style={{
+                  width: '100%',
+                  height: 40,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '0 38px 0 12px',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 13,
+                  background: 'hsl(var(--card))',
+                  color: 'hsl(var(--on-surface))',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowGatePass((v) => !v)}
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'hsl(var(--on-surface-muted))',
+                  padding: 0,
+                  display: 'flex',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  {showGatePass ? 'visibility_off' : 'visibility'}
+                </span>
+              </button>
+            </div>
+            <button
+              className="btn btn-primary btn-sm"
+              disabled={gateSaving}
+              onClick={handleSavePassphrase}
+            >
+              {gateSaving ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+        ) : (
+          <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>Loading…</p>
+        )}
+      </div>
+
       {formOpen ? (
         <div className="panel" style={{ padding: 24, marginBottom: 24 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 24 }}>
