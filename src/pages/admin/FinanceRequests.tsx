@@ -25,13 +25,11 @@ function statusPill(status: FinanceRequest['status']) {
   return <span className="pill pill-warn">Pending</span>
 }
 
-// Utility to format ISO date string into day/month/year representation
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
+  const d = new Date(iso)
+  const date = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  return { date, time }
 }
 
 // Utility to format raw numeric values to Ghanaian Cedi currency string representation
@@ -244,6 +242,7 @@ export default function FinanceRequests() {
 
   const [mySearch, setMySearch] = useState('')
   const [mySortOrder, setMySortOrder] = useState<'asc' | 'desc'>('asc')
+  const [detailRequest, setDetailRequest] = useState<FinanceRequest | null>(null)
 
   const sortedMyRequests = useMemo(() => {
     const list = myRequests.filter((r) => {
@@ -790,49 +789,180 @@ export default function FinanceRequests() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedMyRequests.map((r) => (
-                    <tr
-                      key={r.id}
-                      style={{
-                        borderBottom: '1px solid hsl(var(--border))',
-                        verticalAlign: 'middle',
-                      }}
-                    >
-                      <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
-                        {fmtDate(r.created_at)}
-                      </td>
-                      <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface))' }}>
-                        {TYPE_LABELS[r.request_type]}
-                      </td>
-                      <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface))' }}>
-                        {r.chapter}
-                      </td>
-                      <td
+                  {sortedMyRequests.map((r) => {
+                    const { date, time } = fmtDate(r.created_at)
+                    const comment =
+                      (r.status === 'Approved' || r.status === 'Rejected') && r.officer_comment
+                        ? r.officer_comment
+                        : '—'
+                    return (
+                      <tr
+                        key={r.id}
+                        onClick={() => setDetailRequest(r)}
                         style={{
-                          padding: '10px 12px',
-                          color: 'hsl(var(--on-surface))',
-                          whiteSpace: 'nowrap',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          verticalAlign: 'middle',
+                          cursor: 'pointer',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'hsl(var(--container-low))'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = ''
                         }}
                       >
-                        {fmtAmount(r.amount)}
-                      </td>
-                      <td style={{ padding: '10px 12px' }}>{statusPill(r.status)}</td>
-                      <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
-                        {r.status !== 'Pending' && r.approver_name ? r.approver_name : '—'}
-                      </td>
-                      <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
-                        {(r.status === 'Approved' || r.status === 'Rejected') && r.officer_comment
-                          ? r.officer_comment
-                          : '—'}
-                      </td>
-                    </tr>
-                  ))}
+                        <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
+                          <span>{date}</span>
+                          <br />
+                          <span style={{ fontSize: 11, opacity: 0.7 }}>{time}</span>
+                        </td>
+                        <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface))' }}>
+                          {TYPE_LABELS[r.request_type]}
+                        </td>
+                        <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface))' }}>
+                          {r.chapter}
+                        </td>
+                        <td
+                          style={{
+                            padding: '10px 12px',
+                            color: 'hsl(var(--on-surface))',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {fmtAmount(r.amount)}
+                        </td>
+                        <td style={{ padding: '10px 12px' }}>{statusPill(r.status)}</td>
+                        <td style={{ padding: '10px 12px', color: 'hsl(var(--on-surface-muted))' }}>
+                          {r.status !== 'Pending' && r.approver_name ? r.approver_name : '—'}
+                        </td>
+                        <td
+                          style={{
+                            padding: '10px 12px',
+                            color: 'hsl(var(--on-surface-muted))',
+                            maxWidth: 140,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                          title={comment !== '—' ? comment : undefined}
+                        >
+                          {comment}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
           )}
         </div>
       </div>
+
+      {/* ── Request Detail Modal ─────────────────────────────────── */}
+      {detailRequest &&
+        (() => {
+          const r = detailRequest
+          const { date, time } = fmtDate(r.created_at)
+          const rows: { label: string; value: React.ReactNode }[] = [
+            { label: 'Request Type', value: TYPE_LABELS[r.request_type] },
+            { label: 'Category', value: r.category || '—' },
+            { label: 'Region / Chapter', value: r.chapter || '—' },
+            { label: 'Amount', value: fmtAmount(r.amount) },
+            { label: 'Status', value: statusPill(r.status) },
+            { label: 'Submitted', value: `${date} at ${time}` },
+            {
+              label: 'Approved By',
+              value: r.status !== 'Pending' && r.approver_name ? r.approver_name : '—',
+            },
+            {
+              label: 'Officer Comment',
+              value:
+                (r.status === 'Approved' || r.status === 'Rejected') && r.officer_comment
+                  ? r.officer_comment
+                  : '—',
+            },
+            { label: 'Description', value: r.description || '—' },
+          ]
+          return (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.45)',
+                zIndex: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onClick={() => setDetailRequest(null)}
+            >
+              <div
+                style={{
+                  background: 'hsl(var(--card))',
+                  borderRadius: 'var(--radius-lg)',
+                  width: '100%',
+                  maxWidth: 520,
+                  maxHeight: '80vh',
+                  overflow: 'auto',
+                  padding: 28,
+                  margin: 16,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 20,
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    Request Details
+                  </h3>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setDetailRequest(null)}
+                    style={{ padding: 4 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                      close
+                    </span>
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {rows.map((row) => (
+                    <div key={row.label}>
+                      <p
+                        style={{
+                          margin: '0 0 2px',
+                          fontSize: 11,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {row.label}
+                      </p>
+                      <div style={{ fontSize: 14, color: 'hsl(var(--on-surface))' }}>
+                        {row.value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )
+        })()}
     </div>
   )
 }
