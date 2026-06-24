@@ -7,7 +7,7 @@
  * verifications, donations), and sidebar toggle states.
  */
 
-import { Suspense, useState, useEffect, useRef } from 'react'
+import { Suspense, useState, useEffect, useCallback } from 'react'
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
@@ -17,6 +17,7 @@ import { messagingService } from '@/services/messagingService'
 import { authService } from '@/services/authService'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
+import { useAdminSessionTimer } from '@/hooks/useAdminSessionTimer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PageLabelProvider } from '@/contexts/PageLabelContext'
 import { getAdminRouteAccessDecision } from '@/lib/adminRouteAccess'
@@ -158,47 +159,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
   }, [location.pathname, windowWidth])
 
-  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lastActivityAt = useRef(0)
-  useEffect(() => {
-    const stored = Number(localStorage.getItem('admin_session_timeout_minutes'))
-    const maxMinutes = 30
-    const minutes = stored > 0 && stored <= maxMinutes ? stored : maxMinutes
-    const TIMEOUT_MS = minutes * 60 * 1000
-    const logoutIfIdle = async () => {
-      const idleFor = Date.now() - lastActivityAt.current
-      if (idleFor < TIMEOUT_MS) {
-        reset()
-        return
-      }
-      await authService.logout()
-      navigate('/command')
-    }
-    const reset = () => {
-      lastActivityAt.current = Date.now()
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
-      inactivityTimer.current = setTimeout(() => {
-        void logoutIfIdle()
-      }, TIMEOUT_MS)
-    }
-    const events = [
-      'pointermove',
-      'mousemove',
-      'mousedown',
-      'click',
-      'keydown',
-      'touchstart',
-      'wheel',
-      'scroll',
-      'focus',
-    ] as const
-    events.forEach((e) => window.addEventListener(e, reset, { passive: true }))
-    reset()
-    return () => {
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
-      events.forEach((e) => window.removeEventListener(e, reset))
-    }
+  const handleSessionTimeout = useCallback(async () => {
+    await authService.logout()
+    navigate('/command')
   }, [navigate])
+
+  const { secondsLeft } = useAdminSessionTimer({ onTimeout: handleSessionTimeout })
 
   /**
    * handleMarkAsRead
@@ -330,6 +296,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           canSubmitTicket={canSubmitTicket}
           setSubmitTicketOpen={setSubmitTicketOpen}
           windowWidth={windowWidth}
+          sessionSecondsLeft={secondsLeft}
         />
 
         {/* Content Area */}

@@ -52,6 +52,7 @@ interface AdminTopbarProps {
   handleLogout: () => void
   canSubmitTicket: boolean
   setSubmitTicketOpen: (open: boolean) => void
+  sessionSecondsLeft?: number
   windowWidth: number
 }
 
@@ -77,6 +78,7 @@ export function AdminTopbar({
   canSubmitTicket,
   setSubmitTicketOpen,
   windowWidth,
+  sessionSecondsLeft,
 }: AdminTopbarProps) {
   const navigate = useNavigate()
   const allPages = useMemo(() => flattenNavItems(getNavGroups(0, 0, 0)), [])
@@ -574,6 +576,11 @@ export function AdminTopbar({
 
       {/* Right: notifications + divider + user */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+        {/* Session timer */}
+        {sessionSecondsLeft != null && (
+          <SessionTimer secondsLeft={sessionSecondsLeft} isMobile={windowWidth < 768} />
+        )}
+
         {/* IT Support */}
         {canSubmitTicket && (
           <button
@@ -1072,5 +1079,92 @@ export function AdminTopbar({
         </div>
       </div>
     </header>
+  )
+}
+
+function SessionTimer({ secondsLeft, isMobile }: { secondsLeft: number; isMobile: boolean }) {
+  const mins = Math.floor(secondsLeft / 60)
+  const secs = secondsLeft % 60
+  const display = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+  const isUrgent = secondsLeft <= 120
+
+  if (isMobile) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 32,
+          height: 32,
+          borderRadius: 'var(--radius-sm)',
+          background: isUrgent ? 'rgba(206,17,38,.08)' : 'transparent',
+          position: 'relative',
+        }}
+        title={`Session expires in ${display}`}
+      >
+        <span
+          className="material-symbols-outlined"
+          style={{
+            fontSize: 16,
+            color: isUrgent ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
+          }}
+        >
+          timer
+        </span>
+        {isUrgent && (
+          <span
+            style={{
+              position: 'absolute',
+              top: -2,
+              right: -2,
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: 'hsl(var(--destructive))',
+            }}
+          />
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 5,
+        padding: '0 10px',
+        height: 30,
+        borderRadius: 'var(--radius-sm)',
+        background: isUrgent ? 'rgba(206,17,38,.06)' : 'hsl(var(--container-low))',
+        border: `1px solid ${isUrgent ? 'rgba(206,17,38,.2)' : 'hsl(var(--border))'}`,
+        flexShrink: 0,
+        transition: 'all .3s',
+      }}
+    >
+      <span
+        className="material-symbols-outlined"
+        style={{
+          fontSize: 13,
+          color: isUrgent ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
+        }}
+      >
+        timer
+      </span>
+      <span
+        style={{
+          fontFamily: "'Public Sans', sans-serif",
+          fontSize: 11,
+          fontWeight: 600,
+          fontVariantNumeric: 'tabular-nums',
+          color: isUrgent ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
+          letterSpacing: '0.02em',
+        }}
+      >
+        {display}
+      </span>
+    </div>
   )
 }
