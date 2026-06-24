@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { contentService } from '@/services/contentService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { useDeleteModal } from '@/hooks/useDeleteModal'
 import { toast } from 'sonner'
 
 type Tab = 'comments' | 'reviews'
@@ -68,6 +69,7 @@ export default function AdminModeration() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [flaggedOnly, setFlaggedOnly] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const { openDelete, modal: deleteModal } = useDeleteModal()
 
   const loadComments = useCallback(() => {
     void (async () => {
@@ -100,17 +102,25 @@ export default function AdminModeration() {
     else void loadReviews()
   }, [tab, loadComments, loadReviews])
 
-  async function deleteComment(id: string) {
-    if (!window.confirm('Delete this comment? This cannot be undone.')) return
-    setDeleting(id)
-    try {
-      await contentService.deleteComment(id)
-      toast.success('Comment deleted.')
-      setComments((prev) => prev.filter((c) => c.id !== id))
-    } catch {
-      toast.error('Failed to delete comment.')
-    }
-    setDeleting(null)
+  function deleteComment(id: string) {
+    openDelete({
+      itemName: 'this comment',
+      isPermanent: true,
+      title: 'Delete comment?',
+      description: 'This comment will be permanently removed and cannot be recovered.',
+      onConfirm: async () => {
+        setDeleting(id)
+        try {
+          await contentService.deleteComment(id)
+          toast.success('Comment deleted.')
+          setComments((prev) => prev.filter((c) => c.id !== id))
+        } catch {
+          toast.error('Failed to delete comment.')
+        }
+        setDeleting(null)
+        return true
+      },
+    })
   }
 
   async function unflagComment(id: string) {
@@ -123,17 +133,25 @@ export default function AdminModeration() {
     }
   }
 
-  async function deleteReview(id: string) {
-    if (!window.confirm('Delete this review? This cannot be undone.')) return
-    setDeleting(id)
-    try {
-      await contentService.deleteReview(id)
-      toast.success('Review deleted.')
-      setReviews((prev) => prev.filter((r) => r.id !== id))
-    } catch {
-      toast.error('Failed to delete review.')
-    }
-    setDeleting(null)
+  function deleteReview(id: string) {
+    openDelete({
+      itemName: 'this review',
+      isPermanent: true,
+      title: 'Delete review?',
+      description: 'This review will be permanently removed and cannot be recovered.',
+      onConfirm: async () => {
+        setDeleting(id)
+        try {
+          await contentService.deleteReview(id)
+          toast.success('Review deleted.')
+          setReviews((prev) => prev.filter((r) => r.id !== id))
+        } catch {
+          toast.error('Failed to delete review.')
+        }
+        setDeleting(null)
+        return true
+      },
+    })
   }
 
   const sortedComments = useMemo(() => {
@@ -825,6 +843,7 @@ export default function AdminModeration() {
           ))
         )}
       </div>
+      {deleteModal}
     </div>
   )
 }
