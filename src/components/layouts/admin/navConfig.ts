@@ -5,7 +5,34 @@
  * Defines permission gates, role restrictions, and dynamically embeds real-time alerts counts.
  */
 
-import type { AdminPermission } from '@/types/admin'
+import type { AdminPermission, AdminRole } from '@/types/admin'
+
+// ── Role groups by department ──────────────────────────────────
+const GLOBAL_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
+
+const MEDIA_ROLES: AdminRole[] = [
+  ...GLOBAL_ROLES,
+  'CHIEF_EDITOR',
+  'SENIOR_EDITOR',
+  'EDITOR',
+  'JUNIOR_EDITOR',
+  'REGIONAL_CORRESPONDENT',
+  'COMMUNICATIONS_OFFICER',
+]
+
+const CONTENT_ROLES: AdminRole[] = [
+  ...GLOBAL_ROLES,
+  'CHIEF_EDITOR',
+  'SENIOR_EDITOR',
+  'EDITOR',
+  'JUNIOR_EDITOR',
+  'REGIONAL_CORRESPONDENT',
+  'COMMUNICATIONS_OFFICER',
+]
+
+const STORE_ROLES: AdminRole[] = [...GLOBAL_ROLES, 'STORE_MANAGER']
+
+// GLOBAL_ROLES is used directly for system-level nav items
 
 /**
  * NavItem
@@ -190,13 +217,13 @@ export const getNavGroups = (
         to: '/admin/store',
         icon: 'shopping_bag',
         label: 'Store inventory',
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        allowedRoles: STORE_ROLES,
       },
       {
         to: '/admin/orders',
         icon: 'local_shipping',
         label: 'Member orders',
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        allowedRoles: STORE_ROLES,
       },
       {
         to: '/admin/regions',
@@ -286,20 +313,13 @@ export const getNavGroups = (
         to: '/admin/authors',
         icon: 'edit',
         label: 'Authors',
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        allowedRoles: CONTENT_ROLES,
       },
       {
         to: '/admin/media',
         icon: 'image',
         label: 'Media library',
-        allowedRoles: [
-          'SUPER_ADMIN',
-          'FOUNDER',
-          'CHIEF_EDITOR',
-          'SENIOR_EDITOR',
-          'EDITOR',
-          'STORE_MANAGER',
-        ],
+        allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
       },
       {
         to: '/admin/polls',
@@ -335,31 +355,13 @@ export const getNavGroups = (
         to: '/admin/media-hub',
         icon: 'newsmode',
         label: 'The Wall',
-        allowedRoles: [
-          'SUPER_ADMIN',
-          'FOUNDER',
-          'CHIEF_EDITOR',
-          'SENIOR_EDITOR',
-          'EDITOR',
-          'JUNIOR_EDITOR',
-          'REGIONAL_CORRESPONDENT',
-          'COMMUNICATIONS_OFFICER',
-        ],
+        allowedRoles: MEDIA_ROLES,
       },
       {
         to: '/admin/media-hub/assignments',
         icon: 'assignment',
         label: 'Assignments',
-        allowedRoles: [
-          'SUPER_ADMIN',
-          'FOUNDER',
-          'CHIEF_EDITOR',
-          'SENIOR_EDITOR',
-          'EDITOR',
-          'JUNIOR_EDITOR',
-          'REGIONAL_CORRESPONDENT',
-          'COMMUNICATIONS_OFFICER',
-        ],
+        allowedRoles: MEDIA_ROLES,
       },
     ],
   },
@@ -386,7 +388,7 @@ export const getNavGroups = (
         // Visible to the same roles the route guard (ITDepartmentLayout) allows,
         // so an IT_MANAGER (incl. the break-glass recovery account) can actually
         // reach the IT pages — especially Leaders Auth to reset device slots.
-        allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER'],
+        allowedRoles: GLOBAL_ROLES,
         label: 'IT Department',
         subItems: [
           { to: '/admin/it-department', icon: 'dashboard', label: 'Overview' },
@@ -428,27 +430,13 @@ export const getNavGroups = (
         to: '/admin/redirects',
         icon: 'alt_route',
         label: 'Redirects',
-        allowedRoles: [
-          'SUPER_ADMIN',
-          'FOUNDER',
-          'CHIEF_EDITOR',
-          'SENIOR_EDITOR',
-          'EDITOR',
-          'STORE_MANAGER',
-        ],
+        allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
       },
       {
         to: '/admin/trash',
         icon: 'delete',
         label: 'Audit trash',
-        allowedRoles: [
-          'SUPER_ADMIN',
-          'FOUNDER',
-          'CHIEF_EDITOR',
-          'SENIOR_EDITOR',
-          'EDITOR',
-          'STORE_MANAGER',
-        ],
+        allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
       },
     ],
   },

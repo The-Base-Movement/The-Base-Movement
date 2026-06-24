@@ -48,9 +48,10 @@ type AccessDecision = {
   rule: RouteRule | null
 }
 
-const MEDIA_HUB_ROLES: AdminRole[] = [
-  'SUPER_ADMIN',
-  'FOUNDER',
+const GLOBAL_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
+
+const MEDIA_ROLES: AdminRole[] = [
+  ...GLOBAL_ROLES,
   'CHIEF_EDITOR',
   'SENIOR_EDITOR',
   'EDITOR',
@@ -59,12 +60,66 @@ const MEDIA_HUB_ROLES: AdminRole[] = [
   'COMMUNICATIONS_OFFICER',
 ]
 
+const CONTENT_ROLES: AdminRole[] = [
+  ...GLOBAL_ROLES,
+  'CHIEF_EDITOR',
+  'SENIOR_EDITOR',
+  'EDITOR',
+  'JUNIOR_EDITOR',
+  'REGIONAL_CORRESPONDENT',
+  'COMMUNICATIONS_OFFICER',
+]
+
+const STORE_ROLES: AdminRole[] = [...GLOBAL_ROLES, 'STORE_MANAGER']
+
 const MANUAL_ROUTE_RULES: RouteRule[] = [
   {
     to: '/admin/media-hub',
     match: 'exact_or_descendant',
-    allowedRoles: MEDIA_HUB_ROLES,
+    allowedRoles: MEDIA_ROLES,
     source: 'media-hub-department',
+  },
+  {
+    to: '/admin/media',
+    match: 'exact_or_descendant',
+    allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+    source: 'media-library',
+  },
+  {
+    to: '/admin/authors',
+    match: 'exact_or_descendant',
+    allowedRoles: CONTENT_ROLES,
+    source: 'content-authors',
+  },
+  {
+    to: '/admin/redirects',
+    match: 'exact_or_descendant',
+    allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+    source: 'content-redirects',
+  },
+  {
+    to: '/admin/trash',
+    match: 'exact_or_descendant',
+    allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+    source: 'audit-trash',
+  },
+  {
+    to: '/admin/store',
+    match: 'exact_or_descendant',
+    allowedRoles: STORE_ROLES,
+    source: 'store-inventory',
+  },
+  {
+    to: '/admin/orders',
+    match: 'exact_or_descendant',
+    allowedRoles: STORE_ROLES,
+    source: 'store-orders',
+  },
+  {
+    to: '/admin/it-department',
+    match: 'exact_or_descendant',
+    allowedRoles: GLOBAL_ROLES,
+    source: 'it-department',
   },
   {
     to: '/admin/notifications',
