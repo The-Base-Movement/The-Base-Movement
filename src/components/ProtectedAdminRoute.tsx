@@ -66,14 +66,17 @@ export default function ProtectedAdminRoute() {
         const totp = factors?.totp?.find((f) => f.status === 'verified')
 
         if (totp) {
-          if (aal?.currentLevel === 'aal2') {
-            // MFA is completed and verified
+          const gateFlag = sessionStorage.getItem(ADMIN_GATE_KEY)
+
+          if (aal?.currentLevel === 'aal2' && gateFlag) {
+            // MFA completed and gate flag present — allow through
             if (!cancelled) {
               setFactorId(totp.id)
               setStatus('allowed')
             }
           } else {
-            // MFA enrolled but not challenged yet in this session
+            // Either AAL < aal2 or gate flag was cleared (member → admin switch)
+            // Force a re-challenge
             if (!cancelled) {
               setFactorId(totp.id)
               setStatus('challenge')
