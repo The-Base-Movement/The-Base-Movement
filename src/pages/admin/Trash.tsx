@@ -6,9 +6,13 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { contentService } from '@/services/contentService'
 import { logisticsService } from '@/services/logisticsService'
 import { adminService, type Member } from '@/services/adminService'
+import { authService } from '@/services/authService'
+import { discordService } from '@/services/discordService'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
@@ -43,6 +47,54 @@ export default function TrashPage() {
   const [isBulkDeleting, setIsBulkDeleting] = useState(false)
 
   const { openDelete, modal: deleteModal } = useDeleteModal()
+  const [mfaModalOpen, setMfaModalOpen] = useState(false)
+  const [mfaCode, setMfaCode] = useState('')
+  const [mfaVerifying, setMfaVerifying] = useState(false)
+  const [pendingDeleteAction, setPendingDeleteAction] = useState<(() => Promise<void>) | null>(null)
+
+  const requireMfaThenDelete = useCallback((action: () => Promise<void>) => {
+    setPendingDeleteAction(() => action)
+    setMfaCode('')
+    setMfaModalOpen(true)
+  }, [])
+
+  const handleMfaVerifyAndDelete = async () => {
+    const code = mfaCode.replace(/\D/g, '').slice(0, 6)
+    if (code.length < 6) return
+    setMfaVerifying(true)
+    try {
+      const factors = await authService.listMfaFactors()
+      const totp = factors?.totp?.find((f) => f.status === 'verified')
+      if (!totp) throw new Error('No MFA factor enrolled')
+      const challenge = await supabase.auth.mfa.challenge({ factorId: totp.id })
+      if (challenge.error) throw challenge.error
+      const verify = await supabase.auth.mfa.verify({
+        factorId: totp.id,
+        challengeId: challenge.data.id,
+        code,
+      })
+      if (verify.error) throw verify.error
+
+      const admin = adminService.getCurrentUser()
+      discordService.alert(
+        'Permanent deletion from Audit Trash',
+        `**${admin?.name || 'Unknown admin'}** permanently deleted items from the trash vault after MFA verification.`,
+        [
+          { name: 'Tab', value: activeTab, inline: true },
+          { name: 'Items', value: String(selectedIds.size || 1), inline: true },
+        ]
+      )
+
+      if (pendingDeleteAction) await pendingDeleteAction()
+      setMfaModalOpen(false)
+      setPendingDeleteAction(null)
+    } catch {
+      toast.error('MFA verification failed. Permanent deletion blocked.')
+      setMfaCode('')
+    } finally {
+      setMfaVerifying(false)
+    }
+  }
 
   // Query soft-deleted data lists in parallel across all core services
   const loadTrash = useCallback(async () => {
@@ -136,31 +188,36 @@ export default function TrashPage() {
       itemName: `${selectedIds.size} selected item${selectedIds.size > 1 ? 's' : ''}`,
       isPermanent: true,
       title: 'Delete forever?',
-      description: 'The selected items will be permanently deleted and cannot be recovered.',
+      description:
+        'The selected items will be permanently deleted and cannot be recovered. You will need to verify your identity with MFA.',
       onConfirm: async () => {
-        setIsBulkDeleting(true)
-        let successCount = 0
-        for (const id of Array.from(selectedIds)) {
-          let success = false
-          try {
-            if (activeTab === 'blogs') success = await contentService.permanentlyDeleteBlogPost(id)
-            if (activeTab === 'products')
-              success = await logisticsService.permanentlyDeleteInventoryItem(id)
-            if (activeTab === 'media') {
-              const item = media.find((m) => m.id === id)
-              if (item) success = await contentService.permanentlyDeleteMediaFile(item.url)
+        requireMfaThenDelete(async () => {
+          setIsBulkDeleting(true)
+          let successCount = 0
+          for (const id of Array.from(selectedIds)) {
+            let success = false
+            try {
+              if (activeTab === 'blogs')
+                success = await contentService.permanentlyDeleteBlogPost(id)
+              if (activeTab === 'products')
+                success = await logisticsService.permanentlyDeleteInventoryItem(id)
+              if (activeTab === 'media') {
+                const item = media.find((m) => m.id === id)
+                if (item) success = await contentService.permanentlyDeleteMediaFile(item.url)
+              }
+              if (activeTab === 'authors')
+                success = await contentService.permanentlyDeleteAuthor(id)
+              if (activeTab === 'members') success = await adminService.permanentlyDeleteMember(id)
+            } catch {
+              /* continue */
             }
-            if (activeTab === 'authors') success = await contentService.permanentlyDeleteAuthor(id)
-            if (activeTab === 'members') success = await adminService.permanentlyDeleteMember(id)
-          } catch {
-            /* continue */
+            if (success) successCount++
           }
-          if (success) successCount++
-        }
-        setIsBulkDeleting(false)
-        setSelectedIds(new Set())
-        toast.success(`${successCount} of ${selectedIds.size} items deleted forever.`)
-        loadTrash()
+          setIsBulkDeleting(false)
+          setSelectedIds(new Set())
+          toast.success(`${successCount} items permanently deleted.`)
+          loadTrash()
+        })
         return true
       },
     })
@@ -656,6 +713,126 @@ export default function TrashPage() {
       </div>
 
       {deleteModal}
+
+      {mfaModalOpen &&
+        createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 400,
+              background: 'rgba(0,0,0,.6)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 20,
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setMfaModalOpen(false)
+                setPendingDeleteAction(null)
+              }
+            }}
+          >
+            <div
+              style={{
+                width: '100%',
+                maxWidth: 380,
+                background: 'hsl(var(--card))',
+                borderRadius: 'var(--radius-lg)',
+                borderTop: '4px solid hsl(var(--destructive))',
+                padding: '28px 24px',
+              }}
+            >
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 36, color: 'hsl(var(--destructive))' }}
+                >
+                  shield_lock
+                </span>
+                <h3
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 600,
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface))',
+                    margin: '10px 0 6px',
+                  }}
+                >
+                  Verify identity to delete
+                </h3>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    margin: 0,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Permanent deletion requires MFA verification. Enter the 6-digit code from your
+                  authenticator app.
+                </p>
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  void handleMfaVerifyAndDelete()
+                }}
+              >
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="000000"
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    height: 52,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    textAlign: 'center',
+                    fontSize: 24,
+                    letterSpacing: '0.4em',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 500,
+                    color: 'hsl(var(--on-surface))',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    marginBottom: 14,
+                  }}
+                />
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ flex: 1, height: 42 }}
+                    onClick={() => {
+                      setMfaModalOpen(false)
+                      setPendingDeleteAction(null)
+                    }}
+                    disabled={mfaVerifying}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-dest"
+                    style={{ flex: 1, height: 42 }}
+                    disabled={mfaVerifying || mfaCode.length < 6}
+                  >
+                    {mfaVerifying ? 'Verifying…' : 'Verify & Delete'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

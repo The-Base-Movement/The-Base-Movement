@@ -2,6 +2,7 @@ import type { Factor } from '@supabase/supabase-js'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { QRCodeSVG } from 'qrcode.react'
+import { toast } from 'sonner'
 import { ResetConfirmationModal } from '@/components/admin/ResetConfirmationModal'
 
 interface PasswordForm {
@@ -484,6 +485,7 @@ function SessionTimeoutSelector() {
   const handleSave = () => {
     localStorage.setItem('admin_session_timeout_minutes', String(selected))
     setLastSaved(selected)
+    toast.success(`Session timeout set to ${selected} minutes.`)
   }
 
   return (
