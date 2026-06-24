@@ -78,6 +78,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        'npm:libphonenumber-js@1.11.20/max': 'libphonenumber-js/max',
       },
     },
     build: {
