@@ -147,7 +147,7 @@ export function SecuritySettingsTab({
               style={{ width: '100%', justifyContent: 'center' }}
               disabled={isSaving || !passwordForm.newPassword}
             >
-              {isSaving ? 'Hardening…' : 'Harden Security Credentials'}
+              {isSaving ? 'Updating…' : 'Update Password'}
             </button>
           </form>
         </div>
@@ -501,8 +501,8 @@ function SessionTimeoutSelector() {
             lineHeight: 1.6,
           }}
         >
-          Set how long the admin session stays active during inactivity. After this period, you will
-          be signed out and must re-enter the passphrase and MFA code to regain access.
+          Set how long your session stays active during inactivity. After this period, you will be
+          automatically signed out and must re-enter the passphrase and MFA code to regain access.
         </p>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           {TIMEOUT_OPTIONS.map((opt) => (
