@@ -26,7 +26,7 @@ const FIELDS: {
   { key: 'accountNumber', label: 'Account Number', placeholder: '2497625640001' },
   { key: 'swiftCode', label: 'Swift Code', placeholder: 'CBGHGHAC' },
   { key: 'branch', label: 'Branch', placeholder: 'Kwabenya' },
-  { key: 'address', label: 'Address', placeholder: 'Street, City, Region, Country', full: true },
+  { key: 'address', label: 'Address', placeholder: 'Street, City, Region, Country' },
 ]
 
 const labelSt: React.CSSProperties = {
