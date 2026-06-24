@@ -4,6 +4,7 @@ import { tacticalService } from '@/services/tacticalService'
 import {
   adminService,
   type Member,
+  type Region,
   type AuditLogEntry,
   type MemberDonation,
   type MemberPollVote,
@@ -57,6 +58,10 @@ export default function AdminMemberDetail() {
   const [jobSelection, setJobSelection] = useState<JobSelection>(emptyJobSelection)
   const [jobDirty, setJobDirty] = useState(false)
   const [isSavingEdit, setIsSavingEdit] = useState(false)
+  const [dbRegions, setDbRegions] = useState<Region[]>([])
+  const [dbConstituencies, setDbConstituencies] = useState<{ name: string; region_id: number }[]>(
+    []
+  )
 
   const [isVerifyOpen, setIsVerifyOpen] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
@@ -96,6 +101,14 @@ export default function AdminMemberDetail() {
         adminService.getMemberEventAttendanceYtd(targetId).then(setEventsYtd),
       ])
     })
+    adminService
+      .getRegions()
+      .then(setDbRegions)
+      .catch(() => {})
+    adminService
+      .getConstituencies()
+      .then((res) => setDbConstituencies(res.data ?? []))
+      .catch(() => {})
   }, [memberId])
 
   const handleAddNote = async () => {
@@ -797,6 +810,8 @@ export default function AdminMemberDetail() {
         onClose={() => setIsEditOpen(false)}
         isSaving={isSavingEdit}
         chapters={chapters.map((c) => c.name)}
+        regions={dbRegions}
+        constituencies={dbConstituencies}
         jobSelection={jobSelection}
         onJobChange={(next) => {
           setJobSelection(next)

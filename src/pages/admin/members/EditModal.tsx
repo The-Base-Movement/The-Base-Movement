@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import { type Member } from '@/services/adminService'
+import { type Member, type Region } from '@/services/adminService'
 import { JobSelector } from '@/components/JobSelector'
 import { type JobSelection } from '@/services/jobTaxonomyService'
 
@@ -12,6 +12,8 @@ interface EditModalProps {
   onClose: () => void
   isSaving: boolean
   chapters?: string[]
+  regions?: Region[]
+  constituencies?: { name: string; region_id: number }[]
   jobSelection: JobSelection
   onJobChange: (next: JobSelection) => void
   onJobLabelChange: (label: string) => void
@@ -26,10 +28,16 @@ export function EditModal({
   onClose,
   isSaving,
   chapters,
+  regions,
+  constituencies,
   jobSelection,
   onJobChange,
   onJobLabelChange,
 }: EditModalProps) {
+  const selectedRegion = regions?.find((r) => r.name === form.region)
+  const filteredConstituencies = selectedRegion
+    ? (constituencies ?? []).filter((c) => c.region_id === selectedRegion.id)
+    : []
   if (!isOpen || !member) return null
   return createPortal(
     <div
@@ -127,8 +135,8 @@ export function EditModal({
               { key: 'email', label: 'Email address', type: 'email' },
               { key: 'phone', label: 'Phone number', type: 'text' },
               { key: 'gender', label: 'Gender', type: 'select', options: ['Male', 'Female'] },
-              { key: 'region', label: 'Region', type: 'text' },
-              { key: 'constituency', label: 'Constituency', type: 'text' },
+              { key: 'region', label: 'Region', type: 'region-select' },
+              { key: 'constituency', label: 'Constituency', type: 'constituency-select' },
               { key: 'country', label: 'Country', type: 'text' },
               { key: 'chapter', label: 'Chapter', type: 'text' },
               { key: 'city', label: 'City / Town', type: 'text' },
@@ -149,7 +157,68 @@ export function EditModal({
               >
                 {field.label}
               </label>
-              {field.key === 'chapter' ? (
+              {field.type === 'region-select' ? (
+                <select
+                  name={field.key}
+                  id={`input-edit-${field.key}`}
+                  value={(form[field.key as keyof typeof form] as string) ?? ''}
+                  onChange={(e) => {
+                    onChange(field.key, e.target.value)
+                    onChange('constituency', '')
+                  }}
+                  style={{
+                    width: '100%',
+                    height: 42,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    padding: '0 12px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    fontSize: 13,
+                    background: 'hsl(var(--card))',
+                    color: 'hsl(var(--on-surface))',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <option value="">— select region —</option>
+                  {(regions ?? []).map((r) => (
+                    <option key={r.id} value={r.name}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === 'constituency-select' ? (
+                <select
+                  name={field.key}
+                  id={`input-edit-${field.key}`}
+                  value={(form[field.key as keyof typeof form] as string) ?? ''}
+                  onChange={(e) => onChange(field.key, e.target.value)}
+                  disabled={!form.region}
+                  style={{
+                    width: '100%',
+                    height: 42,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    padding: '0 12px',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-normal, 400)',
+                    fontSize: 13,
+                    background: 'hsl(var(--card))',
+                    color: 'hsl(var(--on-surface))',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    opacity: !form.region ? 0.5 : 1,
+                  }}
+                >
+                  <option value="">— select constituency —</option>
+                  {filteredConstituencies.map((c) => (
+                    <option key={c.name} value={c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              ) : field.key === 'chapter' ? (
                 <select
                   name={field.key}
                   id={`input-edit-${field.key}`}
