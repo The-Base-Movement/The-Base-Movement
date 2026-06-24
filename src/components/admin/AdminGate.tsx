@@ -36,18 +36,20 @@ export function AdminGate({ children }: AdminGateProps) {
         body: { passphrase: value.trim() },
       })
 
+      const clientIp = data?.ip || 'Unknown'
+
       if (fnError || !data?.ok) {
         const next = attempts + 1
         setAttempts(next)
         setError(true)
-        discordService.adminAccessAttempt(false)
+        discordService.adminAccessAttempt(false, clientIp)
         setValue('')
         if (next >= 5) setLocked(true)
         return
       }
 
       sessionStorage.setItem(GATE_KEY, String(Date.now()))
-      discordService.adminAccessAttempt(true)
+      discordService.adminAccessAttempt(true, clientIp)
       setPassed(true)
     } catch {
       setError(true)
