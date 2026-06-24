@@ -14,8 +14,6 @@ import { SecuritySettingsTab } from './settings/components/SecuritySettingsTab'
 import { ButtonCustomizerTab } from './settings/components/ButtonCustomizerTab'
 import { AuditLogTab } from './settings/components/AuditLogTab'
 import { AboutPageTab } from './settings/components/AboutPageTab'
-import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
-
 type SettingsTab =
   | 'profile'
   | 'roles'
@@ -25,18 +23,18 @@ type SettingsTab =
   | 'security'
   | 'buttons'
   | 'audit'
-  | 'finance'
 
-const tabs: { id: SettingsTab; label: string; icon: string }[] = [
+const SUPER_ROLES = ['SUPER_ADMIN', 'FOUNDER']
+
+const allTabs: { id: SettingsTab; label: string; icon: string; superOnly?: boolean }[] = [
   { id: 'profile', label: 'My Profile', icon: 'person' },
-  { id: 'roles', label: 'Admin Roles', icon: 'shield' },
-  { id: 'system', label: 'Preferences', icon: 'tune' },
-  { id: 'movement', label: 'Movement Info', icon: 'campaign' },
-  { id: 'about', label: 'About Page', icon: 'info' },
   { id: 'security', label: 'Security', icon: 'lock' },
-  { id: 'buttons', label: 'Buttons', icon: 'ads_click' },
-  { id: 'audit', label: 'Audit Log', icon: 'history' },
-  { id: 'finance', label: 'Finance Approvals', icon: 'account_balance_wallet' },
+  { id: 'roles', label: 'Admin Roles', icon: 'shield', superOnly: true },
+  { id: 'system', label: 'Preferences', icon: 'tune', superOnly: true },
+  { id: 'movement', label: 'Movement Info', icon: 'campaign', superOnly: true },
+  { id: 'about', label: 'About Page', icon: 'info', superOnly: true },
+  { id: 'buttons', label: 'Buttons', icon: 'ads_click', superOnly: true },
+  { id: 'audit', label: 'Audit Log', icon: 'history', superOnly: true },
 ]
 
 export default function AdminSettings() {
@@ -50,6 +48,8 @@ export default function AdminSettings() {
   const [auditSortOrder, setAuditSortOrder] = useState<'asc' | 'desc'>('asc')
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [adminData, setAdminData] = useState<AdminUser | null>(null)
+  const isSuperRole = SUPER_ROLES.includes(adminData?.role ?? '')
+  const tabs = allTabs.filter((t) => !t.superOnly || isSuperRole)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [mfaFactors, setMfaFactors] = useState<Factor[]>([])
@@ -478,7 +478,6 @@ export default function AdminSettings() {
               handleVerifyMfa={handleVerifyMfa}
             />
           )}
-          {activeTab === 'finance' && <FinanceApprovalsTab />}
           {activeTab === 'audit' && (
             <AuditLogTab
               auditSearch={auditSearch}

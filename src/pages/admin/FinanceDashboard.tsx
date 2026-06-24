@@ -15,6 +15,7 @@ import {
 } from 'recharts'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { BankDetailsEditor } from '@/components/admin/BankDetailsEditor'
+import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
 import { useIsMobile } from '@/hooks/use-mobile'
 import {
   financeAnalyticsService,
@@ -959,6 +960,10 @@ export default function FinanceDashboard() {
 
       <div style={{ marginTop: 24 }}>
         <BankDetailsEditor />
+      </div>
+
+      <div style={{ marginTop: 24 }}>
+        <FinanceApprovalsTab />
       </div>
     </div>
   )

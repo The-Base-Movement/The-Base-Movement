@@ -379,8 +379,7 @@ export const getNavGroups = (
       {
         to: '/admin/settings',
         icon: 'settings',
-        label: 'Core settings',
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        label: 'Settings',
       },
       {
         to: '/admin/redirects',
