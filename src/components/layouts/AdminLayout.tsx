@@ -158,11 +158,13 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
   }, [location.pathname, windowWidth])
 
-  // 15-minute inactivity timeout — only sign out after no admin interaction.
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastActivityAt = useRef(0)
   useEffect(() => {
-    const TIMEOUT_MS = 15 * 60 * 1000
+    const stored = Number(localStorage.getItem('admin_session_timeout_minutes'))
+    const maxMinutes = 30
+    const minutes = stored > 0 && stored <= maxMinutes ? stored : maxMinutes
+    const TIMEOUT_MS = minutes * 60 * 1000
     const logoutIfIdle = async () => {
       const idleFor = Date.now() - lastActivityAt.current
       if (idleFor < TIMEOUT_MS) {
@@ -170,7 +172,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         return
       }
       await authService.logout()
-      navigate('/admin-login')
+      navigate('/command')
     }
     const reset = () => {
       lastActivityAt.current = Date.now()

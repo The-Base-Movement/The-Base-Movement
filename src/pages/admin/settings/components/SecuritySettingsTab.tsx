@@ -460,6 +460,84 @@ export function SecuritySettingsTab({
         confirmIcon="lock_open"
         details={[{ label: 'Action', value: 'Remove TOTP protection from your account' }]}
       />
+
+      <SessionTimeoutSelector />
+    </div>
+  )
+}
+
+const TIMEOUT_OPTIONS = [
+  { value: 5, label: '5 minutes' },
+  { value: 10, label: '10 minutes' },
+  { value: 20, label: '20 minutes' },
+  { value: 30, label: '30 minutes (default)' },
+]
+
+function SessionTimeoutSelector() {
+  const [selected, setSelected] = useState(() => {
+    const stored = Number(localStorage.getItem('admin_session_timeout_minutes'))
+    return stored > 0 && stored <= 30 ? stored : 30
+  })
+  const [lastSaved, setLastSaved] = useState(selected)
+  const saved = selected === lastSaved
+
+  const handleSave = () => {
+    localStorage.setItem('admin_session_timeout_minutes', String(selected))
+    setLastSaved(selected)
+  }
+
+  return (
+    <div className="panel" style={{ gridColumn: '1 / -1' }}>
+      <div className="ph">
+        <span>Session Timeout</span>
+      </div>
+      <div style={{ padding: 24 }}>
+        <p
+          style={{
+            margin: '0 0 16px',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: "'Public Sans', sans-serif",
+            lineHeight: 1.6,
+          }}
+        >
+          Set how long the admin session stays active during inactivity. After this period, you will
+          be signed out and must re-enter the passphrase and MFA code to regain access.
+        </p>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          {TIMEOUT_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setSelected(opt.value)}
+              style={{
+                padding: '10px 18px',
+                border: '1px solid',
+                borderColor: selected === opt.value ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                background: selected === opt.value ? 'hsla(var(--primary), 0.08)' : 'transparent',
+                color:
+                  selected === opt.value ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 12,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontFamily: "'Public Sans', sans-serif",
+                cursor: 'pointer',
+                transition: 'all .15s',
+              }}
+            >
+              {opt.label}
+            </button>
+          ))}
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={handleSave}
+            disabled={saved}
+            style={{ marginLeft: 8, opacity: saved ? 0.5 : 1 }}
+          >
+            {saved ? 'Saved' : 'Apply'}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
