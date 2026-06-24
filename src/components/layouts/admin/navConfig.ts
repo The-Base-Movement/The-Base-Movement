@@ -7,32 +7,7 @@
 
 import type { AdminPermission, AdminRole } from '@/types/admin'
 
-// ── Role groups by department ──────────────────────────────────
 const GLOBAL_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
-
-const MEDIA_ROLES: AdminRole[] = [
-  ...GLOBAL_ROLES,
-  'CHIEF_EDITOR',
-  'SENIOR_EDITOR',
-  'EDITOR',
-  'JUNIOR_EDITOR',
-  'REGIONAL_CORRESPONDENT',
-  'COMMUNICATIONS_OFFICER',
-]
-
-const CONTENT_ROLES: AdminRole[] = [
-  ...GLOBAL_ROLES,
-  'CHIEF_EDITOR',
-  'SENIOR_EDITOR',
-  'EDITOR',
-  'JUNIOR_EDITOR',
-  'REGIONAL_CORRESPONDENT',
-  'COMMUNICATIONS_OFFICER',
-]
-
-const STORE_ROLES: AdminRole[] = [...GLOBAL_ROLES, 'STORE_MANAGER']
-
-// GLOBAL_ROLES is used directly for system-level nav items
 
 /**
  * NavItem
@@ -283,13 +258,13 @@ export const getNavGroups = (
         to: '/admin/store',
         icon: 'shopping_bag',
         label: 'Store inventory',
-        allowedRoles: STORE_ROLES,
+        permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' },
       },
       {
         to: '/admin/orders',
         icon: 'local_shipping',
         label: 'Member orders',
-        allowedRoles: STORE_ROLES,
+        permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' },
       },
       {
         to: '/admin/regions',
@@ -379,13 +354,13 @@ export const getNavGroups = (
         to: '/admin/authors',
         icon: 'edit',
         label: 'Authors',
-        allowedRoles: CONTENT_ROLES,
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
         to: '/admin/media',
         icon: 'image',
         label: 'Media library',
-        allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
         to: '/admin/polls',
@@ -415,7 +390,7 @@ export const getNavGroups = (
         to: '/admin/media-hub',
         icon: 'newsmode',
         label: 'Media Hub',
-        allowedRoles: MEDIA_ROLES,
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
         subItems: [
           { to: '/admin/media-hub', icon: 'dashboard', label: 'The Wall' },
           { to: '/admin/media-hub/assignments', icon: 'assignment', label: 'Assignments' },
@@ -488,13 +463,13 @@ export const getNavGroups = (
         to: '/admin/redirects',
         icon: 'alt_route',
         label: 'Redirects',
-        allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
         to: '/admin/trash',
         icon: 'delete',
         label: 'Audit trash',
-        allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
     ],
   },

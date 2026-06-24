@@ -16,17 +16,6 @@ import type { AdminUser } from '@/types/admin'
 import { MediaHubContext } from './MediaHubContext'
 import type React from 'react'
 
-const MEDIA_ALLOWED_ROLES = [
-  'SUPER_ADMIN',
-  'FOUNDER',
-  'CHIEF_EDITOR',
-  'SENIOR_EDITOR',
-  'EDITOR',
-  'JUNIOR_EDITOR',
-  'REGIONAL_CORRESPONDENT',
-  'COMMUNICATIONS_OFFICER',
-]
-
 interface MediaHubHeader {
   title: string
   icon: string
@@ -84,7 +73,7 @@ export default function MediaHubLayout() {
     )
   }
 
-  if (!user || !MEDIA_ALLOWED_ROLES.includes(user.role)) {
+  if (!user || !adminService.can('MANAGE_BLOGS', 'BLOGS')) {
     return (
       <div
         style={{

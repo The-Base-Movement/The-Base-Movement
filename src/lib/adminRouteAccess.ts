@@ -50,71 +50,57 @@ type AccessDecision = {
 
 const GLOBAL_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
 
-const MEDIA_ROLES: AdminRole[] = [
-  ...GLOBAL_ROLES,
-  'CHIEF_EDITOR',
-  'SENIOR_EDITOR',
-  'EDITOR',
-  'JUNIOR_EDITOR',
-  'REGIONAL_CORRESPONDENT',
-  'COMMUNICATIONS_OFFICER',
-]
-
-const CONTENT_ROLES: AdminRole[] = [
-  ...GLOBAL_ROLES,
-  'CHIEF_EDITOR',
-  'SENIOR_EDITOR',
-  'EDITOR',
-  'JUNIOR_EDITOR',
-  'REGIONAL_CORRESPONDENT',
-  'COMMUNICATIONS_OFFICER',
-]
-
-const STORE_ROLES: AdminRole[] = [...GLOBAL_ROLES, 'STORE_MANAGER']
-
 const MANUAL_ROUTE_RULES: RouteRule[] = [
+  // ── Permission-based routes (respect database role config) ──
   {
     to: '/admin/media-hub',
     match: 'exact_or_descendant',
-    allowedRoles: MEDIA_ROLES,
-    source: 'media-hub-department',
+    permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+    source: 'media-hub',
   },
   {
     to: '/admin/media',
     match: 'exact_or_descendant',
-    allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+    permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
     source: 'media-library',
   },
   {
     to: '/admin/authors',
     match: 'exact_or_descendant',
-    allowedRoles: CONTENT_ROLES,
+    permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
     source: 'content-authors',
   },
   {
     to: '/admin/redirects',
     match: 'exact_or_descendant',
-    allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+    permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
     source: 'content-redirects',
   },
   {
     to: '/admin/trash',
     match: 'exact_or_descendant',
-    allowedRoles: [...CONTENT_ROLES, 'STORE_MANAGER'],
+    permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
     source: 'audit-trash',
   },
   {
     to: '/admin/store',
     match: 'exact_or_descendant',
-    allowedRoles: STORE_ROLES,
+    permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' },
     source: 'store-inventory',
   },
   {
     to: '/admin/orders',
     match: 'exact_or_descendant',
-    allowedRoles: STORE_ROLES,
+    permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' },
     source: 'store-orders',
   },
+  {
+    to: '/admin/rally-command',
+    match: 'exact_or_descendant',
+    permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+    source: 'field-operations-rally-command',
+  },
+  // ── Role-gated routes (no matching permission exists) ──
   {
     to: '/admin/it-department',
     match: 'exact_or_descendant',
@@ -126,22 +112,23 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
     match: 'exact_or_descendant',
     source: 'personal-admin-notifications',
   },
+  // ── Department dashboards (role-gated, each role sees own dept) ──
   {
     to: '/admin/departments/finance',
     match: 'exact_or_descendant',
-    allowedRoles: [...GLOBAL_ROLES, 'FINANCE_OFFICER'],
+    permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
     source: 'department-finance',
   },
   {
     to: '/admin/departments/media',
     match: 'exact_or_descendant',
-    allowedRoles: MEDIA_ROLES,
+    permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
     source: 'department-media',
   },
   {
     to: '/admin/departments/store',
     match: 'exact_or_descendant',
-    allowedRoles: STORE_ROLES,
+    permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' },
     source: 'department-store',
   },
   {
@@ -153,37 +140,37 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
   {
     to: '/admin/departments/membership',
     match: 'exact_or_descendant',
-    allowedRoles: [...GLOBAL_ROLES, 'ADMIN', 'ADMIN_L2', 'VERIFIER'],
+    permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
     source: 'department-membership',
   },
   {
     to: '/admin/departments/chapter',
     match: 'exact_or_descendant',
-    allowedRoles: [...GLOBAL_ROLES, 'CHAPTER_LEAD', 'CHAPTER_SECRETARY'],
+    permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
     source: 'department-chapter',
   },
   {
     to: '/admin/departments/constituency',
     match: 'exact_or_descendant',
-    allowedRoles: [...GLOBAL_ROLES, 'CONSTITUENCY_LEAD', 'REGIONAL_DIRECTOR'],
+    permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
     source: 'department-constituency',
   },
   {
     to: '/admin/departments/youth',
     match: 'exact_or_descendant',
-    allowedRoles: [...GLOBAL_ROLES, 'YOUTH_LEADER'],
+    permission: { action: 'MANAGE_POLLS', resource: 'POLLS' },
     source: 'department-youth',
   },
   {
     to: '/admin/departments/executive',
     match: 'exact_or_descendant',
-    allowedRoles: [...GLOBAL_ROLES, 'EXECUTIVE', 'MOVEMENT_LEADER', 'ORGANIZER'],
+    executiveOnly: true,
     source: 'department-executive',
   },
   {
     to: '/admin/departments/movement_leader',
     match: 'exact_or_descendant',
-    allowedRoles: [...GLOBAL_ROLES, 'MOVEMENT_LEADER'],
+    executiveOnly: true,
     source: 'department-movement-leader',
   },
   {
@@ -191,12 +178,6 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
     match: 'exact_or_descendant',
     allowedRoles: ['SUPER_ADMIN', 'FOUNDER'],
     source: 'department-index',
-  },
-  {
-    to: '/admin/rally-command',
-    match: 'exact_or_descendant',
-    permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
-    source: 'field-operations-rally-command',
   },
 ]
 
