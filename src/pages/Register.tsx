@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useAuth } from '@/context/AuthContext'
 import { ChoiceStep } from './register/components/ChoiceStep'
 import { RegistrationForm } from './register/components/RegistrationForm'
 import { SuccessStep } from './register/components/SuccessStep'
@@ -17,9 +18,15 @@ import { saveDraftRegistration } from '@/utils/offlineDb'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
 
 export default function Register() {
+  const { session } = useAuth()
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const platformParam = searchParams.get('platform')
   const refParam = searchParams.get('ref')
+
+  useEffect(() => {
+    if (session) navigate('/dashboard', { replace: true })
+  }, [session, navigate])
   const _savedDraft = (() => {
     try {
       const s = sessionStorage.getItem('reg_draft')

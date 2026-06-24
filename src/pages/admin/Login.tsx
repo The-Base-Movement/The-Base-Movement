@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authService } from '@/services/authService'
+import { useAuth } from '@/context/AuthContext'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 
@@ -30,6 +31,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function AdminLogin() {
+  const { session } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -41,6 +43,10 @@ export default function AdminLogin() {
   const location = useLocation()
 
   useEffect(() => {
+    if (session) {
+      navigate('/admin/dashboard', { replace: true })
+      return
+    }
     sessionStorage.removeItem('admin_device_captured')
     sessionStorage.removeItem('admin_gate_verified')
 
@@ -49,7 +55,7 @@ export default function AdminLogin() {
       // Clear location state to prevent repeating the toast on page refresh
       window.history.replaceState({}, document.title)
     }
-  }, [location.state])
+  }, [location.state, session, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
