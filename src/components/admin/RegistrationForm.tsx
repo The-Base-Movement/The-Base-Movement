@@ -36,6 +36,7 @@ export interface RegistrationSubmission {
   emergencyContactName: string
   emergencyRelationship: string
   emergencyNumber: string
+  ghanaCardNumber: string
   photoUrl: string | null
   croppedAreaPixels?: Area | null
 }
@@ -110,6 +111,7 @@ export default function RegistrationForm({
     emergencyContactName: '',
     emergencyRelationship: '',
     emergencyNumber: '',
+    ghanaCardNumber: '',
   })
 
   const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies } = useRegistrationData()
@@ -562,6 +564,52 @@ export default function RegistrationForm({
                       </button>
                     </div>
                   </div>
+
+                  {platform === 'GHANA' && (
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="input-ghana-card-admin"
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface-muted))',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                        }}
+                      >
+                        Ghana Card Number{' '}
+                        <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+                      </label>
+                      <input
+                        aria-label="Ghana Card Number"
+                        name="name-ghana-card-admin"
+                        id="input-ghana-card-admin"
+                        placeholder="GHA-XXXXXXXXX-X"
+                        required
+                        value={formData.ghanaCardNumber}
+                        onChange={(e) => handleChange('ghanaCardNumber', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '14px 18px',
+                          fontSize: '14px',
+                          background: 'hsl(var(--container-low))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: 'var(--radius-sm)',
+                          outline: 'none',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      />
+                      <p
+                        style={{
+                          fontSize: '11px',
+                          color: 'hsl(var(--on-surface-muted))',
+                          marginTop: '4px',
+                        }}
+                      >
+                        Enter the number exactly as it appears on the Ghana Card.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 

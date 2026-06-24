@@ -150,6 +150,7 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
         emergency_name: data.emergencyContactName,
         emergency_relationship: data.emergencyRelationship,
         emergency_phone: data.emergencyNumber,
+        national_id: data.ghanaCardNumber || undefined,
         joined_at: new Date().toISOString(),
         status: 'Active',
         registration_source: 'admin',
