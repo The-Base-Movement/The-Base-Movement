@@ -304,7 +304,7 @@ export default function FinanceDashboard() {
           </p>
         </div>
 
-        {/* KPI: Total Donations */}
+        {/* KPI: Total Income */}
         <div
           className="panel"
           style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
@@ -329,7 +329,7 @@ export default function FinanceDashboard() {
               margin: '0 0 6px',
             }}
           >
-            Total Donations
+            Total Income
           </p>
           <p
             style={{
@@ -444,7 +444,7 @@ export default function FinanceDashboard() {
           <div className="ph" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
             <div>
               <h3 style={{ margin: 0 }}>
-                {breakdownTab === 'expense' ? 'Expense Breakdown' : 'Donation Breakdown'}
+                {breakdownTab === 'expense' ? 'Expense Breakdown' : 'Income Breakdown'}
               </h3>
               <p
                 style={{

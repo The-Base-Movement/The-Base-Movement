@@ -36,10 +36,9 @@ export const FINANCE_OFFICER_ALLOWED_PATHS = [
   '/admin/finance-dashboard',
   '/admin/donations',
   '/admin/spending-ledger',
-  '/admin/store',
-  '/admin/orders',
   '/admin/finance-requests',
   '/admin/finance-requests/review-inbox',
+  '/admin/settings',
 ]
 
 // List of routes executive roles are permitted to access

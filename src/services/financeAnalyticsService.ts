@@ -159,14 +159,21 @@ export const financeAnalyticsService = {
       .from('mobilization_ledger')
       .select('amount')
       .eq('transaction_type', 'Expenditure')
+    const orderQuery = supabase
+      .from('store_orders')
+      .select('total_amount')
+      .eq('payment_status', 'Paid')
+      .neq('status', 'Cancelled')
     if (chapter) {
       donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes] = await Promise.all([donQuery, ledQuery])
+    const [donRes, ledRes, orderRes] = await Promise.all([donQuery, ledQuery, orderQuery])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
-    const totalIncome = (donRes.data ?? []).reduce((s, d) => s + Number(d.amount), 0)
+    const donationIncome = (donRes.data ?? []).reduce((s, d) => s + Number(d.amount), 0)
+    const storeIncome = (orderRes.data ?? []).reduce((s, o) => s + Number(o.total_amount), 0)
+    const totalIncome = donationIncome + storeIncome
     const totalExpenses = (ledRes.data ?? []).reduce((s, l) => s + Number(l.amount), 0)
     return { totalIncome, totalExpenses, netBalance: totalIncome - totalExpenses }
   },
@@ -183,14 +190,25 @@ export const financeAnalyticsService = {
       .select('timestamp, amount')
       .eq('transaction_type', 'Expenditure')
       .gte('timestamp', start)
+    const orderQuery = supabase
+      .from('store_orders')
+      .select('created_at, total_amount')
+      .eq('payment_status', 'Paid')
+      .neq('status', 'Cancelled')
+      .gte('created_at', start)
     if (chapter) {
       donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes] = await Promise.all([donQuery, ledQuery])
+    const [donRes, ledRes, orderRes] = await Promise.all([donQuery, ledQuery, orderQuery])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
-    return bucket(period, donRes.data ?? [], ledRes.data ?? [])
+    const storeAsDonations = (orderRes.data ?? []).map((o) => ({
+      created_at: o.created_at,
+      amount: o.total_amount,
+    }))
+    const allIncome = [...(donRes.data ?? []), ...storeAsDonations]
+    return bucket(period, allIncome, ledRes.data ?? [])
   },
 
   async getExpenseBreakdown(period: FinancePeriod, chapter?: string): Promise<ExpenseCategory[]> {
@@ -278,12 +296,24 @@ export const financeAnalyticsService = {
       .in('status', ['Pending', 'Rejected'])
       .order('created_at', { ascending: false })
       .limit(limit)
+    const orderQuery = supabase
+      .from('store_orders')
+      .select('id, created_at, total_amount, full_name, payment_method, payment_status, status')
+      .eq('payment_status', 'Paid')
+      .neq('status', 'Cancelled')
+      .order('created_at', { ascending: false })
+      .limit(limit)
     if (chapter) {
       donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
       reqQuery = reqQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes, reqRes] = await Promise.all([donQuery, ledQuery, reqQuery])
+    const [donRes, ledRes, reqRes, orderRes] = await Promise.all([
+      donQuery,
+      ledQuery,
+      reqQuery,
+      orderQuery,
+    ])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
     if (reqRes.error) throw new Error(reqRes.error.message)
@@ -295,6 +325,15 @@ export const financeAnalyticsService = {
       chapterOrSource: d.chapter || d.payment_method || d.country || '—',
       amount: Number(d.amount),
       status: d.status,
+    }))
+    const storeIncome: TransactionRow[] = (orderRes.data ?? []).map((o) => ({
+      id: o.id,
+      kind: 'income' as const,
+      description: o.full_name || 'Store Order',
+      date: o.created_at,
+      chapterOrSource: o.payment_method || 'Store',
+      amount: Number(o.total_amount),
+      status: o.payment_status,
     }))
     const expense: TransactionRow[] = (ledRes.data ?? []).map((l) => ({
       id: l.id,
@@ -314,7 +353,7 @@ export const financeAnalyticsService = {
       amount: Number(r.amount),
       status: r.status,
     }))
-    return [...income, ...expense, ...pendingRejectedExpense]
+    return [...income, ...storeIncome, ...expense, ...pendingRejectedExpense]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, limit)
   },
