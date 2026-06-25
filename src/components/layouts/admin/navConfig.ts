@@ -30,45 +30,6 @@ export interface NavItem {
   subItems?: NavItem[]
 }
 
-// List of routes finance officers are permitted to access
-export const FINANCE_OFFICER_ALLOWED_PATHS = [
-  '/admin/dashboard',
-  '/admin/departments',
-  '/admin/analytics',
-  '/admin/members',
-  '/admin/notifications',
-  '/admin/finance-dashboard',
-  '/admin/donations',
-  '/admin/spending-ledger',
-  '/admin/finance-requests',
-  '/admin/finance-requests/review-inbox',
-  '/admin/priorities',
-  '/admin/settings',
-]
-
-// List of routes executive roles are permitted to access
-export const EXECUTIVE_ALLOWED_PATHS = [
-  '/admin/departments',
-  '/admin/executive',
-  '/admin/finance-dashboard',
-  '/admin/finance-requests',
-  '/admin/finance-requests/review-inbox',
-  '/admin/war-room',
-  '/admin/mobilization-metrics',
-  '/admin/ground-game',
-  '/admin/polling-stations',
-  '/admin/broadcasts',
-  '/admin/directives',
-  '/admin/deploy',
-  '/admin/priorities',
-  '/admin/polls',
-  '/admin/plan-manager',
-  '/admin/roadmap',
-  '/admin/party-officials',
-  '/admin/administrators',
-  '/admin/members',
-]
-
 /**
  * getNavGroups
  * -------------------------------------------------------------
@@ -138,13 +99,19 @@ export const getNavGroups = (
         to: '/admin/departments/chapter',
         icon: 'groups',
         label: 'My Department',
-        allowedRoles: ['CHAPTER_LEAD', 'CHAPTER_SECRETARY'],
+        allowedRoles: ['CHAPTER_LEAD', 'CHAPTER_SECRETARY', 'CHAPTER_TREASURER'],
       },
       {
         to: '/admin/departments/constituency',
         icon: 'location_city',
         label: 'My Department',
-        allowedRoles: ['CONSTITUENCY_LEAD', 'REGIONAL_DIRECTOR'],
+        allowedRoles: [
+          'CONSTITUENCY_LEAD',
+          'CONSTITUENCY_SECRETARY',
+          'CONSTITUENCY_DEPUTY',
+          'CONSTITUENCY_TREASURER',
+          'REGIONAL_DIRECTOR',
+        ],
       },
       {
         to: '/admin/departments/youth',

@@ -10,7 +10,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import { getNavGroups, FINANCE_OFFICER_ALLOWED_PATHS, EXECUTIVE_ALLOWED_PATHS } from './navConfig'
+import { getNavGroups } from './navConfig'
 import type { AdminUser } from '@/types/admin'
 
 interface AdminSidebarProps {
@@ -75,12 +75,6 @@ export function AdminSidebar({
           if (item.executiveOnly) {
             const role = user?.role
             if (role !== 'EXECUTIVE' && role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
-          }
-          if (user?.role === 'FINANCE_OFFICER') {
-            return FINANCE_OFFICER_ALLOWED_PATHS.includes(item.to)
-          }
-          if (user?.role === 'EXECUTIVE') {
-            return EXECUTIVE_ALLOWED_PATHS.includes(item.to)
           }
           if (!item.permission) return true
           return adminService.can(item.permission.action, item.permission.resource)
