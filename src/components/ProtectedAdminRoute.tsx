@@ -103,7 +103,17 @@ export default function ProtectedAdminRoute() {
     }
   }, [session, location.pathname])
 
-  if (isLoading) return null
+  if (isLoading)
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'hsl(var(--background))',
+          zIndex: 9999,
+        }}
+      />
+    )
 
   if (!session) {
     sessionStorage.removeItem(ADMIN_GATE_KEY)
@@ -117,7 +127,17 @@ export default function ProtectedAdminRoute() {
     return <Navigate to="/command" state={{ error: errorState }} replace />
   }
 
-  if (status === 'checking') return null
+  if (status === 'checking')
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'hsl(var(--background))',
+          zIndex: 9999,
+        }}
+      />
+    )
 
   const tab = new URLSearchParams(location.search).get('tab')
   const onSecuritySetupPath = location.pathname === MFA_SETUP_PATH && tab === MFA_SETUP_TAB

@@ -39,7 +39,17 @@ export default function VerifiedRoute() {
       })
   }, [session?.user?.id])
 
-  if (authLoading) return null
+  if (authLoading)
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'hsl(var(--background))',
+          zIndex: 9999,
+        }}
+      />
+    )
   if (!session) return <Navigate to="/login" replace />
   if (statusLoading)
     return (

@@ -18,7 +18,17 @@ export default function ProtectedRoute() {
   const { session, isLoading } = useAuth()
   const location = useLocation()
 
-  if (isLoading) return null
+  if (isLoading)
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'hsl(var(--background))',
+          zIndex: 9999,
+        }}
+      />
+    )
 
   if (!session) {
     return <Navigate to="/login" state={{ from: location }} replace />
