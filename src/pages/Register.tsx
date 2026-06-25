@@ -167,12 +167,51 @@ export default function Register() {
     }
   }
 
+  function validateStep(step: number): string | null {
+    if (step === 1) {
+      if (!formData.fullName.trim()) return 'Full name is required.'
+      if (formData.fullName.trim().split(/\s+/).length < 2)
+        return 'Please enter your full name (first and last).'
+      if (!formData.contactNumber.trim()) return 'Phone number is required.'
+      if (formData.contactNumber.replace(/\D/g, '').length < 7) return 'Phone number is too short.'
+      if (!formData.gender) return 'Please select your gender.'
+      if (!formData.ageRange) return 'Please select your age range.'
+      if (platform === 'GHANA' && !formData.idNumber.trim()) return 'Ghana Card number is required.'
+      if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+        return 'Please enter a valid email address.'
+    }
+    if (step === 2) {
+      if (platform === 'GHANA') {
+        if (!formData.region) return 'Please select your region.'
+      } else {
+        if (!formData.country) return 'Please select your country.'
+      }
+      if (!formData.emergencyContactName.trim()) return 'Emergency contact name is required.'
+      if (!formData.emergencyNumber.trim()) return 'Emergency contact number is required.'
+    }
+    if (step === 4) {
+      if (!formData.password || formData.password.length < 8)
+        return 'Password must be at least 8 characters.'
+    }
+    return null
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formStep < 4) {
+      const error = validateStep(formStep)
+      if (error) {
+        toast.error(error)
+        return
+      }
       setFormStep((prev) => prev + 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
+      const finalError = validateStep(4)
+      if (finalError) {
+        toast.error(finalError)
+        return
+      }
       if (!isOnline) {
         try {
           await saveDraftRegistration({

@@ -145,6 +145,41 @@ describe('Auto-approval logic', () => {
   })
 })
 
+describe('Email validation', () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  it('accepts valid emails', () => {
+    expect(emailRegex.test('user@example.com')).toBe(true)
+    expect(emailRegex.test('kwame.asante@gmail.com')).toBe(true)
+  })
+
+  it('rejects invalid emails', () => {
+    expect(emailRegex.test('notanemail')).toBe(false)
+    expect(emailRegex.test('user@')).toBe(false)
+    expect(emailRegex.test('@example.com')).toBe(false)
+    expect(emailRegex.test('user @example.com')).toBe(false)
+  })
+})
+
+describe('Full name validation', () => {
+  it('requires at least two words', () => {
+    const check = (name: string) => name.trim().split(/\s+/).length >= 2
+    expect(check('Kwame Asante')).toBe(true)
+    expect(check('Kwame')).toBe(false)
+    expect(check('  ')).toBe(false)
+    expect(check('Kwame Nkrumah Asante')).toBe(true)
+  })
+})
+
+describe('Phone number length', () => {
+  it('requires at least 7 digits', () => {
+    const check = (num: string) => num.replace(/\D/g, '').length >= 7
+    expect(check('241234567')).toBe(true)
+    expect(check('12345')).toBe(false)
+    expect(check('024 123 4567')).toBe(true)
+  })
+})
+
 describe('Offline draft structure', () => {
   it('draft contains required fields for sync', () => {
     const draft = {

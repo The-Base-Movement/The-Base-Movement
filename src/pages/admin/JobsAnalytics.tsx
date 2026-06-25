@@ -400,7 +400,7 @@ export default function JobsAnalytics() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(2, 1fr)',
               gap: 16,
               marginBottom: 16,
             }}
