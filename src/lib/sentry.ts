@@ -34,9 +34,10 @@ export function initSentry() {
     dsn,
     environment: import.meta.env.MODE,
     sendDefaultPii: true,
-    tracesSampleRate: 0.1,
-    replaysSessionSampleRate: 0.05,
-    replaysOnErrorSampleRate: 1.0,
+    // ponytail: lowered to avoid 429 rate-limit on free tier
+    tracesSampleRate: 0.02,
+    replaysSessionSampleRate: 0.01,
+    replaysOnErrorSampleRate: 0.5,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }),
