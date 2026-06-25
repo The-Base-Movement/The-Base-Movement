@@ -168,26 +168,38 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
     source: 'department-youth',
   },
   {
+    to: '/admin/departments/founder',
+    match: 'exact_or_descendant',
+    allowedRoles: ['SUPER_ADMIN', 'FOUNDER'],
+    source: 'department-founder',
+  },
+  {
+    to: '/admin/departments/organizer',
+    match: 'exact_or_descendant',
+    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'ORGANIZER'],
+    source: 'department-organizer',
+  },
+  {
     to: '/admin/departments/executive',
     match: 'exact_or_descendant',
-    executiveOnly: true,
+    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE', 'ORGANIZER'],
     source: 'department-executive',
   },
   {
     to: '/admin/departments/movement_leader',
     match: 'exact_or_descendant',
-    executiveOnly: true,
+    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'MOVEMENT_LEADER'],
     source: 'department-movement-leader',
   },
   {
     to: '/admin/departments',
     match: 'exact_or_descendant',
-    allowedRoles: ['SUPER_ADMIN', 'FOUNDER'],
+    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE'],
     source: 'department-index',
   },
 ]
 
-const PRIVILEGED_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE']
+const PRIVILEGED_ROLES: AdminRole[] = ['SUPER_ADMIN']
 
 const NAV_ROUTE_RULES = buildNavRouteRules()
 

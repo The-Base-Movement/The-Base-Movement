@@ -56,7 +56,19 @@ export const getNavGroups = (
         to: '/admin/departments',
         icon: 'apartment',
         label: 'Departments',
-        allowedRoles: ['SUPER_ADMIN', 'FOUNDER'],
+        allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE'],
+      },
+      {
+        to: '/admin/departments/executive',
+        icon: 'corporate_fare',
+        label: 'My Department',
+        allowedRoles: ['ORGANIZER'],
+      },
+      {
+        to: '/admin/departments/movement_leader',
+        icon: 'flag',
+        label: 'My Department',
+        allowedRoles: ['MOVEMENT_LEADER'],
       },
       {
         to: '/admin/departments/finance',

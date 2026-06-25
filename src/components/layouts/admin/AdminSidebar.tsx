@@ -63,8 +63,7 @@ export function AdminSidebar({
       .map((group) => ({
         ...group,
         items: group.items.filter((item) => {
-          // Explicit role allow-list takes precedence over every other gate
-          // (incl. the FINANCE_OFFICER / EXECUTIVE path allow-lists below).
+          // Explicit role allow-list takes precedence over every other gate.
           if (item.allowedRoles) {
             return !!user?.role && item.allowedRoles.includes(user.role)
           }
