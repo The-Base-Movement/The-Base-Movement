@@ -32,7 +32,11 @@ export interface NavItem {
 
 // List of routes finance officers are permitted to access
 export const FINANCE_OFFICER_ALLOWED_PATHS = [
+  '/admin/dashboard',
   '/admin/departments',
+  '/admin/analytics',
+  '/admin/members',
+  '/admin/notifications',
   '/admin/finance-dashboard',
   '/admin/donations',
   '/admin/spending-ledger',
