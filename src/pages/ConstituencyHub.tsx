@@ -219,7 +219,7 @@ export default function ConstituencyHub() {
       const updated = await constituencyService.postAnnouncement(
         constituency.id,
         announceDraft.trim(),
-        leaderName || constituency.leaderName
+        leaderName || constituency.leaderName || 'Leader'
       )
       setAnnouncements(updated)
       setAnnounceDraft('')

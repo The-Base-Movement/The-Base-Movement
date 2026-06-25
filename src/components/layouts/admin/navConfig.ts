@@ -181,6 +181,12 @@ export const getNavGroups = (
         permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
       },
       {
+        to: '/admin/referral-analytics',
+        icon: 'share',
+        label: 'Referral analytics',
+        permission: { action: 'VIEW_MEMBER_DIRECTORY', resource: 'MEMBERS' },
+      },
+      {
         to: '/admin/jobs-analytics',
         icon: 'work',
         label: 'Jobs analytics',
