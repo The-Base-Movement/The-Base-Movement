@@ -7,7 +7,6 @@
  */
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { usePerformance } from '@/context/PerformanceContext'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import {

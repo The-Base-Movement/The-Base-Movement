@@ -12,7 +12,6 @@ import { logisticsService } from '@/services/logisticsService'
 import { adminService, type Member } from '@/services/adminService'
 import { authService } from '@/services/authService'
 import { discordService } from '@/services/discordService'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
@@ -66,14 +65,7 @@ export default function TrashPage() {
       const factors = await authService.listMfaFactors()
       const totp = factors?.totp?.find((f) => f.status === 'verified')
       if (!totp) throw new Error('No MFA factor enrolled')
-      const challenge = await supabase.auth.mfa.challenge({ factorId: totp.id })
-      if (challenge.error) throw challenge.error
-      const verify = await supabase.auth.mfa.verify({
-        factorId: totp.id,
-        challengeId: challenge.data.id,
-        code,
-      })
-      if (verify.error) throw verify.error
+      await authService.challengeAndVerifyMfa(totp.id, code)
 
       const admin = adminService.getCurrentUser()
       discordService.alert(
