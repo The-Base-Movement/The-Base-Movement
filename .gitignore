@@ -20,6 +20,7 @@ dist-ssr
 /fix-dark.cjs
 /replace-colors.cjs
 /.cache_ggshield
+/agent/
 
 .env
 .env.*

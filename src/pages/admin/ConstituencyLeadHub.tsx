@@ -8,6 +8,12 @@ import { HubDonationsList } from './chapterhub/HubDonationsList'
 import type { ChapterDonation } from './chapterhub/types'
 import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
 import { toast } from 'sonner'
+import { AddActivityModal } from './constituencyLeadHub/AddActivityModal'
+import { AssignCommitteeModal } from './constituencyLeadHub/AssignCommitteeModal'
+import { AssignLeaderModal } from './constituencyLeadHub/AssignLeaderModal'
+import { ConstituencyHubKpis } from './constituencyLeadHub/ConstituencyHubKpis'
+import { ConstituencyHubTabs } from './constituencyLeadHub/ConstituencyHubTabs'
+import type { HubActiveTab, Modal, UserOption } from './constituencyLeadHub/types'
 
 const PHONE_VISIBLE_ROLES = new Set([
   'CHAPTER_LEAD',
@@ -29,14 +35,6 @@ type Member = {
   registration_number?: string
 }
 
-type UserOption = {
-  id: string
-  full_name: string
-  avatar_url?: string
-}
-
-type Modal = 'add-activity' | 'assign-leader' | 'assign-committee' | null
-
 export default function AdminConstituencyLeadHub() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -46,9 +44,7 @@ export default function AdminConstituencyLeadHub() {
   const [committee, setCommittee] = useState<ConstituencyLeader[]>([])
   const [donations, setDonations] = useState<ChapterDonation[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<
-    'members' | 'donations' | 'activities' | 'committee' | 'helpdesk'
-  >('members')
+  const [activeTab, setActiveTab] = useState<HubActiveTab>('members')
   const [modal, setModal] = useState<Modal>(null)
 
   // Activity form
@@ -259,122 +255,11 @@ export default function AdminConstituencyLeadHub() {
         }
       />
 
-      {/* KPI strip */}
-      <div className="kpis" style={{ marginBottom: 24 }}>
-        <div
-          className="panel"
-          style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 3,
-              background: 'hsl(var(--primary))',
-            }}
-          />
-          <p
-            style={{
-              fontSize: 10,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: 'hsl(var(--on-surface-muted))',
-              margin: '0 0 6px',
-            }}
-          >
-            Members
-          </p>
-          <p
-            style={{
-              fontSize: 'var(--kpi-num-size)',
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-              margin: 0,
-            }}
-          >
-            {constituency.memberCount}
-          </p>
-        </div>
-
-        <div
-          className="panel"
-          style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 3,
-              background: 'hsl(var(--accent))',
-            }}
-          />
-          <p
-            style={{
-              fontSize: 10,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: 'hsl(var(--on-surface-muted))',
-              margin: '0 0 6px',
-            }}
-          >
-            Verified
-          </p>
-          <p
-            style={{
-              fontSize: 'var(--kpi-num-size)',
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-              margin: 0,
-            }}
-          >
-            {verifiedCount}
-          </p>
-        </div>
-
-        <div
-          className="panel"
-          style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 3,
-              background: 'hsl(var(--container-low))',
-            }}
-          />
-          <p
-            style={{
-              fontSize: 10,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: 'hsl(var(--on-surface-muted))',
-              margin: '0 0 6px',
-            }}
-          >
-            Activities
-          </p>
-          <p
-            style={{
-              fontSize: 'var(--kpi-num-size)',
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-              margin: 0,
-            }}
-          >
-            {activities.length}
-          </p>
-        </div>
-      </div>
+      <ConstituencyHubKpis
+        memberCount={constituency.memberCount}
+        verifiedCount={verifiedCount}
+        activitiesCount={activities.length}
+      />
 
       {/* Coordinator panel */}
       <div
@@ -424,39 +309,14 @@ export default function AdminConstituencyLeadHub() {
         </button>
       </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-        <button
-          className={activeTab === 'members' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
-          onClick={() => setActiveTab('members')}
-        >
-          Members ({members.length})
-        </button>
-        <button
-          className={activeTab === 'donations' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
-          onClick={() => setActiveTab('donations')}
-        >
-          Donations ({donations.length})
-        </button>
-        <button
-          className={activeTab === 'activities' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
-          onClick={() => setActiveTab('activities')}
-        >
-          Activities ({activities.length})
-        </button>
-        <button
-          className={activeTab === 'committee' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
-          onClick={() => setActiveTab('committee')}
-        >
-          Committee ({committee.length})
-        </button>
-        <button
-          className={activeTab === 'helpdesk' ? 'btn btn-active-tab' : 'btn btn-inactive-tab'}
-          onClick={() => setActiveTab('helpdesk')}
-        >
-          Support Tickets
-        </button>
-      </div>
+      <ConstituencyHubTabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        membersCount={members.length}
+        donationsCount={donations.length}
+        activitiesCount={activities.length}
+        committeeCount={committee.length}
+      />
 
       {/* Members tab */}
       {activeTab === 'members' && (
@@ -834,491 +694,45 @@ export default function AdminConstituencyLeadHub() {
 
       {/* Assign Committee Member Modal */}
       {modal === 'assign-committee' && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onClick={() => setModal(null)}
-        >
-          <div
-            style={{
-              background: 'hsl(var(--background))',
-              borderRadius: 'var(--radius-lg)',
-              padding: 28,
-              width: '100%',
-              maxWidth: 480,
-              margin: '0 16px',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2
-              style={{
-                fontSize: 17,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                margin: '0 0 20px',
-              }}
-            >
-              Assign Committee Member
-            </h2>
-
-            {/* Role selector */}
-            <div style={{ marginBottom: 16 }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: 11,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface-muted))',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: 6,
-                }}
-              >
-                Role
-              </label>
-              <select
-                value={committeeRole}
-                onChange={(e) => setCommitteeRole(e.target.value as ConstituencyLeader['role'])}
-                style={{
-                  width: '100%',
-                  height: 40,
-                  padding: '0 10px',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: 14,
-                  fontFamily: "'Public Sans', sans-serif",
-                  background: 'hsl(var(--background))',
-                  color: 'hsl(var(--on-surface))',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <option value="Secretary">Secretary</option>
-                <option value="Deputy Secretary">Deputy Secretary</option>
-                <option value="Treasurer">Treasurer</option>
-              </select>
-            </div>
-
-            {/* Member search */}
-            <div style={{ marginBottom: 16 }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: 11,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface-muted))',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: 6,
-                }}
-              >
-                Select Member
-              </label>
-              <input
-                value={committeeMemberSearch}
-                onChange={(e) => {
-                  setCommitteeMemberSearch(e.target.value)
-                  setCommitteeSelectedMember(null)
-                }}
-                placeholder="Search member by name..."
-                style={{
-                  width: '100%',
-                  height: 40,
-                  padding: '0 12px',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: 14,
-                  fontFamily: "'Public Sans', sans-serif",
-                  boxSizing: 'border-box',
-                  marginBottom: 8,
-                }}
-              />
-              {committeeMemberOptions.length > 0 && (
-                <div
-                  style={{
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 'var(--radius-sm)',
-                    maxHeight: 200,
-                    overflowY: 'auto',
-                  }}
-                >
-                  {committeeMemberOptions.map((u) => (
-                    <button
-                      key={u.id}
-                      className="btn btn-ghost"
-                      style={{
-                        justifyContent: 'flex-start',
-                        gap: 10,
-                        padding: '10px 12px',
-                        width: '100%',
-                        borderRadius: 0,
-                        borderBottom: '1px solid hsl(var(--border))',
-                        background:
-                          committeeSelectedMember?.id === u.id
-                            ? 'hsl(var(--primary) / 0.06)'
-                            : undefined,
-                        borderLeft:
-                          committeeSelectedMember?.id === u.id
-                            ? '3px solid hsl(var(--primary))'
-                            : '3px solid transparent',
-                      }}
-                      onClick={() => setCommitteeSelectedMember(u)}
-                    >
-                      {u.avatar_url ? (
-                        <img
-                          src={u.avatar_url}
-                          alt=""
-                          style={{
-                            width: 28,
-                            height: 28,
-                            borderRadius: 'var(--radius-pill)',
-                            objectFit: 'cover',
-                            flexShrink: 0,
-                          }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: 28,
-                            height: 28,
-                            borderRadius: 'var(--radius-pill)',
-                            background: 'hsl(var(--container-low))',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <span
-                            className="material-symbols-outlined"
-                            style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}
-                          >
-                            person
-                          </span>
-                        </div>
-                      )}
-                      <span
-                        style={{
-                          fontSize: 14,
-                          color: 'hsl(var(--on-surface))',
-                          fontFamily: "'Public Sans', sans-serif",
-                        }}
-                      >
-                        {u.full_name}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {committeeMemberSearch && committeeMemberOptions.length === 0 && (
-                <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
-                  No members found.
-                </p>
-              )}
-            </div>
-
-            {/* Preview */}
-            {committeeSelectedMember && (
-              <div
-                style={{
-                  background: 'hsl(var(--primary) / 0.06)',
-                  border: '1px solid hsl(var(--primary) / 0.2)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '10px 14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  marginBottom: 20,
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 16, color: 'hsl(var(--primary))' }}
-                >
-                  check_circle
-                </span>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 13,
-                    fontFamily: "'Public Sans', sans-serif",
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                >
-                  <strong>{committeeSelectedMember.full_name}</strong> will be assigned as{' '}
-                  <strong>{committeeRole}</strong>.
-                </p>
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-              <button
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={() => {
-                  setModal(null)
-                  setCommitteeMemberSearch('')
-                  setCommitteeSelectedMember(null)
-                  setCommitteeRole('Secretary')
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={handleAssignCommitteeMember}
-                disabled={!committeeSelectedMember || committeeSaving}
-              >
-                {committeeSaving ? 'Saving...' : 'Confirm'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <AssignCommitteeModal
+          committeeRole={committeeRole}
+          setCommitteeRole={setCommitteeRole}
+          committeeMemberSearch={committeeMemberSearch}
+          setCommitteeMemberSearch={setCommitteeMemberSearch}
+          committeeMemberOptions={committeeMemberOptions}
+          committeeSelectedMember={committeeSelectedMember}
+          setCommitteeSelectedMember={setCommitteeSelectedMember}
+          committeeSaving={committeeSaving}
+          handleAssignCommitteeMember={handleAssignCommitteeMember}
+          setModal={setModal}
+        />
       )}
 
       {modal === 'add-activity' && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onClick={() => setModal(null)}
-        >
-          <div
-            style={{
-              background: 'hsl(var(--background))',
-              borderRadius: 'var(--radius-lg)',
-              padding: 28,
-              width: '100%',
-              maxWidth: 480,
-              margin: '0 16px',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2
-              style={{
-                fontSize: 17,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                margin: '0 0 20px',
-              }}
-            >
-              Add Activity
-            </h2>
-            <form
-              onSubmit={handleAddActivity}
-              style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
-            >
-              <input
-                required
-                value={actTitle}
-                onChange={(e) => setActTitle(e.target.value)}
-                placeholder="Title *"
-                style={{
-                  height: 40,
-                  padding: '0 12px',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: 14,
-                  fontFamily: "'Public Sans', sans-serif",
-                  boxSizing: 'border-box',
-                }}
-              />
-              <textarea
-                value={actDesc}
-                onChange={(e) => setActDesc(e.target.value)}
-                placeholder="Description"
-                rows={3}
-                style={{
-                  padding: '10px 12px',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: 14,
-                  fontFamily: "'Public Sans', sans-serif",
-                  resize: 'vertical',
-                  boxSizing: 'border-box',
-                }}
-              />
-              <input
-                required
-                value={actType}
-                onChange={(e) => setActType(e.target.value)}
-                placeholder="Type (e.g. Meeting, Workshop) *"
-                style={{
-                  height: 40,
-                  padding: '0 12px',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: 14,
-                  fontFamily: "'Public Sans', sans-serif",
-                  boxSizing: 'border-box',
-                }}
-              />
-              <input
-                required
-                type="date"
-                value={actDate}
-                onChange={(e) => setActDate(e.target.value)}
-                style={{
-                  height: 40,
-                  padding: '0 12px',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: 14,
-                  fontFamily: "'Public Sans', sans-serif",
-                  boxSizing: 'border-box',
-                }}
-              />
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 8 }}>
-                <button
-                  type="button"
-                  className="btn btn-outline btn-sm"
-                  onClick={() => setModal(null)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary btn-sm" disabled={actSaving}>
-                  {actSaving ? 'Saving...' : 'Add Activity'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <AddActivityModal
+          actTitle={actTitle}
+          setActTitle={setActTitle}
+          actDesc={actDesc}
+          setActDesc={setActDesc}
+          actType={actType}
+          setActType={setActType}
+          actDate={actDate}
+          setActDate={setActDate}
+          actSaving={actSaving}
+          handleAddActivity={handleAddActivity}
+          setModal={setModal}
+        />
       )}
 
-      {/* Assign Leader Modal */}
       {modal === 'assign-leader' && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.45)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onClick={() => setModal(null)}
-        >
-          <div
-            style={{
-              background: 'hsl(var(--background))',
-              borderRadius: 'var(--radius-lg)',
-              padding: 28,
-              width: '100%',
-              maxWidth: 480,
-              margin: '0 16px',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2
-              style={{
-                fontSize: 17,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                margin: '0 0 20px',
-              }}
-            >
-              Assign Coordinator
-            </h2>
-            <input
-              value={leaderSearch}
-              onChange={(e) => setLeaderSearch(e.target.value)}
-              placeholder="Search member by name..."
-              style={{
-                width: '100%',
-                height: 40,
-                padding: '0 12px',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: 14,
-                fontFamily: "'Public Sans', sans-serif",
-                boxSizing: 'border-box',
-                marginBottom: 16,
-              }}
-            />
-            {leaderOptions.length > 0 && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 4,
-                  maxHeight: 280,
-                  overflowY: 'auto',
-                }}
-              >
-                {leaderOptions.map((u) => (
-                  <button
-                    key={u.id}
-                    className="btn btn-ghost"
-                    style={{ justifyContent: 'flex-start', gap: 12, padding: '10px 12px' }}
-                    onClick={() => handleAssignLeader(u)}
-                    disabled={leaderSaving}
-                  >
-                    {u.avatar_url ? (
-                      <img
-                        src={u.avatar_url}
-                        alt=""
-                        style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 'var(--radius-pill)',
-                          objectFit: 'cover',
-                        }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 'var(--radius-pill)',
-                          background: 'hsl(var(--container-low))',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                        }}
-                      >
-                        <span
-                          className="material-symbols-outlined"
-                          style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
-                        >
-                          person
-                        </span>
-                      </div>
-                    )}
-                    <span style={{ fontSize: 14, color: 'hsl(var(--on-surface))' }}>
-                      {u.full_name}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-            {leaderSearch && leaderOptions.length === 0 && (
-              <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-                No members found.
-              </p>
-            )}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
-              <button className="btn btn-outline btn-sm" onClick={() => setModal(null)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <AssignLeaderModal
+          leaderSearch={leaderSearch}
+          setLeaderSearch={setLeaderSearch}
+          leaderOptions={leaderOptions}
+          leaderSaving={leaderSaving}
+          handleAssignLeader={handleAssignLeader}
+          setModal={setModal}
+        />
       )}
     </div>
   )
