@@ -108,6 +108,18 @@ export const getNavGroups = (
         allowedRoles: ['ADMIN', 'ADMIN_L2', 'VERIFIER'],
       },
       {
+        to: '/admin/departments/field',
+        icon: 'directions_walk',
+        label: 'My Department',
+        allowedRoles: ['FIELD_AGENT'],
+      },
+      {
+        to: '/admin/departments/intelligence',
+        icon: 'psychology',
+        label: 'My Department',
+        allowedRoles: ['INTELLIGENCE_ANALYST'],
+      },
+      {
         to: '/admin/departments/chapter',
         icon: 'groups',
         label: 'My Department',

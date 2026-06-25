@@ -150,6 +150,18 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
     source: 'department-membership',
   },
   {
+    to: '/admin/departments/field',
+    match: 'exact_or_descendant',
+    permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
+    source: 'department-field',
+  },
+  {
+    to: '/admin/departments/intelligence',
+    match: 'exact_or_descendant',
+    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'INTELLIGENCE_ANALYST'],
+    source: 'department-intelligence',
+  },
+  {
     to: '/admin/departments/chapter',
     match: 'exact_or_descendant',
     permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },

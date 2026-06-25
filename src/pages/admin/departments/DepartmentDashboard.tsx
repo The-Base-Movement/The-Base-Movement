@@ -116,6 +116,19 @@ const QUICK_LINKS: Record<string, QuickLink[]> = {
     { to: '/admin/broadcasts', icon: 'campaign', label: 'Mobilization', color: RED },
     { to: '/admin/jobs-analytics', icon: 'work', label: 'Jobs Analytics', color: GREEN },
   ],
+  field: [
+    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
+    { to: '/admin/verification', icon: 'verified_user', label: 'KYC Queue', color: GOLD },
+    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: INK },
+    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: GREEN },
+  ],
+  intelligence: [
+    { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics', color: GREEN },
+    { to: '/admin/sentiment-intelligence', icon: 'psychology', label: 'Sentiment AI', color: GOLD },
+    { to: '/admin/ml-intelligence', icon: 'auto_awesome', label: 'ML Intelligence', color: INK },
+    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
+    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: RED },
+  ],
   it: [
     { to: '/admin/it-department', icon: 'computer', label: 'IT Department', color: GREEN },
     {
