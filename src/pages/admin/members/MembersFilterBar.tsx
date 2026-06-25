@@ -6,13 +6,19 @@ interface MembersFilterBarProps {
   searchTerm: string
   searchType: SearchType
   sourceFilter: 'all' | 'digital' | 'scan' | 'admin'
+  genderFilter: 'all' | 'Male' | 'Female'
+  ageRangeFilter: string
   sortOrder: 'asc' | 'desc'
   onSearchChange: (val: string) => void
   onSearchTypeChange: (val: SearchType) => void
   onSourceFilterChange: (val: 'all' | 'digital' | 'scan' | 'admin') => void
+  onGenderFilterChange: (val: 'all' | 'Male' | 'Female') => void
+  onAgeRangeFilterChange: (val: string) => void
   onSortChange: (next: 'asc' | 'desc') => void
   onClearSearch: () => void
 }
+
+const AGE_RANGES = ['all', '18-25', '26-35', '36-45', '46-55', '56-65', '65+']
 
 const SEARCH_TYPE_OPTIONS: {
   value: SearchType
@@ -47,14 +53,30 @@ const SOURCE_OPTIONS = [
   { value: 'admin', label: 'Admin', icon: 'admin_panel_settings' },
 ] as const
 
+const selectSt: React.CSSProperties = {
+  height: 32,
+  padding: '0 8px',
+  borderRadius: 4,
+  border: '1px solid hsl(var(--border))',
+  fontSize: 11.5,
+  fontFamily: "'Public Sans', sans-serif",
+  color: 'hsl(var(--on-surface))',
+  background: 'hsl(var(--card))',
+  boxSizing: 'border-box',
+}
+
 export function MembersFilterBar({
   searchTerm,
   searchType,
   sourceFilter,
+  genderFilter,
+  ageRangeFilter,
   sortOrder,
   onSearchChange,
   onSearchTypeChange,
   onSourceFilterChange,
+  onGenderFilterChange,
+  onAgeRangeFilterChange,
   onSortChange,
   onClearSearch,
 }: MembersFilterBarProps) {
@@ -198,6 +220,26 @@ export function MembersFilterBar({
               </button>
             ))}
           </div>
+          <select
+            value={genderFilter}
+            onChange={(e) => onGenderFilterChange(e.target.value as 'all' | 'Male' | 'Female')}
+            style={selectSt}
+          >
+            <option value="all">All genders</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          <select
+            value={ageRangeFilter}
+            onChange={(e) => onAgeRangeFilterChange(e.target.value)}
+            style={selectSt}
+          >
+            {AGE_RANGES.map((r) => (
+              <option key={r} value={r}>
+                {r === 'all' ? 'All ages' : r}
+              </option>
+            ))}
+          </select>
           <SortToggle value={sortOrder} onChange={onSortChange} />
         </div>
       </div>

@@ -47,6 +47,8 @@ export default function MembersList() {
     searchTerm,
     searchType,
     sourceFilter,
+    genderFilter,
+    ageRangeFilter,
     sortOrder,
     setSortOrder,
     stats,
@@ -54,6 +56,8 @@ export default function MembersList() {
     handleSearchChange,
     handleSearchTypeChange,
     handleSourceFilterChange,
+    handleGenderFilterChange,
+    handleAgeRangeFilterChange,
     handleClearSearch,
     handleNextPage,
     handlePrevPage,
@@ -161,10 +165,14 @@ export default function MembersList() {
         searchTerm={searchTerm}
         searchType={searchType}
         sourceFilter={sourceFilter}
+        genderFilter={genderFilter}
+        ageRangeFilter={ageRangeFilter}
         sortOrder={sortOrder}
         onSearchChange={handleSearchChange}
         onSearchTypeChange={handleSearchTypeChange}
         onSourceFilterChange={handleSourceFilterChange}
+        onGenderFilterChange={handleGenderFilterChange}
+        onAgeRangeFilterChange={handleAgeRangeFilterChange}
         onSortChange={setSortOrder}
         onClearSearch={handleClearSearch}
       />

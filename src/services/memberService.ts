@@ -644,7 +644,9 @@ class MemberService {
     searchTerm?: string,
     registrationSource?: string,
     searchType: 'default' | 'constituency' | 'polling_station' = 'default',
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: 'asc' | 'desc',
+    gender?: string,
+    ageRange?: string
   ): Promise<{ data: Member[]; totalCount: number }> {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
@@ -652,11 +654,14 @@ class MemberService {
     let query = supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source',
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source,age_range',
         { count: 'exact' }
       )
       .is('deleted_at', null)
       .eq('status', 'Active')
+
+    if (gender) query = query.eq('gender', gender)
+    if (ageRange) query = query.eq('age_range', ageRange)
 
     if (searchTerm) {
       if (searchType === 'constituency') {

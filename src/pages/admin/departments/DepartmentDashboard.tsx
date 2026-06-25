@@ -78,6 +78,8 @@ const QUICK_LINKS: Record<string, QuickLink[]> = {
     { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: GOLD },
     { to: '/admin/broadcasts', icon: 'campaign', label: 'Broadcasts', color: INK },
     { to: '/admin/jobs', icon: 'work', label: 'Jobs Board', color: GREEN },
+    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: GOLD },
+    { to: '/admin/referral-analytics', icon: 'share', label: 'Referral Analytics', color: INK },
   ],
   executive: [
     { to: '/admin/executive', icon: 'corporate_fare', label: 'Executive Dashboard', color: GREEN },

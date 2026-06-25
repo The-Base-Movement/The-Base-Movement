@@ -223,7 +223,9 @@ class AdminService {
     searchTerm?: string,
     registrationSource?: string,
     searchType: 'default' | 'constituency' | 'polling_station' = 'default',
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: 'asc' | 'desc',
+    gender?: string,
+    ageRange?: string
   ): Promise<{ data: Member[]; totalCount: number }> {
     return memberService.getMembersPaginated(
       page,
@@ -231,7 +233,9 @@ class AdminService {
       searchTerm,
       registrationSource,
       searchType,
-      sortOrder
+      sortOrder,
+      gender,
+      ageRange
     )
   }
 

@@ -14,6 +14,8 @@ export function useMembersData() {
     return ''
   })
   const [sourceFilter, setSourceFilter] = useState<'all' | 'digital' | 'scan' | 'admin'>('all')
+  const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>('all')
+  const [ageRangeFilter, setAgeRangeFilter] = useState<string>('all')
   const [searchType, setSearchType] = useState<'default' | 'constituency' | 'polling_station'>(
     'default'
   )
@@ -29,14 +31,16 @@ export function useMembersData() {
         searchTerm,
         sourceFilter,
         searchType,
-        sortOrder
+        sortOrder,
+        genderFilter !== 'all' ? genderFilter : undefined,
+        ageRangeFilter !== 'all' ? ageRangeFilter : undefined
       )
       .then(({ data, totalCount: total }) => {
         setMembers(data)
         setTotalMembers(total)
         setIsLoading(false)
       })
-  }, [currentPage, searchTerm, sourceFilter, searchType, sortOrder])
+  }, [currentPage, searchTerm, sourceFilter, searchType, sortOrder, genderFilter, ageRangeFilter])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -49,6 +53,14 @@ export function useMembersData() {
   }
   const handleSourceFilterChange = (val: 'all' | 'digital' | 'scan' | 'admin') => {
     setSourceFilter(val)
+    setCurrentPage(1)
+  }
+  const handleGenderFilterChange = (val: 'all' | 'Male' | 'Female') => {
+    setGenderFilter(val)
+    setCurrentPage(1)
+  }
+  const handleAgeRangeFilterChange = (val: string) => {
+    setAgeRangeFilter(val)
     setCurrentPage(1)
   }
   const handleClearSearch = () => {
@@ -86,6 +98,8 @@ export function useMembersData() {
     searchTerm,
     searchType,
     sourceFilter,
+    genderFilter,
+    ageRangeFilter,
     sortOrder,
     setSortOrder,
     stats,
@@ -93,6 +107,8 @@ export function useMembersData() {
     handleSearchChange,
     handleSearchTypeChange,
     handleSourceFilterChange,
+    handleGenderFilterChange,
+    handleAgeRangeFilterChange,
     handleClearSearch,
     handleNextPage,
     handlePrevPage,
