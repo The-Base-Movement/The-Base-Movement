@@ -136,35 +136,49 @@ export function donationReceiptEmail(d: DonationReceiptEmailData): string {
     `Your ${d.amount} contribution goes directly to youth employment programs and branch operations.`
 
   function receiptRow(key: string, value: string, ok = false) {
-    return `<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
-      <span style="color:#888;font-weight:700">${key}</span>
-      <span style="font-family:'Public Sans',Arial;font-weight:800;${ok ? 'color:#006B3F' : ''}">${value}</span>
-    </div>`
+    return `<tr>
+      <td style="padding:12px 0;border-bottom:1px solid #edf1eb;color:#6f7a71;font-family:'Public Sans',Arial;font-size:12px;font-weight:700;vertical-align:top">${key}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #edf1eb;color:${ok ? '#006B3F' : '#181d19'};font-family:'Public Sans',Arial;font-size:13px;font-weight:800;text-align:right;vertical-align:top">${value}</td>
+    </tr>`
   }
 
   return `${SHELL_OPEN}
   <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
     Your ${d.amount} contribution is confirmed. Receipt ref: ${d.reference}. Thank you, patriot.
   </div>
-  <div style="background:#fff;border-radius:4px;overflow:hidden">
+  <div style="background:#fff;border:1px solid #e4e9e2;border-radius:8px;overflow:hidden">
     ${TOP_BAR}
-    ${emailHeader('Donation receipt')}
-    <div style="padding:28px 28px 24px">
-      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Thank you, ${d.name}.</div>
-      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Your ${d.amount} contribution is confirmed.</h1>
-      <p style="line-height:1.65;color:#444;margin-bottom:14px">Every cedi you give goes directly to youth employment programs and branch operations. Here is your official receipt.</p>
-      ${receiptRow('Donor', d.name)}
-      ${receiptRow('Amount', d.amount)}
-      ${receiptRow('Method', d.method)}
-      ${receiptRow('Date', d.date)}
-      ${receiptRow('Frequency', freq)}
-      ${receiptRow('Reference', d.reference)}
-      ${receiptRow('Status', '✓ Confirmed', true)}
-      <div style="display:flex;justify-content:space-between;padding:12px 16px;background:#f6fbf4;border-radius:4px;margin:14px 0">
-        <span style="font-family:'Public Sans',Arial;font-weight:800">Total paid</span>
-        <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:18px;color:#006B3F">${d.amount}</span>
-      </div>
-      <p style="line-height:1.65;color:#888;font-size:12px;margin-bottom:14px">${impact}</p>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;background:#101611">
+      <tr>
+        <td style="padding:18px 28px;vertical-align:middle">
+          <img src="https://thebasemovement.info/branding/logo.png" width="76" alt="The Base Movement" style="display:block;width:76px;max-width:76px;height:auto;background:#fff;border-radius:6px;padding:6px">
+        </td>
+        <td style="padding:18px 28px;text-align:right;vertical-align:middle">
+          <div style="font-family:'Public Sans',Arial;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#DAA520">Donation receipt</div>
+          <div style="font-family:'Public Sans',Arial;font-size:13px;font-weight:800;color:#fff;margin-top:4px">The Base Movement</div>
+        </td>
+      </tr>
+    </table>
+    <div style="padding:30px 28px 24px">
+      <div style="display:inline-block;background:#f6fbf4;border:1px solid #dfeee3;border-radius:999px;color:#006B3F;font-family:'Public Sans',Arial;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:7px 11px;margin-bottom:18px">Payment confirmed</div>
+      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:28px;letter-spacing:-.02em;line-height:1.12;color:#181d19;margin:0 0 12px">Thank you, ${d.name}.</h1>
+      <p style="line-height:1.7;color:#444;margin:0 0 20px">Your ${d.amount} contribution has been received. Below is your official receipt for your records.</p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin:6px 0 16px">
+        ${receiptRow('Donor', d.name)}
+        ${receiptRow('Amount', d.amount)}
+        ${receiptRow('Method', d.method)}
+        ${receiptRow('Date', d.date)}
+        ${receiptRow('Frequency', freq)}
+        ${receiptRow('Reference', d.reference)}
+        ${receiptRow('Status', 'Confirmed', true)}
+      </table>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;background:#f6fbf4;border:1px solid #e0eadc;border-radius:6px;margin:14px 0 12px">
+        <tr>
+          <td style="padding:16px;font-family:'Public Sans',Arial;font-size:13px;font-weight:800;color:#181d19">Total paid</td>
+          <td style="padding:16px;font-family:'Public Sans',Arial;font-size:20px;font-weight:800;color:#006B3F;text-align:right">${d.amount}</td>
+        </tr>
+      </table>
+      <p style="line-height:1.65;color:#6f7a71;font-size:12px;margin:0 0 16px">${impact}</p>
       ${ctaButton('Set up a monthly contribution →', d.monthlyUrl)}
       ${d.receiptPdfUrl ? `<a href="${d.receiptPdfUrl}" style="display:block;background:#fff;color:#006B3F;border:1px solid #dfe4dd;text-align:center;padding:12px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:13px;text-decoration:none;margin-bottom:14px">Download PDF receipt</a>` : ''}
     </div>
