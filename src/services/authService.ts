@@ -12,15 +12,6 @@ export interface AuthSession {
   user: User | null
 }
 
-async function getDummyEmail(phone: string): Promise<string> {
-  const clean = phone.replace('+', '').trim()
-  const msgBuffer = new TextEncoder().encode(clean)
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-  return `${hashHex.slice(0, 16)}@thebase.org`
-}
-
 class AuthService {
   private static instance: AuthService
   private currentSession: Session | null = null
@@ -73,29 +64,15 @@ class AuthService {
         formattedPhone = '+' + formattedPhone
       }
 
-      // Fast path: native Phone Auth is disabled, so phone accounts normally
-      // authenticate via the generated placeholder email
-      const dummyEmail = await getDummyEmail(formattedPhone)
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: dummyEmail,
-        password,
-      })
-
-      if (!error) {
-        this.currentSession = data.session
-        return data
-      }
-
-      // Fallback: members promoted to admin have their auth email switched to
-      // a real address (assign-admin-email), so the placeholder no longer
-      // exists. The phone-login edge function resolves phone → auth email
-      // server-side and signs in there.
+      // ponytail: skip client-side dummy email attempt — it always 400s for
+      // admin-promoted members and leaks errors to console. The edge function
+      // handles both dummy-email and real-email resolution server-side.
       const { data: fnData, error: fnError } = await supabase.functions.invoke('phone-login', {
         body: { identifier: trimmedIdentifier, phone: formattedPhone, password },
       })
 
       if (fnError || !fnData?.access_token) {
-        throw new Error(error.message || 'Login failed')
+        throw new Error('Invalid login credentials')
       }
 
       const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
