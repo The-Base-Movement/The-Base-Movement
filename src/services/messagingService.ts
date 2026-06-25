@@ -276,6 +276,32 @@ class MessagingService {
       return null
     }
     // last_message_at is bumped by DB trigger update_conversation_last_message_at() — no client update needed
+
+    // Notify the other party — fire and forget
+    ;(async () => {
+      try {
+        const { data: convo } = await supabase
+          .from('conversations')
+          .select('member_id, leader_id')
+          .eq('id', conversationId)
+          .single()
+        if (!convo) return
+        const recipientId = senderType === 'member' ? convo.leader_id : convo.member_id
+        if (recipientId) {
+          const preview = content.length > 80 ? content.slice(0, 80) + '…' : content
+          await supabase.from('notifications').insert({
+            user_id: recipientId,
+            type: 'message',
+            title: 'New message',
+            message: preview,
+            link: '/dashboard/messages',
+          })
+        }
+      } catch {
+        // non-critical
+      }
+    })()
+
     return data as Message
   }
 

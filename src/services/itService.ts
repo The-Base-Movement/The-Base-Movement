@@ -36,8 +36,9 @@ export const itService = {
         .eq('status', 'completed'),
       supabase.from('it_todos').select('*', { count: 'exact', head: true }).neq('status', 'done'),
       supabase
-        .from('it_tickets')
+        .from('helpdesk_tickets')
         .select('*', { count: 'exact', head: true })
+        .eq('department_id', 'it')
         .in('status', ['open', 'in-progress']),
       supabase.from('assets').select('*', { count: 'exact', head: true }).eq('department_id', 'it'),
       supabase
@@ -276,17 +277,18 @@ export const itService = {
     return data?.length ?? 0
   },
 
-  // ── Tickets ──
+  // ── Tickets (unified on helpdesk_tickets, department_id = 'it') ──
   async getTicketsWithStaff() {
     const [{ data: rawTickets }, { data: staff }] = await Promise.all([
       supabase
-        .from('it_tickets')
+        .from('helpdesk_tickets')
         .select('*, submitter:users!submitted_by(full_name), assignee:users!assigned_to(full_name)')
+        .eq('department_id', 'it')
         .order('created_at', { ascending: false }),
       supabase
         .from('admins')
         .select('id, users!admins_id_fkey(full_name)')
-        .in('role', ['SUPER_ADMIN', 'FOUNDER']),
+        .in('role', ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']),
     ])
     const itStaff = (staff ?? []).map((s: Record<string, unknown>) => ({
       id: s.id as string,
@@ -294,7 +296,7 @@ export const itService = {
     }))
     const tickets = (rawTickets ?? []).map((t: Record<string, unknown>) => ({
       id: t.id as string,
-      title: t.title as string,
+      title: (t.subject ?? '') as string,
       description: t.description as string,
       priority: t.priority as string,
       status: t.status as string,
@@ -309,31 +311,31 @@ export const itService = {
   },
 
   async updateTicket(id: string, payload: Record<string, unknown>): Promise<void> {
-    const { error } = await supabase.from('it_tickets').update(payload).eq('id', id)
+    const { error } = await supabase.from('helpdesk_tickets').update(payload).eq('id', id)
     if (error) throw error
   },
 
   async deleteTicket(id: string): Promise<void> {
-    const { error } = await supabase.from('it_tickets').delete().eq('id', id)
+    const { error } = await supabase.from('helpdesk_tickets').delete().eq('id', id)
     if (error) throw error
   },
 
   async getTicketById(id: string) {
-    const { data } = await supabase.from('it_tickets').select('*').eq('id', id).maybeSingle()
+    const { data } = await supabase.from('helpdesk_tickets').select('*').eq('id', id).maybeSingle()
     return data
   },
 
   async getTicketComments(ticketId: string) {
     const { data } = await supabase
-      .from('it_ticket_comments')
-      .select('id, body, created_at, author_id, users!author_id(full_name)')
+      .from('helpdesk_comments')
+      .select('id, body, created_at, author_id, is_internal, users!author_id(full_name)')
       .eq('ticket_id', ticketId)
       .order('created_at', { ascending: true })
     return data ?? []
   },
 
   async addTicketComment(payload: Record<string, unknown>): Promise<void> {
-    const { error } = await supabase.from('it_ticket_comments').insert(payload)
+    const { error } = await supabase.from('helpdesk_comments').insert(payload)
     if (error) throw error
   },
 
