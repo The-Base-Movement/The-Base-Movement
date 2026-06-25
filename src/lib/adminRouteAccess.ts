@@ -100,6 +100,12 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
     permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
     source: 'field-operations-rally-command',
   },
+  {
+    to: '/admin/priorities',
+    match: 'exact_or_descendant',
+    permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+    source: 'strategic-priorities',
+  },
   // ── Role-gated routes (no matching permission exists) ──
   {
     to: '/admin/it-department',

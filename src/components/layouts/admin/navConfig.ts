@@ -38,6 +38,7 @@ export const FINANCE_OFFICER_ALLOWED_PATHS = [
   '/admin/spending-ledger',
   '/admin/finance-requests',
   '/admin/finance-requests/review-inbox',
+  '/admin/priorities',
   '/admin/settings',
 ]
 
