@@ -504,6 +504,55 @@ interface PendingDonationEmailData {
   donateUrl: string
 }
 
+// ---------------------------------------------------------------------------
+// Helpdesk ticket notification
+// ---------------------------------------------------------------------------
+
+export interface HelpdeskEmailData {
+  name: string
+  ticketSubject: string
+  event: 'submitted' | 'resolved' | 'closed' | 'comment'
+  comment?: string
+  dashboardUrl: string
+}
+
+export function helpdeskEmail(d: HelpdeskEmailData): string {
+  const tagMap = {
+    submitted: 'TICKET RECEIVED',
+    resolved: 'TICKET RESOLVED',
+    closed: 'TICKET CLOSED',
+    comment: 'NEW REPLY',
+  }
+  const headlineMap = {
+    submitted: 'Your support ticket has been received.',
+    resolved: 'Your support ticket has been resolved.',
+    closed: 'Your support ticket has been closed.',
+    comment: 'There is a new reply on your support ticket.',
+  }
+  return `${SHELL_OPEN}
+  ${TOP_BAR}
+  ${emailHeader(tagMap[d.event])}
+  <div style="background:#fff;padding:28px">
+    <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:18px;color:#181d19;margin:0 0 8px">Hi ${d.name},</h2>
+    <p style="font-size:13px;color:#666;line-height:1.6;margin:0 0 16px">${headlineMap[d.event]}</p>
+    <div style="background:#f6fbf4;border:1px solid #dfe4dd;border-radius:6px;padding:16px 20px;margin-bottom:20px">
+      <div style="font-size:11px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">Subject</div>
+      <div style="font-size:14px;color:#181d19;font-weight:600">${d.ticketSubject}</div>
+    </div>
+    ${
+      d.comment
+        ? `<div style="background:#fffdf5;border:1px solid #f0e6c8;border-radius:6px;padding:16px 20px;margin-bottom:20px">
+      <div style="font-size:11px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">Reply</div>
+      <div style="font-size:13px;color:#333;line-height:1.6">${d.comment}</div>
+    </div>`
+        : ''
+    }
+    ${ctaButton('View Ticket →', d.dashboardUrl, '#006B3F')}
+  </div>
+  ${emailFooter('THE BASE MOVEMENT · SUPPORT DESK')}
+  ${SHELL_CLOSE}`
+}
+
 export function pendingDonationEmail(d: PendingDonationEmailData): string {
   return `${SHELL_OPEN}
   ${TOP_BAR}

@@ -200,6 +200,11 @@ export function useHelpdesk(departmentId: string) {
           type: 'Helpdesk',
         })
         discordService.helpdeskTicketResolved(ticket?.subject ?? '', status)
+        supabase.functions
+          .invoke('helpdesk-email', {
+            body: { ticketId, event: status },
+          })
+          .catch(console.error)
       }
       await fetchTickets()
       if (detail?.ticket.id === ticketId) await loadDetail(ticketId)
@@ -274,6 +279,11 @@ export function useHelpdesk(departmentId: string) {
           message: body.trim().slice(0, 120),
           type: 'Helpdesk',
         })
+        supabase.functions
+          .invoke('helpdesk-email', {
+            body: { ticketId, event: 'comment', comment: body.trim() },
+          })
+          .catch(console.error)
       }
       await loadDetail(ticketId)
       return true
@@ -496,6 +506,11 @@ export function useMemberHelpdesk(userId: string | null) {
 
       toast.success('Ticket submitted')
       discordService.helpdeskTicketSubmitted(payload.subject.trim(), payload.priority)
+      supabase.functions
+        .invoke('helpdesk-email', {
+          body: { ticketId: ticket.id, event: 'submitted' },
+        })
+        .catch(console.error)
       await fetchMyTickets()
       return true
     },
