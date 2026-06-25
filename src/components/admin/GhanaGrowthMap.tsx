@@ -152,7 +152,10 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
       </TooltipProvider>
 
       {/* Map Legend */}
-      <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-sm">
+      <div
+        className="absolute bottom-6 left-6 space-y-3 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-sm"
+        style={{ background: 'hsl(var(--surface) / 0.88)' }}
+      >
         <p className="text-micro font-bold text-on-surface/40 mb-2 tracking-tight">
           Expansion density
         </p>

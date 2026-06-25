@@ -577,7 +577,7 @@ export function HistoryPanel({
             zIndex: 200,
             display: 'flex',
             flexDirection: 'column',
-            background: '#e8e8e8',
+            background: 'hsl(var(--container-low))',
           }}
         >
           {/* Preview header bar */}
@@ -741,7 +741,7 @@ export function HistoryPanel({
             srcDoc={previewNewsletter.body_html}
             title={previewNewsletter.subject}
             sandbox="allow-same-origin"
-            style={{ flex: 1, border: 'none', background: '#e8e8e8' }}
+            style={{ flex: 1, border: 'none', background: 'hsl(var(--container-low))' }}
           />
         </div>
       )}
