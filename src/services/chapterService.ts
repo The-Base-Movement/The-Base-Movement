@@ -941,6 +941,61 @@ class ChapterService {
       .from('chapter_poll_candidates')
       .insert(candidates.map((c) => ({ poll_id: pollId, ...c })))
   }
+  // ── Announcements ──
+
+  async getAnnouncements(chapterId: string) {
+    const { data } = await supabase
+      .from('chapter_announcements')
+      .select('*')
+      .eq('chapter_id', chapterId)
+      .order('created_at', { ascending: false })
+    return data ?? []
+  }
+
+  async postAnnouncement(chapterId: string, content: string, authorName: string) {
+    const { error } = await supabase.from('chapter_announcements').insert({
+      chapter_id: chapterId,
+      content,
+      author_name: authorName,
+    })
+    if (error) throw error
+    return this.getAnnouncements(chapterId)
+  }
+
+  async deleteAnnouncement(id: string) {
+    const { error } = await supabase.from('chapter_announcements').delete().eq('id', id)
+    if (error) throw error
+  }
+
+  // ── Activities ──
+
+  async addActivity(
+    chapterId: string,
+    title: string,
+    type: string,
+    activityDate: string,
+    description?: string
+  ) {
+    const { error } = await supabase.from('chapter_activities').insert({
+      chapter_id: chapterId,
+      title,
+      description: description || null,
+      type,
+      activity_date: activityDate,
+    })
+    if (error) throw error
+    const { data } = await supabase
+      .from('chapter_activities')
+      .select('id, title, description, type, activity_date')
+      .eq('chapter_id', chapterId)
+      .order('activity_date', { ascending: false })
+    return data ?? []
+  }
+
+  async deleteActivity(id: string) {
+    const { error } = await supabase.from('chapter_activities').delete().eq('id', id)
+    if (error) throw error
+  }
 }
 
 export const chapterService = ChapterService.getInstance()

@@ -380,6 +380,31 @@ class ConstituencyService {
     }
     return true
   }
+  // ── Announcements ──
+
+  async getAnnouncements(constituencyId: number) {
+    const { data } = await supabase
+      .from('constituency_announcements')
+      .select('*')
+      .eq('constituency_id', constituencyId)
+      .order('created_at', { ascending: false })
+    return data ?? []
+  }
+
+  async postAnnouncement(constituencyId: number, content: string, authorName: string) {
+    const { error } = await supabase.from('constituency_announcements').insert({
+      constituency_id: constituencyId,
+      content,
+      author_name: authorName,
+    })
+    if (error) throw error
+    return this.getAnnouncements(constituencyId)
+  }
+
+  async deleteAnnouncement(id: string) {
+    const { error } = await supabase.from('constituency_announcements').delete().eq('id', id)
+    if (error) throw error
+  }
 }
 
 export const constituencyService = ConstituencyService.getInstance()

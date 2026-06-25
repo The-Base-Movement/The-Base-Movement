@@ -215,48 +215,43 @@ export default function ConstituencyHub() {
   const handlePostAnnouncement = async () => {
     if (!constituency || !announceDraft.trim()) return
     setIsPostingAnnounce(true)
-    const { error } = await supabase.from('constituency_announcements').insert({
-      constituency_id: constituency.id,
-      content: announceDraft.trim(),
-      author_name: leaderName || constituency.leaderName,
-    })
-    setIsPostingAnnounce(false)
-    if (error) {
-      toast.error('Failed to post update.')
-      return
-    }
-    const { data } = await supabase
-      .from('constituency_announcements')
-      .select('*')
-      .eq('constituency_id', constituency.id)
-      .order('created_at', { ascending: false })
-    setAnnouncements(data ?? [])
-    setAnnounceDraft('')
-    toast.success('Update posted.')
+    try {
+      const updated = await constituencyService.postAnnouncement(
+        constituency.id,
+        announceDraft.trim(),
+        leaderName || constituency.leaderName
+      )
+      setAnnouncements(updated)
+      setAnnounceDraft('')
+      toast.success('Update posted.')
 
-    // Push notification to all members of constituency — fire and forget
-    const memberIds = members.map((m) => m.authId).filter(Boolean)
-    if (memberIds.length > 0) {
-      supabase.functions
-        .invoke('send-push-notification', {
-          body: {
-            userIds: memberIds,
-            title: `${constituency.name} — new announcement`,
-            body: announceDraft.trim().slice(0, 100),
-            url: `/dashboard/constituencies/${constituencySlug(constituency.name)}`,
-          },
-        })
-        .catch(console.error)
+      const memberIds = members.map((m) => m.authId).filter(Boolean)
+      if (memberIds.length > 0) {
+        supabase.functions
+          .invoke('send-push-notification', {
+            body: {
+              userIds: memberIds,
+              title: `${constituency.name} — new announcement`,
+              body: announceDraft.trim().slice(0, 100),
+              url: `/dashboard/constituencies/${constituencySlug(constituency.name)}`,
+            },
+          })
+          .catch(console.error)
+      }
+    } catch {
+      toast.error('Failed to post update.')
+    } finally {
+      setIsPostingAnnounce(false)
     }
   }
 
   const handleDeleteAnnouncement = async (id: string) => {
-    const { error } = await supabase.from('constituency_announcements').delete().eq('id', id)
-    if (error) {
+    try {
+      await constituencyService.deleteAnnouncement(id)
+      setAnnouncements((prev) => prev.filter((a) => a.id !== id))
+    } catch {
       toast.error('Failed to delete.')
-      return
     }
-    setAnnouncements((prev) => prev.filter((a) => a.id !== id))
   }
 
   // ── activities ────────────────────────────────────────────────────────────

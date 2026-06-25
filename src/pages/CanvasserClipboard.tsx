@@ -5,6 +5,7 @@ import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+// ponytail: direct supabase for single insert — add canvasserService when more CRUD appears
 import { supabase } from '@/lib/supabase'
 
 import { CampaignSelector } from './canvasser/components/CampaignSelector'

@@ -309,48 +309,43 @@ export default function ChapterHub() {
   const handlePostAnnouncement = async () => {
     if (!chapter || !announceDraft.trim()) return
     setIsPostingAnnounce(true)
-    const { error } = await supabase.from('chapter_announcements').insert({
-      chapter_id: chapter.id,
-      content: announceDraft.trim(),
-      author_name: leaderName || chapter.leader_name,
-    })
-    setIsPostingAnnounce(false)
-    if (error) {
-      toast.error('Failed to post update.')
-      return
-    }
-    const { data } = await supabase
-      .from('chapter_announcements')
-      .select('*')
-      .eq('chapter_id', chapter.id)
-      .order('created_at', { ascending: false })
-    setAnnouncements(data || [])
-    setAnnounceDraft('')
-    toast.success('Update posted to members.')
+    try {
+      const updated = await chapterService.postAnnouncement(
+        chapter.id,
+        announceDraft.trim(),
+        leaderName || chapter.leader_name
+      )
+      setAnnouncements(updated)
+      setAnnounceDraft('')
+      toast.success('Update posted to members.')
 
-    // Push notification to all chapter members — fire and forget
-    const memberIds = members.map((m) => m.authId).filter(Boolean)
-    if (memberIds.length > 0) {
-      supabase.functions
-        .invoke('send-push-notification', {
-          body: {
-            userIds: memberIds,
-            title: `${chapter.name} — new announcement`,
-            body: announceDraft.trim().slice(0, 100),
-            url: '/dashboard/chapter-hub',
-          },
-        })
-        .catch(console.error)
+      const memberIds = members.map((m) => m.authId).filter(Boolean)
+      if (memberIds.length > 0) {
+        supabase.functions
+          .invoke('send-push-notification', {
+            body: {
+              userIds: memberIds,
+              title: `${chapter.name} — new announcement`,
+              body: announceDraft.trim().slice(0, 100),
+              url: '/dashboard/chapter-hub',
+            },
+          })
+          .catch(console.error)
+      }
+    } catch {
+      toast.error('Failed to post update.')
+    } finally {
+      setIsPostingAnnounce(false)
     }
   }
 
   const handleDeleteAnnouncement = async (id: string) => {
-    const { error } = await supabase.from('chapter_announcements').delete().eq('id', id)
-    if (error) {
+    try {
+      await chapterService.deleteAnnouncement(id)
+      setAnnouncements((prev) => prev.filter((a) => a.id !== id))
+    } catch {
       toast.error('Failed to delete update.')
-      return
     }
-    setAnnouncements((prev) => prev.filter((a) => a.id !== id))
   }
 
   const handleAddActivity = async () => {
@@ -359,41 +354,37 @@ export default function ChapterHub() {
       return
     }
     setIsSavingActivity(true)
-    const { error } = await supabase.from('chapter_activities').insert({
-      chapter_id: chapter.id,
-      title: actTitle.trim(),
-      description: actDesc.trim() || null,
-      type: actType,
-      activity_date: actDate,
-    })
-    setIsSavingActivity(false)
-    if (error) {
+    try {
+      const updated = await chapterService.addActivity(
+        chapter.id,
+        actTitle.trim(),
+        actType,
+        actDate,
+        actDesc.trim() || undefined
+      )
+      setActivities(updated)
+      queryClient.invalidateQueries({ queryKey: ['chapters'] })
+      setActTitle('')
+      setActDesc('')
+      setActType('Event')
+      setActDate('')
+      setShowActivityForm(false)
+      toast.success('Activity added.')
+    } catch {
       toast.error('Failed to add activity.')
-      return
+    } finally {
+      setIsSavingActivity(false)
     }
-    const { data } = await supabase
-      .from('chapter_activities')
-      .select('id, title, description, type, activity_date')
-      .eq('chapter_id', chapter.id)
-      .order('activity_date', { ascending: false })
-    setActivities(data || [])
-    queryClient.invalidateQueries({ queryKey: ['chapters'] })
-    setActTitle('')
-    setActDesc('')
-    setActType('Event')
-    setActDate('')
-    setShowActivityForm(false)
-    toast.success('Activity added.')
   }
 
   const handleDeleteActivity = async (id: string) => {
-    const { error } = await supabase.from('chapter_activities').delete().eq('id', id)
-    if (error) {
+    try {
+      await chapterService.deleteActivity(id)
+      setActivities((prev) => prev.filter((a) => a.id !== id))
+      queryClient.invalidateQueries({ queryKey: ['chapters'] })
+    } catch {
       toast.error('Failed to remove activity.')
-      return
     }
-    setActivities((prev) => prev.filter((a) => a.id !== id))
-    queryClient.invalidateQueries({ queryKey: ['chapters'] })
   }
 
   if (isLoading) {
