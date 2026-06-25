@@ -16,6 +16,7 @@ import { OfflineBanner } from '@/components/OfflineBanner'
 import { OfflineSuccessStep } from './register/components/OfflineSuccessStep'
 import { saveDraftRegistration } from '@/utils/offlineDb'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
+import { validatePhone } from '@/lib/phoneValidation'
 
 export default function Register() {
   const { session } = useAuth()
@@ -172,8 +173,8 @@ export default function Register() {
       if (!formData.fullName.trim()) return 'Full name is required.'
       if (formData.fullName.trim().split(/\s+/).length < 2)
         return 'Please enter your full name (first and last).'
-      if (!formData.contactNumber.trim()) return 'Phone number is required.'
-      if (formData.contactNumber.replace(/\D/g, '').length < 7) return 'Phone number is too short.'
+      const phoneErr = validatePhone(formData.contactNumber, formData.countryCode)
+      if (phoneErr) return phoneErr
       if (!formData.gender) return 'Please select your gender.'
       if (!formData.ageRange) return 'Please select your age range.'
       if (platform === 'GHANA' && !formData.idNumber.trim()) return 'Ghana Card number is required.'

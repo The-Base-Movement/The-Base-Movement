@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import { useAuth } from '@/context/AuthContext'
 import { toast } from 'sonner'
+import { validatePhone } from '@/lib/phoneValidation'
 import SEO from '@/components/SEO'
 import { AdminGate } from '@/components/admin/AdminGate'
 
@@ -62,6 +63,20 @@ export default function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (honeypot) return
+    const trimmed = email.trim()
+    const isEmailAddr = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
+    const isPhoneNum = /^\+?[\d\s()-]+$/.test(trimmed) && trimmed.replace(/\D/g, '').length >= 7
+    if (!isEmailAddr && isPhoneNum) {
+      const phoneErr = validatePhone(trimmed)
+      if (phoneErr) {
+        toast.error(phoneErr)
+        return
+      }
+    }
+    if (!isEmailAddr && !isPhoneNum) {
+      toast.error('Please enter a valid email or phone number.')
+      return
+    }
     setIsLoading(true)
     try {
       await authService.login(email, password)

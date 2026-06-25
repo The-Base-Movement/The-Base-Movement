@@ -6,6 +6,7 @@ import { sessionStore } from '@/lib/sessionStore'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
+import { validatePhone } from '@/lib/phoneValidation'
 import SEO from '@/components/SEO'
 
 export default function Login() {
@@ -25,6 +26,20 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    const trimmed = email.trim()
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
+    const isPhone = /^\+?[\d\s()-]+$/.test(trimmed) && trimmed.replace(/\D/g, '').length >= 7
+    if (!isEmail && isPhone) {
+      const phoneErr = validatePhone(trimmed)
+      if (phoneErr) {
+        toast.error(phoneErr)
+        return
+      }
+    }
+    if (!isEmail && !isPhone) {
+      toast.error('Please enter a valid email or phone number.')
+      return
+    }
     setIsLoading(true)
 
     try {
