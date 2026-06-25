@@ -164,17 +164,47 @@ export const financeAnalyticsService = {
       .select('total_amount')
       .eq('payment_status', 'Paid')
       .neq('status', 'Cancelled')
+    const licenseQuery = supabase
+      .from('it_licenses')
+      .select('cost, billing_cycle')
+      .eq('status', 'Active')
+    const resourceQuery = supabase
+      .from('resource_request_items')
+      .select('quantity, store_inventory!inner(price_ghs), resource_requests!inner(status)')
     if (chapter) {
       donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes, orderRes] = await Promise.all([donQuery, ledQuery, orderQuery])
+    const [donRes, ledRes, orderRes, licenseRes, resourceRes] = await Promise.all([
+      donQuery,
+      ledQuery,
+      orderQuery,
+      licenseQuery,
+      resourceQuery,
+    ])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
     const donationIncome = (donRes.data ?? []).reduce((s, d) => s + Number(d.amount), 0)
     const storeIncome = (orderRes.data ?? []).reduce((s, o) => s + Number(o.total_amount), 0)
     const totalIncome = donationIncome + storeIncome
-    const totalExpenses = (ledRes.data ?? []).reduce((s, l) => s + Number(l.amount), 0)
+    const ledgerExpenses = (ledRes.data ?? []).reduce((s, l) => s + Number(l.amount), 0)
+    const annualLicenseCost = (licenseRes.data ?? []).reduce((s, l) => {
+      const cost = Number(l.cost)
+      return s + (l.billing_cycle === 'Monthly' ? cost * 12 : cost)
+    }, 0)
+    const monthlyLicenseCost = annualLicenseCost / 12
+    const resourceCost = (resourceRes.data ?? [])
+      .filter((r) => {
+        const req = r.resource_requests as unknown as { status: string }
+        return (
+          req?.status === 'Approved' || req?.status === 'Dispatched' || req?.status === 'Delivered'
+        )
+      })
+      .reduce((s, item) => {
+        const inv = item.store_inventory as unknown as { price_ghs: number }
+        return s + Number(item.quantity) * Number(inv?.price_ghs ?? 0)
+      }, 0)
+    const totalExpenses = ledgerExpenses + monthlyLicenseCost + resourceCost
     return { totalIncome, totalExpenses, netBalance: totalIncome - totalExpenses }
   },
 
@@ -303,16 +333,30 @@ export const financeAnalyticsService = {
       .neq('status', 'Cancelled')
       .order('created_at', { ascending: false })
       .limit(limit)
+    const licenseQuery = supabase
+      .from('it_licenses')
+      .select('id, software_name, vendor, cost, billing_cycle, renewal_date, status')
+      .eq('status', 'Active')
+    const resourceTxQuery = supabase
+      .from('resource_requests')
+      .select(
+        'id, created_at, region, status, notes, resource_request_items(quantity, store_inventory(name, price_ghs))'
+      )
+      .in('status', ['Approved', 'Dispatched', 'Delivered'])
+      .order('created_at', { ascending: false })
+      .limit(limit)
     if (chapter) {
       donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
       reqQuery = reqQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes, reqRes, orderRes] = await Promise.all([
+    const [donRes, ledRes, reqRes, orderRes, licenseRes, resourceTxRes] = await Promise.all([
       donQuery,
       ledQuery,
       reqQuery,
       orderQuery,
+      licenseQuery,
+      resourceTxQuery,
     ])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
@@ -353,7 +397,47 @@ export const financeAnalyticsService = {
       amount: Number(r.amount),
       status: r.status,
     }))
-    return [...income, ...storeIncome, ...expense, ...pendingRejectedExpense]
+    const licenseExpense: TransactionRow[] = (licenseRes.data ?? []).map((l) => ({
+      id: l.id,
+      kind: 'expense' as const,
+      description: `${l.software_name} (${l.vendor})`,
+      date: l.renewal_date,
+      chapterOrSource: 'IT License',
+      amount: l.billing_cycle === 'Monthly' ? Number(l.cost) : Number(l.cost) / 12,
+      status: l.status,
+    }))
+    interface ResourceTxItem {
+      quantity: number
+      store_inventory: { name: string; price_ghs: number } | null
+    }
+    const resourceExpense: TransactionRow[] = (resourceTxRes.data ?? []).map((r) => {
+      const items = (r.resource_request_items ?? []) as unknown as ResourceTxItem[]
+      const total = items.reduce(
+        (s, item) => s + Number(item.quantity) * Number(item.store_inventory?.price_ghs ?? 0),
+        0
+      )
+      const names = items
+        .map((item) => item.store_inventory?.name)
+        .filter(Boolean)
+        .join(', ')
+      return {
+        id: r.id,
+        kind: 'expense' as const,
+        description: names || r.notes || 'Resource Request',
+        date: r.created_at,
+        chapterOrSource: r.region || '—',
+        amount: total,
+        status: r.status,
+      }
+    })
+    return [
+      ...income,
+      ...storeIncome,
+      ...expense,
+      ...pendingRejectedExpense,
+      ...licenseExpense,
+      ...resourceExpense,
+    ]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, limit)
   },

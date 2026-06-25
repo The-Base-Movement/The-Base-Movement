@@ -13,9 +13,11 @@ import {
   Pie,
   Cell,
 } from 'recharts'
+import { adminService } from '@/services/adminService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { BankDetailsEditor } from '@/components/admin/BankDetailsEditor'
 import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
+import type { DonationCampaign } from '@/types/admin'
 import { useIsMobile } from '@/hooks/use-mobile'
 import {
   financeAnalyticsService,
@@ -66,6 +68,7 @@ export default function FinanceDashboard() {
   const [chartsLoading, setChartsLoading] = useState(true)
   const [chapter, setChapter] = useState<string | null>(null)
   const [chapters, setChapters] = useState<string[]>([])
+  const [campaigns, setCampaigns] = useState<DonationCampaign[]>([])
   const isMobile = useIsMobile()
 
   const filteredTransactions = useMemo(() => {
@@ -155,6 +158,10 @@ export default function FinanceDashboard() {
       .catch(() => {
         /* silent — dropdown just won't show */
       })
+    adminService
+      .getDonationCampaigns()
+      .then(setCampaigns)
+      .catch(() => {})
   }, [])
 
   return (
@@ -957,6 +964,119 @@ export default function FinanceDashboard() {
           </table>
         </div>
       </div>
+
+      {/* ── Campaign Fundraising Progress ─────────────────────── */}
+      {campaigns.length > 0 && (
+        <div className="panel" style={{ marginTop: 24 }}>
+          <div className="ph">
+            <div>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 15,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
+                Campaign fundraising
+              </h3>
+              <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                Progress of active and closed donation campaigns.
+              </p>
+            </div>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 20, color: 'hsl(var(--accent))' }}
+            >
+              campaign
+            </span>
+          </div>
+          <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {campaigns.map((c) => {
+              const pct =
+                c.targetAmount > 0
+                  ? Math.min(100, Math.round((c.raisedAmount / c.targetAmount) * 100))
+                  : 0
+              return (
+                <div
+                  key={c.id}
+                  style={{
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-md)',
+                    padding: 16,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 14,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {c.title}
+                    </p>
+                    <span className={`pill ${c.status === 'Active' ? 'pill-ok' : 'pill-mute'}`}>
+                      {c.status}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
+                    <span>Raised: {fmt(c.raisedAmount)}</span>
+                    <span>Target: {fmt(c.targetAmount)}</span>
+                  </div>
+                  <div
+                    style={{
+                      height: 8,
+                      borderRadius: 'var(--radius-pill)',
+                      background: 'hsl(var(--border))',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${pct}%`,
+                        borderRadius: 'var(--radius-pill)',
+                        background: pct >= 100 ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
+                        transition: 'width 0.3s ease',
+                      }}
+                    />
+                  </div>
+                  <p
+                    style={{
+                      margin: '6px 0 0',
+                      fontSize: 11,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textAlign: 'right',
+                    }}
+                  >
+                    {pct}% funded
+                    {c.endDate &&
+                      ` · Ends ${new Date(c.endDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}`}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <div style={{ marginTop: 24 }}>
         <BankDetailsEditor />
