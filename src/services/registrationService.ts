@@ -23,6 +23,7 @@ export interface SubmitConfig {
   croppedAreaPixels?: Area | null
   usedScan: boolean
   refParam: string | null
+  registeredBy?: string | null
 }
 
 export interface SubmitResult {
@@ -134,6 +135,7 @@ export const registrationService = {
       city: formData.city,
       registration_source: usedScan ? 'scan' : 'digital',
       referred_by: refParam || null,
+      registered_by: config.registeredBy || null,
     })
 
     if (dbError) throw dbError

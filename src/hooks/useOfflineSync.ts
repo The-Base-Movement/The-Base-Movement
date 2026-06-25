@@ -15,6 +15,7 @@ import {
   type DraftRegistration,
 } from '@/utils/offlineDb'
 import { registrationService } from '@/services/registrationService'
+import { adminService } from '@/services/adminService'
 
 /**
  * Custom React hook managing resilient offline registration workflows.
@@ -64,6 +65,7 @@ export function useOfflineSync() {
           croppedAreaPixels: draft.croppedAreaPixels,
           usedScan: draft.usedScan,
           refParam: draft.refParam,
+          registeredBy: adminService.getCurrentUser()?.id || null,
         })
 
         // If successful, delete the draft and toast success

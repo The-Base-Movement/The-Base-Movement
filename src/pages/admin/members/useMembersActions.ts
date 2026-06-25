@@ -154,6 +154,7 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
         joined_at: new Date().toISOString(),
         status: 'Active',
         registration_source: 'admin',
+        registered_by: adminService.getCurrentUser()?.id || null,
       }
       const { error: dbError } = await adminService.registerMember(newUser)
       if (dbError) throw dbError

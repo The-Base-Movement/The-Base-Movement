@@ -10,12 +10,27 @@ interface AssignmentInfo {
   constituency: string
 }
 
+interface AgentStats {
+  total: number
+  today: number
+  thisWeek: number
+  thisMonth: number
+}
+
+interface LeaderboardEntry {
+  agentId: string
+  agentName: string
+  avatarUrl: string | null
+  count: number
+}
+
 export default function FieldAgentDashboard() {
   const isMobile = useIsMobile()
   const { isOnline, draftCount, isSyncing, drafts, triggerSync } = useOfflineSync()
   const [assignment, setAssignment] = useState<AssignmentInfo | null>(null)
   const [pendingVerifications, setPendingVerifications] = useState(0)
-  const [totalMembers, setTotalMembers] = useState(0)
+  const [myStats, setMyStats] = useState<AgentStats | null>(null)
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -24,9 +39,11 @@ export default function FieldAgentDashboard() {
         const user = adminService.getCurrentUser()
         if (!user) return
 
-        const [agents, members] = await Promise.all([
+        const [agents, members, stats, board] = await Promise.all([
           adminService.getFieldAgents(),
           adminService.getMembers(),
+          adminService.getFieldAgentStats(user.id),
+          adminService.getFieldAgentLeaderboard(),
         ])
 
         const myAssignment = agents.find((a) => a.member_id === user.id)
@@ -36,7 +53,8 @@ export default function FieldAgentDashboard() {
 
         const pending = members.filter((m) => m.status === 'Pending')
         setPendingVerifications(pending.length)
-        setTotalMembers(members.length)
+        setMyStats(stats)
+        setLeaderboard(board)
       } catch {
         /* silent */
       } finally {
@@ -47,18 +65,10 @@ export default function FieldAgentDashboard() {
   }, [])
 
   const kpis = [
-    {
-      label: 'Pending Sync',
-      value: draftCount,
-      bar: draftCount > 0 ? 'hsl(var(--accent))' : 'hsl(var(--primary))',
-    },
-    { label: 'KYC Queue', value: pendingVerifications, bar: 'hsl(var(--accent))' },
-    { label: 'Total Members', value: totalMembers, bar: 'hsl(var(--primary))' },
-    {
-      label: 'Connection',
-      value: isOnline ? 'Online' : 'Offline',
-      bar: isOnline ? 'hsl(var(--primary))' : 'hsl(var(--destructive))',
-    },
+    { label: 'Registered Today', value: myStats?.today ?? 0, bar: 'hsl(var(--primary))' },
+    { label: 'This Week', value: myStats?.thisWeek ?? 0, bar: 'hsl(var(--accent))' },
+    { label: 'This Month', value: myStats?.thisMonth ?? 0, bar: 'hsl(var(--on-surface))' },
+    { label: 'All Time', value: myStats?.total ?? 0, bar: 'hsl(var(--primary))' },
   ]
 
   const actions = [
@@ -297,6 +307,257 @@ export default function FieldAgentDashboard() {
           </Link>
         ))}
       </div>
+
+      {/* ── Operational Stats ── */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 12,
+          marginBottom: 24,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div
+          className="panel"
+          style={{
+            flex: 1,
+            minWidth: 120,
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{
+              fontSize: 20,
+              color: draftCount > 0 ? 'hsl(var(--accent))' : 'hsl(var(--primary))',
+            }}
+          >
+            cloud_upload
+          </span>
+          <div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Pending Sync
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 18,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              {draftCount}
+            </p>
+          </div>
+        </div>
+        <div
+          className="panel"
+          style={{
+            flex: 1,
+            minWidth: 120,
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 20, color: 'hsl(var(--accent))' }}
+          >
+            verified_user
+          </span>
+          <div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              KYC Queue
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 18,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              {loading ? '—' : pendingVerifications}
+            </p>
+          </div>
+        </div>
+        <div
+          className="panel"
+          style={{
+            flex: 1,
+            minWidth: 120,
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <div
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              background: isOnline ? 'hsl(var(--primary))' : 'hsl(var(--destructive))',
+              flexShrink: 0,
+            }}
+          />
+          <div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 11,
+                color: 'hsl(var(--on-surface-muted))',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Status
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 14,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              {isOnline ? 'Online' : 'Offline'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Agent Leaderboard ── */}
+      {leaderboard.length > 0 && (
+        <div className="panel" style={{ marginBottom: 24 }}>
+          <div className="ph">
+            <div>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 15,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
+                Agent leaderboard
+              </h3>
+              <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                Total members registered by each field agent.
+              </p>
+            </div>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 20, color: 'hsl(var(--accent))' }}
+            >
+              leaderboard
+            </span>
+          </div>
+          <div style={{ padding: '12px 20px' }}>
+            {leaderboard.map((entry, idx) => {
+              const isMeEntry = entry.agentId === adminService.getCurrentUser()?.id
+              return (
+                <div
+                  key={entry.agentId}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '10px 0',
+                    borderBottom:
+                      idx < leaderboard.length - 1 ? '1px solid hsl(var(--border))' : undefined,
+                    background: isMeEntry ? 'hsl(var(--primary) / 0.04)' : undefined,
+                    borderRadius: isMeEntry ? 'var(--radius-sm)' : undefined,
+                    paddingLeft: isMeEntry ? 12 : undefined,
+                    paddingRight: isMeEntry ? 12 : undefined,
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 24,
+                      textAlign: 'center',
+                      fontSize: 13,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: idx < 3 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    {idx + 1}
+                  </span>
+                  {entry.avatarUrl ? (
+                    <img
+                      src={entry.avatarUrl}
+                      alt=""
+                      style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        background: 'hsl(var(--container-low))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {entry.agentName.charAt(0)}
+                    </div>
+                  )}
+                  <span
+                    style={{
+                      flex: 1,
+                      fontSize: 13,
+                      fontWeight: isMeEntry ? 'var(--font-weight-medium, 500)' : undefined,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {entry.agentName}
+                    {isMeEntry && (
+                      <span style={{ fontSize: 11, color: 'hsl(var(--primary))', marginLeft: 6 }}>
+                        (You)
+                      </span>
+                    )}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: idx === 0 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {entry.count}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ── Connection Status ── */}
       <div className="panel" style={{ padding: 16 }}>

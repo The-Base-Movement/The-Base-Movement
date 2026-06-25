@@ -2654,6 +2654,90 @@ class AdminService {
     return true
   }
 
+  async getFieldAgentStats(agentId: string): Promise<{
+    total: number
+    today: number
+    thisWeek: number
+    thisMonth: number
+  }> {
+    const now = new Date()
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
+    const weekStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - now.getDay()
+    ).toISOString()
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+
+    const { count: total } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .eq('registered_by', agentId)
+    const { count: today } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .eq('registered_by', agentId)
+      .gte('joined_at', todayStart)
+    const { count: thisWeek } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .eq('registered_by', agentId)
+      .gte('joined_at', weekStart)
+    const { count: thisMonth } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .eq('registered_by', agentId)
+      .gte('joined_at', monthStart)
+
+    return {
+      total: total ?? 0,
+      today: today ?? 0,
+      thisWeek: thisWeek ?? 0,
+      thisMonth: thisMonth ?? 0,
+    }
+  }
+
+  async getFieldAgentLeaderboard(): Promise<
+    Array<{ agentId: string; agentName: string; avatarUrl: string | null; count: number }>
+  > {
+    const { data, error } = await supabase
+      .from('users')
+      .select('registered_by')
+      .not('registered_by', 'is', null)
+    if (error || !data) return []
+
+    const counts: Record<string, number> = {}
+    for (const row of data) {
+      const id = row.registered_by as string
+      counts[id] = (counts[id] ?? 0) + 1
+    }
+
+    const agentIds = Object.keys(counts)
+    if (agentIds.length === 0) return []
+
+    const { data: profiles } = await supabase
+      .from('users')
+      .select('id, full_name, avatar_url')
+      .in('id', agentIds)
+
+    const profileMap: Record<string, { name: string; avatar: string | null }> = {}
+    for (const p of profiles ?? []) {
+      profileMap[p.id as string] = {
+        name: (p.full_name as string) || 'Unknown',
+        avatar: (p.avatar_url as string | null) || null,
+      }
+    }
+
+    return agentIds
+      .map((id) => ({
+        agentId: id,
+        agentName: profileMap[id]?.name ?? 'Unknown',
+        avatarUrl: profileMap[id]?.avatar ?? null,
+        count: counts[id],
+      }))
+      .sort((a, b) => b.count - a.count)
+  }
+
   // --- Polling Station Agents ---
 
   async getPollingStationAgents(): Promise<
