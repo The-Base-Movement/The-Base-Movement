@@ -43,7 +43,7 @@ export function RolesManagementTab() {
     {
       role: 'Audit View',
       desc: 'Read-only access to financial and telemetry streams.',
-      count: (counts['AuditView'] || 0) + (counts['VERIFIER'] || 0),
+      count: counts['AuditView'] || 0,
       icon: 'history',
       color: 'hsl(var(--on-surface-muted))',
     },

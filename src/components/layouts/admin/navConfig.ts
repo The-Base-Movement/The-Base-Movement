@@ -105,7 +105,7 @@ export const getNavGroups = (
         to: '/admin/departments/membership',
         icon: 'group',
         label: 'My Department',
-        allowedRoles: ['ADMIN', 'ADMIN_L2', 'VERIFIER'],
+        allowedRoles: ['ADMIN', 'ADMIN_L2'],
       },
       {
         to: '/admin/departments/field',

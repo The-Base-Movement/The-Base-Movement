@@ -57,7 +57,7 @@ export default function Administrators() {
   const [memberResults, setMemberResults] = useState<Member[]>([])
   const [isMemberSearching, setIsMemberSearching] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
-  const [provisionRole, setProvisionRole] = useState<string>('VERIFIER')
+  const [provisionRole, setProvisionRole] = useState<string>('ADMIN')
   const [provisionRegion, setProvisionRegion] = useState('')
   const [isProvisioning, setIsProvisioning] = useState(false)
   const [provisionEmail, setProvisionEmail] = useState('')
@@ -66,7 +66,7 @@ export default function Administrators() {
 
   // Edit modal
   const [editTarget, setEditTarget] = useState<AdminUser | null>(null)
-  const [editRole, setEditRole] = useState<string>('VERIFIER')
+  const [editRole, setEditRole] = useState<string>('ADMIN')
   const [editRegion, setEditRegion] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
@@ -201,7 +201,7 @@ export default function Administrators() {
       setSelectedMember(null)
       setMemberQuery('')
       setMemberResults([])
-      setProvisionRole('VERIFIER')
+      setProvisionRole('ADMIN')
       setProvisionRegion('')
       setProvisionEmail('')
       setNeedsLoginEmail(false)
