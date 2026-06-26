@@ -14,33 +14,6 @@ interface HeroSectionProps {
   lowBandwidthMode: boolean
 }
 
-const fallbackUpdates = [
-  {
-    title: 'Youth jobs remain the mission',
-    category: 'Movement',
-    excerpt: 'Field notes and updates from branches working toward productive local economies.',
-    imageUrl: '/branding/base-banner-image.png',
-    slug: 'updates',
-    publishedAt: new Date().toISOString(),
-  },
-  {
-    title: 'Branches are organising locally',
-    category: 'Chapters',
-    excerpt: 'Follow the latest work from communities, coordinators, and diaspora chapters.',
-    imageUrl: '/branding/party-headquarters-image.webp',
-    slug: 'updates',
-    publishedAt: new Date().toISOString(),
-  },
-  {
-    title: 'Ghana First in action',
-    category: 'Agenda',
-    excerpt: 'Clear priorities, accountable leadership, and practical national development.',
-    imageUrl: '/branding/hero-background-image.png',
-    slug: 'updates',
-    publishedAt: new Date().toISOString(),
-  },
-]
-
 function HeroUpdatesSlider({
   latestPosts,
   lowBandwidthMode,
@@ -48,11 +21,11 @@ function HeroUpdatesSlider({
   latestPosts: BlogPost[]
   lowBandwidthMode: boolean
 }) {
-  const updates = latestPosts.length > 0 ? latestPosts.slice(0, 3) : fallbackUpdates
+  const updates = latestPosts.slice(0, 3)
 
   return (
     <div
-      className="w-full max-w-[360px] md:max-w-[400px]"
+      className="w-full max-w-[320px] md:max-w-[360px]"
       aria-label="Latest movement updates"
       style={{ filter: 'drop-shadow(0 24px 50px rgba(0,0,0,.35))' }}
     >
@@ -68,42 +41,31 @@ function HeroUpdatesSlider({
         pagination={{ clickable: true }}
         style={{ paddingBottom: 34 }}
       >
-        {updates.map((post) => (
-          <SwiperSlide key={post.slug}>
+        {updates.length === 0 ? (
+          <SwiperSlide>
             <Link
-              to={latestPosts.length > 0 ? `/blog/${post.slug}` : '/blog'}
+              to="/blog"
               className="group block overflow-hidden border border-white/20 bg-white/95 text-on-surface"
               style={{ borderRadius: 'var(--radius-lg)' }}
             >
-              <div className="aspect-[16/11] overflow-hidden bg-muted">
-                <img
-                  src={post.imageUrl || '/branding/base-banner-image.png'}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  decoding="async"
-                  loading="lazy"
-                />
-              </div>
-              <div className="p-4 md:p-5">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="text-micro font-meta font-medium text-primary tracking-tight">
-                    {post.category}
-                  </span>
-                  <span className="text-micro font-meta text-muted-foreground">
-                    {new Date(post.publishedAt).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                    })}
+              <div className="aspect-[16/7] overflow-hidden bg-muted">
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/80">
+                  <span className="text-micro font-semibold tracking-tight text-muted-foreground/80">
+                    Latest updates
                   </span>
                 </div>
-                <h2 className="font-meta text-lg md:text-xl font-medium leading-tight tracking-tight text-on-surface group-hover:text-primary transition-colors">
-                  {post.title}
+              </div>
+              <div className="p-4">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="text-micro font-meta font-medium text-primary tracking-tight">
+                    Updates
+                  </span>
+                </div>
+                <h2 className="font-meta text-base md:text-lg font-medium leading-tight tracking-tight text-on-surface group-hover:text-primary transition-colors">
+                  Latest stories are loading
                 </h2>
-                <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                  {post.excerpt}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-2 text-xs font-meta font-medium text-primary">
-                  Read update
+                <span className="mt-3 inline-flex items-center gap-2 text-xs font-meta font-medium text-primary">
+                  View all updates
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                     arrow_forward
                   </span>
@@ -111,7 +73,54 @@ function HeroUpdatesSlider({
               </div>
             </Link>
           </SwiperSlide>
-        ))}
+        ) : (
+          updates.map((post) => {
+            const updateHref = `/blog/${post.slug}`
+
+            return (
+              <SwiperSlide key={post.id}>
+                <Link
+                  to={updateHref}
+                  aria-label={`Read update: ${post.title}`}
+                  className="group block overflow-hidden border border-white/20 bg-white/95 text-on-surface"
+                  style={{ borderRadius: 'var(--radius-lg)' }}
+                >
+                  <div className="aspect-[16/7] overflow-hidden bg-muted">
+                    <img
+                      src={post.imageUrl || '/branding/base-banner-image.png'}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      decoding="async"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="text-micro font-meta font-medium text-primary tracking-tight">
+                        {post.category}
+                      </span>
+                      <span className="text-micro font-meta text-muted-foreground">
+                        {new Date(post.publishedAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                        })}
+                      </span>
+                    </div>
+                    <h2 className="font-meta text-base md:text-lg font-medium leading-tight tracking-tight text-on-surface group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h2>
+                    <span className="mt-3 inline-flex items-center gap-2 text-xs font-meta font-medium text-primary">
+                      Read update
+                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                        arrow_forward
+                      </span>
+                    </span>
+                  </div>
+                </Link>
+              </SwiperSlide>
+            )
+          })
+        )}
       </Swiper>
     </div>
   )
@@ -127,8 +136,8 @@ export function HeroSection({
   return (
     <section
       aria-labelledby="hero-heading"
-      className="home-hero relative text-white flex items-center overflow-hidden border-b-[8px] border-accent group"
-      style={{ minHeight: 'clamp(560px, 80vh, 780px)' }}
+      className="home-hero relative text-white flex items-end overflow-hidden border-b-[8px] border-accent group"
+      style={{ minHeight: '100vh' }}
       onMouseMove={onMouseMove}
     >
       {!lowBandwidthMode ? (
@@ -156,8 +165,8 @@ export function HeroSection({
 
       <div className="home-hero-shade absolute inset-0 z-0" />
 
-      <div className="page-container py-14 md:py-[80px] relative z-10 flex flex-col md:flex-row items-center md:items-center justify-end md:justify-center gap-8 md:gap-12 w-full h-full">
-        <div className="flex-1 text-center md:text-left mt-auto md:mt-0">
+      <div className="page-container pb-14 pt-28 md:pb-[90px] md:pt-32 relative z-10 flex flex-col md:flex-row items-center md:items-end justify-end gap-8 md:gap-12 w-full min-h-screen">
+        <div className="flex-1 text-center md:text-left">
           <h1
             id="hero-heading"
             className="font-meta font-medium mb-2 leading-[1.05] tracking-tighter"
