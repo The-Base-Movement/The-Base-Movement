@@ -70,6 +70,33 @@ function InitialAvatar({ name }: { name: string }) {
   )
 }
 
+function DonorAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
+  const [imageFailed, setImageFailed] = useState(false)
+
+  if (!avatarUrl || imageFailed) {
+    return <InitialAvatar name={name} />
+  }
+
+  return (
+    <img
+      src={avatarUrl}
+      alt=""
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      onError={() => setImageFailed(true)}
+      style={{
+        width: 36,
+        height: 36,
+        flexShrink: 0,
+        borderRadius: '50%',
+        objectFit: 'cover',
+        border: '1.5px solid hsl(var(--border))',
+        background: 'hsl(var(--container-low))',
+      }}
+    />
+  )
+}
+
 export function LiveContributionFeed() {
   const { lowBandwidthMode } = usePerformance()
   const [donations, setDonations] = useState<DonationDetail[]>([])
@@ -261,7 +288,7 @@ export function LiveContributionFeed() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-                  <InitialAvatar name={donation.fullName} />
+                  <DonorAvatar name={donation.fullName} avatarUrl={donation.avatarUrl} />
                   <div style={{ minWidth: 0 }}>
                     <p
                       style={{

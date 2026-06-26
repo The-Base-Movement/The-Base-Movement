@@ -194,7 +194,7 @@ export default function Home() {
 
       <HeroSection
         heroBgUrl={settings.hero_bg_url || '/hero-bg.png'}
-        logoUrl={settings.logo_url}
+        latestPosts={latestPosts}
         mousePos={mousePos}
         onMouseMove={handleMouseMove}
         lowBandwidthMode={lowBandwidthMode}

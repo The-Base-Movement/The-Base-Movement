@@ -1,17 +1,125 @@
 import { Link } from 'react-router-dom'
+import { Autoplay, Pagination } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { type BlogPost } from '@/services/adminService'
+import 'swiper/css'
+import 'swiper/css/pagination'
 
 interface HeroSectionProps {
   heroBgUrl: string
-  logoUrl: string
+  latestPosts: BlogPost[]
   mousePos: { x: number; y: number }
   onMouseMove: (e: React.MouseEvent<HTMLElement>) => void
   lowBandwidthMode: boolean
 }
 
+const fallbackUpdates = [
+  {
+    title: 'Youth jobs remain the mission',
+    category: 'Movement',
+    excerpt: 'Field notes and updates from branches working toward productive local economies.',
+    imageUrl: '/branding/base-banner-image.png',
+    slug: 'updates',
+    publishedAt: new Date().toISOString(),
+  },
+  {
+    title: 'Branches are organising locally',
+    category: 'Chapters',
+    excerpt: 'Follow the latest work from communities, coordinators, and diaspora chapters.',
+    imageUrl: '/branding/party-headquarters-image.webp',
+    slug: 'updates',
+    publishedAt: new Date().toISOString(),
+  },
+  {
+    title: 'Ghana First in action',
+    category: 'Agenda',
+    excerpt: 'Clear priorities, accountable leadership, and practical national development.',
+    imageUrl: '/branding/hero-background-image.png',
+    slug: 'updates',
+    publishedAt: new Date().toISOString(),
+  },
+]
+
+function HeroUpdatesSlider({
+  latestPosts,
+  lowBandwidthMode,
+}: {
+  latestPosts: BlogPost[]
+  lowBandwidthMode: boolean
+}) {
+  const updates = latestPosts.length > 0 ? latestPosts.slice(0, 3) : fallbackUpdates
+
+  return (
+    <div
+      className="w-full max-w-[360px] md:max-w-[400px]"
+      aria-label="Latest movement updates"
+      style={{ filter: 'drop-shadow(0 24px 50px rgba(0,0,0,.35))' }}
+    >
+      <Swiper
+        modules={[Autoplay, Pagination]}
+        slidesPerView={1}
+        loop={updates.length > 1}
+        autoplay={
+          lowBandwidthMode || updates.length < 2
+            ? false
+            : { delay: 4200, disableOnInteraction: false }
+        }
+        pagination={{ clickable: true }}
+        style={{ paddingBottom: 34 }}
+      >
+        {updates.map((post) => (
+          <SwiperSlide key={post.slug}>
+            <Link
+              to={latestPosts.length > 0 ? `/blog/${post.slug}` : '/blog'}
+              className="group block overflow-hidden border border-white/20 bg-white/95 text-on-surface"
+              style={{ borderRadius: 'var(--radius-lg)' }}
+            >
+              <div className="aspect-[16/11] overflow-hidden bg-muted">
+                <img
+                  src={post.imageUrl || '/branding/base-banner-image.png'}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  decoding="async"
+                  loading="lazy"
+                />
+              </div>
+              <div className="p-4 md:p-5">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span className="text-micro font-meta font-medium text-primary tracking-tight">
+                    {post.category}
+                  </span>
+                  <span className="text-micro font-meta text-muted-foreground">
+                    {new Date(post.publishedAt).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'short',
+                    })}
+                  </span>
+                </div>
+                <h2 className="font-meta text-lg md:text-xl font-medium leading-tight tracking-tight text-on-surface group-hover:text-primary transition-colors">
+                  {post.title}
+                </h2>
+                <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                  {post.excerpt}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-2 text-xs font-meta font-medium text-primary">
+                  Read update
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                    arrow_forward
+                  </span>
+                </span>
+              </div>
+            </Link>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
+  )
+}
+
 export function HeroSection({
   heroBgUrl,
-  logoUrl,
+  latestPosts,
   mousePos,
   onMouseMove,
   lowBandwidthMode,
@@ -98,13 +206,8 @@ export function HeroSection({
           </div>
         </div>
 
-        <div className="hidden sm:flex flex-1 justify-center md:justify-end opacity-90">
-          <img
-            src={logoUrl}
-            alt="The Base"
-            className="w-52 md:w-80 lg:w-96 drop-shadow-2xl object-contain"
-            decoding="async"
-          />
+        <div className="hidden sm:flex flex-1 justify-center md:justify-end">
+          <HeroUpdatesSlider latestPosts={latestPosts} lowBandwidthMode={lowBandwidthMode} />
         </div>
       </div>
     </section>
