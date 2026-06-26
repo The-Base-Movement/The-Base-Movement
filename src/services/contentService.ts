@@ -3,6 +3,7 @@ import type { BlogPost, MediaAsset, Author, PressRelease, MediaKitAsset } from '
 import { adminService } from '@/services/adminService'
 import { compressForUpload } from '@/lib/imageUtils'
 import { discordService } from '@/services/discordService'
+import { mediaHubService } from '@/services/mediaHubService'
 import mediaManifest from '@/data/media-manifest.json'
 
 interface DBAuthor {
@@ -45,6 +46,13 @@ function withoutImageUrl<T extends { image_url?: unknown }>(data: T) {
   return fallbackData
 }
 
+type BlogPostSnapshot = {
+  id: string
+  title: string
+  slug: string
+  status: BlogPost['status']
+}
+
 class ContentService {
   private static instance: ContentService
 
@@ -55,6 +63,43 @@ class ContentService {
       data: { user },
     } = await supabase.auth.getUser()
     return user?.id ?? 'hq-system-admin'
+  }
+
+  private async getBlogPostSnapshot(id: string): Promise<BlogPostSnapshot | null> {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('id, title, slug, status')
+      .eq('id', id)
+      .maybeSingle()
+
+    if (error || !data) {
+      if (error) console.warn('[DATABASE] Failed to fetch blog post snapshot:', error)
+      return null
+    }
+
+    return {
+      id: data.id,
+      title: data.title,
+      slug: data.slug,
+      status: (data.status as BlogPost['status']) || 'Draft',
+    }
+  }
+
+  private async notifyMediaContentActivity(
+    action: Parameters<typeof mediaHubService.createContentActivityAlert>[0]['action'],
+    post: BlogPostSnapshot
+  ): Promise<void> {
+    await mediaHubService
+      .createContentActivityAlert({
+        action,
+        postId: post.id,
+        title: post.title,
+        status: post.status,
+        slug: post.slug,
+      })
+      .catch((error) => {
+        console.warn('[MEDIA HUB] Content alert dispatch failed:', error)
+      })
   }
 
   public static getInstance(): ContentService {
@@ -184,14 +229,22 @@ class ContentService {
       meta_description: post.metaDescription || null,
     }
 
-    let { error } = await supabase.from('blog_posts').insert(insertData)
+    let { data: createdRow, error } = await supabase
+      .from('blog_posts')
+      .insert(insertData)
+      .select('id')
+      .single()
 
     if (error?.code === 'PGRST204' && error.message.includes("'image_url'")) {
       if (post.imageUrl) {
         console.error('[DATABASE] blog_posts.image_url is missing; featured image cannot be saved.')
         return false
       }
-      ;({ error } = await supabase.from('blog_posts').insert(withoutImageUrl(insertData)))
+      ;({ data: createdRow, error } = await supabase
+        .from('blog_posts')
+        .insert(withoutImageUrl(insertData))
+        .select('id')
+        .single())
       console.warn('[DATABASE] blog_posts.image_url is missing; featured image was not saved.')
     }
 
@@ -212,10 +265,24 @@ class ContentService {
         post.slug
       )
     }
+    await this.notifyMediaContentActivity(
+      post.status === 'Published'
+        ? 'published'
+        : post.status === 'Pending Verification'
+          ? 'submitted'
+          : 'created',
+      {
+        id: createdRow?.id ?? post.slug,
+        title: post.title,
+        slug: post.slug,
+        status: post.status || 'Draft',
+      }
+    )
     return true
   }
 
   async updateBlogPost(id: string, post: Partial<BlogPost>): Promise<boolean> {
+    const beforeUpdate = await this.getBlogPostSnapshot(id)
     const updateData: Record<string, string | number | boolean | string[] | null | undefined> = {}
     if (post.title) updateData.title = post.title
     if (post.slug) updateData.slug = post.slug
@@ -257,10 +324,23 @@ class ContentService {
         post.slug
       )
     }
+    const snapshot = await this.getBlogPostSnapshot(id)
+    if (snapshot) {
+      const action =
+        post.status === 'Published'
+          ? 'published'
+          : post.status === 'Draft' && beforeUpdate?.status === 'Published'
+            ? 'unpublished'
+            : post.status === 'Pending Verification'
+              ? 'submitted'
+              : 'updated'
+      await this.notifyMediaContentActivity(action, snapshot)
+    }
     return true
   }
 
   async deleteBlogPost(id: string): Promise<boolean> {
+    const snapshot = await this.getBlogPostSnapshot(id)
     const { error } = await supabase
       .from('blog_posts')
       .update({ deleted_at: new Date().toISOString() })
@@ -270,6 +350,7 @@ class ContentService {
       console.error('[DATABASE] Blog post soft deletion failed:', error)
       return false
     }
+    if (snapshot) await this.notifyMediaContentActivity('trashed', snapshot)
     return true
   }
 

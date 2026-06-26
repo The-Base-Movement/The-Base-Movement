@@ -56,6 +56,15 @@ const MEDIA_ROLES = [
   'COMMUNICATIONS_OFFICER',
 ]
 
+const CONTENT_ACTION_LABELS: Record<string, string> = {
+  created: 'created',
+  updated: 'updated',
+  published: 'published',
+  unpublished: 'unpublished',
+  submitted: 'submitted for verification',
+  trashed: 'moved to trash',
+}
+
 async function getCurrentUserId(): Promise<string> {
   const {
     data: { user },
@@ -352,6 +361,67 @@ export const mediaHubService = {
   },
 
   // ── Helpers ──
+
+  async createContentActivityAlert(data: {
+    action: 'created' | 'updated' | 'published' | 'unpublished' | 'submitted' | 'trashed'
+    postId: string
+    title: string
+    status?: string
+    slug?: string
+  }): Promise<void> {
+    const userId = await getCurrentUserId()
+    const { data: adminRow, error: adminError } = await supabase
+      .from('admins')
+      .select('id, role, users!admins_id_fkey(full_name)')
+      .eq('id', userId)
+      .maybeSingle()
+
+    if (adminError) {
+      console.warn('[MEDIA HUB] Failed to resolve content actor:', adminError)
+      return
+    }
+
+    const typedAdmin = adminRow as {
+      id: string
+      role: string
+      users: { full_name: string | null } | { full_name: string | null }[] | null
+    } | null
+    if (!typedAdmin || !MEDIA_ROLES.includes(typedAdmin.role)) return
+
+    const profile = Array.isArray(typedAdmin.users) ? typedAdmin.users[0] : typedAdmin.users
+    const actorName = profile?.full_name || 'Unknown media operator'
+    const occurredAt = new Date()
+    const actionLabel = CONTENT_ACTION_LABELS[data.action] ?? data.action
+    const bodyRows = [
+      `${actorName} ${actionLabel} a blog article.`,
+      '',
+      `Title: ${data.title}`,
+      `Article ID: ${data.postId}`,
+      `Actor: ${actorName}`,
+      `Role: ${typedAdmin.role}`,
+      `Date/time: ${occurredAt.toLocaleString('en-GB', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      })}`,
+      `ISO timestamp: ${occurredAt.toISOString()}`,
+    ]
+    if (data.status) bodyRows.push(`Status: ${data.status}`)
+    if (data.slug) bodyRows.push(`Slug: ${data.slug}`)
+    const body = bodyRows.join('\n')
+
+    const priority = ['published', 'trashed'].includes(data.action) ? 'urgent' : 'important'
+    const { error } = await supabase.from('media_briefings').insert({
+      title: `Content alert: ${data.title}`,
+      body,
+      priority,
+      pinned: data.action === 'published',
+      author_id: userId,
+    })
+
+    if (error) {
+      console.warn('[MEDIA HUB] Failed to create content activity alert:', error)
+    }
+  },
 
   async getMediaTeamMembers(): Promise<{ id: string; name: string; role: string }[]> {
     const { data } = await supabase
