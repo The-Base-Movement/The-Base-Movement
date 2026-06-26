@@ -393,7 +393,7 @@ export const mediaHubService = {
     const occurredAt = new Date()
     const actionLabel = CONTENT_ACTION_LABELS[data.action] ?? data.action
     const bodyRows = [
-      `${actorName} ${actionLabel} a blog article.`,
+      `${actorName} ${actionLabel} a blog article in the editorial workflow.`,
       '',
       `Title: ${data.title}`,
       `Article ID: ${data.postId}`,
@@ -411,7 +411,7 @@ export const mediaHubService = {
 
     const priority = ['published', 'trashed'].includes(data.action) ? 'urgent' : 'important'
     const { error } = await supabase.from('media_briefings').insert({
-      title: `Content alert: ${data.title}`,
+      title: `Editorial activity: ${data.title}`,
       body,
       priority,
       pinned: data.action === 'published',
