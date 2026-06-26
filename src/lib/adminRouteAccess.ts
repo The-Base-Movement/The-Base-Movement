@@ -5,6 +5,7 @@
  */
 
 import { getNavGroups, type NavItem } from '@/components/layouts/admin/navConfig'
+import { userCan } from '@/lib/roleCatalog'
 import type { AdminPermission, AdminRole, AdminUser } from '@/types/admin'
 
 /**
@@ -211,8 +212,6 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
   },
 ]
 
-const PRIVILEGED_ROLES: AdminRole[] = ['SUPER_ADMIN']
-
 const NAV_ROUTE_RULES = buildNavRouteRules()
 
 /**
@@ -267,20 +266,6 @@ function matchesRule(rule: RouteRule, pathname: string): boolean {
  */
 function formatRoles(roles: AdminRole[]): string {
   return roles.join(', ')
-}
-
-/**
- * Validates user specific system-level permission overrides.
- */
-function hasPermission(
-  user: AdminUser,
-  permission: NonNullable<RouteAccessSpec['permission']>
-): boolean {
-  if (PRIVILEGED_ROLES.includes(user.role)) return true
-
-  return user.permissions.some(
-    (granted) => granted.action === permission.action && granted.resource === permission.resource
-  )
 }
 
 /**
@@ -350,7 +335,7 @@ export function getAdminRouteAccessDecision(
   }
 
   if (rule.permission) {
-    const allowed = hasPermission(user, rule.permission)
+    const allowed = userCan(user, rule.permission)
     return {
       allowed,
       reason: allowed ? null : `Requires ${rule.permission.action} on ${rule.permission.resource}.`,

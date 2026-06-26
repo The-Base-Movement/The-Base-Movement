@@ -5,12 +5,22 @@
  * Includes detail modals for creating, updating, and deleting roles.
  */
 
-import { useState, useEffect } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import {
+  COMMITTEE_LANES,
+  ROLE_PARENT_GROUPS,
+  formatRoleName,
+  getRoleCatalogEntry,
+  isProtectedRole,
+  type CommitteeLane,
+  type RoleParentGroup,
+  type RoleScopeType,
+} from '@/lib/roleCatalog'
 import { roleService, type AdminRoleRecord } from '@/services/roleService'
 import type { AdminPermission } from '@/types/admin'
 
@@ -120,15 +130,23 @@ const ALL_PERMISSIONS: AdminPermission[] = PERMISSION_GROUPS.flatMap((g) =>
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 // Helper function to format SCREAMING_SNAKE_CASE names into Title Case
-const formatName = (name: string) =>
-  name
-    .split('_')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(' ')
+const formatName = formatRoleName
 
 // Helper function to determine if a permission set contains a specific action and resource
 const hasPermission = (perms: AdminPermission[], action: string, resource: string) =>
   perms.some((p) => p.action === action && p.resource === resource)
+
+const badgeStyle: React.CSSProperties = {
+  padding: '2px 8px',
+  borderRadius: 'var(--radius-pill)',
+  background: 'hsl(var(--container-low))',
+  border: '1px solid hsl(var(--border))',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  fontSize: 9.5,
+  color: 'hsl(var(--on-surface-muted))',
+  whiteSpace: 'nowrap',
+}
 
 // ─── Shared styles ────────────────────────────────────────────────────────────
 
@@ -146,6 +164,8 @@ const inputSt: React.CSSProperties = {
   boxSizing: 'border-box',
   color: 'hsl(var(--on-surface))',
 }
+
+const selectSt: React.CSSProperties = { ...inputSt, maxWidth: 190 }
 
 // ─── Role Modal ───────────────────────────────────────────────────────────────
 
@@ -711,6 +731,11 @@ export default function RolesManager() {
   const [roles, setRoles] = useState<AdminRoleRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [parentFilter, setParentFilter] = useState<RoleParentGroup | 'all'>('all')
+  const [laneFilter, setLaneFilter] = useState<CommitteeLane | 'all'>('all')
+  const [scopeFilter, setScopeFilter] = useState<RoleScopeType | 'all'>('all')
+  const [typeFilter, setTypeFilter] = useState<'all' | 'system' | 'custom'>('all')
+  const [twoFactorFilter, setTwoFactorFilter] = useState<'all' | 'required' | 'optional'>('all')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [editTarget, setEditTarget] = useState<AdminRoleRecord | null | 'new'>()
   const [deleteTarget, setDeleteTarget] = useState<AdminRoleRecord | null>(null)
@@ -733,11 +758,27 @@ export default function RolesManager() {
     return () => clearTimeout(timer)
   }, [])
 
-  const filtered = roles.filter(
-    (r) =>
-      r.name.toLowerCase().includes(search.toLowerCase()) ||
-      (r.description ?? '').toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = roles.filter((r) => {
+    const meta = getRoleCatalogEntry(r.name)
+    const query = search.toLowerCase()
+    const matchesSearch =
+      r.name.toLowerCase().includes(query) ||
+      meta.label.toLowerCase().includes(query) ||
+      (r.description ?? '').toLowerCase().includes(query)
+
+    const matchesParent = parentFilter === 'all' || meta.parentGroup === parentFilter
+    const matchesLane = laneFilter === 'all' || meta.committeeLane === laneFilter
+    const matchesScope = scopeFilter === 'all' || meta.scopeType === scopeFilter
+    const matchesType =
+      typeFilter === 'all' || (typeFilter === 'system' ? r.is_system : !r.is_system)
+    const matches2fa =
+      twoFactorFilter === 'all' ||
+      (twoFactorFilter === 'required' ? meta.requires2fa : !meta.requires2fa)
+
+    return (
+      matchesSearch && matchesParent && matchesLane && matchesScope && matchesType && matches2fa
+    )
+  })
 
   const sorted = [...filtered].sort((a, b) => {
     const cmp = formatName(a.name).localeCompare(formatName(b.name))
@@ -746,6 +787,20 @@ export default function RolesManager() {
 
   const systemCount = roles.filter((r) => r.is_system).length
   const customCount = roles.filter((r) => !r.is_system).length
+  const elevatedCount = roles.filter((r) => getRoleCatalogEntry(r.name).requires2fa).length
+
+  const groupedRoles = ROLE_PARENT_GROUPS.map((group) => {
+    const groupRoles = sorted.filter((role) => getRoleCatalogEntry(role.name).parentGroup === group)
+    const hasLanes = group === 'NCC' || group === 'RCC' || group === 'CCC'
+    const lanes = hasLanes
+      ? COMMITTEE_LANES.map((lane) => ({
+          lane,
+          roles: groupRoles.filter((role) => getRoleCatalogEntry(role.name).committeeLane === lane),
+        })).filter((lane) => lane.roles.length > 0)
+      : []
+
+    return { group, roles: groupRoles, lanes }
+  }).filter((group) => group.roles.length > 0)
 
   return (
     <div className="main">
@@ -764,7 +819,7 @@ export default function RolesManager() {
       />
 
       {/* KPIs */}
-      <div className="kpis" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
+      <div className="kpis" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 24 }}>
         {[
           {
             label: 'Total Roles',
@@ -780,6 +835,11 @@ export default function RolesManager() {
             label: 'Custom Roles',
             value: isLoading ? '—' : customCount,
             bar: 'hsl(var(--accent))',
+          },
+          {
+            label: '2FA Required',
+            value: isLoading ? '—' : elevatedCount,
+            bar: 'hsl(var(--destructive))',
           },
         ].map((kpi) => (
           <div
@@ -823,9 +883,17 @@ export default function RolesManager() {
         ))}
       </div>
 
-      {/* Search + Sort */}
+      {/* Search + Filters */}
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div style={{ padding: '14px 20px', display: 'flex', gap: 10, alignItems: 'center' }}>
+        <div
+          style={{
+            padding: '14px 20px',
+            display: 'grid',
+            gap: 10,
+            gridTemplateColumns: 'minmax(220px, 1fr) repeat(5, minmax(150px, 190px)) auto',
+            alignItems: 'center',
+          }}
+        >
           <div style={{ position: 'relative', flex: 1 }}>
             <label htmlFor="roles-search" style={{ display: 'none' }}>
               Search roles
@@ -854,6 +922,64 @@ export default function RolesManager() {
               style={{ ...inputSt, paddingLeft: 34 }}
             />
           </div>
+          <select
+            aria-label="Filter by parent group"
+            value={parentFilter}
+            onChange={(e) => setParentFilter(e.target.value as RoleParentGroup | 'all')}
+            style={selectSt}
+          >
+            <option value="all">All groups</option>
+            {ROLE_PARENT_GROUPS.map((group) => (
+              <option key={group} value={group}>
+                {group}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="Filter by committee lane"
+            value={laneFilter}
+            onChange={(e) => setLaneFilter(e.target.value as CommitteeLane | 'all')}
+            style={selectSt}
+          >
+            <option value="all">All lanes</option>
+            {COMMITTEE_LANES.map((lane) => (
+              <option key={lane} value={lane}>
+                {lane}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="Filter by scope type"
+            value={scopeFilter}
+            onChange={(e) => setScopeFilter(e.target.value as RoleScopeType | 'all')}
+            style={selectSt}
+          >
+            <option value="all">All scopes</option>
+            <option value="national">National</option>
+            <option value="region">Region</option>
+            <option value="constituency">Constituency</option>
+            <option value="polling_station">Polling station</option>
+          </select>
+          <select
+            aria-label="Filter by role type"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value as 'all' | 'system' | 'custom')}
+            style={selectSt}
+          >
+            <option value="all">System + custom</option>
+            <option value="system">System only</option>
+            <option value="custom">Custom only</option>
+          </select>
+          <select
+            aria-label="Filter by 2FA requirement"
+            value={twoFactorFilter}
+            onChange={(e) => setTwoFactorFilter(e.target.value as 'all' | 'required' | 'optional')}
+            style={selectSt}
+          >
+            <option value="all">All 2FA states</option>
+            <option value="required">2FA required</option>
+            <option value="optional">2FA optional</option>
+          </select>
           <SortToggle value={sortDir} onChange={setSortDir} />
         </div>
       </div>
@@ -869,7 +995,7 @@ export default function RolesManager() {
                   borderBottom: '1px solid hsl(var(--border))',
                 }}
               >
-                {['Role', 'Description', 'Permissions', 'Type', ''].map((h) => (
+                {['Role', 'Structure', 'Permissions', 'Badges', ''].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -907,7 +1033,7 @@ export default function RolesManager() {
                     ))}
                   </tr>
                 ))
-              ) : sorted.length === 0 ? (
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
@@ -923,101 +1049,161 @@ export default function RolesManager() {
                   </td>
                 </tr>
               ) : (
-                sorted.map((role) => (
-                  <tr
-                    key={role.id}
-                    style={{
-                      borderBottom: '1px solid hsl(var(--border))',
-                      transition: 'background 0.1s',
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                    }
-                    onMouseLeave={(e) => (e.currentTarget.style.background = '')}
-                  >
-                    <td style={{ padding: '14px 16px' }}>
-                      <span
+                groupedRoles.map((group) => (
+                  <Fragment key={group.group}>
+                    <tr key={`${group.group}-heading`}>
+                      <td
+                        colSpan={5}
                         style={{
-                          fontFamily: "'Public Sans', sans-serif",
+                          padding: '12px 16px',
+                          background: 'hsl(var(--container-low))',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          fontSize: 11,
                           fontWeight: 'var(--font-weight-semibold, 600)',
-                          fontSize: 12,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
                           color: 'hsl(var(--on-surface))',
                         }}
                       >
-                        {formatName(role.name)}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px 16px' }}>
-                      <span
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-normal, 400)',
-                          fontSize: 12,
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        {role.description || '—'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                        {role.permissions.length === 0 ? (
-                          <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-                            None
-                          </span>
-                        ) : (
-                          role.permissions.map((p) => (
-                            <span
-                              key={`${p.action}-${p.resource}`}
+                        {group.group}
+                      </td>
+                    </tr>
+                    {(group.lanes.length > 0
+                      ? group.lanes.flatMap(({ lane, roles: laneRoles }) => [
+                          { type: 'lane' as const, lane },
+                          ...laneRoles.map((role) => ({ type: 'role' as const, role })),
+                        ])
+                      : group.roles.map((role) => ({ type: 'role' as const, role }))
+                    ).map((item) => {
+                      if (item.type === 'lane') {
+                        return (
+                          <tr key={`${group.group}-${item.lane}`}>
+                            <td
+                              colSpan={5}
                               style={{
-                                padding: '2px 8px',
-                                borderRadius: 'var(--radius-pill)',
-                                background: 'hsl(var(--container-low))',
-                                border: '1px solid hsl(var(--border))',
-                                fontFamily: "'Public Sans', sans-serif",
-                                fontWeight: 'var(--font-weight-medium, 500)',
-                                fontSize: 9.5,
-                                color: 'hsl(var(--on-surface-muted))',
-                                whiteSpace: 'nowrap',
+                                padding: '8px 16px 8px 28px',
+                                background: 'hsl(var(--surface))',
+                                borderBottom: '1px solid hsl(var(--border))',
+                                fontSize: 10,
+                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                color: 'hsl(var(--primary))',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.06em',
                               }}
                             >
-                              {p.action.replace(/_/g, ' ')}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ padding: '14px 16px' }}>
-                      <span className={role.is_system ? 'pill pill-ok' : 'pill pill-warn'}>
-                        {role.is_system ? 'System' : 'Custom'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                        <button
-                          className="btn btn-outline btn-sm"
-                          onClick={() => setEditTarget(role)}
-                          style={{ padding: '0 10px' }}
+                              {item.lane}
+                            </td>
+                          </tr>
+                        )
+                      }
+
+                      const role = item.role
+                      const meta = getRoleCatalogEntry(role.name)
+                      return (
+                        <tr
+                          key={role.id}
+                          style={{
+                            borderBottom: '1px solid hsl(var(--border))',
+                            transition: 'background 0.1s',
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                          }
+                          onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                            edit
-                          </span>
-                          Edit
-                        </button>
-                        {!role.is_system && (
-                          <button
-                            className="btn btn-outline-dest btn-sm"
-                            onClick={() => setDeleteTarget(role)}
-                            style={{ padding: '0 10px' }}
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                              delete
-                            </span>
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              <span
+                                style={{
+                                  fontFamily: "'Public Sans', sans-serif",
+                                  fontWeight: 'var(--font-weight-semibold, 600)',
+                                  fontSize: 12,
+                                  color: 'hsl(var(--on-surface))',
+                                }}
+                              >
+                                {formatName(role.name)}
+                              </span>
+                              <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                                {role.description || role.name}
+                              </span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                              <span style={badgeStyle}>{meta.parentGroup}</span>
+                              {meta.committeeLane && (
+                                <span style={badgeStyle}>{meta.committeeLane}</span>
+                              )}
+                              <span style={badgeStyle}>{meta.scopeType.replace(/_/g, ' ')}</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                              {role.permissions.length === 0 ? (
+                                <span
+                                  style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}
+                                >
+                                  None
+                                </span>
+                              ) : (
+                                role.permissions.slice(0, 4).map((p) => (
+                                  <span key={`${p.action}-${p.resource}`} style={badgeStyle}>
+                                    {p.action.replace(/_/g, ' ')}
+                                  </span>
+                                ))
+                              )}
+                              {role.permissions.length > 4 && (
+                                <span style={badgeStyle}>+{role.permissions.length - 4} more</span>
+                              )}
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                              <span className={role.is_system ? 'pill pill-ok' : 'pill pill-warn'}>
+                                {role.is_system ? 'System' : 'Custom'}
+                              </span>
+                              {meta.protected && <span className="pill pill-err">Protected</span>}
+                              {meta.requires2fa && (
+                                <span className="pill pill-warn">2FA required</span>
+                              )}
+                              <span style={badgeStyle}>{role.permissions.length} permissions</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                              <button
+                                className="btn btn-outline btn-sm"
+                                onClick={() => setEditTarget(role)}
+                                style={{ padding: '0 10px' }}
+                              >
+                                <span
+                                  className="material-symbols-outlined"
+                                  style={{ fontSize: 13 }}
+                                >
+                                  edit
+                                </span>
+                                Edit
+                              </button>
+                              {!role.is_system && !isProtectedRole(role.name) && (
+                                <button
+                                  className="btn btn-outline-dest btn-sm"
+                                  onClick={() => setDeleteTarget(role)}
+                                  style={{ padding: '0 10px' }}
+                                >
+                                  <span
+                                    className="material-symbols-outlined"
+                                    style={{ fontSize: 13 }}
+                                  >
+                                    delete
+                                  </span>
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </Fragment>
                 ))
               )}
             </tbody>
@@ -1072,103 +1258,121 @@ export default function RolesManager() {
             No roles found.
           </div>
         ) : (
-          filtered.map((role) => (
-            <div key={role.id} className="panel" style={{ padding: 20 }}>
+          groupedRoles.map((group) => (
+            <div key={group.group} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: 'space-between',
-                  marginBottom: 10,
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  color: 'hsl(var(--on-surface))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  padding: '4px 2px',
                 }}
               >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-semibold, 600)',
-                      fontSize: 13,
-                      color: 'hsl(var(--on-surface))',
-                      margin: 0,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {formatName(role.name)}
-                  </p>
-                  {role.description && (
-                    <p
+                {group.group}
+              </div>
+              {(group.lanes.length > 0
+                ? group.lanes
+                : [{ lane: undefined, roles: group.roles }]
+              ).map(({ lane, roles: laneRoles }) => (
+                <Fragment key={lane ?? group.group}>
+                  {lane && (
+                    <div
                       style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                        fontSize: 11,
-                        color: 'hsl(var(--on-surface-muted))',
-                        margin: '2px 0 0',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-semibold, 600)',
+                        color: 'hsl(var(--primary))',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        padding: '2px 2px',
                       }}
                     >
-                      {role.description}
-                    </p>
+                      {lane}
+                    </div>
                   )}
-                </div>
-                <span
-                  className={`pill ${role.is_system ? 'pill-ok' : 'pill-warn'}`}
-                  style={{ flexShrink: 0, marginLeft: 8 }}
-                >
-                  {role.is_system ? 'System' : 'Custom'}
-                </span>
-              </div>
+                  {laneRoles.map((role) => {
+                    const meta = getRoleCatalogEntry(role.name)
+                    return (
+                      <div key={role.id} className="panel" style={{ padding: 20 }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            marginBottom: 10,
+                          }}
+                        >
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <p
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontWeight: 'var(--font-weight-semibold, 600)',
+                                fontSize: 13,
+                                color: 'hsl(var(--on-surface))',
+                                margin: 0,
+                              }}
+                            >
+                              {formatName(role.name)}
+                            </p>
+                            <p
+                              style={{
+                                fontFamily: "'Public Sans', sans-serif",
+                                fontWeight: 'var(--font-weight-normal, 400)',
+                                fontSize: 11,
+                                color: 'hsl(var(--on-surface-muted))',
+                                margin: '2px 0 0',
+                              }}
+                            >
+                              {role.description || role.name}
+                            </p>
+                          </div>
+                          <span
+                            className={`pill ${role.is_system ? 'pill-ok' : 'pill-warn'}`}
+                            style={{ flexShrink: 0, marginLeft: 8 }}
+                          >
+                            {role.is_system ? 'System' : 'Custom'}
+                          </span>
+                        </div>
 
-              {role.permissions.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 14 }}>
-                  {role.permissions.map((p) => (
-                    <span
-                      key={`${p.action}-${p.resource}`}
-                      style={{
-                        padding: '2px 8px',
-                        borderRadius: 'var(--radius-pill)',
-                        background: 'hsl(var(--container-low))',
-                        border: '1px solid hsl(var(--border))',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 9.5,
-                        color: 'hsl(var(--on-surface-muted))',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {p.action.replace(/_/g, ' ')}
-                    </span>
-                  ))}
-                </div>
-              )}
+                        <div
+                          style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 14 }}
+                        >
+                          <span style={badgeStyle}>{meta.scopeType.replace(/_/g, ' ')}</span>
+                          {meta.protected && <span className="pill pill-err">Protected</span>}
+                          {meta.requires2fa && <span className="pill pill-warn">2FA required</span>}
+                          <span style={badgeStyle}>{role.permissions.length} permissions</span>
+                        </div>
 
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  className="btn btn-outline btn-sm"
-                  style={{ flex: 1, justifyContent: 'center' }}
-                  onClick={() => setEditTarget(role)}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                    edit
-                  </span>
-                  Edit
-                </button>
-                {!role.is_system && (
-                  <button
-                    className="btn btn-dest btn-sm"
-                    style={{ flex: 1, justifyContent: 'center' }}
-                    onClick={() => setDeleteTarget(role)}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                      delete
-                    </span>
-                    Delete
-                  </button>
-                )}
-              </div>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <button
+                            className="btn btn-outline btn-sm"
+                            style={{ flex: 1, justifyContent: 'center' }}
+                            onClick={() => setEditTarget(role)}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                              edit
+                            </span>
+                            Edit
+                          </button>
+                          {!role.is_system && !isProtectedRole(role.name) && (
+                            <button
+                              className="btn btn-dest btn-sm"
+                              style={{ flex: 1, justifyContent: 'center' }}
+                              onClick={() => setDeleteTarget(role)}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                                delete
+                              </span>
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </Fragment>
+              ))}
             </div>
           ))
         )}

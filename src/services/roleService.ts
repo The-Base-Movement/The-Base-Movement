@@ -1,4 +1,6 @@
 import { supabase } from '@/lib/supabase'
+import { getRoleCatalogEntry, isProtectedRole } from '@/lib/roleCatalog'
+import type { CommitteeLane, RoleParentGroup, RoleScopeType } from '@/lib/roleCatalog'
 import type { AdminPermission } from '@/types/admin'
 
 export interface AdminRoleRecord {
@@ -8,6 +10,12 @@ export interface AdminRoleRecord {
   is_system: boolean
   created_at: string
   permissions: AdminPermission[]
+  label: string
+  parentGroup: RoleParentGroup
+  committeeLane?: CommitteeLane
+  scopeType: RoleScopeType
+  protected: boolean
+  requires2fa: boolean
 }
 
 export const roleService = {
@@ -20,14 +28,23 @@ export const roleService = {
 
     if (error) throw error
 
-    return (data || []).map((r) => ({
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      is_system: r.is_system,
-      created_at: r.created_at,
-      permissions: (r.admin_role_permissions || []) as AdminPermission[],
-    }))
+    return (data || []).map((r) => {
+      const meta = getRoleCatalogEntry(r.name)
+      return {
+        id: r.id,
+        name: r.name,
+        description: r.description,
+        is_system: r.is_system,
+        created_at: r.created_at,
+        permissions: (r.admin_role_permissions || []) as AdminPermission[],
+        label: meta.label,
+        parentGroup: meta.parentGroup,
+        committeeLane: meta.committeeLane,
+        scopeType: meta.scopeType,
+        protected: meta.protected,
+        requires2fa: meta.requires2fa,
+      }
+    })
   },
 
   async createRole(
@@ -55,7 +72,17 @@ export const roleService = {
       if (permError) throw permError
     }
 
-    return { ...role, permissions }
+    const meta = getRoleCatalogEntry(role.name)
+    return {
+      ...role,
+      permissions,
+      label: meta.label,
+      parentGroup: meta.parentGroup,
+      committeeLane: meta.committeeLane,
+      scopeType: meta.scopeType,
+      protected: meta.protected,
+      requires2fa: meta.requires2fa,
+    }
   },
 
   async updateRole(
@@ -86,6 +113,17 @@ export const roleService = {
   },
 
   async deleteRole(id: string): Promise<void> {
+    const { data: role, error: lookupError } = await supabase
+      .from('admin_roles')
+      .select('name, is_system')
+      .eq('id', id)
+      .maybeSingle()
+
+    if (lookupError) throw lookupError
+    if (!role || role.is_system || isProtectedRole(role.name)) {
+      throw new Error('Protected system roles cannot be deleted.')
+    }
+
     const { error } = await supabase
       .from('admin_roles')
       .delete()

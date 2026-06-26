@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { adminService, type AdminUser } from '@/services/adminService'
+import { formatRoleName, isRemovingOwnLastSuperAdmin } from '@/lib/roleCatalog'
 import { toast } from 'sonner'
 import { auditService } from '@/services/auditService'
 import { roleService, type AdminRoleRecord } from '@/services/roleService'
@@ -28,11 +29,7 @@ import { AdminsSecurityNote } from './administrators/AdminsSecurityNote'
 const REGIONAL_ROLES: string[] = ['REGIONAL_DIRECTOR', 'CONSTITUENCY_LEAD']
 
 // Utility function to format raw uppercase snake_case role strings to title case
-const formatRole = (role: string) =>
-  role
-    .split('_')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(' ')
+const formatRole = formatRoleName
 
 // Primary page component managing administrator accounts and their database states
 export default function Administrators() {
@@ -224,6 +221,19 @@ export default function Administrators() {
   // Submits updated role/permissions/region credentials for an administrator
   const handleEditSubmit = async () => {
     if (!editTarget) return
+    const currentAdmin = adminService.getCurrentUser()
+    if (
+      isRemovingOwnLastSuperAdmin({
+        currentUserId: currentAdmin?.id,
+        targetUserId: editTarget.id,
+        currentTargetRole: editTarget.role,
+        nextRole: editRole,
+        allAdminRoles: admins.map((admin) => ({ id: admin.id, role: admin.role })),
+      })
+    ) {
+      toast.error('You cannot remove your own last Super Admin access.')
+      return
+    }
     setIsEditing(true)
     try {
       await adminService.updateAdminData(editTarget.id, {
@@ -244,6 +254,19 @@ export default function Administrators() {
   // Revokes administrative access and removes administrative role from a user
   const handleRevoke = async () => {
     if (!revokeTarget) return
+    const currentAdmin = adminService.getCurrentUser()
+    if (
+      isRemovingOwnLastSuperAdmin({
+        currentUserId: currentAdmin?.id,
+        targetUserId: revokeTarget.id,
+        currentTargetRole: revokeTarget.role,
+        nextRole: null,
+        allAdminRoles: admins.map((admin) => ({ id: admin.id, role: admin.role })),
+      })
+    ) {
+      toast.error('You cannot revoke your own last Super Admin access.')
+      return
+    }
     setIsRevoking(true)
     try {
       const ok = await adminService.revokeAdministrator(revokeTarget.id)
