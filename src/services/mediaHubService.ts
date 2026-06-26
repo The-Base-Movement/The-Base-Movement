@@ -355,14 +355,24 @@ export const mediaHubService = {
 
   async getMediaTeamMembers(): Promise<{ id: string; name: string; role: string }[]> {
     const { data } = await supabase
-      .from('users')
-      .select('id, full_name, role')
+      .from('admins')
+      .select('id, role, users!admins_id_fkey(full_name)')
       .in('role', MEDIA_ROLES)
-      .order('full_name')
-    return (data ?? []).map((u) => ({
-      id: u.id,
-      name: u.full_name ?? 'Unknown',
-      role: u.role,
-    }))
+      .order('role')
+
+    return (
+      (data as unknown as {
+        id: string
+        role: string
+        users: { full_name: string | null } | { full_name: string | null }[] | null
+      }[]) ?? []
+    ).map((u) => {
+      const profile = Array.isArray(u.users) ? u.users[0] : u.users
+      return {
+        id: u.id,
+        name: profile?.full_name ?? 'Unknown',
+        role: u.role,
+      }
+    })
   },
 }

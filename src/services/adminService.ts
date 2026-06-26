@@ -326,10 +326,15 @@ class AdminService {
   }
 
   async revokeAdministrator(id: string): Promise<boolean> {
-    const { error } = await supabase.rpc('revoke_administrator', { target_id: id })
+    const { data, error } = await supabase.from('admins').delete().eq('id', id).select('id')
 
     if (error) {
       console.error('[ADMIN SERVICE] Revocation failed:', error)
+      return false
+    }
+
+    if (!data?.length) {
+      console.error('[ADMIN SERVICE] Revocation failed: administrator record not found')
       return false
     }
 

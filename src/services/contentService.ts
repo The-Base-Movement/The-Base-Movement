@@ -5,6 +5,40 @@ import { compressForUpload } from '@/lib/imageUtils'
 import { discordService } from '@/services/discordService'
 import mediaManifest from '@/data/media-manifest.json'
 
+interface DBAuthor {
+  id: string
+  name: string
+  slug: string
+  role?: string
+  bio?: string
+  image_url?: string | null
+  member_id?: string | null
+  created_at: string
+  deleted_at?: string | null
+}
+
+async function resolveAuthorAvatars(authors: DBAuthor[]): Promise<Map<string, string>> {
+  const memberIds = [...new Set(authors.map((author) => author.member_id).filter(Boolean))]
+  const avatarMap = new Map<string, string>()
+  if (!memberIds.length) return avatarMap
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, avatar_url')
+    .in('id', memberIds as string[])
+
+  if (error) {
+    console.warn('[DATABASE] Failed to fetch author profile avatars:', error)
+    return avatarMap
+  }
+
+  for (const user of data ?? []) {
+    if (user.avatar_url) avatarMap.set(user.id, user.avatar_url)
+  }
+
+  return avatarMap
+}
+
 class ContentService {
   private static instance: ContentService
 
@@ -492,17 +526,6 @@ class ContentService {
   }
 
   async getAuthors(): Promise<Author[]> {
-    interface DBAuthor {
-      id: string
-      name: string
-      slug: string
-      role?: string
-      bio?: string
-      image_url?: string
-      created_at: string
-      deleted_at?: string | null
-    }
-
     const { data, error } = await supabase
       .from('authors')
       .select('*')
@@ -514,14 +537,17 @@ class ContentService {
       return []
     }
 
-    return ((data as DBAuthor[]) || []).map((a) => ({
+    const authors = (data as DBAuthor[]) || []
+    const avatarMap = await resolveAuthorAvatars(authors)
+
+    return authors.map((a) => ({
       id: a.id,
       name: a.name,
       slug: a.slug,
       role: a.role,
       bio: a.bio,
-      imageUrl: a.image_url,
-      memberId: (a as { member_id?: string | null }).member_id ?? null,
+      imageUrl: a.image_url || (a.member_id ? avatarMap.get(a.member_id) : undefined),
+      memberId: a.member_id ?? null,
       createdAt: a.created_at,
       deletedAt: a.deleted_at,
     }))
@@ -537,13 +563,15 @@ class ContentService {
 
     if (!data) return null
 
+    const avatarMap = await resolveAuthorAvatars([data as DBAuthor])
+
     return {
       id: data.id,
       name: data.name,
       slug: data.slug,
       role: data.role,
       bio: data.bio,
-      imageUrl: data.image_url,
+      imageUrl: data.image_url || (data.member_id ? avatarMap.get(data.member_id) : undefined),
       memberId: data.member_id ?? null,
       createdAt: data.created_at,
       deletedAt: data.deleted_at,
@@ -614,17 +642,6 @@ class ContentService {
   }
 
   async getTrashedAuthors(): Promise<Author[]> {
-    interface DBAuthor {
-      id: string
-      name: string
-      slug: string
-      role?: string
-      bio?: string
-      image_url?: string
-      created_at: string
-      deleted_at?: string | null
-    }
-
     const { data, error } = await supabase
       .from('authors')
       .select('*')
@@ -636,13 +653,17 @@ class ContentService {
       return []
     }
 
-    return ((data as DBAuthor[]) || []).map((a) => ({
+    const authors = (data as DBAuthor[]) || []
+    const avatarMap = await resolveAuthorAvatars(authors)
+
+    return authors.map((a) => ({
       id: a.id,
       name: a.name,
       slug: a.slug,
       role: a.role,
       bio: a.bio,
-      imageUrl: a.image_url,
+      imageUrl: a.image_url || (a.member_id ? avatarMap.get(a.member_id) : undefined),
+      memberId: a.member_id ?? null,
       createdAt: a.created_at,
       deletedAt: a.deleted_at,
     }))
