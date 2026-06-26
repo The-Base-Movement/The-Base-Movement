@@ -52,6 +52,18 @@ const EMPTY_FORM: FormData = {
   authorBio: '',
 }
 
+const withAuthorSnapshot = (form: FormData, author?: Author): FormData => {
+  if (!author || form.authorId) return form
+  return {
+    ...form,
+    authorId: author.id,
+    authorName: author.name,
+    authorRole: author.role || '',
+    authorImage: author.imageUrl || '',
+    authorBio: author.bio || '',
+  }
+}
+
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [authors, setAuthors] = useState<Author[]>([])
@@ -243,7 +255,10 @@ export default function AdminBlogs() {
 
   // Handles creating or updating a post in the database
   const handleSubmit = async () => {
-    if (!formData.authorId) {
+    const effectiveFormData =
+      currentView === 'edit' && !editingPost ? withAuthorSnapshot(formData, authors[0]) : formData
+
+    if (!effectiveFormData.authorId) {
       toast.error('Author required', {
         description: 'Select an author before saving or publishing.',
       })
@@ -252,7 +267,7 @@ export default function AdminBlogs() {
     setIsLoading(true)
     try {
       const editorContent = editorRef.current ? editorRef.current.getContent() : formData.content
-      const postData = { ...formData, content: editorContent }
+      const postData = { ...effectiveFormData, content: editorContent }
       let success = false
       if (editingPost) {
         success = await adminService.updateBlogPost(editingPost.id, postData)
@@ -266,13 +281,13 @@ export default function AdminBlogs() {
       }
       if (success) {
         const label =
-          formData.status === 'Published'
+          effectiveFormData.status === 'Published'
             ? 'Intelligence authorized & published'
-            : formData.status === 'Pending Verification'
+            : effectiveFormData.status === 'Pending Verification'
               ? 'Submitted for strategic verification'
               : 'Intelligence saved as draft'
         toast.success(label, {
-          description: `"${formData.title}" has been processed successfully.`,
+          description: `"${effectiveFormData.title}" has been processed successfully.`,
         })
         setCurrentView('list')
         fetchPosts()
@@ -374,12 +389,18 @@ export default function AdminBlogs() {
     })
   }, [posts, searchQuery, categoryFilter, statusFilter, sortOrder])
 
+  const editorFormData = useMemo(
+    () =>
+      currentView === 'edit' && !editingPost ? withAuthorSnapshot(formData, authors[0]) : formData,
+    [authors, currentView, editingPost, formData]
+  )
+
   // View routing
   if (currentView === 'edit') {
     return (
       <BlogEditorView
         editingPost={editingPost}
-        formData={formData}
+        formData={editorFormData}
         setFormData={setFormData}
         authors={authors}
         isLoading={isLoading}

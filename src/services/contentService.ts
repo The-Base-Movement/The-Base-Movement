@@ -167,12 +167,7 @@ class ContentService {
       excerpt: post.excerpt,
       content: post.content,
       author_id: post.authorId,
-      author_name: post.authorName,
-      author_role: post.authorRole,
-      author_image: post.authorImage,
-      author_bio: post.authorBio,
       category: post.category,
-      image_url: post.imageUrl || null,
       read_time: post.readTime,
       is_featured: post.isFeatured,
       published_at: post.publishedAt,
@@ -183,7 +178,12 @@ class ContentService {
     })
 
     if (error) {
-      console.error('[DATABASE] Blog post creation failed:', error)
+      console.error(
+        '[DATABASE] Blog post creation failed:',
+        error.message,
+        error.code,
+        error.details
+      )
       return false
     }
     if (post.status === 'Published') {
@@ -204,11 +204,6 @@ class ContentService {
     if (post.excerpt) updateData.excerpt = post.excerpt
     if (post.content) updateData.content = post.content
     if (post.category) updateData.category = post.category
-    if (post.imageUrl !== undefined) updateData.image_url = post.imageUrl
-    if (post.authorName !== undefined) updateData.author_name = post.authorName
-    if (post.authorRole !== undefined) updateData.author_role = post.authorRole
-    if (post.authorImage !== undefined) updateData.author_image = post.authorImage
-    if (post.authorBio !== undefined) updateData.author_bio = post.authorBio
     if (post.readTime) updateData.read_time = post.readTime
     if (post.isFeatured !== undefined) updateData.is_featured = post.isFeatured
     if (post.publishedAt) updateData.published_at = post.publishedAt
@@ -220,7 +215,7 @@ class ContentService {
     const { error } = await supabase.from('blog_posts').update(updateData).eq('id', id)
 
     if (error) {
-      console.error('[DATABASE] Blog post update failed:', error)
+      console.error('[DATABASE] Blog post update failed:', error.message, error.code, error.details)
       return false
     }
     if (post.status === 'Published' && post.title && post.slug) {
