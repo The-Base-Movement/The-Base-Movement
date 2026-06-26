@@ -43,6 +43,7 @@ interface BlogEditorViewProps {
   isMediaLoading: boolean
   onRefreshMedia: () => void
   onUpload: (file: File) => Promise<void>
+  onOpenFeaturedImageLibrary: () => void
   onBack: () => void
   onSubmit: () => void
 }
@@ -67,6 +68,7 @@ export function BlogEditorView({
   isMediaLoading,
   onRefreshMedia,
   onUpload,
+  onOpenFeaturedImageLibrary,
   onBack,
   onSubmit,
 }: BlogEditorViewProps) {
@@ -409,59 +411,110 @@ export function BlogEditorView({
                   />
                 </div>
 
-                {/* Cover image preview with remove button */}
-                {formData.imageUrl && (
+                {/* Featured image field */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: isMobile ? '1fr' : 'minmax(160px, 220px) 1fr',
+                    gap: 14,
+                    alignItems: 'stretch',
+                    padding: 14,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--container-low))',
+                    marginBottom: 20,
+                  }}
+                >
                   <div
                     style={{
-                      position: 'relative',
-                      borderRadius: 'var(--radius-sm)',
-                      overflow: 'hidden',
                       aspectRatio: '16/9',
+                      borderRadius: 'var(--radius-xs)',
+                      overflow: 'hidden',
                       border: '1px solid hsl(var(--border))',
-                      marginBottom: 20,
-                    }}
-                    onMouseEnter={(e) => {
-                      const btn = e.currentTarget.querySelector('button') as HTMLElement | null
-                      if (btn) btn.style.opacity = '1'
-                    }}
-                    onMouseLeave={(e) => {
-                      const btn = e.currentTarget.querySelector('button') as HTMLElement | null
-                      if (btn) btn.style.opacity = '0'
+                      background: 'hsl(var(--card))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    <img
-                      src={formData.imageUrl}
-                      crossOrigin="anonymous"
-                      loading="lazy"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      alt=""
-                    />
-                    <button
-                      onClick={() => setFormData({ ...formData, imageUrl: '' })}
-                      style={{
-                        position: 'absolute',
-                        top: 12,
-                        right: 12,
-                        width: 36,
-                        height: 36,
-                        background: 'rgba(0,0,0,0.7)',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        opacity: 0,
-                        transition: 'opacity 0.2s',
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                        delete
+                    {formData.imageUrl ? (
+                      <img
+                        src={formData.imageUrl}
+                        crossOrigin="anonymous"
+                        loading="lazy"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        alt=""
+                      />
+                    ) : (
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 28, color: 'hsl(var(--on-surface-muted))' }}
+                      >
+                        image
                       </span>
-                    </button>
+                    )}
                   </div>
-                )}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      gap: 10,
+                      minWidth: 0,
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        Featured image
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface-muted))',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                        title={formData.imageUrl || 'Default blog placeholder will be used'}
+                      >
+                        {formData.imageUrl || 'Default blog placeholder will be used'}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={onOpenFeaturedImageLibrary}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                          upload
+                        </span>
+                        Upload / select
+                      </button>
+                      {formData.imageUrl && (
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                            close
+                          </span>
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 {/* TinyMCE editor — keyed by post id to force re-mount on post change */}
                 <div style={{ minHeight: 500 }}>

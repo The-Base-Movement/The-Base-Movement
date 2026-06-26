@@ -373,6 +373,11 @@ export default function AdminBlogs() {
     }
   }
 
+  const openFeaturedImageLibrary = () => {
+    setActiveMediaFolder('editor-content')
+    setShowMediaPanel(true)
+  }
+
   const filteredPosts = useMemo(() => {
     const list = posts.filter((post) => {
       const matchesSearch =
@@ -418,6 +423,7 @@ export default function AdminBlogs() {
         isMediaLoading={isMediaLoading}
         onRefreshMedia={fetchMedia}
         onUpload={handleUpload}
+        onOpenFeaturedImageLibrary={openFeaturedImageLibrary}
         onBack={() => setCurrentView('list')}
         onSubmit={handleSubmit}
       />

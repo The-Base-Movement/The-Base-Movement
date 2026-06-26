@@ -18,7 +18,7 @@
 
 import { createPortal } from 'react-dom'
 import type { BlogPost, AdminUser } from '@/types/admin'
-import { CATEGORY_PLACEHOLDERS, DEFAULT_PLACEHOLDER } from './constants'
+import { DEFAULT_PLACEHOLDER } from './constants'
 import { metaSt } from './styles'
 
 interface BlogsGridProps {
@@ -270,12 +270,13 @@ export function BlogsGrid({
                   }}
                 >
                   <img
-                    src={
-                      post.imageUrl || CATEGORY_PLACEHOLDERS[post.category] || DEFAULT_PLACEHOLDER
-                    }
+                    src={post.imageUrl || DEFAULT_PLACEHOLDER}
                     alt={post.title}
                     crossOrigin="anonymous"
                     loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.src = DEFAULT_PLACEHOLDER
+                    }}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                   {/* Category badge */}
