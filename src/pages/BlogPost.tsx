@@ -15,6 +15,7 @@ import { PostHeroImage } from './blogpost/PostHeroImage'
 import { PostSidebar } from './blogpost/PostSidebar'
 import { Skeleton } from '@/components/states'
 import { contentService } from '@/services/contentService'
+import { getBlogImageUrl } from '@/lib/blogImages'
 
 export default function BlogPost() {
   const { settings } = useBranding()
@@ -401,29 +402,13 @@ export default function BlogPost() {
                               className="aspect-[16/10] overflow-hidden mb-3 relative"
                               style={{ border: '1px solid hsl(var(--border))' }}
                             >
-                              {related.imageUrl ? (
-                                <img
-                                  src={related.imageUrl}
-                                  alt={related.title}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                  decoding="async"
-                                  loading="lazy"
-                                />
-                              ) : (
-                                <div
-                                  className="w-full h-full flex flex-col items-center justify-center gap-2"
-                                  style={{ background: 'hsl(132 9% 10%)' }}
-                                >
-                                  <div className="flex h-[5px] w-12" aria-hidden="true">
-                                    <div className="flex-1 bg-[#CE1126]" />
-                                    <div className="flex-1 bg-[#DAA520]" />
-                                    <div className="flex-1 bg-[#006B3F]" />
-                                  </div>
-                                  <span className="text-[8px] font-medium tracking-[0.18em] uppercase text-white/30 font-['Public_Sans',sans-serif]">
-                                    The Base
-                                  </span>
-                                </div>
-                              )}
+                              <img
+                                src={getBlogImageUrl(related.imageUrl)}
+                                alt={related.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                decoding="async"
+                                loading="lazy"
+                              />
                               <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                             </div>
                             <span

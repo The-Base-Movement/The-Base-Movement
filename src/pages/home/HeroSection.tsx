@@ -4,6 +4,7 @@ import type { Swiper as SwiperInstance } from 'swiper'
 import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { getBlogImageUrl } from '@/lib/blogImages'
 import { type BlogPost } from '@/services/adminService'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -96,7 +97,7 @@ function HeroUpdatesSlider({ latestPosts }: { latestPosts: BlogPost[] }) {
                 >
                   <div className="aspect-[16/7] overflow-hidden bg-muted">
                     <img
-                      src={post.imageUrl || '/branding/base-banner-image.png'}
+                      src={getBlogImageUrl(post.imageUrl)}
                       alt=""
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       decoding="async"

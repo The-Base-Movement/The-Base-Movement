@@ -8,6 +8,7 @@
 
 import { useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
+import { getBlogImageUrl } from '@/lib/blogImages'
 import type { BlogPost } from '@/types/admin'
 
 interface BlogPostCardProps {
@@ -74,52 +75,19 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           justifyContent: 'center',
         }}
       >
-        {post.imageUrl ? (
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              transform: hover ? 'scale(1.05)' : 'none',
-              transition: 'transform 0.7s',
-            }}
-            decoding="async"
-            loading="lazy"
-          />
-        ) : (
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 12,
-              background: 'hsl(132 9% 10%)',
-            }}
-          >
-            <div style={{ display: 'flex', height: 5, width: 56 }} aria-hidden="true">
-              <div style={{ flex: 1, background: '#CE1126' }} />
-              <div style={{ flex: 1, background: '#DAA520' }} />
-              <div style={{ flex: 1, background: '#006B3F' }} />
-            </div>
-            <span
-              style={{
-                fontSize: 9,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.3)',
-                fontFamily: FONT,
-              }}
-            >
-              The Base
-            </span>
-          </div>
-        )}
+        <img
+          src={getBlogImageUrl(post.imageUrl)}
+          alt={post.title}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            transform: hover ? 'scale(1.05)' : 'none',
+            transition: 'transform 0.7s',
+          }}
+          decoding="async"
+          loading="lazy"
+        />
         {post.category && (
           <span
             style={{

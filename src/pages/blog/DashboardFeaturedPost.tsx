@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { getBlogImageUrl } from '@/lib/blogImages'
 import type { BlogPost } from '@/services/adminService'
 
 interface DashboardFeaturedPostProps {
@@ -9,17 +10,15 @@ interface DashboardFeaturedPostProps {
 export function DashboardFeaturedPost({ post, baseUrl }: DashboardFeaturedPostProps) {
   return (
     <div className="panel" style={{ overflow: 'hidden' }}>
-      {post.imageUrl && (
-        <div style={{ height: 200, overflow: 'hidden' }}>
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            decoding="async"
-            loading="lazy"
-          />
-        </div>
-      )}
+      <div style={{ height: 200, overflow: 'hidden' }}>
+        <img
+          src={getBlogImageUrl(post.imageUrl)}
+          alt={post.title}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          decoding="async"
+          loading="lazy"
+        />
+      </div>
       <div style={{ padding: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
           {post.category && (

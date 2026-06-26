@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
 import { cn } from '@/lib/utils'
+import { getBlogImageUrl } from '@/lib/blogImages'
 import { type BlogPost } from '@/services/adminService'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 import { Skeleton } from '@/components/states'
@@ -72,20 +73,13 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                   <SwiperSlide key={post.id}>
                     <Link to={`/blog/${post.slug}`} className="group block">
                       <div className="aspect-[16/10] overflow-hidden mb-3 border border-border/60 bg-muted">
-                        {post.imageUrl ? (
-                          <img
-                            src={post.imageUrl}
-                            alt={post.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            decoding="async"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                            <span className="text-micro font-semibold text-muted-foreground/80 tracking-tight">
-                              The Base
-                            </span>
-                          </div>
-                        )}
+                        <img
+                          src={getBlogImageUrl(post.imageUrl)}
+                          alt={post.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          decoding="async"
+                          loading="lazy"
+                        />
                       </div>
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-micro font-meta font-medium text-primary tracking-tight">
@@ -117,20 +111,13 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
               {latestPosts.map((post) => (
                 <Link key={post.id} to={`/blog/${post.slug}`} className="group block">
                   <div className="aspect-[16/10] overflow-hidden mb-4 md:mb-6 border border-border/60 bg-muted">
-                    {post.imageUrl ? (
-                      <img
-                        src={post.imageUrl}
-                        alt={post.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        decoding="async"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                        <span className="text-micro font-semibold text-muted-foreground/80 tracking-tight">
-                          The Base
-                        </span>
-                      </div>
-                    )}
+                    <img
+                      src={getBlogImageUrl(post.imageUrl)}
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      decoding="async"
+                      loading="lazy"
+                    />
                   </div>
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-micro font-meta font-medium text-primary tracking-tight">

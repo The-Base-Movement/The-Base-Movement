@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { getBlogImageUrl } from '@/lib/blogImages'
 import type { BlogPost } from '@/services/adminService'
 
 interface PublicFeaturedPostProps {
@@ -21,29 +22,13 @@ export function PublicFeaturedPost({ post, baseUrl }: PublicFeaturedPostProps) {
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
       >
         <div className="overflow-hidden" style={{ aspectRatio: '16/9' }}>
-          {post.imageUrl ? (
-            <img
-              src={post.imageUrl}
-              alt={post.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              decoding="async"
-              loading="lazy"
-            />
-          ) : (
-            <div
-              className="w-full h-full flex flex-col items-center justify-center gap-3"
-              style={{ background: 'hsl(132 9% 10%)' }}
-            >
-              <div className="flex h-[6px] w-20" aria-hidden="true">
-                <div className="flex-1 bg-[#CE1126]" />
-                <div className="flex-1 bg-[#DAA520]" />
-                <div className="flex-1 bg-[#006B3F]" />
-              </div>
-              <span className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/30 font-['Public_Sans',sans-serif]">
-                The Base
-              </span>
-            </div>
-          )}
+          <img
+            src={getBlogImageUrl(post.imageUrl)}
+            alt={post.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            decoding="async"
+            loading="lazy"
+          />
         </div>
         <div className="p-6 md:p-10 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-4">

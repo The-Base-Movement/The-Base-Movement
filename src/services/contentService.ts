@@ -39,6 +39,12 @@ async function resolveAuthorAvatars(authors: DBAuthor[]): Promise<Map<string, st
   return avatarMap
 }
 
+function withoutImageUrl<T extends { image_url?: unknown }>(data: T) {
+  const fallbackData = { ...data }
+  delete fallbackData.image_url
+  return fallbackData
+}
+
 class ContentService {
   private static instance: ContentService
 
@@ -161,13 +167,14 @@ class ContentService {
   }
 
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<boolean> {
-    const { error } = await supabase.from('blog_posts').insert({
+    const insertData = {
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt,
       content: post.content,
       author_id: post.authorId,
       category: post.category,
+      image_url: post.imageUrl || null,
       read_time: post.readTime,
       is_featured: post.isFeatured,
       published_at: post.publishedAt,
@@ -175,7 +182,18 @@ class ContentService {
       tags: post.tags,
       seo_title: post.seoTitle || null,
       meta_description: post.metaDescription || null,
-    })
+    }
+
+    let { error } = await supabase.from('blog_posts').insert(insertData)
+
+    if (error?.code === 'PGRST204' && error.message.includes("'image_url'")) {
+      if (post.imageUrl) {
+        console.error('[DATABASE] blog_posts.image_url is missing; featured image cannot be saved.')
+        return false
+      }
+      ;({ error } = await supabase.from('blog_posts').insert(withoutImageUrl(insertData)))
+      console.warn('[DATABASE] blog_posts.image_url is missing; featured image was not saved.')
+    }
 
     if (error) {
       console.error(
@@ -204,6 +222,7 @@ class ContentService {
     if (post.excerpt) updateData.excerpt = post.excerpt
     if (post.content) updateData.content = post.content
     if (post.category) updateData.category = post.category
+    if (post.imageUrl !== undefined) updateData.image_url = post.imageUrl || null
     if (post.readTime) updateData.read_time = post.readTime
     if (post.isFeatured !== undefined) updateData.is_featured = post.isFeatured
     if (post.publishedAt) updateData.published_at = post.publishedAt
@@ -212,7 +231,19 @@ class ContentService {
     if (post.seoTitle !== undefined) updateData.seo_title = post.seoTitle
     if (post.metaDescription !== undefined) updateData.meta_description = post.metaDescription
 
-    const { error } = await supabase.from('blog_posts').update(updateData).eq('id', id)
+    let { error } = await supabase.from('blog_posts').update(updateData).eq('id', id)
+
+    if (error?.code === 'PGRST204' && error.message.includes("'image_url'")) {
+      if (post.imageUrl) {
+        console.error('[DATABASE] blog_posts.image_url is missing; featured image cannot be saved.')
+        return false
+      }
+      ;({ error } = await supabase
+        .from('blog_posts')
+        .update(withoutImageUrl(updateData))
+        .eq('id', id))
+      console.warn('[DATABASE] blog_posts.image_url is missing; featured image was not saved.')
+    }
 
     if (error) {
       console.error('[DATABASE] Blog post update failed:', error.message, error.code, error.details)
