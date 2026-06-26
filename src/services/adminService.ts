@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { PostgrestError, RealtimeChannel } from '@supabase/supabase-js'
 import { compressForUpload } from '@/lib/imageUtils'
+import { ROLE_CATALOG, getDefaultRolePermissions } from '@/lib/roleCatalog'
 import { isUuid } from '@/lib/supabaseFilters'
 import { authService } from './authService'
 import { memberService } from './memberService'
@@ -75,6 +76,21 @@ import type {
   MemberSession,
   MemberNote,
 } from '@/types/admin'
+
+const approvedAdminRoles = new Set<string>(ROLE_CATALOG.map((entry) => entry.role))
+
+function normalizeAdminRole(role: string | null | undefined): AdminRole {
+  const dbRole = role?.toUpperCase() || ''
+  if (approvedAdminRoles.has(dbRole)) return dbRole as AdminRole
+
+  if (dbRole.includes('FOUNDER')) return 'FOUNDER'
+  if (dbRole.includes('SUPER')) return 'SUPER_ADMIN'
+  if (dbRole === 'FINANCEOFFICER') return 'FINANCE_OFFICER'
+  if (dbRole.includes('ORGANIZER')) return 'ORGANIZER'
+  if (dbRole.includes('LEADER')) return 'MOVEMENT_LEADER'
+
+  return 'ADMIN'
+}
 
 // ── Inline types not in admin.ts ─────────────────────────────────────────────
 export interface PasswordResetRecord {
@@ -1815,56 +1831,41 @@ class AdminService {
 
     // Map database JSON permissions to the AdminPermission[] format
     const dbPermissions = admin.permissions || {}
-    const permissions: AdminPermission[] = []
+    const parsedPermissions: AdminPermission[] = []
 
     if (Array.isArray(dbPermissions)) {
-      permissions.push(...(dbPermissions as AdminPermission[]))
+      parsedPermissions.push(...(dbPermissions as AdminPermission[]))
     } else {
       if (dbPermissions.can_manage_members) {
-        permissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' })
+        parsedPermissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' })
       }
       if (dbPermissions.can_manage_chapters) {
-        permissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' })
+        parsedPermissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' })
       }
       if (dbPermissions.can_manage_polls) {
-        permissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' })
+        parsedPermissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' })
       }
       if (dbPermissions.can_manage_store) {
-        permissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' })
+        parsedPermissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' })
       }
       if (dbPermissions.can_view_audit_logs) {
-        permissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' })
+        parsedPermissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' })
       }
       if (dbPermissions.can_post_blog) {
-        permissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' })
+        parsedPermissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' })
       }
       if (dbPermissions.can_manage_newsletters) {
-        permissions.push({ action: 'MANAGE_NEWSLETTERS', resource: 'NEWSLETTERS' })
+        parsedPermissions.push({ action: 'MANAGE_NEWSLETTERS', resource: 'NEWSLETTERS' })
       }
       if (dbPermissions.can_manage_donations) {
-        permissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
+        parsedPermissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
       }
     }
 
-    // Normalize role string to match AdminRole type exactly
-    let role: AdminRole = 'ADMIN'
-    const dbRole = admin.role?.toUpperCase() || ''
-    if (dbRole.includes('FOUNDER')) role = 'FOUNDER'
-    else if (dbRole.includes('ORGANIZER')) role = 'ORGANIZER'
-    else if (dbRole === 'EXECUTIVE') role = 'EXECUTIVE'
-    else if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN'
-    else if (dbRole === 'ADMIN') role = 'ADMIN'
-    else if (dbRole.includes('CHIEF_EDITOR')) role = 'CHIEF_EDITOR'
-    else if (dbRole.includes('SENIOR_EDITOR')) role = 'SENIOR_EDITOR'
-    else if (dbRole.includes('REGIONAL')) role = 'REGIONAL_DIRECTOR'
-    else if (dbRole.includes('CONSTITUENCY')) role = 'CONSTITUENCY_LEAD'
-    else if (dbRole === 'CHAPTER_LEAD') role = 'CHAPTER_LEAD'
-    else if (dbRole.includes('LEADER')) role = 'CONSTITUENCY_LEAD'
-    else if (dbRole.includes('JUNIOR_EDITOR')) role = 'JUNIOR_EDITOR'
-    else if (dbRole.includes('REGIONAL_CORRESPONDENT')) role = 'REGIONAL_CORRESPONDENT'
-    else if (dbRole.includes('EDITOR')) role = 'EDITOR'
-    else if (dbRole.includes('FINANCE_OFFICER') || dbRole === 'FINANCEOFFICER')
-      role = 'FINANCE_OFFICER'
+    const role = normalizeAdminRole(admin.role)
+    const permissions = approvedAdminRoles.has(role)
+      ? getDefaultRolePermissions(role)
+      : parsedPermissions
 
     const defaultPreferences: import('@/types/admin').AdminPreferences = {
       interfaceDensity: 'Comfortable',

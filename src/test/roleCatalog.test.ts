@@ -130,6 +130,11 @@ describe('roleCatalog policy', () => {
     expect(userCan(user, perm('VIEW_AUDIT_LOGS', 'SYSTEM'))).toBe(false)
   })
 
+  it('requires explicit 2FA state for elevated roles', () => {
+    const user = admin('SECURITY_DIRECTOR', [perm('VIEW_AUDIT_LOGS', 'SYSTEM')])
+    expect(userCan(user, perm('VIEW_AUDIT_LOGS', 'SYSTEM'))).toBe(false)
+  })
+
   it('marks protected roles as not deletable', () => {
     expect(isProtectedRole('SUPER_ADMIN')).toBe(true)
     expect(isProtectedRole('ICT_DIRECTOR')).toBe(true)
@@ -183,6 +188,7 @@ describe('roleCatalog policy', () => {
   })
 
   it('relocates existing roles that were in the wrong parent group', () => {
+    expect(getRoleCatalogEntry('FOUNDER').label).toBe('Founder')
     expect(getRoleCatalogEntry('CHAPTER_LEAD').parentGroup).toBe('CCC')
     expect(getRoleCatalogEntry('CHAPTER_LEAD').committeeLane).toBe('Operations & Organising')
     expect(getRoleCatalogEntry('STORE_MANAGER').parentGroup).toBe('NCC')

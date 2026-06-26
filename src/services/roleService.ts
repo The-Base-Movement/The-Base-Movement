@@ -24,6 +24,7 @@ export interface AdminRoleRecord {
 }
 
 const CATALOG_ID_PREFIX = 'catalog:'
+const catalogRoleNames = new Set<string>(ROLE_CATALOG.map((entry) => entry.role))
 
 function toRoleRecord(row: {
   id: string
@@ -34,7 +35,9 @@ function toRoleRecord(row: {
   admin_role_permissions?: AdminPermission[]
 }): AdminRoleRecord {
   const meta = getRoleCatalogEntry(row.name)
-  const permissions = row.admin_role_permissions ?? getDefaultRolePermissions(row.name)
+  const permissions = catalogRoleNames.has(row.name)
+    ? getDefaultRolePermissions(row.name)
+    : (row.admin_role_permissions ?? [])
   return {
     id: row.id,
     name: row.name,

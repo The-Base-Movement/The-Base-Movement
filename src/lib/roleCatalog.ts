@@ -53,7 +53,7 @@ const policy: CommitteeLane = 'Research & Policy'
 const welfare: CommitteeLane = 'Appointment, Discipline & Welfare'
 
 const entries = [
-  ['FOUNDER', 'Founder / Platform Owner', 'BOARD', undefined, 'national', true, true],
+  ['FOUNDER', 'Founder', 'BOARD', undefined, 'national', true, true],
   ['BOARD_CHAIR', 'Board Chair', 'BOARD', undefined, 'national', true, true],
   ['BOARD_SECRETARY', 'Board Secretary', 'BOARD', undefined, 'national', false, false],
   ['EXECUTIVE', 'Executive Member', 'BOARD', undefined, 'national', false, false],
@@ -573,7 +573,6 @@ export function hasPermission(
 }
 
 function hasSatisfied2fa(user: UserCanInput): boolean {
-  if (user.mfaVerified == null && user.mfa_verified == null && user.aal == null) return true
   return user.mfaVerified === true || user.mfa_verified === true || user.aal === 'aal2'
 }
 
