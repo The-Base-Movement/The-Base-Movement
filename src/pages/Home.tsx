@@ -9,7 +9,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 
-import { HeroSection } from './home/HeroSection'
+import { HeroSection, MobileHeroUpdatesTicker } from './home/HeroSection'
 import { StatsSection } from './home/StatsSection'
 import { RoadmapSection } from './home/RoadmapSection'
 import { NetworkStructureSection } from './home/NetworkStructureSection'
@@ -199,6 +199,8 @@ export default function Home() {
         onMouseMove={handleMouseMove}
         lowBandwidthMode={lowBandwidthMode}
       />
+
+      <MobileHeroUpdatesTicker latestPosts={latestPosts} />
 
       <StatsSection statsGridRef={statsGridRef} stats={stats} />
 

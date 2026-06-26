@@ -1,5 +1,7 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { Autoplay, Pagination } from 'swiper/modules'
+import type { Swiper as SwiperInstance } from 'swiper'
+import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { type BlogPost } from '@/services/adminService'
@@ -14,14 +16,19 @@ interface HeroSectionProps {
   lowBandwidthMode: boolean
 }
 
-function HeroUpdatesSlider({
-  latestPosts,
-  lowBandwidthMode,
-}: {
-  latestPosts: BlogPost[]
-  lowBandwidthMode: boolean
-}) {
+function HeroUpdatesSlider({ latestPosts }: { latestPosts: BlogPost[] }) {
   const updates = latestPosts.slice(0, 3)
+  const swiperRef = useRef<SwiperInstance | null>(null)
+
+  useEffect(() => {
+    if (updates.length < 2) return undefined
+
+    const intervalId = window.setInterval(() => {
+      swiperRef.current?.slideNext()
+    }, 4200)
+
+    return () => window.clearInterval(intervalId)
+  }, [updates.length])
 
   return (
     <div
@@ -30,15 +37,17 @@ function HeroUpdatesSlider({
       style={{ filter: 'drop-shadow(0 24px 50px rgba(0,0,0,.35))' }}
     >
       <Swiper
-        modules={[Autoplay, Pagination]}
+        modules={[Pagination]}
         slidesPerView={1}
         loop={updates.length > 1}
-        autoplay={
-          lowBandwidthMode || updates.length < 2
-            ? false
-            : { delay: 4200, disableOnInteraction: false }
-        }
         pagination={{ clickable: true }}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper
+        }}
+        onDestroy={() => {
+          swiperRef.current = null
+        }}
+        speed={650}
         style={{ paddingBottom: 34 }}
       >
         {updates.length === 0 ? (
@@ -126,6 +135,78 @@ function HeroUpdatesSlider({
   )
 }
 
+export function MobileHeroUpdatesTicker({ latestPosts }: { latestPosts: BlogPost[] }) {
+  const updates = latestPosts.slice(0, 5)
+  const swiperRef = useRef<SwiperInstance | null>(null)
+
+  useEffect(() => {
+    if (updates.length < 2) return undefined
+
+    const intervalId = window.setInterval(() => {
+      swiperRef.current?.slideNext()
+    }, 3600)
+
+    return () => window.clearInterval(intervalId)
+  }, [updates.length])
+
+  return (
+    <section
+      className="sm:hidden border-b border-accent/70 bg-primary text-primary-foreground"
+      aria-label="Urgent updates"
+    >
+      <div className="page-container py-2">
+        <div className="flex min-h-[56px] items-center gap-3">
+          <Link
+            to="/blog"
+            className="shrink-0 rounded-full bg-accent px-3 py-1.5 font-meta text-[10px] font-medium uppercase tracking-[0.08em] text-black"
+          >
+            Urgent updates
+          </Link>
+
+          <div className="min-w-0 flex-1">
+            {updates.length === 0 ? (
+              <Link
+                to="/blog"
+                className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
+              >
+                Latest movement updates are loading
+              </Link>
+            ) : (
+              <Swiper
+                slidesPerView={1}
+                loop={updates.length > 1}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper
+                }}
+                onDestroy={() => {
+                  swiperRef.current = null
+                }}
+                speed={520}
+              >
+                {updates.map((post) => (
+                  <SwiperSlide key={post.id}>
+                    <Link
+                      to={`/blog/${post.slug}`}
+                      className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
+                      aria-label={`Read update: ${post.title}`}
+                    >
+                      {post.title}
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
+          </div>
+
+          <span className="material-symbols-outlined shrink-0" style={{ fontSize: 18 }}>
+            arrow_forward
+          </span>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export function HeroSection({
   heroBgUrl,
   latestPosts,
@@ -137,7 +218,7 @@ export function HeroSection({
     <section
       aria-labelledby="hero-heading"
       className="home-hero relative text-white flex items-end overflow-hidden border-b-[8px] border-accent group"
-      style={{ minHeight: '100vh' }}
+      style={{ minHeight: '100vh', minBlockSize: '100svh' }}
       onMouseMove={onMouseMove}
     >
       {!lowBandwidthMode ? (
@@ -165,8 +246,8 @@ export function HeroSection({
 
       <div className="home-hero-shade absolute inset-0 z-0" />
 
-      <div className="page-container pb-14 pt-28 md:pb-[90px] md:pt-32 relative z-10 flex flex-col md:flex-row items-center md:items-end justify-end gap-8 md:gap-12 w-full min-h-screen">
-        <div className="flex-1 text-center md:text-left">
+      <div className="page-container pb-14 pt-28 md:pb-[90px] md:pt-32 relative z-10 flex flex-col md:flex-row items-stretch md:items-end justify-end gap-8 md:gap-12 w-full min-h-screen">
+        <div className="md:flex-1 text-center md:text-left">
           <h1
             id="hero-heading"
             className="font-meta font-medium mb-2 leading-[1.05] tracking-tighter"
@@ -215,8 +296,8 @@ export function HeroSection({
           </div>
         </div>
 
-        <div className="hidden sm:flex flex-1 justify-center md:justify-end">
-          <HeroUpdatesSlider latestPosts={latestPosts} lowBandwidthMode={lowBandwidthMode} />
+        <div className="hidden md:flex flex-1 justify-center md:justify-end">
+          <HeroUpdatesSlider latestPosts={latestPosts} />
         </div>
       </div>
     </section>
