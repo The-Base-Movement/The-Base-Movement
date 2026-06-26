@@ -58,6 +58,7 @@ const entries = [
   ['BOARD_SECRETARY', 'Board Secretary', 'BOARD', undefined, 'national', false, false],
   ['EXECUTIVE', 'Executive Member', 'BOARD', undefined, 'national', false, false],
   ['EXECUTIVE_MEMBER', 'Executive Member', 'BOARD', undefined, 'national', false, false],
+  ['MOVEMENT_LEADER', 'Movement Leader', 'BOARD', undefined, 'national', false, false],
   [
     'AUDIT_COMPLIANCE_OFFICER',
     'Audit / Compliance Officer',
@@ -68,6 +69,9 @@ const entries = [
     true,
   ],
   ['LEGAL_OFFICER', 'Legal Officer', 'BOARD', undefined, 'national', false, false],
+  ['BOARD_MEMBER', 'Board Member', 'BOARD', undefined, 'national', false, false],
+  ['BOARD_TREASURER', 'Board Treasurer', 'BOARD', undefined, 'national', false, false],
+  ['BOARD_ADVISOR', 'Board Advisor', 'BOARD', undefined, 'national', false, false],
 
   ['ICT_DIRECTOR', 'ICT Director', 'NATIONAL ICT', undefined, 'national', true, true],
   ['SUPER_ADMIN', 'Super Admin', 'NATIONAL ICT', undefined, 'national', true, true],
@@ -101,6 +105,17 @@ const entries = [
     false,
     false,
   ],
+  ['DATABASE_MANAGER', 'Database Manager', 'NATIONAL ICT', undefined, 'national', false, false],
+  ['WEB_APP_MANAGER', 'Web / App Manager', 'NATIONAL ICT', undefined, 'national', false, false],
+  [
+    'DATA_PROTECTION_OFFICER',
+    'Data Protection Officer',
+    'NATIONAL ICT',
+    undefined,
+    'national',
+    false,
+    false,
+  ],
 
   [
     'SECURITY_DIRECTOR',
@@ -112,11 +127,29 @@ const entries = [
     true,
   ],
   [
+    'DEPUTY_SECURITY_DIRECTOR',
+    'Deputy Security Director',
+    'SECURITY / INTEL',
+    undefined,
+    'national',
+    false,
+    false,
+  ],
+  [
     'INTELLIGENCE_ANALYST',
     'Intelligence Analyst',
     'SECURITY / INTEL',
     undefined,
     'national',
+    false,
+    false,
+  ],
+  [
+    'FIELD_INTELLIGENCE_OFFICER',
+    'Field Intelligence Officer',
+    'SECURITY / INTEL',
+    undefined,
+    'constituency',
     false,
     false,
   ],
@@ -378,8 +411,7 @@ const entries = [
   ],
   ['CONSTITUENCY_DEPUTY', 'Constituency Deputy', 'CCC', ops, 'constituency', false, false],
   ['CHAPTER_TREASURER', 'Chapter Treasurer', 'CCC', finance, 'constituency', false, false],
-  ['STORE_MANAGER', 'Store Manager', 'NATIONAL ICT', undefined, 'national', false, false],
-  ['MOVEMENT_LEADER', 'Movement Leader', 'NCC', ops, 'national', false, false],
+  ['STORE_MANAGER', 'Store Manager', 'NCC', ops, 'national', false, false],
 ] as const
 
 export const ROLE_CATALOG: RoleCatalogEntry[] = entries.map(
@@ -408,6 +440,95 @@ export const COMMITTEE_LANES: CommitteeLane[] = [ops, media, finance, policy, we
 const catalogMap = new Map<AdminRole, RoleCatalogEntry>(
   ROLE_CATALOG.map((entry) => [entry.role, entry])
 )
+
+const p = (
+  action: AdminPermission['action'],
+  resource: AdminPermission['resource']
+): AdminPermission => ({ action, resource })
+
+const viewOps = [
+  p('VIEW_WAR_ROOM', 'OPERATIONS'),
+  p('VIEW_DEPLOYMENT_METRICS', 'OPERATIONS'),
+  p('VIEW_CONSTITUENCY_OPS', 'OPERATIONS'),
+  p('VIEW_POLLING_STATIONS', 'OPERATIONS'),
+]
+
+const boardView = [
+  p('VIEW_ADMINS', 'ADMINS'),
+  p('VIEW_MEMBER_DIRECTORY', 'MEMBERS'),
+  p('VIEW_FINANCE', 'FINANCE'),
+  p('VIEW_STRATEGIC_FOCUS', 'STRATEGY'),
+  p('VIEW_PARTY_OFFICIALS', 'PARTY'),
+  ...viewOps,
+]
+
+const ictManage = [
+  p('VIEW_ADMINS', 'ADMINS'),
+  p('VIEW_AUDIT_LOGS', 'SYSTEM'),
+  p('SUBMIT_IT_TICKET', 'IT_SUPPORT'),
+  p('VERIFY_MEMBER', 'MEMBERS'),
+]
+
+const opsManage = [
+  p('VIEW_MEMBER_DIRECTORY', 'MEMBERS'),
+  p('VERIFY_MEMBER', 'MEMBERS'),
+  p('MANAGE_CHAPTER', 'CHAPTERS'),
+  p('APPOINT_LEAD', 'CHAPTERS'),
+  ...viewOps,
+]
+
+const mediaManage = [p('MANAGE_BLOGS', 'BLOGS'), p('MANAGE_NEWSLETTERS', 'NEWSLETTERS')]
+const financeManage = [p('MANAGE_DONATIONS', 'DONATIONS'), p('VIEW_FINANCE', 'FINANCE')]
+const policyView = [
+  p('VIEW_STRATEGIC_FOCUS', 'STRATEGY'),
+  p('VIEW_MISSION_PLAN', 'STRATEGY'),
+  p('VIEW_ROADMAP', 'STRATEGY'),
+]
+const welfareManage = [p('VIEW_MEMBER_DIRECTORY', 'MEMBERS'), p('APPOINT_LEAD', 'CHAPTERS')]
+const securityView = [
+  p('VIEW_AUDIT_LOGS', 'SYSTEM'),
+  p('VIEW_WAR_ROOM', 'OPERATIONS'),
+  p('VIEW_DEPLOYMENT_METRICS', 'OPERATIONS'),
+  p('VIEW_MEMBER_DIRECTORY', 'MEMBERS'),
+]
+
+export function getDefaultRolePermissions(role: string): AdminPermission[] {
+  const meta = getRoleCatalogEntry(role)
+
+  if (role === 'SUPER_ADMIN') {
+    return [
+      ...ictManage,
+      ...opsManage,
+      ...mediaManage,
+      ...financeManage,
+      ...policyView,
+      p('DELETE_MEMBER', 'MEMBERS'),
+      p('MANAGE_POLLS', 'POLLS'),
+      p('MANAGE_INVENTORY', 'STORE'),
+      p('VIEW_POLLS', 'POLLS'),
+      p('VIEW_MASS_MOBILIZATION', 'OPERATIONS'),
+      p('VIEW_DIRECTIVES', 'OPERATIONS'),
+      p('VIEW_DEPLOY_ASSET', 'OPERATIONS'),
+      p('VIEW_PARTY_OFFICIALS', 'PARTY'),
+    ]
+  }
+
+  if (meta.parentGroup === 'BOARD') {
+    return role === 'AUDIT_COMPLIANCE_OFFICER'
+      ? [p('VIEW_AUDIT_LOGS', 'SYSTEM'), p('VIEW_FINANCE', 'FINANCE'), p('VIEW_ADMINS', 'ADMINS')]
+      : boardView
+  }
+
+  if (meta.parentGroup === 'NATIONAL ICT') return ictManage
+  if (meta.parentGroup === 'SECURITY / INTEL') return securityView
+
+  if (meta.committeeLane === media) return mediaManage
+  if (meta.committeeLane === finance) return financeManage
+  if (meta.committeeLane === policy) return policyView
+  if (meta.committeeLane === welfare) return welfareManage
+
+  return opsManage
+}
 
 export function formatRoleName(role: string): string {
   const entry = catalogMap.get(role as AdminRole)

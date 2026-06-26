@@ -1,5 +1,10 @@
 import { supabase } from '@/lib/supabase'
-import { getRoleCatalogEntry, isProtectedRole } from '@/lib/roleCatalog'
+import {
+  ROLE_CATALOG,
+  getDefaultRolePermissions,
+  getRoleCatalogEntry,
+  isProtectedRole,
+} from '@/lib/roleCatalog'
 import type { CommitteeLane, RoleParentGroup, RoleScopeType } from '@/lib/roleCatalog'
 import type { AdminPermission } from '@/types/admin'
 
@@ -18,6 +23,34 @@ export interface AdminRoleRecord {
   requires2fa: boolean
 }
 
+const CATALOG_ID_PREFIX = 'catalog:'
+
+function toRoleRecord(row: {
+  id: string
+  name: string
+  description: string | null
+  is_system: boolean
+  created_at: string
+  admin_role_permissions?: AdminPermission[]
+}): AdminRoleRecord {
+  const meta = getRoleCatalogEntry(row.name)
+  const permissions = row.admin_role_permissions ?? getDefaultRolePermissions(row.name)
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    is_system: row.is_system,
+    created_at: row.created_at,
+    permissions,
+    label: meta.label,
+    parentGroup: meta.parentGroup,
+    committeeLane: meta.committeeLane,
+    scopeType: meta.scopeType,
+    protected: meta.protected,
+    requires2fa: meta.requires2fa,
+  }
+}
+
 export const roleService = {
   async getRoles(): Promise<AdminRoleRecord[]> {
     const { data, error } = await supabase
@@ -28,23 +61,24 @@ export const roleService = {
 
     if (error) throw error
 
-    return (data || []).map((r) => {
-      const meta = getRoleCatalogEntry(r.name)
-      return {
-        id: r.id,
-        name: r.name,
-        description: r.description,
-        is_system: r.is_system,
-        created_at: r.created_at,
-        permissions: (r.admin_role_permissions || []) as AdminPermission[],
-        label: meta.label,
-        parentGroup: meta.parentGroup,
-        committeeLane: meta.committeeLane,
-        scopeType: meta.scopeType,
-        protected: meta.protected,
-        requires2fa: meta.requires2fa,
-      }
-    })
+    const dbRoles = (data || []).map((r) =>
+      toRoleRecord({
+        ...r,
+        admin_role_permissions: (r.admin_role_permissions || []) as AdminPermission[],
+      })
+    )
+    const existing = new Set(dbRoles.map((role) => role.name))
+    const catalogRoles = ROLE_CATALOG.filter((entry) => !existing.has(entry.role)).map((entry) =>
+      toRoleRecord({
+        id: `${CATALOG_ID_PREFIX}${entry.role}`,
+        name: entry.role,
+        description: entry.label,
+        is_system: true,
+        created_at: '',
+      })
+    )
+
+    return [...dbRoles, ...catalogRoles].sort((a, b) => a.label.localeCompare(b.label))
   },
 
   async createRole(
@@ -93,20 +127,34 @@ export const roleService = {
     isSystem: boolean
   ): Promise<void> {
     const slug = isSystem ? name : name.toUpperCase().replace(/\s+/g, '_')
+    let roleId = id
 
-    const { error } = await supabase
-      .from('admin_roles')
-      .update({ name: slug, description })
-      .eq('id', id)
+    if (id.startsWith(CATALOG_ID_PREFIX)) {
+      const { data: inserted, error: insertError } = await supabase
+        .from('admin_roles')
+        .insert({ name: slug, description, is_system: true })
+        .select('id')
+        .single()
 
-    if (error) throw error
+      if (insertError) throw insertError
+      roleId = inserted.id
+    } else {
+      const { error } = await supabase
+        .from('admin_roles')
+        .update({ name: slug, description })
+        .eq('id', id)
 
-    await supabase.from('admin_role_permissions').delete().eq('role_id', id)
+      if (error) throw error
+    }
+
+    await supabase.from('admin_role_permissions').delete().eq('role_id', roleId)
 
     if (permissions.length > 0) {
       const { error: permError } = await supabase
         .from('admin_role_permissions')
-        .insert(permissions.map((p) => ({ role_id: id, action: p.action, resource: p.resource })))
+        .insert(
+          permissions.map((p) => ({ role_id: roleId, action: p.action, resource: p.resource }))
+        )
 
       if (permError) throw permError
     }

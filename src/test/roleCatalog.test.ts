@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ROLE_CATALOG,
+  getDefaultRolePermissions,
   getRoleCatalogEntry,
   isProtectedRole,
   isRemovingOwnLastSuperAdmin,
@@ -153,5 +155,51 @@ describe('roleCatalog policy', () => {
       'Finance & Fundraising'
     )
     expect(getRoleCatalogEntry('CONSTITUENCY_LEAD').parentGroup).toBe('CCC')
+  })
+
+  it('includes every approved missing-role name in the catalog', () => {
+    const roleNames = new Set(ROLE_CATALOG.map((entry) => entry.role))
+    const expectedRoles: AdminRole[] = [
+      'BOARD_CHAIR',
+      'BOARD_SECRETARY',
+      'AUDIT_COMPLIANCE_OFFICER',
+      'LEGAL_OFFICER',
+      'BOARD_MEMBER',
+      'BOARD_TREASURER',
+      'BOARD_ADVISOR',
+      'ICT_DIRECTOR',
+      'DATABASE_MANAGER',
+      'WEB_APP_MANAGER',
+      'DATA_PROTECTION_OFFICER',
+      'DEPUTY_SECURITY_DIRECTOR',
+      'FIELD_INTELLIGENCE_OFFICER',
+      'REGIONAL_LOGISTICS_OFFICER',
+      'CONSTITUENCY_LOGISTICS_OFFICER',
+      'POLLING_STATION_COORDINATOR',
+      'POLLING_STATION_AGENT',
+      'MEMBERSHIP_OFFICER',
+    ]
+    expectedRoles.forEach((role) => expect(roleNames.has(role)).toBe(true))
+  })
+
+  it('relocates existing roles that were in the wrong parent group', () => {
+    expect(getRoleCatalogEntry('CHAPTER_LEAD').parentGroup).toBe('CCC')
+    expect(getRoleCatalogEntry('CHAPTER_LEAD').committeeLane).toBe('Operations & Organising')
+    expect(getRoleCatalogEntry('STORE_MANAGER').parentGroup).toBe('NCC')
+    expect(getRoleCatalogEntry('STORE_MANAGER').committeeLane).toBe('Operations & Organising')
+    expect(getRoleCatalogEntry('MOVEMENT_LEADER').parentGroup).toBe('BOARD')
+  })
+
+  it('provides default permissions for catalog-only roles', () => {
+    expect(getDefaultRolePermissions('BOARD_CHAIR')).toContainEqual(perm('VIEW_ADMINS', 'ADMINS'))
+    expect(getDefaultRolePermissions('NATIONAL_MEDIA_DIRECTOR')).toContainEqual(
+      perm('MANAGE_BLOGS', 'BLOGS')
+    )
+    expect(getDefaultRolePermissions('REGIONAL_FINANCE_OFFICER')).toContainEqual(
+      perm('VIEW_FINANCE', 'FINANCE')
+    )
+    expect(getDefaultRolePermissions('POLLING_STATION_AGENT')).toContainEqual(
+      perm('VIEW_POLLING_STATIONS', 'OPERATIONS')
+    )
   })
 })
