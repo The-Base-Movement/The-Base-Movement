@@ -27,6 +27,11 @@ export interface AdminRoleRecord {
 const CATALOG_ID_PREFIX = 'catalog:'
 const catalogRoleNames = new Set<string>(ROLE_CATALOG.map((entry) => entry.role))
 
+export function resolveRolePermissions(name: string, permissions: AdminPermission[] | undefined) {
+  if (permissions && permissions.length > 0) return permissions
+  return catalogRoleNames.has(name) ? getDefaultRolePermissions(name) : []
+}
+
 function toRoleRecord(row: {
   id: string
   name: string
@@ -37,9 +42,7 @@ function toRoleRecord(row: {
 }): AdminRoleRecord {
   const name = resolveRoleAlias(row.name)
   const meta = getRoleCatalogEntry(name)
-  const permissions = catalogRoleNames.has(name)
-    ? getDefaultRolePermissions(name)
-    : (row.admin_role_permissions ?? [])
+  const permissions = resolveRolePermissions(name, row.admin_role_permissions)
   return {
     id: row.id,
     name,
