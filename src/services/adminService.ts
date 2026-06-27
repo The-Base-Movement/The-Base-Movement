@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { PostgrestError, RealtimeChannel } from '@supabase/supabase-js'
 import { compressForUpload } from '@/lib/imageUtils'
-import { ROLE_CATALOG, getDefaultRolePermissions } from '@/lib/roleCatalog'
+import { ROLE_CATALOG, getDefaultRolePermissions, resolveRoleAlias } from '@/lib/roleCatalog'
 import { isUuid } from '@/lib/supabaseFilters'
 import { authService } from './authService'
 import { memberService } from './memberService'
@@ -80,7 +80,7 @@ import type {
 const approvedAdminRoles = new Set<string>(ROLE_CATALOG.map((entry) => entry.role))
 
 function normalizeAdminRole(role: string | null | undefined): AdminRole {
-  const dbRole = role?.toUpperCase() || ''
+  const dbRole = resolveRoleAlias(role?.toUpperCase() || '')
   if (approvedAdminRoles.has(dbRole)) return dbRole as AdminRole
 
   if (dbRole.includes('FOUNDER')) return 'FOUNDER'

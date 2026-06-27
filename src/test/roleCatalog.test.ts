@@ -5,6 +5,7 @@ import {
   getRoleCatalogEntry,
   isProtectedRole,
   isRemovingOwnLastSuperAdmin,
+  resolveRoleAlias,
   requiresRole2fa,
   userCan,
 } from '@/lib/roleCatalog'
@@ -194,6 +195,24 @@ describe('roleCatalog policy', () => {
     expect(getRoleCatalogEntry('STORE_MANAGER').parentGroup).toBe('NCC')
     expect(getRoleCatalogEntry('STORE_MANAGER').committeeLane).toBe('Operations & Organising')
     expect(getRoleCatalogEntry('MOVEMENT_LEADER').parentGroup).toBe('BOARD')
+  })
+
+  it('keeps duplicate legacy role names as aliases instead of catalog rows', () => {
+    const roleNames = new Set(ROLE_CATALOG.map((entry) => entry.role))
+    expect(roleNames.has('EXECUTIVE_MEMBER')).toBe(false)
+    expect(roleNames.has('NATIONAL_ORGANISER')).toBe(false)
+    expect(roleNames.has('NATIONAL_FINANCE_OFFICER')).toBe(false)
+    expect(roleNames.has('NATIONAL_MEDIA_DIRECTOR')).toBe(false)
+    expect(resolveRoleAlias('EXECUTIVE_MEMBER')).toBe('EXECUTIVE')
+    expect(resolveRoleAlias('NATIONAL_ORGANISER')).toBe('ORGANIZER')
+    expect(resolveRoleAlias('NATIONAL_FINANCE_OFFICER')).toBe('FINANCE_OFFICER')
+    expect(resolveRoleAlias('NATIONAL_MEDIA_DIRECTOR')).toBe('COMMUNICATIONS_OFFICER')
+  })
+
+  it('requires elevated security for every Board role', () => {
+    ROLE_CATALOG.filter((entry) => entry.parentGroup === 'BOARD').forEach((entry) => {
+      expect(requiresRole2fa(entry.role)).toBe(true)
+    })
   })
 
   it('provides default permissions for catalog-only roles', () => {

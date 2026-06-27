@@ -46,6 +46,13 @@ type UserCanInput = AdminUser & {
   assigned_polling_station?: string | null
 }
 
+export const ROLE_ALIASES: Partial<Record<AdminRole, AdminRole>> = {
+  EXECUTIVE_MEMBER: 'EXECUTIVE',
+  NATIONAL_ORGANISER: 'ORGANIZER',
+  NATIONAL_MEDIA_DIRECTOR: 'COMMUNICATIONS_OFFICER',
+  NATIONAL_FINANCE_OFFICER: 'FINANCE_OFFICER',
+}
+
 const ops: CommitteeLane = 'Operations & Organising'
 const media: CommitteeLane = 'Media & Communications'
 const finance: CommitteeLane = 'Finance & Fundraising'
@@ -55,10 +62,9 @@ const welfare: CommitteeLane = 'Appointment, Discipline & Welfare'
 const entries = [
   ['FOUNDER', 'Founder', 'BOARD', undefined, 'national', true, true],
   ['BOARD_CHAIR', 'Board Chair', 'BOARD', undefined, 'national', true, true],
-  ['BOARD_SECRETARY', 'Board Secretary', 'BOARD', undefined, 'national', false, false],
-  ['EXECUTIVE', 'Executive Member', 'BOARD', undefined, 'national', false, false],
-  ['EXECUTIVE_MEMBER', 'Executive Member', 'BOARD', undefined, 'national', false, false],
-  ['MOVEMENT_LEADER', 'Movement Leader', 'BOARD', undefined, 'national', false, false],
+  ['BOARD_SECRETARY', 'Board Secretary', 'BOARD', undefined, 'national', false, true],
+  ['EXECUTIVE', 'Executive Member', 'BOARD', undefined, 'national', false, true],
+  ['MOVEMENT_LEADER', 'Movement Leader', 'BOARD', undefined, 'national', false, true],
   [
     'AUDIT_COMPLIANCE_OFFICER',
     'Audit / Compliance Officer',
@@ -68,10 +74,10 @@ const entries = [
     false,
     true,
   ],
-  ['LEGAL_OFFICER', 'Legal Officer', 'BOARD', undefined, 'national', false, false],
-  ['BOARD_MEMBER', 'Board Member', 'BOARD', undefined, 'national', false, false],
-  ['BOARD_TREASURER', 'Board Treasurer', 'BOARD', undefined, 'national', false, false],
-  ['BOARD_ADVISOR', 'Board Advisor', 'BOARD', undefined, 'national', false, false],
+  ['LEGAL_OFFICER', 'Legal Officer', 'BOARD', undefined, 'national', false, true],
+  ['BOARD_MEMBER', 'Board Member', 'BOARD', undefined, 'national', false, true],
+  ['BOARD_TREASURER', 'Board Treasurer', 'BOARD', undefined, 'national', false, true],
+  ['BOARD_ADVISOR', 'Board Advisor', 'BOARD', undefined, 'national', false, true],
 
   ['ICT_DIRECTOR', 'ICT Director', 'NATIONAL ICT', undefined, 'national', true, true],
   ['SUPER_ADMIN', 'Super Admin', 'NATIONAL ICT', undefined, 'national', true, true],
@@ -201,7 +207,6 @@ const entries = [
   ],
   ['ORGANIZER', 'National Organiser', 'NCC', ops, 'national', false, false],
   ['NATIONAL_SECRETARY', 'National Secretary', 'NCC', ops, 'national', false, false],
-  ['NATIONAL_ORGANISER', 'National Organiser', 'NCC', ops, 'national', false, false],
   [
     'NATIONAL_LOGISTICS_OFFICER',
     'National Logistics Officer',
@@ -212,30 +217,12 @@ const entries = [
     false,
   ],
   ['YOUTH_LEADER', 'Youth Leader', 'NCC', ops, 'national', false, false],
-  [
-    'NATIONAL_MEDIA_DIRECTOR',
-    'National Media Director / Communications Officer',
-    'NCC',
-    media,
-    'national',
-    false,
-    false,
-  ],
   ['COMMUNICATIONS_OFFICER', 'Communications Officer', 'NCC', media, 'national', false, false],
   ['CHIEF_EDITOR', 'Chief Editor', 'NCC', media, 'national', false, false],
   ['SENIOR_EDITOR', 'Senior Editor', 'NCC', media, 'national', false, false],
   ['EDITOR', 'Editor', 'NCC', media, 'national', false, false],
   ['JUNIOR_EDITOR', 'Junior Editor', 'NCC', media, 'national', false, false],
   ['FINANCE_OFFICER', 'National Finance Officer', 'NCC', finance, 'national', false, false],
-  [
-    'NATIONAL_FINANCE_OFFICER',
-    'National Finance Officer',
-    'NCC',
-    finance,
-    'national',
-    false,
-    false,
-  ],
   [
     'NATIONAL_FUNDRAISING_OFFICER',
     'National Fundraising Officer',
@@ -441,6 +428,10 @@ const catalogMap = new Map<AdminRole, RoleCatalogEntry>(
   ROLE_CATALOG.map((entry) => [entry.role, entry])
 )
 
+export function resolveRoleAlias(role: string): string {
+  return ROLE_ALIASES[role as AdminRole] ?? role
+}
+
 const p = (
   action: AdminPermission['action'],
   resource: AdminPermission['resource']
@@ -531,7 +522,7 @@ export function getDefaultRolePermissions(role: string): AdminPermission[] {
 }
 
 export function formatRoleName(role: string): string {
-  const entry = catalogMap.get(role as AdminRole)
+  const entry = catalogMap.get(resolveRoleAlias(role) as AdminRole)
   if (entry) return entry.label
 
   return role
@@ -541,9 +532,10 @@ export function formatRoleName(role: string): string {
 }
 
 export function getRoleCatalogEntry(role: string): RoleCatalogEntry {
+  const canonicalRole = resolveRoleAlias(role) as AdminRole
   return (
-    catalogMap.get(role as AdminRole) ?? {
-      role: role as AdminRole,
+    catalogMap.get(canonicalRole) ?? {
+      role: canonicalRole,
       label: formatRoleName(role),
       parentGroup: 'NATIONAL ICT',
       scopeType: 'national',

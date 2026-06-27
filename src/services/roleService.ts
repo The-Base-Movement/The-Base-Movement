@@ -4,6 +4,7 @@ import {
   getDefaultRolePermissions,
   getRoleCatalogEntry,
   isProtectedRole,
+  resolveRoleAlias,
 } from '@/lib/roleCatalog'
 import type { CommitteeLane, RoleParentGroup, RoleScopeType } from '@/lib/roleCatalog'
 import type { AdminPermission } from '@/types/admin'
@@ -34,13 +35,14 @@ function toRoleRecord(row: {
   created_at: string
   admin_role_permissions?: AdminPermission[]
 }): AdminRoleRecord {
-  const meta = getRoleCatalogEntry(row.name)
-  const permissions = catalogRoleNames.has(row.name)
-    ? getDefaultRolePermissions(row.name)
+  const name = resolveRoleAlias(row.name)
+  const meta = getRoleCatalogEntry(name)
+  const permissions = catalogRoleNames.has(name)
+    ? getDefaultRolePermissions(name)
     : (row.admin_role_permissions ?? [])
   return {
     id: row.id,
-    name: row.name,
+    name,
     description: row.description,
     is_system: row.is_system,
     created_at: row.created_at,
@@ -54,6 +56,15 @@ function toRoleRecord(row: {
   }
 }
 
+function uniqueByRoleName(roles: AdminRoleRecord[]): AdminRoleRecord[] {
+  const seen = new Set<string>()
+  return roles.filter((role) => {
+    if (seen.has(role.name)) return false
+    seen.add(role.name)
+    return true
+  })
+}
+
 export const roleService = {
   async getRoles(): Promise<AdminRoleRecord[]> {
     const { data, error } = await supabase
@@ -64,11 +75,13 @@ export const roleService = {
 
     if (error) throw error
 
-    const dbRoles = (data || []).map((r) =>
-      toRoleRecord({
-        ...r,
-        admin_role_permissions: (r.admin_role_permissions || []) as AdminPermission[],
-      })
+    const dbRoles = uniqueByRoleName(
+      (data || []).map((r) =>
+        toRoleRecord({
+          ...r,
+          admin_role_permissions: (r.admin_role_permissions || []) as AdminPermission[],
+        })
+      )
     )
     const existing = new Set(dbRoles.map((role) => role.name))
     const catalogRoles = ROLE_CATALOG.filter((entry) => !existing.has(entry.role)).map((entry) =>
@@ -81,7 +94,9 @@ export const roleService = {
       })
     )
 
-    return [...dbRoles, ...catalogRoles].sort((a, b) => a.label.localeCompare(b.label))
+    return uniqueByRoleName([...dbRoles, ...catalogRoles]).sort((a, b) =>
+      a.label.localeCompare(b.label)
+    )
   },
 
   async createRole(

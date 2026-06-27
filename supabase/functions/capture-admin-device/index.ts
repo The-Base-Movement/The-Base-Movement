@@ -20,7 +20,20 @@ const corsHeaders = {
 }
 
 // Roles whose devices we bind. Keep in sync with DEVICE_TRACKED_ROLES on the client.
-const TRACKED_ROLES = ['FOUNDER', 'FINANCE_OFFICER', 'EXECUTIVE', 'SUPER_ADMIN', 'MOVEMENT_LEADER']
+const TRACKED_ROLES = [
+  'FOUNDER',
+  'BOARD_CHAIR',
+  'BOARD_SECRETARY',
+  'EXECUTIVE',
+  'MOVEMENT_LEADER',
+  'AUDIT_COMPLIANCE_OFFICER',
+  'LEGAL_OFFICER',
+  'BOARD_MEMBER',
+  'BOARD_TREASURER',
+  'BOARD_ADVISOR',
+  'SUPER_ADMIN',
+  'FINANCE_OFFICER',
+]
 
 const DEVICE_TYPES = ['desktop', 'tablet', 'mobile']
 

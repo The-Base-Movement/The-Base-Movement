@@ -1,15 +1,14 @@
 import { supabase } from '@/lib/supabase'
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
+import { ROLE_CATALOG } from '@/lib/roleCatalog'
 
 // Roles whose devices we bind. Keep in sync with TRACKED_ROLES in the
-// capture-admin-device edge function. Add a role here to start tracking it.
+// capture-admin-device edge function.
 export const DEVICE_TRACKED_ROLES = [
-  'FOUNDER',
-  'FINANCE_OFFICER',
-  'EXECUTIVE',
+  ...ROLE_CATALOG.filter((role) => role.parentGroup === 'BOARD').map((role) => role.role),
   'SUPER_ADMIN',
-  'MOVEMENT_LEADER',
+  'FINANCE_OFFICER',
 ] as const
 
 export type DeviceType = 'desktop' | 'tablet' | 'mobile'

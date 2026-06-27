@@ -175,7 +175,7 @@ interface RoleModalProps {
   onSaved: () => void
 }
 
-// Dialog component for creating or editing system/custom roles and their permission listings
+// Dialog component for creating or editing roles and their permission listings
 function RoleModal({ role, onClose, onSaved }: RoleModalProps) {
   const isEdit = !!role
   const [name, setName] = useState(role ? role.name : '')
@@ -259,7 +259,7 @@ function RoleModal({ role, onClose, onSaved }: RoleModalProps) {
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: 540,
+          maxWidth: 680,
           background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid hsl(var(--border))',
@@ -305,7 +305,6 @@ function RoleModal({ role, onClose, onSaved }: RoleModalProps) {
                 }}
               >
                 {formatName(role.name)}
-                {role.is_system && ' · System role'}
               </p>
             )}
           </div>
@@ -339,66 +338,76 @@ function RoleModal({ role, onClose, onSaved }: RoleModalProps) {
             gap: 20,
           }}
         >
-          {/* Name */}
-          <div>
-            <label
-              htmlFor="role-name"
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
-                fontSize: 11,
-                color: 'hsl(var(--on-surface-muted))',
-                display: 'block',
-                marginBottom: 6,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-              }}
-            >
-              Role name
-            </label>
-            <input
-              id="role-name"
-              name="roleName"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. FIELD_OFFICER"
-              style={inputSt}
-              disabled={isEdit && role?.is_system}
-            />
-            {!isEdit && (
-              <p style={{ margin: '4px 0 0', fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>
-                Spaces become underscores and the name is uppercased automatically.
-              </p>
-            )}
-          </div>
+          <div
+            style={{
+              display: 'grid',
+              gap: 16,
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            }}
+          >
+            {/* Name */}
+            <div>
+              <label
+                htmlFor="role-name"
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                Role name
+              </label>
+              <input
+                id="role-name"
+                name="roleName"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. FIELD_OFFICER"
+                style={inputSt}
+                disabled={isEdit && role?.is_system}
+              />
+              {!isEdit && (
+                <p
+                  style={{ margin: '4px 0 0', fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}
+                >
+                  Spaces become underscores and the name is uppercased automatically.
+                </p>
+              )}
+            </div>
 
-          {/* Description */}
-          <div>
-            <label
-              htmlFor="role-desc"
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-semibold, 600)',
-                fontSize: 11,
-                color: 'hsl(var(--on-surface-muted))',
-                display: 'block',
-                marginBottom: 6,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-              }}
-            >
-              Description
-            </label>
-            <input
-              id="role-desc"
-              name="roleDescription"
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Brief description of this role's responsibilities"
-              style={inputSt}
-            />
+            {/* Description */}
+            <div>
+              <label
+                htmlFor="role-desc"
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                Description
+              </label>
+              <input
+                id="role-desc"
+                name="roleDescription"
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief description of this role's responsibilities"
+                style={inputSt}
+              />
+            </div>
           </div>
 
           {/* Permissions */}
@@ -734,8 +743,7 @@ export default function RolesManager() {
   const [parentFilter, setParentFilter] = useState<RoleParentGroup | 'all'>('all')
   const [laneFilter, setLaneFilter] = useState<CommitteeLane | 'all'>('all')
   const [scopeFilter, setScopeFilter] = useState<RoleScopeType | 'all'>('all')
-  const [typeFilter, setTypeFilter] = useState<'all' | 'system' | 'custom'>('all')
-  const [twoFactorFilter, setTwoFactorFilter] = useState<'all' | 'required' | 'optional'>('all')
+  const [twoFactorFilter, setTwoFactorFilter] = useState<'all' | 'required'>('all')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [editTarget, setEditTarget] = useState<AdminRoleRecord | null | 'new'>()
   const [deleteTarget, setDeleteTarget] = useState<AdminRoleRecord | null>(null)
@@ -769,15 +777,9 @@ export default function RolesManager() {
     const matchesParent = parentFilter === 'all' || meta.parentGroup === parentFilter
     const matchesLane = laneFilter === 'all' || meta.committeeLane === laneFilter
     const matchesScope = scopeFilter === 'all' || meta.scopeType === scopeFilter
-    const matchesType =
-      typeFilter === 'all' || (typeFilter === 'system' ? r.is_system : !r.is_system)
-    const matches2fa =
-      twoFactorFilter === 'all' ||
-      (twoFactorFilter === 'required' ? meta.requires2fa : !meta.requires2fa)
+    const matches2fa = twoFactorFilter === 'all' || meta.requires2fa
 
-    return (
-      matchesSearch && matchesParent && matchesLane && matchesScope && matchesType && matches2fa
-    )
+    return matchesSearch && matchesParent && matchesLane && matchesScope && matches2fa
   })
 
   const sorted = [...filtered].sort((a, b) => {
@@ -785,9 +787,23 @@ export default function RolesManager() {
     return sortDir === 'asc' ? cmp : -cmp
   })
 
-  const systemCount = roles.filter((r) => r.is_system).length
-  const customCount = roles.filter((r) => !r.is_system).length
+  const boardCount = roles.filter((r) => getRoleCatalogEntry(r.name).parentGroup === 'BOARD').length
+  const protectedCount = roles.filter((r) => getRoleCatalogEntry(r.name).protected).length
   const elevatedCount = roles.filter((r) => getRoleCatalogEntry(r.name).requires2fa).length
+  const hasActiveFilters =
+    search.trim() !== '' ||
+    parentFilter !== 'all' ||
+    laneFilter !== 'all' ||
+    scopeFilter !== 'all' ||
+    twoFactorFilter !== 'all'
+
+  const clearFilters = () => {
+    setSearch('')
+    setParentFilter('all')
+    setLaneFilter('all')
+    setScopeFilter('all')
+    setTwoFactorFilter('all')
+  }
 
   const groupedRoles = ROLE_PARENT_GROUPS.map((group) => {
     const groupRoles = sorted.filter((role) => getRoleCatalogEntry(role.name).parentGroup === group)
@@ -827,17 +843,17 @@ export default function RolesManager() {
             bar: 'hsl(var(--on-surface))',
           },
           {
-            label: 'System Roles',
-            value: isLoading ? '—' : systemCount,
+            label: 'Board Roles',
+            value: isLoading ? '—' : boardCount,
             bar: 'hsl(var(--primary))',
           },
           {
-            label: 'Custom Roles',
-            value: isLoading ? '—' : customCount,
+            label: 'Protected Roles',
+            value: isLoading ? '—' : protectedCount,
             bar: 'hsl(var(--accent))',
           },
           {
-            label: '2FA Required',
+            label: 'Elevated Security',
             value: isLoading ? '—' : elevatedCount,
             bar: 'hsl(var(--destructive))',
           },
@@ -889,12 +905,10 @@ export default function RolesManager() {
           style={{
             padding: '14px 20px',
             display: 'grid',
-            gap: 10,
-            gridTemplateColumns: 'minmax(220px, 1fr) repeat(5, minmax(150px, 190px)) auto',
-            alignItems: 'center',
+            gap: 12,
           }}
         >
-          <div style={{ position: 'relative', flex: 1 }}>
+          <div style={{ position: 'relative' }}>
             <label htmlFor="roles-search" style={{ display: 'none' }}>
               Search roles
             </label>
@@ -922,65 +936,74 @@ export default function RolesManager() {
               style={{ ...inputSt, paddingLeft: 34 }}
             />
           </div>
-          <select
-            aria-label="Filter by parent group"
-            value={parentFilter}
-            onChange={(e) => setParentFilter(e.target.value as RoleParentGroup | 'all')}
-            style={selectSt}
+          <div
+            style={{
+              display: 'grid',
+              gap: 10,
+              gridTemplateColumns: 'repeat(4, minmax(150px, 1fr)) auto auto',
+              alignItems: 'center',
+            }}
           >
-            <option value="all">All groups</option>
-            {ROLE_PARENT_GROUPS.map((group) => (
-              <option key={group} value={group}>
-                {group}
-              </option>
-            ))}
-          </select>
-          <select
-            aria-label="Filter by committee lane"
-            value={laneFilter}
-            onChange={(e) => setLaneFilter(e.target.value as CommitteeLane | 'all')}
-            style={selectSt}
-          >
-            <option value="all">All lanes</option>
-            {COMMITTEE_LANES.map((lane) => (
-              <option key={lane} value={lane}>
-                {lane}
-              </option>
-            ))}
-          </select>
-          <select
-            aria-label="Filter by scope type"
-            value={scopeFilter}
-            onChange={(e) => setScopeFilter(e.target.value as RoleScopeType | 'all')}
-            style={selectSt}
-          >
-            <option value="all">All scopes</option>
-            <option value="national">National</option>
-            <option value="region">Region</option>
-            <option value="constituency">Constituency</option>
-            <option value="polling_station">Polling station</option>
-          </select>
-          <select
-            aria-label="Filter by role type"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value as 'all' | 'system' | 'custom')}
-            style={selectSt}
-          >
-            <option value="all">System + custom</option>
-            <option value="system">System only</option>
-            <option value="custom">Custom only</option>
-          </select>
-          <select
-            aria-label="Filter by 2FA requirement"
-            value={twoFactorFilter}
-            onChange={(e) => setTwoFactorFilter(e.target.value as 'all' | 'required' | 'optional')}
-            style={selectSt}
-          >
-            <option value="all">All 2FA states</option>
-            <option value="required">2FA required</option>
-            <option value="optional">2FA optional</option>
-          </select>
-          <SortToggle value={sortDir} onChange={setSortDir} />
+            <select
+              aria-label="Filter by parent group"
+              value={parentFilter}
+              onChange={(e) => setParentFilter(e.target.value as RoleParentGroup | 'all')}
+              style={{ ...selectSt, maxWidth: 'none' }}
+            >
+              <option value="all">All groups</option>
+              {ROLE_PARENT_GROUPS.map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
+            <select
+              aria-label="Filter by committee lane"
+              value={laneFilter}
+              onChange={(e) => setLaneFilter(e.target.value as CommitteeLane | 'all')}
+              style={{ ...selectSt, maxWidth: 'none' }}
+            >
+              <option value="all">All lanes</option>
+              {COMMITTEE_LANES.map((lane) => (
+                <option key={lane} value={lane}>
+                  {lane}
+                </option>
+              ))}
+            </select>
+            <select
+              aria-label="Filter by scope type"
+              value={scopeFilter}
+              onChange={(e) => setScopeFilter(e.target.value as RoleScopeType | 'all')}
+              style={{ ...selectSt, maxWidth: 'none' }}
+            >
+              <option value="all">All scopes</option>
+              <option value="national">National</option>
+              <option value="region">Region</option>
+              <option value="constituency">Constituency</option>
+              <option value="polling_station">Polling station</option>
+            </select>
+            <select
+              aria-label="Filter by elevated security"
+              value={twoFactorFilter}
+              onChange={(e) => setTwoFactorFilter(e.target.value as 'all' | 'required')}
+              style={{ ...selectSt, maxWidth: 'none' }}
+            >
+              <option value="all">All security states</option>
+              <option value="required">Elevated only</option>
+            </select>
+            <button
+              className="btn btn-outline btn-sm"
+              type="button"
+              onClick={clearFilters}
+              disabled={!hasActiveFilters}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                filter_alt_off
+              </span>
+              Clear
+            </button>
+            <SortToggle value={sortDir} onChange={setSortDir} />
+          </div>
         </div>
       </div>
 
@@ -1102,12 +1125,21 @@ export default function RolesManager() {
                       return (
                         <tr
                           key={role.id}
+                          onClick={() => setEditTarget(role)}
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              setEditTarget(role)
+                            }
+                          }}
                           style={{
                             borderBottom: '1px solid hsl(var(--border))',
                             transition: 'background 0.1s',
+                            cursor: 'pointer',
                           }}
                           onMouseEnter={(e) =>
-                            (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                            (e.currentTarget.style.background = 'hsl(var(--container))')
                           }
                           onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                         >
@@ -1159,12 +1191,9 @@ export default function RolesManager() {
                           </td>
                           <td style={{ padding: '14px 16px' }}>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                              <span className={role.is_system ? 'pill pill-ok' : 'pill pill-warn'}>
-                                {role.is_system ? 'System' : 'Custom'}
-                              </span>
                               {meta.protected && <span className="pill pill-err">Protected</span>}
                               {meta.requires2fa && (
-                                <span className="pill pill-warn">2FA required</span>
+                                <span className="pill pill-warn">Elevated security</span>
                               )}
                               <span style={badgeStyle}>{role.permissions.length} permissions</span>
                             </div>
@@ -1173,7 +1202,10 @@ export default function RolesManager() {
                             <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                               <button
                                 className="btn btn-outline btn-sm"
-                                onClick={() => setEditTarget(role)}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setEditTarget(role)
+                                }}
                                 style={{ padding: '0 10px' }}
                               >
                                 <span
@@ -1187,7 +1219,10 @@ export default function RolesManager() {
                               {!role.is_system && !isProtectedRole(role.name) && (
                                 <button
                                   className="btn btn-outline-dest btn-sm"
-                                  onClick={() => setDeleteTarget(role)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setDeleteTarget(role)
+                                  }}
                                   style={{ padding: '0 10px' }}
                                 >
                                   <span
@@ -1294,7 +1329,20 @@ export default function RolesManager() {
                   {laneRoles.map((role) => {
                     const meta = getRoleCatalogEntry(role.name)
                     return (
-                      <div key={role.id} className="panel" style={{ padding: 20 }}>
+                      <div
+                        key={role.id}
+                        className="panel"
+                        onClick={() => setEditTarget(role)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            setEditTarget(role)
+                          }
+                        }}
+                        style={{ padding: 20, cursor: 'pointer' }}
+                      >
                         <div
                           style={{
                             display: 'flex',
@@ -1327,12 +1375,6 @@ export default function RolesManager() {
                               {role.description || role.name}
                             </p>
                           </div>
-                          <span
-                            className={`pill ${role.is_system ? 'pill-ok' : 'pill-warn'}`}
-                            style={{ flexShrink: 0, marginLeft: 8 }}
-                          >
-                            {role.is_system ? 'System' : 'Custom'}
-                          </span>
                         </div>
 
                         <div
@@ -1340,7 +1382,9 @@ export default function RolesManager() {
                         >
                           <span style={badgeStyle}>{meta.scopeType.replace(/_/g, ' ')}</span>
                           {meta.protected && <span className="pill pill-err">Protected</span>}
-                          {meta.requires2fa && <span className="pill pill-warn">2FA required</span>}
+                          {meta.requires2fa && (
+                            <span className="pill pill-warn">Elevated security</span>
+                          )}
                           <span style={badgeStyle}>{role.permissions.length} permissions</span>
                         </div>
 
@@ -1348,7 +1392,10 @@ export default function RolesManager() {
                           <button
                             className="btn btn-outline btn-sm"
                             style={{ flex: 1, justifyContent: 'center' }}
-                            onClick={() => setEditTarget(role)}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setEditTarget(role)
+                            }}
                           >
                             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                               edit
@@ -1359,7 +1406,10 @@ export default function RolesManager() {
                             <button
                               className="btn btn-dest btn-sm"
                               style={{ flex: 1, justifyContent: 'center' }}
-                              onClick={() => setDeleteTarget(role)}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setDeleteTarget(role)
+                              }}
                             >
                               <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                                 delete
