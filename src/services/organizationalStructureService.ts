@@ -53,32 +53,32 @@ const POLLING_STATION_ROLES = new Set([
 export const ORG_ROADMAP: RoadmapNode[] = [
   {
     group: 'BOARD',
-    items: ['Strategic oversight', 'Final approval', 'Governance'],
+    items: ['Governance', 'Strategy', 'Oversight', 'Final approval'],
   },
   {
     group: 'NATIONAL ICT',
-    items: ['Platform control', 'Users, roles, permissions, logs, 2FA, security settings'],
+    items: ['Platform control', 'Roles and permissions', '2FA', 'Logs', 'System security'],
   },
   {
     group: 'SECURITY / INTEL',
-    items: ['Risk monitoring', 'Intelligence reports', 'Incident tracking', 'Security cases'],
+    items: ['Risk reports', 'Intelligence', 'Incident tracking', 'Security cases'],
   },
   {
     group: 'NCC',
     items: [
       'National coordination',
       'National operations',
-      'National communication',
-      'National finance',
-      'National research/policy',
-      'National appointment/discipline/welfare',
+      'Media',
+      'Finance',
+      'Research/policy',
+      'Appointment/discipline/welfare',
     ],
   },
   {
     group: 'RCC',
     items: [
       'Regional coordination',
-      'Regional role supervision',
+      'Regional supervision',
       'Regional reporting',
       'Regional mobilization',
     ],
@@ -87,19 +87,14 @@ export const ORG_ROADMAP: RoadmapNode[] = [
     group: 'CCC',
     items: [
       'Constituency coordination',
-      'Local member verification',
+      'Member verification',
+      'Local operations',
       'Polling station coordination',
-      'Grassroots mobilization',
     ],
   },
   {
     group: 'Polling Stations',
-    items: [
-      'Ground-level reporting',
-      'Member verification',
-      'Voter/community engagement',
-      'Polling station reports',
-    ],
+    items: ['Grassroots reports', 'Field verification', 'Community/voter engagement'],
   },
 ]
 

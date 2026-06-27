@@ -25,6 +25,24 @@ const PARENT_COLORS: Record<OrgParentGroup, string> = {
   'Polling Stations': 'hsl(var(--on-surface-muted))',
 }
 
+const PARENT_ICONS: Record<OrgParentGroup, string> = {
+  BOARD: 'crown',
+  'NATIONAL ICT': 'desktop_windows',
+  'SECURITY / INTEL': 'shield',
+  NCC: 'verified_user',
+  RCC: 'travel_explore',
+  CCC: 'groups',
+  'Polling Stations': 'account_balance',
+}
+
+const LANE_COLORS: Record<CommitteeLane, string> = {
+  'Operations & Organising': 'hsl(208 92% 48%)',
+  'Media & Communications': 'hsl(187 85% 42%)',
+  'Finance & Fundraising': 'hsl(145 70% 34%)',
+  'Research & Policy': 'hsl(266 80% 58%)',
+  'Appointment, Discipline & Welfare': 'hsl(336 84% 54%)',
+}
+
 const SCOPE_OPTIONS: RoleScopeType[] = ['national', 'region', 'constituency', 'polling_station']
 const ALL_PARENT_GROUPS: OrgParentGroup[] = [...ROLE_PARENT_GROUPS, 'Polling Stations']
 const LEVEL_FLOW = [
@@ -37,6 +55,11 @@ const LEVEL_FLOW = [
 
 const formatNumber = (value: number | null) =>
   value === null ? 'Not configured' : value.toLocaleString()
+
+const withAlpha = (color: string, alpha: number) =>
+  color.startsWith('hsl(var(')
+    ? color.replace('))', `) / ${alpha})`)
+    : color.replace(')', ` / ${alpha})`)
 
 const badgeStyle: React.CSSProperties = {
   display: 'inline-flex',
@@ -111,61 +134,563 @@ function KPI({
   )
 }
 
-function RoleCard({ role, onSelect }: { role: RoleNode; onSelect: (role: RoleNode) => void }) {
+function RoleChip({ role, onSelect }: { role: RoleNode; onSelect: (role: RoleNode) => void }) {
   return (
     <button
       type="button"
       onClick={() => onSelect(role)}
-      className="panel"
       style={{
-        width: '100%',
-        textAlign: 'left',
-        padding: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 6,
+        minWidth: 126,
+        border: '1px solid hsl(var(--border))',
         borderRadius: 'var(--radius-sm)',
+        background: 'hsl(var(--surface) / 0.9)',
+        color: 'hsl(var(--on-surface))',
+        padding: '9px 10px',
+        textAlign: 'left',
         cursor: 'pointer',
-        borderColor: 'hsl(var(--border))',
-        transition: 'transform 160ms ease, border-color 160ms ease, background 160ms ease',
+        boxShadow: '0 10px 24px hsl(var(--background) / 0.16)',
       }}
       onMouseEnter={(event) => {
-        event.currentTarget.style.transform = 'translateY(-1px)'
         event.currentTarget.style.borderColor = PARENT_COLORS[role.parentGroup]
       }}
       onMouseLeave={(event) => {
-        event.currentTarget.style.transform = 'translateY(0)'
         event.currentTarget.style.borderColor = 'hsl(var(--border))'
+      }}
+    >
+      <span
+        style={{ fontSize: 12, fontWeight: 'var(--font-weight-medium, 500)', lineHeight: 1.25 }}
+      >
+        {role.label}
+      </span>
+      <span style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+        <span style={{ ...badgeStyle, padding: '3px 6px', fontSize: 10 }}>
+          {role.permissions.length} perms
+        </span>
+        <span style={{ ...badgeStyle, padding: '3px 6px', fontSize: 10 }}>
+          {role.scopeType.replace('_', ' ')}
+        </span>
+        {role.protected && (
+          <span style={{ ...badgeStyle, padding: '3px 6px', fontSize: 10 }}>Protected</span>
+        )}
+        {role.requires2fa && (
+          <span style={{ ...badgeStyle, padding: '3px 6px', fontSize: 10 }}>2FA</span>
+        )}
+      </span>
+    </button>
+  )
+}
+
+function Connector({ label }: { label?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        display: 'grid',
+        placeItems: 'center',
+        minHeight: 34,
+        color: 'hsl(var(--on-surface-muted))',
+      }}
+    >
+      <div
+        style={{
+          width: 2,
+          height: 28,
+          background: 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--border)))',
+          position: 'relative',
+        }}
+      >
+        <span
+          className="material-symbols-outlined"
+          style={{
+            position: 'absolute',
+            left: -9,
+            bottom: -12,
+            fontSize: 20,
+            color: 'hsl(var(--primary))',
+          }}
+        >
+          keyboard_arrow_down
+        </span>
+      </div>
+      {label && <span style={{ fontSize: 10, marginTop: 8 }}>{label}</span>}
+    </div>
+  )
+}
+
+function EmptyNode({ label = 'No matching roles' }: { label?: string }) {
+  return (
+    <div
+      style={{
+        border: '1px dashed hsl(var(--border))',
+        borderRadius: 'var(--radius-sm)',
+        padding: 12,
+        color: 'hsl(var(--on-surface-muted))',
+        fontSize: 12,
+        textAlign: 'center',
+      }}
+    >
+      {label}
+    </div>
+  )
+}
+
+function ParentGroupNode({
+  group,
+  roles,
+  children,
+  compact = false,
+  onSelect,
+}: {
+  group: OrgParentGroup
+  roles: RoleNode[]
+  children?: React.ReactNode
+  compact?: boolean
+  onSelect: (role: RoleNode) => void
+}) {
+  const color = PARENT_COLORS[group]
+  return (
+    <section
+      style={{
+        border: `1px solid ${color}`,
+        borderRadius: 'var(--radius-lg)',
+        background:
+          'linear-gradient(180deg, hsl(var(--surface) / 0.98), hsl(var(--surface) / 0.76))',
+        boxShadow: `0 0 0 1px hsl(var(--background) / 0.32), 0 16px 40px ${withAlpha(color, 0.18)}`,
+        overflow: 'hidden',
       }}
     >
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           justifyContent: 'space-between',
-          gap: 10,
+          gap: 12,
+          padding: compact ? '12px 14px' : '14px 16px',
+          borderBottom: '1px solid hsl(var(--border))',
+          background: `linear-gradient(90deg, ${withAlpha(color, 0.2)}, transparent)`,
         }}
       >
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              width: 32,
+              height: 32,
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: 'var(--radius-sm)',
+              background: 'hsl(var(--background) / 0.45)',
+              color,
+              fontSize: 20,
+            }}
+          >
+            {PARENT_ICONS[group]}
+          </span>
+          <div>
+            <p
+              style={{
+                margin: 0,
+                color: 'hsl(var(--on-surface))',
+                fontSize: compact ? 15 : 20,
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              {group}
+            </p>
+            <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 11 }}>
+              {roles.length} visible role{roles.length === 1 ? '' : 's'}
+            </p>
+          </div>
+        </div>
+        <span style={badgeStyle}>Parent group</span>
+      </div>
+
+      <div style={{ padding: compact ? 12 : 16 }}>
+        {children ?? (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(126px, 1fr))',
+              gap: 8,
+            }}
+          >
+            {roles.length > 0 ? (
+              roles.map((role) => (
+                <RoleChip key={`${group}-${role.name}`} role={role} onSelect={onSelect} />
+              ))
+            ) : (
+              <EmptyNode />
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function CommitteeLaneNode({
+  lane,
+  roles,
+  onSelect,
+}: {
+  lane: CommitteeLane
+  roles: RoleNode[]
+  onSelect: (role: RoleNode) => void
+}) {
+  const color = LANE_COLORS[lane]
+  return (
+    <div
+      style={{
+        border: `1px solid ${color}`,
+        borderRadius: 'var(--radius-md)',
+        background: 'hsl(var(--background) / 0.16)',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 10,
+          padding: '10px 12px',
+          borderBottom: '1px solid hsl(var(--border))',
+          background: `linear-gradient(90deg, ${withAlpha(color, 0.18)}, transparent)`,
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            color: 'hsl(var(--on-surface))',
+            fontSize: 12,
+            fontWeight: 'var(--font-weight-medium, 500)',
+          }}
+        >
+          {lane}
+        </p>
+        <span style={{ ...badgeStyle, padding: '3px 6px', fontSize: 10 }}>{roles.length}</span>
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(118px, 1fr))',
+          gap: 8,
+          padding: 10,
+        }}
+      >
+        {roles.length > 0 ? (
+          roles.map((role) => (
+            <RoleChip key={`${lane}-${role.name}`} role={role} onSelect={onSelect} />
+          ))
+        ) : (
+          <EmptyNode />
+        )}
+      </div>
+    </div>
+  )
+}
+
+function LaneGroupNode({
+  group,
+  level,
+  count,
+  lanes,
+  roles,
+  onSelect,
+}: {
+  group: Extract<OrgParentGroup, 'NCC' | 'RCC' | 'CCC'>
+  level: string
+  count?: string
+  lanes: Array<{ lane: CommitteeLane; roles: RoleNode[] }>
+  roles: RoleNode[]
+  onSelect: (role: RoleNode) => void
+}) {
+  return (
+    <ParentGroupNode group={group} roles={roles} compact onSelect={onSelect}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(180px, 0.75fr) minmax(0, 2fr)',
+          gap: 12,
+          alignItems: 'stretch',
+        }}
+      >
+        <div
+          style={{
+            border: `1px solid ${PARENT_COLORS[group]}`,
+            borderRadius: 'var(--radius-md)',
+            padding: 16,
+            background: `linear-gradient(135deg, ${withAlpha(PARENT_COLORS[group], 0.2)}, hsl(var(--background) / 0.18))`,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            minHeight: 126,
+          }}
+        >
           <p
             style={{
-              margin: '0 0 5px',
+              margin: 0,
               color: 'hsl(var(--on-surface))',
-              fontSize: 13,
+              fontSize: 28,
               fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
-            {role.label}
+            {group}
           </p>
-          <p style={{ margin: 0, color: 'hsl(var(--on-surface-muted))', fontSize: 11 }}>
-            {role.scopeType.replace('_', ' ')} scope
+          <p style={{ margin: '5px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 13 }}>
+            {level}
+          </p>
+          {count && (
+            <p
+              style={{
+                margin: '10px 0 0',
+                color: PARENT_COLORS[group],
+                fontSize: 13,
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              {count}
+            </p>
+          )}
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+            gap: 10,
+          }}
+        >
+          {lanes.length > 0 ? (
+            lanes.map((lane) => (
+              <CommitteeLaneNode
+                key={`${group}-${lane.lane}`}
+                lane={lane.lane}
+                roles={lane.roles}
+                onSelect={onSelect}
+              />
+            ))
+          ) : (
+            <EmptyNode />
+          )}
+        </div>
+      </div>
+    </ParentGroupNode>
+  )
+}
+
+function HierarchyMap({
+  groups,
+  counts,
+  onSelect,
+}: {
+  groups: OrganizationalStructureData['groups']
+  counts: OrganizationalStructureData['counts']
+  onSelect: (role: RoleNode) => void
+}) {
+  const byGroup = new Map(groups.map((group) => [group.group, group]))
+  const board = byGroup.get('BOARD')
+  const ict = byGroup.get('NATIONAL ICT')
+  const security = byGroup.get('SECURITY / INTEL')
+  const ncc = byGroup.get('NCC')
+  const rcc = byGroup.get('RCC')
+  const ccc = byGroup.get('CCC')
+  const polling = byGroup.get('Polling Stations')
+
+  return (
+    <section
+      className="panel"
+      style={{
+        padding: 18,
+        marginBottom: 22,
+        overflow: 'hidden',
+        background:
+          'radial-gradient(circle at top left, hsl(var(--primary) / 0.12), transparent 28%), hsl(var(--surface))',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
+        >
+          schema
+        </span>
+        <div>
+          <p
+            style={{
+              margin: 0,
+              color: 'hsl(var(--on-surface))',
+              fontSize: 16,
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            Command Structure Map
+          </p>
+          <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+            Board branches into national systems; NCC flows down through RCC, CCC and polling
+            stations.
           </p>
         </div>
-        <span style={{ ...badgeStyle, flexShrink: 0 }}>{role.permissions.length}</span>
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-        {role.protected && <span style={badgeStyle}>Protected</span>}
-        {role.requires2fa && <span style={badgeStyle}>2FA required</span>}
-        {role.committeeLane && <span style={badgeStyle}>{role.committeeLane}</span>}
+
+      <div style={{ display: 'grid', justifyItems: 'center', gap: 0 }}>
+        <div style={{ width: 'min(100%, 760px)' }}>
+          {board ? (
+            <ParentGroupNode group="BOARD" roles={board.roles} onSelect={onSelect} />
+          ) : (
+            <EmptyNode label="Board has no matching roles" />
+          )}
+        </div>
+
+        <Connector />
+
+        <div
+          style={{
+            width: '100%',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: 14,
+            alignItems: 'start',
+            position: 'relative',
+          }}
+        >
+          {ict ? (
+            <ParentGroupNode group="NATIONAL ICT" roles={ict.roles} compact onSelect={onSelect} />
+          ) : (
+            <EmptyNode label="National ICT has no matching roles" />
+          )}
+          {security ? (
+            <ParentGroupNode
+              group="SECURITY / INTEL"
+              roles={security.roles}
+              compact
+              onSelect={onSelect}
+            />
+          ) : (
+            <EmptyNode label="Security / Intel has no matching roles" />
+          )}
+          {ncc ? (
+            <LaneGroupNode
+              group="NCC"
+              level="National Command Center"
+              lanes={ncc.lanes}
+              roles={ncc.roles}
+              onSelect={onSelect}
+            />
+          ) : (
+            <EmptyNode label="NCC has no matching roles" />
+          )}
+        </div>
+
+        <Connector label="NCC command flow" />
+
+        <div style={{ width: '100%' }}>
+          {rcc ? (
+            <LaneGroupNode
+              group="RCC"
+              level="Regional Level"
+              count={
+                counts.regions === null
+                  ? 'Regions not configured'
+                  : `${counts.regions.toLocaleString()} Regions`
+              }
+              lanes={rcc.lanes}
+              roles={rcc.roles}
+              onSelect={onSelect}
+            />
+          ) : (
+            <EmptyNode label="RCC has no matching roles" />
+          )}
+        </div>
+
+        <Connector />
+
+        <div style={{ width: '100%' }}>
+          {ccc ? (
+            <LaneGroupNode
+              group="CCC"
+              level="Constituency Level"
+              count={
+                counts.constituencies === null
+                  ? 'Constituencies not configured'
+                  : `${counts.constituencies.toLocaleString()} Constituencies`
+              }
+              lanes={ccc.lanes}
+              roles={ccc.roles}
+              onSelect={onSelect}
+            />
+          ) : (
+            <EmptyNode label="CCC has no matching roles" />
+          )}
+        </div>
+
+        <Connector />
+
+        <div style={{ width: 'min(100%, 760px)' }}>
+          {polling ? (
+            <ParentGroupNode group="Polling Stations" roles={polling.roles} onSelect={onSelect}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'minmax(180px, 0.75fr) minmax(0, 1fr)',
+                  gap: 12,
+                }}
+              >
+                <div
+                  style={{
+                    border: `1px solid ${PARENT_COLORS['Polling Stations']}`,
+                    borderRadius: 'var(--radius-md)',
+                    padding: 16,
+                    background: 'hsl(var(--background) / 0.2)',
+                  }}
+                >
+                  <p
+                    style={{
+                      margin: 0,
+                      color: 'hsl(var(--on-surface))',
+                      fontSize: 22,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                    }}
+                  >
+                    {counts.pollingStations === null
+                      ? 'Polling Stations'
+                      : `${counts.pollingStations.toLocaleString()} Polling Stations`}
+                  </p>
+                  <p
+                    style={{
+                      margin: '5px 0 0',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 13,
+                    }}
+                  >
+                    Grassroots Level
+                  </p>
+                </div>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(126px, 1fr))',
+                    gap: 8,
+                  }}
+                >
+                  {polling.roles.length > 0 ? (
+                    polling.roles.map((role) => (
+                      <RoleChip key={`polling-${role.name}`} role={role} onSelect={onSelect} />
+                    ))
+                  ) : (
+                    <EmptyNode />
+                  )}
+                </div>
+              </div>
+            </ParentGroupNode>
+          ) : (
+            <EmptyNode label="Polling Station roles have no matches" />
+          )}
+        </div>
       </div>
-    </button>
+    </section>
   )
 }
 
@@ -836,228 +1361,88 @@ export default function OrganizationalStructureRoadmap() {
         </div>
       </section>
 
+      <HierarchyMap groups={filteredGroups} counts={data.counts} onSelect={setSelectedRole} />
+
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))',
+          gridTemplateColumns: 'minmax(0, 1fr) minmax(min(100%, 320px), 380px)',
           gap: 18,
           alignItems: 'start',
         }}
       >
-        <div style={{ display: 'grid', gap: 18 }}>
-          {filteredGroups.map((group, index) => (
-            <section
-              key={group.group}
-              className="panel"
+        <section className="panel" style={{ padding: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
+            >
+              route
+            </span>
+            <p
               style={{
-                padding: 18,
-                borderLeft: `4px solid ${PARENT_COLORS[group.group]}`,
-                position: 'relative',
+                margin: 0,
+                fontSize: 16,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
               }}
             >
-              {index < filteredGroups.length - 1 && (
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    left: 22,
-                    bottom: -18,
-                    width: 2,
-                    height: 18,
-                    background: 'hsl(var(--border))',
-                  }}
-                />
-              )}
+              Road Mapping
+            </p>
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+              gap: 12,
+            }}
+          >
+            {data.roadmap.map((node) => (
               <div
+                key={node.group}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 12,
-                  marginBottom: 14,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 14,
+                  background: 'hsl(var(--surface))',
+                  borderTop: `3px solid ${PARENT_COLORS[node.group]}`,
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 'var(--radius-sm)',
-                      display: 'grid',
-                      placeItems: 'center',
-                      background: 'hsl(var(--surface))',
-                      border: `1px solid ${PARENT_COLORS[group.group]}`,
-                      color: PARENT_COLORS[group.group],
-                      fontSize: 20,
-                    }}
-                  >
-                    {group.group === 'Polling Stations' ? 'ballot' : 'account_tree'}
-                  </span>
-                  <div>
-                    <p
+                <p
+                  style={{
+                    margin: '0 0 10px',
+                    color: 'hsl(var(--on-surface))',
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 13,
+                  }}
+                >
+                  {node.group}
+                </p>
+                <div style={{ display: 'grid', gap: 7 }}>
+                  {node.items.map((item) => (
+                    <div
+                      key={item}
                       style={{
-                        margin: 0,
-                        color: 'hsl(var(--on-surface))',
-                        fontSize: 16,
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                      }}
-                    >
-                      {group.group}
-                    </p>
-                    <p
-                      style={{
-                        margin: '3px 0 0',
+                        display: 'flex',
+                        gap: 8,
                         color: 'hsl(var(--on-surface-muted))',
                         fontSize: 12,
                       }}
                     >
-                      {group.roles.length} visible role{group.roles.length === 1 ? '' : 's'}
-                    </p>
-                  </div>
-                </div>
-                <span style={badgeStyle}>View parent group details</span>
-              </div>
-
-              {group.lanes.length > 0 ? (
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-                    gap: 12,
-                  }}
-                >
-                  {group.lanes.map((laneNode) => (
-                    <div
-                      key={laneNode.lane}
-                      style={{
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: 'var(--radius-md)',
-                        padding: 12,
-                        background: 'hsl(var(--surface))',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          gap: 10,
-                          marginBottom: 10,
-                        }}
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 14, color: PARENT_COLORS[node.group] }}
                       >
-                        <p
-                          style={{
-                            margin: 0,
-                            color: 'hsl(var(--on-surface))',
-                            fontSize: 13,
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                          }}
-                        >
-                          {laneNode.lane}
-                        </p>
-                        <span style={badgeStyle}>{laneNode.roles.length}</span>
-                      </div>
-                      <div style={{ display: 'grid', gap: 8 }}>
-                        {laneNode.roles.map((role) => (
-                          <RoleCard key={role.name} role={role} onSelect={setSelectedRole} />
-                        ))}
-                      </div>
+                        check_circle
+                      </span>
+                      <span>{item}</span>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-                    gap: 10,
-                  }}
-                >
-                  {group.roles.map((role) => (
-                    <RoleCard
-                      key={`${group.group}-${role.name}`}
-                      role={role}
-                      onSelect={setSelectedRole}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
-          ))}
-
-          <section className="panel" style={{ padding: 18 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
-              >
-                route
-              </span>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: 16,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
-                Road Mapping
-              </p>
-            </div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-                gap: 12,
-              }}
-            >
-              {data.roadmap.map((node) => (
-                <div
-                  key={node.group}
-                  style={{
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 'var(--radius-md)',
-                    padding: 14,
-                    background: 'hsl(var(--surface))',
-                    borderTop: `3px solid ${PARENT_COLORS[node.group]}`,
-                  }}
-                >
-                  <p
-                    style={{
-                      margin: '0 0 10px',
-                      color: 'hsl(var(--on-surface))',
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 13,
-                    }}
-                  >
-                    {node.group}
-                  </p>
-                  <div style={{ display: 'grid', gap: 7 }}>
-                    {node.items.map((item) => (
-                      <div
-                        key={item}
-                        style={{
-                          display: 'flex',
-                          gap: 8,
-                          color: 'hsl(var(--on-surface-muted))',
-                          fontSize: 12,
-                        }}
-                      >
-                        <span
-                          className="material-symbols-outlined"
-                          style={{ fontSize: 14, color: PARENT_COLORS[node.group] }}
-                        >
-                          check_circle
-                        </span>
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <RoleDetailPanel
           role={selectedRole}
