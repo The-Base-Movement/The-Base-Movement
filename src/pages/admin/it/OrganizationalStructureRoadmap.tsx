@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import {
   organizationalStructureService,
@@ -26,6 +27,13 @@ const PARENT_COLORS: Record<OrgParentGroup, string> = {
 
 const SCOPE_OPTIONS: RoleScopeType[] = ['national', 'region', 'constituency', 'polling_station']
 const ALL_PARENT_GROUPS: OrgParentGroup[] = [...ROLE_PARENT_GROUPS, 'Polling Stations']
+const LEVEL_FLOW = [
+  { label: 'Board', detail: 'Governance and final approval' },
+  { label: 'National Level', detail: 'National ICT, Security / Intel and NCC' },
+  { label: 'Regional Level', detail: 'RCC supervision across regions' },
+  { label: 'Constituency Level', detail: 'CCC coordination and grassroots operations' },
+  { label: 'Polling Stations', detail: 'Ground-level reporting and verification' },
+]
 
 const formatNumber = (value: number | null) =>
   value === null ? 'Not configured' : value.toLocaleString()
@@ -325,7 +333,7 @@ export default function OrganizationalStructureRoadmap() {
   useITLayout(
     'Organizational Structure & Road Mapping',
     'account_tree',
-    'Board -> National Systems -> Regional Command -> Constituency Command -> Grassroots'
+    'Board -> National Level -> Regional Level -> Constituency Level -> Polling Stations'
   )
 
   useEffect(() => {
@@ -395,6 +403,37 @@ export default function OrganizationalStructureRoadmap() {
     protectedOnly ||
     twoFactorOnly
 
+  const parentAnalytics = useMemo(() => {
+    if (!data) return []
+    return data.groups.map((group) => ({
+      name: group.group,
+      value: group.roles.length,
+      color: PARENT_COLORS[group.group],
+    }))
+  }, [data])
+
+  const securityAnalytics = useMemo(() => {
+    if (!data) return []
+    const roles = data.groups.flatMap((group) => group.roles)
+    return [
+      {
+        name: '2FA required',
+        value: roles.filter((role) => role.requires2fa).length,
+        color: 'hsl(var(--primary))',
+      },
+      {
+        name: 'Protected',
+        value: roles.filter((role) => role.protected).length,
+        color: 'hsl(var(--destructive))',
+      },
+      {
+        name: 'Standard',
+        value: roles.filter((role) => !role.requires2fa && !role.protected).length,
+        color: 'hsl(var(--on-surface-muted))',
+      },
+    ].filter((item) => item.value > 0)
+  }, [data])
+
   const clearFilters = () => {
     setSearch('')
     setParent('all')
@@ -441,7 +480,7 @@ export default function OrganizationalStructureRoadmap() {
                 fontWeight: 'var(--font-weight-medium, 500)',
               }}
             >
-              Board → National Systems → Regional Command → Constituency Command → Grassroots
+              Board → National Level → Regional Level → Constituency Level → Polling Stations
             </p>
             <p
               style={{
@@ -452,7 +491,7 @@ export default function OrganizationalStructureRoadmap() {
               }}
             >
               This dashboard connects parent groups, committee lanes, role scopes, permissions,
-              protected status, 2FA requirements and polling station structures from the current
+              protected status, 2FA requirements and the polling station structure from the current
               role catalog and database-backed operational counts.
             </p>
           </div>
@@ -470,6 +509,61 @@ export default function OrganizationalStructureRoadmap() {
               Settings
             </Link>
           </div>
+        </div>
+      </section>
+
+      <section className="panel" style={{ padding: 16, marginBottom: 22 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+            gap: 10,
+          }}
+        >
+          {LEVEL_FLOW.map((level, index) => (
+            <div
+              key={level.label}
+              style={{
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-md)',
+                padding: 14,
+                background: 'hsl(var(--surface))',
+                position: 'relative',
+                minHeight: 92,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: 'var(--radius-pill)',
+                    display: 'grid',
+                    placeItems: 'center',
+                    background: 'hsl(var(--primary) / 0.12)',
+                    color: 'hsl(var(--primary))',
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
+                  {index + 1}
+                </span>
+                <p
+                  style={{
+                    margin: 0,
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                  }}
+                >
+                  {level.label}
+                </p>
+              </div>
+              <p style={{ margin: 0, color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                {level.detail}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -533,7 +627,144 @@ export default function OrganizationalStructureRoadmap() {
         />
       </div>
 
+      <section
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 16,
+          marginBottom: 22,
+        }}
+      >
+        <div className="panel" style={{ padding: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  color: 'hsl(var(--on-surface))',
+                  fontSize: 15,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                }}
+              >
+                Role Distribution
+              </p>
+              <p style={{ margin: '4px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                Roles grouped by parent structure.
+              </p>
+            </div>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
+            >
+              analytics
+            </span>
+          </div>
+          <div style={{ height: 220, marginTop: 8 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={parentAnalytics}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={54}
+                  outerRadius={82}
+                  paddingAngle={2}
+                >
+                  {parentAnalytics.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {parentAnalytics.map((entry) => (
+              <span key={entry.name} style={badgeStyle}>
+                <span
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 'var(--radius-pill)',
+                    background: entry.color,
+                  }}
+                />
+                {entry.name}: {entry.value}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="panel" style={{ padding: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  color: 'hsl(var(--on-surface))',
+                  fontSize: 15,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                }}
+              >
+                Security Posture
+              </p>
+              <p style={{ margin: '4px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                Elevated, protected and standard role mix.
+              </p>
+            </div>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 20, color: 'hsl(var(--accent))' }}
+            >
+              verified_user
+            </span>
+          </div>
+          <div style={{ height: 220, marginTop: 8 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={securityAnalytics}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={54}
+                  outerRadius={82}
+                  paddingAngle={2}
+                >
+                  {securityAnalytics.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {securityAnalytics.map((entry) => (
+              <span key={entry.name} style={badgeStyle}>
+                <span
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 'var(--radius-pill)',
+                    background: entry.color,
+                  }}
+                />
+                {entry.name}: {entry.value}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="panel" style={{ padding: 16, marginBottom: 22 }}>
+        <div style={{ marginBottom: 10 }}>
+          <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search roles by name, code, or description"
+            style={compactInputStyle}
+          />
+        </div>
         <div
           style={{
             display: 'grid',
@@ -542,12 +773,6 @@ export default function OrganizationalStructureRoadmap() {
             alignItems: 'center',
           }}
         >
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search roles"
-            style={compactInputStyle}
-          />
           <select
             value={parent}
             onChange={(event) => setParent(event.target.value as OrgParentGroup | 'all')}
