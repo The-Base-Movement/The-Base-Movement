@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase'
 import type { PostgrestError, RealtimeChannel } from '@supabase/supabase-js'
 import { compressForUpload } from '@/lib/imageUtils'
-import { ROLE_CATALOG, getDefaultRolePermissions, resolveRoleAlias } from '@/lib/roleCatalog'
+import { ROLE_CATALOG, resolveRoleAlias } from '@/lib/roleCatalog'
+import { resolveStoredAdminPermissions } from '@/lib/adminPermissionHydration'
 import { isUuid } from '@/lib/supabaseFilters'
 import { authService } from './authService'
 import { memberService } from './memberService'
@@ -1793,16 +1794,7 @@ class AdminService {
     interface DBAdminResponse {
       id: string
       role: string
-      permissions: {
-        can_manage_members?: boolean
-        can_manage_chapters?: boolean
-        can_manage_polls?: boolean
-        can_manage_store?: boolean
-        can_view_audit_logs?: boolean
-        can_post_blog?: boolean
-        can_manage_newsletters?: boolean
-        can_manage_donations?: boolean
-      }
+      permissions: unknown
       assigned_region: string | null
       users:
         | {
@@ -1829,43 +1821,8 @@ class AdminService {
       avatar_url: string
     } | null
 
-    // Map database JSON permissions to the AdminPermission[] format
-    const dbPermissions = admin.permissions || {}
-    const parsedPermissions: AdminPermission[] = []
-
-    if (Array.isArray(dbPermissions)) {
-      parsedPermissions.push(...(dbPermissions as AdminPermission[]))
-    } else {
-      if (dbPermissions.can_manage_members) {
-        parsedPermissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' })
-      }
-      if (dbPermissions.can_manage_chapters) {
-        parsedPermissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' })
-      }
-      if (dbPermissions.can_manage_polls) {
-        parsedPermissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' })
-      }
-      if (dbPermissions.can_manage_store) {
-        parsedPermissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' })
-      }
-      if (dbPermissions.can_view_audit_logs) {
-        parsedPermissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' })
-      }
-      if (dbPermissions.can_post_blog) {
-        parsedPermissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' })
-      }
-      if (dbPermissions.can_manage_newsletters) {
-        parsedPermissions.push({ action: 'MANAGE_NEWSLETTERS', resource: 'NEWSLETTERS' })
-      }
-      if (dbPermissions.can_manage_donations) {
-        parsedPermissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
-      }
-    }
-
     const role = normalizeAdminRole(admin.role)
-    const permissions = approvedAdminRoles.has(role)
-      ? getDefaultRolePermissions(role)
-      : parsedPermissions
+    const permissions = resolveStoredAdminPermissions(role, admin.permissions)
 
     const defaultPreferences: import('@/types/admin').AdminPreferences = {
       interfaceDensity: 'Comfortable',
@@ -1934,6 +1891,20 @@ class AdminService {
     if (error) throw new Error(error.message || 'Failed to update admin data')
     if (!data?.length)
       throw new Error('Update failed — you may not have permission to edit this record')
+
+    if (this.currentUser?.id === userId) {
+      const assignedRegion =
+        'assigned_region' in updates
+          ? updates.assigned_region || undefined
+          : this.currentUser.region
+      this.currentUser = {
+        ...this.currentUser,
+        role: updates.role ?? this.currentUser.role,
+        region: assignedRegion,
+        assigned_region: assignedRegion,
+        permissions: updates.permissions ?? this.currentUser.permissions,
+      } as AdminUser & { assigned_region?: string }
+    }
   }
 
   async updatePublicUserProfile(

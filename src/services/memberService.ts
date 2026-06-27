@@ -1,16 +1,10 @@
 import { supabase } from '@/lib/supabase'
 import { sessionStore } from '@/lib/sessionStore'
 import { sanitizeOrTerm } from '@/lib/supabaseFilters'
+import { resolveStoredAdminPermissions } from '@/lib/adminPermissionHydration'
 import type { JobSelection } from '@/services/jobTaxonomyService'
 import type { PostgrestError } from '@supabase/supabase-js'
-import type {
-  Member,
-  PendingVerification,
-  AdminUser,
-  AdminRole,
-  AdminPermission,
-  User,
-} from '@/types/admin'
+import type { Member, PendingVerification, AdminUser, AdminRole, User } from '@/types/admin'
 
 function stripMarkdownEmail(value: string | null | undefined): string {
   if (!value) return ''
@@ -78,7 +72,7 @@ class MemberService {
     interface AdminDbResponse {
       id: string
       role: string
-      permissions: AdminPermission[]
+      permissions: unknown
       users: {
         full_name: string
         email: string
@@ -114,7 +108,7 @@ class MemberService {
       email: a.users?.email || 'hq@thebase.gh',
       role: a.role as AdminRole,
       region: a.assigned_region || undefined,
-      permissions: a.permissions as AdminPermission[],
+      permissions: resolveStoredAdminPermissions(a.role as AdminRole, a.permissions),
       avatarUrl: a.users?.avatar_url || undefined,
     }))
   }
