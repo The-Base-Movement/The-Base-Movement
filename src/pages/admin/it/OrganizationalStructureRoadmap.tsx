@@ -243,6 +243,7 @@ function ParentGroupNode({
   children,
   compact = false,
   viewMode = 'expanded',
+  meta,
   onSelect,
 }: {
   group: OrgParentGroup
@@ -250,6 +251,7 @@ function ParentGroupNode({
   children?: React.ReactNode
   compact?: boolean
   viewMode?: 'compact' | 'expanded'
+  meta?: React.ReactNode
   onSelect: (role: RoleNode) => void
 }) {
   const color = PARENT_COLORS[group]
@@ -304,9 +306,26 @@ function ParentGroupNode({
             >
               {group}
             </p>
-            <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 11 }}>
-              {roles.length} visible role{roles.length === 1 ? '' : 's'}
-            </p>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 6,
+                marginTop: 4,
+                color: 'hsl(var(--on-surface-muted))',
+                fontSize: 11,
+              }}
+            >
+              <span>
+                {roles.length} visible role{roles.length === 1 ? '' : 's'}
+              </span>
+              {meta && (
+                <>
+                  <span aria-hidden="true">•</span>
+                  <span>{meta}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
         <span style={badgeStyle}>Parent group</span>
@@ -452,65 +471,25 @@ function LaneGroupNode({
   viewMode: 'compact' | 'expanded'
   onSelect: (role: RoleNode) => void
 }) {
+  const meta = count ? `${level} • ${count}` : level
+
   return (
-    <ParentGroupNode group={group} roles={roles} compact viewMode={viewMode} onSelect={onSelect}>
+    <ParentGroupNode
+      group={group}
+      roles={roles}
+      compact
+      viewMode={viewMode}
+      meta={meta}
+      onSelect={onSelect}
+    >
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: group === 'NCC' ? '1fr' : 'minmax(180px, 220px) minmax(0, 1fr)',
-          gap: 12,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))',
+          gap: 10,
           alignItems: 'start',
         }}
       >
-        <div
-          style={{
-            border: `1px solid ${PARENT_COLORS[group]}`,
-            borderRadius: 'var(--radius-md)',
-            padding: group === 'NCC' ? '10px 12px' : 14,
-            background: `linear-gradient(135deg, ${withAlpha(PARENT_COLORS[group], 0.2)}, hsl(var(--background) / 0.18))`,
-            display: 'flex',
-            flexDirection: group === 'NCC' ? 'row' : 'column',
-            justifyContent: group === 'NCC' ? 'space-between' : 'center',
-            alignItems: group === 'NCC' ? 'center' : 'flex-start',
-            gap: 8,
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              color: 'hsl(var(--on-surface))',
-              fontSize: group === 'NCC' ? 18 : 24,
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
-          >
-            {group}
-          </p>
-          <p style={{ margin: '5px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 13 }}>
-            {level}
-          </p>
-          {count && (
-            <p
-              style={{
-                margin: '10px 0 0',
-                color: PARENT_COLORS[group],
-                fontSize: 13,
-                fontWeight: 'var(--font-weight-medium, 500)',
-              }}
-            >
-              {count}
-            </p>
-          )}
-        </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns:
-              group === 'NCC'
-                ? 'repeat(auto-fit, minmax(150px, 1fr))'
-                : 'repeat(auto-fit, minmax(145px, 1fr))',
-            gap: 10,
-          }}
-        >
           {lanes.length > 0 ? (
             lanes.map((lane) => (
               <CommitteeLaneNode
@@ -524,7 +503,6 @@ function LaneGroupNode({
           ) : (
             <EmptyNode />
           )}
-        </div>
       </div>
     </ParentGroupNode>
   )
@@ -592,8 +570,8 @@ function HierarchyMap({
               Command Structure Map
             </p>
             <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
-              Board branches into national systems; NCC flows down through RCC, CCC and polling
-              stations.
+              Board connects to NCC. National ICT and Security / Intel feed into NCC, then NCC
+              flows down through RCC, CCC and polling stations.
             </p>
           </div>
         </div>
@@ -625,44 +603,64 @@ function HierarchyMap({
           )}
         </div>
 
-        <Connector />
+        <Connector label="Board to NCC" />
 
         <div
           style={{
             width: '100%',
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
             gap: 14,
             alignItems: 'start',
             position: 'relative',
           }}
         >
-          {ict ? (
-            <ParentGroupNode
-              group="NATIONAL ICT"
-              roles={ict.roles}
-              compact
-              viewMode={viewMode}
-              onSelect={onSelect}
-            />
-          ) : (
-            <EmptyNode label="National ICT has no matching roles" />
-          )}
-          {security ? (
-            <ParentGroupNode
-              group="SECURITY / INTEL"
-              roles={security.roles}
-              compact
-              viewMode={viewMode}
-              onSelect={onSelect}
-            />
-          ) : (
-            <EmptyNode label="Security / Intel has no matching roles" />
-          )}
+          <div style={{ display: 'grid', gap: 10 }}>
+            <div
+              style={{
+                border: '1px dashed hsl(var(--border))',
+                borderRadius: 'var(--radius-md)',
+                padding: '8px 10px',
+                color: 'hsl(var(--on-surface-muted))',
+                fontSize: 11,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+              }}
+            >
+              <span>Support systems feed into NCC</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                arrow_forward
+              </span>
+            </div>
+            {ict ? (
+              <ParentGroupNode
+                group="NATIONAL ICT"
+                roles={ict.roles}
+                compact
+                viewMode={viewMode}
+                onSelect={onSelect}
+              />
+            ) : (
+              <EmptyNode label="National ICT has no matching roles" />
+            )}
+            {security ? (
+              <ParentGroupNode
+                group="SECURITY / INTEL"
+                roles={security.roles}
+                compact
+                viewMode={viewMode}
+                onSelect={onSelect}
+              />
+            ) : (
+              <EmptyNode label="Security / Intel has no matching roles" />
+            )}
+          </div>
           {ncc ? (
             <LaneGroupNode
               group="NCC"
-              level="National Command Center"
+              level="National Level"
               lanes={ncc.lanes}
               roles={ncc.roles}
               viewMode={viewMode}
@@ -673,7 +671,7 @@ function HierarchyMap({
           )}
         </div>
 
-        <Connector label="NCC command flow" />
+        <Connector label="NCC to RCC" />
 
         <div style={{ width: '100%' }}>
           {rcc ? (
@@ -1556,24 +1554,6 @@ export default function OrganizationalStructureRoadmap() {
         </button>
         {showRoadmap && (
           <div style={{ padding: '0 18px 18px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
-              >
-                route
-              </span>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: 16,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
-                Road Mapping
-              </p>
-            </div>
             <div
               style={{
                 display: 'grid',
