@@ -46,7 +46,8 @@ type UserCanInput = AdminUser & {
   assigned_polling_station?: string | null
 }
 
-export const ROLE_ALIASES: Partial<Record<AdminRole, AdminRole>> = {
+export const ROLE_ALIASES: Partial<Record<string, AdminRole>> = {
+  CHAPTER_LEADER: 'CHAPTER_LEAD',
   EXECUTIVE_MEMBER: 'EXECUTIVE',
   NATIONAL_ORGANISER: 'ORGANIZER',
   NATIONAL_MEDIA_DIRECTOR: 'COMMUNICATIONS_OFFICER',

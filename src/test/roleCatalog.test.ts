@@ -164,7 +164,7 @@ describe('roleCatalog policy', () => {
   })
 
   it('includes every approved missing-role name in the catalog', () => {
-    const roleNames = new Set(ROLE_CATALOG.map((entry) => entry.role))
+    const roleNames = new Set<string>(ROLE_CATALOG.map((entry) => entry.role))
     const expectedRoles: AdminRole[] = [
       'BOARD_CHAIR',
       'BOARD_SECRETARY',
@@ -192,17 +192,21 @@ describe('roleCatalog policy', () => {
     expect(getRoleCatalogEntry('FOUNDER').label).toBe('Founder')
     expect(getRoleCatalogEntry('CHAPTER_LEAD').parentGroup).toBe('CCC')
     expect(getRoleCatalogEntry('CHAPTER_LEAD').committeeLane).toBe('Operations & Organising')
+    expect(getRoleCatalogEntry('CHAPTER_LEADER').parentGroup).toBe('CCC')
+    expect(getRoleCatalogEntry('CHAPTER_LEADER').committeeLane).toBe('Operations & Organising')
     expect(getRoleCatalogEntry('STORE_MANAGER').parentGroup).toBe('NCC')
     expect(getRoleCatalogEntry('STORE_MANAGER').committeeLane).toBe('Operations & Organising')
     expect(getRoleCatalogEntry('MOVEMENT_LEADER').parentGroup).toBe('BOARD')
   })
 
   it('keeps duplicate legacy role names as aliases instead of catalog rows', () => {
-    const roleNames = new Set(ROLE_CATALOG.map((entry) => entry.role))
+    const roleNames = new Set<string>(ROLE_CATALOG.map((entry) => entry.role))
     expect(roleNames.has('EXECUTIVE_MEMBER')).toBe(false)
+    expect(roleNames.has('CHAPTER_LEADER')).toBe(false)
     expect(roleNames.has('NATIONAL_ORGANISER')).toBe(false)
     expect(roleNames.has('NATIONAL_FINANCE_OFFICER')).toBe(false)
     expect(roleNames.has('NATIONAL_MEDIA_DIRECTOR')).toBe(false)
+    expect(resolveRoleAlias('CHAPTER_LEADER')).toBe('CHAPTER_LEAD')
     expect(resolveRoleAlias('EXECUTIVE_MEMBER')).toBe('EXECUTIVE')
     expect(resolveRoleAlias('NATIONAL_ORGANISER')).toBe('ORGANIZER')
     expect(resolveRoleAlias('NATIONAL_FINANCE_OFFICER')).toBe('FINANCE_OFFICER')
