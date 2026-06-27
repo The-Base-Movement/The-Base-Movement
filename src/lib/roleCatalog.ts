@@ -618,11 +618,11 @@ export function userCan(
 ): boolean {
   if (!user) return false
   if (user.isActive === false || user.is_active === false) return false
+  if (user.role === 'SUPER_ADMIN') return true
 
   const meta = getRoleCatalogEntry(user.role)
   if (meta.requires2fa && !hasSatisfied2fa(user)) return false
 
-  if (user.role === 'SUPER_ADMIN') return true
   if (!hasPermission(user.permissions, permission)) return false
 
   return scopeMatches(user, meta.scopeType, resource)

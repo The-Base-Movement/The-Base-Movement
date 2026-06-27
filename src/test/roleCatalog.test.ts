@@ -31,9 +31,10 @@ const admin = (
   }) as AdminUser & Record<string, unknown>
 
 describe('roleCatalog policy', () => {
-  it('allows Super Admin full access when elevated 2FA is satisfied', () => {
-    const user = admin('SUPER_ADMIN', [], { aal: 'aal2' })
+  it('allows Super Admin full access without per-permission rows', () => {
+    const user = admin('SUPER_ADMIN', [])
     expect(userCan(user, perm('MANAGE_DONATIONS', 'DONATIONS'))).toBe(true)
+    expect(userCan(user, perm('VIEW_AUDIT_LOGS', 'SYSTEM'))).toBe(true)
   })
 
   it('keeps Board Chair in oversight access without system settings access', () => {
