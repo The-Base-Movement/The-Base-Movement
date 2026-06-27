@@ -127,6 +127,9 @@ const ITLicenses = lazy(() => import('./pages/admin/it/ITLicenses'))
 const ITAssets = lazy(() => import('./pages/admin/it/ITAssets'))
 const ITHelpdesk = lazy(() => import('./pages/admin/it/ITHelpdesk'))
 const ITHierarchy = lazy(() => import('./pages/admin/it/ITHierarchy'))
+const ITOrganizationalStructure = lazy(
+  () => import('./pages/admin/it/OrganizationalStructureRoadmap')
+)
 const LeadersAuth = lazy(() => import('./pages/admin/it/executives_auth/LeadersAuth'))
 const LeadersAuthActivity = lazy(
   () => import('./pages/admin/it/executives_auth/LeadersAuthActivity')
@@ -314,6 +317,10 @@ export const routes: RouteObject[] = [
               { path: '/admin/it-department/licenses', element: <ITLicenses /> },
               { path: '/admin/it-department/assets', element: <ITAssets /> },
               { path: '/admin/it-department/hierarchy', element: <ITHierarchy /> },
+              {
+                path: '/admin/it-department/organizational-structure',
+                element: <ITOrganizationalStructure />,
+              },
               { path: '/admin/it-department/leaders-auth', element: <LeadersAuth /> },
               {
                 path: '/admin/it-department/leaders-auth/activity',

@@ -7,7 +7,14 @@
 
 import type { AdminPermission, AdminRole } from '@/types/admin'
 
-const GLOBAL_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
+const GLOBAL_ROLES: AdminRole[] = [
+  'SUPER_ADMIN',
+  'FOUNDER',
+  'ICT_DIRECTOR',
+  'IT_MANAGER',
+  'SYSTEM_ADMINISTRATOR',
+  'ADMIN',
+]
 
 /**
  * NavItem
@@ -440,6 +447,11 @@ export const getNavGroups = (
           { to: '/admin/it-department/licenses', icon: 'license', label: 'Licenses' },
           { to: '/admin/it-department/assets', icon: 'inventory_2', label: 'Assets' },
           { to: '/admin/it-department/hierarchy', icon: 'account_tree', label: 'Hierarchy' },
+          {
+            to: '/admin/it-department/organizational-structure',
+            icon: 'schema',
+            label: 'Org Road Map',
+          },
           { to: '/admin/it-department/leaders-auth', icon: 'verified_user', label: 'Leaders Auth' },
         ],
       },

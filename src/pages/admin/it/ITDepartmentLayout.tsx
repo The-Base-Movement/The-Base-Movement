@@ -15,7 +15,14 @@ import type { AdminUser } from '@/types/admin'
 import { ITLayoutContext } from './ITLayoutContext'
 import type React from 'react'
 
-const IT_ALLOWED_ROLES = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
+const IT_ALLOWED_ROLES = [
+  'SUPER_ADMIN',
+  'FOUNDER',
+  'ICT_DIRECTOR',
+  'IT_MANAGER',
+  'SYSTEM_ADMINISTRATOR',
+  'ADMIN',
+]
 
 interface ITHeader {
   title: string
@@ -74,7 +81,11 @@ export default function ITDepartmentLayout() {
     )
   }
 
-  if (!user || !IT_ALLOWED_ROLES.includes(user.role)) {
+  const hasSystemAccess =
+    !!user &&
+    (IT_ALLOWED_ROLES.includes(user.role) || adminService.can('VIEW_AUDIT_LOGS', 'SYSTEM'))
+
+  if (!user || !hasSystemAccess) {
     return (
       <div
         style={{
@@ -118,7 +129,7 @@ export default function ITDepartmentLayout() {
             Access Restricted
           </p>
           <p style={{ margin: 0, fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-            The IT Department is only accessible to IT Managers and Super Admins.
+            The IT Department is only accessible to approved IT and system administrators.
           </p>
         </div>
         <button className="btn btn-outline btn-sm" onClick={() => navigate('/admin/dashboard')}>
