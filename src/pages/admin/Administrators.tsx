@@ -11,7 +11,7 @@ import { formatRoleName, isRemovingOwnLastSuperAdmin } from '@/lib/roleCatalog'
 import { toast } from 'sonner'
 import { auditService } from '@/services/auditService'
 import { roleService, type AdminRoleRecord } from '@/services/roleService'
-import type { AuditLogEntry, AdminRole } from '@/types/admin'
+import type { AuditLogEntry, AdminPermission, AdminRole } from '@/types/admin'
 import type { Member } from '@/types/admin'
 
 // Subcomponents
@@ -65,6 +65,7 @@ export default function Administrators() {
   const [editTarget, setEditTarget] = useState<AdminUser | null>(null)
   const [editRole, setEditRole] = useState<string>('ADMIN')
   const [editRegion, setEditRegion] = useState('')
+  const [editPermissions, setEditPermissions] = useState<AdminPermission[]>([])
   const [isEditing, setIsEditing] = useState(false)
 
   // Revoke confirm
@@ -215,7 +216,13 @@ export default function Administrators() {
     setEditTarget(admin)
     setEditRole(admin.role)
     setEditRegion(admin.region || '')
+    setEditPermissions(admin.permissions || [])
     setOpenMenuId(null)
+  }
+
+  const handleEditRoleChange = (role: string) => {
+    setEditRole(role)
+    setEditPermissions(getPermsForRole(role))
   }
 
   // Submits updated role/permissions/region credentials for an administrator
@@ -238,7 +245,7 @@ export default function Administrators() {
     try {
       await adminService.updateAdminData(editTarget.id, {
         role: editRole as AdminRole,
-        permissions: getPermsForRole(editRole),
+        permissions: editPermissions,
         assigned_region: REGIONAL_ROLES.includes(editRole) ? editRegion || null : null,
       })
       toast.success('Admin credentials updated')
@@ -373,9 +380,12 @@ export default function Administrators() {
           editTarget={editTarget}
           onClose={() => setEditTarget(null)}
           editRole={editRole}
-          setEditRole={setEditRole}
+          setEditRole={handleEditRoleChange}
           editRegion={editRegion}
           setEditRegion={setEditRegion}
+          editPermissions={editPermissions}
+          setEditPermissions={setEditPermissions}
+          defaultPermissions={getPermsForRole(editRole)}
           regions={regions}
           roles={roleList.map((r) => ({ value: r.name, label: formatRole(r.name) }))}
           isEditing={isEditing}

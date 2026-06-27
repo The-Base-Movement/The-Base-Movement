@@ -1,6 +1,12 @@
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
+import {
+  ADMIN_PERMISSION_GROUPS,
+  ALL_ADMIN_PERMISSIONS,
+  hasAdminPermission,
+} from '@/lib/adminPermissionCatalog'
 import { type AdminUser } from '@/services/adminService'
+import type { AdminPermission } from '@/types/admin'
 
 const REGIONAL_ROLES: string[] = ['REGIONAL_DIRECTOR', 'CONSTITUENCY_LEAD']
 
@@ -42,6 +48,9 @@ interface EditPermissionsModalProps {
   setEditRole: (r: string) => void
   editRegion: string
   setEditRegion: (reg: string) => void
+  editPermissions: AdminPermission[]
+  setEditPermissions: (permissions: AdminPermission[]) => void
+  defaultPermissions: AdminPermission[]
   regions: string[]
   roles: { value: string; label: string }[]
   isEditing: boolean
@@ -55,11 +64,30 @@ export function EditPermissionsModal({
   setEditRole,
   editRegion,
   setEditRegion,
+  editPermissions,
+  setEditPermissions,
+  defaultPermissions,
   regions,
   roles,
   isEditing,
   handleEditSubmit,
 }: EditPermissionsModalProps) {
+  const togglePermission = (
+    action: AdminPermission['action'],
+    resource: AdminPermission['resource']
+  ) => {
+    if (hasAdminPermission(editPermissions, action, resource)) {
+      setEditPermissions(
+        editPermissions.filter(
+          (permission) => permission.action !== action || permission.resource !== resource
+        )
+      )
+      return
+    }
+
+    setEditPermissions([...editPermissions, { action, resource }])
+  }
+
   return createPortal(
     <div
       style={{
@@ -91,7 +119,7 @@ export function EditPermissionsModal({
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: 480,
+          maxWidth: 760,
           background: 'hsl(var(--card))',
           borderRadius: 4,
           overflow: 'hidden',
@@ -238,17 +266,129 @@ export function EditPermissionsModal({
             </div>
           )}
 
-          <p
+          <div
             style={{
-              margin: 0,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-              fontSize: 11,
-              color: 'hsl(var(--on-surface-muted))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              flexWrap: 'wrap',
             }}
           >
-            Permissions will be reset to the defaults for the selected role.
-          </p>
+            <div>
+              <p style={{ ...labelSt, marginBottom: 2 }}>Row permissions</p>
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-normal, 400)',
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                {editPermissions.length} selected for this administrator.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setEditPermissions(defaultPermissions)}
+              >
+                Role defaults
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setEditPermissions(ALL_ADMIN_PERMISSIONS)}
+              >
+                Select all
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setEditPermissions([])}
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: 10,
+            }}
+          >
+            {ADMIN_PERMISSION_GROUPS.map((group) => (
+              <div
+                key={`${group.resource}-${group.label}`}
+                style={{
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 4,
+                  background: 'hsl(var(--card))',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '9px 10px',
+                    background: 'hsl(var(--container-low))',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 11,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {group.label}
+                </div>
+                <div style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {group.items.map((item) => {
+                    const checked = hasAdminPermission(editPermissions, item.action, group.resource)
+                    return (
+                      <label
+                        key={`${group.resource}-${item.action}`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 8,
+                          padding: '7px 6px',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          background: checked ? 'hsl(var(--primary) / 0.08)' : 'transparent',
+                          border: checked
+                            ? '1px solid hsl(var(--primary) / 0.30)'
+                            : '1px solid transparent',
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => togglePermission(item.action, group.resource)}
+                          style={{ marginTop: 1 }}
+                        />
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: 11,
+                            lineHeight: 1.35,
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
+                          {item.label}
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div
