@@ -63,8 +63,9 @@ export function AdminSidebar({
       .map((group) => ({
         ...group,
         items: group.items.filter((item) => {
-          // Explicit role allow-list takes precedence over every other gate.
+          // Super Admin has command-center visibility across role-listed areas.
           if (item.allowedRoles) {
+            if (user?.role === 'SUPER_ADMIN') return true
             return !!user?.role && item.allowedRoles.includes(user.role)
           }
           if (item.superAdminOnly) {
