@@ -1,3 +1,4 @@
+import { getAdminPermissionLabel } from '@/lib/adminPermissionCatalog'
 import { type AdminUser } from '@/services/adminService'
 
 const formatRole = (role: string) =>
@@ -23,6 +24,21 @@ const avatarSt = (role: string): React.CSSProperties => ({
   overflow: 'hidden',
   flexShrink: 0,
 })
+
+const permissionBadgeStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  maxWidth: '100%',
+  padding: '3px 7px',
+  borderRadius: 'var(--radius-pill)',
+  border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--card))',
+  color: 'hsl(var(--on-surface-muted))',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  fontSize: 10,
+  lineHeight: 1.2,
+}
 
 interface AdministratorsMobileCardsProps {
   filteredAdmins: AdminUser[]
@@ -226,6 +242,64 @@ export function AdministratorsMobileCards({
                   {admin.region || 'National HQ'}
                 </span>
               </div>
+            </div>
+
+            <div
+              style={{
+                padding: '10px 12px',
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 4,
+                marginBottom: 12,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: 10,
+                  marginBottom: 8,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  Permissions
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {admin.permissions.length}
+                </span>
+              </div>
+              {admin.permissions.length === 0 ? (
+                <span style={permissionBadgeStyle}>No row permissions</span>
+              ) : (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                  {admin.permissions.slice(0, 4).map((permission) => (
+                    <span
+                      key={`${permission.resource}-${permission.action}`}
+                      style={permissionBadgeStyle}
+                      title={getAdminPermissionLabel(permission)}
+                    >
+                      {getAdminPermissionLabel(permission)}
+                    </span>
+                  ))}
+                  {admin.permissions.length > 4 && (
+                    <span style={permissionBadgeStyle}>+{admin.permissions.length - 4} more</span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', gap: 8 }}>

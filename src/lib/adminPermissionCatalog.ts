@@ -110,3 +110,15 @@ export function hasAdminPermission(
     (permission) => permission.action === action && permission.resource === resource
   )
 }
+
+export function getAdminPermissionLabel(permission: AdminPermission) {
+  const group = ADMIN_PERMISSION_GROUPS.find((entry) => entry.resource === permission.resource)
+  const item = group?.items.find((entry) => entry.action === permission.action)
+
+  if (item) return item.label
+
+  return permission.action
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}

@@ -1,3 +1,4 @@
+import { getAdminPermissionLabel } from '@/lib/adminPermissionCatalog'
 import { type AdminUser } from '@/services/adminService'
 
 const formatRole = (role: string) =>
@@ -40,6 +41,24 @@ const tdSt: React.CSSProperties = {
   borderBottom: '1px solid hsl(var(--border))',
 }
 
+const permissionBadgeStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  maxWidth: 180,
+  padding: '3px 7px',
+  borderRadius: 'var(--radius-pill)',
+  border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--container-low))',
+  color: 'hsl(var(--on-surface-muted))',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  fontSize: 10,
+  lineHeight: 1.2,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+}
+
 interface AdministratorsTableProps {
   filteredAdmins: AdminUser[]
   isLoading: boolean
@@ -78,6 +97,7 @@ export function AdministratorsTable({
             <tr>
               <th style={thSt}>Administrator</th>
               <th style={thSt}>Access level</th>
+              <th style={thSt}>Permissions</th>
               <th style={thSt}>Region</th>
               <th style={{ ...thSt, textAlign: 'right' }}>Actions</th>
             </tr>
@@ -93,6 +113,16 @@ export function AdministratorsTable({
                         background: 'hsl(var(--container-low))',
                         borderRadius: 4,
                         width: 200,
+                      }}
+                    />
+                  </td>
+                  <td style={tdSt}>
+                    <div
+                      style={{
+                        height: 20,
+                        background: 'hsl(var(--container-low))',
+                        borderRadius: 4,
+                        width: 160,
                       }}
                     />
                   </td>
@@ -132,7 +162,7 @@ export function AdministratorsTable({
             ) : filteredAdmins.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   style={{
                     ...tdSt,
                     textAlign: 'center',
@@ -225,6 +255,41 @@ export function AdministratorsTable({
                       >
                         {formatRole(admin.role)}
                       </span>
+                    </div>
+                  </td>
+                  <td style={tdSt}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-semibold, 600)',
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {admin.permissions.length} permission
+                        {admin.permissions.length === 1 ? '' : 's'}
+                      </span>
+                      {admin.permissions.length === 0 ? (
+                        <span style={permissionBadgeStyle}>No row permissions</span>
+                      ) : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                          {admin.permissions.slice(0, 3).map((permission) => (
+                            <span
+                              key={`${permission.resource}-${permission.action}`}
+                              style={permissionBadgeStyle}
+                              title={getAdminPermissionLabel(permission)}
+                            >
+                              {getAdminPermissionLabel(permission)}
+                            </span>
+                          ))}
+                          {admin.permissions.length > 3 && (
+                            <span style={permissionBadgeStyle}>
+                              +{admin.permissions.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td style={tdSt}>
