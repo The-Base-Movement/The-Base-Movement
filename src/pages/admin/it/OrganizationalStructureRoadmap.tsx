@@ -142,13 +142,13 @@ function RoleChip({ role, onSelect }: { role: RoleNode; onSelect: (role: RoleNod
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 6,
-        minWidth: 126,
+        gap: 5,
+        minWidth: 0,
         border: '1px solid hsl(var(--border))',
         borderRadius: 'var(--radius-sm)',
         background: 'hsl(var(--surface) / 0.9)',
         color: 'hsl(var(--on-surface))',
-        padding: '9px 10px',
+        padding: '7px 8px',
         textAlign: 'left',
         cursor: 'pointer',
         boxShadow: '0 10px 24px hsl(var(--background) / 0.16)',
@@ -161,7 +161,7 @@ function RoleChip({ role, onSelect }: { role: RoleNode; onSelect: (role: RoleNod
       }}
     >
       <span
-        style={{ fontSize: 12, fontWeight: 'var(--font-weight-medium, 500)', lineHeight: 1.25 }}
+        style={{ fontSize: 11, fontWeight: 'var(--font-weight-medium, 500)', lineHeight: 1.25 }}
       >
         {role.label}
       </span>
@@ -242,15 +242,19 @@ function ParentGroupNode({
   roles,
   children,
   compact = false,
+  viewMode = 'expanded',
   onSelect,
 }: {
   group: OrgParentGroup
   roles: RoleNode[]
   children?: React.ReactNode
   compact?: boolean
+  viewMode?: 'compact' | 'expanded'
   onSelect: (role: RoleNode) => void
 }) {
   const color = PARENT_COLORS[group]
+  const visibleRoles = viewMode === 'compact' ? roles.slice(0, 3) : roles
+  const hiddenRoleCount = roles.length - visibleRoles.length
   return (
     <section
       style={{
@@ -313,14 +317,31 @@ function ParentGroupNode({
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(126px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(112px, 1fr))',
               gap: 8,
             }}
           >
             {roles.length > 0 ? (
-              roles.map((role) => (
-                <RoleChip key={`${group}-${role.name}`} role={role} onSelect={onSelect} />
-              ))
+              <>
+                {visibleRoles.map((role) => (
+                  <RoleChip key={`${group}-${role.name}`} role={role} onSelect={onSelect} />
+                ))}
+                {hiddenRoleCount > 0 && (
+                  <div
+                    style={{
+                      border: '1px dashed hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: '7px 8px',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 11,
+                      display: 'grid',
+                      placeItems: 'center',
+                    }}
+                  >
+                    +{hiddenRoleCount} more
+                  </div>
+                )}
+              </>
             ) : (
               <EmptyNode />
             )}
@@ -334,13 +355,17 @@ function ParentGroupNode({
 function CommitteeLaneNode({
   lane,
   roles,
+  viewMode,
   onSelect,
 }: {
   lane: CommitteeLane
   roles: RoleNode[]
+  viewMode: 'compact' | 'expanded'
   onSelect: (role: RoleNode) => void
 }) {
   const color = LANE_COLORS[lane]
+  const visibleRoles = viewMode === 'compact' ? roles.slice(0, 3) : roles
+  const hiddenRoleCount = roles.length - visibleRoles.length
   return (
     <div
       style={{
@@ -376,15 +401,32 @@ function CommitteeLaneNode({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(118px, 1fr))',
-          gap: 8,
-          padding: 10,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(108px, 1fr))',
+          gap: 7,
+          padding: 9,
         }}
       >
         {roles.length > 0 ? (
-          roles.map((role) => (
-            <RoleChip key={`${lane}-${role.name}`} role={role} onSelect={onSelect} />
-          ))
+          <>
+            {visibleRoles.map((role) => (
+              <RoleChip key={`${lane}-${role.name}`} role={role} onSelect={onSelect} />
+            ))}
+            {hiddenRoleCount > 0 && (
+              <div
+                style={{
+                  border: '1px dashed hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '7px 8px',
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontSize: 11,
+                  display: 'grid',
+                  placeItems: 'center',
+                }}
+              >
+                +{hiddenRoleCount} more
+              </div>
+            )}
+          </>
         ) : (
           <EmptyNode />
         )}
@@ -399,6 +441,7 @@ function LaneGroupNode({
   count,
   lanes,
   roles,
+  viewMode,
   onSelect,
 }: {
   group: Extract<OrgParentGroup, 'NCC' | 'RCC' | 'CCC'>
@@ -406,35 +449,37 @@ function LaneGroupNode({
   count?: string
   lanes: Array<{ lane: CommitteeLane; roles: RoleNode[] }>
   roles: RoleNode[]
+  viewMode: 'compact' | 'expanded'
   onSelect: (role: RoleNode) => void
 }) {
   return (
-    <ParentGroupNode group={group} roles={roles} compact onSelect={onSelect}>
+    <ParentGroupNode group={group} roles={roles} compact viewMode={viewMode} onSelect={onSelect}>
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(180px, 0.75fr) minmax(0, 2fr)',
+          gridTemplateColumns: group === 'NCC' ? '1fr' : 'minmax(180px, 220px) minmax(0, 1fr)',
           gap: 12,
-          alignItems: 'stretch',
+          alignItems: 'start',
         }}
       >
         <div
           style={{
             border: `1px solid ${PARENT_COLORS[group]}`,
             borderRadius: 'var(--radius-md)',
-            padding: 16,
+            padding: group === 'NCC' ? '10px 12px' : 14,
             background: `linear-gradient(135deg, ${withAlpha(PARENT_COLORS[group], 0.2)}, hsl(var(--background) / 0.18))`,
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            minHeight: 126,
+            flexDirection: group === 'NCC' ? 'row' : 'column',
+            justifyContent: group === 'NCC' ? 'space-between' : 'center',
+            alignItems: group === 'NCC' ? 'center' : 'flex-start',
+            gap: 8,
           }}
         >
           <p
             style={{
               margin: 0,
               color: 'hsl(var(--on-surface))',
-              fontSize: 28,
+              fontSize: group === 'NCC' ? 18 : 24,
               fontWeight: 'var(--font-weight-medium, 500)',
             }}
           >
@@ -459,7 +504,10 @@ function LaneGroupNode({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+            gridTemplateColumns:
+              group === 'NCC'
+                ? 'repeat(auto-fit, minmax(150px, 1fr))'
+                : 'repeat(auto-fit, minmax(145px, 1fr))',
             gap: 10,
           }}
         >
@@ -469,6 +517,7 @@ function LaneGroupNode({
                 key={`${group}-${lane.lane}`}
                 lane={lane.lane}
                 roles={lane.roles}
+                viewMode={viewMode}
                 onSelect={onSelect}
               />
             ))
@@ -484,10 +533,14 @@ function LaneGroupNode({
 function HierarchyMap({
   groups,
   counts,
+  viewMode,
+  onViewModeChange,
   onSelect,
 }: {
   groups: OrganizationalStructureData['groups']
   counts: OrganizationalStructureData['counts']
+  viewMode: 'compact' | 'expanded'
+  onViewModeChange: (mode: 'compact' | 'expanded') => void
   onSelect: (role: RoleNode) => void
 }) {
   const byGroup = new Map(groups.map((group) => [group.group, group]))
@@ -504,41 +557,69 @@ function HierarchyMap({
       className="panel"
       style={{
         padding: 18,
-        marginBottom: 22,
+        marginBottom: 18,
         overflow: 'hidden',
         background:
           'radial-gradient(circle at top left, hsl(var(--primary) / 0.12), transparent 28%), hsl(var(--surface))',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
-        >
-          schema
-        </span>
-        <div>
-          <p
-            style={{
-              margin: 0,
-              color: 'hsl(var(--on-surface))',
-              fontSize: 16,
-              fontWeight: 'var(--font-weight-medium, 500)',
-            }}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          marginBottom: 16,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
           >
-            Command Structure Map
-          </p>
-          <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
-            Board branches into national systems; NCC flows down through RCC, CCC and polling
-            stations.
-          </p>
+            schema
+          </span>
+          <div>
+            <p
+              style={{
+                margin: 0,
+                color: 'hsl(var(--on-surface))',
+                fontSize: 16,
+                fontWeight: 'var(--font-weight-medium, 500)',
+              }}
+            >
+              Command Structure Map
+            </p>
+            <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+              Board branches into national systems; NCC flows down through RCC, CCC and polling
+              stations.
+            </p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {(['compact', 'expanded'] as const).map((mode) => (
+            <button
+              key={mode}
+              className={`btn btn-sm ${viewMode === mode ? 'btn-primary' : 'btn-outline'}`}
+              type="button"
+              onClick={() => onViewModeChange(mode)}
+            >
+              {mode === 'compact' ? 'Compact View' : 'Expanded View'}
+            </button>
+          ))}
         </div>
       </div>
 
       <div style={{ display: 'grid', justifyItems: 'center', gap: 0 }}>
         <div style={{ width: 'min(100%, 760px)' }}>
           {board ? (
-            <ParentGroupNode group="BOARD" roles={board.roles} onSelect={onSelect} />
+            <ParentGroupNode
+              group="BOARD"
+              roles={board.roles}
+              viewMode={viewMode}
+              onSelect={onSelect}
+            />
           ) : (
             <EmptyNode label="Board has no matching roles" />
           )}
@@ -557,7 +638,13 @@ function HierarchyMap({
           }}
         >
           {ict ? (
-            <ParentGroupNode group="NATIONAL ICT" roles={ict.roles} compact onSelect={onSelect} />
+            <ParentGroupNode
+              group="NATIONAL ICT"
+              roles={ict.roles}
+              compact
+              viewMode={viewMode}
+              onSelect={onSelect}
+            />
           ) : (
             <EmptyNode label="National ICT has no matching roles" />
           )}
@@ -566,6 +653,7 @@ function HierarchyMap({
               group="SECURITY / INTEL"
               roles={security.roles}
               compact
+              viewMode={viewMode}
               onSelect={onSelect}
             />
           ) : (
@@ -577,6 +665,7 @@ function HierarchyMap({
               level="National Command Center"
               lanes={ncc.lanes}
               roles={ncc.roles}
+              viewMode={viewMode}
               onSelect={onSelect}
             />
           ) : (
@@ -598,6 +687,7 @@ function HierarchyMap({
               }
               lanes={rcc.lanes}
               roles={rcc.roles}
+              viewMode={viewMode}
               onSelect={onSelect}
             />
           ) : (
@@ -619,6 +709,7 @@ function HierarchyMap({
               }
               lanes={ccc.lanes}
               roles={ccc.roles}
+              viewMode={viewMode}
               onSelect={onSelect}
             />
           ) : (
@@ -671,14 +762,33 @@ function HierarchyMap({
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(126px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(112px, 1fr))',
                     gap: 8,
                   }}
                 >
                   {polling.roles.length > 0 ? (
-                    polling.roles.map((role) => (
-                      <RoleChip key={`polling-${role.name}`} role={role} onSelect={onSelect} />
-                    ))
+                    <>
+                      {(viewMode === 'compact' ? polling.roles.slice(0, 4) : polling.roles).map(
+                        (role) => (
+                          <RoleChip key={`polling-${role.name}`} role={role} onSelect={onSelect} />
+                        )
+                      )}
+                      {viewMode === 'compact' && polling.roles.length > 4 && (
+                        <div
+                          style={{
+                            border: '1px dashed hsl(var(--border))',
+                            borderRadius: 'var(--radius-sm)',
+                            padding: '7px 8px',
+                            color: 'hsl(var(--on-surface-muted))',
+                            fontSize: 11,
+                            display: 'grid',
+                            placeItems: 'center',
+                          }}
+                        >
+                          +{polling.roles.length - 4} more
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <EmptyNode />
                   )}
@@ -704,28 +814,7 @@ function RoleDetailPanel({
   onClose: () => void
 }) {
   if (!role) {
-    return (
-      <aside className="panel" style={{ padding: 18, position: 'sticky', top: 16 }}>
-        <div
-          style={{
-            minHeight: 220,
-            display: 'grid',
-            placeItems: 'center',
-            textAlign: 'center',
-            color: 'hsl(var(--on-surface-muted))',
-          }}
-        >
-          <div>
-            <span className="material-symbols-outlined" style={{ fontSize: 36, opacity: 0.55 }}>
-              touch_app
-            </span>
-            <p style={{ margin: '8px 0 0', fontSize: 13 }}>
-              Select a role card to inspect scope, security and permissions.
-            </p>
-          </div>
-        </div>
-      </aside>
-    )
+    return null
   }
 
   return (
@@ -850,6 +939,9 @@ export default function OrganizationalStructureRoadmap() {
   const [scope, setScope] = useState<RoleScopeType | 'all'>('all')
   const [protectedOnly, setProtectedOnly] = useState(false)
   const [twoFactorOnly, setTwoFactorOnly] = useState(false)
+  const [viewMode, setViewMode] = useState<'compact' | 'expanded'>('compact')
+  const [showAnalytics, setShowAnalytics] = useState(false)
+  const [showRoadmap, setShowRoadmap] = useState(false)
 
   useEffect(() => {
     setCurrentLabel('Organizational Structure & Road Mapping')
@@ -868,7 +960,7 @@ export default function OrganizationalStructureRoadmap() {
       .then((payload) => {
         if (cancelled) return
         setData(payload)
-        setSelectedRole(payload.groups.flatMap((group) => group.roles)[0] ?? null)
+        setSelectedRole(null)
       })
       .catch((err) => {
         console.error('[OrganizationalStructure] Failed to load:', err)
@@ -1152,135 +1244,6 @@ export default function OrganizationalStructureRoadmap() {
         />
       </div>
 
-      <section
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 16,
-          marginBottom: 22,
-        }}
-      >
-        <div className="panel" style={{ padding: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p
-                style={{
-                  margin: 0,
-                  color: 'hsl(var(--on-surface))',
-                  fontSize: 15,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                }}
-              >
-                Role Distribution
-              </p>
-              <p style={{ margin: '4px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
-                Roles grouped by parent structure.
-              </p>
-            </div>
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
-            >
-              analytics
-            </span>
-          </div>
-          <div style={{ height: 220, marginTop: 8 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={parentAnalytics}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={54}
-                  outerRadius={82}
-                  paddingAngle={2}
-                >
-                  {parentAnalytics.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {parentAnalytics.map((entry) => (
-              <span key={entry.name} style={badgeStyle}>
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 'var(--radius-pill)',
-                    background: entry.color,
-                  }}
-                />
-                {entry.name}: {entry.value}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="panel" style={{ padding: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p
-                style={{
-                  margin: 0,
-                  color: 'hsl(var(--on-surface))',
-                  fontSize: 15,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                }}
-              >
-                Security Posture
-              </p>
-              <p style={{ margin: '4px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
-                Elevated, protected and standard role mix.
-              </p>
-            </div>
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 20, color: 'hsl(var(--accent))' }}
-            >
-              verified_user
-            </span>
-          </div>
-          <div style={{ height: 220, marginTop: 8 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={securityAnalytics}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={54}
-                  outerRadius={82}
-                  paddingAngle={2}
-                >
-                  {securityAnalytics.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {securityAnalytics.map((entry) => (
-              <span key={entry.name} style={badgeStyle}>
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 'var(--radius-pill)',
-                    background: entry.color,
-                  }}
-                />
-                {entry.name}: {entry.value}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="panel" style={{ padding: 16, marginBottom: 22 }}>
         <div style={{ marginBottom: 10 }}>
           <input
@@ -1361,95 +1324,311 @@ export default function OrganizationalStructureRoadmap() {
         </div>
       </section>
 
-      <HierarchyMap groups={filteredGroups} counts={data.counts} onSelect={setSelectedRole} />
+      <HierarchyMap
+        groups={filteredGroups}
+        counts={data.counts}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onSelect={setSelectedRole}
+      />
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) minmax(min(100%, 320px), 380px)',
-          gap: 18,
-          alignItems: 'start',
-        }}
-      >
-        <section className="panel" style={{ padding: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+      {selectedRole && (
+        <div style={{ maxWidth: 920, margin: '0 auto 18px' }}>
+          <RoleDetailPanel
+            role={selectedRole}
+            canEdit={canEditRoles}
+            onClose={() => setSelectedRole(null)}
+          />
+        </div>
+      )}
+
+      <section className="panel" style={{ padding: 0, marginBottom: 18, overflow: 'hidden' }}>
+        <button
+          type="button"
+          onClick={() => setShowAnalytics((value) => !value)}
+          style={{
+            width: '100%',
+            border: 0,
+            background: 'transparent',
+            color: 'hsl(var(--on-surface))',
+            padding: '14px 18px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            cursor: 'pointer',
+            textAlign: 'left',
+          }}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
+            >
+              analytics
+            </span>
+            <span style={{ fontSize: 15, fontWeight: 'var(--font-weight-medium, 500)' }}>
+              Analytics
+            </span>
+          </span>
+          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+            {showAnalytics ? 'expand_less' : 'expand_more'}
+          </span>
+        </button>
+        {showAnalytics && (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 16,
+              padding: '0 18px 18px',
+            }}
+          >
+            <div className="panel" style={{ padding: 18 }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <div>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: 'hsl(var(--on-surface))',
+                      fontSize: 15,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                    }}
+                  >
+                    Role Distribution
+                  </p>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 12,
+                    }}
+                  >
+                    Roles grouped by parent structure.
+                  </p>
+                </div>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
+                >
+                  donut_large
+                </span>
+              </div>
+              <div style={{ height: 220, marginTop: 8 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={parentAnalytics}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={54}
+                      outerRadius={82}
+                      paddingAngle={2}
+                    >
+                      {parentAnalytics.map((entry) => (
+                        <Cell key={entry.name} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {parentAnalytics.map((entry) => (
+                  <span key={entry.name} style={badgeStyle}>
+                    <span
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: 'var(--radius-pill)',
+                        background: entry.color,
+                      }}
+                    />
+                    {entry.name}: {entry.value}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="panel" style={{ padding: 18 }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <div>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: 'hsl(var(--on-surface))',
+                      fontSize: 15,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                    }}
+                  >
+                    Security Posture
+                  </p>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 12,
+                    }}
+                  >
+                    Elevated, protected and standard role mix.
+                  </p>
+                </div>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 20, color: 'hsl(var(--accent))' }}
+                >
+                  verified_user
+                </span>
+              </div>
+              <div style={{ height: 220, marginTop: 8 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={securityAnalytics}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={54}
+                      outerRadius={82}
+                      paddingAngle={2}
+                    >
+                      {securityAnalytics.map((entry) => (
+                        <Cell key={entry.name} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {securityAnalytics.map((entry) => (
+                  <span key={entry.name} style={badgeStyle}>
+                    <span
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: 'var(--radius-pill)',
+                        background: entry.color,
+                      }}
+                    />
+                    {entry.name}: {entry.value}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <button
+          type="button"
+          onClick={() => setShowRoadmap((value) => !value)}
+          style={{
+            width: '100%',
+            border: 0,
+            background: 'transparent',
+            color: 'hsl(var(--on-surface))',
+            padding: '14px 18px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            cursor: 'pointer',
+            textAlign: 'left',
+          }}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span
               className="material-symbols-outlined"
               style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
             >
               route
             </span>
-            <p
-              style={{
-                margin: 0,
-                fontSize: 16,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-              }}
-            >
+            <span style={{ fontSize: 16, fontWeight: 'var(--font-weight-medium, 500)' }}>
               Road Mapping
-            </p>
-          </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-              gap: 12,
-            }}
-          >
-            {data.roadmap.map((node) => (
-              <div
-                key={node.group}
+            </span>
+          </span>
+          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+            {showRoadmap ? 'expand_less' : 'expand_more'}
+          </span>
+        </button>
+        {showRoadmap && (
+          <div style={{ padding: '0 18px 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
+              >
+                route
+              </span>
+              <p
                 style={{
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-md)',
-                  padding: 14,
-                  background: 'hsl(var(--surface))',
-                  borderTop: `3px solid ${PARENT_COLORS[node.group]}`,
+                  margin: 0,
+                  fontSize: 16,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
                 }}
               >
-                <p
+                Road Mapping
+              </p>
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+                gap: 12,
+              }}
+            >
+              {data.roadmap.map((node) => (
+                <div
+                  key={node.group}
                   style={{
-                    margin: '0 0 10px',
-                    color: 'hsl(var(--on-surface))',
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 13,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-md)',
+                    padding: 14,
+                    background: 'hsl(var(--surface))',
+                    borderTop: `3px solid ${PARENT_COLORS[node.group]}`,
                   }}
                 >
-                  {node.group}
-                </p>
-                <div style={{ display: 'grid', gap: 7 }}>
-                  {node.items.map((item) => (
-                    <div
-                      key={item}
-                      style={{
-                        display: 'flex',
-                        gap: 8,
-                        color: 'hsl(var(--on-surface-muted))',
-                        fontSize: 12,
-                      }}
-                    >
-                      <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: 14, color: PARENT_COLORS[node.group] }}
+                  <p
+                    style={{
+                      margin: '0 0 10px',
+                      color: 'hsl(var(--on-surface))',
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 13,
+                    }}
+                  >
+                    {node.group}
+                  </p>
+                  <div style={{ display: 'grid', gap: 7 }}>
+                    {node.items.map((item) => (
+                      <div
+                        key={item}
+                        style={{
+                          display: 'flex',
+                          gap: 8,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontSize: 12,
+                        }}
                       >
-                        check_circle
-                      </span>
-                      <span>{item}</span>
-                    </div>
-                  ))}
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: 14, color: PARENT_COLORS[node.group] }}
+                        >
+                          check_circle
+                        </span>
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </section>
-
-        <RoleDetailPanel
-          role={selectedRole}
-          canEdit={canEditRoles}
-          onClose={() => setSelectedRole(null)}
-        />
-      </div>
+        )}
+      </section>
     </div>
   )
 }
