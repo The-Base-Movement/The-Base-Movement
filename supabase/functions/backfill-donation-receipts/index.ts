@@ -13,7 +13,7 @@ declare const Deno: {
   serve(handler: (req: Request) => Response | Promise<Response>): void
 }
 
-const SITE_BASE = 'https://thebasemovement.info'
+const SITE_BASE = 'https://www.thebasemovement.info'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -103,8 +103,8 @@ Deno.serve(async (req: Request) => {
           date: dateStr,
           campaign: row.donation_campaigns?.title ?? undefined,
           internalNote: row.verification_notes ?? undefined,
-          logoUrl: `${SITE_BASE}/public/branding/logo.png`,
-          eagleUrl: `${SITE_BASE}/public/brand/eagle-in-flight.webp`,
+          logoUrl: `${SITE_BASE}/branding/logo.png`,
+          eagleUrl: `${SITE_BASE}/branding/patterns/eagle-in-flight.webp`,
         })
 
         const encoder = new TextEncoder()

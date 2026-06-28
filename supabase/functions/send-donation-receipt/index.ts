@@ -5,7 +5,7 @@ import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-temp
 import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
 
-const SITE_BASE = 'https://thebasemovement.info'
+const SITE_BASE = 'https://www.thebasemovement.info'
 
 function normalizePhone(raw: string): string {
   const cleaned = raw.trim()
@@ -92,8 +92,14 @@ Deno.serve(async (req: Request) => {
           .maybeSingle(),
       ])
 
-      const logoPath = (logoRes.data?.value as string | null) ?? '/branding/logo.png'
-      const logoUrl = logoPath.startsWith('http') ? logoPath : `${SITE_BASE}${logoPath}`
+      const rawLogoPath = (logoRes.data?.value as string | null) ?? '/branding/logo.png'
+      // Replace any stale CDN hostnames with the canonical production domain
+      const sanitizedLogoPath = rawLogoPath
+        .replace(/https?:\/\/[^/]*creativeutil\.com/g, SITE_BASE)
+        .replace(/https?:\/\/[^/]*thebasemovement\.creativeutil\.com/g, SITE_BASE)
+      const logoUrl = sanitizedLogoPath.startsWith('http')
+        ? sanitizedLogoPath
+        : `${SITE_BASE}${sanitizedLogoPath}`
       const eagleUrl =
         (eagleRes.data?.url as string | null) ??
         `${SITE_BASE}/branding/patterns/eagle-in-flight.webp`
@@ -146,7 +152,7 @@ Deno.serve(async (req: Request) => {
         method: row.payment_method ?? 'N/A',
         reference: row.reference,
         date: dateStr,
-        monthlyUrl: 'https://thebasemovement.info/dashboard/donate',
+        monthlyUrl: `${SITE_BASE}/dashboard/donate`,
         receiptPdfUrl: receiptUrl ?? undefined,
       })
 

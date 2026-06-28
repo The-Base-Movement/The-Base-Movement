@@ -33,9 +33,12 @@ import AdminDeviceCapture from '@/components/AdminDeviceCapture'
  */
 export const ADMIN_GATE_KEY = 'admin_gate_verified'
 
-type GateStatus = 'checking' | 'allowed' | 'challenge'
+type GateStatus = 'checking' | 'allowed' | 'challenge' | 'net-error'
 const MFA_SETUP_PATH = '/admin/settings'
 const MFA_SETUP_TAB = 'security'
+
+const MAX_RETRIES = 3
+const RETRY_DELAY_MS = 1500
 
 export default function ProtectedAdminRoute() {
   const { session, isLoading } = useAuth()
@@ -47,7 +50,7 @@ export default function ProtectedAdminRoute() {
   useEffect(() => {
     let cancelled = false
 
-    async function checkGate() {
+    async function checkGate(attempt = 1) {
       if (!session) return
 
       try {
@@ -89,10 +92,32 @@ export default function ProtectedAdminRoute() {
             setStatus('allowed')
           }
         }
-      } catch (err) {
+      } catch (err: unknown) {
+        // AuthRetryableFetchError means a transient network issue (ERR_CONNECTION_CLOSED,
+        // timeout, etc.) — retry before treating it as an auth failure.
+        const isNetworkError =
+          err instanceof Error &&
+          (err.name === 'AuthRetryableFetchError' ||
+            err.message?.includes('Failed to fetch') ||
+            err.message?.includes('ERR_CONNECTION_CLOSED'))
+
+        if (isNetworkError && attempt < MAX_RETRIES) {
+          console.warn(
+            `[MFA Gate] network error (attempt ${attempt}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`
+          )
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS))
+          if (!cancelled) checkGate(attempt + 1)
+          return
+        }
+
         console.error('[MFA Gate] verification error:', err)
         if (!cancelled) {
-          setErrorState('Security gate verification failed. Please sign in again.')
+          if (isNetworkError) {
+            // Show a recoverable network error state rather than clearing the session
+            setStatus('net-error')
+          } else {
+            setErrorState('Security gate verification failed. Please sign in again.')
+          }
         }
       }
     }
@@ -127,16 +152,42 @@ export default function ProtectedAdminRoute() {
     return <Navigate to="/command" state={{ error: errorState }} replace />
   }
 
-  if (status === 'checking')
+  if (status === 'checking' || status === 'net-error')
     return (
       <div
         style={{
           position: 'fixed',
           inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.75rem',
           background: 'hsl(var(--background))',
           zIndex: 9999,
         }}
-      />
+      >
+        {status === 'net-error' && (
+          <>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))' }}
+            >
+              wifi_off
+            </span>
+            <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: '0.875rem', margin: 0 }}>
+              Connection lost. Retrying&hellip;
+            </p>
+            <button
+              className="btn btn-secondary"
+              style={{ marginTop: '0.5rem' }}
+              onClick={() => window.location.reload()}
+            >
+              Reload page
+            </button>
+          </>
+        )}
+      </div>
     )
 
   const tab = new URLSearchParams(location.search).get('tab')
