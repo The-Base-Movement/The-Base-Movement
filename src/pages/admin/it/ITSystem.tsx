@@ -32,18 +32,20 @@ export default function ITSystem() {
   }, [])
 
   const dbSizeMB = (dbStats?.db_size_bytes ?? 0) / 1024 / 1024
+  const storageSizeMB = (dbStats?.storage_size_bytes ?? 0) / 1024 / 1024
+  const totalSizeMB = dbSizeMB + storageSizeMB
   const dbLimitMB = 500
-  const dbPct = Math.min(100, (dbSizeMB / dbLimitMB) * 100)
+  const totalPct = Math.min(100, (totalSizeMB / dbLimitMB) * 100)
   const conns = dbStats?.active_connections ?? 0
   const connPct = Math.min(100, (conns / 100) * 100)
 
   const dbBar =
-    dbPct > 80
+    totalPct > 80
       ? 'hsl(var(--destructive))'
-      : dbPct > 60
+      : totalPct > 60
         ? 'hsl(var(--accent))'
         : 'hsl(var(--primary))'
-  const dbStatus = dbPct > 80 ? 'High Usage' : dbPct > 60 ? 'Moderate' : 'Healthy'
+  const dbStatus = `DB: ${dbSizeMB.toFixed(1)}MB · Files: ${storageSizeMB.toFixed(1)}MB`
   const connBar =
     conns > 80
       ? 'hsl(var(--destructive))'
@@ -88,13 +90,19 @@ export default function ITSystem() {
           loading={healthLoading}
         />
         <HealthCard
-          label="Database Storage"
+          label="Database & Storage"
           icon="storage"
-          value={healthLoading ? '—' : `${dbSizeMB.toFixed(1)} MB / ${dbLimitMB} MB`}
-          pct={dbPct}
+          value={healthLoading ? '—' : `${totalSizeMB.toFixed(1)} MB / ${dbLimitMB} MB`}
+          pct={totalPct}
           bar={dbBar}
           status={dbStatus}
-          statusColor={dbBar}
+          statusColor={
+            totalPct > 80
+              ? 'hsl(var(--destructive))'
+              : totalPct > 60
+                ? 'hsl(var(--accent))'
+                : 'hsl(var(--on-surface-muted))'
+          }
           loading={healthLoading}
         />
         <HealthCard

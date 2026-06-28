@@ -12,6 +12,9 @@ export interface AuditLog {
 
 export interface DbStats {
   db_size_bytes: number
+  public_table_size_bytes: number
+  public_index_size_bytes: number
+  storage_size_bytes: number
   active_connections: number
   cache_hit_ratio: number | null
 }
