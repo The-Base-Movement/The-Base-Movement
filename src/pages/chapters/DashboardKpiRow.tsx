@@ -2,9 +2,15 @@ interface DashboardKpiRowProps {
   diasporaCount: number
   totalCount: number
   countryCount: number
+  diasporaMemberCount: number
 }
 
-export function DashboardKpiRow({ diasporaCount, totalCount, countryCount }: DashboardKpiRowProps) {
+export function DashboardKpiRow({
+  diasporaCount,
+  totalCount,
+  countryCount,
+  diasporaMemberCount,
+}: DashboardKpiRowProps) {
   const kpis = [
     {
       label: 'Diaspora chapters',
@@ -26,6 +32,13 @@ export function DashboardKpiRow({ diasporaCount, totalCount, countryCount }: Das
       sub: 'Global presence',
       bar: 'hsl(var(--primary))',
       icon: 'travel_explore',
+    },
+    {
+      label: 'Diaspora members',
+      value: diasporaMemberCount.toLocaleString(),
+      sub: 'Global patriots',
+      bar: 'hsl(var(--accent))',
+      icon: 'groups',
     },
   ]
 

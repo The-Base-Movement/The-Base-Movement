@@ -166,6 +166,7 @@ export default function Chapters() {
           diasporaCount={chapters.length}
           totalCount={chapters.length}
           countryCount={new Set(chapters.map((c) => c.country)).size}
+          diasporaMemberCount={chapters.reduce((sum, c) => sum + (c.member_count || 0), 0)}
         />
 
         <DashboardMobileFilterToggle
