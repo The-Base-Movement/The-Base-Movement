@@ -75,11 +75,17 @@ jobs:
   sast-code-scan:
     name: SAST Code Analysis (Semgrep)
     runs-on: ubuntu-latest
-    container:
-      image: returntocorp/semgrep
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Semgrep
+        run: python -m pip install --upgrade semgrep
 
       - name: Run Semgrep Scan
         run: semgrep scan --config auto --severity ERROR --exclude docs
