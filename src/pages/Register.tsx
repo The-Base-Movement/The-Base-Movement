@@ -16,7 +16,7 @@ import { OfflineBanner } from '@/components/OfflineBanner'
 import { OfflineSuccessStep } from './register/components/OfflineSuccessStep'
 import { saveDraftRegistration } from '@/utils/offlineDb'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
-import { validatePhone } from '@/lib/phoneValidation'
+import { validatePhone, cleanPhoneInput } from '@/lib/phoneValidation'
 
 export default function Register() {
   const { session } = useAuth()
@@ -122,7 +122,11 @@ export default function Register() {
     value: RegistrationFormData[K]
   ) => {
     setFormData((prev) => {
-      const updates = { ...prev, [field]: value }
+      let val = value
+      if (field === 'contactNumber' && typeof val === 'string') {
+        val = cleanPhoneInput(val, prev.countryCode) as RegistrationFormData[K]
+      }
+      const updates = { ...prev, [field]: val }
       if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
         updates.countryCode = dbCountryCodes[value]
       }
@@ -149,6 +153,9 @@ export default function Register() {
     try {
       const { platform: detectedPlatform, fields } = await scanFormFile(file, setScanStatus)
       handlePlatformChange(detectedPlatform)
+      if (fields.contactNumber) {
+        fields.contactNumber = cleanPhoneInput(fields.contactNumber, fields.countryCode || '+233')
+      }
       setFormData((prev) => ({ ...prev, ...fields }))
       setStep('form')
       setFormStep(1)
@@ -199,6 +206,9 @@ export default function Register() {
     }
     if (step === 4) {
       if (!formData.emergencyContactName.trim()) return 'Emergency contact name is required.'
+      if (!/^[\p{L}\s'-]+$/u.test(formData.emergencyContactName.trim())) {
+        return 'Emergency contact name can only contain letters, spaces, hyphens, and apostrophes.'
+      }
       if (!formData.emergencyNumber.trim()) return 'Emergency contact number is required.'
     }
     return null

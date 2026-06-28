@@ -5,7 +5,7 @@
  * and formal educational levels, matching dropdown options in the membership form.
  */
 
-export const ageRanges = ['16-25', '26-40', '41-60', '60+']
+export const ageRanges = ['18-25', '26-35', '36-45', '46-60', '60+']
 
 export const educationLevels = [
   'None',
@@ -18,4 +18,23 @@ export const educationLevels = [
   "Master's Degree",
   'PhD / Doctorate',
   'Professional Certification',
+]
+
+export const emergencyRelationships = [
+  'Spouse',
+  'Husband',
+  'Wife',
+  'Parent',
+  'Father',
+  'Mother',
+  'Sibling',
+  'Brother',
+  'Sister',
+  'Child',
+  'Aunt / Aunty',
+  'Uncle',
+  'Cousin',
+  'Grandparent',
+  'Friend',
+  'Other',
 ]

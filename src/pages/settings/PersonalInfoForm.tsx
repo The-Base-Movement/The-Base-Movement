@@ -2,6 +2,7 @@ import { labelStyle, inputStyle, selectStyle } from './shared'
 import { SelIcon } from './SelIcon'
 import { JobSelector } from '@/components/JobSelector'
 import type { JobSelection } from '@/services/jobTaxonomyService'
+import { emergencyRelationships } from '@/components/admin/RegistrationForm.constants'
 
 interface FormState {
   fullName: string
@@ -164,12 +165,16 @@ export function PersonalInfoForm({
                 onChange={(e) => onChange('gender', e.target.value)}
                 style={selectStyle}
               >
-                <option value="Male / 18 - 25">Male / 18 - 25</option>
-                <option value="Male / 26 - 40">Male / 26 - 40</option>
-                <option value="Male / 41+">Male / 41+</option>
-                <option value="Female / 18 - 25">Female / 18 - 25</option>
-                <option value="Female / 26 - 40">Female / 26 - 40</option>
-                <option value="Female / 41+">Female / 41+</option>
+                <option value="Male / 18-25">Male / 18-25</option>
+                <option value="Male / 26-35">Male / 26-35</option>
+                <option value="Male / 36-45">Male / 36-45</option>
+                <option value="Male / 46-60">Male / 46-60</option>
+                <option value="Male / 60+">Male / 60+</option>
+                <option value="Female / 18-25">Female / 18-25</option>
+                <option value="Female / 26-35">Female / 26-35</option>
+                <option value="Female / 36-45">Female / 36-45</option>
+                <option value="Female / 46-60">Female / 46-60</option>
+                <option value="Female / 60+">Female / 60+</option>
               </select>
               <SelIcon />
             </div>
@@ -455,7 +460,7 @@ export function PersonalInfoForm({
                   style={selectStyle}
                 >
                   <option value="">Select</option>
-                  {['Parent', 'Spouse', 'Sibling', 'Child', 'Friend', 'Other'].map((r) => (
+                  {emergencyRelationships.map((r) => (
                     <option key={r} value={r}>
                       {r}
                     </option>

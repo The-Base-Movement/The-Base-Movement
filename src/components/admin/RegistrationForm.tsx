@@ -19,6 +19,8 @@ import { RegistrationStepProfessional } from './RegistrationStepProfessional'
 import { RegistrationStepVerification } from './RegistrationStepVerification'
 import type { RegistrationFormData, RegistrationSubmission } from './RegistrationForm.types'
 import { useRegistrationData } from '@/pages/register/useRegistrationData'
+import { toast } from 'sonner'
+import { cleanPhoneInput } from '@/lib/phoneValidation'
 
 export type { RegistrationSubmission } from './RegistrationForm.types'
 
@@ -127,7 +129,11 @@ export default function RegistrationForm({
    */
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => {
-      const newData = { ...prev, [field]: value }
+      let val = value
+      if (field === 'contactNumber') {
+        val = cleanPhoneInput(val, prev.countryCode)
+      }
+      const newData = { ...prev, [field]: val }
 
       if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
         newData.countryCode = dbCountryCodes[value]
@@ -146,6 +152,19 @@ export default function RegistrationForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formStep < 4) {
+      if (formStep === 3) {
+        const nameClean = formData.emergencyContactName.trim()
+        if (!nameClean) {
+          toast.error('Emergency contact name is required.')
+          return
+        }
+        if (!/^[\p{L}\s'-]+$/u.test(nameClean)) {
+          toast.error(
+            'Emergency contact name can only contain letters, spaces, hyphens, and apostrophes.'
+          )
+          return
+        }
+      }
       setFormStep((prev) => prev + 1)
       const modalElement = document.getElementById('registration-modal-content')
       if (modalElement) modalElement.scrollTo({ top: 0, behavior: 'smooth' })

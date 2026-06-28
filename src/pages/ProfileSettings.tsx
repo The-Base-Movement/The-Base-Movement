@@ -8,6 +8,7 @@ import { authService } from '@/services/authService'
 import { userActivityService } from '@/services/userActivityService'
 import { dataURLtoBlob, getCroppedImg } from '@/lib/imageUtils'
 import { toast } from 'sonner'
+import { cleanPhoneInput } from '@/lib/phoneValidation'
 import { usePerformance } from '@/context/PerformanceContext'
 import { MembershipCardPanel } from './settings/MembershipCardPanel'
 import { VerificationStatusPanel } from './settings/VerificationStatusPanel'
@@ -89,8 +90,8 @@ function splitProfilePhone(
   const phoneDigits = onlyDigits(phone)
   const codeDigits = onlyDigits(countryCode)
   const localDigits = phoneDigits.startsWith(codeDigits)
-    ? phoneDigits.slice(codeDigits.length)
-    : phoneDigits
+    ? phoneDigits.slice(codeDigits.length).replace(/^0+/, '')
+    : phoneDigits.replace(/^0+/, '')
 
   return {
     countryCode,
@@ -139,7 +140,7 @@ export default function ProfileSettings() {
     constituency: '',
     profession: '',
     bio: '',
-    gender: 'Male / 26 - 40',
+    gender: 'Male / 26-35',
     joinedDate: new Date().toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'short',
@@ -209,7 +210,7 @@ export default function ProfileSettings() {
           gender:
             profile.gender && profile.ageRange
               ? `${profile.gender} / ${profile.ageRange}`
-              : 'Male / 26 - 40',
+              : 'Male / 26-35',
           joinedDate: profile.joined,
           status: profile.status === 'Active' ? 'Active Member' : profile.status,
           chapter: profile.chapter || 'TBM Ghana Chapter',
@@ -306,13 +307,27 @@ export default function ProfileSettings() {
   }
 
   const handleChange = (field: string, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }))
+    let val = value
+    if (field === 'phone') {
+      val = cleanPhoneInput(val, form.countryCode)
+    }
+    setForm((prev) => ({ ...prev, [field]: val }))
   }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     const regNo = sessionStore.getItem('userRegNo')
     if (!regNo) return
+
+    if (form.emergencyName) {
+      const nameClean = form.emergencyName.trim()
+      if (!/^[\p{L}\s'-]+$/u.test(nameClean)) {
+        toast.error(
+          'Emergency contact name can only contain letters, spaces, hyphens, and apostrophes.'
+        )
+        return
+      }
+    }
 
     setLoading(true)
     let finalAvatarUrl = avatarUrl

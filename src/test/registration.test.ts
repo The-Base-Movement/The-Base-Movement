@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { RegistrationFormData } from '@/types/registration'
+import { cleanPhoneInput } from '@/lib/phoneValidation'
 
 const VALID_GHANA: RegistrationFormData = {
   idNumber: 'GHA-123456789-0',
@@ -17,7 +18,7 @@ const VALID_GHANA: RegistrationFormData = {
   constituency: 'Ablekuma North',
   chapter: 'Accra Central',
   profession: 'Software Engineer',
-  educationLevel: 'Bachelors',
+  educationLevel: "Bachelor's Degree",
   emergencyContactName: 'Ama Asante',
   emergencyRelationship: 'Spouse',
   emergencyNumber: '+233201234567',
@@ -40,7 +41,7 @@ const VALID_DIASPORA: RegistrationFormData = {
   constituency: '',
   chapter: '',
   profession: 'Nurse',
-  educationLevel: 'Masters',
+  educationLevel: "Master's Degree",
   emergencyContactName: 'Kofi Mensah',
   emergencyRelationship: 'Father',
   emergencyNumber: '+12025559999',
@@ -108,6 +109,18 @@ describe('Phone number cleaning', () => {
     const countryCode = '+1'
     const clean = countryCode + raw.replace(/^0+/, '').replace(/\s+/g, '')
     expect(clean).toBe('+12025551234')
+  })
+
+  it('cleanPhoneInput strips country code and leading zeros', () => {
+    expect(cleanPhoneInput('+233244456789', '+233')).toBe('244456789')
+    expect(cleanPhoneInput('+233 244456789', '+233')).toBe('244456789')
+    expect(cleanPhoneInput('+2330244456789', '+233')).toBe('244456789')
+    expect(cleanPhoneInput('+233 0244456789', '+233')).toBe('244456789')
+    expect(cleanPhoneInput('0244456789', '+233')).toBe('244456789')
+    expect(cleanPhoneInput('244456789', '+233')).toBe('244456789')
+    expect(cleanPhoneInput('233244456789', '+233')).toBe('244456789')
+    expect(cleanPhoneInput('+1 202 555 1234', '+1')).toBe('202 555 1234')
+    expect(cleanPhoneInput('02025551234', '+1')).toBe('2025551234')
   })
 })
 

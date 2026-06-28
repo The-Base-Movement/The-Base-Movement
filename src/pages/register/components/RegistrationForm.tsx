@@ -4,6 +4,10 @@ import type { RegistrationFormData, Region, Constituency } from '@/types/registr
 import { PhotoCropStep } from './PhotoCropStep'
 import { JobSelector } from '@/components/JobSelector'
 import { emptyJobSelection } from '@/services/jobTaxonomyService'
+import {
+  emergencyRelationships,
+  educationLevels,
+} from '@/components/admin/RegistrationForm.constants'
 
 interface RegistrationFormProps {
   platform: string
@@ -570,14 +574,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
                     >
                       <option value="">Select</option>
-                      <option value="None">None</option>
-                      <option value="Primary">Primary</option>
-                      <option value="JHS">JHS / Middle School</option>
-                      <option value="SHS">SHS / Secondary</option>
-                      <option value="Diploma">Diploma / HND</option>
-                      <option value="Bachelors">Bachelor's Degree</option>
-                      <option value="Masters">Master's Degree</option>
-                      <option value="Doctorate">Doctorate / PhD</option>
+                      {educationLevels.map((lvl) => (
+                        <option key={lvl} value={lvl}>
+                          {lvl}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -663,12 +664,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
                             className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
                           >
                             <option value="">Select</option>
-                            <option value="Spouse">Spouse</option>
-                            <option value="Parent">Parent</option>
-                            <option value="Sibling">Sibling</option>
-                            <option value="Child">Child</option>
-                            <option value="Friend">Friend</option>
-                            <option value="Other">Other</option>
+                            {emergencyRelationships.map((r) => (
+                              <option key={r} value={r}>
+                                {r}
+                              </option>
+                            ))}
                           </select>
                         </div>
                       </div>

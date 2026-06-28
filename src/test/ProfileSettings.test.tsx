@@ -60,7 +60,7 @@ vi.mock('@/services/adminService', () => ({
       avatarUrl: 'https://cdn.example.com/avatar.webp',
       platform: 'GHANA',
       gender: 'Female',
-      ageRange: '26 - 40',
+      ageRange: '26-35',
       country: 'Ghana',
     }),
     getMemberProfileByAuthId: vi.fn().mockResolvedValue(null),

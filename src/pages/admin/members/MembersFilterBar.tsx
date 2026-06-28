@@ -18,7 +18,7 @@ interface MembersFilterBarProps {
   onClearSearch: () => void
 }
 
-const AGE_RANGES = ['all', '18-25', '26-35', '36-45', '46-55', '56-65', '65+']
+const AGE_RANGES = ['all', '18-25', '26-35', '36-45', '46-60', '60+']
 
 const SEARCH_TYPE_OPTIONS: {
   value: SearchType

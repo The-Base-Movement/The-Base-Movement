@@ -122,7 +122,7 @@ export function MembershipFormBody({ platform, formTitle, logoUrl }: MembershipF
             <div className="space-y-4">
               <p className="text-micro font-bold tracking-tight text-stone-500">Age range*</p>
               <div className="grid grid-cols-3 gap-y-2">
-                {['16-25', '26-35', '36-45', '46-60', '60+'].map((r) => (
+                {['18-25', '26-35', '36-45', '46-60', '60+'].map((r) => (
                   <div key={r} className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-stone-300" />
                     <span className="text-tiny font-bold">{r}</span>
