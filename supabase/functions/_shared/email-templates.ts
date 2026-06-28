@@ -591,3 +591,33 @@ export function pendingDonationEmail(d: PendingDonationEmailData): string {
   ${emailFooter('THE BASE MOVEMENT · GHANA FIRST, JOBS FOR THE YOUTH!')}
   ${SHELL_CLOSE}`
 }
+
+export interface PasswordResetEmailData {
+  name: string
+  resetLink: string
+  expiryHours?: number
+}
+
+export function passwordResetEmail(d: PasswordResetEmailData): string {
+  const hours = d.expiryHours ?? 24
+  const hrsText = hours === 1 ? '1 hour' : `${hours} hours`
+  return `${SHELL_OPEN}
+  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+    Reset link for your Base Movement account. Valid for ${hrsText}.
+  </div>
+  <div style="background:#fff;border-radius:4px;overflow:hidden">
+    ${TOP_BAR}
+    ${emailHeader('Account security')}
+    <div style="padding:28px 28px 24px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Dear Patriot,</div>
+      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1.2;color:#181d19;margin:0 0 14px">Reset your Base password.</h1>
+      <p style="line-height:1.65;color:#444;margin-bottom:20px">An administrator has initiated a password reset request for your account. Please click the button below to choose a new password.</p>
+      ${ctaButton('Choose a new password →', d.resetLink, '#006B3F')}
+      <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:4px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#7a5800;font-family:'Public Sans',Arial;font-weight:700">
+        ⚠ This link is valid for ${hrsText}. If you did not request this password reset, please ignore this email safely. Your account remains secure.
+      </div>
+    </div>
+    ${emailFooter(`The Base Movement · Accra, Ghana · thebasemovement.info`)}
+  </div>
+  ${SHELL_CLOSE}`
+}

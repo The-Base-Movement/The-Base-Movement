@@ -14,6 +14,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail } from '../_shared/admin-auth.ts'
+import { passwordResetEmail } from '../_shared/email-templates.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -87,6 +88,7 @@ Deno.serve(async (req: Request) => {
     }
 
     let targetEmail = ''
+    let targetName = 'Patriot'
     let isProvisionedNow = false
 
     const { data: targetAuth, error: targetError } = await admin.auth.admin.getUserById(user_id)
@@ -161,9 +163,11 @@ Deno.serve(async (req: Request) => {
       }
 
       targetEmail = finalEmail
+      targetName = profile.full_name
       isProvisionedNow = true
     } else {
       targetEmail = targetAuth.user.email ?? ''
+      targetName = targetAuth.user.user_metadata?.name || 'Patriot'
     }
 
     if (!targetEmail) {
@@ -194,6 +198,11 @@ Deno.serve(async (req: Request) => {
     if (sgKey && realEmail) {
       try {
         const senderEmail = await getSenderEmail(admin)
+        const html = passwordResetEmail({
+          name: targetName,
+          resetLink: customLink,
+          expiryHours: 24,
+        })
         const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
           method: 'POST',
           headers: { Authorization: `Bearer ${sgKey}`, 'Content-Type': 'application/json' },
@@ -206,18 +215,12 @@ Deno.serve(async (req: Request) => {
                 type: 'text/plain',
                 value:
                   `An administrator started a password reset for your account.\n\n` +
-                  `Open this link to choose a new password (valid for 1 hour):\n${customLink}\n\n` +
-                  `If you didn't expect this, you can ignore this email.`,
+                  `Open this link to choose a new password (valid for 24 hours):\n${customLink}\n\n` +
+                  `If you did not request this password reset, please ignore this email safely. Your account remains secure.`,
               },
               {
                 type: 'text/html',
-                value:
-                  `<p>An administrator started a password reset for your account.</p>` +
-                  `<p><a href="${customLink}" style="display:inline-block;padding:12px 20px;` +
-                  `background:#006B3F;color:#fff;border-radius:8px;text-decoration:none;` +
-                  `font-family:sans-serif">Choose a new password</a></p>` +
-                  `<p style="font-family:sans-serif;font-size:13px;color:#555">` +
-                  `This link is valid for 1 hour. If you didn't expect this, ignore this email.</p>`,
+                value: html,
               },
             ],
           }),
