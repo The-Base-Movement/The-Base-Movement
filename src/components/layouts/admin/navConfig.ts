@@ -41,7 +41,7 @@ export interface NavItem {
 const DEPARTMENT_NAV_ITEMS: NavItem[] = DEPARTMENT_CATALOG.map((department) => ({
   to: `/admin/departments/${department.id}`,
   icon: department.icon,
-  label: 'My Department',
+  label: department.name,
   allowedRoles: department.access?.allowedRoles,
   permission: department.access?.permission,
 }))

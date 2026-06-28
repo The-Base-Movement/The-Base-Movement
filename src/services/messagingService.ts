@@ -1,5 +1,10 @@
 // src/services/messagingService.ts
 import { supabase } from '@/lib/supabase'
+import {
+  getDepartmentCatalogRow,
+  getDepartmentCatalogRows,
+  type DepartmentCatalogRow,
+} from '@/lib/departmentCatalog'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import type {
   Conversation,
@@ -898,8 +903,14 @@ class MessagingService {
         base().eq('status', 'resolved').gte('updated_at', since30d),
         base(),
       ])
+    const catalogRow = getDepartmentCatalogRow(deptId)
     return {
-      dept: deptRow as Record<string, unknown> | null,
+      dept: catalogRow
+        ? ({ ...catalogRow, ...(deptRow as Partial<DepartmentCatalogRow> | null) } as Record<
+            string,
+            unknown
+          >)
+        : ((deptRow as Record<string, unknown> | null) ?? null),
       stats: {
         open: open.count ?? 0,
         inProgress: inProgress.count ?? 0,
@@ -961,13 +972,18 @@ class MessagingService {
     for (const t of (tickets ?? []) as { department_id: string }[]) {
       counts[t.department_id] = (counts[t.department_id] ?? 0) + 1
     }
+    const departmentRowsById = new Map(
+      ((depts ?? []) as Partial<DepartmentCatalogRow>[]).map((department) => [
+        department.id,
+        department,
+      ])
+    )
+    const departments = getDepartmentCatalogRows().map((department) => ({
+      ...department,
+      ...(departmentRowsById.get(department.id) ?? {}),
+    }))
     return {
-      departments: (depts ?? []) as {
-        id: string
-        name: string
-        icon: string
-        sort_order: number
-      }[],
+      departments,
       openCounts: counts,
     }
   }

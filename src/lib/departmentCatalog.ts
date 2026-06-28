@@ -26,6 +26,17 @@ export interface DepartmentCatalogEntry {
   }
 }
 
+export interface DepartmentCatalogRow {
+  id: DepartmentId
+  name: string
+  handler_roles: AdminRole[]
+  restricted_submitter_roles: AdminRole[] | null
+  icon: string
+  sort_order: number
+  active: boolean
+  lead_id: string | null
+}
+
 const elevated: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER']
 
 const boardRoles: AdminRole[] = [
@@ -215,4 +226,33 @@ export const CANONICAL_DEPARTMENT_IDS = new Set<string>(
 
 export function getDepartmentCatalogEntry(id: string | undefined) {
   return DEPARTMENT_CATALOG.find((department) => department.id === id) ?? null
+}
+
+export function getDepartmentCatalogRow(id: string | undefined): DepartmentCatalogRow | null {
+  const department = getDepartmentCatalogEntry(id)
+  if (!department) return null
+
+  return {
+    id: department.id,
+    name: department.name,
+    handler_roles: department.handlerRoles,
+    restricted_submitter_roles: department.restrictedSubmitterRoles,
+    icon: department.icon,
+    sort_order: department.sortOrder,
+    active: true,
+    lead_id: null,
+  }
+}
+
+export function getDepartmentCatalogRows(): DepartmentCatalogRow[] {
+  return DEPARTMENT_CATALOG.map((department) => ({
+    id: department.id,
+    name: department.name,
+    handler_roles: department.handlerRoles,
+    restricted_submitter_roles: department.restrictedSubmitterRoles,
+    icon: department.icon,
+    sort_order: department.sortOrder,
+    active: true,
+    lead_id: null,
+  }))
 }

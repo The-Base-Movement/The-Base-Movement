@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { CANONICAL_DEPARTMENT_IDS, DEPARTMENT_CATALOG } from '@/lib/departmentCatalog'
+import {
+  CANONICAL_DEPARTMENT_IDS,
+  DEPARTMENT_CATALOG,
+  getDepartmentCatalogRow,
+  getDepartmentCatalogRows,
+} from '@/lib/departmentCatalog'
 import { getAdminRouteAccessDecision, getAdminRouteRule } from '@/lib/adminRouteAccess'
 import type { AdminUser } from '@/types/admin'
 
@@ -53,5 +58,18 @@ describe('departmentCatalog', () => {
         getAdminRouteAccessDecision(superAdmin, `/admin/departments/${department.id}`).allowed
       ).toBe(true)
     })
+  })
+
+  it('can provide helpdesk-shaped fallback rows for every canonical department', () => {
+    expect(getDepartmentCatalogRows()).toHaveLength(DEPARTMENT_CATALOG.length)
+    expect(getDepartmentCatalogRow('board-governance')).toMatchObject({
+      id: 'board-governance',
+      name: 'Board / Governance',
+      icon: 'corporate_fare',
+      sort_order: 1,
+      active: true,
+      lead_id: null,
+    })
+    expect(getDepartmentCatalogRow('media')).toBeNull()
   })
 })
