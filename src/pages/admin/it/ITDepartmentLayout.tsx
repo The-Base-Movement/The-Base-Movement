@@ -93,48 +93,57 @@ export default function ITDepartmentLayout() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          minHeight: 'calc(100vh - 160px)',
           padding: '60px 24px',
           textAlign: 'center',
           gap: 16,
+          backgroundImage:
+            "linear-gradient(hsl(var(--background) / 0.76), hsl(var(--background) / 0.86)), url('/branding/restricted-access-area-bg.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          borderRadius: 'var(--radius-lg)',
         }}
       >
-        <div
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: '50%',
-            background: 'hsl(var(--destructive) / 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: 28, color: 'hsl(var(--destructive))' }}
-          >
-            lock
-          </span>
-        </div>
-        <div>
-          <p
+        <div className="panel" style={{ maxWidth: 560, padding: '32px 28px' }}>
+          <div
             style={{
-              margin: '0 0 6px',
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 16,
-              color: 'hsl(var(--on-surface))',
+              width: 56,
+              height: 56,
+              margin: '0 auto 16px',
+              borderRadius: '50%',
+              background: 'hsl(var(--destructive) / 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            Access Restricted
-          </p>
-          <p style={{ margin: 0, fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-            The IT Department is only accessible to approved IT and system administrators.
-          </p>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 28, color: 'hsl(var(--destructive))' }}
+            >
+              lock
+            </span>
+          </div>
+          <div>
+            <p
+              style={{
+                margin: '0 0 6px',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 16,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Access Restricted
+            </p>
+            <p style={{ margin: '0 0 18px', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
+              The IT Department is only accessible to approved IT and system administrators.
+            </p>
+          </div>
+          <button className="btn btn-outline btn-sm" onClick={() => navigate('/admin/dashboard')}>
+            Back to dashboard
+          </button>
         </div>
-        <button className="btn btn-outline btn-sm" onClick={() => navigate('/admin/dashboard')}>
-          Back to dashboard
-        </button>
       </div>
     )
   }

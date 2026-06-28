@@ -5,6 +5,7 @@ import { messagingService } from '@/services/messagingService'
 import { adminService } from '@/services/adminService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { Helpdesk } from '@/components/admin/Helpdesk'
+import { getDepartmentCatalogEntry, type DepartmentId } from '@/lib/departmentCatalog'
 import type { HelpdeskDepartment } from '@/components/admin/Helpdesk/types'
 
 interface LeadProfile {
@@ -32,106 +33,16 @@ const RED = 'hsl(var(--destructive))'
 const INK = 'hsl(var(--on-surface))'
 
 // Department-specific tooling — every link is an existing admin route
-const QUICK_LINKS: Record<string, QuickLink[]> = {
-  membership: [
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
-    { to: '/admin/verification', icon: 'verified_user', label: 'KYC Queue', color: GOLD },
-    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: INK },
-    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: GREEN },
-  ],
-  constituency: [
-    { to: '/admin/constituencies', icon: 'location_city', label: 'Constituencies', color: GREEN },
-    { to: '/admin/regions', icon: 'map', label: 'Regions', color: GOLD },
-    { to: '/admin/chapter-ops', icon: 'hub', label: 'Chapter Operations', color: INK },
-    { to: '/admin/ground-game', icon: 'directions_walk', label: 'Ground Game', color: RED },
-  ],
-  chapter: [
-    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: GREEN },
-    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: GOLD },
-    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: INK },
-  ],
-  finance: [
-    { to: '/admin/finance-dashboard', icon: 'analytics', label: 'Finance Dashboard', color: GREEN },
-    { to: '/admin/donations', icon: 'volunteer_activism', label: 'Donations', color: GOLD },
-    { to: '/admin/spending-ledger', icon: 'receipt_long', label: 'Spending Ledger', color: INK },
-    { to: '/admin/finance-requests', icon: 'request_quote', label: 'Finance Requests', color: RED },
-  ],
-  media: [
-    { to: '/admin/blogs', icon: 'article', label: 'Blog Posts', color: GREEN },
-    { to: '/admin/broadcasts', icon: 'campaign', label: 'Broadcasts', color: GOLD },
-    { to: '/admin/newsletter', icon: 'mail', label: 'Newsletter', color: INK },
-    { to: '/admin/media', icon: 'photo_library', label: 'Media Library', color: GREEN },
-    { to: '/admin/authors', icon: 'history_edu', label: 'Authors', color: GOLD },
-  ],
-  store: [
-    { to: '/admin/store', icon: 'storefront', label: 'Store', color: GREEN },
-    { to: '/admin/orders', icon: 'shopping_bag', label: 'Orders', color: GOLD },
-    {
-      to: '/admin/logistics-intelligence',
-      icon: 'inventory_2',
-      label: 'Logistics Intelligence',
-      color: INK,
-    },
-  ],
-  youth: [
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
-    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: GOLD },
-    { to: '/admin/broadcasts', icon: 'campaign', label: 'Broadcasts', color: INK },
-    { to: '/admin/jobs', icon: 'work', label: 'Jobs Board', color: GREEN },
-    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: GOLD },
-    { to: '/admin/referral-analytics', icon: 'share', label: 'Referral Analytics', color: INK },
-  ],
-  executive: [
+const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
+  'board-governance': [
     { to: '/admin/executive', icon: 'corporate_fare', label: 'Executive Dashboard', color: GREEN },
-    { to: '/admin/war-room', icon: 'radio', label: 'War Room', color: RED },
-    { to: '/admin/finance-dashboard', icon: 'analytics', label: 'Finance Overview', color: GREEN },
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: INK },
-    { to: '/admin/directives', icon: 'gavel', label: 'Directives', color: GOLD },
-    { to: '/admin/priorities', icon: 'flag', label: 'Priorities', color: INK },
     { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics', color: GREEN },
-    { to: '/admin/roadmap', icon: 'route', label: 'Mission Roadmap', color: GOLD },
-  ],
-  founder: [
-    { to: '/admin/executive', icon: 'corporate_fare', label: 'Executive Dashboard', color: GREEN },
-    { to: '/admin/finance-dashboard', icon: 'analytics', label: 'Finance Overview', color: GOLD },
-    { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics', color: GREEN },
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: INK },
     { to: '/admin/priorities', icon: 'flag', label: 'Priorities', color: RED },
     { to: '/admin/roadmap', icon: 'route', label: 'Mission Roadmap', color: GOLD },
     { to: '/admin/party-officials', icon: 'badge', label: 'Party Officials', color: INK },
     { to: '/admin/administrators', icon: 'shield', label: 'Administrators', color: GREEN },
   ],
-  organizer: [
-    { to: '/admin/war-room', icon: 'radio', label: 'War Room', color: RED },
-    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: GREEN },
-    { to: '/admin/constituencies', icon: 'location_city', label: 'Constituencies', color: GOLD },
-    { to: '/admin/broadcasts', icon: 'campaign', label: 'Mass Mobilization', color: INK },
-    { to: '/admin/ground-game', icon: 'directions_walk', label: 'Ground Game', color: RED },
-    { to: '/admin/polling-stations', icon: 'ballot', label: 'Polling Stations', color: GREEN },
-    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: GOLD },
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: INK },
-  ],
-  movement_leader: [
-    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: GREEN },
-    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: GOLD },
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: INK },
-    { to: '/admin/broadcasts', icon: 'campaign', label: 'Mobilization', color: RED },
-    { to: '/admin/jobs-analytics', icon: 'work', label: 'Jobs Analytics', color: GREEN },
-  ],
-  field: [
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
-    { to: '/admin/verification', icon: 'verified_user', label: 'KYC Queue', color: GOLD },
-    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: INK },
-    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: GREEN },
-  ],
-  intelligence: [
-    { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics', color: GREEN },
-    { to: '/admin/sentiment-intelligence', icon: 'psychology', label: 'Sentiment AI', color: GOLD },
-    { to: '/admin/ml-intelligence', icon: 'auto_awesome', label: 'ML Intelligence', color: INK },
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
-    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: RED },
-  ],
-  it: [
+  'national-ict': [
     { to: '/admin/it-department', icon: 'computer', label: 'IT Department', color: GREEN },
     {
       to: '/admin/it-department/helpdesk',
@@ -140,6 +51,66 @@ const QUICK_LINKS: Record<string, QuickLink[]> = {
       color: GOLD,
     },
     { to: '/admin/it-department/assets', icon: 'inventory_2', label: 'IT Assets', color: INK },
+    {
+      to: '/admin/it-department/hierarchy',
+      icon: 'account_tree',
+      label: 'IT Hierarchy',
+      color: GREEN,
+    },
+    {
+      to: '/admin/it-department/organizational-structure',
+      icon: 'schema',
+      label: 'Org Structure',
+      color: GOLD,
+    },
+    { to: '/admin/administrators', icon: 'shield', label: 'Administrators', color: INK },
+  ],
+  'security-intel': [
+    { to: '/admin/war-room', icon: 'radio', label: 'War Room', color: RED },
+    { to: '/admin/sentiment-intelligence', icon: 'psychology', label: 'Sentiment AI', color: GOLD },
+    { to: '/admin/ml-intelligence', icon: 'auto_awesome', label: 'ML Intelligence', color: INK },
+    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
+    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: RED },
+  ],
+  'operations-organising': [
+    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
+    { to: '/admin/verification', icon: 'verified_user', label: 'KYC Queue', color: GOLD },
+    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: INK },
+    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: GREEN },
+    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: GREEN },
+    { to: '/admin/constituencies', icon: 'location_city', label: 'Constituencies', color: GREEN },
+    { to: '/admin/regions', icon: 'map', label: 'Regions', color: GOLD },
+    { to: '/admin/ground-game', icon: 'directions_walk', label: 'Ground Game', color: RED },
+    { to: '/admin/polling-stations', icon: 'ballot', label: 'Polling Stations', color: GREEN },
+    { to: '/admin/logistics-intelligence', icon: 'inventory_2', label: 'Logistics', color: INK },
+    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: GOLD },
+    { to: '/admin/jobs', icon: 'work', label: 'Jobs Board', color: GREEN },
+    { to: '/admin/referral-analytics', icon: 'share', label: 'Referral Analytics', color: INK },
+  ],
+  'media-communications': [
+    { to: '/admin/blogs', icon: 'article', label: 'Blog Posts', color: GREEN },
+    { to: '/admin/broadcasts', icon: 'campaign', label: 'Broadcasts', color: GOLD },
+    { to: '/admin/newsletter', icon: 'mail', label: 'Newsletter', color: INK },
+    { to: '/admin/media', icon: 'photo_library', label: 'Media Library', color: GREEN },
+    { to: '/admin/authors', icon: 'history_edu', label: 'Authors', color: GOLD },
+  ],
+  'finance-fundraising': [
+    { to: '/admin/finance-dashboard', icon: 'analytics', label: 'Finance Dashboard', color: GREEN },
+    { to: '/admin/donations', icon: 'volunteer_activism', label: 'Donations', color: GOLD },
+    { to: '/admin/spending-ledger', icon: 'receipt_long', label: 'Spending Ledger', color: INK },
+    { to: '/admin/finance-requests', icon: 'request_quote', label: 'Finance Requests', color: RED },
+  ],
+  'research-policy': [
+    { to: '/admin/priorities', icon: 'flag', label: 'Priorities', color: RED },
+    { to: '/admin/roadmap', icon: 'route', label: 'Mission Roadmap', color: GOLD },
+    { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics', color: GREEN },
+    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: INK },
+  ],
+  'appointment-welfare': [
+    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: GREEN },
+    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: INK },
+    { to: '/admin/verification', icon: 'verified_user', label: 'KYC Queue', color: GOLD },
+    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: GREEN },
   ],
 }
 
@@ -155,6 +126,7 @@ interface DeptStats {
 export default function DepartmentDashboard() {
   const { deptId } = useParams<{ deptId: string }>()
   const { setCurrentLabel } = usePageLabel()
+  const catalogDept = getDepartmentCatalogEntry(deptId)
 
   const [dept, setDept] = useState<HelpdeskDepartment | null>(null)
   const [stats, setStats] = useState<DeptStats | null>(null)
@@ -173,7 +145,7 @@ export default function DepartmentDashboard() {
   }, [dept, setCurrentLabel])
 
   useEffect(() => {
-    if (!deptId) return
+    if (!deptId || !catalogDept) return
     let cancelled = false
     async function load() {
       const { dept: deptRow, stats: deptStats } = await messagingService.getDepartmentDashboard(
@@ -196,7 +168,7 @@ export default function DepartmentDashboard() {
     return () => {
       cancelled = true
     }
-  }, [deptId])
+  }, [catalogDept, deptId])
 
   async function openAppoint() {
     setSelectedLead(dept?.lead_id ?? '')
@@ -208,7 +180,7 @@ export default function DepartmentDashboard() {
   }
 
   async function saveLead() {
-    if (!deptId) return
+    if (!deptId || !catalogDept) return
     setSavingLead(true)
     const newLeadId = selectedLead || null
     try {
@@ -230,7 +202,7 @@ export default function DepartmentDashboard() {
 
   if (!deptId) return null
 
-  if (!loading && !dept) {
+  if (!catalogDept || (!loading && !dept)) {
     return (
       <div className="main">
         <div className="panel" style={{ padding: '48px 24px', textAlign: 'center' }}>
@@ -268,7 +240,7 @@ export default function DepartmentDashboard() {
     { label: 'All Time', value: stats?.total, bar: GREEN, sub: 'Total tickets received' },
   ]
 
-  const quickLinks = QUICK_LINKS[deptId] ?? []
+  const quickLinks = catalogDept ? QUICK_LINKS[catalogDept.id] : []
 
   return (
     <div className="main">

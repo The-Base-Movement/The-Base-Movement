@@ -5,6 +5,7 @@
  */
 
 import { getNavGroups, type NavItem } from '@/components/layouts/admin/navConfig'
+import { DEPARTMENT_CATALOG } from '@/lib/departmentCatalog'
 import { userCan } from '@/lib/roleCatalog'
 import type { AdminPermission, AdminRole, AdminUser } from '@/types/admin'
 
@@ -34,7 +35,7 @@ type RouteRule = RouteAccessSpec & {
   /** URL path target */
   to: string
   /** Matching strategy for matching pathnames */
-  match: 'exact_or_descendant' | 'descendant_only'
+  match: 'exact' | 'exact_or_descendant' | 'descendant_only'
 }
 
 /**
@@ -50,6 +51,14 @@ type AccessDecision = {
 }
 
 const GLOBAL_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
+
+const DEPARTMENT_ROUTE_RULES: RouteRule[] = DEPARTMENT_CATALOG.map((department) => ({
+  to: `/admin/departments/${department.id}`,
+  match: 'exact_or_descendant',
+  allowedRoles: department.access?.allowedRoles,
+  permission: department.access?.permission,
+  source: `department-${department.id}`,
+}))
 
 const MANUAL_ROUTE_RULES: RouteRule[] = [
   // ── Permission-based routes (respect database role config) ──
@@ -119,94 +128,11 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
     match: 'exact_or_descendant',
     source: 'personal-admin-notifications',
   },
-  // ── Department dashboards (role-gated, each role sees own dept) ──
-  {
-    to: '/admin/departments/finance',
-    match: 'exact_or_descendant',
-    permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
-    source: 'department-finance',
-  },
-  {
-    to: '/admin/departments/media',
-    match: 'exact_or_descendant',
-    permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
-    source: 'department-media',
-  },
-  {
-    to: '/admin/departments/store',
-    match: 'exact_or_descendant',
-    permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' },
-    source: 'department-store',
-  },
-  {
-    to: '/admin/departments/it',
-    match: 'exact_or_descendant',
-    allowedRoles: GLOBAL_ROLES,
-    source: 'department-it',
-  },
-  {
-    to: '/admin/departments/membership',
-    match: 'exact_or_descendant',
-    permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
-    source: 'department-membership',
-  },
-  {
-    to: '/admin/departments/field',
-    match: 'exact_or_descendant',
-    permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
-    source: 'department-field',
-  },
-  {
-    to: '/admin/departments/intelligence',
-    match: 'exact_or_descendant',
-    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'INTELLIGENCE_ANALYST'],
-    source: 'department-intelligence',
-  },
-  {
-    to: '/admin/departments/chapter',
-    match: 'exact_or_descendant',
-    permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
-    source: 'department-chapter',
-  },
-  {
-    to: '/admin/departments/constituency',
-    match: 'exact_or_descendant',
-    permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
-    source: 'department-constituency',
-  },
-  {
-    to: '/admin/departments/youth',
-    match: 'exact_or_descendant',
-    permission: { action: 'MANAGE_POLLS', resource: 'POLLS' },
-    source: 'department-youth',
-  },
-  {
-    to: '/admin/departments/founder',
-    match: 'exact_or_descendant',
-    allowedRoles: ['SUPER_ADMIN', 'FOUNDER'],
-    source: 'department-founder',
-  },
-  {
-    to: '/admin/departments/organizer',
-    match: 'exact_or_descendant',
-    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'ORGANIZER'],
-    source: 'department-organizer',
-  },
-  {
-    to: '/admin/departments/executive',
-    match: 'exact_or_descendant',
-    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE', 'ORGANIZER'],
-    source: 'department-executive',
-  },
-  {
-    to: '/admin/departments/movement_leader',
-    match: 'exact_or_descendant',
-    allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'MOVEMENT_LEADER'],
-    source: 'department-movement-leader',
-  },
+  // ── Department dashboards (canonical hierarchy departments only) ──
+  ...DEPARTMENT_ROUTE_RULES,
   {
     to: '/admin/departments',
-    match: 'exact_or_descendant',
+    match: 'exact',
     allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE'],
     source: 'department-index',
   },
@@ -236,7 +162,7 @@ function buildNavRouteRules(): RouteRule[] {
         ...spec,
         source: 'nav-config',
         to: item.to,
-        match: 'exact_or_descendant',
+        match: item.to === '/admin/departments' ? 'exact' : 'exact_or_descendant',
       })
 
       if (item.subItems?.length) {
@@ -254,6 +180,10 @@ function buildNavRouteRules(): RouteRule[] {
  * Validates if the target path matches the rule specification path.
  */
 function matchesRule(rule: RouteRule, pathname: string): boolean {
+  if (rule.match === 'exact') {
+    return pathname === rule.to
+  }
+
   if (rule.match === 'descendant_only') {
     return pathname.startsWith(`${rule.to}/`)
   }

@@ -315,9 +315,16 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 <section
                   className="main"
                   style={{
+                    minHeight: 'calc(100vh - 160px)',
                     padding: '48px 24px',
                     display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
+                    backgroundImage:
+                      "linear-gradient(hsl(var(--background) / 0.76), hsl(var(--background) / 0.86)), url('/branding/restricted-access-area-bg.png')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    borderRadius: 'var(--radius-lg)',
                   }}
                 >
                   <div

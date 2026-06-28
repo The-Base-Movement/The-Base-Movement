@@ -66,7 +66,11 @@ export function AdminGate({ children }: AdminGateProps) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#0a0d0b',
+        backgroundColor: '#0a0d0b',
+        backgroundImage:
+          "linear-gradient(rgba(10, 13, 11, 0.78), rgba(10, 13, 11, 0.88)), url('/branding/restricted-access-area-bg.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         fontFamily: "'Public Sans', sans-serif",
         padding: 20,
       }}

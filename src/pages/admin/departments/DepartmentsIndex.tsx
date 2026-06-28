@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { messagingService } from '@/services/messagingService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { CANONICAL_DEPARTMENT_IDS } from '@/lib/departmentCatalog'
 
 export default function DepartmentsIndex() {
   const { setCurrentLabel } = usePageLabel()
@@ -19,7 +20,7 @@ export default function DepartmentsIndex() {
     async function load() {
       const { departments: depts, openCounts: counts } =
         await messagingService.getDepartmentsWithOpenTickets()
-      setDepartments(depts)
+      setDepartments(depts.filter((dept) => CANONICAL_DEPARTMENT_IDS.has(dept.id)))
       setOpenCounts(counts)
       setLoading(false)
     }
@@ -56,7 +57,7 @@ export default function DepartmentsIndex() {
         >
           {departments.map((d) => {
             const open = openCounts[d.id] ?? 0
-            const to = d.id === 'it' ? '/admin/it-department' : `/admin/departments/${d.id}`
+            const to = `/admin/departments/${d.id}`
             return (
               <Link
                 key={d.id}

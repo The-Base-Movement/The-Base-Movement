@@ -5,6 +5,7 @@
  * Defines permission gates, role restrictions, and dynamically embeds real-time alerts counts.
  */
 
+import { DEPARTMENT_CATALOG } from '@/lib/departmentCatalog'
 import type { AdminPermission, AdminRole } from '@/types/admin'
 
 const GLOBAL_ROLES: AdminRole[] = [
@@ -37,6 +38,14 @@ export interface NavItem {
   subItems?: NavItem[]
 }
 
+const DEPARTMENT_NAV_ITEMS: NavItem[] = DEPARTMENT_CATALOG.map((department) => ({
+  to: `/admin/departments/${department.id}`,
+  icon: department.icon,
+  label: 'My Department',
+  allowedRoles: department.access?.allowedRoles,
+  permission: department.access?.permission,
+}))
+
 /**
  * getNavGroups
  * -------------------------------------------------------------
@@ -65,97 +74,7 @@ export const getNavGroups = (
         label: 'Departments',
         allowedRoles: ['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE'],
       },
-      {
-        to: '/admin/departments/executive',
-        icon: 'corporate_fare',
-        label: 'My Department',
-        allowedRoles: ['ORGANIZER'],
-      },
-      {
-        to: '/admin/departments/movement_leader',
-        icon: 'flag',
-        label: 'My Department',
-        allowedRoles: ['MOVEMENT_LEADER'],
-      },
-      {
-        to: '/admin/departments/finance',
-        icon: 'account_balance',
-        label: 'My Department',
-        allowedRoles: ['FINANCE_OFFICER'],
-      },
-      {
-        to: '/admin/departments/media',
-        icon: 'newsmode',
-        label: 'My Department',
-        allowedRoles: [
-          'CHIEF_EDITOR',
-          'SENIOR_EDITOR',
-          'EDITOR',
-          'JUNIOR_EDITOR',
-          'REGIONAL_CORRESPONDENT',
-          'COMMUNICATIONS_OFFICER',
-        ],
-      },
-      {
-        to: '/admin/departments/store',
-        icon: 'storefront',
-        label: 'My Department',
-        allowedRoles: ['STORE_MANAGER'],
-      },
-      {
-        to: '/admin/departments/it',
-        icon: 'computer',
-        label: 'My Department',
-        allowedRoles: ['IT_MANAGER'],
-      },
-      {
-        to: '/admin/departments/membership',
-        icon: 'group',
-        label: 'My Department',
-        allowedRoles: ['ADMIN', 'ADMIN_L2'],
-      },
-      {
-        to: '/admin/departments/field',
-        icon: 'directions_walk',
-        label: 'My Department',
-        allowedRoles: ['FIELD_AGENT'],
-      },
-      {
-        to: '/admin/departments/intelligence',
-        icon: 'psychology',
-        label: 'My Department',
-        allowedRoles: ['INTELLIGENCE_ANALYST'],
-      },
-      {
-        to: '/admin/departments/chapter',
-        icon: 'groups',
-        label: 'My Department',
-        allowedRoles: ['CHAPTER_LEAD', 'CHAPTER_SECRETARY', 'CHAPTER_TREASURER'],
-      },
-      {
-        to: '/admin/departments/constituency',
-        icon: 'location_city',
-        label: 'My Department',
-        allowedRoles: [
-          'CONSTITUENCY_LEAD',
-          'CONSTITUENCY_SECRETARY',
-          'CONSTITUENCY_DEPUTY',
-          'CONSTITUENCY_TREASURER',
-          'REGIONAL_DIRECTOR',
-        ],
-      },
-      {
-        to: '/admin/departments/youth',
-        icon: 'school',
-        label: 'My Department',
-        allowedRoles: ['YOUTH_LEADER'],
-      },
-      {
-        to: '/admin/departments/executive',
-        icon: 'corporate_fare',
-        label: 'My Department',
-        allowedRoles: ['EXECUTIVE', 'MOVEMENT_LEADER', 'ORGANIZER'],
-      },
+      ...DEPARTMENT_NAV_ITEMS,
       { to: '/admin/war-room', icon: 'radio', label: 'War Room', pill: 'LIVE' },
       { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics' },
       { to: '/admin/logistics-intelligence', icon: 'inventory_2', label: 'Logistics' },

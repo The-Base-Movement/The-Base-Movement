@@ -111,7 +111,6 @@ const AdminFinanceDashboard = lazy(() => import('./pages/admin/FinanceDashboard'
 const AdminExecutiveDashboard = lazy(() => import('./pages/admin/ExecutiveDashboard'))
 const DepartmentsIndex = lazy(() => import('./pages/admin/departments/DepartmentsIndex'))
 const DepartmentDashboard = lazy(() => import('./pages/admin/departments/DepartmentDashboard'))
-const FieldAgentDashboard = lazy(() => import('./pages/admin/departments/FieldAgentDashboard'))
 const ITDepartmentLayout = lazy(() => import('./pages/admin/it/ITDepartmentLayout'))
 const MediaHubLayout = lazy(() => import('./pages/admin/media-hub/MediaHubLayout'))
 const MediaWall = lazy(() => import('./pages/admin/media-hub/MediaWall'))
@@ -301,7 +300,6 @@ export const routes: RouteObject[] = [
           { path: '/admin/notifications', element: <AdminNotifications /> },
           { path: '/admin/password-resets', element: <AdminPasswordResets /> },
           { path: '/admin/departments', element: <DepartmentsIndex /> },
-          { path: '/admin/departments/field', element: <FieldAgentDashboard /> },
           { path: '/admin/departments/:deptId', element: <DepartmentDashboard /> },
           {
             element: <ITDepartmentLayout />,
