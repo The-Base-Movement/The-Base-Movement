@@ -223,24 +223,35 @@ export const jobTaxonomyService = {
   },
 
   /**
-   * Member-usage counts per taxonomy id, derived from the role-gated analytics RPC
-   * (so it correctly sees every member, not just the caller's own row). Used to warn
-   * before deleting an in-use entry — the DB also hard-blocks such deletes via FK.
+   * Member-usage counts per taxonomy id, aggregated on the database side efficiently via RPC
+   * (so it correctly sees all members and is pagination-proof). Used to warn before deleting
+   * an in-use entry — the DB also hard-blocks such deletes via FK.
    */
   async getUsageCounts(): Promise<{
     industries: Record<number, number>
     subCategories: Record<number, number>
     roles: Record<number, number>
   }> {
-    const rows = await this.getAnalyticsRows()
+    const { data, error } = await supabase.rpc('get_job_taxonomy_usage')
+    if (error) throw error
+
     const industries: Record<number, number> = {}
     const subCategories: Record<number, number> = {}
     const roles: Record<number, number> = {}
-    for (const r of rows) {
-      if (r.industry_id != null) industries[r.industry_id] = (industries[r.industry_id] ?? 0) + 1
-      if (r.sub_category_id != null)
-        subCategories[r.sub_category_id] = (subCategories[r.sub_category_id] ?? 0) + 1
-      if (r.role_id != null) roles[r.role_id] = (roles[r.role_id] ?? 0) + 1
+
+    for (const r of (data as Array<{
+      entry_type: string
+      entry_id: number
+      usage_count: string | number
+    }>) ?? []) {
+      const count = Number(r.usage_count)
+      if (r.entry_type === 'industry') {
+        industries[r.entry_id] = count
+      } else if (r.entry_type === 'sub_category') {
+        subCategories[r.entry_id] = count
+      } else if (r.entry_type === 'role') {
+        roles[r.entry_id] = count
+      }
     }
     return { industries, subCategories, roles }
   },
