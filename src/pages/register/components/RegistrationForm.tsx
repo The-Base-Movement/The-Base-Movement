@@ -153,7 +153,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   >
                     Email address{' '}
                     <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
-                      (Optional - You can register with phone number instead)
+                      (Optional)
                     </span>
                   </label>
                   <input
@@ -166,6 +166,10 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                     placeholder="patriot@thebase.gh"
                   />
+                  <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
+                    Phone number is the primary contact. Add email if you want account updates there
+                    too.
+                  </p>
                 </div>
 
                 <div className="space-y-1.5">
@@ -365,7 +369,10 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     htmlFor="input-fbfe65"
                     className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                   >
-                    Mobile Number
+                    Primary phone number{' '}
+                    <span className="text-destructive normal-case tracking-normal ml-1">
+                      (Required)
+                    </span>
                   </label>
                   <div className="flex">
                     <div className="flex items-center justify-center h-[46px] px-3 bg-muted/10 border border-border border-r-0 text-sm font-medium text-on-surface-muted min-w-[60px]">

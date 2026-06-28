@@ -15,6 +15,12 @@ async function getDummyEmail(phone: string): Promise<string> {
   return `${hashHex.slice(0, 16)}@thebase.org`
 }
 
+function normalizeRegistrationPhone(countryCode: string, contactNumber: string): string {
+  const raw = contactNumber.trim().replace(/\s+/g, '')
+  if (raw.startsWith('+')) return raw
+  return `${countryCode}${raw.replace(/^0+/, '')}`
+}
+
 export interface SubmitConfig {
   platform: string
   formData: RegistrationFormData
@@ -41,8 +47,7 @@ export const registrationService = {
     const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
 
     const authEmail = formData.email ? formData.email.trim() : null
-    const cleanPhone =
-      formData.countryCode + formData.contactNumber.replace(/^0+/, '').replace(/\s+/g, '')
+    const cleanPhone = normalizeRegistrationPhone(formData.countryCode, formData.contactNumber)
     const dummyEmail = await getDummyEmail(cleanPhone)
     const finalAuthEmail = authEmail || dummyEmail
 

@@ -65,8 +65,8 @@ export default function Register() {
     const defaults: RegistrationFormData = {
       idNumber: '',
       fullName: '',
-      countryCode: '+233',
-      country: 'Ghana',
+      countryCode: platform === 'DIASPORA' ? '' : '+233',
+      country: platform === 'DIASPORA' ? '' : 'Ghana',
       children_count: 0,
       contactNumber: '',
       ageRange: '',
@@ -132,8 +132,15 @@ export default function Register() {
 
   const handlePlatformChange = (newPlatform: string) => {
     setPlatform(newPlatform)
-    if (newPlatform === 'GHANA')
+    if (newPlatform === 'GHANA') {
       setFormData((prev) => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        country: prev.country === 'Ghana' ? '' : prev.country,
+        countryCode: prev.country === 'Ghana' ? '' : prev.countryCode,
+      }))
+    }
   }
 
   const handleFormScan = async (file: File) => {
@@ -173,10 +180,6 @@ export default function Register() {
       if (!formData.fullName.trim()) return 'Full name is required.'
       if (formData.fullName.trim().split(/\s+/).length < 2)
         return 'Please enter your full name (first and last).'
-      const phoneErr = validatePhone(formData.contactNumber, formData.countryCode)
-      if (phoneErr) return phoneErr
-      if (!formData.gender) return 'Please select your gender.'
-      if (!formData.ageRange) return 'Please select your age range.'
       if (platform === 'GHANA' && !formData.idNumber.trim()) return 'Ghana Card number is required.'
       if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
         return 'Please enter a valid email address.'
@@ -187,12 +190,16 @@ export default function Register() {
       } else {
         if (!formData.country) return 'Please select your country.'
       }
-      if (!formData.emergencyContactName.trim()) return 'Emergency contact name is required.'
-      if (!formData.emergencyNumber.trim()) return 'Emergency contact number is required.'
-    }
-    if (step === 4) {
+      const phoneErr = validatePhone(formData.contactNumber, formData.countryCode)
+      if (phoneErr) return phoneErr
+      if (!formData.gender) return 'Please select your gender.'
+      if (!formData.ageRange) return 'Please select your age range.'
       if (!formData.password || formData.password.length < 8)
         return 'Password must be at least 8 characters.'
+    }
+    if (step === 4) {
+      if (!formData.emergencyContactName.trim()) return 'Emergency contact name is required.'
+      if (!formData.emergencyNumber.trim()) return 'Emergency contact number is required.'
     }
     return null
   }
