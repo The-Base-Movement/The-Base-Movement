@@ -514,29 +514,44 @@ export function MemberDetailPanel({
             </div>
 
             {/* Quick stats */}
-            <div className="member-quick-stats">
-              {[
-                { label: 'Lifetime contribution', val: '₵0', sub: 'No donations yet' },
-                {
-                  label: 'Polls voted',
-                  val: pollVotes.length || '—',
-                  sub: 'Poll activity',
-                },
-                { label: 'Chapter activity', val: '—', sub: 'Events attended YTD' },
-                {
-                  label: 'Membership tier',
-                  val: member.type || 'Citizen',
-                  sub: 'Active tier',
-                  accent: true,
-                },
-              ].map((s, i) => (
-                <div key={i}>
-                  <div className="sl">{s.label}</div>
-                  <div className={`sv tnum${s.accent ? ' accent' : ''}`}>{s.val}</div>
-                  <div className="sd">{s.sub}</div>
+            {(() => {
+              const clearedDonations = donations.filter((d) => d.cleared)
+              const lifetimeContribution = clearedDonations.reduce(
+                (sum, d) => sum + (Number(d.amount) || 0),
+                0
+              )
+              return (
+                <div className="member-quick-stats">
+                  {[
+                    {
+                      label: 'Lifetime contribution',
+                      val: `₵${lifetimeContribution.toLocaleString()}`,
+                      sub: clearedDonations.length
+                        ? `${clearedDonations.length} cleared donation${clearedDonations.length === 1 ? '' : 's'}`
+                        : 'No donations yet',
+                    },
+                    {
+                      label: 'Polls voted',
+                      val: pollVotes.length || '—',
+                      sub: 'Poll activity',
+                    },
+                    { label: 'Chapter activity', val: '—', sub: 'Events attended YTD' },
+                    {
+                      label: 'Membership tier',
+                      val: member.type || 'Citizen',
+                      sub: 'Active tier',
+                      accent: true,
+                    },
+                  ].map((s, i) => (
+                    <div key={i}>
+                      <div className="sl">{s.label}</div>
+                      <div className={`sv tnum${s.accent ? ' accent' : ''}`}>{s.val}</div>
+                      <div className="sd">{s.sub}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )
+            })()}
           </div>
 
           {/* Tabs */}

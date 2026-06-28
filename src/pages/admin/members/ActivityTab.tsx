@@ -45,7 +45,8 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
       return { bg: '#f1f5ee', color: 'hsl(var(--primary))', icon: 'how_to_vote' }
     return { bg: '#f1f5ee', color: 'hsl(var(--primary))', icon: 'history' }
   }
-  const totalGiven = donations.reduce((s, d) => s + d.amount, 0)
+  const cleared = donations.filter((d) => d.cleared)
+  const totalGiven = cleared.reduce((s, d) => s + d.amount, 0)
   const barHeights = [20, 35, 25, 40, 60, 45, 55, 70, 62, 80, 72, 95]
   return (
     <div className="panel-twocol">
@@ -244,7 +245,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                   paddingBottom: 4,
                 }}
               >
-                lifetime · {donations.length} donations
+                lifetime · {cleared.length} donation{cleared.length !== 1 ? 's' : ''}
               </div>
             </div>
             <div
@@ -255,8 +256,8 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                 height: 48,
               }}
             >
-              {(donations.length > 0
-                ? donations.slice(-12).map((d, i, arr) => ({
+              {(cleared.length > 0
+                ? cleared.slice(-12).map((d, i, arr) => ({
                     h: Math.max(
                       8,
                       Math.round((d.amount / Math.max(...arr.map((x) => x.amount))) * 100)
@@ -277,7 +278,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                 />
               ))}
             </div>
-            {donations.length === 0 && (
+            {cleared.length === 0 && (
               <p
                 style={{
                   margin: '8px 0 0',

@@ -5,6 +5,9 @@ interface DonationsTabProps {
 }
 
 export function DonationsTab({ donations }: DonationsTabProps) {
+  const cleared = donations.filter((d) => d.cleared)
+  const totalGiven = cleared.reduce((s, d) => s + d.amount, 0)
+
   return (
     <div>
       <div className="panel" style={{ marginBottom: 20 }}>
@@ -40,7 +43,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
               >
                 ₵
               </span>
-              {donations.reduce((s, d) => s + d.amount, 0).toLocaleString() || '0'}
+              {totalGiven.toLocaleString() || '0'}
             </div>
             <div
               style={{
@@ -49,8 +52,8 @@ export function DonationsTab({ donations }: DonationsTabProps) {
                 paddingBottom: 5,
               }}
             >
-              lifetime · {donations.length} donation
-              {donations.length !== 1 ? 's' : ''}
+              lifetime · {cleared.length} donation
+              {cleared.length !== 1 ? 's' : ''}
             </div>
           </div>
           <div
@@ -62,8 +65,8 @@ export function DonationsTab({ donations }: DonationsTabProps) {
               marginBottom: 4,
             }}
           >
-            {(donations.length > 0
-              ? donations.slice(-12).map((d, i, arr) => ({
+            {(cleared.length > 0
+              ? cleared.slice(-12).map((d, i, arr) => ({
                   h: Math.max(
                     8,
                     Math.round((d.amount / Math.max(...arr.map((x) => x.amount))) * 100)
@@ -87,7 +90,7 @@ export function DonationsTab({ donations }: DonationsTabProps) {
               />
             ))}
           </div>
-          {donations.length === 0 && (
+          {cleared.length === 0 && (
             <p
               style={{
                 margin: '6px 0 0',
