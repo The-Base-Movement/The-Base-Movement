@@ -32,8 +32,20 @@ Deno.serve(async (req: Request) => {
     const authz = requireServiceRoleCall(req, serviceKey)
     if (!authz.ok) return authz.response
 
-    const { donationId } = (await req.json()) as { donationId: string }
-    if (!donationId) throw new Error('donationId is required')
+    let donationId: string
+    try {
+      const body = await req.json()
+      donationId = typeof body?.donationId === 'string' ? body.donationId.trim() : ''
+    } catch {
+      donationId = ''
+    }
+    if (!donationId) {
+      console.error('[RECEIPT] Missing or invalid donationId in request body')
+      return new Response(JSON.stringify({ error: 'donationId is required' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      })
+    }
 
     // @ts-ignore: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
