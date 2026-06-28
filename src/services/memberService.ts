@@ -402,20 +402,33 @@ class MemberService {
   }
 
   async getPendingVerifications(): Promise<PendingVerification[]> {
-    const { data, error } = await supabase
-      .from('users')
-      .select(
-        'id,registration_number,full_name,region,constituency,platform,country,phone_number,gender,age_range,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status'
-      )
-      .in('verification_status', ['In Review', 'Processing', 'Flagged'])
-      .order('joined_at', { ascending: false })
+    const PAGE = 1000
+    let from = 0
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let all: any[] = []
 
-    if (error) {
-      console.error('[DATABASE] Failed to fetch pending verifications:', error)
-      return []
+    // Supabase caps results at 1000 rows by default — paginate to get all
+    while (true) {
+      const { data, error } = await supabase
+        .from('users')
+        .select(
+          'id,registration_number,full_name,region,constituency,platform,country,phone_number,gender,age_range,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status'
+        )
+        .in('verification_status', ['In Review', 'Processing', 'Flagged'])
+        .order('joined_at', { ascending: false })
+        .range(from, from + PAGE - 1)
+
+      if (error) {
+        console.error('[DATABASE] Failed to fetch pending verifications:', error)
+        break
+      }
+
+      all = all.concat(data || [])
+      if (!data || data.length < PAGE) break
+      from += PAGE
     }
 
-    return (data || []).map((u) => ({
+    return all.map((u) => ({
       id: u.registration_number,
       name: u.full_name,
       region: u.region,
@@ -430,7 +443,7 @@ class MemberService {
       emergencyName: u.emergency_name,
       emergencyRelationship: u.emergency_relationship,
       emergencyPhone: u.emergency_phone,
-      submitted: new Date(u.joined_at).toLocaleString(),
+      submitted: new Date(u.joined_at as string).toLocaleString(),
       status: u.verification_status,
       photoUrl: u.avatar_url,
       chapter: u.chapter,
