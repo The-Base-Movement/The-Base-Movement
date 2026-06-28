@@ -62,13 +62,111 @@ Deno.serve(async (req: Request) => {
     const { user_id } = await req.json()
     if (!user_id) return json({ error: 'user_id is required.' }, 400)
 
-    const { data: target, error: targetErr } = await admin.auth.admin.getUserById(user_id)
-    if (targetErr || !target?.user) return json({ error: 'Target user not found.' }, 404)
+    const CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz'
+    function generateTempPassword(length = 10): string {
+      const bytes = crypto.getRandomValues(new Uint8Array(length))
+      return Array.from(bytes, (b) => CHARSET[b % CHARSET.length]).join('')
+    }
+    function normalizePhoneNumber(raw: string): string {
+      const cleaned = (raw ?? '').trim()
+      if (!cleaned) return ''
+      if (cleaned.startsWith('+')) return cleaned
+      const digits = cleaned.replace(/\D/g, '')
+      if (!digits) return ''
+      if (digits.startsWith('233')) return `+${digits}`
+      if (digits.startsWith('0')) return `+233${digits.slice(1)}`
+      return `+233${digits}`
+    }
+    async function getDummyEmail(phone: string): Promise<string> {
+      const clean = phone.replace('+', '').trim()
+      const msgBuffer = new TextEncoder().encode(clean)
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
+      const hashArray = Array.from(new Uint8Array(hashBuffer))
+      const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+      return `${hashHex.slice(0, 16)}@thebase.org`
+    }
 
-    // A real (non-placeholder) email is required to receive the reset link.
-    const email = target.user.email ?? ''
-    const realEmail = email && !email.endsWith('@thebase.org') ? email : ''
-    if (!realEmail) {
+    let targetEmail = ''
+    let isProvisionedNow = false
+
+    const { data: targetAuth, error: targetError } = await admin.auth.admin.getUserById(user_id)
+
+    if (targetError || !targetAuth?.user) {
+      // User not found in auth.users — check if they exist in public.users (imported member)
+      const { data: profile, error: profileErr } = await admin
+        .from('users')
+        .select('registration_number, full_name, email, phone_number')
+        .eq('id', user_id)
+        .maybeSingle()
+
+      if (profileErr || !profile) {
+        return json({ error: 'Target user not found in directory or auth systems.' }, 404)
+      }
+
+      // Provision auth credentials on the fly
+      const normalizedPhone = normalizePhoneNumber(profile.phone_number)
+      const finalEmail =
+        profile.email || (normalizedPhone ? await getDummyEmail(normalizedPhone) : '')
+      if (!finalEmail) {
+        return json(
+          {
+            error:
+              'This member has no email address or phone number on file, so a login cannot be created.',
+          },
+          400
+        )
+      }
+
+      const tempPassword = generateTempPassword()
+      const createParams: Record<string, unknown> = {
+        email: finalEmail,
+        password: tempPassword,
+        email_confirm: true,
+        user_metadata: {
+          reg_no: profile.registration_number,
+          name: profile.full_name,
+          must_change_password: true,
+        },
+      }
+      if (normalizedPhone) {
+        createParams.phone = normalizedPhone
+        createParams.phone_confirm = true
+      }
+
+      const { data: newAuth, error: createError } = await admin.auth.admin.createUser(createParams)
+      if (createError || !newAuth?.user) {
+        return json(
+          { error: `Could not provision auth login: ${createError?.message ?? 'Unknown'}` },
+          400
+        )
+      }
+
+      // Link public.users record to new auth user ID
+      const { error: updateProfileErr } = await admin
+        .from('users')
+        .update({
+          id: newAuth.user.id,
+          must_change_password: true,
+          temp_password_sent_at: new Date().toISOString(),
+        })
+        .eq('registration_number', profile.registration_number)
+
+      if (updateProfileErr) {
+        // Clean up created auth user to avoid orphan auths
+        await admin.auth.admin.deleteUser(newAuth.user.id)
+        return json(
+          { error: `Failed to link member directory profile: ${updateProfileErr.message}` },
+          400
+        )
+      }
+
+      targetEmail = finalEmail
+      isProvisionedNow = true
+    } else {
+      targetEmail = targetAuth.user.email ?? ''
+    }
+
+    if (!targetEmail) {
       return json(
         { error: 'This member has no email address on file, so a reset link cannot be sent.' },
         400
@@ -80,7 +178,7 @@ Deno.serve(async (req: Request) => {
     // /reset-password, which handles the PASSWORD_RECOVERY event.
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
       type: 'recovery',
-      email: realEmail,
+      email: targetEmail,
       options: { redirectTo: `${siteUrl}/reset-password` },
     })
     if (linkErr || !linkData?.properties?.action_link) {
@@ -88,11 +186,12 @@ Deno.serve(async (req: Request) => {
     }
     const properties = linkData.properties as Record<string, unknown>
     const emailOtp = properties.email_otp as string
-    const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(realEmail)}&token=${emailOtp}`
+    const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(targetEmail)}&token=${emailOtp}`
 
-    // Email the link via SendGrid (best-effort — the link is also returned).
+    // Email the link via SendGrid (best-effort — only for real non-placeholder emails).
     let emailed = false
-    if (sgKey) {
+    const realEmail = targetEmail && !targetEmail.endsWith('@thebase.org') ? targetEmail : ''
+    if (sgKey && realEmail) {
       try {
         const senderEmail = await getSenderEmail(admin)
         const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
@@ -129,7 +228,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    return json({ success: true, emailed, email: realEmail, actionLink: customLink })
+    return json({ success: true, emailed, email: realEmail || targetEmail, actionLink: customLink })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[admin-reset-password] ${msg}`)
