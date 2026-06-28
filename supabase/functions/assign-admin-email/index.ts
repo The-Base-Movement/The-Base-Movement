@@ -1,3 +1,4 @@
+// @ts-nocheck
 // assign-admin-email
 //
 // Phone-registered members carry a placeholder auth email (<phone>@thebase.org)
@@ -14,8 +15,6 @@
 //
 // Optional secret: SENDGRID_API_KEY (notifies the appointee of their login email)
 
-// @ts-expect-error: Deno supports URL imports
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail } from '../_shared/admin-auth.ts'
@@ -35,7 +34,7 @@ function json(body: unknown, status = 200) {
   })
 }
 
-serve(async (req: Request) => {
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }

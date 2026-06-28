@@ -31,14 +31,16 @@ Deno.serve(async (req) => {
       })
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey)
 
-    const authz = await requireAuthorizedAdmin(req, supabase, canManageMembers)
+    const authz = await requireAuthorizedAdmin(req, supabase, canManageMembers, {
+      allowServiceRole: true,
+      serviceRoleKey,
+    })
     if (!authz.ok) {
-      return new Response(await authz.response.text(), {
+      // Return the pre-built error response directly — don't re-read its body
+      return new Response(authz.response.body, {
         status: authz.response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
