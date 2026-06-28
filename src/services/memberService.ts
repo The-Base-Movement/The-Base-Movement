@@ -209,7 +209,7 @@ class MemberService {
     if (isTbmFormat) return existing
 
     const yearStr = new Date().getFullYear().toString().slice(-2)
-    const randomNum = String(Math.floor(100000 + Math.random() * 900000))
+    const randomNum = String(Math.floor(1000 + Math.random() * 9000))
     const platform = (data.platform as string) || 'GHANA'
     const newRegNo = `TBM-${platform === 'DIASPORA' ? 'DI' : 'GH'}-${yearStr}${randomNum}`
 
@@ -234,29 +234,49 @@ class MemberService {
     for (let i = 0; i < users.length; i += batchSize) {
       const batch = users.slice(i, i + batchSize)
 
-      // Pre-check phone numbers and emails so duplicates are skipped, not errored
+      // Pre-check phone numbers, emails, and registration numbers so duplicates are skipped/resolved
       const phones = batch.map((u) => u.phone_number).filter(Boolean)
       const emails = batch.map((u) => u.email).filter(Boolean) as string[]
+      const regNos = batch.map((u) => u.registration_number).filter(Boolean)
 
-      const [phoneRes, emailRes] = await Promise.all([
+      const [phoneRes, emailRes, regNoRes] = await Promise.all([
         supabase.from('users').select('phone_number').in('phone_number', phones),
         emails.length > 0
           ? supabase.from('users').select('email').in('email', emails)
           : Promise.resolve({ data: [] }),
+        supabase.from('users').select('registration_number').in('registration_number', regNos),
       ])
 
       const existingPhones = new Set(phoneRes.data?.map((u) => u.phone_number) ?? [])
       const existingEmails = new Set(emailRes.data?.map((u) => u.email) ?? [])
+      const existingRegNos = new Set(regNoRes.data?.map((u) => u.registration_number) ?? [])
 
       const seenPhones = new Set<string>()
       const seenEmails = new Set<string>()
-      const newRecords = batch.filter((u) => {
-        if (existingPhones.has(u.phone_number) || seenPhones.has(u.phone_number)) return false
-        if (u.email && (existingEmails.has(u.email) || seenEmails.has(u.email))) return false
-        seenPhones.add(u.phone_number)
-        if (u.email) seenEmails.add(u.email)
-        return true
-      })
+      const seenRegNos = new Set<string>()
+
+      const newRecords = batch
+        .filter((u) => {
+          if (existingPhones.has(u.phone_number) || seenPhones.has(u.phone_number)) return false
+          if (u.email && (existingEmails.has(u.email) || seenEmails.has(u.email))) return false
+          seenPhones.add(u.phone_number)
+          if (u.email) seenEmails.add(u.email)
+          return true
+        })
+        .map((u) => {
+          let regNo = u.registration_number
+          const platform = u.platform || 'GHANA'
+          const yearStr = new Date().getFullYear().toString().slice(-2)
+
+          // If the registration number collides with an existing one, or is a duplicate within the current batch, regenerate
+          while (!regNo || existingRegNos.has(regNo) || seenRegNos.has(regNo)) {
+            const randomNum = String(Math.floor(1000 + Math.random() * 9000))
+            regNo = `TBM-${platform === 'DIASPORA' ? 'DI' : 'GH'}-${yearStr}${randomNum}`
+          }
+          seenRegNos.add(regNo)
+          return { ...u, registration_number: regNo }
+        })
+
       totalSkipped += batch.length - newRecords.length
 
       if (newRecords.length > 0) {

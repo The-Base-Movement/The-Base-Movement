@@ -3,6 +3,7 @@ import { SelIcon } from './SelIcon'
 import { JobSelector } from '@/components/JobSelector'
 import type { JobSelection } from '@/services/jobTaxonomyService'
 import { emergencyRelationships } from '@/components/admin/RegistrationForm.constants'
+import { EmailSuggestion } from '@/components/EmailSuggestion'
 
 interface FormState {
   fullName: string
@@ -115,6 +116,7 @@ export function PersonalInfoForm({
               placeholder="you@example.com"
               style={inputStyle}
             />
+            <EmailSuggestion email={form.email} onAccept={(v) => onChange('email', v)} />
           </div>
 
           {/* Phone */}

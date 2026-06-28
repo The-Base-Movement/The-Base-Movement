@@ -8,6 +8,7 @@ import {
   emergencyRelationships,
   educationLevels,
 } from '@/components/admin/RegistrationForm.constants'
+import { EmailSuggestion } from '@/components/EmailSuggestion'
 
 interface RegistrationFormProps {
   platform: string
@@ -169,6 +170,10 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     autoComplete="username"
                     className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                     placeholder="patriot@thebase.gh"
+                  />
+                  <EmailSuggestion
+                    email={formData.email || ''}
+                    onAccept={(v) => onInputChange('email', v)}
                   />
                   <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
                     Phone number is the primary contact. Add email if you want account updates there

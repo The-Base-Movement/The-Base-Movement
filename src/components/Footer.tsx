@@ -5,6 +5,7 @@ import { FacebookIcon, InstagramIcon, TikTokIcon, YouTubeIcon } from './icons/So
 import { adminService } from '../services/adminService'
 import { useBranding } from '@/hooks/useBranding'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
+import { EmailSuggestion } from '@/components/EmailSuggestion'
 
 const FOOTER_COLS = [
   {
@@ -312,6 +313,7 @@ export default function Footer() {
                   onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
                   onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
                 />
+                <EmailSuggestion email={email} onAccept={(v) => setEmail(v)} />
                 <ButtonPrimary type="submit" className="w-full" disabled={submitting}>
                   {submitting ? 'Subscribing…' : 'Subscribe'}
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>

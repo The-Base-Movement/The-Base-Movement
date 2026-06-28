@@ -222,3 +222,36 @@ describe('Offline draft structure', () => {
     expect(draft.refParam).toBe('TBM-GH-260001')
   })
 })
+
+import { suggestEmailDomain } from '@/lib/emailSuggestion'
+
+describe('suggestEmailDomain', () => {
+  it('returns null for correct known domains', () => {
+    expect(suggestEmailDomain('kwame@gmail.com')).toBeNull()
+    expect(suggestEmailDomain('ama@yahoo.com')).toBeNull()
+    expect(suggestEmailDomain('kofi@outlook.com')).toBeNull()
+  })
+
+  it('suggests correction for 1-character typos', () => {
+    expect(suggestEmailDomain('kwame@gmil.com')).toBe('kwame@gmail.com')
+    expect(suggestEmailDomain('ama@yahooo.com')).toBe('ama@yahoo.com')
+    expect(suggestEmailDomain('kofi@outlok.com')).toBe('kofi@outlook.com')
+    expect(suggestEmailDomain('aba@hotmial.com')).toBe('aba@hotmail.com')
+  })
+
+  it('suggests correction for 2-character typos', () => {
+    expect(suggestEmailDomain('kwame@gmill.com')).toBe('kwame@gmail.com')
+    expect(suggestEmailDomain('ama@iclud.com')).toBe('ama@icloud.com')
+  })
+
+  it('returns null for domains too different to guess', () => {
+    expect(suggestEmailDomain('user@thebase.gh')).toBeNull()
+    expect(suggestEmailDomain('user@company.org')).toBeNull()
+  })
+
+  it('returns null for malformed emails', () => {
+    expect(suggestEmailDomain('notanemail')).toBeNull()
+    expect(suggestEmailDomain('@nodomain')).toBeNull()
+    expect(suggestEmailDomain('user@')).toBeNull()
+  })
+})
