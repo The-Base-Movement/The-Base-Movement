@@ -46,6 +46,7 @@ export default function ConstituencyHub() {
   >('members')
 
   const [memberSearch, setMemberSearch] = useState('')
+  const [isAuthorized, setIsAuthorized] = useState(true)
 
   // Board
   const [announceDraft, setAnnounceDraft] = useState('')
@@ -193,6 +194,17 @@ export default function ConstituencyHub() {
       setAnnouncements(announceData ?? [])
       setActivities(actData ?? [])
       setCommittee(committeeData)
+
+      // Check if user is constituency lead, committee member or admin
+      const isLeader = c.leaderId === userId
+      const isCommitteeMember = committeeData.some((m) => m.memberId === userId)
+      const { data: adminRow } = await supabase
+        .from('admins')
+        .select('role')
+        .eq('id', userId)
+        .maybeSingle()
+      const isAuthorizedOfficial = isLeader || isCommitteeMember || !!adminRow
+      setIsAuthorized(isAuthorizedOfficial)
 
       // Load member donations
       const memberIds = mappedMembers.map((m) => m.authId).filter(Boolean)
@@ -429,6 +441,47 @@ export default function ConstituencyHub() {
   ]
 
   // ── render ────────────────────────────────────────────────────────────────
+
+  if (!isAuthorized) {
+    return (
+      <div
+        className="main"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '60vh',
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 56, color: 'hsl(var(--on-surface-muted))', opacity: 0.15 }}
+          >
+            lock
+          </span>
+          <h2
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 18,
+              color: 'hsl(var(--on-surface))',
+              marginTop: 16,
+              marginBottom: 8,
+            }}
+          >
+            Access Restricted
+          </h2>
+          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginBottom: 20 }}>
+            This dashboard is restricted to constituency leads and officials only.
+          </p>
+          <Link to="/dashboard/constituencies" className="btn btn-outline">
+            Back to constituencies
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="main">

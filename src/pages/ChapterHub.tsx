@@ -58,6 +58,7 @@ export default function ChapterHub() {
   const [donations, setDonations] = useState<ChapterDonation[]>([])
   const [announcements, setAnnouncements] = useState<ChapterAnnouncement[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isAuthorized, setIsAuthorized] = useState(true)
   const [activeTab, setActiveTab] = useState<
     'members' | 'donations' | 'board' | 'activities' | 'settings' | 'requests'
   >('members')
@@ -206,6 +207,31 @@ export default function ChapterHub() {
 
       const requests = await chapterService.getChapterRequests(mine.id)
       setJoinRequests(requests)
+
+      // Check if user is chapter lead or official
+      const isLeader = mine.leader_id === userId
+      const userName = ud?.full_name?.toLowerCase().trim() ?? ''
+      const isLeaderByName = mine.leader_name && mine.leader_name.toLowerCase().trim() === userName
+
+      // chapter_leaders (officials) check
+      const { data: ledRow } = await supabase
+        .from('chapter_leaders')
+        .select('id')
+        .eq('chapter_id', mine.id)
+        .ilike('name', ud?.full_name ?? '')
+        .maybeSingle()
+      const isOfficialByName = !!ledRow
+
+      // Admin check
+      const { data: adminData } = await supabase
+        .from('admins')
+        .select('id')
+        .eq('id', userId)
+        .maybeSingle()
+      const isAdmin = !!adminData
+
+      const isAuthorizedOfficial = isLeader || isLeaderByName || isOfficialByName || isAdmin
+      setIsAuthorized(isAuthorizedOfficial)
 
       setIsLoading(false)
     }
@@ -468,6 +494,49 @@ export default function ChapterHub() {
     },
     { key: 'settings' as const, label: 'Settings' },
   ]
+
+  // ── render ────────────────────────────────────────────────────────────────
+
+  if (!isAuthorized) {
+    return (
+      <div
+        className="main"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '60vh',
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 56, color: 'hsl(var(--on-surface-muted))', opacity: 0.15 }}
+          >
+            lock
+          </span>
+          <h2
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 18,
+              color: 'hsl(var(--on-surface))',
+              marginTop: 16,
+              marginBottom: 8,
+            }}
+          >
+            Access Restricted
+          </h2>
+          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginBottom: 20 }}>
+            This dashboard is restricted to chapter leads and officials only.
+          </p>
+          <Link to="/dashboard/chapters" className="btn btn-outline">
+            Back to chapters
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="main">

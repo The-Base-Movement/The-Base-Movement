@@ -15,6 +15,32 @@ function isVerified(m: Member) {
   return m.status === 'Active' || m.status === 'Approved' || !m.status
 }
 
+function maskName(name: string): string {
+  if (!name) return ''
+  const parts = name.trim().split(/\s+/)
+  if (parts.length > 1) {
+    return `${parts[0]} ${parts[1][0]}.`
+  }
+  return name.length > 2 ? `${name.slice(0, 2)}***` : `${name}***`
+}
+
+function maskRegNo(regNo: string): string {
+  if (!regNo) return ''
+  if (regNo.length > 8) {
+    return `${regNo.slice(0, 8)}${'*'.repeat(regNo.length - 8)}`
+  }
+  return 'TBM-GH-****'
+}
+
+function maskPhone(phone: string): string {
+  if (!phone) return ''
+  const clean = phone.trim()
+  if (clean.length > 6) {
+    return `${clean.slice(0, 4)}***${clean.slice(-2)}`
+  }
+  return '***'
+}
+
 export default function Members() {
   const { user, isLoading: authLoading } = useAuth()
   const myAuthId = user?.id ?? null
@@ -55,6 +81,29 @@ export default function Members() {
           return
         }
 
+        // Check if current user is an admin
+        const { data: adminRow } = await supabase
+          .from('admins')
+          .select('role')
+          .eq('id', myAuthId)
+          .maybeSingle()
+
+        // Check if current user is a chapter leader
+        const { data: leadRow } = await supabase
+          .from('chapters')
+          .select('id')
+          .eq('leader_id', myAuthId)
+          .maybeSingle()
+
+        // Check if current user is a constituency coordinator
+        const { data: constRow } = await supabase
+          .from('ghana_constituencies')
+          .select('id')
+          .eq('leader_id', myAuthId)
+          .maybeSingle()
+
+        const isManager = !!adminRow || !!leadRow || !!constRow
+
         const { data: rows } = await supabase
           .from('users')
           .select(
@@ -63,23 +112,27 @@ export default function Members() {
           .eq('chapter', chapterName)
           .order('joined_at', { ascending: false })
 
-        const mapped: Member[] = (rows || []).map((u) => ({
-          id: u.registration_number,
-          authId: u.id,
-          name: u.full_name,
-          email: '',
-          phone: u.phone_number || '',
-          platform: u.platform === 'DIASPORA' ? 'DIASPORA' : 'GHANA',
-          region: u.region || '',
-          constituency: u.constituency || '',
-          country: u.country || 'Ghana',
-          profession: u.profession || 'Patriot',
-          avatarUrl: u.avatar_url || undefined,
-          status: u.status || 'Pending',
-          joined: u.joined_at || '',
-          type: u.platform === 'DIASPORA' ? 'Premium' : 'Standard',
-          chapter: u.chapter || undefined,
-        }))
+        const mapped: Member[] = (rows || []).map((u) => {
+          const isSelf = u.id === myAuthId
+          const showFull = isManager || isSelf
+          return {
+            id: showFull ? u.registration_number : maskRegNo(u.registration_number || ''),
+            authId: u.id,
+            name: showFull ? u.full_name : maskName(u.full_name),
+            email: '',
+            phone: showFull ? u.phone_number || '' : maskPhone(u.phone_number || ''),
+            platform: u.platform === 'DIASPORA' ? 'DIASPORA' : 'GHANA',
+            region: u.region || '',
+            constituency: u.constituency || '',
+            country: u.country || 'Ghana',
+            profession: u.profession || 'Patriot',
+            avatarUrl: u.avatar_url || undefined,
+            status: u.status || 'Pending',
+            joined: u.joined_at || '',
+            type: u.platform === 'DIASPORA' ? 'Premium' : 'Standard',
+            chapter: u.chapter || undefined,
+          }
+        })
 
         setMembers(mapped)
       } catch (error) {
