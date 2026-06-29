@@ -45,7 +45,7 @@ export default function AdminSettings() {
   const [auditSearch, setAuditSearch] = useState('')
   const [auditFilter, setAuditFilter] = useState('All Status')
   const [auditResourceFilter, setAuditResourceFilter] = useState('All Resources')
-  const [auditSortOrder, setAuditSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [auditSortOrder, setAuditSortOrder] = useState<'asc' | 'desc'>('desc')
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [adminData, setAdminData] = useState<AdminUser | null>(null)
   const isSuperRole = SUPER_ROLES.includes(adminData?.role ?? '')
@@ -227,9 +227,9 @@ export default function AdminSettings() {
       return matchesSearch && matchesStatus && matchesResource
     })
     return list.sort((a, b) => {
-      const actA = a.action || ''
-      const actB = b.action || ''
-      return auditSortOrder === 'asc' ? actA.localeCompare(actB) : actB.localeCompare(actA)
+      const timeA = new Date(a.timestamp).getTime()
+      const timeB = new Date(b.timestamp).getTime()
+      return auditSortOrder === 'asc' ? timeA - timeB : timeB - timeA
     })
   }, [auditLogs, auditSearch, auditFilter, auditResourceFilter, auditSortOrder])
 

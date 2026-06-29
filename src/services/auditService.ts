@@ -2,21 +2,6 @@ import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
 import type { AuditLogEntry, ActivityLog } from '@/types/admin'
 
-interface AuditLogResponse {
-  id: string
-  timestamp: string
-  admin_id: string | null
-  action: string
-  resource: string
-  status: 'Success' | 'Failure' | 'Warning'
-  metadata: Record<string, unknown>
-  admins: {
-    users: {
-      full_name: string
-    } | null
-  } | null
-}
-
 class AuditService {
   private static instance: AuditService
 
@@ -51,17 +36,8 @@ class AuditService {
 
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
     const { data, error } = await supabase
-      .from('audit_logs')
-      .select(
-        `
-        *,
-        admins!fk_audit_logs_admin (
-          users!admins_id_fkey (
-            full_name
-          )
-        )
-      `
-      )
+      .from('system_audit_logs_view')
+      .select('*')
       .order('timestamp', { ascending: false })
       .limit(100)
 
@@ -70,32 +46,37 @@ class AuditService {
       return []
     }
 
-    return (data as unknown as AuditLogResponse[]).map((log) => ({
+    interface ViewAuditLog {
+      id: string
+      timestamp: string
+      admin_id: string | null
+      action: string
+      resource: string
+      status: 'Success' | 'Failure' | 'Warning'
+      metadata: Record<string, unknown>
+      admin_name: string | null
+      ip_address: string | null
+      target_name: string | null
+    }
+
+    return (data as unknown as ViewAuditLog[]).map((log) => ({
       id: log.id,
       timestamp: log.timestamp,
       adminId: log.admin_id || 'SYS',
-      adminName:
-        log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
+      adminName: log.admin_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
       action: log.action,
       resource: log.resource,
       status: log.status,
       details: log.metadata,
+      ipAddress: log.ip_address || 'N/A',
+      targetName: log.target_name || undefined,
     }))
   }
 
   async getAuditLogsForResource(resourceId: string): Promise<AuditLogEntry[]> {
     const { data, error } = await supabase
-      .from('audit_logs')
-      .select(
-        `
-        *,
-        admins!fk_audit_logs_admin (
-          users!admins_id_fkey (
-            full_name
-          )
-        )
-      `
-      )
+      .from('system_audit_logs_view')
+      .select('*')
       .eq('resource', resourceId)
       .order('timestamp', { ascending: false })
 
@@ -104,16 +85,30 @@ class AuditService {
       return []
     }
 
-    return (data as unknown as AuditLogResponse[]).map((log) => ({
+    interface ViewAuditLog {
+      id: string
+      timestamp: string
+      admin_id: string | null
+      action: string
+      resource: string
+      status: 'Success' | 'Failure' | 'Warning'
+      metadata: Record<string, unknown>
+      admin_name: string | null
+      ip_address: string | null
+      target_name: string | null
+    }
+
+    return (data as unknown as ViewAuditLog[]).map((log) => ({
       id: log.id,
       timestamp: log.timestamp,
       adminId: log.admin_id || 'SYS',
-      adminName:
-        log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
+      adminName: log.admin_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
       action: log.action,
       resource: log.resource,
       status: log.status,
       details: log.metadata,
+      ipAddress: log.ip_address || 'N/A',
+      targetName: log.target_name || undefined,
     }))
   }
 

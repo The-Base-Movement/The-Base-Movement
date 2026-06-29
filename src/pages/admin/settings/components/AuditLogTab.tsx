@@ -448,6 +448,31 @@ export function AuditLogTab({
                 </p>
               </div>
 
+              {selectedLog.targetName && (
+                <div>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Target Admin/Member
+                  </span>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: 'hsl(var(--primary))',
+                    }}
+                  >
+                    {selectedLog.targetName}
+                  </p>
+                </div>
+              )}
+
               <div
                 style={{
                   borderTop: '1px solid hsl(var(--border))',

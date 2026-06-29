@@ -589,6 +589,7 @@ export interface AuditLogEntry {
   status: 'Success' | 'Failure' | 'Warning'
   ipAddress?: string
   details?: Record<string, unknown>
+  targetName?: string
 }
 
 export type AdminRole =
