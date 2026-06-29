@@ -39,6 +39,7 @@ export default function PublicDonate() {
     totalDonors: 0,
   })
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
@@ -84,9 +85,20 @@ export default function PublicDonate() {
       setIsLoggedIn(!!user)
 
       let profile: Member | null = null
+      let isUserVerified = false
       if (user) {
         try {
           profile = await memberService.getMemberProfileByAuthId(user.id)
+
+          // Check if user is in admins table
+          const { data: adminRow } = await supabase
+            .from('admins')
+            .select('id')
+            .eq('id', user.id)
+            .maybeSingle()
+
+          isUserVerified =
+            profile?.status === 'Active' || profile?.status === 'Approved' || !!adminRow
         } catch (err) {
           console.error('Failed to fetch user profile for pre-filling:', err)
         }
@@ -100,6 +112,7 @@ export default function PublicDonate() {
           memberId: user.id,
         }))
       }
+      setIsVerified(isUserVerified)
 
       try {
         const [countryData, activeCampaigns, victories, stats, allHistory, personal, spending] =
@@ -427,7 +440,7 @@ export default function PublicDonate() {
               }))}
               onDownload={handleDownload}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
-              isLoggedIn={isLoggedIn}
+              isVerified={isLoggedIn && isVerified}
             />
           </section>
         )}
@@ -445,7 +458,7 @@ export default function PublicDonate() {
             .getElementById('payment-section')
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }}
-        isLoggedIn={isLoggedIn}
+        isVerified={isLoggedIn && isVerified}
       />
 
       <HubtelPaymentModal

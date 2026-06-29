@@ -25,7 +25,7 @@ interface OperationalTransparencyProps {
   spendingHistory: SpendingRecord[]
   onDownload: () => void
   onOpenAudit: () => void
-  isLoggedIn?: boolean
+  isVerified?: boolean
 }
 
 const formatSpendingAmount = (amount: string) => {
@@ -65,7 +65,7 @@ export function OperationalTransparency({
   spendingHistory,
   onDownload,
   onOpenAudit,
-  isLoggedIn = false,
+  isVerified = false,
 }: OperationalTransparencyProps) {
   const filteredSpendingHistory = spendingHistory.filter((item) =>
     matchesSpendingSearch(item, searchQuery)
@@ -286,8 +286,8 @@ export function OperationalTransparency({
               onClick={onDownload}
               className="btn btn-outline btn-sm"
               style={{ flexShrink: 0 }}
-              disabled={!isLoggedIn}
-              title={!isLoggedIn ? 'Log in to download ledger' : undefined}
+              disabled={!isVerified}
+              title={!isVerified ? 'Only verified members can download the ledger' : undefined}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 download
