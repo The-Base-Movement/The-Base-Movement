@@ -53,7 +53,6 @@ export default function Footer() {
     setSubmitting(false)
     if (success) {
       setSubscribed(true)
-      setEmail('')
       toast.success("Subscribed! You'll receive updates from The Base.")
     } else {
       toast.error('Subscription failed. Please try again.')
@@ -263,65 +262,46 @@ export default function Footer() {
               from across the movement.
             </p>
 
-            {subscribed ? (
-              <div
+            <form
+              onSubmit={handleSubscribe}
+              style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
+            >
+              <input
+                name="email"
+                id="input-a60551"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
+                required
+                disabled={subscribed}
                 style={{
-                  padding: '12px 16px',
-                  border: '1px solid hsl(var(--primary) / 30%)',
-                  background: 'hsl(var(--primary) / 10%)',
-                  textAlign: 'center',
+                  width: '100%',
+                  padding: '12px 14px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 'var(--button-radius)',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 500,
+                  fontSize: 12,
+                  color: '#fff',
+                  outline: 'none',
+                  boxSizing: 'border-box',
                 }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 12,
-                    color: 'hsl(var(--primary))',
-                  }}
-                >
-                  Successfully Enlisted
-                </div>
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSubscribe}
-                style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
-              >
-                <input
-                  name="email"
-                  id="input-a60551"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: 'var(--button-radius)',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 12,
-                    color: '#fff',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                  }}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
-                />
-                <EmailSuggestion email={email} onAccept={(v) => setEmail(v)} />
-                <ButtonPrimary type="submit" className="w-full" disabled={submitting}>
-                  {submitting ? 'Subscribing…' : 'Subscribe'}
+                onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
+                onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
+              />
+              <EmailSuggestion email={email} onAccept={(v) => setEmail(v)} />
+              <ButtonPrimary type="submit" className="w-full" disabled={submitting || subscribed}>
+                {submitting ? 'Subscribing…' : subscribed ? 'Subscribed' : 'Subscribe'}
+                {!subscribed && (
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                     send
                   </span>
-                </ButtonPrimary>
-              </form>
-            )}
+                )}
+              </ButtonPrimary>
+            </form>
           </div>
         </div>
 

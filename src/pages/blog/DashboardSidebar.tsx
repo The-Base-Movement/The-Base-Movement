@@ -9,6 +9,7 @@ interface DashboardSidebarProps {
   onSidebarEmailChange: (v: string) => void
   sidebarSubmitting: boolean
   onSidebarSubscribe: () => void
+  sidebarSubscribed?: boolean
 }
 
 export function DashboardSidebar({
@@ -20,6 +21,7 @@ export function DashboardSidebar({
   onSidebarEmailChange,
   sidebarSubmitting,
   onSidebarSubscribe,
+  sidebarSubscribed = false,
 }: DashboardSidebarProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -97,6 +99,7 @@ export function DashboardSidebar({
           placeholder="Email address"
           value={sidebarEmail}
           onChange={(e) => onSidebarEmailChange(e.target.value)}
+          disabled={sidebarSubscribed}
           style={{
             width: '100%',
             height: 38,
@@ -116,10 +119,10 @@ export function DashboardSidebar({
         <button
           className="btn btn-primary"
           style={{ width: '100%', justifyContent: 'center' }}
-          disabled={sidebarSubmitting}
+          disabled={sidebarSubmitting || sidebarSubscribed}
           onClick={onSidebarSubscribe}
         >
-          {sidebarSubmitting ? 'Subscribing…' : 'Subscribe'}
+          {sidebarSubmitting ? 'Subscribing…' : sidebarSubscribed ? 'Subscribed' : 'Subscribe'}
         </button>
       </div>
     </div>

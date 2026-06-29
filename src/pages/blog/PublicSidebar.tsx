@@ -10,6 +10,7 @@ interface PublicSidebarProps {
   onPublicEmailChange: (v: string) => void
   publicSubmitting: boolean
   onPublicSubscribe: () => void
+  publicSubscribed?: boolean
 }
 
 export function PublicSidebar({
@@ -21,6 +22,7 @@ export function PublicSidebar({
   onPublicEmailChange,
   publicSubmitting,
   onPublicSubscribe,
+  publicSubscribed = false,
 }: PublicSidebarProps) {
   const [hoverCat, setHoverCat] = useState<string | null>(null)
 
@@ -89,6 +91,7 @@ export function PublicSidebar({
             placeholder="Email Address"
             value={publicEmail}
             onChange={(e) => onPublicEmailChange(e.target.value)}
+            disabled={publicSubscribed}
             className="w-full text-xs"
             style={{
               padding: 12,
@@ -109,10 +112,10 @@ export function PublicSidebar({
               borderRadius: 'var(--button-radius)',
               fontWeight: 'var(--button-font-weight)',
             }}
-            disabled={publicSubmitting}
+            disabled={publicSubmitting || publicSubscribed}
             onClick={onPublicSubscribe}
           >
-            {publicSubmitting ? 'Subscribing…' : 'Subscribe'}
+            {publicSubmitting ? 'Subscribing…' : publicSubscribed ? 'Subscribed' : 'Subscribe'}
           </button>
         </div>
       </div>

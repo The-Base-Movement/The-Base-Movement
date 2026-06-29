@@ -27,14 +27,16 @@ export default function Blog() {
   const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
   const [sidebarEmail, setSidebarEmail] = useState('')
   const [sidebarSubmitting, setSidebarSubmitting] = useState(false)
+  const [sidebarSubscribed, setSidebarSubscribed] = useState(false)
   const [publicEmail, setPublicEmail] = useState('')
   const [publicSubmitting, setPublicSubmitting] = useState(false)
+  const [publicSubscribed, setPublicSubscribed] = useState(false)
   const [error, setError] = useState(false)
 
   const handleNewsletter = async (
     email: string,
-    setEmail: (v: string) => void,
-    setSubmitting: (v: boolean) => void
+    setSubmitting: (v: boolean) => void,
+    setSubscribed: (v: boolean) => void
   ) => {
     if (!email.trim() || !email.includes('@')) {
       toast.error('Please enter a valid email address.')
@@ -45,7 +47,7 @@ export default function Blog() {
     setSubmitting(false)
     if (success) {
       toast.success("Subscribed! You'll receive The Base Weekly.")
-      setEmail('')
+      setSubscribed(true)
     } else toast.error('Subscription failed. Please try again.')
   }
 
@@ -184,8 +186,9 @@ export default function Blog() {
               sidebarEmail={sidebarEmail}
               onSidebarEmailChange={setSidebarEmail}
               sidebarSubmitting={sidebarSubmitting}
+              sidebarSubscribed={sidebarSubscribed}
               onSidebarSubscribe={() =>
-                handleNewsletter(sidebarEmail, setSidebarEmail, setSidebarSubmitting)
+                handleNewsletter(sidebarEmail, setSidebarSubmitting, setSidebarSubscribed)
               }
             />
           </div>
@@ -278,8 +281,9 @@ export default function Blog() {
                     publicEmail={publicEmail}
                     onPublicEmailChange={setPublicEmail}
                     publicSubmitting={publicSubmitting}
+                    publicSubscribed={publicSubscribed}
                     onPublicSubscribe={() =>
-                      handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)
+                      handleNewsletter(publicEmail, setPublicSubmitting, setPublicSubscribed)
                     }
                   />
                 </div>
@@ -325,6 +329,7 @@ export default function Blog() {
                   placeholder="Email address"
                   value={publicEmail}
                   onChange={(e) => setPublicEmail(e.target.value)}
+                  disabled={publicSubscribed}
                   style={{
                     width: '100%',
                     height: 40,
@@ -342,8 +347,10 @@ export default function Blog() {
                   }}
                 />
                 <button
-                  onClick={() => handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)}
-                  disabled={publicSubmitting}
+                  onClick={() =>
+                    handleNewsletter(publicEmail, setPublicSubmitting, setPublicSubscribed)
+                  }
+                  disabled={publicSubmitting || publicSubscribed}
                   style={{
                     width: '100%',
                     height: 40,
@@ -358,7 +365,11 @@ export default function Blog() {
                     letterSpacing: '0.04em',
                   }}
                 >
-                  {publicSubmitting ? 'Subscribing…' : 'Subscribe'}
+                  {publicSubmitting
+                    ? 'Subscribing…'
+                    : publicSubscribed
+                      ? 'Subscribed'
+                      : 'Subscribe'}
                 </button>
               </div>
             </>
