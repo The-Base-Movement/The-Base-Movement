@@ -3055,6 +3055,35 @@ class AdminService {
     }
   }
 
+  async checkIsSubscribed(email: string): Promise<boolean> {
+    try {
+      // 1. Check newsletter_subscribers table
+      const { data: subData, error: subError } = await supabase
+        .from('newsletter_subscribers')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle()
+
+      if (subError) throw subError
+      if (subData) return true
+
+      // 2. Check users table for registered members who haven't opted out
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email)
+        .eq('newsletter_opt_out', false)
+        .is('deleted_at', null)
+        .maybeSingle()
+
+      if (userError) throw userError
+      return !!userData
+    } catch (error) {
+      console.error('[DATABASE] Check newsletter subscription failed:', error)
+      return false
+    }
+  }
+
   async submitContactForm(submission: {
     name: string
     email: string
