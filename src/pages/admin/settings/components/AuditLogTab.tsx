@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { AuditLogEntry } from '@/services/adminService'
 import { SortToggle } from '@/components/ui/SortToggle'
 
@@ -61,6 +62,8 @@ export function AuditLogTab({
   onAuditSortChange,
   handleExportLogs,
 }: AuditLogTabProps) {
+  const [selectedLog, setSelectedLog] = useState<AuditLogEntry | null>(null)
+
   return (
     <div className="panel">
       <div className="ph">
@@ -178,6 +181,8 @@ export function AuditLogTab({
               filteredLogs.slice(0, 15).map((log) => (
                 <tr
                   key={log.id}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setSelectedLog(log)}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.background = 'hsl(var(--container-low))')
                   }
@@ -246,6 +251,300 @@ export function AuditLogTab({
           </tbody>
         </table>
       </div>
+
+      {selectedLog && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setSelectedLog(null)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: 520,
+              background: 'hsl(var(--card))',
+              borderRadius: 4,
+              overflow: 'hidden',
+              boxShadow: '0 24px 48px rgba(0,0,0,0.35)',
+              border: '1px solid hsl(var(--border))',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top brand accent bar */}
+            <div style={{ height: 4, background: 'hsl(var(--primary))' }} />
+
+            {/* Header */}
+            <div
+              style={{
+                padding: '20px 24px',
+                background: 'hsl(var(--container-low))',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
+            >
+              <div>
+                <h3
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface))',
+                    margin: 0,
+                  }}
+                >
+                  Audit Entry Details
+                </h3>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                    margin: '3px 0 0',
+                  }}
+                >
+                  Log ID: {selectedLog.id}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedLog(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 4,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                  close
+                </span>
+              </button>
+            </div>
+
+            {/* Body info */}
+            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Timestamp
+                  </span>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {new Date(selectedLog.timestamp).toLocaleString([], {
+                      dateStyle: 'medium',
+                      timeStyle: 'medium',
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Status
+                  </span>
+                  <p style={{ margin: '4px 0 0' }}>
+                    <span className={statusPill(selectedLog.status)}>{selectedLog.status}</span>
+                  </p>
+                </div>
+                <div>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Administrator
+                  </span>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {selectedLog.adminName}
+                  </p>
+                </div>
+                <div>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    IP Address
+                  </span>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {selectedLog.ipAddress || 'N/A'}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Action
+                </span>
+                <p
+                  style={{
+                    margin: '4px 0 0',
+                    fontSize: 13,
+                    fontWeight: 500,
+                    color: 'hsl(var(--on-surface))',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {selectedLog.action}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  borderTop: '1px solid hsl(var(--border))',
+                  paddingTop: 16,
+                  marginTop: 8,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                    display: 'block',
+                    marginBottom: 8,
+                  }}
+                >
+                  Activity Payload Details
+                </span>
+
+                {selectedLog.details && Object.keys(selectedLog.details).length > 0 ? (
+                  <div
+                    style={{
+                      background: 'hsl(var(--container-low))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 4,
+                      padding: 12,
+                      maxHeight: 200,
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                      <tbody>
+                        {Object.entries(selectedLog.details).map(([key, value]) => (
+                          <tr key={key} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                            <td
+                              style={{
+                                padding: '6px 0',
+                                fontWeight: 600,
+                                color: 'hsl(var(--on-surface-muted))',
+                                width: '35%',
+                                textTransform: 'capitalize',
+                              }}
+                            >
+                              {key.replace(/_/g, ' ')}
+                            </td>
+                            <td
+                              style={{
+                                padding: '6px 0',
+                                color: 'hsl(var(--on-surface))',
+                                wordBreak: 'break-all',
+                              }}
+                            >
+                              {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    No metadata payload associated with this action.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div
+              style={{
+                padding: '16px 24px',
+                background: 'hsl(var(--container-low))',
+                borderTop: '1px solid hsl(var(--border))',
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setSelectedLog(null)}
+                style={{ height: 38, padding: '0 20px' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
