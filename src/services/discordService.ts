@@ -443,4 +443,20 @@ export const discordService = {
       'media'
     )
   },
+
+  ledgerDownloaded(name: string, regNo: string, ledgerType: 'Spending' | 'Contributions'): void {
+    post(
+      {
+        title: '📥 Financial Ledger Downloaded',
+        color: 0x5865f2,
+        fields: [
+          { name: 'Patriot', value: name || '—', inline: true },
+          { name: 'Reg No', value: regNo || '—', inline: true },
+          { name: 'Ledger Type', value: ledgerType || '—', inline: true },
+        ],
+        timestamp: new Date().toISOString(),
+      },
+      'alerts'
+    )
+  },
 }
