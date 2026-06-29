@@ -5,6 +5,23 @@ import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
 
+/**
+ * Supabase Auth returns a raw character-set dump when the password policy
+ * isn't met (e.g. "Password should contain at least one character of each:
+ * abcdefg..."). We detect that and swap it for a readable message.
+ */
+function sanitiseAuthError(err: unknown, fallback: string): string {
+  const msg = err instanceof Error ? err.message : ''
+  if (
+    msg.toLowerCase().includes('password should contain') ||
+    msg.toLowerCase().includes('password must contain') ||
+    msg.toLowerCase().includes('abcdefghijklmnopqrstuvwxyz')
+  ) {
+    return 'Password must include uppercase and lowercase letters, a number, and a special character (e.g. !@#$%).'
+  }
+  return msg || fallback
+}
+
 const inputStyle: React.CSSProperties = {
   width: '100%',
   height: 46,
@@ -236,9 +253,7 @@ export default function ResetPassword() {
       setTimeout(() => navigate('/login'), 2500)
     } catch (err: unknown) {
       console.error('[RESET PASSWORD ERROR]', err)
-      toast.error(
-        err instanceof Error ? err.message : 'Failed to reset password. Please try again.'
-      )
+      toast.error(sanitiseAuthError(err, 'Failed to reset password. Please try again.'))
     } finally {
       setIsLoading(false)
     }

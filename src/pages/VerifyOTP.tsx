@@ -5,6 +5,18 @@ import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
 
+function sanitiseAuthError(err: unknown, fallback: string): string {
+  const msg = err instanceof Error ? err.message : ''
+  if (
+    msg.toLowerCase().includes('password should contain') ||
+    msg.toLowerCase().includes('password must contain') ||
+    msg.toLowerCase().includes('abcdefghijklmnopqrstuvwxyz')
+  ) {
+    return 'Password must include uppercase and lowercase letters, a number, and a special character (e.g. !@#$%).'
+  }
+  return msg || fallback
+}
+
 export default function VerifyOTP() {
   const { settings } = useBranding()
   const navigate = useNavigate()
@@ -61,11 +73,9 @@ export default function VerifyOTP() {
       navigate('/login', { replace: true })
     } catch (err: unknown) {
       console.error('[OTP VERIFY ERROR]', err)
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Invalid or expired verification code. Please check and try again.'
-      toast.error(message)
+      toast.error(
+        sanitiseAuthError(err, 'Invalid or expired verification code. Please check and try again.')
+      )
     } finally {
       setIsLoading(false)
     }

@@ -4,6 +4,18 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 
+function sanitiseAuthError(err: unknown, fallback: string): string {
+  const msg = err instanceof Error ? err.message : ''
+  if (
+    msg.toLowerCase().includes('password should contain') ||
+    msg.toLowerCase().includes('password must contain') ||
+    msg.toLowerCase().includes('abcdefghijklmnopqrstuvwxyz')
+  ) {
+    return 'Password must include uppercase and lowercase letters, a number, and a special character (e.g. !@#$%).'
+  }
+  return msg || fallback
+}
+
 export default function ChangePassword() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -54,9 +66,7 @@ export default function ChangePassword() {
       navigate('/dashboard', { replace: true })
     } catch (err: unknown) {
       console.error('[PASSWORD CHANGE ERROR]', err)
-      toast.error(
-        err instanceof Error ? err.message : 'Failed to update password. Please try again.'
-      )
+      toast.error(sanitiseAuthError(err, 'Failed to update password. Please try again.'))
     } finally {
       setIsLoading(false)
     }
