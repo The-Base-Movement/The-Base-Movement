@@ -49,7 +49,7 @@ Deno.serve(async (req: Request) => {
         .from('chapters')
         .select('leader_id, users(email, phone_number)')
         .eq('name', record.chapter)
-        .single()
+        .maybeSingle()
 
       if (chapterData?.users) {
         interface ChapterLead {
@@ -59,6 +59,72 @@ Deno.serve(async (req: Request) => {
         const lead = chapterData.users as unknown as ChapterLead
         leadEmail = lead.email
         leadPhone = lead.phone_number
+      }
+    }
+
+    // Fetch constituency lead (CCC) contact info
+    let cccEmail = ''
+    let cccPhone = ''
+
+    if (record.constituency) {
+      try {
+        const { data: constData } = await supabaseAdmin
+          .from('ghana_constituencies')
+          .select('id')
+          .ilike('name', record.constituency)
+          .maybeSingle()
+
+        if (constData?.id) {
+          const { data: leaderData } = await supabaseAdmin
+            .from('constituency_leaders')
+            .select('member_id')
+            .eq('constituency_id', constData.id)
+            .limit(1)
+            .maybeSingle()
+
+          if (leaderData?.member_id) {
+            const { data: userData } = await supabaseAdmin
+              .from('users')
+              .select('email, phone_number')
+              .eq('id', leaderData.member_id)
+              .maybeSingle()
+
+            if (userData) {
+              cccEmail = userData.email || ''
+              cccPhone = userData.phone_number || ''
+            }
+          }
+        }
+      } catch (err) {
+        console.error('[NOTIFY-LEADS] CCC lead lookup error:', err)
+      }
+    }
+
+    // Fetch regional admin (RCC) contact info
+    let rccEmail = ''
+    let rccPhone = ''
+
+    if (record.region) {
+      try {
+        const { data: adminData } = await supabaseAdmin
+          .from('admins')
+          .select('id, users(email, phone_number)')
+          .ilike('region', record.region)
+          .eq('role', 'ADMIN_L2')
+          .limit(1)
+          .maybeSingle()
+
+        if (adminData?.users) {
+          interface RCCLead {
+            email: string
+            phone_number: string
+          }
+          const leader = adminData.users as unknown as RCCLead
+          rccEmail = leader.email
+          rccPhone = leader.phone_number
+        }
+      } catch (err) {
+        console.error('[NOTIFY-LEADS] RCC lead lookup error:', err)
       }
     }
 
@@ -128,7 +194,7 @@ Deno.serve(async (req: Request) => {
         .catch((e) => console.error('[SENDGRID-SYNC] dispatch error', e))
     }
 
-    // Lead notification (SMS alert)
+    // 1. Chapter Lead SMS notification (Diaspora)
     if (leadPhone) {
       const smsResult = await sendSms(
         [leadPhone],
@@ -142,6 +208,84 @@ Deno.serve(async (req: Request) => {
     }
     if (leadEmail) {
       console.warn(`[EMAIL] Lead notification queued for ${leadEmail}`)
+    }
+
+    // 2. Constituency Lead SMS notification (CCC)
+    if (cccPhone) {
+      const smsResult = await sendSms(
+        [cccPhone],
+        `[The Base CCC] Alert: A new member (${record.full_name}) has registered in your constituency (${record.constituency}).`
+      )
+      if (smsResult.ok) {
+        console.warn(`[SMS] CCC lead notification sent successfully to ${cccPhone}`)
+      } else {
+        console.error(`[SMS] CCC lead notification failed for ${cccPhone}: ${smsResult.detail}`)
+      }
+    }
+    if (cccEmail) {
+      console.warn(`[EMAIL] CCC lead notification queued for ${cccEmail}`)
+    }
+
+    // 3. Regional Lead SMS notification (RCC)
+    if (rccPhone) {
+      const smsResult = await sendSms(
+        [rccPhone],
+        `[The Base RCC] Alert: A new member (${record.full_name}) has registered in your region (${record.region}).`
+      )
+      if (smsResult.ok) {
+        console.warn(`[SMS] RCC lead notification sent successfully to ${rccPhone}`)
+      } else {
+        console.error(`[SMS] RCC lead notification failed for ${rccPhone}: ${smsResult.detail}`)
+      }
+    }
+    if (rccEmail) {
+      console.warn(`[EMAIL] RCC lead notification queued for ${rccEmail}`)
+    }
+
+    // 4. National Command Center (NCC) Alert via Discord webhook
+    // @ts-ignore: Deno global
+    const nccWebhook = Deno.env.get('DISCORD_NCC_ALERTS_WEBHOOK_URL')
+    if (nccWebhook) {
+      try {
+        const discordRes = await fetch(nccWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            embeds: [
+              {
+                title: '🆕 New Member Registration Verified',
+                description: `A new member has completed registration and verification.`,
+                color: 2067276, // Green
+                fields: [
+                  { name: 'Name', value: record.full_name || 'N/A', inline: true },
+                  {
+                    name: 'Registration No',
+                    value: record.registration_number || 'N/A',
+                    inline: true,
+                  },
+                  { name: 'Region', value: record.region || 'N/A', inline: true },
+                  { name: 'Constituency', value: record.constituency || 'N/A', inline: true },
+                  { name: 'Chapter/Diaspora', value: record.chapter || 'N/A', inline: true },
+                  { name: 'Source Platform', value: record.platform || 'Web Portal', inline: true },
+                ],
+                footer: { text: 'NCC Command Center Real-Time Alert' },
+                timestamp: new Date().toISOString(),
+              },
+            ],
+          }),
+        })
+        if (discordRes.ok) {
+          console.warn('[DISCORD] NCC Alerts notification sent successfully.')
+        } else {
+          console.error(
+            '[DISCORD] NCC Alerts dispatch failed:',
+            discordRes.status,
+            await discordRes.text()
+          )
+        }
+      } catch (err) {
+        console.error('[DISCORD] NCC Alerts error:', err)
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), {
