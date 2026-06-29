@@ -4,6 +4,7 @@ import { adminService } from '@/services/adminService'
 import { compressForUpload } from '@/lib/imageUtils'
 import { discordService } from '@/services/discordService'
 import { mediaHubService } from '@/services/mediaHubService'
+import { redirectService } from '@/services/redirectService'
 import mediaManifest from '@/data/media-manifest.json'
 
 interface DBAuthor {
@@ -299,6 +300,21 @@ class ContentService {
     if (post.metaDescription !== undefined) updateData.meta_description = post.metaDescription
 
     let { error } = await supabase.from('blog_posts').update(updateData).eq('id', id)
+
+    if (!error && post.slug && beforeUpdate && beforeUpdate.slug !== post.slug) {
+      await redirectService
+        .createRedirectRule({
+          sourcePath: `/blog/${beforeUpdate.slug}`,
+          destinationPath: `/blog/${post.slug}`,
+          statusCode: 301,
+          isActive: true,
+          preserveQuery: true,
+          notes: `Auto-generated on blog post slug update: ${beforeUpdate.title}`,
+        })
+        .catch((err) => {
+          console.error('[REDIRECT] Failed to auto-generate blog post slug redirect:', err)
+        })
+    }
 
     if (error?.code === 'PGRST204' && error.message.includes("'image_url'")) {
       if (post.imageUrl) {

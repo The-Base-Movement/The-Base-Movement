@@ -6,10 +6,11 @@
  * and live websocket data replication.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePerformance } from '@/context/PerformanceContext'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
+import { redirectService } from '@/services/redirectService'
 import {
   adminService,
   type InventoryItem,
@@ -40,7 +41,30 @@ export default function AdminStore() {
   const [selectedProduct, setSelectedProduct] = useState<Partial<InventoryItem> | null>(null)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null)
+  const [redirectDest, setRedirectDest] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+
+  const redirectOptions = useMemo(() => {
+    if (!deleteConfirm) return []
+    const options = [
+      { label: 'Store Front (All items)', value: '/store' },
+      { label: 'Category: Apparel', value: '/store?category=Apparel' },
+      { label: 'Category: Accessories', value: '/store?category=Accessories' },
+      { label: 'Category: Print material', value: '/store?category=Print' },
+      { label: 'Category: Digital goods', value: '/store?category=Digital' },
+    ]
+    // Add other products
+    const otherProducts = products
+      .filter((p) => p.id !== deleteConfirm.id)
+      .map((p) => {
+        const slug = p.slug || p.name.toLowerCase().replace(/\s+/g, '-')
+        return {
+          label: `Product: ${p.name}`,
+          value: `/store/product/${slug}`,
+        }
+      })
+    return [...options, ...otherProducts]
+  }, [deleteConfirm, products])
   const [activeCategory, setActiveCategory] = useState('All')
   const [sortConfig, setSortConfig] = useState<{
     key: keyof InventoryItem
@@ -177,9 +201,30 @@ export default function AdminStore() {
     if (!deleteConfirm) return
     setIsDeleting(deleteConfirm.id)
     try {
+      const targetProduct = products.find((p) => p.id === deleteConfirm.id)
       const success = await adminService.deleteInventoryItem(deleteConfirm.id, deleteConfirm.name)
       if (success) {
         toast.success(`"${deleteConfirm.name}" moved to trash vault`)
+
+        // If a redirect destination was selected, create the redirect rule!
+        if (redirectDest && targetProduct) {
+          const productSlug =
+            targetProduct.slug || targetProduct.name.toLowerCase().replace(/\s+/g, '-')
+          await redirectService
+            .createRedirectRule({
+              sourcePath: `/store/product/${productSlug}`,
+              destinationPath: redirectDest,
+              statusCode: 302, // Temporary redirect for product archive fallback
+              isActive: true,
+              preserveQuery: true,
+              notes: `Auto-generated on product deletion/archive: ${targetProduct.name}`,
+            })
+            .catch((err) => {
+              console.error('[REDIRECT] Failed to auto-generate product redirect:', err)
+            })
+        }
+
+        setRedirectDest('')
         fetchData()
       } else {
         toast.error('Failed to move item to trash')
@@ -396,13 +441,19 @@ export default function AdminStore() {
 
       <DeleteConfirmationModal
         isOpen={!!deleteConfirm}
-        onClose={() => setDeleteConfirm(null)}
+        onClose={() => {
+          setDeleteConfirm(null)
+          setRedirectDest('')
+        }}
         onConfirm={handleDelete}
         title="Move to trash"
         description="This product will be moved to the trash vault. You can restore it within 30 days before it is permanently removed from the catalog."
         itemName={deleteConfirm?.name || ''}
         isLoading={!!isDeleting}
         isPermanent={false}
+        redirectDestination={redirectDest}
+        setRedirectDestination={setRedirectDest}
+        redirectOptions={redirectOptions}
       />
 
       <ProductFormDialog

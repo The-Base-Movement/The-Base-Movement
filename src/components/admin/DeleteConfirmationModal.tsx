@@ -17,6 +17,9 @@ interface DeleteConfirmationModalProps {
   itemName: string
   isLoading?: boolean
   isPermanent?: boolean
+  redirectDestination?: string
+  setRedirectDestination?: (val: string) => void
+  redirectOptions?: { label: string; value: string }[]
 }
 
 /**
@@ -32,6 +35,9 @@ export function DeleteConfirmationModal({
   itemName,
   isLoading = false,
   isPermanent = false,
+  redirectDestination,
+  setRedirectDestination,
+  redirectOptions,
 }: DeleteConfirmationModalProps) {
   if (!isOpen) return null
 
@@ -159,6 +165,58 @@ export function DeleteConfirmationModal({
               {itemName}
             </p>
           </div>
+
+          {redirectOptions && redirectOptions.length > 0 && (
+            <div
+              style={{
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 4,
+                padding: '12px 14px',
+                marginBottom: 20,
+              }}
+            >
+              <label
+                htmlFor="select-redirect-dest"
+                style={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  color: 'hsl(var(--on-surface-muted))',
+                  letterSpacing: '0.05em',
+                  margin: '0 0 6px',
+                  display: 'block',
+                }}
+              >
+                Redirect incoming traffic to (Optional)
+              </label>
+              <select
+                id="select-redirect-dest"
+                value={redirectDestination || ''}
+                onChange={(e) => setRedirectDestination?.(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: 38,
+                  padding: '0 8px',
+                  border: '1px solid hsl(var(--border))',
+                  background: 'hsl(var(--card))',
+                  color: 'hsl(var(--on-surface))',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  outline: 'none',
+                  cursor: 'pointer',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                <option value="">None (Show 404 page)</option>
+                {redirectOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button
