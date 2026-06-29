@@ -213,7 +213,7 @@ export function HubtelPaymentModal({
         </div>
 
         {/* Content Area with Iframe */}
-        <div style={{ flex: 1, position: 'relative', background: '#f5f5f5' }}>
+        <div style={{ flex: 1, position: 'relative', background: 'hsl(var(--card))' }}>
           {iframeLoading && (
             <div
               style={{

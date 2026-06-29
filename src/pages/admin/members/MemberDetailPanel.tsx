@@ -147,7 +147,7 @@ export function MemberDetailPanel({
             width: '100%',
             maxWidth: 1200,
             overflowY: 'auto',
-            background: '#f1f5ee',
+            background: 'var(--container-low)',
           }}
         >
           {/* Dark header */}
@@ -593,7 +593,7 @@ export function MemberDetailPanel({
                     style={{
                       marginLeft: 6,
                       padding: '1px 7px',
-                      background: '#f1f5ee',
+                      background: 'var(--container-low)',
                       borderRadius: 99,
                       fontSize: 9,
                       fontFamily: "'Public Sans', sans-serif",

@@ -115,7 +115,7 @@ export function RoutesPanel({
                 style={{
                   marginTop: 8,
                   height: 5,
-                  background: '#f1f5ee',
+                  background: 'var(--container-low)',
                   borderRadius: 99,
                   overflow: 'hidden',
                 }}

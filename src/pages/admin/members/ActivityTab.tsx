@@ -42,8 +42,8 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
     )
       return { bg: '#181d19', color: '#fff', icon: 'edit' }
     if (a.includes('vote') || a.includes('poll'))
-      return { bg: '#f1f5ee', color: 'hsl(var(--primary))', icon: 'how_to_vote' }
-    return { bg: '#f1f5ee', color: 'hsl(var(--primary))', icon: 'history' }
+      return { bg: 'var(--container-low)', color: 'hsl(var(--primary))', icon: 'how_to_vote' }
+    return { bg: 'var(--container-low)', color: 'hsl(var(--primary))', icon: 'history' }
   }
   const cleared = donations.filter((d) => d.cleared)
   const totalGiven = cleared.reduce((s, d) => s + d.amount, 0)
@@ -173,7 +173,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: '#f1f5ee',
+                        background: 'var(--container-low)',
                         color: 'hsl(var(--primary))',
                         flexShrink: 0,
                         zIndex: 1,

@@ -228,7 +228,7 @@ export function MembersTable({
                           borderRadius: '50%',
                           border: '2px solid hsl(var(--border))',
                           overflow: 'hidden',
-                          background: '#f1f5ee',
+                          background: 'var(--container-low)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',

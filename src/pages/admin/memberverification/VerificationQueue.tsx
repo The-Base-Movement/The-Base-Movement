@@ -263,7 +263,7 @@ export function VerificationQueue({
                         height: 42,
                         borderRadius: 4,
                         overflow: 'hidden',
-                        background: isActive ? 'rgba(255,255,255,.1)' : '#f1f5ee',
+                        background: isActive ? 'rgba(255,255,255,.1)' : 'var(--container-low)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

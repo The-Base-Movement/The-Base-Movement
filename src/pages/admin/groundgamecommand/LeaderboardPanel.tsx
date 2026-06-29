@@ -67,7 +67,7 @@ export function LeaderboardPanel({
                     width: 36,
                     height: 36,
                     borderRadius: '50%',
-                    background: '#e5e7eb',
+                    background: 'hsl(var(--secondary))',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -112,7 +112,7 @@ export function LeaderboardPanel({
                     style={{
                       marginTop: 5,
                       height: 4,
-                      background: '#f1f5ee',
+                      background: 'var(--container-low)',
                       borderRadius: 99,
                       overflow: 'hidden',
                       maxWidth: 200,

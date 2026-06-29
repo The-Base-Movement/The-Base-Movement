@@ -64,8 +64,9 @@ export default function AdminTwoFactorGate({ factorId, onVerified }: AdminTwoFac
         style={{
           width: '100%',
           maxWidth: 380,
-          background: '#fff',
+          background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
+          border: '1px solid hsl(var(--border))',
           borderTop: '4px solid hsl(var(--accent))',
           padding: '32px 28px',
           boxSizing: 'border-box',
@@ -83,7 +84,7 @@ export default function AdminTwoFactorGate({ factorId, onVerified }: AdminTwoFac
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
               fontSize: 18,
-              color: '#181d19',
+              color: 'hsl(var(--on-surface))',
               margin: '10px 0 6px',
             }}
           >
@@ -122,7 +123,8 @@ export default function AdminTwoFactorGate({ factorId, onVerified }: AdminTwoFac
               letterSpacing: '0.4em',
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
-              color: '#181d19',
+              color: 'hsl(var(--on-surface))',
+              background: 'hsl(var(--background))',
               outline: 'none',
               boxSizing: 'border-box',
               marginBottom: 14,

@@ -133,8 +133,8 @@ export function Reviews({ product }: ReviewsProps) {
           onSubmit={(e) => void handleSubmit(e)}
           style={{
             marginBottom: 40,
-            background: '#fafafa',
-            border: '1px solid #e7e7e7',
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
             padding: 24,
           }}
         >
@@ -143,7 +143,7 @@ export function Reviews({ product }: ReviewsProps) {
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 600,
               fontSize: 13,
-              color: '#1c1c1c',
+              color: 'hsl(var(--on-surface))',
               marginBottom: 16,
             }}
           >
@@ -188,13 +188,13 @@ export function Reviews({ product }: ReviewsProps) {
               rows={4}
               style={{
                 width: '100%',
-                background: 'hsl(var(--card))',
-                border: '1px solid #e2e2e2',
+                background: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
                 padding: '12px 14px',
                 fontSize: 13,
                 fontFamily: "'Public Sans', sans-serif",
                 fontWeight: 500,
-                color: '#374151',
+                color: 'hsl(var(--on-surface))',
                 outline: 'none',
                 resize: 'vertical',
                 boxSizing: 'border-box',

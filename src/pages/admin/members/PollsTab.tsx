@@ -55,7 +55,7 @@ export function PollsTab({ votes }: PollsTabProps) {
                     width: 32,
                     height: 32,
                     borderRadius: '50%',
-                    background: '#f1f5ee',
+                    background: 'var(--container-low)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
