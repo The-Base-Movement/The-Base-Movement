@@ -365,6 +365,21 @@ export default function Checkout() {
                       : 'Finish payment'}
               </button>
 
+              {paymentState === 'failed' && (
+                <p
+                  className="text-center text-xs mt-3"
+                  style={{ color: 'hsl(var(--on-surface-muted))' }}
+                >
+                  Having trouble?{' '}
+                  <Link
+                    to={isDashboard ? '/dashboard/contact' : '/contact'}
+                    className="text-brand-green font-bold hover:underline"
+                  >
+                    Contact Support
+                  </Link>
+                </p>
+              )}
+
               <div className="mt-8 space-y-4">
                 <div
                   className="flex items-center gap-3"

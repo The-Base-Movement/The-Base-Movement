@@ -796,6 +796,30 @@ export function MobilizationProtocol({
                     : 'Pay securely'}
             </button>
 
+            {paymentState === 'failed' && (
+              <p
+                style={{
+                  textAlign: 'center',
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginTop: 10,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                Having trouble?{' '}
+                <a
+                  href="/contact"
+                  style={{
+                    color: 'hsl(var(--primary))',
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Contact Support
+                </a>
+              </p>
+            )}
+
             <div
               style={{
                 display: 'grid',
