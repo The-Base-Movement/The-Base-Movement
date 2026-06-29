@@ -516,7 +516,9 @@ export default function ConstituencyHub() {
       )}
 
       {/* ── Donations Tab ───────────────────────────────────────────────────── */}
-      {activeTab === 'donations' && <DonationsTab donations={donations} />}
+      {activeTab === 'donations' && (
+        <DonationsTab donations={donations} constituencyName={constituency?.name} />
+      )}
 
       {/* ── Board Tab ─────────────────────────────────────────────────────── */}
       {activeTab === 'board' && (

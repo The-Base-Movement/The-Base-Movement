@@ -1,3 +1,5 @@
+import { toast } from 'sonner'
+
 interface Donation {
   id: string
   full_name: string
@@ -11,11 +13,70 @@ interface Donation {
 
 interface Props {
   donations: Donation[]
+  constituencyName?: string
 }
 
-export function DonationsTab({ donations }: Props) {
+export function DonationsTab({ donations, constituencyName }: Props) {
+  const handleExport = () => {
+    if (donations.length === 0) {
+      toast.info('No donation records to export.')
+      return
+    }
+    const headers = ['Date', 'Donor', 'Phone', 'Amount (GHS)', 'Method', 'Reference', 'Status']
+    const rows = donations.map((d) => [
+      new Date(d.created_at).toLocaleDateString('en-GB'),
+      d.full_name,
+      d.phone,
+      Number(d.amount).toFixed(2),
+      d.payment_method,
+      d.reference || '',
+      d.status,
+    ])
+    const csv = [headers, ...rows]
+      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    const name = constituencyName
+      ? constituencyName.toLowerCase().replace(/\s+/g, '-')
+      : 'constituency'
+    a.download = `donations-${name}-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success(`Exported ${donations.length} donation records.`)
+  }
   return (
     <div className="panel" style={{ overflow: 'hidden' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 18px',
+          borderBottom: '1px solid hsl(var(--border))',
+        }}
+      >
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: "'Public Sans', sans-serif",
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          {donations.length} record{donations.length !== 1 ? 's' : ''}
+        </span>
+        <button className="btn btn-outline btn-sm" onClick={handleExport} style={{ gap: 4 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+            download
+          </span>
+          Export CSV
+        </button>
+      </div>
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead

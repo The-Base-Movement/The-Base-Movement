@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 
 interface ChapterDonation {
   id: string
@@ -13,6 +14,7 @@ interface ChapterDonation {
 
 interface Props {
   donations: ChapterDonation[]
+  chapterName?: string
 }
 
 function StatusPill({ status }: { status: string }) {
@@ -20,8 +22,37 @@ function StatusPill({ status }: { status: string }) {
   return <span className={`pill ${cls}`}>{status}</span>
 }
 
-export function DonationsTab({ donations }: Props) {
+export function DonationsTab({ donations, chapterName }: Props) {
   const [isMobile, setIsMobile] = useState(false)
+
+  const handleExport = () => {
+    if (donations.length === 0) {
+      toast.info('No donation records to export.')
+      return
+    }
+    const headers = ['Date', 'Donor', 'Phone', 'Amount (GHS)', 'Method', 'Reference', 'Status']
+    const rows = donations.map((d) => [
+      new Date(d.created_at).toLocaleDateString('en-GB'),
+      d.full_name,
+      d.phone,
+      Number(d.amount).toFixed(2),
+      d.payment_method,
+      d.reference || '',
+      d.status,
+    ])
+    const csv = [headers, ...rows]
+      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    const name = chapterName ? chapterName.toLowerCase().replace(/\s+/g, '-') : 'chapter'
+    a.download = `donations-${name}-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success(`Exported ${donations.length} donation records.`)
+  }
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -30,25 +61,64 @@ export function DonationsTab({ donations }: Props) {
     return () => window.removeEventListener('resize', check)
   }, [])
 
+  const exportBar = (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '12px 18px',
+        borderBottom: '1px solid hsl(var(--border))',
+      }}
+    >
+      <span
+        style={{
+          fontSize: 11,
+          fontWeight: 'var(--font-weight-medium, 500)',
+          color: 'hsl(var(--on-surface-muted))',
+          fontFamily: "'Public Sans', sans-serif",
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}
+      >
+        {donations.length} record{donations.length !== 1 ? 's' : ''}
+      </span>
+      <button
+        className="btn btn-outline btn-sm"
+        onClick={handleExport}
+        disabled={donations.length === 0}
+        style={{ gap: 4 }}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+          download
+        </span>
+        Export CSV
+      </button>
+    </div>
+  )
+
   if (donations.length === 0) {
     return (
-      <div className="panel" style={{ padding: '48px 18px', textAlign: 'center' }}>
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.2 }}
-        >
-          volunteer_activism
-        </span>
-        <p
-          style={{
-            fontSize: 13,
-            color: 'hsl(var(--on-surface-muted))',
-            fontFamily: "'Public Sans', sans-serif",
-            marginTop: 12,
-          }}
-        >
-          No donations from chapter members yet.
-        </p>
+      <div className="panel" style={{ overflow: 'hidden' }}>
+        {exportBar}
+        <div style={{ padding: '48px 18px', textAlign: 'center' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.2 }}
+          >
+            volunteer_activism
+          </span>
+          <p
+            style={{
+              fontSize: 13,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              marginTop: 12,
+            }}
+          >
+            No donations from chapter members yet.
+          </p>
+        </div>
       </div>
     )
   }
@@ -56,116 +126,119 @@ export function DonationsTab({ donations }: Props) {
   /* ── Mobile: card list ── */
   if (isMobile) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {donations.map((d) => (
-          <div key={d.id} className="panel" style={{ padding: '16px 18px' }}>
-            {/* Donor + status */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 10,
-                marginBottom: 12,
-              }}
-            >
-              <div>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 14,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  {d.full_name}
-                </p>
-                <p
-                  style={{
-                    margin: '2px 0 0',
-                    fontSize: 11,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  {d.phone}
-                </p>
-              </div>
-              <StatusPill status={d.status} />
-            </div>
-
-            {/* Amount — prominent */}
-            <p
-              style={{
-                margin: '0 0 12px',
-                fontSize: 22,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--primary))',
-                fontFamily: "'Public Sans', sans-serif",
-                letterSpacing: '-0.01em',
-              }}
-            >
-              GH₵ {Number(d.amount).toLocaleString()}
-            </p>
-
-            {/* Detail rows */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 0,
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-md)',
-                overflow: 'hidden',
-              }}
-            >
-              {[
-                { label: 'Method', value: d.payment_method },
-                { label: 'Reference', value: d.reference || '—' },
-                { label: 'Date', value: new Date(d.created_at).toLocaleDateString('en-GB') },
-              ].map((row, i) => (
-                <div
-                  key={row.label}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '9px 14px',
-                    borderTop: i === 0 ? 'none' : '1px solid hsl(var(--border))',
-                    background: i % 2 === 0 ? '#fff' : 'hsl(var(--container-low))',
-                  }}
-                >
-                  <span
+      <div className="panel" style={{ overflow: 'hidden' }}>
+        {exportBar}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '10px' }}>
+          {donations.map((d) => (
+            <div key={d.id} className="panel" style={{ padding: '16px 18px' }}>
+              {/* Donor + status */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 10,
+                  marginBottom: 12,
+                }}
+              >
+                <div>
+                  <p
                     style={{
-                      fontSize: 10,
+                      margin: 0,
+                      fontSize: 14,
                       fontWeight: 'var(--font-weight-medium, 500)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
+                      color: 'hsl(var(--on-surface))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    {d.full_name}
+                  </p>
+                  <p
+                    style={{
+                      margin: '2px 0 0',
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-medium, 500)',
                       color: 'hsl(var(--on-surface-muted))',
                       fontFamily: "'Public Sans', sans-serif",
                     }}
                   >
-                    {row.label}
-                  </span>
-                  <span
+                    {d.phone}
+                  </p>
+                </div>
+                <StatusPill status={d.status} />
+              </div>
+
+              {/* Amount — prominent */}
+              <p
+                style={{
+                  margin: '0 0 12px',
+                  fontSize: 22,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--primary))',
+                  fontFamily: "'Public Sans', sans-serif",
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                GH₵ {Number(d.amount).toLocaleString()}
+              </p>
+
+              {/* Detail rows */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 0,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                }}
+              >
+                {[
+                  { label: 'Method', value: d.payment_method },
+                  { label: 'Reference', value: d.reference || '—' },
+                  { label: 'Date', value: new Date(d.created_at).toLocaleDateString('en-GB') },
+                ].map((row, i) => (
+                  <div
+                    key={row.label}
                     style={{
-                      fontSize: 12,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface))',
-                      fontFamily:
-                        row.label === 'Reference' ? 'monospace' : "'Public Sans', sans-serif",
-                      textAlign: 'right',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '9px 14px',
+                      borderTop: i === 0 ? 'none' : '1px solid hsl(var(--border))',
+                      background: i % 2 === 0 ? '#fff' : 'hsl(var(--container-low))',
                     }}
                   >
-                    {row.value}
-                  </span>
-                </div>
-              ))}
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      {row.label}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                        fontFamily:
+                          row.label === 'Reference' ? 'monospace' : "'Public Sans', sans-serif",
+                        textAlign: 'right',
+                      }}
+                    >
+                      {row.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     )
   }
@@ -173,6 +246,7 @@ export function DonationsTab({ donations }: Props) {
   /* ── Desktop: full table ── */
   return (
     <div className="panel" style={{ overflow: 'hidden' }}>
+      {exportBar}
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead

@@ -560,7 +560,9 @@ export default function ChapterHub() {
         />
       )}
 
-      {activeTab === 'donations' && <DonationsTab donations={donations} />}
+      {activeTab === 'donations' && (
+        <DonationsTab donations={donations} chapterName={chapter?.name} />
+      )}
 
       {activeTab === 'board' && (
         <BoardTab
