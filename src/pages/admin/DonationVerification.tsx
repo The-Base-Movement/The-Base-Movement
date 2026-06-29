@@ -87,6 +87,13 @@ function matchesMethod(d: DonationDetail, m: MethodOption): boolean {
 
 // Primary page component managing donation verification flows and state
 export default function FinancialAudit() {
+  const currentUser = adminService.getCurrentUser()
+  const canExport =
+    currentUser?.role === 'FOUNDER' ||
+    currentUser?.role === 'SUPER_ADMIN' ||
+    currentUser?.role === 'FINANCE_OFFICER' ||
+    currentUser?.role === 'NATIONAL_FINANCE_OFFICER'
+
   const [donations, setDonations] = useState<DonationDetail[]>([])
   const [stats, setStats] = useState({
     totalContributions: 0,
@@ -342,12 +349,14 @@ export default function FinancialAudit() {
                 </button>
               </>
             )}
-            <button className="btn btn-outline btn-sm" onClick={handleExport}>
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                download
-              </span>
-              Export CSV
-            </button>
+            {canExport && (
+              <button className="btn btn-outline btn-sm" onClick={handleExport}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  download
+                </span>
+                Export CSV
+              </button>
+            )}
             <button className="btn btn-dest btn-sm" onClick={() => fetchData()}>
               <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                 sync

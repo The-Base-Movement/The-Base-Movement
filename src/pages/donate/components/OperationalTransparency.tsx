@@ -23,9 +23,7 @@ interface OperationalTransparencyProps {
   publicHistory: DonationDetail[]
   personalHistory: DonationDetail[]
   spendingHistory: SpendingRecord[]
-  onDownload: () => void
   onOpenAudit: () => void
-  isVerified?: boolean
 }
 
 const formatSpendingAmount = (amount: string) => {
@@ -63,9 +61,7 @@ export function OperationalTransparency({
   setSearchQuery,
   loading,
   spendingHistory,
-  onDownload,
   onOpenAudit,
-  isVerified = false,
 }: OperationalTransparencyProps) {
   const filteredSpendingHistory = spendingHistory.filter((item) =>
     matchesSpendingSearch(item, searchQuery)
@@ -278,22 +274,9 @@ export function OperationalTransparency({
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontFamily: "'Public Sans', sans-serif",
                   outline: 'none',
-                  boxSizing: 'border-box',
                 }}
               />
             </div>
-            <button
-              onClick={onDownload}
-              className="btn btn-outline btn-sm"
-              style={{ flexShrink: 0 }}
-              disabled={!isVerified}
-              title={!isVerified ? 'Only verified members can download the ledger' : undefined}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                download
-              </span>{' '}
-              Export CSV
-            </button>
           </div>
         )}
       </div>

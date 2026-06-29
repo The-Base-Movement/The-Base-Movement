@@ -12,7 +12,6 @@ import { memberService } from '@/services/memberService'
 import type { Member } from '@/types/admin'
 import { toast } from 'sonner'
 import { BrandLine } from '@/components/ui/BrandLine'
-import { discordService } from '@/services/discordService'
 
 // Subcomponents
 import { HeroStats } from './donate/components/HeroStats'
@@ -40,7 +39,6 @@ export default function PublicDonate() {
     totalDonors: 0,
   })
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isVerified, setIsVerified] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
@@ -85,21 +83,10 @@ export default function PublicDonate() {
 
       setIsLoggedIn(!!user)
 
-      let profile: Member | null = null
-      let isUserVerified = false
       if (user) {
+        let profile: Member | null = null
         try {
           profile = await memberService.getMemberProfileByAuthId(user.id)
-
-          // Check if user is in admins table
-          const { data: adminRow } = await supabase
-            .from('admins')
-            .select('id')
-            .eq('id', user.id)
-            .maybeSingle()
-
-          isUserVerified =
-            profile?.status === 'Active' || profile?.status === 'Approved' || !!adminRow
         } catch (err) {
           console.error('Failed to fetch user profile for pre-filling:', err)
         }
@@ -113,7 +100,6 @@ export default function PublicDonate() {
           memberId: user.id,
         }))
       }
-      setIsVerified(isUserVerified)
 
       try {
         const [countryData, activeCampaigns, victories, stats, allHistory, personal, spending] =
@@ -272,80 +258,6 @@ export default function PublicDonate() {
     }
   }
 
-  const handleDownload = () => {
-    if (historyTab === 'spending') {
-      if (spendingHistory.length === 0) {
-        toast.info('No spending records to export yet')
-        return
-      }
-      const headers = ['Date', 'Chapter', 'Category', 'Description', 'Amount (GHS)']
-      const rows = spendingHistory.map((d) => [
-        new Date(d.timestamp).toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        }),
-        d.chapter,
-        d.category,
-        d.description,
-        d.amount.toFixed(2),
-      ])
-      const csv = [headers, ...rows]
-        .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
-        .join('\n')
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'the-base-spending-ledger.csv'
-      a.click()
-      URL.revokeObjectURL(url)
-      toast.success('Spending ledger downloaded')
-
-      // Notify Discord
-      discordService.ledgerDownloaded(
-        formData.fullName || 'Unknown Patriot',
-        formData.membershipNumber || 'N/A',
-        'Spending'
-      )
-      return
-    }
-
-    if (publicHistory.length === 0) {
-      toast.info('No contributions to export yet')
-      return
-    }
-    const headers = ['Date', 'Contributor', 'Campaign', 'Amount (GHS)']
-    const rows = publicHistory.map((d) => [
-      new Date(d.date).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      }),
-      d.fullName,
-      d.campaignTitle || 'Strategic Fund',
-      parseFloat(d.amount || '0').toFixed(2),
-    ])
-    const csv = [headers, ...rows]
-      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
-      .join('\n')
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'the-base-public-ledger.csv'
-    a.click()
-    URL.revokeObjectURL(url)
-    toast.success('Public ledger downloaded')
-
-    // Notify Discord
-    discordService.ledgerDownloaded(
-      formData.fullName || 'Unknown Patriot',
-      formData.membershipNumber || 'N/A',
-      'Contributions'
-    )
-  }
-
   if (loading && !submitted) {
     return (
       <div
@@ -484,9 +396,7 @@ export default function PublicDonate() {
                 category: s.category,
                 date: s.timestamp,
               }))}
-              onDownload={handleDownload}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
-              isVerified={isLoggedIn && isVerified}
             />
           </section>
         )}
@@ -497,14 +407,12 @@ export default function PublicDonate() {
         onClose={() => setIsHistoryModalOpen(false)}
         publicHistory={publicHistory}
         contributionsCount={globalStats.totalDonors}
-        onDownload={handleDownload}
         onContribute={() => {
           setIsHistoryModalOpen(false)
           document
             .getElementById('payment-section')
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }}
-        isVerified={isLoggedIn && isVerified}
       />
 
       <HubtelPaymentModal
