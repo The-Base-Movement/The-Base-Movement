@@ -103,6 +103,12 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
       }
 
       const batch = activeRecipients.slice(i, i + BATCH_SIZE)
+
+      // Determine callback URL for delivery status receipt tracking
+      // @ts-expect-error: Deno global
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
+      const callbackUrl = supabaseUrl ? `${supabaseUrl}/functions/v1/sms-callback` : undefined
+
       const res = await fetch(
         `https://api.mnotify.com/api/sms/quick?key=${encodeURIComponent(apiKey)}`,
         {
@@ -114,6 +120,7 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
             message: finalMessage,
             is_schedule: 'false',
             schedule_date: '',
+            callback_url: callbackUrl,
           }),
         }
       )
