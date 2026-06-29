@@ -6,6 +6,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { welcomeEmail } from '../_shared/email-templates.ts'
+import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
@@ -127,9 +128,17 @@ Deno.serve(async (req: Request) => {
         .catch((e) => console.error('[SENDGRID-SYNC] dispatch error', e))
     }
 
-    // Lead notification (SMS placeholder)
+    // Lead notification (SMS alert)
     if (leadPhone) {
-      console.warn(`[SMS] Queued for lead ${leadPhone}`)
+      const smsResult = await sendSms(
+        [leadPhone],
+        `[The Base] Alert: A new member (${record.full_name}) has joined your chapter (${record.chapter}).`
+      )
+      if (smsResult.ok) {
+        console.warn(`[SMS] Lead notification sent successfully to ${leadPhone}`)
+      } else {
+        console.error(`[SMS] Lead notification failed for ${leadPhone}: ${smsResult.detail}`)
+      }
     }
     if (leadEmail) {
       console.warn(`[EMAIL] Lead notification queued for ${leadEmail}`)
