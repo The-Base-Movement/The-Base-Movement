@@ -3,7 +3,12 @@ import { readFileSync, existsSync } from 'fs'
 
 // ── Config ────────────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://vhlyekyxutwbxlvktnzd.supabase.co'
-const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZobHlla3l4dXR3Ynhsdmt0bnpkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Nzc3NzMyMiwiZXhwIjoyMDkzMzUzMzIyfQ.ricN_MeNATkhpdoaVbWluiGUYjAAWAvymgopP21F3Zg'
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
+
+if (!SERVICE_KEY) {
+  console.error('❌ Please set SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SERVICE_KEY in your environment.')
+  process.exit(1)
+}
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { persistSession: false },
