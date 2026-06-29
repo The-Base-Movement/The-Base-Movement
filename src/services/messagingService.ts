@@ -301,6 +301,17 @@ class MessagingService {
             message: preview,
             link: '/dashboard/messages',
           })
+          // ponytail: reuse existing send-push-notification edge fn
+          supabase.functions
+            .invoke('send-push-notification', {
+              body: {
+                userIds: [recipientId],
+                title: 'New message',
+                body: preview,
+                url: '/dashboard/messages',
+              },
+            })
+            .catch(() => {})
         }
       } catch {
         // non-critical
