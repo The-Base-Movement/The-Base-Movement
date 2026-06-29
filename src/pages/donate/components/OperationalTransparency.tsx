@@ -1,4 +1,4 @@
-﻿import { LiveContributionFeed } from '@/components/LiveContributionFeed'
+import { LiveContributionFeed } from '@/components/LiveContributionFeed'
 import type { DonationDetail } from '@/types/admin'
 
 interface SpendingRecord {
@@ -25,6 +25,7 @@ interface OperationalTransparencyProps {
   spendingHistory: SpendingRecord[]
   onDownload: () => void
   onOpenAudit: () => void
+  isLoggedIn?: boolean
 }
 
 const formatSpendingAmount = (amount: string) => {
@@ -64,6 +65,7 @@ export function OperationalTransparency({
   spendingHistory,
   onDownload,
   onOpenAudit,
+  isLoggedIn = false,
 }: OperationalTransparencyProps) {
   const filteredSpendingHistory = spendingHistory.filter((item) =>
     matchesSpendingSearch(item, searchQuery)
@@ -284,6 +286,8 @@ export function OperationalTransparency({
               onClick={onDownload}
               className="btn btn-outline btn-sm"
               style={{ flexShrink: 0 }}
+              disabled={!isLoggedIn}
+              title={!isLoggedIn ? 'Log in to download ledger' : undefined}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 download

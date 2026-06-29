@@ -7,6 +7,7 @@ interface AuditModalProps {
   contributionsCount: number
   onDownload: () => void
   onContribute: () => void
+  isLoggedIn?: boolean
 }
 
 function maskName(fullName: string): string {
@@ -23,6 +24,7 @@ export function AuditModal({
   contributionsCount,
   onDownload,
   onContribute,
+  isLoggedIn = false,
 }: AuditModalProps) {
   if (!isOpen) return null
 
@@ -317,7 +319,12 @@ export function AuditModal({
             </span>
           </div>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-            <button onClick={onDownload} className="btn btn-outline btn-sm">
+            <button
+              onClick={onDownload}
+              className="btn btn-outline btn-sm"
+              disabled={!isLoggedIn}
+              title={!isLoggedIn ? 'Log in to download ledger' : undefined}
+            >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 download
               </span>

@@ -427,6 +427,7 @@ export default function PublicDonate() {
               }))}
               onDownload={handleDownload}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
+              isLoggedIn={isLoggedIn}
             />
           </section>
         )}
@@ -444,6 +445,7 @@ export default function PublicDonate() {
             .getElementById('payment-section')
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }}
+        isLoggedIn={isLoggedIn}
       />
 
       <HubtelPaymentModal
