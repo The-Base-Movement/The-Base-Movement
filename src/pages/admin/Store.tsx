@@ -57,7 +57,7 @@ export default function AdminStore() {
     const otherProducts = products
       .filter((p) => p.id !== deleteConfirm.id)
       .map((p) => {
-        const slug = p.slug || p.name.toLowerCase().replace(/\s+/g, '-')
+        const slug = p.name.toLowerCase().replace(/\s+/g, '-')
         return {
           label: `Product: ${p.name}`,
           value: `/store/product/${slug}`,
@@ -208,8 +208,7 @@ export default function AdminStore() {
 
         // If a redirect destination was selected, create the redirect rule!
         if (redirectDest && targetProduct) {
-          const productSlug =
-            targetProduct.slug || targetProduct.name.toLowerCase().replace(/\s+/g, '-')
+          const productSlug = targetProduct.name.toLowerCase().replace(/\s+/g, '-')
           await redirectService
             .createRedirectRule({
               sourcePath: `/store/product/${productSlug}`,
