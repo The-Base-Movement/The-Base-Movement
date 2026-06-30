@@ -98,9 +98,24 @@ export default function AdminDashboard() {
         setAuditLogs(audit)
         setPendingVerifications(pending)
         setRegions(regs as unknown as { id: number; name: string }[])
-        setConstituencies(consts as unknown as { id: number; name: string; region_id: number }[])
+        const mappedConsts = consts as unknown as { id: number; name: string; region_id: number }[]
+        setConstituencies(mappedConsts)
         setDiasporaChapters(diaspora as unknown as { id: string; name: string; country: string }[])
         setRegionalStats(regional)
+
+        // Auto-resolve region ID if the loaded broadcast targets a constituency
+        if (
+          broadcast.target_type === 'CONSTITUENCY' &&
+          broadcast.target_value &&
+          broadcast.target_value !== 'ALL'
+        ) {
+          const match = mappedConsts.find(
+            (c) => c.name.toLowerCase() === broadcast.target_value.toLowerCase()
+          )
+          if (match) {
+            setSelectedRegionId(match.region_id)
+          }
+        }
       } catch (error) {
         console.error('[SYSTEM] Dashboard: Data fetch failed:', error)
       } finally {
@@ -108,11 +123,21 @@ export default function AdminDashboard() {
       }
     }
     fetchData()
-  }, [])
+  }, [broadcast.target_type, broadcast.target_value])
 
   const handleSendBroadcast = async () => {
     if (!broadcast.title || !broadcast.content) {
       toast.error('Please provide both a headline and message content.')
+      return
+    }
+
+    // Validate target value selection for region or constituency targets
+    if (
+      broadcast.target_type !== 'ALL' &&
+      broadcast.target_type !== 'DIASPORA' &&
+      (!broadcast.target_value || broadcast.target_value === 'ALL')
+    ) {
+      toast.error(`Please select a specific target ${broadcast.target_type.toLowerCase()}.`)
       return
     }
 

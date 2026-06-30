@@ -50,13 +50,15 @@ export function QuickBroadcastComposer({
         <label htmlFor="input-b97fc0" className="lbl">
           Headline
         </label>
-        <input
+        <textarea
           name="name-b97fc0"
           id="input-b97fc0"
           className="title"
           value={broadcast.title}
           onChange={(e) => setBroadcast((prev) => ({ ...prev, title: e.target.value }))}
           placeholder="Mobilization directive..."
+          rows={2}
+          style={{ resize: 'none' }}
         />
       </div>
 

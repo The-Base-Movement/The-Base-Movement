@@ -10,6 +10,28 @@ interface AuditLogsModalProps {
   selectedAdminLogs: AuditLogEntry[]
 }
 
+function formatResource(resource: string): string {
+  if (!resource) return ''
+  const parts = resource.split('/')
+  if (parts.length === 2) {
+    const name = parts[0]
+      .split('_')
+      .map((word) => {
+        if (word.toLowerCase() === 'it') return 'IT'
+        return word.charAt(0).toUpperCase() + word.slice(1)
+      })
+      .join(' ')
+
+    let id = parts[1]
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (uuidRegex.test(id)) {
+      id = id.substring(0, 8)
+    }
+    return `${name} (ID: ${id})`
+  }
+  return resource
+}
+
 export function AuditLogsModal({
   onClose,
   activeAdminName,
@@ -181,7 +203,9 @@ export function AuditLogsModal({
                     }}
                   >
                     Resource:{' '}
-                    <span style={{ color: 'hsl(var(--on-surface-muted))' }}>{log.resource}</span>
+                    <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
+                      {formatResource(log.resource)}
+                    </span>
                   </p>
                   <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <div

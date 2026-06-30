@@ -1836,11 +1836,16 @@ td.leadership-col-secondary {
   padding: 0;
   color: hsl(var(--on-surface));
 }
-.compose .field input.title {
+.compose .field input.title,
+.compose .field textarea.title {
   font-family: 'Public Sans';
   font-weight: 600;
   font-size: 18px;
   letter-spacing: -0.015em;
+}
+.compose .field textarea.title {
+  min-height: 52px;
+  line-height: 1.25;
 }
 .compose .field textarea {
   min-height: 90px;

@@ -5,6 +5,28 @@ interface AdminActivityLogProps {
   auditLogs: AuditLogEntry[]
 }
 
+function formatResource(resource: string): string {
+  if (!resource) return ''
+  const parts = resource.split('/')
+  if (parts.length === 2) {
+    const name = parts[0]
+      .split('_')
+      .map((word) => {
+        if (word.toLowerCase() === 'it') return 'IT'
+        return word.charAt(0).toUpperCase() + word.slice(1)
+      })
+      .join(' ')
+
+    let id = parts[1]
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (uuidRegex.test(id)) {
+      id = id.substring(0, 8)
+    }
+    return `${name} (ID: ${id})`
+  }
+  return resource
+}
+
 export function AdminActivityLog({ auditLogs }: AdminActivityLogProps) {
   return (
     <div className="panel">
@@ -15,7 +37,13 @@ export function AdminActivityLog({ auditLogs }: AdminActivityLogProps) {
       <div className="log">
         {auditLogs.slice(0, 4).map((log) => (
           <div key={log.id} className="log-row">
-            <span className="stamp">
+            <span className="stamp" style={{ minWidth: '120px' }}>
+              {new Date(log.timestamp).toLocaleDateString([], {
+                month: 'numeric',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+              {', '}
               {new Date(log.timestamp).toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -25,7 +53,7 @@ export function AdminActivityLog({ auditLogs }: AdminActivityLogProps) {
               <p>
                 <b>{log.adminName.split(' ')[0]}</b> {log.action.toLowerCase().replace('_', ' ')}
               </p>
-              <span>{log.resource}</span>
+              <span>{formatResource(log.resource)}</span>
             </div>
             <span
               className={cn(
