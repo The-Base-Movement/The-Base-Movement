@@ -92,7 +92,7 @@ export default function Sidebar({
     {
       label: 'Movement',
       items: [
-        { to: '/dashboard', icon: 'dashboard', label: 'Overview' },
+        { to: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
         { to: '/dashboard/blog', icon: 'article', label: 'Updates' },
         { to: '/dashboard/agenda', icon: 'event_note', label: 'The Plan' },
         { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },

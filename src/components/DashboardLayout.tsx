@@ -372,7 +372,7 @@ export default function DashboardLayout() {
 
   const getPageTitle = () => {
     const path = location.pathname
-    if (path === '/dashboard') return 'Overview'
+    if (path === '/dashboard') return 'Dashboard'
     if (path === '/dashboard/blog') return 'Updates'
     if (path.startsWith('/dashboard/blog/')) return 'Update Article'
     if (path === '/dashboard/agenda') return 'The Plan'

@@ -6,6 +6,7 @@
 import { supabase } from '@/lib/supabase'
 import type { Session, User, AuthResponse } from '@supabase/supabase-js'
 import { deviceTrackingService } from './deviceTrackingService'
+import { userActivityService } from './userActivityService'
 
 export interface AuthSession {
   session: Session | null
@@ -185,6 +186,11 @@ class AuthService {
         await deviceTrackingService.logoutDevice()
       } catch (err) {
         console.warn('[auth] failed to log admin device logout:', err)
+      }
+      try {
+        await userActivityService.logActivity(uid, 'logout', 'Signed out of account')
+      } catch (err) {
+        console.warn('[auth] failed to log user activity logout:', err)
       }
       try {
         await supabase
