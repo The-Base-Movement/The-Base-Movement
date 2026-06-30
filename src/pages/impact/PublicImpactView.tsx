@@ -482,24 +482,40 @@ export function PublicImpactView({
                       borderBottom: '1px solid hsl(var(--border))',
                     }}
                   >
-                    <div
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 'var(--radius-sm)',
-                        background: 'rgba(0,107,63,.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'hsl(var(--primary))',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 13,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {(item.fullName || 'A')[0]}
-                    </div>
+                    {item.avatarUrl ? (
+                      <img
+                        src={item.avatarUrl}
+                        alt=""
+                        style={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: 'var(--radius-sm)',
+                          objectFit: 'cover',
+                          flexShrink: 0,
+                        }}
+                        decoding="async"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'rgba(0,107,63,.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'hsl(var(--primary))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 13,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {(item.fullName || 'A')[0]}
+                      </div>
+                    )}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p
                         style={{

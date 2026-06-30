@@ -1118,6 +1118,7 @@ class AdminService {
     chapters: number
     regions: number
     diaspora: number
+    countries: number
     membersDelta: string
     chaptersDelta: string
     diasporaDelta: string
@@ -1130,6 +1131,7 @@ class AdminService {
         chapters: 0,
         regions: 16,
         diaspora: 0,
+        countries: 0,
         membersDelta: '',
         chaptersDelta: '',
         diasporaDelta: '',
@@ -1140,6 +1142,7 @@ class AdminService {
       chapters: data.chapters ?? 0,
       regions: data.regions ?? 16,
       diaspora: data.diaspora ?? 0,
+      countries: data.countries ?? 0,
       membersDelta: 'Steady growth',
       chaptersDelta: 'Growing nationwide',
       diasporaDelta: 'Global network',

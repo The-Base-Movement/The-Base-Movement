@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import SEO from '@/components/SEO'
+import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { chapterService } from '@/services/chapterService'
@@ -16,7 +17,7 @@ export default function Impact() {
   const isDashboard = location.pathname.startsWith('/dashboard')
 
   const [activeFilter, setActiveFilter] = useState<'day' | 'week' | 'month' | 'year' | 'custom'>(
-    'day'
+    'month'
   )
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
@@ -45,38 +46,36 @@ export default function Impact() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
+        // Donation aggregates + feed come from anon-safe SECURITY DEFINER RPCs.
+        // donations RLS only exposes a member's own rows, so direct table reads
+        // (getDonationStats/getDonations) return nothing for the public page.
         const [
           donationStats,
-          allDonations,
-          members,
+          donationFeed,
+          publicStats,
           activeChapterCount,
           regionalCounts,
           totalRegistered,
         ] = await Promise.all([
-          donationService.getDonationStats(),
-          donationService.getDonations(),
-          memberService.getMembers(),
+          adminService.getGlobalMobilizationStats(),
+          donationService.getPublicDonationFeed(50),
+          adminService.getPublicStats(),
           chapterService.getActiveChapterCount(),
           memberService.getRegionalMemberCounts(),
           memberService.getTotalRegisteredCount(),
         ])
 
-        const uniqueCountries = new Set(members.map((m) => m.country || 'Ghana')).size
+        const raised = donationStats.totalRaised
+        const donors = donationStats.totalDonors
         setStats({
-          totalDonations:
-            donationStats.approvedAmount > 0
-              ? `₵${donationStats.approvedAmount.toLocaleString()}`
-              : '₵0',
+          totalDonations: raised > 0 ? `₵${raised.toLocaleString()}` : '₵0',
           activeChapters: activeChapterCount.toString(),
           totalMembers: totalRegistered.toLocaleString(),
-          countriesReached: uniqueCountries.toString(),
-          raised: donationStats.approvedAmount,
+          countriesReached: publicStats.countries.toString(),
+          raised,
           goal: 500000,
-          avgDonation:
-            donationStats.approvedAmount > 0
-              ? `₵${(donationStats.approvedAmount / (donationStats.totalContributions || 1)).toFixed(2)}`
-              : '₵0',
-          totalContributors: donationStats.totalContributions,
+          avgDonation: donors > 0 ? `₵${(raised / donors).toFixed(2)}` : '₵0',
+          totalContributors: donors,
         })
 
         const GHANA_REGIONS = [
@@ -119,10 +118,10 @@ export default function Impact() {
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
         const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
         setContributions({
-          day: allDonations.filter((d) => new Date(d.date) > dayAgo),
-          week: allDonations.filter((d) => new Date(d.date) > weekAgo),
-          month: allDonations.filter((d) => new Date(d.date) > monthAgo),
-          year: allDonations.filter((d) => new Date(d.date) > yearAgo),
+          day: donationFeed.filter((d) => new Date(d.date) > dayAgo),
+          week: donationFeed.filter((d) => new Date(d.date) > weekAgo),
+          month: donationFeed.filter((d) => new Date(d.date) > monthAgo),
+          year: donationFeed.filter((d) => new Date(d.date) > yearAgo),
           custom: [],
         })
       } catch (err) {
