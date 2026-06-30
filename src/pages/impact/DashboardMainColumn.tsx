@@ -165,7 +165,7 @@ export function DashboardMainColumn({ stats, progressPct, regions }: Props) {
         </div>
         <div
           style={{
-            padding: '0 20px 20px',
+            padding: '16px 20px 20px',
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
             gap: 10,

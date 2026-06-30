@@ -41,7 +41,7 @@ export function DashboardActivityFeed({
         </span>
       </div>
 
-      <div style={{ padding: '0 16px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+      <div style={{ padding: '14px 16px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
         <div
           style={{
             display: 'grid',
