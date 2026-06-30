@@ -35,6 +35,12 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
   const displayName =
     post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName
 
+  const maxExcerptLength = 120
+  const excerptText =
+    post.excerpt && post.excerpt.length > maxExcerptLength
+      ? post.excerpt.substring(0, maxExcerptLength) + '...'
+      : post.excerpt
+
   const metaStyle: CSSProperties = {
     fontFamily: FONT,
     fontSize: 12,
@@ -182,7 +188,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
             overflow: 'hidden',
           }}
         >
-          {post.excerpt}
+          {excerptText}
         </p>
 
         {/* Author row */}

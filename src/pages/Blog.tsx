@@ -135,7 +135,7 @@ export default function Blog() {
                 <Skeleton variant="text-md" />
                 <Skeleton variant="text-md" width="55%" />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
                 {[0, 1, 2, 3].map((i) => (
                   <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <Skeleton variant="img" height={120} />
@@ -164,7 +164,7 @@ export default function Blog() {
               {featured && <DashboardFeaturedPost post={featured} baseUrl={baseUrl} />}
 
               {rest.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
                   {rest.map((post) => (
                     <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
                   ))}
@@ -220,7 +220,7 @@ export default function Blog() {
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <Skeleton variant="img" height={300} style={{ borderRadius: 'var(--radius-lg)' }} />
-              <div className="grid sm:grid-cols-2 gap-5 md:gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
                 {[0, 1, 2, 3].map((i) => (
                   <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <Skeleton variant="img" height={150} />
@@ -264,7 +264,7 @@ export default function Blog() {
                         >
                           Latest articles
                         </h2>
-                        <div className="grid sm:grid-cols-2 gap-5 md:gap-8">
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
                           {rest.map((post) => (
                             <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
                           ))}
