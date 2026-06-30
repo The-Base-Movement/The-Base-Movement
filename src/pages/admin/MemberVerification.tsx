@@ -94,6 +94,10 @@ export default function MemberVerification() {
 
   const handleVerdict = async (approve: boolean) => {
     if (!selectedMember) return
+    if (approve && !selectedMember.photoUrl) {
+      toast.error('Cannot approve member without a profile photo.')
+      return
+    }
     const newStatus: PendingVerification['status'] = approve ? 'Approved' : 'Rejected'
     setMembers((prev) =>
       prev.map((m) => (m.id === selectedMember.id ? { ...m, status: newStatus } : m))

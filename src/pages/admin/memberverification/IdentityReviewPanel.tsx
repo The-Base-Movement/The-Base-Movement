@@ -466,7 +466,14 @@ export function IdentityReviewPanel({
           </button>
           <button
             className="btn btn-primary"
-            style={{ justifyContent: 'center', height: 44 }}
+            style={{
+              justifyContent: 'center',
+              height: 44,
+              opacity: !selectedMember.photoUrl ? 0.5 : 1,
+              cursor: !selectedMember.photoUrl ? 'not-allowed' : 'pointer',
+            }}
+            disabled={!selectedMember.photoUrl}
+            title={!selectedMember.photoUrl ? 'Profile photo is required for verification' : ''}
             onClick={() => handleVerdict(true)}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>

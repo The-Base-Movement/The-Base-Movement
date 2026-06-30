@@ -190,6 +190,11 @@ export default function AdminMemberDetail() {
 
   const handleVerify = async () => {
     if (!member) return
+    if (!member.avatarUrl) {
+      toast.error('Cannot approve member without a profile photo.')
+      setIsVerifyOpen(false)
+      return
+    }
     setIsVerifying(true)
     const success = await adminService.verifyMember(member.id, true, 'Administrative Approval')
     setIsVerifying(false)

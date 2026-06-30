@@ -170,6 +170,13 @@ export default function AdminDashboard() {
   }
 
   const handleVerifyMember = async (id: string, approve: boolean) => {
+    if (approve) {
+      const m = pendingVerifications.find((item) => item.id === id)
+      if (m && !m.photoUrl) {
+        toast.error('Cannot approve member without a profile photo.')
+        return
+      }
+    }
     const success = await adminService.verifyMember(id, approve)
     if (success) {
       setPendingVerifications((prev) => prev.filter((m) => m.id !== id))
