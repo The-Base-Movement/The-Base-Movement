@@ -113,7 +113,9 @@ export default function AdminDashboard() {
             (c) => c.name.toLowerCase() === broadcast.target_value.toLowerCase()
           )
           if (match) {
-            setSelectedRegionId(match.region_id)
+            setTimeout(() => {
+              setSelectedRegionId(match.region_id)
+            }, 0)
           }
         }
       } catch (error) {
