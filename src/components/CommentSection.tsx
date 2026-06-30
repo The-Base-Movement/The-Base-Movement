@@ -25,6 +25,7 @@ interface Comment {
   avatar?: string
   initials?: string
   replyTo?: string
+  parentId?: string
   flagged?: boolean
 }
 
@@ -34,9 +35,13 @@ interface DBComment {
   author_avatar: string | null
   content: string
   reply_to_name: string | null
+  parent_id: string | null
   flagged: boolean
   created_at: string
 }
+
+const COMMENT_SELECT =
+  'id, author_name, author_avatar, content, reply_to_name, parent_id, flagged, created_at'
 
 function getInitials(name: string): string {
   return name
@@ -75,6 +80,7 @@ function dbToComment(row: DBComment): Comment {
     avatar: row.author_avatar ?? undefined,
     initials: getInitials(row.author_name),
     replyTo: row.reply_to_name ?? undefined,
+    parentId: row.parent_id ?? undefined,
     flagged: row.flagged,
   }
 }
@@ -95,8 +101,8 @@ function CommentAvatar({ avatar, initials }: { avatar?: string; initials?: strin
         width: 40,
         height: 40,
         borderRadius: '50%',
-        background: 'rgba(0,107,63,0.08)',
-        border: '1px solid rgba(0,107,63,0.12)',
+        background: 'hsl(var(--brand-green) / 0.08)',
+        border: '1px solid hsl(var(--brand-green) / 0.12)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -108,7 +114,7 @@ function CommentAvatar({ avatar, initials }: { avatar?: string; initials?: strin
           style={{
             fontSize: 12,
             fontWeight: 'var(--font-weight-medium, 500)',
-            color: 'var(--brand-green)',
+            color: 'hsl(var(--brand-green))',
             fontFamily: "'Public Sans', sans-serif",
           }}
         >
@@ -117,7 +123,7 @@ function CommentAvatar({ avatar, initials }: { avatar?: string; initials?: strin
       ) : (
         <span
           className="material-symbols-outlined"
-          style={{ fontSize: 20, color: 'var(--brand-green)' }}
+          style={{ fontSize: 20, color: 'hsl(var(--brand-green))' }}
         >
           person
         </span>
@@ -134,6 +140,7 @@ export function CommentSection({ postId }: { postId: string }) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyText, setReplyText] = useState('')
   const [flagged, setFlagged] = useState<Set<string>>(new Set())
+  const [collapsedThreads, setCollapsedThreads] = useState<Set<string>>(new Set())
   const [currentUser] = useState<{ id: string; name: string; avatar?: string } | null>(() => {
     const user = authService.getUser()
     if (!user) return null
@@ -156,7 +163,7 @@ export function CommentSection({ postId }: { postId: string }) {
       setLoadingComments(true)
       const { data, error } = await supabase
         .from('blog_comments')
-        .select('id, author_name, author_avatar, content, reply_to_name, flagged, created_at')
+        .select(COMMENT_SELECT)
         .eq('post_id', postId)
         .order('created_at', { ascending: true })
       if (!error && data) {
@@ -181,7 +188,7 @@ export function CommentSection({ postId }: { postId: string }) {
         author_avatar: currentUser.avatar ?? null,
         content: newComment.trim(),
       })
-      .select('id, author_name, author_avatar, content, reply_to_name, flagged, created_at')
+      .select(COMMENT_SELECT)
       .single()
     setSaving(false)
     if (error || !data) {
@@ -211,7 +218,7 @@ export function CommentSection({ postId }: { postId: string }) {
         parent_id: parentId,
         reply_to_name: parentAuthor,
       })
-      .select('id, author_name, author_avatar, content, reply_to_name, flagged, created_at')
+      .select(COMMENT_SELECT)
       .single()
     setSaving(false)
     if (error || !data) {
@@ -219,10 +226,11 @@ export function CommentSection({ postId }: { postId: string }) {
       return
     }
     const newReply = dbToComment(data as DBComment)
-    setComments((prev) => {
-      const idx = prev.findIndex((c) => c.id === parentId)
-      const next = [...prev]
-      next.splice(idx + 1, 0, newReply)
+    setComments((prev) => [...prev, newReply])
+    setCollapsedThreads((prev) => {
+      if (!prev.has(parentId)) return prev
+      const next = new Set(prev)
+      next.delete(parentId)
       return next
     })
     setReplyText('')
@@ -247,8 +255,194 @@ export function CommentSection({ postId }: { postId: string }) {
     toast.success('Comment flagged. Our team will review it shortly.')
   }
 
+  const toggleThread = (parentId: string) => {
+    setCollapsedThreads((prev) => {
+      const next = new Set(prev)
+      if (next.has(parentId)) next.delete(parentId)
+      else next.add(parentId)
+      return next
+    })
+  }
+
+  const topLevelComments = comments.filter((c) => !c.parentId)
+  const repliesByParent = new Map<string, Comment[]>()
+  for (const c of comments) {
+    if (!c.parentId) continue
+    const list = repliesByParent.get(c.parentId) ?? []
+    list.push(c)
+    repliesByParent.set(c.parentId, list)
+  }
+
+  const renderCommentRow = (comment: Comment, isReply: boolean) => (
+    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+      <CommentAvatar avatar={comment.avatar} initials={comment.initials} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 8,
+            marginBottom: 6,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              {comment.author}
+            </span>
+            {comment.replyTo && (
+              <span
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                ↩ {comment.replyTo}
+              </span>
+            )}
+          </div>
+          <span
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+              flexShrink: 0,
+            }}
+          >
+            {relativeTime(comment.createdAt)}
+          </span>
+        </div>
+        <p
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 500,
+            fontSize: 13,
+            color: 'hsl(var(--on-surface))',
+            lineHeight: 1.6,
+            margin: '0 0 8px',
+          }}
+        >
+          {comment.content}
+        </p>
+        <div style={{ display: 'flex', gap: 16 }}>
+          {currentUser && !isReply && (
+            <button
+              onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 11,
+                color:
+                  replyingTo === comment.id
+                    ? 'hsl(var(--brand-green))'
+                    : 'hsl(var(--on-surface-muted))',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+              }}
+            >
+              {replyingTo === comment.id ? 'Cancel' : 'Reply'}
+            </button>
+          )}
+          <button
+            onClick={() => void handleFlag(comment)}
+            disabled={flagged.has(comment.id)}
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 11,
+              color: flagged.has(comment.id)
+                ? 'hsl(var(--on-surface-muted) / 0.6)'
+                : 'hsl(var(--on-surface-muted))',
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: flagged.has(comment.id) ? 'default' : 'pointer',
+            }}
+          >
+            {flagged.has(comment.id) ? 'Flagged' : 'Flag'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderReplyForm = (comment: Comment) => (
+    <div
+      style={{
+        marginLeft: 52,
+        marginTop: 12,
+        background: 'hsl(var(--container-low))',
+        border: '1px solid hsl(var(--border))',
+        padding: '14px',
+      }}
+    >
+      <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+        <CommentAvatar
+          avatar={currentUser?.avatar}
+          initials={getInitials(currentUser?.name ?? '')}
+        />
+        <textarea
+          autoFocus
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value)}
+          placeholder={`Reply to ${comment.author}…`}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+            padding: '10px 12px',
+            fontSize: 12,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 500,
+            color: 'hsl(var(--on-surface))',
+            outline: 'none',
+            minHeight: 72,
+            resize: 'vertical',
+            boxSizing: 'border-box',
+            lineHeight: 1.5,
+          }}
+        />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <button
+          onClick={() => void handleReplySubmit(comment.id, comment.author)}
+          disabled={!replyText.trim() || saving}
+          style={{
+            background: 'hsl(var(--brand-green))',
+            color: 'hsl(var(--primary-foreground, 0 0% 100%))',
+            border: 'none',
+            height: 34,
+            padding: '0 20px',
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            fontSize: 11,
+            letterSpacing: '0.04em',
+            cursor: replyText.trim() && !saving ? 'pointer' : 'default',
+            opacity: replyText.trim() && !saving ? 1 : 0.5,
+          }}
+        >
+          {saving ? 'Posting…' : 'Post reply'}
+        </button>
+      </div>
+    </div>
+  )
+
   return (
-    <div className="mt-24 pt-12" style={{ borderTop: '1px solid hsl(var(--border))' }}>
+    <div style={{ marginTop: 96, paddingTop: 48, borderTop: '1px solid hsl(var(--border))' }}>
       {/* Header */}
       <div
         style={{
@@ -261,7 +455,7 @@ export function CommentSection({ postId }: { postId: string }) {
       >
         <span
           className="material-symbols-outlined"
-          style={{ fontSize: 22, color: 'var(--brand-green)' }}
+          style={{ fontSize: 22, color: 'hsl(var(--brand-green))' }}
         >
           chat_bubble
         </span>
@@ -334,8 +528,8 @@ export function CommentSection({ postId }: { postId: string }) {
                 type="submit"
                 disabled={!newComment.trim() || saving}
                 style={{
-                  background: 'var(--brand-green)',
-                  color: '#fff',
+                  background: 'hsl(var(--brand-green))',
+                  color: 'hsl(var(--primary-foreground, 0 0% 100%))',
                   border: 'none',
                   height: 38,
                   padding: '0 24px',
@@ -386,173 +580,55 @@ export function CommentSection({ postId }: { postId: string }) {
         </p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-          {comments.map((comment) => (
-            <div key={comment.id}>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                <CommentAvatar avatar={comment.avatar} initials={comment.initials} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 8,
-                      marginBottom: 6,
-                    }}
-                  >
-                    <div
-                      style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}
-                    >
-                      <span
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-semibold, 600)',
-                          fontSize: 13,
-                          color: 'hsl(var(--on-surface))',
-                          letterSpacing: '-0.01em',
-                        }}
-                      >
-                        {comment.author}
-                      </span>
-                      {comment.replyTo && (
-                        <span
-                          style={{
-                            fontFamily: "'Public Sans', sans-serif",
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            fontSize: 11,
-                            color: 'hsl(var(--on-surface-muted))',
-                          }}
-                        >
-                          ↩ {comment.replyTo}
-                        </span>
-                      )}
-                    </div>
-                    <span
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 11,
-                        color: 'hsl(var(--on-surface-muted))',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {relativeTime(comment.createdAt)}
-                    </span>
-                  </div>
-                  <p
-                    style={{
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 500,
-                      fontSize: 13,
-                      color: 'hsl(var(--on-surface))',
-                      lineHeight: 1.6,
-                      margin: '0 0 8px',
-                    }}
-                  >
-                    {comment.content}
-                  </p>
-                  <div style={{ display: 'flex', gap: 16 }}>
-                    {currentUser && (
-                      <button
-                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-medium, 500)',
-                          fontSize: 11,
-                          color: replyingTo === comment.id ? 'var(--brand-green)' : '#6b7280',
-                          background: 'none',
-                          border: 'none',
-                          padding: 0,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {replyingTo === comment.id ? 'Cancel' : 'Reply'}
-                      </button>
-                    )}
+          {topLevelComments.map((comment) => {
+            const replies = repliesByParent.get(comment.id) ?? []
+            const isCollapsed = collapsedThreads.has(comment.id)
+            return (
+              <div key={comment.id}>
+                {renderCommentRow(comment, false)}
+
+                {replyingTo === comment.id && currentUser && renderReplyForm(comment)}
+
+                {replies.length > 0 && (
+                  <div style={{ marginLeft: 52, marginTop: 12 }}>
                     <button
-                      onClick={() => void handleFlag(comment)}
-                      disabled={flagged.has(comment.id)}
+                      onClick={() => toggleThread(comment.id)}
                       style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 11,
-                        color: flagged.has(comment.id) ? '#9ca3af' : '#6b7280',
+                        color: 'hsl(var(--brand-green))',
                         background: 'none',
                         border: 'none',
                         padding: 0,
-                        cursor: flagged.has(comment.id) ? 'default' : 'pointer',
+                        cursor: 'pointer',
                       }}
                     >
-                      {flagged.has(comment.id) ? 'Flagged' : 'Flag'}
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                        {isCollapsed ? 'expand_more' : 'expand_less'}
+                      </span>
+                      {isCollapsed
+                        ? `Show ${replies.length} ${replies.length === 1 ? 'reply' : 'replies'}`
+                        : `Hide ${replies.length} ${replies.length === 1 ? 'reply' : 'replies'}`}
                     </button>
-                  </div>
-                </div>
-              </div>
 
-              {/* Inline reply form */}
-              {replyingTo === comment.id && currentUser && (
-                <div
-                  style={{
-                    marginLeft: 52,
-                    marginTop: 12,
-                    background: 'hsl(var(--container-low))',
-                    border: '1px solid hsl(var(--border))',
-                    padding: '14px',
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-                    <CommentAvatar
-                      avatar={currentUser.avatar}
-                      initials={getInitials(currentUser.name)}
-                    />
-                    <textarea
-                      autoFocus
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      placeholder={`Reply to ${comment.author}…`}
-                      style={{
-                        flex: 1,
-                        minWidth: 0,
-                        background: 'hsl(var(--card))',
-                        border: '1px solid hsl(var(--border))',
-                        padding: '10px 12px',
-                        fontSize: 12,
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 500,
-                        color: 'hsl(var(--on-surface))',
-                        outline: 'none',
-                        minHeight: 72,
-                        resize: 'vertical',
-                        boxSizing: 'border-box',
-                        lineHeight: 1.5,
-                      }}
-                    />
+                    {!isCollapsed && (
+                      <div
+                        style={{ display: 'flex', flexDirection: 'column', gap: 20, marginTop: 16 }}
+                      >
+                        {replies.map((reply) => (
+                          <div key={reply.id}>{renderCommentRow(reply, true)}</div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <button
-                      onClick={() => void handleReplySubmit(comment.id, comment.author)}
-                      disabled={!replyText.trim() || saving}
-                      style={{
-                        background: 'var(--brand-green)',
-                        color: '#fff',
-                        border: 'none',
-                        height: 34,
-                        padding: '0 20px',
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        fontSize: 11,
-                        letterSpacing: '0.04em',
-                        cursor: replyText.trim() && !saving ? 'pointer' : 'default',
-                        opacity: replyText.trim() && !saving ? 1 : 0.5,
-                      }}
-                    >
-                      {saving ? 'Posting…' : 'Post reply'}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            )
+          })}
         </div>
       )}
     </div>
