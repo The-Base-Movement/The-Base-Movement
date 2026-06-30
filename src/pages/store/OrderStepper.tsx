@@ -1,3 +1,10 @@
+import { useRef } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
+
+gsap.registerPlugin(ScrollTrigger)
+
 const steps = [
   {
     num: '01',
@@ -26,8 +33,24 @@ const steps = [
 ]
 
 export function OrderStepper() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useGSAP(
+    () => {
+      gsap.from('[data-step-card]', {
+        opacity: 0,
+        y: 24,
+        duration: 0.5,
+        ease: 'power2.out',
+        stagger: 0.12,
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' },
+      })
+    },
+    { scope: sectionRef }
+  )
+
   return (
-    <section className="mt-16 mb-16 pt-10 border-t-2 border-on-surface">
+    <section ref={sectionRef} className="mt-16 mb-16 pt-10 border-t-2 border-on-surface">
       <h2 className="font-meta font-medium text-[18px] md:text-[20px] mb-5 m-0">
         Checkout · Order flow
       </h2>
@@ -35,6 +58,7 @@ export function OrderStepper() {
         {steps.map((step) => (
           <div
             key={step.num}
+            data-step-card
             className="p-4 md:p-[18px] border border-border rounded-[6px]"
             style={{ borderLeft: `3px solid ${step.color}` }}
           >

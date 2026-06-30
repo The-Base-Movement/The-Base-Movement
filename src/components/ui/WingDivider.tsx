@@ -29,7 +29,7 @@ const LINE_COLOR: Record<NonNullable<WingDividerProps['variant']>, string> = {
   white: 'rgba(255,255,255,0.35)',
 }
 
-const EAGLE_SRC = '/branding/icons/eagle-head.png'
+const EAGLE_SRC = '/branding/patterns/eagle-in-flight.webp'
 
 /**
  * WingDivider component definition.
@@ -61,6 +61,7 @@ export function WingDivider({
       <img
         src={EAGLE_SRC}
         alt=""
+        className="wing-divider-eagle"
         style={{ width: size, height: size, objectFit: 'contain', flexShrink: 0 }}
       />
       <div style={{ flex: 1, height: 1, background: lineColor, maxWidth: 180 }} />

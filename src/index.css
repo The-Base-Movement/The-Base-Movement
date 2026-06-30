@@ -2361,6 +2361,25 @@ td.leadership-col-secondary {
   }
 }
 
+/* 🦅 WingDivider eagle — gentle soaring float */
+@keyframes wing-soar {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-1.5deg);
+  }
+}
+.wing-divider-eagle {
+  animation: wing-soar 3.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wing-divider-eagle {
+    animation: none;
+  }
+}
+
 /* 📡 Low-Bandwidth Mode Aggressive Optimization */
 .prose-standard {
   max-width: 75ch;

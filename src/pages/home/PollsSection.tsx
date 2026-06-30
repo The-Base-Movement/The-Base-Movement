@@ -10,10 +10,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
   if (activePolls.length === 0) return null
 
   return (
-    <section
-      aria-labelledby="polls-heading"
-      className="py-16 md:py-24 bg-background border-b border-border/30"
-    >
+    <section aria-labelledby="polls-heading" className="py-16 md:py-24 bg-background">
       <div className="page-container">
         <div className="flex items-end justify-between mb-8 md:mb-10">
           <div>

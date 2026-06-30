@@ -16,6 +16,7 @@ import { PublicFeaturedPost } from './blog/PublicFeaturedPost'
 import { PublicSidebar } from './blog/PublicSidebar'
 import { PublicCTA } from './blog/PublicCTA'
 import { PublicSearchFilter } from './blog/PublicSearchFilter'
+import { WingDivider } from '@/components/ui/WingDivider'
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -376,6 +377,8 @@ export default function Blog() {
           )}
         </div>
       </div>
+
+      <WingDivider />
 
       <PublicCTA />
     </>

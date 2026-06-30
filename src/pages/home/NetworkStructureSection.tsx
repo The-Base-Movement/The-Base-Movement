@@ -30,8 +30,6 @@ export function NetworkStructureSection() {
       aria-labelledby="network-structure-heading"
       style={{
         background: 'hsl(var(--container-low))',
-        borderTop: '1px solid hsl(var(--border))',
-        borderBottom: '1px solid hsl(var(--border))',
         padding: '72px 0',
       }}
     >

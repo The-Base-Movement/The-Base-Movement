@@ -12,6 +12,7 @@ import { memberService } from '@/services/memberService'
 import type { Member } from '@/types/admin'
 import { toast } from 'sonner'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { WingDivider } from '@/components/ui/WingDivider'
 
 // Subcomponents
 import { HeroStats } from './donate/components/HeroStats'
@@ -375,7 +376,16 @@ export default function PublicDonate() {
               onReopenCheckout={() => setIsPaymentModalOpen(true)}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
             />
-            <VictoriesSection pastCampaigns={pastCampaigns} />
+
+            {pastCampaigns.length > 0 && (
+              <>
+                <WingDivider />
+                <VictoriesSection pastCampaigns={pastCampaigns} />
+              </>
+            )}
+
+            <WingDivider />
+
             <OperationalTransparency
               globalStats={globalStats}
               historyTab={historyTab}

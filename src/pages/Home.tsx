@@ -228,9 +228,12 @@ export default function Home() {
 
       <LatestUpdatesSection latestPosts={latestPosts} />
 
-      <WingDivider />
-
-      <PollsSection activePolls={activePolls} />
+      {activePolls.length > 0 && (
+        <>
+          <WingDivider />
+          <PollsSection activePolls={activePolls} />
+        </>
+      )}
     </main>
   )
 }

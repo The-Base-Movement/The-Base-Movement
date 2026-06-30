@@ -4,6 +4,7 @@ import { AboutHero } from './about/AboutHero'
 import { AboutPillars } from './about/AboutPillars'
 import { AboutStats } from './about/AboutStats'
 import { AboutCTA } from './about/AboutCTA'
+import { WingDivider } from '@/components/ui/WingDivider'
 
 const DEFAULT_STATS = {
   members: 0,
@@ -58,6 +59,8 @@ export default function About() {
         <AboutHero tagline={siteSettings.about_hero_tagline} />
       </section>
 
+      <WingDivider />
+
       {/* Pillars */}
       <section
         style={{
@@ -76,19 +79,21 @@ export default function About() {
         />
       </section>
 
+      <WingDivider />
+
       {/* Stats */}
       <section
         style={{
           padding: 'clamp(48px, 6vw, 80px) clamp(16px, 5vw, 48px)',
           background: 'hsl(var(--background) / 0.6)',
-          borderTop: '1px solid hsl(var(--border))',
-          borderBottom: '1px solid hsl(var(--border))',
         }}
       >
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <AboutStats stats={stats} />
         </div>
       </section>
+
+      <WingDivider />
 
       {/* CTA */}
       <section

@@ -4,7 +4,7 @@ export function FoundationSection() {
   return (
     <section
       aria-labelledby="foundation-heading"
-      className="py-16 md:py-24 bg-on-surface text-white border-t border-white/5"
+      className="py-16 md:py-24 bg-on-surface text-white"
       style={{ position: 'relative', overflow: 'hidden' }}
     >
       {/* Eagle watermark */}
