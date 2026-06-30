@@ -3,6 +3,7 @@ import type { DonationCampaign } from '@/types/admin'
 import type { CurrencyInfo } from '@/lib/currency'
 import { formatCurrencyAmount, formatGhsAmount } from '@/lib/currency'
 import { BankTransferDetails } from './BankTransferDetails'
+import { TrustSignals, DONATION_TRUST } from '@/components/ui/TrustSignals'
 
 interface FormData {
   fullName: string
@@ -852,6 +853,10 @@ export function MobilizationProtocol({
                   {label}
                 </div>
               ))}
+            </div>
+
+            <div style={{ marginTop: 14 }}>
+              <TrustSignals items={DONATION_TRUST} />
             </div>
           </div>
         </aside>

@@ -775,6 +775,25 @@ class MemberService {
     return Number(data) || 0
   }
 
+  /**
+   * Anon-safe regional member distribution for the public Impact page.
+   * Reads the SECURITY DEFINER get_regional_member_counts() RPC (region label +
+   * count only, no PII), since anon cannot read member rows directly.
+   */
+  async getRegionalMemberCounts(): Promise<{ region: string; count: number }[]> {
+    const { data, error } = await supabase.rpc('get_regional_member_counts')
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch regional member counts:', error)
+      return []
+    }
+
+    return ((data ?? []) as { region: string; member_count: number }[]).map((r) => ({
+      region: r.region,
+      count: Number(r.member_count) || 0,
+    }))
+  }
+
   async syncSendgridBulk(): Promise<{ total: number; batches: number }> {
     const { data, error } = await supabase.functions.invoke('sync-sendgrid-bulk')
     if (error) throw error

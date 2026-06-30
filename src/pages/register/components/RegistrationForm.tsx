@@ -9,6 +9,7 @@ import {
   educationLevels,
 } from '@/components/admin/RegistrationForm.constants'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
+import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
 
 interface RegistrationFormProps {
   platform: string
@@ -239,32 +240,30 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   </div>
                 </div>
 
-                {platform === 'GHANA' && (
-                  <div className="space-y-1.5">
-                    <label
-                      htmlFor="input-ghana-card"
-                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
-                    >
-                      Ghana Card Number{' '}
-                      <span className="text-destructive normal-case tracking-normal ml-1">
-                        (Required)
-                      </span>
-                    </label>
-                    <input
-                      name="name-ghana-card"
-                      id="input-ghana-card"
-                      required
-                      value={formData.idNumber}
-                      onChange={(e) => onInputChange('idNumber', e.target.value)}
-                      className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                      placeholder="GHA-XXXXXXXXX-X"
-                      autoComplete="off"
-                    />
-                    <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
-                      Enter the number exactly as it appears on your Ghana Card.
-                    </p>
-                  </div>
-                )}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="input-ghana-card"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
+                  >
+                    Ghana Card Number{' '}
+                    <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                      (Optional)
+                    </span>
+                  </label>
+                  <input
+                    name="name-ghana-card"
+                    id="input-ghana-card"
+                    value={formData.idNumber}
+                    onChange={(e) => onInputChange('idNumber', e.target.value)}
+                    className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
+                    placeholder="GHA-XXXXXXXXX-X"
+                    autoComplete="off"
+                  />
+                  <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
+                    You can skip this for now — it's required later to complete verification. Enter
+                    it exactly as it appears on your Ghana Card.
+                  </p>
+                </div>
               </div>
             )}
 
@@ -717,54 +716,62 @@ export function RegistrationForm(props: RegistrationFormProps) {
           </div>
 
           {/* Footer Navigation */}
-          <div className="px-7 py-6 border-t border-border bg-container-low flex gap-2">
-            {formStep > 1 && (
+          <div className="px-7 py-6 border-t border-border bg-container-low">
+            <div className="flex gap-2">
+              {formStep > 1 && (
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="w-1/3 h-[46px] font-medium border border-border bg-white text-on-surface cursor-pointer hover:bg-container-low transition-colors"
+                >
+                  ← Back
+                </button>
+              )}
               <button
-                type="button"
-                onClick={onBack}
-                className="w-1/3 h-[46px] font-medium border border-border bg-white text-on-surface cursor-pointer hover:bg-container-low transition-colors"
+                type="submit"
+                disabled={
+                  (formStep === 4 && !agreed) ||
+                  (formStep === 3 && !photoUrl) ||
+                  isLoading ||
+                  cooldown > 0
+                }
+                className={cn(
+                  'flex-1 h-[46px] font-medium text-sm tracking-tight border-none cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-60',
+                  formStep === 4 ? 'bg-accent text-white' : 'bg-primary text-white'
+                )}
               >
-                ← Back
+                {cooldown > 0 ? (
+                  <>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      timer
+                    </span>{' '}
+                    Wait {cooldown}s
+                  </>
+                ) : isLoading ? (
+                  <>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
+                    >
+                      progress_activity
+                    </span>{' '}
+                    Processing...
+                  </>
+                ) : formStep === 4 ? (
+                  'Submit registration →'
+                ) : formStep === 3 ? (
+                  'Continue to final step →'
+                ) : (
+                  'Continue to next step →'
+                )}
               </button>
+            </div>
+
+            {formStep === 1 && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <TrustSignals items={SIGNUP_TRUST} />
+              </div>
             )}
-            <button
-              type="submit"
-              disabled={
-                (formStep === 4 && !agreed) ||
-                (formStep === 3 && !photoUrl) ||
-                isLoading ||
-                cooldown > 0
-              }
-              className={cn(
-                'flex-1 h-[46px] font-medium text-sm tracking-tight border-none cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-60',
-                formStep === 4 ? 'bg-accent text-white' : 'bg-primary text-white'
-              )}
-            >
-              {cooldown > 0 ? (
-                <>
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                    timer
-                  </span>{' '}
-                  Wait {cooldown}s
-                </>
-              ) : isLoading ? (
-                <>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
-                  >
-                    progress_activity
-                  </span>{' '}
-                  Processing...
-                </>
-              ) : formStep === 4 ? (
-                'Submit registration →'
-              ) : formStep === 3 ? (
-                'Continue to final step →'
-              ) : (
-                'Continue to next step →'
-              )}
-            </button>
           </div>
         </form>
       </div>

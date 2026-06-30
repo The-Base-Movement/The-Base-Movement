@@ -4,6 +4,7 @@ import type { Swiper as SwiperInstance } from 'swiper'
 import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
 import { getBlogImageUrl } from '@/lib/blogImages'
 import { type BlogPost } from '@/services/adminService'
 import 'swiper/css'
@@ -261,14 +262,15 @@ export function HeroSection({
           <div className="flex justify-center md:justify-start">
             <BrandLine />
           </div>
-          <p className="text-white/90 text-sm md:text-base font-body-md max-w-xl mt-4 mb-6 leading-relaxed">
-            We are a grassroots movement committed to youth jobs, accountable leadership, and
-            national development. Join citizens in Ghana and across the diaspora working for a more
-            productive future.
+          <p className="text-white/90 text-sm md:text-base font-body-md max-w-xl mt-4 mb-5 leading-relaxed">
+            A grassroots movement for youth jobs, accountable leadership, and national development.
+          </p>
+          <p className="text-white/70 text-xs md:text-sm font-meta font-medium tracking-tight max-w-xl mb-3">
+            Where you live decides how you join — by constituency in Ghana, or by country abroad.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-center md:justify-start">
             <Link
-              to="/register"
+              to="/register?platform=GHANA"
               className="inline-flex items-center justify-center gap-2 px-7 py-4 font-meta text-sm tracking-tight hover:opacity-90 transition-opacity"
               style={{
                 background: 'hsl(var(--accent))',
@@ -277,13 +279,13 @@ export function HeroSection({
                 fontWeight: 'var(--button-font-weight)',
               }}
             >
-              Join the Movement
+              Join in Ghana
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                arrow_forward
+                place
               </span>
             </Link>
             <Link
-              to="/our-agenda"
+              to="/register?platform=DIASPORA"
               className="inline-flex items-center justify-center gap-2 px-7 py-4 font-meta text-sm tracking-tight hover:opacity-90 transition-opacity"
               style={{
                 background: 'hsl(var(--primary))',
@@ -292,8 +294,23 @@ export function HeroSection({
                 fontWeight: 'var(--button-font-weight)',
               }}
             >
-              Learn More About Us
+              Join from Abroad
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                language
+              </span>
             </Link>
+          </div>
+          <Link
+            to="/our-agenda"
+            className="inline-flex items-center gap-1.5 mt-4 font-meta text-xs md:text-sm font-medium tracking-tight text-white/80 hover:text-white transition-colors"
+          >
+            Learn more about our agenda
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              arrow_forward
+            </span>
+          </Link>
+          <div className="mt-5 flex justify-center md:justify-start">
+            <TrustSignals items={SIGNUP_TRUST} tone="dark" />
           </div>
         </div>
 

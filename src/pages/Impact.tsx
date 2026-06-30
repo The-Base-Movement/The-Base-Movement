@@ -50,14 +50,14 @@ export default function Impact() {
           allDonations,
           members,
           activeChapterCount,
-          leaderboard,
+          regionalCounts,
           totalRegistered,
         ] = await Promise.all([
           donationService.getDonationStats(),
           donationService.getDonations(),
           memberService.getMembers(),
           chapterService.getActiveChapterCount(),
-          chapterService.getRegionalLeaderboard(),
+          memberService.getRegionalMemberCounts(),
           memberService.getTotalRegisteredCount(),
         ])
 
@@ -97,19 +97,20 @@ export default function Impact() {
           'Oti',
           'Western North',
         ]
+        // Live regional engagement from the anon-safe get_regional_member_counts() RPC
+        // (region label + count, no PII) — the public page can't read member rows (RLS).
+        // Engagement = a region's share of total registered membership.
+        const countByRegion = new Map(regionalCounts.map((r) => [r.region.toUpperCase(), r.count]))
         setRegions(
-          GHANA_REGIONS.map((name) => {
-            const live = leaderboard.find((l) => l.region.toLowerCase() === name.toLowerCase())
-            return {
-              name,
-              engagement: live
-                ? Math.min(
-                    100,
-                    Math.max(5, Math.floor((live.total_patriots / (totalRegistered || 1)) * 100))
-                  )
-                : 0,
-            }
-          })
+          GHANA_REGIONS.map((name) => ({
+            name,
+            engagement: Math.min(
+              100,
+              Math.round(
+                ((countByRegion.get(name.toUpperCase()) || 0) / (totalRegistered || 1)) * 100
+              )
+            ),
+          }))
         )
 
         const now = new Date()

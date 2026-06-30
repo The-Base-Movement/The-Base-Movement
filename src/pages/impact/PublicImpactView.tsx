@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { WingDivider } from '@/components/ui/WingDivider'
+import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
 import type { DonationDetail } from '@/types/admin'
 import { ImpactActivityModal } from './ImpactActivityModal'
 import { Skeleton } from '@/components/states'
@@ -59,6 +61,7 @@ export function PublicImpactView({
   ]
 
   const progressPct = Math.min(100, Math.round((stats.raised / stats.goal) * 100))
+  const sortedRegions = [...regions].sort((a, b) => b.engagement - a.engagement)
 
   return (
     <main style={{ background: 'hsl(var(--background))', minHeight: '100vh', paddingBottom: 0 }}>
@@ -275,7 +278,7 @@ export function PublicImpactView({
                     <Skeleton variant="img" height={90} style={{ borderRadius: 0 }} />
                   </div>
                 ))
-            : regions.map((r) => {
+            : sortedRegions.map((r) => {
                 const level = r.engagement > 50 ? 'hi' : r.engagement > 20 ? 'mid' : 'lo'
                 const badge = {
                   hi: {
@@ -392,12 +395,15 @@ export function PublicImpactView({
               })}
         </div>
 
+        <WingDivider />
+
         {/* ── Activity + Progress ──────────────────────────────────────────── */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: 24,
+            marginTop: 48,
             marginBottom: 64,
           }}
         >
@@ -617,6 +623,30 @@ export function PublicImpactView({
                   Goal: ₵{(stats.goal / 1000).toFixed(0)}K
                 </span>
               </div>
+              {!isLoading && stats.raised === 0 && (
+                <p
+                  style={{
+                    fontSize: 11.5,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    margin: '12px 0 0',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  This year's fund is just getting started —{' '}
+                  <Link
+                    to="/donate"
+                    style={{
+                      color: 'hsl(var(--primary))',
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    be the first to contribute
+                  </Link>
+                  .
+                </p>
+              )}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -722,6 +752,9 @@ export function PublicImpactView({
           <Link to="/donate" className="btn btn-accent">
             Contribute
           </Link>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
+          <TrustSignals items={SIGNUP_TRUST} tone="dark" />
         </div>
       </div>
     </main>

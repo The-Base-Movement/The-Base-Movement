@@ -30,19 +30,29 @@ import { Button } from '@/components/buttons/ui/neon-button'
 const NAV_LINKS = [
   { label: 'Home', publicPath: '/', dashPath: '/dashboard' },
   { label: 'About', publicPath: '/about', dashPath: '/dashboard/about' },
+  { label: 'The Plan', publicPath: '/our-agenda', dashPath: '/dashboard/agenda' },
   { label: 'Updates', publicPath: '/blog', dashPath: '/dashboard/blog' },
   { label: 'Polls', publicPath: '/polls', dashPath: '/dashboard/polls' },
-  { label: 'The Plan', publicPath: '/our-agenda', dashPath: '/dashboard/agenda' },
-  { label: 'Leadership', publicPath: '/officers', dashPath: '/dashboard/leadership' },
-  { label: 'Constituencies', publicPath: '/constituencies', dashPath: '/dashboard/constituencies' },
   { label: 'Chapters', publicPath: '/chapters', dashPath: '/dashboard/chapters' },
-  { label: 'Jobs', publicPath: '/jobs', dashPath: '/dashboard/jobs' },
-  { label: 'Store', publicPath: '/store', dashPath: '/dashboard/store' },
   { label: 'Donate', publicPath: '/donate', dashPath: '/dashboard/donate' },
   { label: 'Contact', publicPath: '/contact', dashPath: '/dashboard/contact' },
+  { label: 'Impact', publicPath: '/impact', dashPath: '/dashboard/impact' },
+  { label: 'Leadership', publicPath: '/officers', dashPath: '/dashboard/leadership' },
+  { label: 'Constituencies', publicPath: '/constituencies', dashPath: '/dashboard/constituencies' },
+  { label: 'Jobs', publicPath: '/jobs', dashPath: '/dashboard/jobs' },
+  { label: 'Store', publicPath: '/store', dashPath: '/dashboard/store' },
 ]
 
-const PRIMARY_NAV_LABELS = new Set(['Home', 'About', 'Updates', 'Donate', 'Contact'])
+const PRIMARY_NAV_LABELS = new Set([
+  'Home',
+  'About',
+  'The Plan',
+  'Updates',
+  'Polls',
+  'Chapters',
+  'Donate',
+  'Contact',
+])
 const PRIMARY_NAV_LINKS = NAV_LINKS.filter((link) => PRIMARY_NAV_LABELS.has(link.label))
 const MORE_NAV_LINKS = NAV_LINKS.filter((link) => !PRIMARY_NAV_LABELS.has(link.label))
 
@@ -300,7 +310,7 @@ export default function Navbar() {
                 }
               }}
             >
-              More
+              Explore
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                 expand_more
               </span>
@@ -617,7 +627,7 @@ export default function Navbar() {
                 textAlign: 'left',
               }}
             >
-              More
+              Explore
               <span
                 className="material-symbols-outlined"
                 style={{
