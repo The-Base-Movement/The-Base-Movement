@@ -35,43 +35,30 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
+      if (!user?.id) return
       setLoading(true)
-      const regNo = sessionStore.getItem('userRegNo')
-      let liveMember = null
+      try {
+        const liveMember = await adminService.getMemberProfileByAuthId(user.id)
+        if (liveMember) {
+          sessionStore.setItem('userRegNo', liveMember.id)
 
-      if (regNo) {
-        liveMember = await adminService.getMemberProfile(regNo)
-      }
+          setMember({
+            full_name: liveMember.name,
+            registration_number: liveMember.id,
+            region: liveMember.region,
+            constituency: liveMember.constituency,
+            chapter: liveMember.chapter || 'Central Chapter',
+            joined_date: liveMember.joined || '30 Mar 2025',
+            status:
+              liveMember.status === 'Active' || liveMember.status === 'Approved'
+                ? 'Verified'
+                : 'Pending',
+            avatar_url: liveMember.avatarUrl,
+            platform: liveMember.platform,
+            gender: liveMember.gender,
+          })
 
-      if (!liveMember) {
-        const user = await adminService.initialize() // Ensure we have auth user
-        if (user) {
-          liveMember = await adminService.getMemberProfileByAuthId(user.id)
-        }
-      }
-
-      if (liveMember) {
-        // Save regNo for next time
-        sessionStore.setItem('userRegNo', liveMember.id)
-
-        setMember({
-          full_name: liveMember.name,
-          registration_number: liveMember.id,
-          region: liveMember.region,
-          constituency: liveMember.constituency,
-          chapter: liveMember.chapter || 'Central Chapter',
-          joined_date: liveMember.joined || '30 Mar 2025',
-          status:
-            liveMember.status === 'Active' || liveMember.status === 'Approved'
-              ? 'Verified'
-              : 'Pending',
-          avatar_url: liveMember.avatarUrl,
-          platform: liveMember.platform,
-          gender: liveMember.gender,
-        })
-
-        // Fetch additional stats
-        try {
+          // Fetch additional stats
           const [donations, rank] = await Promise.all([
             donationService.getMemberDonationStats({
               authId: liveMember.authId,
@@ -85,14 +72,15 @@ export default function Dashboard() {
           ])
           setContributionStats({ total: donations.total, lastMonth: donations.lastMonth })
           setRankInfo({ rank: rank.rank, delta: rank.delta })
-        } catch (err) {
-          console.warn('[DASHBOARD] Secondary stats sync failed:', err)
         }
+      } catch (err) {
+        console.warn('[DASHBOARD] Stats sync failed:', err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
     fetchData()
-  }, [])
+  }, [user])
 
   if (loading) {
     return (
