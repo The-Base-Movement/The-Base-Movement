@@ -27,7 +27,7 @@ const steps = [
 
 export function OrderStepper() {
   return (
-    <section className="mt-16 pt-10 border-t-2 border-on-surface">
+    <section className="mt-16 mb-16 pt-10 border-t-2 border-on-surface">
       <h2 className="font-meta font-medium text-[18px] md:text-[20px] mb-5 m-0">
         Checkout · Order flow
       </h2>
