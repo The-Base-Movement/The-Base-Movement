@@ -156,53 +156,56 @@ export function MobileHeroUpdatesTicker({ latestPosts }: { latestPosts: BlogPost
       className="sm:hidden border-b border-accent/70 bg-primary text-primary-foreground"
       aria-label="Urgent updates"
     >
-      <div className="page-container py-2">
-        <div className="flex min-h-[56px] items-center gap-3">
+      <div className="page-container py-2.5">
+        <div className="flex min-h-[68px] flex-col justify-center gap-2">
           <Link
             to="/blog"
-            className="shrink-0 rounded-full bg-accent px-3 py-1.5 font-meta text-[10px] font-medium uppercase tracking-[0.08em] text-black"
+            className="mobile-urgent-badge w-fit shrink-0 rounded-full bg-accent px-3 py-1.5 font-meta text-[10px] font-medium uppercase tracking-[0.08em] text-black"
           >
+            <span className="mobile-urgent-badge__dot" aria-hidden="true" />
             Urgent updates
           </Link>
 
-          <div className="min-w-0 flex-1">
-            {updates.length === 0 ? (
-              <Link
-                to="/blog"
-                className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
-              >
-                Latest movement updates are loading
-              </Link>
-            ) : (
-              <Swiper
-                slidesPerView={1}
-                loop={updates.length > 1}
-                onSwiper={(swiper) => {
-                  swiperRef.current = swiper
-                }}
-                onDestroy={() => {
-                  swiperRef.current = null
-                }}
-                speed={520}
-              >
-                {updates.map((post) => (
-                  <SwiperSlide key={post.id}>
-                    <Link
-                      to={`/blog/${post.slug}`}
-                      className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
-                      aria-label={`Read update: ${post.title}`}
-                    >
-                      {post.title}
-                    </Link>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            )}
-          </div>
+          <div className="flex items-start gap-3">
+            <div className="min-w-0 flex-1">
+              {updates.length === 0 ? (
+                <Link
+                  to="/blog"
+                  className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
+                >
+                  Latest movement updates are loading
+                </Link>
+              ) : (
+                <Swiper
+                  slidesPerView={1}
+                  loop={updates.length > 1}
+                  onSwiper={(swiper) => {
+                    swiperRef.current = swiper
+                  }}
+                  onDestroy={() => {
+                    swiperRef.current = null
+                  }}
+                  speed={520}
+                >
+                  {updates.map((post) => (
+                    <SwiperSlide key={post.id}>
+                      <Link
+                        to={`/blog/${post.slug}`}
+                        className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
+                        aria-label={`Read update: ${post.title}`}
+                      >
+                        {post.title}
+                      </Link>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              )}
+            </div>
 
-          <span className="material-symbols-outlined shrink-0" style={{ fontSize: 18 }}>
-            arrow_forward
-          </span>
+            <span className="material-symbols-outlined shrink-0 pt-0.5" style={{ fontSize: 18 }}>
+              arrow_forward
+            </span>
+          </div>
         </div>
       </div>
     </section>
@@ -300,17 +303,19 @@ export function HeroSection({
               </span>
             </Link>
           </div>
-          <Link
-            to="/our-agenda"
-            className="inline-flex items-center gap-1.5 mt-4 font-meta text-xs md:text-sm font-medium tracking-tight text-white/80 hover:text-white transition-colors"
-          >
-            Learn more about our agenda
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              arrow_forward
-            </span>
-          </Link>
-          <div className="mt-5 flex justify-center md:justify-start">
-            <TrustSignals items={SIGNUP_TRUST} tone="dark" />
+          <div className="home-hero-meta-panel mt-4 md:mt-5">
+            <Link
+              to="/our-agenda"
+              className="inline-flex items-center gap-1.5 font-meta text-xs md:text-sm font-medium tracking-tight text-white/80 hover:text-white transition-colors"
+            >
+              Learn more about our agenda
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                arrow_forward
+              </span>
+            </Link>
+            <div className="mt-4 flex justify-center md:justify-start">
+              <TrustSignals items={SIGNUP_TRUST} tone="dark" className="home-hero-trust-signals" />
+            </div>
           </div>
         </div>
 
