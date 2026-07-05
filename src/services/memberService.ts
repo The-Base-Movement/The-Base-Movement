@@ -117,7 +117,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,national_id,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone'
       )
       .eq('registration_number', regNo)
       .maybeSingle()
@@ -145,6 +145,7 @@ class MemberService {
       chapter: data.chapter || undefined,
       country: data.country || 'Ghana',
       profession: data.profession || 'Patriot',
+      nationalId: data.national_id || undefined,
       city: data.city || undefined,
       residentialAddress: data.residential_address || undefined,
       ageRange: data.age_range || undefined,
@@ -162,7 +163,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,emergency_name,emergency_relationship,emergency_phone'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,national_id,age_range,emergency_name,emergency_relationship,emergency_phone'
       )
       .eq('id', authId)
       .maybeSingle()
@@ -188,6 +189,7 @@ class MemberService {
       chapter: data.chapter || undefined,
       country: data.country || 'Ghana',
       profession: data.profession || 'Patriot',
+      nationalId: data.national_id || undefined,
       ageRange: data.age_range || undefined,
       emergencyName: data.emergency_name || undefined,
       emergencyRelationship: data.emergency_relationship || undefined,
@@ -363,6 +365,7 @@ class MemberService {
     if (profile.chapter) updateData.chapter = profile.chapter
     if (profile.country) updateData.country = profile.country
     if (profile.profession) updateData.profession = profile.profession
+    if (profile.nationalId !== undefined) updateData.national_id = profile.nationalId || null
     if (profile.city) updateData.city = profile.city
     // Optional field: use `!== undefined` (not truthy) so a member can also
     // CLEAR their residential address later, not just set/change it.

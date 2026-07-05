@@ -16,6 +16,7 @@ export interface Member {
   chapter?: string
   country?: string
   profession?: string
+  nationalId?: string
   city?: string
   residentialAddress?: string
   jobIndustryId?: number | null

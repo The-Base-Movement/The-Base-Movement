@@ -27,6 +27,7 @@ import { NotificationsPanel } from './settings/NotificationsPanel'
 
 interface FormState {
   fullName: string
+  nationalId: string
   email: string
   phone: string
   countryCode: string
@@ -133,6 +134,7 @@ export default function ProfileSettings() {
 
   const [form, setForm] = useState<FormState>({
     fullName: '',
+    nationalId: '',
     email: '',
     phone: '',
     countryCode: '+233',
@@ -200,6 +202,7 @@ export default function ProfileSettings() {
         const phoneParts = splitProfilePhone(profile.phone || '', profileCountry, uniqueCountries)
         setForm({
           fullName: profile.name,
+          nationalId: profile.nationalId || '',
           email: profile.email || '',
           phone: phoneParts.phone,
           countryCode: phoneParts.countryCode,
@@ -329,6 +332,11 @@ export default function ProfileSettings() {
       }
     }
 
+    if (userPlatform === 'GHANA' && !form.nationalId.trim()) {
+      toast.error('Ghana Card number is required in profile settings.')
+      return
+    }
+
     setLoading(true)
     let finalAvatarUrl = avatarUrl
     const normalizedPhone = normalizeProfilePhone(form.countryCode, form.phone)
@@ -366,6 +374,7 @@ export default function ProfileSettings() {
     try {
       await adminService.updateMemberProfile(regNo, {
         name: form.fullName,
+        nationalId: form.nationalId.trim(),
         email: form.email,
         phone: normalizedPhone,
         gender: form.gender,

@@ -7,6 +7,7 @@ import { EmailSuggestion } from '@/components/EmailSuggestion'
 
 interface FormState {
   fullName: string
+  nationalId: string
   email: string
   phone: string
   countryCode: string
@@ -98,6 +99,23 @@ export function PersonalInfoForm({
               value={form.fullName}
               onChange={(e) => onChange('fullName', e.target.value)}
               placeholder="Full name as on official ID"
+              style={inputStyle}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label htmlFor="input-ghana-card-profile" style={labelStyle}>
+              Ghana Card Number
+              {userPlatform === 'GHANA' && (
+                <span style={{ color: 'hsl(var(--destructive))' }}> *</span>
+              )}
+            </label>
+            <input
+              name="name-ghana-card-profile"
+              id="input-ghana-card-profile"
+              value={form.nationalId}
+              onChange={(e) => onChange('nationalId', e.target.value)}
+              placeholder="GHA-XXXXXXXXX-X"
               style={inputStyle}
             />
           </div>

@@ -187,7 +187,6 @@ export default function Register() {
       if (!formData.fullName.trim()) return 'Full name is required.'
       if (formData.fullName.trim().split(/\s+/).length < 2)
         return 'Please enter your full name (first and last).'
-      if (platform === 'GHANA' && !formData.idNumber.trim()) return 'Ghana Card number is required.'
       if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
         return 'Please enter a valid email address.'
     }
