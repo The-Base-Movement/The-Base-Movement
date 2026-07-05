@@ -218,7 +218,18 @@ export const newsletterService = {
     const { data, error } = await supabase.functions.invoke('send-newsletter', {
       body: payload,
     })
-    if (error) throw error
+    if (error) {
+      try {
+        const ctx = (error as { context?: Response }).context
+        if (ctx && typeof ctx.json === 'function') {
+          const body = await ctx.json()
+          if (body?.error) throw new Error(body.error)
+        }
+      } catch (parseError) {
+        if (parseError instanceof Error && parseError.message) throw parseError
+      }
+      throw error
+    }
     return data as { sent: number; batches: number }
   },
 

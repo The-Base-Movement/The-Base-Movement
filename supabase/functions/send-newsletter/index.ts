@@ -131,6 +131,12 @@ interface Recipient {
   id: string
 }
 
+interface Personalization {
+  to: Array<{ email: string }>
+  substitutions: Record<string, string>
+  custom_args: { newsletter_id: string }
+}
+
 // Announce a sent newsletter to the #content Discord channel. Non-fatal.
 async function notifyContent(subject: string, recipientCount: number) {
   try {
@@ -350,21 +356,36 @@ Deno.serve(async (req) => {
       ctaUrl: 'https://thebasemovement.info/dashboard',
     })
 
+    let skippedInvalidRecipients = 0
+
     // Send in batches
     let batchCount = 0
     for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
       const batch = recipients.slice(i, i + BATCH_SIZE)
-      const personalizations = await Promise.all(
-        batch.map(async ({ email, id }) => ({
-          to: [{ email }],
-          substitutions: {
-            '%%UNSUB%%': `${supabaseUrl}/functions/v1/newsletter-unsubscribe?token=${await createNewsletterUnsubscribeToken(id)}`,
-          },
-          // custom_args are echoed back in SendGrid event webhooks — used to link
-          // delivery events to the correct newsletters row
-          custom_args: { newsletter_id },
-        }))
-      )
+      const personalizations: Personalization[] = []
+      for (const { email, id } of batch) {
+        try {
+          personalizations.push({
+            to: [{ email }],
+            substitutions: {
+              '%%UNSUB%%': `${supabaseUrl}/functions/v1/newsletter-unsubscribe?token=${await createNewsletterUnsubscribeToken(id)}`,
+            },
+            // custom_args are echoed back in SendGrid event webhooks — used to link
+            // delivery events to the correct newsletters row
+            custom_args: { newsletter_id },
+          })
+        } catch (error) {
+          skippedInvalidRecipients++
+          console.error('[NEWSLETTER] Skipping recipient with invalid unsubscribe identity:', {
+            id,
+            email,
+            error: error instanceof Error ? error.message : String(error),
+          })
+        }
+      }
+
+      if (personalizations.length === 0) continue
+
       const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
@@ -392,19 +413,39 @@ Deno.serve(async (req) => {
       console.warn(`[NEWSLETTER] Batch ${batchCount} sent (${batch.length} recipients)`)
     }
 
+    const sentRecipientCount = recipients.length - skippedInvalidRecipients
+    if (sentRecipientCount <= 0) {
+      await supabase
+        .from('newsletters')
+        .update({
+          status: 'failed',
+          error_message: 'No valid recipients after unsubscribe token validation.',
+        })
+        .eq('id', newsletter_id)
+      throw new Error('No valid recipients after unsubscribe token validation.')
+    }
+
     // Update record with final counts
     await supabase
       .from('newsletters')
       .update({
-        recipient_count: recipients.length,
+        recipient_count: sentRecipientCount,
         status: 'sent',
         sent_at: new Date().toISOString(),
+        error_message:
+          skippedInvalidRecipients > 0
+            ? `Skipped ${skippedInvalidRecipients} recipient(s) with invalid unsubscribe identity.`
+            : null,
       })
       .eq('id', newsletter_id)
 
-    await notifyContent(subject, recipients.length)
+    await notifyContent(subject, sentRecipientCount)
 
-    return json({ sent: recipients.length, batches: batchCount }, 200, corsHeaders)
+    return json(
+      { sent: sentRecipientCount, batches: batchCount, skipped: skippedInvalidRecipients },
+      200,
+      corsHeaders
+    )
   } catch (err: unknown) {
     const message =
       err instanceof Error
