@@ -50,6 +50,7 @@ vi.mock('@/services/adminService', () => ({
     getMemberProfile: vi.fn().mockResolvedValue({
       id: 'TBM-GH-260001',
       name: 'Jane Patriot',
+      nationalId: 'GHA-123456789-0',
       email: 'jane@example.com',
       phone: '+233241234567',
       region: 'Greater Accra',
@@ -173,6 +174,7 @@ describe('ProfileSettings', () => {
         'TBM-GH-260001',
         expect.objectContaining({
           avatarUrl: 'https://cdn.example.com/avatar.webp',
+          nationalId: 'GHA-123456789-0',
         })
       )
     })
