@@ -1,13 +1,28 @@
 // @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-
-// @ts-expect-error: Deno supports URL imports
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
+import {
+  getRetryAfterMs,
+  registerAttempt,
+  type RateLimitEntry,
+} from '../_shared/password-reset-rate-limit.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+const WINDOW_MS = 10 * 60 * 1000
+const MAX_ATTEMPTS = 20
+const LOCKOUT_MS = 15 * 60 * 1000
+const throttleStore = new Map<string, RateLimitEntry>()
+
+function clientIp(req: Request) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    'unknown'
+  )
 }
 
 serve(async (req: Request) => {
@@ -15,20 +30,38 @@ serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405,
+    })
+  }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, serviceKey)
-    const authz = await requireAuthorizedAdmin(req, supabase, () => true, {
-      allowServiceRole: true,
-      serviceRoleKey: serviceKey,
-    })
-    if (!authz.ok) {
-      return new Response(authz.response.body, {
-        status: authz.response.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+    const ip = clientIp(req)
+    const now = Date.now()
+    const authHeader = req.headers.get('Authorization') ?? ''
+    const jwt = authHeader.replace(/^Bearer\s+/i, '').trim()
+
+    if (!serviceKey || jwt !== serviceKey) {
+      const currentThrottle = throttleStore.get(ip)
+      const retryAfterMs = getRetryAfterMs(now, currentThrottle)
+      if (retryAfterMs > 0) {
+        return new Response(
+          JSON.stringify({
+            error: `Too many Discord notifications. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 429,
+          }
+        )
+      }
+      throttleStore.set(
+        ip,
+        registerAttempt(now, currentThrottle, WINDOW_MS, MAX_ATTEMPTS, LOCKOUT_MS)
+      )
     }
 
     const body = await req.json()
@@ -71,6 +104,12 @@ serve(async (req: Request) => {
         JSON.stringify({ error: 'Missing or invalid "embeds" array in request body.' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       )
+    }
+    if (embeds.length > 5) {
+      return new Response(JSON.stringify({ error: 'Too many embeds in one request.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      })
     }
 
     console.warn(`[DISCORD-NOTIFY] Dispatching ${embeds.length} embeds to Discord...`)
