@@ -13,7 +13,6 @@ import { useStore } from '@/hooks/useStore'
 import { useInactivityTimeout } from '@/hooks/useInactivityTimeout'
 import { contentService } from '@/services/contentService'
 import { messagingService } from '@/services/messagingService'
-import { MaintenanceGate } from '@/components/MaintenanceGate'
 import Sidebar from '@/components/DashboardLayout/Sidebar'
 import Topbar from '@/components/layouts/dashboard/Topbar'
 import DashboardAdminBanner from '@/components/layouts/dashboard/DashboardAdminBanner'
@@ -422,103 +421,102 @@ export default function DashboardLayout() {
   )
 
   return (
-    <MaintenanceGate>
-      <div className="bg-surface text-on-surface font-body-md min-h-screen">
-        <SEO noindex />
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:rounded-md focus:font-semibold focus:text-white"
-          style={{ background: 'hsl(var(--primary))' }}
-        >
-          Skip to main content
-        </a>
-        <DashboardAdminBanner isAdmin={isAdmin} />
+    <div className="bg-surface text-on-surface font-body-md min-h-screen">
+      <SEO noindex />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:rounded-md focus:font-semibold focus:text-white"
+        style={{ background: 'hsl(var(--primary))' }}
+      >
+        Skip to main content
+      </a>
+      <DashboardAdminBanner isAdmin={isAdmin} />
 
-        {/* Mobile backdrop: closes the sidebar when tapping outside */}
-        {isSidebarOpen && (
-          <div
-            className="md:hidden"
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 40 }}
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
-
-        {/* Share Modal */}
-        <ShareModal
-          isOpen={isShareModalOpen}
-          onClose={() => setIsShareModalOpen(false)}
-          title="Invite others to join The Base"
-          url={
-            userRegNo
-              ? `https://thebasemovement.info/register?ref=${userRegNo}`
-              : 'https://thebasemovement.info/register'
-          }
+      {/* Mobile backdrop: closes the sidebar when tapping outside */}
+      {isSidebarOpen && (
+        <div
+          className="md:hidden"
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 40 }}
+          onClick={() => setIsSidebarOpen(false)}
         />
+      )}
 
-        <Sidebar
-          settings={settings}
-          isSidebarOpen={isSidebarOpen}
-          isSidebarCollapsed={isSidebarCollapsed}
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        title="Invite others to join The Base"
+        url={
+          userRegNo
+            ? `https://thebasemovement.info/register?ref=${userRegNo}`
+            : 'https://thebasemovement.info/register'
+        }
+      />
+
+      <Sidebar
+        settings={settings}
+        isSidebarOpen={isSidebarOpen}
+        isSidebarCollapsed={isSidebarCollapsed}
+        isAdmin={isAdmin}
+        userPlatform={userPlatform}
+        myConstituencyLink={myConstituencyLink}
+        myChapterLink={myChapterLink}
+        likedCount={likedCount}
+        referralCount={referralCount}
+        messageCount={messageCount}
+        setIsShareModalOpen={setIsShareModalOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        toggleTheme={toggleTheme}
+        isDarkTheme={isDarkTheme}
+        avatarUrl={avatarUrl}
+        userName={userName}
+        userRegNo={userRegNo}
+        initials={initials}
+      />
+
+      {/* Main Content Canvas */}
+      <main
+        id="main-content"
+        className={`min-h-screen bg-muted/10 flex flex-col transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'} ${isAdmin ? 'pt-20 md:pt-[116px]' : 'pt-20'}`}
+      >
+        <Topbar
+          getPageTitle={getPageTitle}
           isAdmin={isAdmin}
-          userPlatform={userPlatform}
-          myConstituencyLink={myConstituencyLink}
-          myChapterLink={myChapterLink}
-          likedCount={likedCount}
-          referralCount={referralCount}
-          messageCount={messageCount}
-          setIsShareModalOpen={setIsShareModalOpen}
-          onClose={() => setIsSidebarOpen(false)}
+          isSidebarCollapsed={isSidebarCollapsed}
+          setIsSidebarOpen={setIsSidebarOpen}
+          setIsSidebarCollapsed={setIsSidebarCollapsed}
           toggleTheme={toggleTheme}
           isDarkTheme={isDarkTheme}
+          setOpenNotifications={setOpenNotifications}
+          openNotifications={openNotifications}
+          unreadCount={unreadCount}
+          notifications={notifications}
+          adminService={adminService}
+          setNotifications={setNotifications}
+          setUnreadCount={setUnreadCount}
+          navigate={navigate}
+          openUserMenu={openUserMenu}
+          setOpenUserMenu={setOpenUserMenu}
           avatarUrl={avatarUrl}
           userName={userName}
           userRegNo={userRegNo}
           initials={initials}
+          wishlist={wishlist}
+          handleLogout={handleLogout}
         />
 
-        {/* Main Content Canvas */}
-        <main
-          id="main-content"
-          className={`min-h-screen bg-muted/10 flex flex-col transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'} ${isAdmin ? 'pt-20 md:pt-[116px]' : 'pt-20'}`}
-        >
-          <Topbar
-            getPageTitle={getPageTitle}
-            isAdmin={isAdmin}
-            isSidebarCollapsed={isSidebarCollapsed}
-            setIsSidebarOpen={setIsSidebarOpen}
-            setIsSidebarCollapsed={setIsSidebarCollapsed}
-            toggleTheme={toggleTheme}
-            isDarkTheme={isDarkTheme}
-            setOpenNotifications={setOpenNotifications}
-            openNotifications={openNotifications}
-            unreadCount={unreadCount}
-            notifications={notifications}
-            adminService={adminService}
-            setNotifications={setNotifications}
-            setUnreadCount={setUnreadCount}
-            navigate={navigate}
-            openUserMenu={openUserMenu}
-            setOpenUserMenu={setOpenUserMenu}
-            avatarUrl={avatarUrl}
-            userName={userName}
-            userRegNo={userRegNo}
-            initials={initials}
-            wishlist={wishlist}
-            handleLogout={handleLogout}
-          />
-
-          <div className="dashboard-body">
-            <div style={{ maxWidth: 1440, margin: '0 auto', width: '100%' }}>
-              <Suspense fallback={contentFallback}>
-                <Outlet />
-              </Suspense>
-            </div>
+        <div className="dashboard-body">
+          <div style={{ maxWidth: 1440, margin: '0 auto', width: '100%' }}>
+            <Suspense fallback={contentFallback}>
+              <Outlet />
+            </Suspense>
           </div>
+        </div>
 
-          <DashboardFooter />
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
+        <DashboardFooter />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
               @media (max-width: 768px) {
                 .dashboard-header-actions {
                   gap: 8px !important;
@@ -546,101 +544,100 @@ export default function DashboardLayout() {
                 }
               }
             `,
-            }}
-          />
-        </main>
-        <BackToTop />
+          }}
+        />
+      </main>
+      <BackToTop />
 
-        {/* Inactivity Warning Modal */}
-        {isWarningVisible && (
+      {/* Inactivity Warning Modal */}
+      {isWarningVisible && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+          }}
+        >
           <div
             style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(0,0,0,0.5)',
-              zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '16px',
+              background: 'hsl(var(--card))',
+              borderRadius: 'var(--radius-lg)',
+              padding: '32px',
+              maxWidth: '400px',
+              width: '100%',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div
               style={{
-                background: 'hsl(var(--card))',
-                borderRadius: 'var(--radius-lg)',
-                padding: '32px',
-                maxWidth: '400px',
-                width: '100%',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '16px',
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <div
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 24, color: 'hsl(var(--accent))' }}
+              >
+                schedule
+              </span>
+              <h2
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  marginBottom: '16px',
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
                 }}
               >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 24, color: 'hsl(var(--accent))' }}
-                >
-                  schedule
-                </span>
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: 18,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                >
-                  Session Timeout
-                </h2>
-              </div>
-              <p
-                style={{
-                  margin: '0 0 24px',
-                  fontSize: 14,
-                  color: 'hsl(var(--on-surface-muted))',
-                  lineHeight: 1.5,
+                Session Timeout
+              </h2>
+            </div>
+            <p
+              style={{
+                margin: '0 0 24px',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface-muted))',
+                lineHeight: 1.5,
+              }}
+            >
+              You've been inactive for 25 minutes. Your session will expire in 5 minutes for
+              security reasons.
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 8,
+              }}
+            >
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={async () => {
+                  await signOut()
+                  navigate('/login')
                 }}
+                style={{ justifyContent: 'center' }}
               >
-                You've been inactive for 25 minutes. Your session will expire in 5 minutes for
-                security reasons.
-              </p>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 8,
-                }}
+                Sign Out
+              </button>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={dismissWarning}
+                style={{ justifyContent: 'center' }}
               >
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={async () => {
-                    await signOut()
-                    navigate('/login')
-                  }}
-                  style={{ justifyContent: 'center' }}
-                >
-                  Sign Out
-                </button>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={dismissWarning}
-                  style={{ justifyContent: 'center' }}
-                >
-                  Stay Logged In
-                </button>
-              </div>
+                Stay Logged In
+              </button>
             </div>
           </div>
-        )}
-      </div>
-    </MaintenanceGate>
+        </div>
+      )}
+    </div>
   )
 }

@@ -8,8 +8,8 @@
  * otherwise falls back to the hardcoded defaults. Renders the brand globe,
  * a heading, a message paragraph, and an animated DotLoader.
  *
- * The admin panel is never gated — staff can always reach /admin to toggle
- * maintenance mode off.
+ * Staff routes are never gated, so maintenance mode can always be switched
+ * back off.
  */
 
 import { DotLoader } from '@/components/states/Spinner'
@@ -24,9 +24,9 @@ const DEFAULT_MESSAGE =
   'We are carrying out scheduled maintenance. This usually takes less than 15 minutes. Thank you for your patience, patriot.'
 
 /**
- * Full-screen maintenance splash shown to the public site and member portal
- * while IT has maintenance mode enabled. The admin panel is never gated, so
- * staff can always reach /admin to switch it back off.
+ * Full-screen maintenance splash shown to the public site while IT has
+ * maintenance mode enabled. Staff routes stay reachable so it can be switched
+ * back off.
  */
 export function MaintenancePage({ title, message }: MaintenancePageProps) {
   return (

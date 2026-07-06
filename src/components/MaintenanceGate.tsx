@@ -25,11 +25,10 @@ interface MaintenanceGateProps {
 }
 
 /**
- * Wraps a layout's content. When IT enables maintenance mode (the
- * `maintenance_mode` site setting), public visitors AND members see the
- * maintenance splash instead — no bypass. Only the admin backend (`/admin/*`,
- * which is never wrapped by this gate) and the auth routes stay reachable, so
- * staff can still log in and switch maintenance back off.
+ * Wraps the public site's content. When IT enables maintenance mode (the
+ * `maintenance_mode` site setting), only the public frontend is replaced with
+ * the maintenance splash. Auth routes stay reachable so staff can still log in
+ * and switch maintenance back off.
  */
 export function MaintenanceGate({ children }: MaintenanceGateProps) {
   const { settings } = useBranding()

@@ -7,10 +7,10 @@ const DEFAULT_MESSAGE =
   'We are carrying out scheduled maintenance. This usually takes less than 15 minutes. Thank you for your patience, patriot.'
 
 /**
- * IT control for the public/member-facing maintenance splash. Writes the
+ * IT control for the public-site maintenance splash. Writes the
  * `maintenance_mode`, `maintenance_title` and `maintenance_message` site
  * settings, then broadcasts so the BrandingContext (and the gate) react live.
- * The admin panel itself is never gated, so this page stays reachable.
+ * Staff routes themselves are never gated, so this page stays reachable.
  */
 export function MaintenanceControl() {
   const [enabled, setEnabled] = useState(false)
@@ -46,8 +46,8 @@ export function MaintenanceControl() {
       window.dispatchEvent(new Event('site_settings_updated'))
       toast.success(
         next.enabled
-          ? 'Maintenance mode is ON — the site is now offline'
-          : 'Maintenance mode is OFF — the site is live'
+          ? 'Maintenance mode is ON — the public site is now offline'
+          : 'Maintenance mode is OFF — the public site is live'
       )
     } catch {
       toast.error('Failed to update maintenance mode')
@@ -99,8 +99,8 @@ export function MaintenanceControl() {
               lineHeight: 1.5,
             }}
           >
-            Take the public site and member portal offline with a maintenance splash. The admin
-            panel stays accessible so you can switch it back on.
+            Take the public site offline with a maintenance splash. Member and admin routes stay
+            accessible so you can switch it back on.
           </p>
         </div>
         <button
@@ -160,7 +160,7 @@ export function MaintenanceControl() {
             warning
           </span>
           <span style={{ fontSize: 12, color: 'hsl(var(--destructive))' }}>
-            The public site is currently offline to visitors and members.
+            The public site is currently offline to visitors.
           </span>
         </div>
       )}
