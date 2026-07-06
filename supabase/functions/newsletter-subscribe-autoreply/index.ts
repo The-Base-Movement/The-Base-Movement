@@ -13,6 +13,18 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const RECENT_SUBSCRIPTION_WINDOW_MS = 10 * 60 * 1000
+
+function normalizeEmail(value: string): string {
+  return value.trim().toLowerCase()
+}
+
+function normalizePhone(value: unknown): string | null {
+  if (typeof value !== 'string') return null
+  const normalized = value.trim()
+  return normalized || null
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') {
@@ -27,19 +39,46 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { email } = await req.json()
+    const { email, phone, subscriberId } = await req.json()
     if (!email || typeof email !== 'string') throw new Error('email is required')
+    if (!subscriberId || typeof subscriberId !== 'string') {
+      return new Response(JSON.stringify({ skipped: true, reason: 'subscriber id required' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
 
-    const normalizedEmail = email.trim().toLowerCase()
+    const normalizedEmail = normalizeEmail(email)
+    const normalizedPhone = normalizePhone(phone)
     const { data: subscriber, error: subscriberErr } = await supabase
       .from('newsletter_subscribers')
-      .select('email, phone_number, status')
-      .eq('email', normalizedEmail)
+      .select('id, email, phone_number, status, created_at')
+      .eq('id', subscriberId)
       .maybeSingle()
 
     if (subscriberErr) throw new Error(`Subscriber lookup failed: ${subscriberErr.message}`)
     if (!subscriber || subscriber.status !== 'Active') {
       return new Response(JSON.stringify({ skipped: true, reason: 'subscriber not active' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
+    if (normalizeEmail(subscriber.email ?? '') !== normalizedEmail) {
+      return new Response(JSON.stringify({ skipped: true, reason: 'subscriber mismatch' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
+    if (normalizedPhone && normalizePhone(subscriber.phone_number) !== normalizedPhone) {
+      return new Response(JSON.stringify({ skipped: true, reason: 'subscriber mismatch' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
+    const createdAt =
+      typeof subscriber.created_at === 'string' ? Date.parse(subscriber.created_at) : NaN
+    if (!Number.isFinite(createdAt) || Date.now() - createdAt > RECENT_SUBSCRIPTION_WINDOW_MS) {
+      return new Response(JSON.stringify({ skipped: true, reason: 'subscription not recent' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })

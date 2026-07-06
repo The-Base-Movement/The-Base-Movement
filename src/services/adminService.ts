@@ -3035,26 +3035,48 @@ class AdminService {
   async subscribeToNewsletter(email: string, phone?: string): Promise<boolean> {
     try {
       const normalizedPhone = phone?.trim() || null
-      const { error } = await supabase
+      const normalizedEmail = email.trim().toLowerCase()
+      const { data: subscriber, error } = await supabase
         .from('newsletter_subscribers')
         .upsert(
-          { email, phone_number: normalizedPhone, status: 'Active' },
+          { email: normalizedEmail, phone_number: normalizedPhone, status: 'Active' },
           { onConflict: 'email', ignoreDuplicates: false }
         )
+        .select('id, email, phone_number, created_at')
+        .single()
 
       if (error && error.code === '42501') {
-        const { error: insertError } = await supabase
+        const { data: insertedSubscriber, error: insertError } = await supabase
           .from('newsletter_subscribers')
-          .insert({ email, phone_number: normalizedPhone, status: 'Active' })
+          .insert({ email: normalizedEmail, phone_number: normalizedPhone, status: 'Active' })
+          .select('id, email, phone_number, created_at')
+          .single()
         if (insertError && insertError.code === '23505') return true
         if (insertError) throw insertError
+        discordService.newsletterSubscription(normalizedEmail)
+        supabase.functions
+          .invoke('newsletter-subscribe-autoreply', {
+            body: {
+              email: normalizedEmail,
+              phone: normalizedPhone,
+              subscriberId: insertedSubscriber?.id,
+            },
+          })
+          .catch((invokeError) => {
+            console.warn('[NEWSLETTER] Subscription auto-reply failed:', invokeError)
+          })
+        return true
       } else if (error) {
         throw error
       }
-      discordService.newsletterSubscription(email)
+      discordService.newsletterSubscription(normalizedEmail)
       supabase.functions
         .invoke('newsletter-subscribe-autoreply', {
-          body: { email, phone: normalizedPhone },
+          body: {
+            email: normalizedEmail,
+            phone: normalizedPhone,
+            subscriberId: subscriber?.id,
+          },
         })
         .catch((invokeError) => {
           console.warn('[NEWSLETTER] Subscription auto-reply failed:', invokeError)
