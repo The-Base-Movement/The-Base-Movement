@@ -15,6 +15,21 @@ function json(body: unknown, status = 200) {
   })
 }
 
+function timingSafeEqual(a: string, b: string) {
+  if (a.length !== b.length) return false
+
+  let diff = 0
+  for (let i = 0; i < a.length; i += 1) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+
+  return diff === 0
+}
+
+async function delay(ms: number) {
+  await new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 // @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
@@ -23,6 +38,7 @@ Deno.serve(async (req: Request) => {
   try {
     const { passphrase } = (await req.json()) as { passphrase?: string }
     if (!passphrase?.trim()) return json({ ok: false, reason: 'Passphrase required' }, 400)
+    const submitted = passphrase.trim()
 
     // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
@@ -43,15 +59,13 @@ Deno.serve(async (req: Request) => {
       return json({ ok: false, reason: 'Admin gate is not configured' }, 503)
     }
 
-    const ok = passphrase.trim() === stored.trim()
+    await delay(250)
+    const ok = timingSafeEqual(submitted, stored.trim())
+    if (!ok) {
+      await delay(750)
+    }
 
-    const ip =
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      req.headers.get('x-real-ip') ||
-      req.headers.get('cf-connecting-ip') ||
-      'Unknown'
-
-    return json({ ok, ip })
+    return json({ ok })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     console.error(`[ADMIN-GATE-ERROR] ${message}`)
