@@ -38,9 +38,15 @@ export default function Dashboard() {
       if (!user?.id) return
       setLoading(true)
       try {
-        const liveMember = await adminService.getMemberProfileByAuthId(user.id)
+        const storedRegNo = sessionStore.getItem('userRegNo')
+        const liveMember = storedRegNo
+          ? (await adminService.getMemberProfile(storedRegNo)) ||
+            (await adminService.getMemberProfileByAuthId(user.id))
+          : await adminService.getMemberProfileByAuthId(user.id)
         if (liveMember) {
           sessionStore.setItem('userRegNo', liveMember.id)
+          sessionStore.setItem('userName', liveMember.name)
+          if (liveMember.avatarUrl) sessionStore.setItem('userAvatar', liveMember.avatarUrl)
 
           setMember({
             full_name: liveMember.name,
