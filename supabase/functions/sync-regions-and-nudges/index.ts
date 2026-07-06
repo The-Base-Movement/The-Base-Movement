@@ -11,7 +11,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { sendSms } from '../_shared/sms.ts'
 import { csvImportWelcomeEmail } from '../_shared/email-templates.ts'
-import { getSenderEmail } from '../_shared/admin-auth.ts'
+import { canManageMembers, getSenderEmail, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -49,6 +49,17 @@ serve(async (req: Request) => {
     const sgKey = Deno.env.get('SENDGRID_API_KEY')
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+    const authz = await requireAuthorizedAdmin(req, supabaseAdmin, canManageMembers, {
+      allowServiceRole: true,
+      serviceRoleKey: supabaseServiceKey,
+    })
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const senderEmail = sgKey ? await getSenderEmail(supabaseAdmin) : ''
 
     // 1. One-time Sync: Auto-resolve region for members who have a constituency but no region
