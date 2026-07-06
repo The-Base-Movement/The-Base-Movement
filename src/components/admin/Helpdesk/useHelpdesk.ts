@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { createSignedStorageUrl } from '@/lib/storageObject'
 import { toast } from 'sonner'
 import { discordService } from '@/services/discordService'
 import type {
@@ -61,6 +62,19 @@ export function useHelpdesk(departmentId: string) {
     attachments: HelpdeskAttachment[]
   } | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
+
+  const signAttachments = useCallback(
+    async (attachments: HelpdeskAttachment[]) =>
+      Promise.all(
+        attachments.map(async (attachment) => ({
+          ...attachment,
+          file_url:
+            (await createSignedStorageUrl('helpdesk-attachments', attachment.file_url, 300)) ??
+            attachment.file_url,
+        }))
+      ),
+    []
+  )
 
   const fetchTickets = useCallback(async () => {
     setLoading(true)
@@ -127,56 +141,59 @@ export function useHelpdesk(departmentId: string) {
     fetchHandlers()
   }, [fetchHandlers])
 
-  const loadDetail = useCallback(async (ticketId: string) => {
-    setDetailLoading(true)
-    const [ticketRes, commentsRes, attachmentsRes] = await Promise.all([
-      supabase
-        .from('helpdesk_tickets')
-        .select(
-          `
+  const loadDetail = useCallback(
+    async (ticketId: string) => {
+      setDetailLoading(true)
+      const [ticketRes, commentsRes, attachmentsRes] = await Promise.all([
+        supabase
+          .from('helpdesk_tickets')
+          .select(
+            `
           id, department_id, subject, description, priority, status,
           submitted_by, assigned_to, created_at, updated_at,
           submitter:users!submitted_by(full_name),
           assignee:users!assigned_to(full_name),
           helpdesk_departments(name, icon)
         `
-        )
-        .eq('id', ticketId)
-        .single(),
-      supabase
-        .from('helpdesk_comments')
-        .select(
-          'id, ticket_id, author_id, body, is_internal, created_at, users!author_id(full_name)'
-        )
-        .eq('ticket_id', ticketId)
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('helpdesk_attachments')
-        .select('id, ticket_id, uploaded_by, file_url, file_name, file_size, created_at')
-        .eq('ticket_id', ticketId)
-        .order('created_at', { ascending: true }),
-    ])
-    if (ticketRes.error) {
-      toast.error('Failed to load ticket')
+          )
+          .eq('id', ticketId)
+          .single(),
+        supabase
+          .from('helpdesk_comments')
+          .select(
+            'id, ticket_id, author_id, body, is_internal, created_at, users!author_id(full_name)'
+          )
+          .eq('ticket_id', ticketId)
+          .order('created_at', { ascending: true }),
+        supabase
+          .from('helpdesk_attachments')
+          .select('id, ticket_id, uploaded_by, file_url, file_name, file_size, created_at')
+          .eq('ticket_id', ticketId)
+          .order('created_at', { ascending: true }),
+      ])
+      if (ticketRes.error) {
+        toast.error('Failed to load ticket')
+        setDetailLoading(false)
+        return
+      }
+      setDetail({
+        ticket: buildTicketFromRow(ticketRes.data),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        comments: (commentsRes.data ?? []).map((c: any) => ({
+          id: c.id,
+          ticket_id: c.ticket_id,
+          author_id: c.author_id,
+          author_name: c.users?.full_name ?? 'Unknown',
+          body: c.body,
+          is_internal: c.is_internal,
+          created_at: c.created_at,
+        })),
+        attachments: await signAttachments(attachmentsRes.data ?? []),
+      })
       setDetailLoading(false)
-      return
-    }
-    setDetail({
-      ticket: buildTicketFromRow(ticketRes.data),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      comments: (commentsRes.data ?? []).map((c: any) => ({
-        id: c.id,
-        ticket_id: c.ticket_id,
-        author_id: c.author_id,
-        author_name: c.users?.full_name ?? 'Unknown',
-        body: c.body,
-        is_internal: c.is_internal,
-        created_at: c.created_at,
-      })),
-      attachments: attachmentsRes.data ?? [],
-    })
-    setDetailLoading(false)
-  }, [])
+    },
+    [signAttachments]
+  )
 
   const closeDetail = useCallback(() => setDetail(null), [])
 
@@ -348,6 +365,19 @@ export function useMemberHelpdesk(userId: string | null) {
     attachments: HelpdeskAttachment[]
   } | null>(null)
 
+  const signAttachments = useCallback(
+    async (attachments: HelpdeskAttachment[]) =>
+      Promise.all(
+        attachments.map(async (attachment) => ({
+          ...attachment,
+          file_url:
+            (await createSignedStorageUrl('helpdesk-attachments', attachment.file_url, 300)) ??
+            attachment.file_url,
+        }))
+      ),
+    []
+  )
+
   const fetchMyTickets = useCallback(async () => {
     if (!userId) {
       setTickets([])
@@ -405,53 +435,56 @@ export function useMemberHelpdesk(userId: string | null) {
     fetchDepartments()
   }, [fetchDepartments])
 
-  const loadDetail = useCallback(async (ticketId: string) => {
-    const [ticketRes, commentsRes, attachmentsRes] = await Promise.all([
-      supabase
-        .from('helpdesk_tickets')
-        .select(
-          `
+  const loadDetail = useCallback(
+    async (ticketId: string) => {
+      const [ticketRes, commentsRes, attachmentsRes] = await Promise.all([
+        supabase
+          .from('helpdesk_tickets')
+          .select(
+            `
           id, department_id, subject, description, priority, status,
           submitted_by, assigned_to, created_at, updated_at,
           submitter:users!submitted_by(full_name),
           assignee:users!assigned_to(full_name),
           helpdesk_departments(name, icon)
         `
-        )
-        .eq('id', ticketId)
-        .single(),
-      supabase
-        .from('helpdesk_comments')
-        .select(
-          'id, ticket_id, author_id, body, is_internal, created_at, users!author_id(full_name)'
-        )
-        .eq('ticket_id', ticketId)
-        .eq('is_internal', false)
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('helpdesk_attachments')
-        .select('id, ticket_id, uploaded_by, file_url, file_name, file_size, created_at')
-        .eq('ticket_id', ticketId),
-    ])
-    if (ticketRes.error) {
-      toast.error('Failed to load ticket')
-      return
-    }
-    setDetail({
-      ticket: buildTicketFromRow(ticketRes.data),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      comments: (commentsRes.data ?? []).map((c: any) => ({
-        id: c.id,
-        ticket_id: c.ticket_id,
-        author_id: c.author_id,
-        author_name: c.users?.full_name ?? 'Unknown',
-        body: c.body,
-        is_internal: false,
-        created_at: c.created_at,
-      })),
-      attachments: attachmentsRes.data ?? [],
-    })
-  }, [])
+          )
+          .eq('id', ticketId)
+          .single(),
+        supabase
+          .from('helpdesk_comments')
+          .select(
+            'id, ticket_id, author_id, body, is_internal, created_at, users!author_id(full_name)'
+          )
+          .eq('ticket_id', ticketId)
+          .eq('is_internal', false)
+          .order('created_at', { ascending: true }),
+        supabase
+          .from('helpdesk_attachments')
+          .select('id, ticket_id, uploaded_by, file_url, file_name, file_size, created_at')
+          .eq('ticket_id', ticketId),
+      ])
+      if (ticketRes.error) {
+        toast.error('Failed to load ticket')
+        return
+      }
+      setDetail({
+        ticket: buildTicketFromRow(ticketRes.data),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        comments: (commentsRes.data ?? []).map((c: any) => ({
+          id: c.id,
+          ticket_id: c.ticket_id,
+          author_id: c.author_id,
+          author_name: c.users?.full_name ?? 'Unknown',
+          body: c.body,
+          is_internal: false,
+          created_at: c.created_at,
+        })),
+        attachments: await signAttachments(attachmentsRes.data ?? []),
+      })
+    },
+    [signAttachments]
+  )
 
   const closeDetail = useCallback(() => setDetail(null), [])
 
@@ -492,13 +525,10 @@ export function useMemberHelpdesk(userId: string | null) {
           console.error('Attachment upload failed', uploadErr)
           continue
         }
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from('helpdesk-attachments').getPublicUrl(upload.path)
         await supabase.from('helpdesk_attachments').insert({
           ticket_id: ticket.id,
           uploaded_by: userId,
-          file_url: publicUrl,
+          file_url: upload.path,
           file_name: file.name,
           file_size: file.size,
         })

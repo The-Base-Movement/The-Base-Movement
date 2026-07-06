@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { createSignedStorageUrl, extractStorageObjectPath } from '@/lib/storageObject'
 
 export const itService = {
   // ── System ──
@@ -357,21 +358,28 @@ export const itService = {
         .in('id', creatorIds)
       nameMap = Object.fromEntries((users ?? []).map((u) => [u.id, u.full_name ?? 'Unknown']))
     }
-    return (data ?? []).map((p) => ({
-      id: p.id as string,
-      title: p.title as string,
-      markdown_content: p.markdown_content as string | null,
-      file_url: p.file_url as string | null,
-      version: p.version as string | null,
-      created_at: p.created_at as string,
-      author_name: nameMap[p.created_by] ?? 'Unknown',
-    }))
+    const protocols = await Promise.all(
+      (data ?? []).map(async (p) => ({
+        id: p.id as string,
+        title: p.title as string,
+        markdown_content: p.markdown_content as string | null,
+        file_url: await createSignedStorageUrl(
+          'it-security-protocols',
+          p.file_url as string | null
+        ),
+        version: p.version as string | null,
+        created_at: p.created_at as string,
+        author_name: nameMap[p.created_by] ?? 'Unknown',
+      }))
+    )
+
+    return protocols
   },
 
   async uploadSecurityProtocol(file: File, path: string) {
     const { error } = await supabase.storage.from('it-security-protocols').upload(path, file)
     if (error) throw error
-    return supabase.storage.from('it-security-protocols').getPublicUrl(path).data.publicUrl
+    return path
   },
 
   async createSecurityProtocol(payload: Record<string, unknown>): Promise<void> {
@@ -380,8 +388,9 @@ export const itService = {
   },
 
   async deleteSecurityProtocol(id: string, storagePath?: string): Promise<void> {
-    if (storagePath) {
-      await supabase.storage.from('it-security-protocols').remove([storagePath])
+    const normalizedPath = extractStorageObjectPath('it-security-protocols', storagePath)
+    if (normalizedPath) {
+      await supabase.storage.from('it-security-protocols').remove([normalizedPath])
     }
     const { error } = await supabase.from('it_security_protocols').delete().eq('id', id)
     if (error) throw error

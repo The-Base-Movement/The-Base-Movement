@@ -166,14 +166,7 @@ export default function ITSecurity() {
   async function handleDelete(id: string, fileUrl: string | null) {
     if (!confirm('Delete this protocol? This cannot be undone.')) return
     try {
-      let storagePath: string | undefined
-      if (fileUrl) {
-        const BUCKET = 'it-security-protocols'
-        const marker = `/storage/v1/object/public/${BUCKET}/`
-        const idx = fileUrl.indexOf(marker)
-        if (idx !== -1) storagePath = decodeURIComponent(fileUrl.slice(idx + marker.length))
-      }
-      await itService.deleteSecurityProtocol(id, storagePath)
+      await itService.deleteSecurityProtocol(id, fileUrl ?? undefined)
       toast.success('Protocol deleted')
       setProtocols((prev) => prev.filter((p) => p.id !== id))
       if (openId === id) setOpenId(null)

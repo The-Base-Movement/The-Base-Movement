@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { compressForUpload } from '@/lib/imageUtils'
+import { createSignedStorageUrl } from '@/lib/storageObject'
 import { sanitizeOrTerm } from '@/lib/supabaseFilters'
 import type {
   Job,
@@ -204,7 +205,15 @@ class JobService {
       .in('id', memberIds)
     const userMap = Object.fromEntries((users || []).map((u) => [u.id, u]))
 
-    return data.map((a) => ({ ...a, member: userMap[a.member_id] ?? null })) as JobApplication[]
+    const applications = await Promise.all(
+      data.map(async (a) => ({
+        ...a,
+        resume_url: await createSignedStorageUrl('job-resumes', a.resume_url as string | null),
+        member: userMap[a.member_id] ?? null,
+      }))
+    )
+
+    return applications as JobApplication[]
   }
 
   async updateApplicationStatus(id: string, status: ApplicationStatus): Promise<boolean> {
@@ -244,8 +253,7 @@ class JobService {
       console.warn('[jobService] uploadResume:', error)
       return null
     }
-    const { data } = supabase.storage.from('job-resumes').getPublicUrl(path)
-    return data.publicUrl
+    return path
   }
 
   async hasApplied(jobId: string): Promise<boolean> {
