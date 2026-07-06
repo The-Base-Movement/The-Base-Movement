@@ -16,6 +16,12 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import {
+  getRetryAfterMs,
+  getThrottleKey,
+  registerFailure,
+  type RateLimitEntry,
+} from './rate-limit.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -51,6 +57,21 @@ function phoneCandidates(raw: string): { exact: string[]; suffix: string | null 
 }
 
 const GENERIC_FAIL = 'Invalid login credentials'
+const FAILURE_DELAY_MS = 900
+const throttleStore = new Map<string, RateLimitEntry>()
+
+async function delay(ms: number) {
+  await new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function clientIp(req: Request) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    'unknown'
+  )
+}
 
 async function resolveProfile(admin: ReturnType<typeof createClient>, identifier: string) {
   const trimmed = identifier.trim()
@@ -106,6 +127,9 @@ serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
+  if (req.method !== 'POST') {
+    return json({ error: 'Method not allowed' }, 405)
+  }
 
   try {
     // @ts-expect-error: Deno global
@@ -120,6 +144,18 @@ serve(async (req: Request) => {
     if (!loginIdentifier || !password) {
       return json({ error: 'Identifier and password are required.' }, 400)
     }
+    const now = Date.now()
+    const throttleKey = getThrottleKey(loginIdentifier, clientIp(req))
+    const currentThrottle = throttleStore.get(throttleKey)
+    const retryAfterMs = getRetryAfterMs(now, currentThrottle)
+    if (retryAfterMs > 0) {
+      return json(
+        {
+          error: `Too many login attempts. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+        },
+        429
+      )
+    }
 
     const admin = createClient(supabaseUrl, serviceKey)
 
@@ -128,10 +164,20 @@ serve(async (req: Request) => {
     // exact matches we allow a unique suffix match and reject ambiguous results.
     const profile = await resolveProfile(admin, loginIdentifier)
 
-    if (!profile) return json({ error: GENERIC_FAIL }, 401)
+    if (!profile) {
+      const next = registerFailure(now, currentThrottle)
+      throttleStore.set(throttleKey, next.entry)
+      await delay(FAILURE_DELAY_MS)
+      return json({ error: GENERIC_FAIL }, 401)
+    }
 
     const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(profile.id)
-    if (authUserError || !authUser?.user?.email) return json({ error: GENERIC_FAIL }, 401)
+    if (authUserError || !authUser?.user?.email) {
+      const next = registerFailure(now, currentThrottle)
+      throttleStore.set(throttleKey, next.entry)
+      await delay(FAILURE_DELAY_MS)
+      return json({ error: GENERIC_FAIL }, 401)
+    }
 
     // Sign in with the real auth email using the anon client so the resulting
     // session is a normal user session (not service-role)
@@ -141,7 +187,14 @@ serve(async (req: Request) => {
       password,
     })
 
-    if (error || !data.session) return json({ error: GENERIC_FAIL }, 401)
+    if (error || !data.session) {
+      const next = registerFailure(now, currentThrottle)
+      throttleStore.set(throttleKey, next.entry)
+      await delay(FAILURE_DELAY_MS)
+      return json({ error: GENERIC_FAIL }, 401)
+    }
+
+    throttleStore.delete(throttleKey)
 
     return json({
       access_token: data.session.access_token,
