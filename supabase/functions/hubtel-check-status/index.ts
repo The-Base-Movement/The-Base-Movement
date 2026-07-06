@@ -1,5 +1,6 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -28,6 +29,15 @@ Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   try {
+    const serviceKey = getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY')
+    const authz = requireServiceRoleCall(req, serviceKey)
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const { reference, type } = (await req.json()) as {
       reference?: string
       type?: 'donation' | 'order'
@@ -37,7 +47,7 @@ Deno.serve(async (req: Request) => {
 
     const clientId = getRequiredEnv('HUBTEL_API_ID')
     const clientSecret = getRequiredEnv('HUBTEL_API_KEY')
-    const accountNumber = getRequiredEnv('HUBTEL_ACCOUNT_NUMBER')
+    getRequiredEnv('HUBTEL_ACCOUNT_NUMBER')
 
     // @ts-expect-error: Deno global
     const statusBaseUrl =
@@ -90,8 +100,7 @@ Deno.serve(async (req: Request) => {
     // Optionally reconcile with local DB
     if (type && reference) {
       const supabaseUrl = getRequiredEnv('SUPABASE_URL')
-      const supabaseServiceKey = getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY')
-      const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+      const supabaseAdmin = createClient(supabaseUrl, serviceKey)
 
       if (type === 'donation') {
         const { data: donation } = await supabaseAdmin
