@@ -10,7 +10,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { sendSms } from '../_shared/sms.ts'
 import { incompleteRegistrationEmail } from '../_shared/email-templates.ts'
-import { getSenderEmail } from '../_shared/admin-auth.ts'
+import { canManageMembers, getSenderEmail, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -196,12 +196,23 @@ async function runSecurityScan(supabase: ReturnType<typeof createClient>): Promi
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
+  }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey)
+    const authz = await requireAuthorizedAdmin(req, supabase, canManageMembers, {
+      allowServiceRole: true,
+      serviceRoleKey,
+    })
+    if (!authz.ok) {
+      return new Response(await authz.response.text(), {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     const sgKey = Deno.env.get('SENDGRID_API_KEY')
     const senderEmail = sgKey ? await getSenderEmail(supabase) : null
