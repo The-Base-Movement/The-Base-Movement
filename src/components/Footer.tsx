@@ -39,6 +39,7 @@ const FOOTER_COLS = [
 export default function Footer() {
   const { settings } = useBranding()
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [subscribed, setSubscribed] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -48,8 +49,12 @@ export default function Footer() {
       toast.error('Please enter a valid email address.')
       return
     }
+    if (phone.trim() && phone.replace(/\D/g, '').length < 8) {
+      toast.error('Please enter a valid phone number for SMS updates, or leave it blank.')
+      return
+    }
     setSubmitting(true)
-    const success = await adminService.subscribeToNewsletter(email.trim())
+    const success = await adminService.subscribeToNewsletter(email.trim(), phone.trim())
     setSubmitting(false)
     if (success) {
       setSubscribed(true)
@@ -275,6 +280,31 @@ export default function Footer() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
                 required
+                disabled={subscribed}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 'var(--button-radius)',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 500,
+                  fontSize: 12,
+                  color: '#fff',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
+                onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
+              />
+              <input
+                name="phone"
+                id="input-newsletter-phone"
+                type="tel"
+                autoComplete="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Phone number for SMS (optional)"
                 disabled={subscribed}
                 style={{
                   width: '100%',

@@ -8,6 +8,8 @@ interface PublicSidebarProps {
   onCategoryChange: (cat: string) => void
   publicEmail: string
   onPublicEmailChange: (v: string) => void
+  publicPhone: string
+  onPublicPhoneChange: (v: string) => void
   publicSubmitting: boolean
   onPublicSubscribe: () => void
   publicSubscribed?: boolean
@@ -20,6 +22,8 @@ export function PublicSidebar({
   onCategoryChange,
   publicEmail,
   onPublicEmailChange,
+  publicPhone,
+  onPublicPhoneChange,
   publicSubmitting,
   onPublicSubscribe,
   publicSubscribed = false,
@@ -91,6 +95,24 @@ export function PublicSidebar({
             placeholder="Email Address"
             value={publicEmail}
             onChange={(e) => onPublicEmailChange(e.target.value)}
+            disabled={publicSubscribed}
+            className="w-full text-xs"
+            style={{
+              padding: 12,
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 'var(--radius-sm)',
+              color: '#fff',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
+          <input
+            aria-label="Phone Number"
+            type="tel"
+            placeholder="Phone number for SMS (optional)"
+            value={publicPhone}
+            onChange={(e) => onPublicPhoneChange(e.target.value)}
             disabled={publicSubscribed}
             className="w-full text-xs"
             style={{

@@ -3035,22 +3035,33 @@ class AdminService {
 
   // --- Phase 15: Public Engagement & Communication (Standardization) ---
 
-  async subscribeToNewsletter(email: string): Promise<boolean> {
+  async subscribeToNewsletter(email: string, phone?: string): Promise<boolean> {
     try {
+      const normalizedPhone = phone?.trim() || null
       const { error } = await supabase
         .from('newsletter_subscribers')
-        .upsert({ email, status: 'Active' }, { onConflict: 'email', ignoreDuplicates: false })
+        .upsert(
+          { email, phone_number: normalizedPhone, status: 'Active' },
+          { onConflict: 'email', ignoreDuplicates: false }
+        )
 
       if (error && error.code === '42501') {
         const { error: insertError } = await supabase
           .from('newsletter_subscribers')
-          .insert({ email, status: 'Active' })
+          .insert({ email, phone_number: normalizedPhone, status: 'Active' })
         if (insertError && insertError.code === '23505') return true
         if (insertError) throw insertError
       } else if (error) {
         throw error
       }
       discordService.newsletterSubscription(email)
+      supabase.functions
+        .invoke('newsletter-subscribe-autoreply', {
+          body: { email, phone: normalizedPhone },
+        })
+        .catch((invokeError) => {
+          console.warn('[NEWSLETTER] Subscription auto-reply failed:', invokeError)
+        })
       return true
     } catch (error) {
       console.error('[DATABASE] Newsletter subscription failed:', error)

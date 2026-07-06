@@ -27,15 +27,18 @@ export default function Blog() {
   const isDashboard = location.pathname.startsWith('/dashboard')
   const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
   const [sidebarEmail, setSidebarEmail] = useState('')
+  const [sidebarPhone, setSidebarPhone] = useState('')
   const [sidebarSubmitting, setSidebarSubmitting] = useState(false)
   const [sidebarSubscribed, setSidebarSubscribed] = useState(false)
   const [publicEmail, setPublicEmail] = useState('')
+  const [publicPhone, setPublicPhone] = useState('')
   const [publicSubmitting, setPublicSubmitting] = useState(false)
   const [publicSubscribed, setPublicSubscribed] = useState(false)
   const [error, setError] = useState(false)
 
   const handleNewsletter = async (
     email: string,
+    phone: string,
     setSubmitting: (v: boolean) => void,
     setSubscribed: (v: boolean) => void
   ) => {
@@ -43,8 +46,12 @@ export default function Blog() {
       toast.error('Please enter a valid email address.')
       return
     }
+    if (phone.trim() && phone.replace(/\D/g, '').length < 8) {
+      toast.error('Please enter a valid phone number for SMS updates, or leave it blank.')
+      return
+    }
     setSubmitting(true)
-    const success = await adminService.subscribeToNewsletter(email.trim())
+    const success = await adminService.subscribeToNewsletter(email.trim(), phone.trim())
     setSubmitting(false)
     if (success) {
       toast.success("Subscribed! You'll receive The Base Weekly.")
@@ -186,10 +193,17 @@ export default function Blog() {
               onCategoryChange={handleCategoryChange}
               sidebarEmail={sidebarEmail}
               onSidebarEmailChange={setSidebarEmail}
+              sidebarPhone={sidebarPhone}
+              onSidebarPhoneChange={setSidebarPhone}
               sidebarSubmitting={sidebarSubmitting}
               sidebarSubscribed={sidebarSubscribed}
               onSidebarSubscribe={() =>
-                handleNewsletter(sidebarEmail, setSidebarSubmitting, setSidebarSubscribed)
+                handleNewsletter(
+                  sidebarEmail,
+                  sidebarPhone,
+                  setSidebarSubmitting,
+                  setSidebarSubscribed
+                )
               }
             />
           </div>
@@ -281,10 +295,17 @@ export default function Blog() {
                     onCategoryChange={setActiveCategory}
                     publicEmail={publicEmail}
                     onPublicEmailChange={setPublicEmail}
+                    publicPhone={publicPhone}
+                    onPublicPhoneChange={setPublicPhone}
                     publicSubmitting={publicSubmitting}
                     publicSubscribed={publicSubscribed}
                     onPublicSubscribe={() =>
-                      handleNewsletter(publicEmail, setPublicSubmitting, setPublicSubscribed)
+                      handleNewsletter(
+                        publicEmail,
+                        publicPhone,
+                        setPublicSubmitting,
+                        setPublicSubscribed
+                      )
                     }
                   />
                 </div>
@@ -347,9 +368,37 @@ export default function Blog() {
                     marginBottom: 8,
                   }}
                 />
+                <input
+                  aria-label="Phone number for SMS"
+                  type="tel"
+                  placeholder="Phone number for SMS (optional)"
+                  value={publicPhone}
+                  onChange={(e) => setPublicPhone(e.target.value)}
+                  disabled={publicSubscribed}
+                  style={{
+                    width: '100%',
+                    height: 40,
+                    padding: '0 12px',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 4,
+                    color: '#fff',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 400,
+                    fontSize: 12,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    marginBottom: 8,
+                  }}
+                />
                 <button
                   onClick={() =>
-                    handleNewsletter(publicEmail, setPublicSubmitting, setPublicSubscribed)
+                    handleNewsletter(
+                      publicEmail,
+                      publicPhone,
+                      setPublicSubmitting,
+                      setPublicSubscribed
+                    )
                   }
                   disabled={publicSubmitting || publicSubscribed}
                   style={{

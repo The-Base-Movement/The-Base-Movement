@@ -7,6 +7,8 @@ interface DashboardSidebarProps {
   onCategoryChange: (cat: string) => void
   sidebarEmail: string
   onSidebarEmailChange: (v: string) => void
+  sidebarPhone: string
+  onSidebarPhoneChange: (v: string) => void
   sidebarSubmitting: boolean
   onSidebarSubscribe: () => void
   sidebarSubscribed?: boolean
@@ -19,6 +21,8 @@ export function DashboardSidebar({
   onCategoryChange,
   sidebarEmail,
   onSidebarEmailChange,
+  sidebarPhone,
+  onSidebarPhoneChange,
   sidebarSubmitting,
   onSidebarSubscribe,
   sidebarSubscribed = false,
@@ -99,6 +103,29 @@ export function DashboardSidebar({
           placeholder="Email address"
           value={sidebarEmail}
           onChange={(e) => onSidebarEmailChange(e.target.value)}
+          disabled={sidebarSubscribed}
+          style={{
+            width: '100%',
+            height: 38,
+            padding: '0 12px',
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 4,
+            color: '#fff',
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 400,
+            fontSize: 12,
+            outline: 'none',
+            boxSizing: 'border-box',
+            marginBottom: 8,
+          }}
+        />
+        <input
+          aria-label="Phone number"
+          type="tel"
+          placeholder="Phone number for SMS (optional)"
+          value={sidebarPhone}
+          onChange={(e) => onSidebarPhoneChange(e.target.value)}
           disabled={sidebarSubscribed}
           style={{
             width: '100%',

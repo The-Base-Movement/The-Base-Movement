@@ -114,6 +114,39 @@ ${SHELL_CLOSE}`
 }
 
 // ---------------------------------------------------------------------------
+// 01b · Newsletter subscriber auto-reply
+// ---------------------------------------------------------------------------
+
+export interface NewsletterSubscriberWelcomeEmailData {
+  updatesUrl: string
+}
+
+export function newsletterSubscriberWelcomeEmail(d: NewsletterSubscriberWelcomeEmailData): string {
+  return `${SHELL_OPEN}
+  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+    You are now subscribed to updates from The Base Movement.
+  </div>
+  <div style="background:#fff;border-radius:4px;overflow:hidden">
+    ${TOP_BAR}
+    ${emailHeader('Newsletter subscription')}
+    <div style="background:linear-gradient(135deg,#181d19,#0f1310);height:140px;display:flex;align-items:center;justify-content:center">
+      <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:44px;color:rgba(255,255,255,.16);letter-spacing:-.04em">The Base</span>
+    </div>
+    <div style="padding:28px 28px 24px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Patriot —</div>
+      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Your newsletter subscription is active.</h1>
+      <p style="line-height:1.65;color:#444;margin-bottom:14px">You will now receive updates from The Base Movement on policy, organizing, community action, and major movement milestones.</p>
+      <p style="line-height:1.65;color:#444;margin-bottom:14px">We keep our emails focused: major announcements, public updates, and the work being done across Ghana and abroad.</p>
+      ${ctaButton('Read the latest updates →', d.updatesUrl, '#006B3F')}
+      <hr style="border:0;border-top:1px solid #eee;margin:18px 0">
+      <p style="line-height:1.65;color:#888;font-size:12px;margin:0">If you did not subscribe to The Base newsletter, reply to this email and our team will remove the address.</p>
+    </div>
+    ${emailFooter(`The Base Movement · Accra, Ghana · <a href="https://thebasemovement.info/contact" style="color:#888">thebasemovement.info/contact</a>`)}
+  </div>
+${SHELL_CLOSE}`
+}
+
+// ---------------------------------------------------------------------------
 // 02 · Donation receipt
 // ---------------------------------------------------------------------------
 
