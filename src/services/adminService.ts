@@ -3122,20 +3122,13 @@ class AdminService {
 
       if (error) throw error
 
-      const settings = (data || []).reduce(
+      return (data || []).reduce(
         (acc, curr) => ({
           ...acc,
           [curr.key]: curr.value,
         }),
         {}
       )
-
-      // ponytail: force maintenance off here so every consumer reopens without
-      // patching each layout; remove this when the DB flag is corrected.
-      return {
-        ...settings,
-        maintenance_mode: false,
-      }
     } catch (error) {
       console.error('[DATABASE] Failed to fetch site settings:', error)
       return {}
