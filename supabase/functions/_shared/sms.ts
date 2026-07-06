@@ -25,6 +25,11 @@ export interface SmsResult {
   detail: string
 }
 
+function getCallbackSecret(): string | null {
+  // @ts-expect-error: Deno global
+  return Deno.env.get('MNOTIFY_CALLBACK_SECRET') ?? Deno.env.get('MNOTIFY_API_KEY') ?? null
+}
+
 /**
  * Send one message to one or more recipients through MNotify's quick-SMS API.
  * Includes rate-limiting (TPS) throttling, opt-out filtering, and compliance footers.
@@ -107,7 +112,13 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
       // Determine callback URL for delivery status receipt tracking
       // @ts-expect-error: Deno global
       const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
-      const callbackUrl = supabaseUrl ? `${supabaseUrl}/functions/v1/sms-callback` : undefined
+      const callbackSecret = getCallbackSecret()
+      const callbackUrl = (() => {
+        if (!supabaseUrl) return undefined
+        const url = new URL(`${supabaseUrl}/functions/v1/sms-callback`)
+        if (callbackSecret) url.searchParams.set('token', callbackSecret)
+        return url.toString()
+      })()
 
       const res = await fetch(
         `https://api.mnotify.com/api/sms/quick?key=${encodeURIComponent(apiKey)}`,

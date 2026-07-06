@@ -11,6 +11,22 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+function timingSafeEqual(a: string, b: string) {
+  if (a.length !== b.length) return false
+
+  let diff = 0
+  for (let i = 0; i < a.length; i += 1) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+
+  return diff === 0
+}
+
+function getExpectedCallbackSecret() {
+  // @ts-expect-error: Deno global
+  return Deno.env.get('MNOTIFY_CALLBACK_SECRET') ?? Deno.env.get('MNOTIFY_API_KEY') ?? ''
+}
+
 serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -25,6 +41,25 @@ serve(async (req: Request) => {
   }
 
   try {
+    const expectedSecret = getExpectedCallbackSecret().trim()
+    if (!expectedSecret) {
+      return new Response(JSON.stringify({ error: 'Callback secret is not configured.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 503,
+      })
+    }
+
+    const providedSecret =
+      req.headers.get('x-webhook-secret')?.trim() ??
+      new URL(req.url).searchParams.get('token')?.trim() ??
+      ''
+    if (!providedSecret || !timingSafeEqual(providedSecret, expectedSecret)) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 403,
+      })
+    }
+
     // 1. Initialize Supabase Admin client
     // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
