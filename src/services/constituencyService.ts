@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { discordService } from '@/services/discordService'
 import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
 
@@ -21,12 +22,12 @@ class ConstituencyService {
   }
 
   async getConstituencies(): Promise<Constituency[]> {
-    const [{ data, error }, { data: memberRows }] = await Promise.all([
+    const [{ data, error }, directoryRows] = await Promise.all([
       supabase
         .from('ghana_constituencies')
         .select('*, region:ghana_regions(name)')
         .order('name', { ascending: true }),
-      supabase.from('users').select('constituency').not('constituency', 'is', null),
+      getPublicDirectoryProfiles(),
     ])
 
     if (error) {
@@ -35,7 +36,7 @@ class ConstituencyService {
     }
 
     const liveCounts: Record<string, number> = {}
-    ;(memberRows || []).forEach((u: { constituency: string | null }) => {
+    directoryRows.forEach((u: { constituency: string | null }) => {
       if (u.constituency) {
         const key = u.constituency.toLowerCase()
         liveCounts[key] = (liveCounts[key] || 0) + 1
@@ -47,15 +48,9 @@ class ConstituencyService {
       .filter(Boolean) as string[]
 
     const leaderAvatarMap: Record<string, string> = {}
-    if (leaderIds.length > 0) {
-      const { data: leaderRows } = await supabase
-        .from('users')
-        .select('id, avatar_url')
-        .in('id', leaderIds)
-      ;(leaderRows || []).forEach((u: { id: string; avatar_url: string | null }) => {
-        if (u.id && u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
-      })
-    }
+    directoryRows.forEach((u: { id: string; avatar_url: string | null }) => {
+      if (leaderIds.includes(u.id) && u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
+    })
 
     return (data || []).map((c) => ({
       id: c.id as number,
@@ -85,24 +80,12 @@ class ConstituencyService {
     const row = data.find((c) => constituencySlug(c.name as string) === slug)
     if (!row) return null
 
-    const [{ count }, leaderAvatarResult] = await Promise.all([
-      supabase
-        .from('users')
-        .select('id', { count: 'exact', head: true })
-        .ilike('constituency', row.name as string),
-      row.leader_id
-        ? supabase
-            .from('users')
-            .select('avatar_url')
-            .eq('id', row.leader_id as string)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
-    ])
+    const directoryRows = await getPublicDirectoryProfiles()
+    const count = directoryRows.filter(
+      (u) => u.constituency?.toLowerCase() === (row.name as string).toLowerCase()
+    ).length
     const leaderAvatarUrl =
-      ((leaderAvatarResult.data as { avatar_url?: string | null } | null)?.avatar_url as
-        | string
-        | null
-        | undefined) || undefined
+      directoryRows.find((u) => u.id === (row.leader_id as string | null))?.avatar_url || undefined
 
     return {
       id: row.id as number,
@@ -131,24 +114,12 @@ class ConstituencyService {
 
     if (error || !data) return null
 
-    const [{ count }, leaderAvatarResult] = await Promise.all([
-      supabase
-        .from('users')
-        .select('id', { count: 'exact', head: true })
-        .ilike('constituency', data.name as string),
-      data.leader_id
-        ? supabase
-            .from('users')
-            .select('avatar_url')
-            .eq('id', data.leader_id as string)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
-    ])
+    const directoryRows = await getPublicDirectoryProfiles()
+    const count = directoryRows.filter(
+      (u) => u.constituency?.toLowerCase() === (data.name as string).toLowerCase()
+    ).length
     const leaderAvatarUrl =
-      ((leaderAvatarResult.data as { avatar_url?: string | null } | null)?.avatar_url as
-        | string
-        | null
-        | undefined) || undefined
+      directoryRows.find((u) => u.id === (data.leader_id as string | null))?.avatar_url || undefined
 
     return {
       id: data.id as number,

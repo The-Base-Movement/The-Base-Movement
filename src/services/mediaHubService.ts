@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-
+import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 // ── Types ──
 
 export interface Briefing {
@@ -78,8 +78,7 @@ async function resolveUserNames(
 ): Promise<Map<string, { full_name: string; avatar_url: string | null }>> {
   const map = new Map<string, { full_name: string; avatar_url: string | null }>()
   if (!userIds.length) return map
-  const unique = [...new Set(userIds)]
-  const { data } = await supabase.from('users').select('id, full_name, avatar_url').in('id', unique)
+  const data = await getPublicDirectoryProfiles(userIds)
   if (data) {
     for (const u of data) {
       map.set(u.id, { full_name: u.full_name ?? 'Unknown', avatar_url: u.avatar_url })

@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
 import { ROLE_CATALOG } from '@/lib/roleCatalog'
@@ -383,10 +384,8 @@ export const deviceTrackingService = {
 async function resolveNames(ids: string[]): Promise<Map<string, string>> {
   const unique = [...new Set(ids)]
   if (unique.length === 0) return new Map()
-  const { data } = await supabase.from('users').select('id, full_name').in('id', unique)
-  return new Map(
-    (data ?? []).map((u) => [u.id as string, (u.full_name as string) ?? 'Unknown admin'])
-  )
+  const data = await getPublicDirectoryProfiles(unique)
+  return new Map(data.map((u) => [u.id, u.full_name ?? 'Unknown admin']))
 }
 
 /** Current admin role per id (live), so device cards don't show a stale role. */

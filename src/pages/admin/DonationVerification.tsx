@@ -106,7 +106,10 @@ export default function FinancialAudit() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('Pending')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [selectedDonation, setSelectedDonation] = useState<DonationDetail | null>(null)
-  const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null)
+  const [selectedReceipt, setSelectedReceipt] = useState<{
+    donationId: string
+    reference: string
+  } | null>(null)
   const [isVerifying, setIsVerifying] = useState<string | null>(null)
   const [internalNote, setInternalNote] = useState('')
   const [isBackfilling, setIsBackfilling] = useState(false)
@@ -859,14 +862,15 @@ export default function FinancialAudit() {
             isVerifying={isVerifying}
             onVerify={handleVerify}
             onRefund={handleRefund}
-            onViewReceipt={setSelectedReceipt}
+            onViewReceipt={(donationId, reference) => setSelectedReceipt({ donationId, reference })}
           />
         )}
       </div>
 
       <ReceiptViewerModal
         isOpen={!!selectedReceipt}
-        receiptUrl={selectedReceipt}
+        donationId={selectedReceipt?.donationId ?? null}
+        reference={selectedReceipt?.reference ?? null}
         onClose={() => setSelectedReceipt(null)}
       />
     </div>

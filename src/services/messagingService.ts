@@ -1,5 +1,6 @@
 // src/services/messagingService.ts
 import { supabase } from '@/lib/supabase'
+import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import {
   getDepartmentCatalogRow,
   getDepartmentCatalogRows,
@@ -488,8 +489,8 @@ class MessagingService {
     leaderId: string,
     scopeType?: Conversation['scope_type']
   ): Promise<ConversationLeaderInfo | null> {
-    const [{ data: profile }, { data: admin }] = await Promise.all([
-      supabase.from('users').select('id, full_name, avatar_url').eq('id', leaderId).maybeSingle(),
+    const [[profile], { data: admin }] = await Promise.all([
+      getPublicDirectoryProfiles([leaderId]),
       supabase.from('admins').select('role').eq('id', leaderId).maybeSingle(),
     ])
     if (!profile) return null
@@ -521,24 +522,11 @@ class MessagingService {
       name: string
       icon: string
       lead_id: string | null
-      users: { full_name: string; avatar_url: string | null } | null
     }
 
     const { data, error } = await supabase
       .from('helpdesk_departments')
-      .select(
-        `
-        id,
-        name,
-        icon,
-        lead_id,
-        users!helpdesk_departments_lead_id_fkey (
-          id,
-          full_name,
-          avatar_url
-        )
-      `
-      )
+      .select('id, name, icon, lead_id')
       .order('name', { ascending: true })
 
     if (error) {
@@ -546,13 +534,23 @@ class MessagingService {
       return []
     }
 
+    const leadMap = new Map(
+      (
+        await getPublicDirectoryProfiles(
+          ((data as DepartmentRow[] | null) ?? [])
+            .map((dept) => dept.lead_id)
+            .filter(Boolean) as string[]
+        )
+      ).map((profile) => [profile.id, profile])
+    )
+
     return ((data as unknown as DepartmentRow[] | null) ?? []).map((dept) => ({
       id: dept.id,
       name: dept.name,
       icon: dept.icon,
       lead_id: dept.lead_id,
-      lead_name: dept.users?.full_name ?? null,
-      lead_avatar: dept.users?.avatar_url ?? null,
+      lead_name: (dept.lead_id && leadMap.get(dept.lead_id)?.full_name) ?? null,
+      lead_avatar: (dept.lead_id && leadMap.get(dept.lead_id)?.avatar_url) ?? null,
     }))
   }
 
@@ -623,35 +621,25 @@ class MessagingService {
       name: string
       icon: string
       lead_id: string | null
-      users: { full_name: string; avatar_url: string | null } | null
     }
 
     const { data: dept } = await supabase
       .from('helpdesk_departments')
-      .select(
-        `
-        id,
-        name,
-        icon,
-        lead_id,
-        users!helpdesk_departments_lead_id_fkey (
-          id,
-          full_name,
-          avatar_url
-        )
-      `
-      )
+      .select('id, name, icon, lead_id')
       .eq('id', departmentId)
       .maybeSingle()
 
     if (!dept) return null
 
     const deptData = dept as unknown as DeptRow
+    const [leadProfile] = deptData.lead_id
+      ? await getPublicDirectoryProfiles([deptData.lead_id])
+      : []
     return {
       id: deptData.id,
       full_name: deptData.name,
       role: 'DEPARTMENT',
-      avatar_url: deptData.users?.avatar_url ?? null,
+      avatar_url: leadProfile?.avatar_url ?? null,
     }
   }
 

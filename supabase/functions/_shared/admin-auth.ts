@@ -53,6 +53,18 @@ export function canManageMembers(admin: AdminAuthRow | null | undefined): boolea
   return admin.permissions?.can_manage_members === true
 }
 
+export function canManageDonations(admin: AdminAuthRow | null | undefined): boolean {
+  if (!admin) return false
+  if (isPrivilegedAdminRole(admin.role)) return true
+  if (Array.isArray(admin.permissions)) {
+    return admin.permissions.some(
+      (p) =>
+        p && typeof p === 'object' && p.action === 'MANAGE_DONATIONS' && p.resource === 'DONATIONS'
+    )
+  }
+  return admin.permissions?.can_manage_donations === true
+}
+
 export function requireServiceRoleCall(
   req: Request,
   serviceRoleKey: string | undefined | null

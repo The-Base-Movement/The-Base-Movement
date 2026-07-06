@@ -3,6 +3,7 @@ import { type RouteObject, Navigate } from 'react-router-dom'
 import WithChapters from './components/WithChapters'
 import Home from './pages/Home'
 import PublicLayout from './components/PublicLayout'
+import LegacyDashboardUpdateArticleRedirect from './components/LegacyDashboardUpdateArticleRedirect'
 import DashboardLayout from './components/DashboardLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute'
@@ -160,6 +161,10 @@ export const routes: RouteObject[] = [
     element: <Navigate to="/dashboard/store/checkout" replace />,
   },
   {
+    path: '/dashboard/updates',
+    element: <Navigate to="/dashboard/blog" replace />,
+  },
+  {
     path: '/members',
     element: <Navigate to="/dashboard/members" replace />,
   },
@@ -180,6 +185,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard', element: <Dashboard /> },
           { path: '/dashboard/blog', element: <Blog /> },
           { path: '/dashboard/blog/:id', element: <BlogPost /> },
+          { path: '/dashboard/updates/:id', element: <LegacyDashboardUpdateArticleRedirect /> },
           { path: '/dashboard/about', element: <About /> },
           { path: '/dashboard/agenda', element: <OurAgenda /> },
           { path: '/dashboard/impact', element: <Impact /> },

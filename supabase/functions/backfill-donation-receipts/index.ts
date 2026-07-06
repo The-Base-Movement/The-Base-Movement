@@ -117,13 +117,9 @@ Deno.serve(async (req: Request) => {
 
         if (uploadError) throw new Error(uploadError.message)
 
-        const {
-          data: { publicUrl },
-        } = supabaseAdmin.storage.from('receipts').getPublicUrl(`${row.id}.html`)
-
         const { error: updateError } = await supabaseAdmin
           .from('donations')
-          .update({ receipt_url: publicUrl })
+          .update({ receipt_url: `receipts/${row.id}.html` })
           .eq('id', row.id)
 
         if (updateError) throw new Error(updateError.message)

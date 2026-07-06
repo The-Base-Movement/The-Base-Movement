@@ -9,7 +9,7 @@ interface DonationDetailSidebarProps {
   isVerifying: string | null
   onVerify: (donationId: string, name: string, action: 'Verified' | 'Rejected') => Promise<void>
   onRefund: (donationId: string, name: string) => Promise<void>
-  onViewReceipt: (url: string) => void
+  onViewReceipt: (donationId: string, reference: string) => void
 }
 
 function methodBadge(method: string): { bg: string; color: string; label: string } {
@@ -363,7 +363,7 @@ export function DonationDetailSidebar({
       {selectedDonation.receiptUrl && (
         <div style={{ padding: '12px 20px', borderBottom: '1px solid hsl(var(--border))' }}>
           <button
-            onClick={() => onViewReceipt(selectedDonation.receiptUrl!)}
+            onClick={() => onViewReceipt(selectedDonation.id, selectedDonation.reference)}
             style={{
               display: 'flex',
               alignItems: 'center',

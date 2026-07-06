@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { sessionStore } from '@/lib/sessionStore'
 import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'
 import SEO from '@/components/SEO'
+import DonationReceiptModal from '@/components/donations/DonationReceiptModal'
 
 function StatusPill({ status }: { status: string }) {
   const cls = status === 'Verified' ? 'pill-ok' : status === 'Rejected' ? 'pill-err' : 'pill-warn'
@@ -65,19 +65,10 @@ export default function MyDonations() {
   const { session } = useAuth()
   const [donations, setDonations] = useState<DonationDetail[]>([])
   const [loading, setLoading] = useState(true)
-  const [receiptViewUrl, setReceiptViewUrl] = useState<string | null>(null)
+  const [receiptViewDonationId, setReceiptViewDonationId] = useState<string | null>(null)
   const [receiptViewRef, setReceiptViewRef] = useState<string>('receipt')
-  const [receiptHtml, setReceiptHtml] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [dateFilter, setDateFilter] = useState<string>('all')
-
-  useEffect(() => {
-    if (!receiptViewUrl) return
-    fetch(receiptViewUrl)
-      .then((r) => r.text())
-      .then(setReceiptHtml)
-      .catch(() => setReceiptHtml('<p>Failed to load receipt.</p>'))
-  }, [receiptViewUrl])
   useEffect(() => {
     if (!session?.user) return
     adminService.getPersonalDonationHistory(session.user.id).then((data) => {
@@ -617,7 +608,7 @@ export default function MyDonations() {
                             className="btn btn-outline btn-sm"
                             style={{ whiteSpace: 'nowrap' }}
                             onClick={() => {
-                              setReceiptViewUrl(d.receiptUrl!)
+                              setReceiptViewDonationId(d.id)
                               setReceiptViewRef(d.reference || 'receipt')
                             }}
                           >
@@ -710,7 +701,7 @@ export default function MyDonations() {
                       className="btn btn-outline btn-sm"
                       style={{ marginTop: 8, alignSelf: 'flex-start' }}
                       onClick={() => {
-                        setReceiptViewUrl(d.receiptUrl!)
+                        setReceiptViewDonationId(d.id)
                         setReceiptViewRef(d.reference || 'receipt')
                       }}
                     >
@@ -727,127 +718,12 @@ export default function MyDonations() {
         )}
       </div>
 
-      {/* Receipt viewer modal */}
-      {receiptViewUrl &&
-        createPortal(
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 16,
-              background: 'rgba(0,0,0,.82)',
-              backdropFilter: 'blur(4px)',
-            }}
-            onClick={() => setReceiptViewUrl(null)}
-          >
-            <div
-              style={{
-                maxWidth: 720,
-                width: '100%',
-                background: 'hsl(var(--card))',
-                borderRadius: 'var(--radius-lg)',
-                overflow: 'hidden',
-                boxShadow: '0 30px 80px rgba(0,0,0,.4)',
-                display: 'flex',
-                flexDirection: 'column',
-                maxHeight: '90vh',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div
-                style={{
-                  padding: '14px 20px',
-                  borderBottom: '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexShrink: 0,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 14,
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                >
-                  Donation Receipt
-                </div>
-                <button
-                  aria-label="Close receipt"
-                  onClick={() => setReceiptViewUrl(null)}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 'var(--radius-sm)',
-                    background: 'hsl(var(--container-low))',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'hsl(var(--on-surface-muted))',
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                    close
-                  </span>
-                </button>
-              </div>
-
-              {/* Receipt viewer */}
-              <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
-                <iframe
-                  srcDoc={receiptHtml ?? ''}
-                  title="Donation Receipt"
-                  style={{ width: '100%', height: '65vh', border: 'none', display: 'block' }}
-                />
-              </div>
-
-              {/* Footer */}
-              <div
-                style={{
-                  padding: '12px 20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  gap: 8,
-                  borderTop: '1px solid hsl(var(--border))',
-                  flexShrink: 0,
-                }}
-              >
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    if (!receiptHtml) return
-                    const blob = new Blob([receiptHtml], { type: 'text/html' })
-                    const url = URL.createObjectURL(blob)
-                    const a = document.createElement('a')
-                    a.href = url
-                    a.download = `receipt-${receiptViewRef}.html`
-                    a.click()
-                    URL.revokeObjectURL(url)
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                    download
-                  </span>
-                  Download
-                </button>
-                <button className="btn btn-outline btn-sm" onClick={() => setReceiptViewUrl(null)}>
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
+      <DonationReceiptModal
+        isOpen={!!receiptViewDonationId}
+        donationId={receiptViewDonationId}
+        reference={receiptViewRef}
+        onClose={() => setReceiptViewDonationId(null)}
+      />
     </>
   )
 }

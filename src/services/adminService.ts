@@ -1259,8 +1259,8 @@ class AdminService {
   }
 
   /**
-   * Upload a donation receipt to storage and create a pending donation record
-   * with the receipt URL so admins can verify later. Returns true on success.
+   * Upload a donation receipt to storage and record its storage path on the
+   * matching donation so receipt access can be signed on demand.
    */
   async uploadDonationReceipt(file: File, donationReference: string): Promise<boolean> {
     if (!donationReference?.trim()) {
@@ -1284,9 +1284,6 @@ class AdminService {
         return false
       }
 
-      const { data: urlData } = supabase.storage.from('donation-receipts').getPublicUrl(data.path)
-      const publicUrl = urlData?.publicUrl || ''
-
       // Resolve the target donation by reference or id using parameterized
       // lookups (never interpolate user input into a raw .or() filter — that
       // would let a crafted reference broaden the UPDATE to every row). The id
@@ -1307,7 +1304,7 @@ class AdminService {
 
       const { data: updatedDonations, error: updateErr } = await supabase
         .from('donations')
-        .update({ receipt_url: publicUrl })
+        .update({ receipt_url: `donation-receipts/${data.path}` })
         .in('id', targetIds)
         .select('id')
 

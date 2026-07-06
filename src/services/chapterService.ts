@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { discordService } from './discordService'
 import type {
   ChapterApplication,
@@ -81,21 +82,15 @@ class ChapterService {
     }
 
     // Collect leader_ids to fetch their real avatars
-    const leaderIds = (data || []).map((c) => c.leader_id).filter(Boolean) as string[]
-
     // Fetch countries, live member counts, and leader avatars + chapters in parallel
-    const [{ data: countriesData }, { data: memberRows }, { data: leaderAvatarRows }] =
-      await Promise.all([
-        supabase.from('countries').select('name, flag_url'),
-        supabase.from('users').select('chapter').not('chapter', 'is', null),
-        leaderIds.length > 0
-          ? supabase.from('users').select('id, avatar_url, chapter').in('id', leaderIds)
-          : Promise.resolve({ data: [] }),
-      ])
+    const [{ data: countriesData }, directoryRows] = await Promise.all([
+      supabase.from('countries').select('name, flag_url'),
+      getPublicDirectoryProfiles(),
+    ])
 
     const leaderAvatarMap: Record<string, string> = {}
     const leaderChapterMap: Record<string, string> = {}
-    ;(leaderAvatarRows || []).forEach(
+    directoryRows.forEach(
       (u: { id: string; avatar_url: string | null; chapter: string | null }) => {
         if (u.id) {
           if (u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
@@ -110,7 +105,7 @@ class ChapterService {
     }, {})
 
     const liveCounts: Record<string, number> = {}
-    ;(memberRows || []).forEach((u: { chapter: string | null }) => {
+    directoryRows.forEach((u: { chapter: string | null }) => {
       if (u.chapter)
         liveCounts[u.chapter.toLowerCase()] = (liveCounts[u.chapter.toLowerCase()] || 0) + 1
     })
@@ -201,19 +196,14 @@ class ChapterService {
       .single()
 
     // Fetch live member count from users table manually
-    const { count: liveCount } = await supabase
-      .from('users')
-      .select('id', { count: 'exact', head: true })
-      .ilike('chapter', data.name)
-
+    const directoryRows = await getPublicDirectoryProfiles()
+    const liveCount = directoryRows.filter(
+      (u) => u.chapter?.toLowerCase() === data.name.toLowerCase()
+    ).length
     let leaderAvatarUrl: string | undefined = undefined
     let leaderRegisteredChapter: string | undefined = undefined
     if (data.leader_id) {
-      const { data: userData } = await supabase
-        .from('users')
-        .select('avatar_url, chapter')
-        .eq('id', data.leader_id)
-        .maybeSingle()
+      const userData = directoryRows.find((u) => u.id === data.leader_id)
       if (userData) {
         if (userData.avatar_url) leaderAvatarUrl = userData.avatar_url
         if (userData.chapter) leaderRegisteredChapter = userData.chapter

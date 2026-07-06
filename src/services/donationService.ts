@@ -495,6 +495,19 @@ class DonationService {
       .catch((err: unknown) => console.error('[DonationService] Receipt send failed:', err))
   }
 
+  async getReceiptAccess(
+    donationId: string
+  ): Promise<{ signedUrl: string; reference?: string } | null> {
+    const { data, error } = await supabase.functions.invoke('get-donation-receipt', {
+      body: { donationId },
+    })
+    if (error) {
+      console.error('[DonationService] Receipt access failed:', error)
+      return null
+    }
+    return data as { signedUrl: string; reference?: string }
+  }
+
   async markRefunded(donationId: string): Promise<void> {
     const { error } = await supabase
       .from('donations')

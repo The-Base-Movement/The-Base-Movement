@@ -138,15 +138,11 @@ Deno.serve(async (req: Request) => {
         })
 
       if (!uploadError) {
-        const {
-          data: { publicUrl },
-        } = supabaseAdmin.storage.from('receipts').getPublicUrl(`${donationId}.html`)
-
-        receiptUrl = publicUrl
+        receiptUrl = `receipts/${donationId}.html`
 
         await supabaseAdmin
           .from('donations')
-          .update({ receipt_url: publicUrl })
+          .update({ receipt_url: receiptUrl })
           .eq('id', donationId)
       } else {
         console.error('[RECEIPT] Upload failed:', uploadError.message)
@@ -165,7 +161,6 @@ Deno.serve(async (req: Request) => {
         reference: row.reference,
         date: dateStr,
         monthlyUrl: `${SITE_BASE}/dashboard/donate`,
-        receiptPdfUrl: receiptUrl ?? undefined,
       })
 
       // @ts-expect-error: Deno global
@@ -195,7 +190,7 @@ Deno.serve(async (req: Request) => {
       const phone = normalizePhone(rawPhone)
       const sms = await sendSms(
         [phone],
-        `Hi ${row.full_name.split(' ')[0]}! Your ${amountStr} contribution to The Base Movement is confirmed. Ref: ${row.reference}.${receiptUrl ? ` Download receipt: ${receiptUrl}` : ''} Thank you, Patriot!`
+        `Hi ${row.full_name.split(' ')[0]}! Your ${amountStr} contribution to The Base Movement is confirmed. Ref: ${row.reference}. View your receipt in the member dashboard. Thank you, Patriot!`
       )
       if (sms.ok) {
         console.log('[RECEIPT-SMS] Sent to', phone)

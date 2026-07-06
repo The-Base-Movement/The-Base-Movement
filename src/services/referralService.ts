@@ -2,6 +2,19 @@
 import { supabase } from '@/lib/supabase'
 import type { ReferredMember, ReferralLeaderboardEntry } from '@/types/referrals'
 
+interface ReferralRow {
+  id: string
+  full_name: string
+  registration_number: string
+  platform: 'GHANA' | 'DIASPORA'
+  region: string | null
+  constituency: string | null
+  country: string | null
+  status: string
+  avatar_url: string | null
+  joined_at: string
+}
+
 export const referralService = {
   async getMyReferrals(): Promise<ReferredMember[]> {
     const {
@@ -9,23 +22,7 @@ export const referralService = {
     } = await supabase.auth.getUser()
     if (!user) return []
 
-    // Resolve current user's registration_number
-    const { data: me } = await supabase
-      .from('users')
-      .select('registration_number')
-      .eq('id', user.id)
-      .single()
-    if (!me?.registration_number) return []
-
-    // Fetch referred members
-    const { data: referred, error } = await supabase
-      .from('users')
-      .select(
-        'id, full_name, registration_number, platform, region, constituency, country, status, avatar_url, joined_at'
-      )
-      .eq('referred_by', me.registration_number)
-      .is('deleted_at', null)
-      .order('joined_at', { ascending: false })
+    const { data: referred, error } = await supabase.rpc('get_my_referrals')
 
     if (error || !referred) {
       console.warn('[referralService] getMyReferrals:', error)
@@ -42,12 +39,12 @@ export const referralService = {
         .eq('award_type', 'verification')
         .in(
           'referred_member_id',
-          referred.map((u) => u.id)
+          (referred as ReferralRow[]).map((u) => u.id)
         )
       awardedSet = new Set(awards?.map((a) => a.referred_member_id) ?? [])
     }
 
-    return referred.map((u) => ({
+    return (referred as ReferralRow[]).map((u) => ({
       id: u.id,
       name: u.full_name,
       registrationNumber: u.registration_number,
