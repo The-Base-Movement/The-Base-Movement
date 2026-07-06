@@ -2,6 +2,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import {
+  getRetryAfterMs,
+  registerAttempt,
+  type RateLimitEntry,
+} from '../_shared/password-reset-rate-limit.ts'
 import { sendSms } from '../_shared/sms.ts'
 
 const corsHeaders = {
@@ -12,6 +17,26 @@ const corsHeaders = {
 const OTP_WINDOW_MS = 10 * 60 * 1000
 const OTP_COOLDOWN_MS = 60 * 1000
 const OTP_MAX_PER_WINDOW = 3
+const IP_WINDOW_MS = 10 * 60 * 1000
+const IP_MAX_ATTEMPTS = 6
+const IP_LOCKOUT_MS = 15 * 60 * 1000
+const ipThrottleStore = new Map<string, RateLimitEntry>()
+
+function clientIp(req: Request) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    'unknown'
+  )
+}
+
+function json(body: unknown, status: number) {
+  return new Response(JSON.stringify(body), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    status,
+  })
+}
 
 function normalizePhoneNumber(raw: string): string {
   const cleaned = raw.trim()
@@ -29,6 +54,9 @@ serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
+  if (req.method !== 'POST') {
+    return json({ error: 'Method not allowed' }, 405)
+  }
 
   try {
     // @ts-expect-error: Deno global
@@ -40,12 +68,19 @@ serve(async (req: Request) => {
 
     const { phone, reg_no } = await req.json()
     if (!phone || !reg_no) {
-      return new Response(
-        JSON.stringify({ error: 'Phone and registration number are required.' }),
+      return json({ error: 'Phone and registration number are required.' }, 400)
+    }
+
+    const now = Date.now()
+    const ip = clientIp(req)
+    const currentIpThrottle = ipThrottleStore.get(ip)
+    const retryAfterMs = getRetryAfterMs(now, currentIpThrottle)
+    if (retryAfterMs > 0) {
+      return json(
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400,
-        }
+          error: `Too many reset requests. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+        },
+        429
       )
     }
 
@@ -84,13 +119,7 @@ serve(async (req: Request) => {
     }
 
     if ((recentOtpCount ?? 0) >= OTP_MAX_PER_WINDOW) {
-      return new Response(
-        JSON.stringify({ error: 'Too many reset requests. Please try again later.' }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 429,
-        }
-      )
+      return json({ error: 'Too many reset requests. Please try again later.' }, 429)
     }
 
     // 1. Verify user profile exists in database
@@ -102,11 +131,17 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (userError || !user) {
-      return new Response(
-        JSON.stringify({
-          error: 'No member profile found matching registration and phone number.',
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+      ipThrottleStore.set(
+        ip,
+        registerAttempt(now, currentIpThrottle, IP_WINDOW_MS, IP_MAX_ATTEMPTS, IP_LOCKOUT_MS)
+      )
+      return json(
+        {
+          success: true,
+          message:
+            'If the details match a member record, a security verification code will be sent shortly.',
+        },
+        200
       )
     }
 
@@ -127,6 +162,11 @@ serve(async (req: Request) => {
       throw new Error(`Failed to store OTP: ${otpError.message}`)
     }
 
+    ipThrottleStore.set(
+      ip,
+      registerAttempt(now, currentIpThrottle, IP_WINDOW_MS, IP_MAX_ATTEMPTS, IP_LOCKOUT_MS)
+    )
+
     // 4. Send SMS via MNotify
     const sms = await sendSms(
       [normalizedPhone],
@@ -134,23 +174,20 @@ serve(async (req: Request) => {
     )
     if (!sms.ok) {
       console.warn(
-        `[OTP-DEBUG] SMS dispatch failed (${sms.detail}). Plaintext OTP for ${user.full_name} (${normalizedPhone}) is: ${otp}`
+        `[OTP-DEBUG] SMS dispatch failed (${sms.detail}) for ${user.full_name} (${normalizedPhone})`
       )
     }
 
-    return new Response(
-      JSON.stringify({
+    return json(
+      {
         success: true,
         message: 'A security verification code has been dispatched to your mobile number.',
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      },
+      200
     )
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error(`[SEND-OTP-ERROR] ${errorMessage}`)
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    })
+    return json({ error: errorMessage }, 500)
   }
 })

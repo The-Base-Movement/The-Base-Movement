@@ -60,13 +60,13 @@ export default function ForgotPassword() {
       })
       if (error) throw error
       toast.success(data?.message || 'Verification code sent successfully!')
-      navigate('/verify-otp', { state: { phone: phone.trim() } })
+      navigate('/verify-otp', { state: { phone: phone.trim(), regNo: regNo.trim().toUpperCase() } })
     } catch (err: unknown) {
       console.error('[OTP SEND ERROR]', err)
       toast.error(
         err instanceof Error
           ? err.message
-          : 'No account matching this Patriot ID and phone number was found.'
+          : 'Unable to send the verification code right now. Please try again.'
       )
     } finally {
       setIsLoading(false)

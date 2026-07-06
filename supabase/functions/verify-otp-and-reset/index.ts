@@ -2,6 +2,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import {
+  getRetryAfterMs,
+  registerAttempt,
+  type RateLimitEntry,
+} from '../_shared/password-reset-rate-limit.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,6 +14,10 @@ const corsHeaders = {
 }
 
 const FAILURE_DELAY_MS = 800
+const VERIFY_WINDOW_MS = 10 * 60 * 1000
+const VERIFY_MAX_ATTEMPTS = 8
+const VERIFY_LOCKOUT_MS = 15 * 60 * 1000
+const verifyThrottleStore = new Map<string, RateLimitEntry>()
 
 async function delayedJson(body: unknown, status: number) {
   await new Promise((resolve) => setTimeout(resolve, FAILURE_DELAY_MS))
@@ -29,10 +38,25 @@ function normalizePhoneNumber(raw: string): string {
   return `+233${digits}`
 }
 
+function clientIp(req: Request) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    'unknown'
+  )
+}
+
 serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405,
+    })
   }
 
   try {
@@ -61,6 +85,21 @@ serve(async (req: Request) => {
     }
 
     const normalizedPhone = normalizePhoneNumber(phone)
+    const now = Date.now()
+    const throttleKey = `${clientIp(req)}::${normalizedPhone}`
+    const currentThrottle = verifyThrottleStore.get(throttleKey)
+    const retryAfterMs = getRetryAfterMs(now, currentThrottle)
+    if (retryAfterMs > 0) {
+      return new Response(
+        JSON.stringify({
+          error: `Too many verification attempts. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 429,
+        }
+      )
+    }
 
     // 1. Fetch and validate OTP code
     const { data: otpRecord, error: otpError } = await supabaseAdmin
@@ -74,12 +113,32 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (otpError || !otpRecord) {
+      verifyThrottleStore.set(
+        throttleKey,
+        registerAttempt(
+          now,
+          currentThrottle,
+          VERIFY_WINDOW_MS,
+          VERIFY_MAX_ATTEMPTS,
+          VERIFY_LOCKOUT_MS
+        )
+      )
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
     // 2. Check if code has expired
     const isExpired = new Date(otpRecord.expires_at) < new Date()
     if (isExpired) {
+      verifyThrottleStore.set(
+        throttleKey,
+        registerAttempt(
+          now,
+          currentThrottle,
+          VERIFY_WINDOW_MS,
+          VERIFY_MAX_ATTEMPTS,
+          VERIFY_LOCKOUT_MS
+        )
+      )
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
@@ -123,6 +182,7 @@ serve(async (req: Request) => {
       .from('password_reset_otps')
       .update({ used: true })
       .eq('phone', normalizedPhone)
+    verifyThrottleStore.delete(throttleKey)
 
     return new Response(
       JSON.stringify({ success: true, message: 'Your password has been successfully reset.' }),
