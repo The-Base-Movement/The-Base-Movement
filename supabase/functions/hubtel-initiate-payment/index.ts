@@ -2,6 +2,15 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { convertToHubtelGhs, parseGhsExchangeRates } from './currency.ts'
 import { normalizeHubtelPhone, isGhanaPhone } from './phone.ts'
+import {
+  ipKey,
+  isIpRateLimited,
+  referenceKey,
+  registerIpAttempt,
+  registerReferenceAttempt,
+  remainingCooldown,
+  type RateLimitEntry,
+} from './rate-limit.ts'
 import { buildSignedHubtelCallbackUrl } from '../hubtel-payment-shared/callback-auth.ts'
 
 const corsHeaders = {
@@ -26,11 +35,23 @@ interface InitiatePaymentBody {
   metadata?: Record<string, unknown>
 }
 
+const ipAttemptStore = new Map<string, RateLimitEntry>()
+const referenceAttemptStore = new Map<string, RateLimitEntry>()
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
+}
+
+function clientIp(req: Request) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    'unknown'
+  )
 }
 
 function getRequiredEnv(name: string) {
@@ -84,6 +105,25 @@ Deno.serve(async (req: Request) => {
     if (!Number.isFinite(amount) || amount <= 0) throw new Error('amount must be greater than 0')
     if (!name) throw new Error('name is required')
     if (!phone) throw new Error('phone is required')
+
+    const now = Date.now()
+    const ip = clientIp(req)
+    const currentIpEntry = ipAttemptStore.get(ipKey(ip))
+    if (isIpRateLimited(now, currentIpEntry)) {
+      return json({ error: 'Too many payment initiation attempts. Please try again later.' }, 429)
+    }
+    const currentReferenceEntry = referenceAttemptStore.get(referenceKey(ip, reference))
+    const replayCooldownMs = remainingCooldown(now, currentReferenceEntry)
+    if (replayCooldownMs > 0) {
+      return json(
+        {
+          error: `This payment request was just started. Please wait ${Math.ceil(replayCooldownMs / 1000)} seconds and try again if needed.`,
+        },
+        429
+      )
+    }
+    ipAttemptStore.set(ipKey(ip), registerIpAttempt(now, currentIpEntry))
+    referenceAttemptStore.set(referenceKey(ip, reference), registerReferenceAttempt(now))
 
     const supabaseUrl = getRequiredEnv('SUPABASE_URL')
     const supabaseServiceKey = getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY')
