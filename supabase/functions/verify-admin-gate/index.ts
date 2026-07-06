@@ -1,5 +1,10 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import {
+  getRetryAfterMs,
+  registerAttempt,
+  type RateLimitEntry,
+} from '../_shared/password-reset-rate-limit.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -30,6 +35,20 @@ async function delay(ms: number) {
   await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+const WINDOW_MS = 15 * 60 * 1000
+const MAX_ATTEMPTS = 5
+const LOCKOUT_MS = 30 * 60 * 1000
+const throttleStore = new Map<string, RateLimitEntry>()
+
+function clientIp(req: Request) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    'unknown'
+  )
+}
+
 // @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
@@ -39,6 +58,19 @@ Deno.serve(async (req: Request) => {
     const { passphrase } = (await req.json()) as { passphrase?: string }
     if (!passphrase?.trim()) return json({ ok: false, reason: 'Passphrase required' }, 400)
     const submitted = passphrase.trim()
+    const ip = clientIp(req)
+    const now = Date.now()
+    const currentThrottle = throttleStore.get(ip)
+    const retryAfterMs = getRetryAfterMs(now, currentThrottle)
+    if (retryAfterMs > 0) {
+      return json(
+        {
+          ok: false,
+          reason: `Too many attempts. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+        },
+        429
+      )
+    }
 
     // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
@@ -62,9 +94,15 @@ Deno.serve(async (req: Request) => {
     await delay(250)
     const ok = timingSafeEqual(submitted, stored.trim())
     if (!ok) {
+      throttleStore.set(
+        ip,
+        registerAttempt(now, currentThrottle, WINDOW_MS, MAX_ATTEMPTS, LOCKOUT_MS)
+      )
       await delay(750)
+      return json({ ok: false }, 200)
     }
 
+    throttleStore.delete(ip)
     return json({ ok })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
