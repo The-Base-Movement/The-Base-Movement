@@ -13,6 +13,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { pendingDonationEmail } from '../_shared/email-templates.ts'
 import { sendSms, normalizeGhanaPhone } from '../_shared/sms.ts'
+import { requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -54,6 +55,20 @@ async function postDiscord(content: string) {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } })
+  }
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+    })
+  }
+
+  const authz = requireServiceRoleCall(req, SERVICE_KEY)
+  if (!authz.ok) {
+    return new Response(await authz.response.text(), {
+      status: authz.response.status,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+    })
   }
 
   const now = Date.now()
