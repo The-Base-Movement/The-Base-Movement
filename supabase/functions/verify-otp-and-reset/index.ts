@@ -8,6 +8,16 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const FAILURE_DELAY_MS = 800
+
+async function delayedJson(body: unknown, status: number) {
+  await new Promise((resolve) => setTimeout(resolve, FAILURE_DELAY_MS))
+  return new Response(JSON.stringify(body), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    status,
+  })
+}
+
 function normalizePhoneNumber(raw: string): string {
   const cleaned = raw.trim()
   if (cleaned.startsWith('+')) {
@@ -40,6 +50,15 @@ serve(async (req: Request) => {
         status: 400,
       })
     }
+    if (String(newPassword).length < 8) {
+      return new Response(
+        JSON.stringify({ error: 'Password must be at least 8 characters long.' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      )
+    }
 
     const normalizedPhone = normalizePhoneNumber(phone)
 
@@ -55,19 +74,13 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (otpError || !otpRecord) {
-      return new Response(JSON.stringify({ error: 'Invalid or incorrect verification code.' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      })
+      return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
     // 2. Check if code has expired
     const isExpired = new Date(otpRecord.expires_at) < new Date()
     if (isExpired) {
-      return new Response(
-        JSON.stringify({ error: 'The verification code has expired. Please request a new one.' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      )
+      return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
     // 3. Mark the OTP as used to prevent replay attacks
@@ -106,6 +119,10 @@ serve(async (req: Request) => {
 
     // 6. Update database profiles setting must_change_password to false
     await supabaseAdmin.from('users').update({ must_change_password: false }).eq('id', user.id)
+    await supabaseAdmin
+      .from('password_reset_otps')
+      .update({ used: true })
+      .eq('phone', normalizedPhone)
 
     return new Response(
       JSON.stringify({ success: true, message: 'Your password has been successfully reset.' }),

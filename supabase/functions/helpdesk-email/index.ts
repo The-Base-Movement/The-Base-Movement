@@ -7,7 +7,7 @@
 // Required secret: SENDGRID_API_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { getSenderEmail } from '../_shared/admin-auth.ts'
+import { getSenderEmail, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 import { helpdeskEmail } from '../_shared/email-templates.ts'
 
 const corsHeaders = {
@@ -28,10 +28,18 @@ Deno.serve(async (req) => {
       })
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey)
+    const authz = await requireAuthorizedAdmin(req, supabase, () => true, {
+      allowServiceRole: true,
+      serviceRoleKey,
+    })
+    if (!authz.ok) {
+      return new Response(authz.response.body, {
+        status: authz.response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     const { ticketId, event, comment } = await req.json()
     if (!ticketId || !event) throw new Error('ticketId and event are required')

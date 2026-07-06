@@ -37,7 +37,11 @@ Deno.serve(async (req: Request) => {
       .maybeSingle()
 
     // @ts-expect-error: Deno global
-    const stored = data?.value || Deno.env.get('ADMIN_GATE_PASSPHRASE') || 'ghana-first-2026'
+    const stored = data?.value || Deno.env.get('ADMIN_GATE_PASSPHRASE')
+    if (!stored || typeof stored !== 'string' || !stored.trim()) {
+      console.error('[ADMIN-GATE] No configured passphrase found.')
+      return json({ ok: false, reason: 'Admin gate is not configured' }, 503)
+    }
 
     const ok = passphrase.trim() === stored.trim()
 

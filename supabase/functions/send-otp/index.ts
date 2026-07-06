@@ -9,6 +9,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const OTP_WINDOW_MS = 10 * 60 * 1000
+const OTP_COOLDOWN_MS = 60 * 1000
+const OTP_MAX_PER_WINDOW = 3
+
 function normalizePhoneNumber(raw: string): string {
   const cleaned = raw.trim()
   if (cleaned.startsWith('+')) {
@@ -46,6 +50,48 @@ serve(async (req: Request) => {
     }
 
     const normalizedPhone = normalizePhoneNumber(phone)
+
+    const recentCutoff = new Date(Date.now() - OTP_WINDOW_MS).toISOString()
+    const {
+      data: recentOtps,
+      error: recentOtpError,
+      count: recentOtpCount,
+    } = await supabaseAdmin
+      .from('password_reset_otps')
+      .select('id, created_at', { count: 'exact' })
+      .eq('phone', normalizedPhone)
+      .gte('created_at', recentCutoff)
+      .order('created_at', { ascending: false })
+
+    if (recentOtpError) {
+      throw new Error(`Failed to check recent OTP requests: ${recentOtpError.message}`)
+    }
+
+    const latestCreatedAt = recentOtps?.[0]?.created_at
+    if (latestCreatedAt) {
+      const retryAfterMs = OTP_COOLDOWN_MS - (Date.now() - new Date(latestCreatedAt).getTime())
+      if (retryAfterMs > 0) {
+        return new Response(
+          JSON.stringify({
+            error: `Please wait ${Math.ceil(retryAfterMs / 1000)} seconds before requesting another code.`,
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 429,
+          }
+        )
+      }
+    }
+
+    if ((recentOtpCount ?? 0) >= OTP_MAX_PER_WINDOW) {
+      return new Response(
+        JSON.stringify({ error: 'Too many reset requests. Please try again later.' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 429,
+        }
+      )
+    }
 
     // 1. Verify user profile exists in database
     const { data: user, error: userError } = await supabaseAdmin
