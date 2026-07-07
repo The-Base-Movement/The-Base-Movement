@@ -24,6 +24,8 @@ interface DashboardMember {
   avatar_url?: string | null
   platform?: string
   gender?: string
+  country?: string
+  city?: string
 }
 
 export default function Dashboard() {
@@ -35,7 +37,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
-      if (!user?.id) return
+      if (!user?.id) {
+        setLoading(false)
+        return
+      }
       setLoading(true)
       try {
         const storedRegNo = sessionStore.getItem('userRegNo')
@@ -62,6 +67,8 @@ export default function Dashboard() {
             avatar_url: liveMember.avatarUrl,
             platform: liveMember.platform,
             gender: liveMember.gender,
+            country: liveMember.country,
+            city: liveMember.city,
           })
 
           // Fetch additional stats
@@ -161,7 +168,8 @@ export default function Dashboard() {
                 status={member.status}
                 avatarUrl={member.avatar_url}
                 gender={member.gender}
-                country="Ghana"
+                country={member.country || 'Ghana'}
+                city={member.city}
               />
             )}
           </div>
