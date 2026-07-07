@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { donationService } from '@/services/donationService'
 
@@ -31,17 +31,6 @@ export default function DonationReceiptModal({
   const receiptHtml = receiptState.donationId === donationId ? receiptState.receiptHtml : null
   const error = receiptState.donationId === donationId ? receiptState.error : null
   const loading = !!isOpen && !!donationId && !receiptHtml && !error
-
-  const receiptUrl = useMemo(() => {
-    if (!receiptHtml) return null
-    return URL.createObjectURL(new Blob([receiptHtml], { type: 'text/html' }))
-  }, [receiptHtml])
-
-  useEffect(() => {
-    return () => {
-      if (receiptUrl) URL.revokeObjectURL(receiptUrl)
-    }
-  }, [receiptUrl])
 
   useEffect(() => {
     let cancelled = false
@@ -84,6 +73,7 @@ export default function DonationReceiptModal({
   if (!isOpen || !donationId) return null
 
   const handlePrint = () => {
+    iframeRef.current?.contentWindow?.focus()
     iframeRef.current?.contentWindow?.print()
   }
 
@@ -215,7 +205,7 @@ export default function DonationReceiptModal({
           ) : (
             <iframe
               ref={iframeRef}
-              src={receiptUrl ?? undefined}
+              srcDoc={receiptHtml ?? undefined}
               title="Donation Receipt"
               style={{ width: '100%', height: '65vh', border: 'none', display: 'block' }}
             />
