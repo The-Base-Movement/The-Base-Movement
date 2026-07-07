@@ -332,11 +332,6 @@ export default function ProfileSettings() {
       }
     }
 
-    if (userPlatform === 'GHANA' && !form.nationalId.trim()) {
-      toast.error('Ghana Card number is required in profile settings.')
-      return
-    }
-
     setLoading(true)
     let finalAvatarUrl = avatarUrl
     const normalizedPhone = normalizeProfilePhone(form.countryCode, form.phone)
