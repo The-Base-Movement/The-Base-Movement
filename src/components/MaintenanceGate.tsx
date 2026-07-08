@@ -1,20 +1,8 @@
 import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useBranding } from '@/hooks/useBranding'
+import { isAllowedDuringMaintenance } from '@/lib/maintenanceMode'
 import { MaintenancePage } from './MaintenancePage'
-
-/**
- * Paths that must stay reachable even during maintenance so staff can still
- * authenticate and get to the (always-on) admin panel to switch it back off.
- */
-const ALWAYS_ALLOWED = [
-  '/login',
-  '/admin-login',
-  '/forgot-password',
-  '/reset-password',
-  '/verify-otp',
-  '/change-password',
-]
 
 function isMaintenanceOn(value: unknown): boolean {
   return value === true || value === 'true'
@@ -35,7 +23,7 @@ export function MaintenanceGate({ children }: MaintenanceGateProps) {
   const { pathname } = useLocation()
 
   const on = isMaintenanceOn(settings.maintenance_mode)
-  const allowed = ALWAYS_ALLOWED.some((p) => pathname.startsWith(p))
+  const allowed = isAllowedDuringMaintenance(pathname)
 
   if (!on || allowed) return <>{children}</>
 
