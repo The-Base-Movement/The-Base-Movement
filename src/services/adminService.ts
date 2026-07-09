@@ -987,6 +987,23 @@ class AdminService {
     return true
   }
 
+  async getDefaultDonationCampaignId(): Promise<string | null> {
+    const { data, error } = await supabase
+      .from('donation_campaigns')
+      .select('id')
+      .eq('status', 'Active')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle()
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch default campaign:', error)
+      return null
+    }
+
+    return data?.id ?? null
+  }
+
   async submitDonation(donationData: {
     fullName: string
     phone: string
@@ -997,6 +1014,8 @@ class AdminService {
     memberId?: string | null
     campaignId?: string | null
   }): Promise<boolean> {
+    const campaignId = donationData.campaignId || (await this.getDefaultDonationCampaignId())
+
     const { error } = await supabase.from('donations').insert({
       full_name: donationData.fullName,
       phone: donationData.phone,
@@ -1005,7 +1024,7 @@ class AdminService {
       payment_method: donationData.paymentMethod || 'MTN MoMo',
       show_on_dashboard: donationData.showOnDashboard,
       member_id: donationData.memberId || null,
-      campaign_id: donationData.campaignId || null,
+      campaign_id: campaignId,
     })
 
     if (error) {

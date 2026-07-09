@@ -197,6 +197,8 @@ export default function PublicDonate() {
         return
       }
 
+      const campaignId = formData.campaignId || campaigns[0]?.id || null
+
       const { data, error } = await supabase
         .from('donations')
         .insert({
@@ -208,7 +210,7 @@ export default function PublicDonate() {
           status: 'Pending',
           show_on_dashboard: formData.showOnDashboard,
           member_id: formData.memberId || null,
-          campaign_id: formData.campaignId || null,
+          campaign_id: campaignId,
         })
         .select('id')
         .single()
@@ -227,7 +229,7 @@ export default function PublicDonate() {
           donationId: data.id,
           memberId: formData.memberId || undefined,
           membershipNumber: formData.membershipNumber || undefined,
-          campaignId: formData.campaignId || undefined,
+          campaignId: campaignId || undefined,
           jurisdiction: formData.country,
           currency: selectedCurrency.code,
           currencySymbol: selectedCurrency.symbol,

@@ -51,6 +51,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
   const [submitting, setSubmitting] = useState(false)
   const [countries, setCountries] = useState<Country[]>([])
   const [paymentPhone, setPaymentPhone] = useState('')
+  const [defaultCampaignId, setDefaultCampaignId] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -58,6 +59,10 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
         .getCountries()
         .then(setCountries)
         .catch((error) => console.error('[DonateModal] country load failed:', error))
+      void adminService
+        .getDefaultDonationCampaignId()
+        .then(setDefaultCampaignId)
+        .catch((error) => console.error('[DonateModal] default campaign load failed:', error))
     }
   }, [isOpen])
 
@@ -150,6 +155,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
           chapter: context?.type === 'chapter' ? context.name : null,
           constituency: context?.type === 'constituency' ? context.name : null,
           show_on_dashboard: true,
+          campaign_id: defaultCampaignId,
         })
         .select('id')
         .single()
