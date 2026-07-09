@@ -1,6 +1,13 @@
 import type { AdminPermission, AdminRole, AdminUser } from '@/types/admin'
 
-export type RoleParentGroup = 'BOARD' | 'NATIONAL ICT' | 'SECURITY / INTEL' | 'NCC' | 'RCC' | 'CCC'
+export type RoleParentGroup =
+  | 'BOARD'
+  | 'NATIONAL ICT'
+  | 'SECURITY / INTEL'
+  | 'NCC'
+  | 'DIASPORA AFFAIRS'
+  | 'RCC'
+  | 'CCC'
 
 export type CommitteeLane =
   | 'Operations & Organising'
@@ -270,6 +277,16 @@ const entries = [
     false,
   ],
 
+  [
+    'DIASPORA_AFFAIRS_OFFICER',
+    'Diaspora Affairs Officer',
+    'DIASPORA AFFAIRS',
+    ops,
+    'national',
+    false,
+    false,
+  ],
+
   ['REGIONAL_DIRECTOR', 'Regional Director', 'RCC', ops, 'region', false, true],
   ['REGIONAL_SECRETARY', 'Regional Secretary', 'RCC', ops, 'region', false, false],
   ['REGIONAL_ORGANISER', 'Regional Organiser', 'RCC', ops, 'region', false, false],
@@ -419,6 +436,7 @@ export const ROLE_PARENT_GROUPS: RoleParentGroup[] = [
   'NATIONAL ICT',
   'SECURITY / INTEL',
   'NCC',
+  'DIASPORA AFFAIRS',
   'RCC',
   'CCC',
 ]
@@ -513,6 +531,7 @@ export function getDefaultRolePermissions(role: string): AdminPermission[] {
 
   if (meta.parentGroup === 'NATIONAL ICT') return ictManage
   if (meta.parentGroup === 'SECURITY / INTEL') return securityView
+  if (meta.parentGroup === 'DIASPORA AFFAIRS') return opsManage
 
   if (meta.committeeLane === media) return mediaManage
   if (meta.committeeLane === finance) return financeManage

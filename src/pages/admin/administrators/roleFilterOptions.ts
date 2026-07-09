@@ -14,6 +14,7 @@ export const ROLE_FILTER_OPTIONS: { label: string; value: string }[] = [
   { label: 'Chapter Lead', value: 'CHAPTER_LEAD' },
   { label: 'Chapter Secretary', value: 'CHAPTER_SECRETARY' },
   { label: 'Chapter Treasurer', value: 'CHAPTER_TREASURER' },
+  { label: 'Diaspora Affairs Officer', value: 'DIASPORA_AFFAIRS_OFFICER' },
   { label: 'Field Agent', value: 'FIELD_AGENT' },
   { label: 'Chief Editor', value: 'CHIEF_EDITOR' },
   { label: 'Senior Editor', value: 'SENIOR_EDITOR' },

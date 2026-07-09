@@ -65,6 +65,15 @@ const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
       color: GOLD,
     },
   ],
+  'diaspora-affairs': [
+    { to: '/admin/diaspora-affairs', icon: 'dashboard', label: 'Diaspora Dashboard', color: GREEN },
+    { to: '/admin/chapters', icon: 'public', label: 'Diaspora Chapters', color: GREEN },
+    { to: '/admin/chapter-ops', icon: 'groups', label: 'Chapter Operations', color: GREEN },
+    { to: '/admin/members', icon: 'group', label: 'Diaspora Members', color: GOLD },
+    { to: '/admin/broadcasts', icon: 'campaign', label: 'Diaspora Communications', color: GOLD },
+    { to: '/admin/polls', icon: 'query_stats', label: 'Diaspora Research', color: RED },
+    { to: '/admin/leadership', icon: 'groups_2', label: 'Diaspora Leads', color: INK },
+  ],
   rcc: [
     { to: '/admin/regions', icon: 'travel_explore', label: 'Regional Command', color: GREEN },
     {
@@ -245,7 +254,9 @@ export default function DepartmentDashboard() {
   ]
 
   const quickLinks = catalogDept ? QUICK_LINKS[catalogDept.id] : []
-  const showSubCommittees = catalogDept ? ['ncc', 'rcc', 'ccc'].includes(catalogDept.id) : false
+  const showSubCommittees = catalogDept
+    ? ['ncc', 'diaspora-affairs', 'rcc', 'ccc'].includes(catalogDept.id)
+    : false
 
   return (
     <div className="main">

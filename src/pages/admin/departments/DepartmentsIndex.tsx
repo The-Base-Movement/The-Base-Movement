@@ -141,7 +141,7 @@ export default function DepartmentsIndex() {
             color: 'hsl(var(--on-surface))',
           }}
         >
-          Sub-committees used inside NCC, RCC, and CCC
+          Sub-committees used inside NCC, Diaspora Affairs, RCC, and CCC
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {DEPARTMENT_SUB_COMMITTEES.map((committee) => (

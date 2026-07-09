@@ -1,6 +1,12 @@
 import type { AdminPermission, AdminRole } from '@/types/admin'
 
-export type DepartmentId = 'board-governance' | 'ncc' | 'rcc' | 'ccc' | 'polling-stations'
+export type DepartmentId =
+  | 'board-governance'
+  | 'ncc'
+  | 'diaspora-affairs'
+  | 'rcc'
+  | 'ccc'
+  | 'polling-stations'
 export interface DepartmentCatalogEntry {
   id: DepartmentId
   name: string
@@ -52,6 +58,7 @@ export const DEPARTMENT_SUB_COMMITTEES: DepartmentSubCommittee[] = [
 export const DEPARTMENT_REPORTING_CHAIN: DepartmentId[] = [
   'board-governance',
   'ncc',
+  'diaspora-affairs',
   'rcc',
   'ccc',
   'polling-stations',
@@ -217,6 +224,13 @@ const cccRoles: AdminRole[] = [
   ...securityRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
 ]
 
+const diasporaRoles: AdminRole[] = [
+  'DIASPORA_AFFAIRS_OFFICER',
+  'CHAPTER_LEAD',
+  'CHAPTER_SECRETARY',
+  'CHAPTER_TREASURER',
+]
+
 const pollingStationRoles: AdminRole[] = ['POLLING_STATION_COORDINATOR', 'POLLING_STATION_AGENT']
 function withElevated(roles: AdminRole[]) {
   return Array.from(new Set([...elevated, ...roles]))
@@ -244,11 +258,21 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
     access: { allowedRoles: withElevated(nccRoles) },
   },
   {
+    id: 'diaspora-affairs',
+    name: 'Diaspora Affairs',
+    levelLabel: 'Diaspora chapter command',
+    icon: 'public',
+    sortOrder: 3,
+    handlerRoles: withElevated(diasporaRoles),
+    restrictedSubmitterRoles: null,
+    access: { allowedRoles: withElevated(diasporaRoles) },
+  },
+  {
     id: 'rcc',
     name: 'RCC / Regional Level',
     levelLabel: 'Regional command level',
     icon: 'travel_explore',
-    sortOrder: 3,
+    sortOrder: 4,
     handlerRoles: withElevated(rccRoles),
     restrictedSubmitterRoles: null,
     access: { allowedRoles: withElevated(rccRoles) },
@@ -258,7 +282,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
     name: 'CCC / Constituency Level',
     levelLabel: 'Constituency command level',
     icon: 'groups',
-    sortOrder: 4,
+    sortOrder: 5,
     handlerRoles: withElevated(cccRoles),
     restrictedSubmitterRoles: null,
     access: { allowedRoles: withElevated(cccRoles) },
@@ -268,7 +292,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
     name: 'Polling Stations / Grassroots Level',
     levelLabel: 'Grassroots reporting level',
     icon: 'ballot',
-    sortOrder: 5,
+    sortOrder: 6,
     handlerRoles: withElevated(pollingStationRoles),
     restrictedSubmitterRoles: null,
     access: { allowedRoles: withElevated([...cccRoles, ...pollingStationRoles]) },

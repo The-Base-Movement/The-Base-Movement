@@ -20,6 +20,7 @@ const PARENT_COLORS: Record<OrgParentGroup, string> = {
   'NATIONAL ICT': 'hsl(var(--primary))',
   'SECURITY / INTEL': 'hsl(var(--accent))',
   NCC: 'hsl(142 72% 32%)',
+  'DIASPORA AFFAIRS': 'hsl(187 85% 42%)',
   RCC: 'hsl(155 70% 34%)',
   CCC: 'hsl(44 86% 48%)',
   'Polling Stations': 'hsl(var(--on-surface-muted))',
@@ -30,6 +31,7 @@ const PARENT_ICONS: Record<OrgParentGroup, string> = {
   'NATIONAL ICT': 'desktop_windows',
   'SECURITY / INTEL': 'shield',
   NCC: 'verified_user',
+  'DIASPORA AFFAIRS': 'public',
   RCC: 'travel_explore',
   CCC: 'groups',
   'Polling Stations': 'account_balance',
@@ -490,19 +492,19 @@ function LaneGroupNode({
           alignItems: 'start',
         }}
       >
-          {lanes.length > 0 ? (
-            lanes.map((lane) => (
-              <CommitteeLaneNode
-                key={`${group}-${lane.lane}`}
-                lane={lane.lane}
-                roles={lane.roles}
-                viewMode={viewMode}
-                onSelect={onSelect}
-              />
-            ))
-          ) : (
-            <EmptyNode />
-          )}
+        {lanes.length > 0 ? (
+          lanes.map((lane) => (
+            <CommitteeLaneNode
+              key={`${group}-${lane.lane}`}
+              lane={lane.lane}
+              roles={lane.roles}
+              viewMode={viewMode}
+              onSelect={onSelect}
+            />
+          ))
+        ) : (
+          <EmptyNode />
+        )}
       </div>
     </ParentGroupNode>
   )
@@ -570,8 +572,8 @@ function HierarchyMap({
               Command Structure Map
             </p>
             <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
-              Board connects to NCC. National ICT and Security / Intel feed into NCC, then NCC
-              flows down through RCC, CCC and polling stations.
+              Board connects to NCC. National ICT and Security / Intel feed into NCC, then NCC flows
+              down through RCC, CCC and polling stations.
             </p>
           </div>
         </div>

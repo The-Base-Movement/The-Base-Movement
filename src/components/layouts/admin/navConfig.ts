@@ -8,6 +8,8 @@
 import { DEPARTMENT_CATALOG } from '@/lib/departmentCatalog'
 import type { AdminPermission, AdminRole } from '@/types/admin'
 
+const DIASPORA_AFFAIRS_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'DIASPORA_AFFAIRS_OFFICER']
+
 const GLOBAL_ROLES: AdminRole[] = [
   'SUPER_ADMIN',
   'FOUNDER',
@@ -212,6 +214,12 @@ export const getNavGroups = (
     label: 'Field',
     icon: 'location_on',
     items: [
+      {
+        to: '/admin/diaspora-affairs',
+        icon: 'public',
+        label: 'Diaspora affairs',
+        allowedRoles: DIASPORA_AFFAIRS_ROLES,
+      },
       {
         to: '/admin/chapters',
         icon: 'location_on',

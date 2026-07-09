@@ -51,6 +51,7 @@ type AccessDecision = {
 }
 
 const GLOBAL_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'IT_MANAGER']
+const DIASPORA_AFFAIRS_ROLES: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER', 'DIASPORA_AFFAIRS_OFFICER']
 
 const DEPARTMENT_ROUTE_RULES: RouteRule[] = DEPARTMENT_CATALOG.map((department) => ({
   to: `/admin/departments/${department.id}`,
@@ -117,6 +118,12 @@ const MANUAL_ROUTE_RULES: RouteRule[] = [
     source: 'strategic-priorities',
   },
   // ── Role-gated routes (no matching permission exists) ──
+  {
+    to: '/admin/diaspora-affairs',
+    match: 'exact_or_descendant',
+    allowedRoles: DIASPORA_AFFAIRS_ROLES,
+    source: 'diaspora-affairs',
+  },
   {
     to: '/admin/it-department',
     match: 'exact_or_descendant',

@@ -16,11 +16,20 @@ const superAdmin = {
   permissions: [],
 } as AdminUser
 
+const diasporaOfficer = {
+  id: 'admin-2',
+  email: 'diaspora@example.test',
+  name: 'Diaspora Officer',
+  role: 'DIASPORA_AFFAIRS_OFFICER',
+  permissions: [],
+} as AdminUser
+
 describe('departmentCatalog', () => {
   it('defines the approved organizational level departments', () => {
     expect(DEPARTMENT_CATALOG.map((department) => department.id)).toEqual([
       'board-governance',
       'ncc',
+      'diaspora-affairs',
       'rcc',
       'ccc',
       'polling-stations',
@@ -74,6 +83,20 @@ describe('departmentCatalog', () => {
       active: true,
       lead_id: null,
     })
+    expect(getDepartmentCatalogRow('diaspora-affairs')).toMatchObject({
+      id: 'diaspora-affairs',
+      name: 'Diaspora Affairs',
+      icon: 'public',
+      sort_order: 3,
+      active: true,
+      lead_id: null,
+    })
+    expect(getAdminRouteAccessDecision(diasporaOfficer, '/admin/diaspora-affairs').allowed).toBe(
+      true
+    )
+    expect(
+      getAdminRouteAccessDecision(diasporaOfficer, '/admin/departments/diaspora-affairs').allowed
+    ).toBe(true)
     expect(getDepartmentCatalogRow('media')).toBeNull()
   })
 })

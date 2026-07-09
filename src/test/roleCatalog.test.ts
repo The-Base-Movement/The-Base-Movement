@@ -162,6 +162,7 @@ describe('roleCatalog policy', () => {
       'Finance & Fundraising'
     )
     expect(getRoleCatalogEntry('CONSTITUENCY_LEAD').parentGroup).toBe('CCC')
+    expect(getRoleCatalogEntry('DIASPORA_AFFAIRS_OFFICER').parentGroup).toBe('DIASPORA AFFAIRS')
   })
 
   it('includes every approved missing-role name in the catalog', () => {
@@ -185,6 +186,7 @@ describe('roleCatalog policy', () => {
       'POLLING_STATION_COORDINATOR',
       'POLLING_STATION_AGENT',
       'MEMBERSHIP_OFFICER',
+      'DIASPORA_AFFAIRS_OFFICER',
     ]
     expectedRoles.forEach((role) => expect(roleNames.has(role)).toBe(true))
   })
