@@ -141,8 +141,8 @@ export default function StrategicPriorities() {
       itemName: campaign.title,
       title: 'Decommission Strategic Priority',
       description:
-        'Are you sure you want to decommission this strategic priority? This action is immutable.',
-      isPermanent: true,
+        'Are you sure you want to decommission this strategic priority? Priorities with donation history will be closed to preserve records.',
+      isPermanent: false,
       successMessage: 'Priority decommissioned.',
       errorMessage: 'Decommissioning failed.',
       onConfirm: async () => {

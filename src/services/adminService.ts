@@ -973,14 +973,17 @@ class AdminService {
   }
 
   async deleteDonationCampaign(id: string, title: string): Promise<boolean> {
-    const { error } = await supabase.from('donation_campaigns').delete().eq('id', id)
+    const { error } = await supabase
+      .from('donation_campaigns')
+      .update({ status: 'Closed' })
+      .eq('id', id)
 
     if (error) {
-      console.error('[DATABASE] Failed to delete campaign:', error)
+      console.error('[DATABASE] Failed to close campaign:', error)
       return false
     }
 
-    await this.logAction('CAMPAIGN_DELETE', `CAMPAIGNS/${title}`, 'Warning')
+    await this.logAction('CAMPAIGN_CLOSE', `CAMPAIGNS/${title}`, 'Warning')
     return true
   }
 
