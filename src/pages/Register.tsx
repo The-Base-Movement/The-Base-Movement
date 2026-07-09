@@ -375,9 +375,9 @@ export default function Register() {
         canonical="/register"
       />
 
-      <div className="max-w-[480px] w-full">
+      <div className="w-full max-w-[1120px]">
         <nav
-          className="breadcrumb-nav flex items-center gap-2 mb-8 mt-5 backdrop-blur-sm px-4 py-2 rounded-full border"
+          className="breadcrumb-nav flex items-center gap-2 mb-8 mt-5 backdrop-blur-sm px-4 py-2 rounded-full border w-fit max-w-full"
           style={{ background: 'hsl(var(--card) / 0.5)', borderColor: 'hsl(var(--border) / 0.5)' }}
         >
           <Link
@@ -426,36 +426,58 @@ export default function Register() {
           )}
         </nav>
 
-        <RegistrationForm
-          platform={platform}
-          formStep={formStep}
-          formData={formData}
-          isLoading={isLoading}
-          cooldown={cooldown}
-          showPassword={showPassword}
-          agreed={agreed}
-          dbCountries={dbCountries}
-          dbRegions={dbRegions}
-          dbConstituencies={dbConstituencies}
-          dbChapters={dbChapters}
-          photoUrl={photoUrl}
-          onPhotoChange={setPhotoUrl}
-          onCropComplete={setCroppedAreaPixels}
-          onPlatformChange={handlePlatformChange}
-          onInputChange={handleChange}
-          onPasswordToggle={() => setShowPassword(!showPassword)}
-          onAgreedChange={setAgreed}
-          onBack={() => setFormStep((prev) => prev - 1)}
-          onSubmit={handleSubmit}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-[360px_minmax(0,480px)] gap-8 items-start justify-center">
+          <div className="hidden lg:block sticky top-8">
+            <ChoiceStep
+              compact
+              activePlatform={platform}
+              isScanning={isScanningForm}
+              scanStatus={scanStatus}
+              onSelect={(p, file) => {
+                if (p === 'PHYSICAL' && file) {
+                  handleFormScan(file)
+                } else {
+                  handlePlatformChange(p)
+                  setStep('form')
+                  setFormStep(1)
+                }
+              }}
+            />
+          </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-[12px] text-on-surface-muted">
-            Already have an account?{' '}
-            <Link to="/login" className="text-primary font-semibold hover:underline">
-              Sign in here →
-            </Link>
-          </p>
+          <div className="w-full max-w-[480px] mx-auto lg:mx-0">
+            <RegistrationForm
+              platform={platform}
+              formStep={formStep}
+              formData={formData}
+              isLoading={isLoading}
+              cooldown={cooldown}
+              showPassword={showPassword}
+              agreed={agreed}
+              dbCountries={dbCountries}
+              dbRegions={dbRegions}
+              dbConstituencies={dbConstituencies}
+              dbChapters={dbChapters}
+              photoUrl={photoUrl}
+              onPhotoChange={setPhotoUrl}
+              onCropComplete={setCroppedAreaPixels}
+              onPlatformChange={handlePlatformChange}
+              onInputChange={handleChange}
+              onPasswordToggle={() => setShowPassword(!showPassword)}
+              onAgreedChange={setAgreed}
+              onBack={() => setFormStep((prev) => prev - 1)}
+              onSubmit={handleSubmit}
+            />
+
+            <div className="mt-8 text-center">
+              <p className="text-[12px] text-on-surface-muted">
+                Already have an account?{' '}
+                <Link to="/login" className="text-primary font-semibold hover:underline">
+                  Sign in here →
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </main>
