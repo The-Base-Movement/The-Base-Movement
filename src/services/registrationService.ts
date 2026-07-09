@@ -5,6 +5,7 @@ import { discordService } from '@/services/discordService'
 import { sessionStore } from '@/lib/sessionStore'
 import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
+import type { AuthResponse } from '@supabase/supabase-js'
 
 async function getDummyEmail(phone: string): Promise<string> {
   const clean = phone.replace('+', '').trim()
@@ -19,6 +20,37 @@ function normalizeRegistrationPhone(countryCode: string, contactNumber: string):
   const raw = contactNumber.trim().replace(/\s+/g, '')
   if (raw.startsWith('+')) return raw
   return `${countryCode}${raw.replace(/^0+/, '')}`
+}
+
+export function duplicateRegistrationMessage(
+  field: 'email' | 'phone',
+  authEmail: string | null,
+  countryCode: string,
+  contactNumber: string
+): string {
+  if (field === 'email') {
+    return `An account with the email "${authEmail}" already exists. Please sign in with your email and password instead.`
+  }
+
+  return `An account with the phone number "${countryCode} ${contactNumber}" already exists. Please sign in with your phone number and password instead.`
+}
+
+async function findDuplicateRegistration(
+  phoneNumber: string,
+  authEmail: string | null
+): Promise<'email' | 'phone' | null> {
+  const [phoneRes, emailRes] = await Promise.all([
+    supabase.from('users').select('phone_number').eq('phone_number', phoneNumber).limit(1),
+    authEmail
+      ? supabase.from('users').select('email').ilike('email', authEmail).limit(1)
+      : Promise.resolve({ data: [], error: null }),
+  ])
+
+  if (phoneRes.error) throw phoneRes.error
+  if (emailRes.error) throw emailRes.error
+  if (emailRes.data?.length) return 'email'
+  if (phoneRes.data?.length) return 'phone'
+  return null
 }
 
 export interface SubmitConfig {
@@ -42,41 +74,60 @@ export const registrationService = {
     const { platform, formData, photoUrl, selfieUrl, croppedAreaPixels, usedScan, refParam } =
       config
 
-    const yearStr = new Date().getFullYear().toString().slice(-2)
-    const randomNum = String(Math.floor(1000 + Math.random() * 9000))
-    const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
-
     const authEmail = formData.email ? formData.email.trim() : null
     const cleanPhone = normalizeRegistrationPhone(formData.countryCode, formData.contactNumber)
     const dummyEmail = await getDummyEmail(cleanPhone)
     const finalAuthEmail = authEmail || dummyEmail
+    const duplicate = await findDuplicateRegistration(cleanPhone, authEmail)
+    if (duplicate) {
+      throw new Error(
+        duplicateRegistrationMessage(
+          duplicate,
+          authEmail,
+          formData.countryCode,
+          formData.contactNumber
+        )
+      )
+    }
+
+    const yearStr = new Date().getFullYear().toString().slice(-2)
+    const randomNum = String(Math.floor(1000 + Math.random() * 9000))
+    const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
 
     // 1. Sign up user in Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const { data: signUpData, error: authError } = await supabase.auth.signUp({
       email: finalAuthEmail,
       password: formData.password!,
       options: { data: { full_name: formData.fullName } },
     })
+    const authData: AuthResponse['data'] = signUpData
 
     if (authError) {
       if (authError.message?.toLowerCase().includes('already registered')) {
-        const usedEmail = authEmail && finalAuthEmail === authEmail
-        if (usedEmail) {
-          throw new Error(
-            `An account with the email "${authEmail}" already exists. Please sign in with your email and password instead.`
-          )
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: finalAuthEmail,
+          password: formData.password!,
+        })
+
+        if (!signInError && signInData.user) {
+          authData.user = signInData.user
+          authData.session = signInData.session
         } else {
-          const displayPhone = formData.countryCode + ' ' + formData.contactNumber
           throw new Error(
-            `An account with the phone number "${displayPhone}" already exists. Please sign in with your phone number and password instead.`
+            duplicateRegistrationMessage(
+              authEmail ? 'email' : 'phone',
+              authEmail,
+              formData.countryCode,
+              formData.contactNumber
+            )
           )
         }
-      }
-      if (authError.status === 429 || authError.message?.toLowerCase().includes('rate')) {
+      } else if (authError.status === 429 || authError.message?.toLowerCase().includes('rate')) {
         const seconds = authError.message?.match(/(\d+)\s*second/)?.[1] || '60'
         throw new Error(`RATE_LIMIT:${seconds}`)
+      } else {
+        throw authError
       }
-      throw authError
     }
 
     // 2. Upload avatar if photo/selfie exists
@@ -143,7 +194,12 @@ export const registrationService = {
       registered_by: config.registeredBy || null,
     })
 
-    if (dbError) throw dbError
+    if (dbError) {
+      if (dbError.code === '23505') {
+        throw new Error('A member with those registration details already exists. Please sign in.')
+      }
+      throw dbError
+    }
 
     // Award referral points to the referrer — fire-and-forget, must not block registration
     if (refParam && authData.user?.id) {

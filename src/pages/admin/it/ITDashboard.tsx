@@ -18,6 +18,12 @@ interface ITStats {
 
 const QUICK_LINKS = [
   {
+    to: '/admin/it-department/brain',
+    icon: 'neurology',
+    label: 'Brain',
+    color: 'hsl(var(--primary))',
+  },
+  {
     to: '/admin/it-department/projects',
     icon: 'folder_open',
     label: 'Projects',

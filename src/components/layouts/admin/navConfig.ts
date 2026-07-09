@@ -352,6 +352,7 @@ export const getNavGroups = (
         label: 'IT Department',
         subItems: [
           { to: '/admin/it-department', icon: 'dashboard', label: 'Overview' },
+          { to: '/admin/it-department/brain', icon: 'neurology', label: 'Brain' },
           { to: '/admin/it-department/tickets', icon: 'confirmation_number', label: 'Helpdesk' },
           { to: '/admin/it-department/projects', icon: 'folder_open', label: 'Projects' },
           { to: '/admin/it-department/notes', icon: 'sticky_note_2', label: 'Notes' },
