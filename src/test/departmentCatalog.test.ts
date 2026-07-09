@@ -17,9 +17,19 @@ const superAdmin = {
 } as AdminUser
 
 describe('departmentCatalog', () => {
-  it('defines the 8 approved hierarchy departments', () => {
+  it('defines the approved organizational level departments', () => {
     expect(DEPARTMENT_CATALOG.map((department) => department.id)).toEqual([
       'board-governance',
+      'ncc',
+      'rcc',
+      'ccc',
+      'polling-stations',
+    ])
+  })
+
+  it('does not treat legacy department slugs as canonical URLs', () => {
+    ;[
+      'finance',
       'national-ict',
       'security-intel',
       'operations-organising',
@@ -27,12 +37,6 @@ describe('departmentCatalog', () => {
       'finance-fundraising',
       'research-policy',
       'appointment-welfare',
-    ])
-  })
-
-  it('does not treat legacy department slugs as canonical URLs', () => {
-    ;[
-      'finance',
       'media',
       'store',
       'it',

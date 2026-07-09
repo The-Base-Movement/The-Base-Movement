@@ -41,7 +41,7 @@ export default function DepartmentsIndex() {
           Departments
         </h1>
         <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: '4px 0 0' }}>
-          Operational dashboards for every movement department
+          Enter by organizational level, then manage the sub-committees inside that level.
         </p>
       </div>
 

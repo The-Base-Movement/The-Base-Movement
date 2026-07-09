@@ -1,15 +1,6 @@
 import type { AdminPermission, AdminRole } from '@/types/admin'
 
-export type DepartmentId =
-  | 'board-governance'
-  | 'national-ict'
-  | 'security-intel'
-  | 'operations-organising'
-  | 'media-communications'
-  | 'finance-fundraising'
-  | 'research-policy'
-  | 'appointment-welfare'
-
+export type DepartmentId = 'board-governance' | 'ncc' | 'rcc' | 'ccc' | 'polling-stations'
 export interface DepartmentCatalogEntry {
   id: DepartmentId
   name: string
@@ -141,6 +132,65 @@ const welfareRoles: AdminRole[] = [
   'CONSTITUENCY_APPOINTMENT_OFFICER',
 ]
 
+const nccRoles: AdminRole[] = [
+  ...ictRoles,
+  ...securityRoles.filter((role) =>
+    [
+      'SECURITY_DIRECTOR',
+      'DEPUTY_SECURITY_DIRECTOR',
+      'INTELLIGENCE_ANALYST',
+      'FIELD_INTELLIGENCE_OFFICER',
+      'INVESTIGATION_OFFICER',
+      'RISK_THREAT_ANALYST',
+    ].includes(role)
+  ),
+  ...operationsRoles.filter((role) =>
+    [
+      'NATIONAL_COORDINATOR',
+      'ORGANIZER',
+      'NATIONAL_SECRETARY',
+      'NATIONAL_LOGISTICS_OFFICER',
+      'YOUTH_LEADER',
+      'STORE_MANAGER',
+    ].includes(role)
+  ),
+  ...mediaRoles.filter((role) =>
+    ['COMMUNICATIONS_OFFICER', 'CHIEF_EDITOR', 'SENIOR_EDITOR', 'EDITOR', 'JUNIOR_EDITOR'].includes(
+      role
+    )
+  ),
+  ...financeRoles.filter((role) =>
+    ['FINANCE_OFFICER', 'NATIONAL_FUNDRAISING_OFFICER'].includes(role)
+  ),
+  ...policyRoles.filter((role) => role === 'NATIONAL_RESEARCH_POLICY_DIRECTOR'),
+  ...welfareRoles.filter((role) => role.startsWith('NATIONAL_')),
+]
+
+const rccRoles: AdminRole[] = [
+  ...operationsRoles.filter((role) => role.startsWith('REGIONAL_')),
+  ...mediaRoles.filter((role) => role.startsWith('REGIONAL_')),
+  ...financeRoles.filter((role) => role.startsWith('REGIONAL_')),
+  ...policyRoles.filter((role) => role.startsWith('REGIONAL_')),
+  ...welfareRoles.filter((role) => role.startsWith('REGIONAL_')),
+  ...securityRoles.filter((role) => role.startsWith('REGIONAL_')),
+]
+
+const cccRoles: AdminRole[] = [
+  ...operationsRoles.filter(
+    (role) =>
+      role.startsWith('CONSTITUENCY_') ||
+      role.startsWith('CHAPTER_') ||
+      role === 'FIELD_AGENT' ||
+      role === 'MEMBERSHIP_OFFICER'
+  ),
+  ...mediaRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
+  ...financeRoles.filter((role) => role.startsWith('CONSTITUENCY_') || role.startsWith('CHAPTER_')),
+  ...policyRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
+  ...welfareRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
+  ...securityRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
+]
+
+const pollingStationRoles: AdminRole[] = ['POLLING_STATION_COORDINATOR', 'POLLING_STATION_AGENT']
 function withElevated(roles: AdminRole[]) {
   return Array.from(new Set([...elevated, ...roles]))
 }
@@ -156,70 +206,42 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
     access: { allowedRoles: withElevated(boardRoles) },
   },
   {
-    id: 'national-ict',
-    name: 'National ICT',
-    icon: 'computer',
+    id: 'ncc',
+    name: 'NCC / National Level',
+    icon: 'verified_user',
     sortOrder: 2,
-    handlerRoles: withElevated(ictRoles),
+    handlerRoles: withElevated(nccRoles),
     restrictedSubmitterRoles: null,
-    access: { allowedRoles: withElevated(ictRoles) },
+    access: { allowedRoles: withElevated(nccRoles) },
   },
   {
-    id: 'security-intel',
-    name: 'Security / Intel',
-    icon: 'shield',
+    id: 'rcc',
+    name: 'RCC / Regional Level',
+    icon: 'travel_explore',
     sortOrder: 3,
-    handlerRoles: withElevated(securityRoles),
+    handlerRoles: withElevated(rccRoles),
     restrictedSubmitterRoles: null,
-    access: { allowedRoles: withElevated(securityRoles) },
+    access: { allowedRoles: withElevated(rccRoles) },
   },
   {
-    id: 'operations-organising',
-    name: 'Operations & Organising',
-    icon: 'hub',
+    id: 'ccc',
+    name: 'CCC / Constituency Level',
+    icon: 'groups',
     sortOrder: 4,
-    handlerRoles: withElevated(operationsRoles),
+    handlerRoles: withElevated(cccRoles),
     restrictedSubmitterRoles: null,
-    access: { allowedRoles: withElevated(operationsRoles) },
+    access: { allowedRoles: withElevated(cccRoles) },
   },
   {
-    id: 'media-communications',
-    name: 'Media & Communications',
-    icon: 'campaign',
+    id: 'polling-stations',
+    name: 'Polling Stations / Grassroots Level',
+    icon: 'ballot',
     sortOrder: 5,
-    handlerRoles: withElevated(mediaRoles),
+    handlerRoles: withElevated(pollingStationRoles),
     restrictedSubmitterRoles: null,
-    access: { permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' } },
-  },
-  {
-    id: 'finance-fundraising',
-    name: 'Finance & Fundraising',
-    icon: 'account_balance',
-    sortOrder: 6,
-    handlerRoles: withElevated(financeRoles),
-    restrictedSubmitterRoles: null,
-    access: { permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
-  },
-  {
-    id: 'research-policy',
-    name: 'Research & Policy',
-    icon: 'query_stats',
-    sortOrder: 7,
-    handlerRoles: withElevated(policyRoles),
-    restrictedSubmitterRoles: null,
-    access: { allowedRoles: withElevated(policyRoles) },
-  },
-  {
-    id: 'appointment-welfare',
-    name: 'Appointment, Discipline & Welfare',
-    icon: 'groups_2',
-    sortOrder: 8,
-    handlerRoles: withElevated(welfareRoles),
-    restrictedSubmitterRoles: null,
-    access: { allowedRoles: withElevated(welfareRoles) },
+    access: { allowedRoles: withElevated([...cccRoles, ...pollingStationRoles]) },
   },
 ]
-
 export const CANONICAL_DEPARTMENT_IDS = new Set<string>(
   DEPARTMENT_CATALOG.map((department) => department.id)
 )

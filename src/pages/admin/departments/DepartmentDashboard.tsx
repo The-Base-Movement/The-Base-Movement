@@ -32,85 +32,85 @@ const GOLD = 'hsl(var(--accent))'
 const RED = 'hsl(var(--destructive))'
 const INK = 'hsl(var(--on-surface))'
 
-// Department-specific tooling — every link is an existing admin route
+// Department-specific tooling — every link is an existing admin route.
+// The finance dashboard is intentionally not linked here; department finance is its own lane.
 const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
   'board-governance': [
     { to: '/admin/executive', icon: 'corporate_fare', label: 'Executive Dashboard', color: GREEN },
-    { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics', color: GREEN },
-    { to: '/admin/priorities', icon: 'flag', label: 'Priorities', color: RED },
+    { to: '/admin/analytics', icon: 'bar_chart', label: 'Movement Analytics', color: GREEN },
     { to: '/admin/roadmap', icon: 'route', label: 'Mission Roadmap', color: GOLD },
     { to: '/admin/party-officials', icon: 'badge', label: 'Party Officials', color: INK },
-    { to: '/admin/administrators', icon: 'shield', label: 'Administrators', color: GREEN },
+    { to: '/admin/administrators', icon: 'shield', label: 'Accountability & Access', color: GREEN },
   ],
-  'national-ict': [
-    { to: '/admin/it-department', icon: 'computer', label: 'IT Department', color: GREEN },
+  ncc: [
+    { to: '/admin/it-department', icon: 'computer', label: 'National ICT', color: GREEN },
+    { to: '/admin/war-room', icon: 'radio', label: 'Security / Intel', color: RED },
+    { to: '/admin/members', icon: 'hub', label: 'Operations & Organising', color: GREEN },
+    { to: '/admin/media-hub', icon: 'campaign', label: 'Media & Communications', color: GOLD },
     {
-      to: '/admin/it-department/helpdesk',
-      icon: 'support_agent',
-      label: 'IT Helpdesk',
+      to: '/admin/finance-requests',
+      icon: 'account_balance',
+      label: 'Finance & Fundraising',
+      color: INK,
+    },
+    { to: '/admin/priorities', icon: 'query_stats', label: 'Research & Policy', color: RED },
+    {
+      to: '/admin/leadership',
+      icon: 'groups_2',
+      label: 'Appointment, Discipline & Welfare',
       color: GOLD,
     },
-    { to: '/admin/it-department/assets', icon: 'inventory_2', label: 'IT Assets', color: INK },
+  ],
+  rcc: [
+    { to: '/admin/regions', icon: 'travel_explore', label: 'Regional Command', color: GREEN },
     {
-      to: '/admin/it-department/hierarchy',
-      icon: 'account_tree',
-      label: 'IT Hierarchy',
+      to: '/admin/mobilization-metrics',
+      icon: 'hub',
+      label: 'Operations & Organising',
       color: GREEN,
     },
+    { to: '/admin/broadcasts', icon: 'campaign', label: 'Media & Communications', color: GOLD },
     {
-      to: '/admin/it-department/organizational-structure',
-      icon: 'schema',
-      label: 'Org Structure',
+      to: '/admin/finance-requests',
+      icon: 'account_balance',
+      label: 'Finance & Fundraising',
+      color: INK,
+    },
+    { to: '/admin/analytics', icon: 'query_stats', label: 'Research & Policy', color: RED },
+    {
+      to: '/admin/leadership',
+      icon: 'groups_2',
+      label: 'Appointment, Discipline & Welfare',
       color: GOLD,
     },
-    { to: '/admin/administrators', icon: 'shield', label: 'Administrators', color: INK },
   ],
-  'security-intel': [
-    { to: '/admin/war-room', icon: 'radio', label: 'War Room', color: RED },
-    { to: '/admin/sentiment-intelligence', icon: 'psychology', label: 'Sentiment AI', color: GOLD },
-    { to: '/admin/ml-intelligence', icon: 'auto_awesome', label: 'ML Intelligence', color: INK },
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
-    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: RED },
+  ccc: [
+    { to: '/admin/constituencies', icon: 'groups', label: 'Constituency Command', color: GREEN },
+    { to: '/admin/ground-game', icon: 'hub', label: 'Operations & Organising', color: GREEN },
+    { to: '/admin/broadcasts', icon: 'campaign', label: 'Media & Communications', color: GOLD },
+    {
+      to: '/admin/finance-requests',
+      icon: 'account_balance',
+      label: 'Finance & Fundraising',
+      color: INK,
+    },
+    { to: '/admin/polls', icon: 'query_stats', label: 'Research & Policy', color: RED },
+    {
+      to: '/admin/leadership',
+      icon: 'groups_2',
+      label: 'Appointment, Discipline & Welfare',
+      color: GOLD,
+    },
   ],
-  'operations-organising': [
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: GREEN },
-    { to: '/admin/verification', icon: 'verified_user', label: 'KYC Queue', color: GOLD },
-    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: INK },
-    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: GREEN },
-    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: GREEN },
-    { to: '/admin/constituencies', icon: 'location_city', label: 'Constituencies', color: GREEN },
-    { to: '/admin/regions', icon: 'map', label: 'Regions', color: GOLD },
-    { to: '/admin/ground-game', icon: 'directions_walk', label: 'Ground Game', color: RED },
-    { to: '/admin/polling-stations', icon: 'ballot', label: 'Polling Stations', color: GREEN },
-    { to: '/admin/logistics-intelligence', icon: 'inventory_2', label: 'Logistics', color: INK },
-    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: GOLD },
-    { to: '/admin/jobs', icon: 'work', label: 'Jobs Board', color: GREEN },
-    { to: '/admin/referral-analytics', icon: 'share', label: 'Referral Analytics', color: INK },
-  ],
-  'media-communications': [
-    { to: '/admin/blogs', icon: 'article', label: 'Blog Posts', color: GREEN },
-    { to: '/admin/broadcasts', icon: 'campaign', label: 'Broadcasts', color: GOLD },
-    { to: '/admin/newsletter', icon: 'mail', label: 'Newsletter', color: INK },
-    { to: '/admin/media', icon: 'photo_library', label: 'Media Library', color: GREEN },
-    { to: '/admin/authors', icon: 'history_edu', label: 'Authors', color: GOLD },
-  ],
-  'finance-fundraising': [
-    { to: '/admin/finance-dashboard', icon: 'analytics', label: 'Finance Dashboard', color: GREEN },
-    { to: '/admin/donations', icon: 'volunteer_activism', label: 'Donations', color: GOLD },
-    { to: '/admin/spending-ledger', icon: 'receipt_long', label: 'Spending Ledger', color: INK },
-    { to: '/admin/finance-requests', icon: 'request_quote', label: 'Finance Requests', color: RED },
-  ],
-  'research-policy': [
-    { to: '/admin/priorities', icon: 'flag', label: 'Priorities', color: RED },
-    { to: '/admin/roadmap', icon: 'route', label: 'Mission Roadmap', color: GOLD },
-    { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics', color: GREEN },
-    { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', color: INK },
-  ],
-  'appointment-welfare': [
-    { to: '/admin/leadership', icon: 'shield', label: 'Leadership Hub', color: GREEN },
-    { to: '/admin/members', icon: 'group', label: 'Member Directory', color: INK },
-    { to: '/admin/verification', icon: 'verified_user', label: 'KYC Queue', color: GOLD },
-    { to: '/admin/messages', icon: 'chat', label: 'Messages', color: GREEN },
+  'polling-stations': [
+    {
+      to: '/admin/polling-stations',
+      icon: 'ballot',
+      label: 'Polling Station Registry',
+      color: GREEN,
+    },
+    { to: '/admin/ground-game', icon: 'how_to_vote', label: 'Grassroots Operations', color: RED },
+    { to: '/admin/members', icon: 'group', label: 'Assigned Agents', color: GOLD },
   ],
 }
 
