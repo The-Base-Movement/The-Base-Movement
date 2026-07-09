@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import gsap from 'gsap'
 import { useAuth } from '@/context/AuthContext'
 import { ChoiceStep } from './register/components/ChoiceStep'
 import { RegistrationForm } from './register/components/RegistrationForm'
@@ -51,6 +52,8 @@ export default function Register() {
   const [offlineSubmitted, setOfflineSubmitted] = useState(false)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+  const platformRailRef = useRef<HTMLDivElement | null>(null)
+  const formPanelRef = useRef<HTMLDivElement | null>(null)
 
   const { isOnline } = useOfflineSync()
 
@@ -60,6 +63,22 @@ export default function Register() {
     useRegistrationSubmit()
 
   const DRAFT_KEY = 'reg_draft'
+
+  useEffect(() => {
+    if (step !== 'form') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!window.matchMedia('(min-width: 1024px)').matches) return
+    if (!platformRailRef.current || !formPanelRef.current) return
+
+    const ctx = gsap.context(() => {
+      gsap
+        .timeline({ defaults: { duration: 0.58, ease: 'power3.out' } })
+        .fromTo(platformRailRef.current, { x: 210 }, { x: 0 })
+        .fromTo(formPanelRef.current, { autoAlpha: 0, x: 70 }, { autoAlpha: 1, x: 0 }, '-=0.36')
+    })
+
+    return () => ctx.revert()
+  }, [step])
 
   const [formData, setFormData] = useState<RegistrationFormData>(() => {
     const defaults: RegistrationFormData = {
@@ -367,7 +386,7 @@ export default function Register() {
   }
 
   return (
-    <main className="bg-container-low min-h-screen flex flex-col items-center justify-center py-12 px-4">
+    <main className="bg-container-low min-h-screen flex flex-col items-center justify-center py-12 px-4 lg:px-8">
       <OfflineBanner />
       <SEO
         title="Member Registration"
@@ -375,7 +394,7 @@ export default function Register() {
         canonical="/register"
       />
 
-      <div className="w-full max-w-[1120px]">
+      <div className="w-full max-w-[1360px]">
         <nav
           className="breadcrumb-nav flex items-center gap-2 mb-8 mt-5 backdrop-blur-sm px-4 py-2 rounded-full border w-fit max-w-full"
           style={{ background: 'hsl(var(--card) / 0.5)', borderColor: 'hsl(var(--border) / 0.5)' }}
@@ -426,8 +445,8 @@ export default function Register() {
           )}
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[360px_minmax(0,480px)] gap-8 items-start justify-center">
-          <div className="hidden lg:block sticky top-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-8 items-start">
+          <div ref={platformRailRef} className="hidden lg:block sticky top-8">
             <ChoiceStep
               compact
               activePlatform={platform}
@@ -445,7 +464,7 @@ export default function Register() {
             />
           </div>
 
-          <div className="w-full max-w-[480px] mx-auto lg:mx-0">
+          <div ref={formPanelRef} className="w-full mx-auto lg:mx-0">
             <RegistrationForm
               platform={platform}
               formStep={formStep}
