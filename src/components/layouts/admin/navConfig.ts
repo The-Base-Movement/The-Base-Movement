@@ -175,6 +175,13 @@ export const getNavGroups = (
         label: 'Review inbox',
         permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
       },
+      {
+        to: '/admin/priorities',
+        icon: 'shield',
+        label: 'Strategic focus',
+        allowedRoles: ['FINANCE_OFFICER', 'SUPER_ADMIN'],
+        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+      },
     ],
   },
   {
@@ -257,12 +264,6 @@ export const getNavGroups = (
         to: '/admin/deploy',
         icon: 'my_location',
         label: 'Deploy asset',
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
-      },
-      {
-        to: '/admin/priorities',
-        icon: 'shield',
-        label: 'Strategic focus',
         permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
       },
     ],

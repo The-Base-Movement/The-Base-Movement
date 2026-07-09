@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { DonationCampaign } from '@/types/admin'
@@ -14,7 +14,11 @@ import { MobileFilterModal } from './strategicpriorities/MobileFilterModal'
 import { DotLoader } from '@/components/states'
 import { PriorityModal } from './strategicpriorities/PriorityModal'
 
+const ALLOWED_ROLES = ['FINANCE_OFFICER', 'SUPER_ADMIN']
+
 export default function StrategicPriorities() {
+  const [role, setRole] = useState<string | null>(() => adminService.getCurrentUser()?.role ?? null)
+  const [authChecked, setAuthChecked] = useState(() => !!adminService.getCurrentUser())
   const [campaigns, setCampaigns] = useState<DonationCampaign[]>([])
   const [loading, setLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
@@ -29,6 +33,7 @@ export default function StrategicPriorities() {
     'media-library'
   )
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const allowed = !!role && ALLOWED_ROLES.includes(role)
 
   // Form State
   const [formData, setFormData] = useState<Omit<DonationCampaign, 'id' | 'raisedAmount'>>({
@@ -41,8 +46,16 @@ export default function StrategicPriorities() {
   })
 
   useEffect(() => {
-    fetchCampaigns()
-  }, [])
+    if (authChecked) return
+    adminService.initialize().then((user) => {
+      setRole(user?.role ?? null)
+      setAuthChecked(true)
+    })
+  }, [authChecked])
+
+  useEffect(() => {
+    if (authChecked && allowed) fetchCampaigns()
+  }, [authChecked, allowed])
 
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth <= 768)
@@ -173,6 +186,42 @@ export default function StrategicPriorities() {
       return sortOrder === 'asc' ? titleA.localeCompare(titleB) : titleB.localeCompare(titleA)
     })
   }, [campaigns, searchQuery, sortOrder])
+
+  if (!authChecked) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '80px 0',
+        }}
+      >
+        <DotLoader label="Verifying access..." />
+      </div>
+    )
+  }
+
+  if (!allowed) {
+    return (
+      <div className="main">
+        <div className="panel" style={{ padding: 24, textAlign: 'center' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 32, color: 'hsl(var(--destructive))', marginBottom: 8 }}
+          >
+            lock
+          </span>
+          <p style={{ margin: 0, fontWeight: 'var(--font-weight-medium, 500)' }}>
+            Access restricted
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
+            Strategic focus is limited to Finance Officers and Super Admins.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   if (loading) {
     return (
