@@ -4,6 +4,7 @@ export type DepartmentId = 'board-governance' | 'ncc' | 'rcc' | 'ccc' | 'polling
 export interface DepartmentCatalogEntry {
   id: DepartmentId
   name: string
+  levelLabel: string
   icon: string
   sortOrder: number
   handlerRoles: AdminRole[]
@@ -28,7 +29,33 @@ export interface DepartmentCatalogRow {
   lead_id: string | null
 }
 
+export interface DepartmentSubCommittee {
+  id: string
+  name: string
+  icon: string
+}
+
 const elevated: AdminRole[] = ['SUPER_ADMIN', 'FOUNDER']
+
+export const DEPARTMENT_SUB_COMMITTEES: DepartmentSubCommittee[] = [
+  { id: 'operations-organising', name: 'Operations & Organising', icon: 'hub' },
+  { id: 'media-communications', name: 'Media & Communications', icon: 'campaign' },
+  { id: 'finance-fundraising', name: 'Finance & Fundraising', icon: 'account_balance' },
+  { id: 'research-policy', name: 'Research & Policy', icon: 'query_stats' },
+  {
+    id: 'appointment-discipline-welfare',
+    name: 'Appointment, Discipline & Welfare',
+    icon: 'groups_2',
+  },
+]
+
+export const DEPARTMENT_REPORTING_CHAIN: DepartmentId[] = [
+  'board-governance',
+  'ncc',
+  'rcc',
+  'ccc',
+  'polling-stations',
+]
 
 const boardRoles: AdminRole[] = [
   'FOUNDER',
@@ -199,6 +226,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
   {
     id: 'board-governance',
     name: 'Board / Governance',
+    levelLabel: 'National accountability board',
     icon: 'corporate_fare',
     sortOrder: 1,
     handlerRoles: withElevated(boardRoles),
@@ -208,6 +236,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
   {
     id: 'ncc',
     name: 'NCC / National Level',
+    levelLabel: 'National command level',
     icon: 'verified_user',
     sortOrder: 2,
     handlerRoles: withElevated(nccRoles),
@@ -217,6 +246,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
   {
     id: 'rcc',
     name: 'RCC / Regional Level',
+    levelLabel: 'Regional command level',
     icon: 'travel_explore',
     sortOrder: 3,
     handlerRoles: withElevated(rccRoles),
@@ -226,6 +256,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
   {
     id: 'ccc',
     name: 'CCC / Constituency Level',
+    levelLabel: 'Constituency command level',
     icon: 'groups',
     sortOrder: 4,
     handlerRoles: withElevated(cccRoles),
@@ -235,6 +266,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
   {
     id: 'polling-stations',
     name: 'Polling Stations / Grassroots Level',
+    levelLabel: 'Grassroots reporting level',
     icon: 'ballot',
     sortOrder: 5,
     handlerRoles: withElevated(pollingStationRoles),

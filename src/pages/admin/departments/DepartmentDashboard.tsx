@@ -5,7 +5,11 @@ import { messagingService } from '@/services/messagingService'
 import { adminService } from '@/services/adminService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { Helpdesk } from '@/components/admin/Helpdesk'
-import { getDepartmentCatalogEntry, type DepartmentId } from '@/lib/departmentCatalog'
+import {
+  DEPARTMENT_SUB_COMMITTEES,
+  getDepartmentCatalogEntry,
+  type DepartmentId,
+} from '@/lib/departmentCatalog'
 import type { HelpdeskDepartment } from '@/components/admin/Helpdesk/types'
 
 interface LeadProfile {
@@ -241,6 +245,7 @@ export default function DepartmentDashboard() {
   ]
 
   const quickLinks = catalogDept ? QUICK_LINKS[catalogDept.id] : []
+  const showSubCommittees = catalogDept ? ['ncc', 'rcc', 'ccc'].includes(catalogDept.id) : false
 
   return (
     <div className="main">
@@ -428,6 +433,58 @@ export default function DepartmentDashboard() {
         </div>
       )}
 
+      {showSubCommittees && (
+        <div className="panel" style={{ marginBottom: 24, padding: 20 }}>
+          <p
+            style={{
+              margin: '0 0 12px',
+              fontSize: 12,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface))',
+            }}
+          >
+            Sub-committees in this level
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+              gap: 10,
+            }}
+          >
+            {DEPARTMENT_SUB_COMMITTEES.map((committee) => (
+              <div
+                key={committee.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  padding: '12px 14px',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'hsl(var(--container-low))',
+                }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 17, color: 'hsl(var(--primary))' }}
+                >
+                  {committee.icon}
+                </span>
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {committee.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {/* Ticket queue — permission-gated by handler_roles inside Helpdesk */}
       <div className="ph" style={{ marginBottom: 8 }}>
         <div>
