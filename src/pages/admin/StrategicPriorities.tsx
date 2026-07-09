@@ -66,7 +66,7 @@ export default function StrategicPriorities() {
   async function fetchCampaigns() {
     setLoading(true)
     try {
-      const data = await adminService.getDonationCampaigns()
+      const data = await adminService.getDonationCampaigns('Active')
       const processed = data.map((campaign) => {
         if (
           campaign.status === 'Active' &&
