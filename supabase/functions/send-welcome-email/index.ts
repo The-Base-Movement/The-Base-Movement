@@ -18,7 +18,7 @@ const corsHeaders = {
 
 function buildWelcomeSms(name: string, regNo: string): string {
   const firstName = name.split(' ')[0] || name
-  return `Hi ${firstName}, welcome to The Base Movement. Your membership is active and your registration number is ${regNo}. Visit thebasemovement.info/dashboard to get started.`
+  return `Hi ${firstName}, welcome to The Base Movement. Your membership is active and your registration number is ${regNo}. Visit www.thebasemovement.org.gh/dashboard to get started.`
 }
 
 async function sendWelcomeEmail(
@@ -125,8 +125,8 @@ Deno.serve(async (req) => {
         name: firstName,
         regNo: row.registration_number,
         chapter: row.chapter ?? 'TBM',
-        dashboardUrl: 'https://thebasemovement.info/dashboard',
-        cardDownloadUrl: 'https://thebasemovement.info/dashboard',
+        dashboardUrl: 'https://www.thebasemovement.org.gh/dashboard',
+        cardDownloadUrl: 'https://www.thebasemovement.org.gh/dashboard',
         totalMembers,
       })
 

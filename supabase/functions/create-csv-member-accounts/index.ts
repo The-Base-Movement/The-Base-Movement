@@ -160,7 +160,7 @@ serve(async (req: Request) => {
               regNo: member.reg_no,
               phone: normalizedPhone || 'N/A',
               tempPassword,
-              loginUrl: 'https://thebasemovement.info/login',
+              loginUrl: 'https://www.thebasemovement.org.gh/login',
             })
             const emailRes = await fetch('https://api.sendgrid.com/v3/mail/send', {
               method: 'POST',
@@ -185,7 +185,7 @@ serve(async (req: Request) => {
         } else if (normalizedPhone) {
           const sms = await sendSms(
             [normalizedPhone],
-            `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at thebasemovement.info/login and change your password.\n- The Base`
+            `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at www.thebasemovement.org.gh/login and change your password.\n- The Base`
           )
           if (!sms.ok) {
             console.warn(

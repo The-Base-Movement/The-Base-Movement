@@ -890,7 +890,7 @@ export default function ConstituencyDetails() {
                   mail
                 </span>
                 {constituency.email ||
-                  `${constituency.name.toLowerCase().replace(/\s+/g, '')}@thebasemovement.info`}
+                  `${constituency.name.toLowerCase().replace(/\s+/g, '')}@thebasemovement.org.gh`}
               </div>
               <div
                 style={{

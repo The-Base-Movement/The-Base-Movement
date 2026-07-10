@@ -181,7 +181,7 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('PUBLIC_SITE_URL') ??
       // @ts-expect-error: Deno global
       Deno.env.get('SITE_URL') ??
-      'https://thebasemovement.info'
+      'https://www.thebasemovement.org.gh'
 
     const normalizedPhone = normalizeHubtelPhone(phone)
     if (!normalizedPhone) throw new Error('Enter a valid international phone number')
@@ -204,7 +204,7 @@ Deno.serve(async (req: Request) => {
       clientReference: reference,
       customerName: name,
       customerPhoneNumber: normalizedPhone,
-      customerEmail: body.email || 'donations@thebasemovement.info',
+      customerEmail: body.email || 'donations@thebasemovement.org.gh',
       channels: ghanaPhone ? ['mobilemoney', 'card'] : ['card'],
       metadata: {
         ...(body.metadata ?? {}),

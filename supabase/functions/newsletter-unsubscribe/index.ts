@@ -42,7 +42,7 @@ function htmlPage(title: string, heading: string, body: string, isError = false)
 <div class="card">
   <div class="bar"></div>
   <div class="header">
-    <img src="https://thebasemovement.info/branding/logo.png" alt="The Base Movement">
+    <img src="https://www.thebasemovement.org.gh/branding/logo.png" alt="The Base Movement">
   </div>
   <div class="body">
     <div class="icon">${isError ? '✕' : '✓'}</div>

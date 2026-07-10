@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
 
     if (sgKey) {
       const html = newsletterSubscriberWelcomeEmail({
-        updatesUrl: 'https://thebasemovement.info/blog',
+        updatesUrl: 'https://www.thebasemovement.org.gh/blog',
       })
       const senderEmail = await getSenderEmail(supabase)
 
@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
     if (subscriber.phone_number) {
       const sms = await sendSms(
         [subscriber.phone_number],
-        'Welcome to The Base newsletter. You will receive movement updates by SMS when relevant. Visit thebasemovement.info/blog for the latest news.'
+        'Welcome to The Base newsletter. You will receive movement updates by SMS when relevant. Visit www.thebasemovement.org.gh/blog for the latest news.'
       )
       smsSent = sms.ok
     }

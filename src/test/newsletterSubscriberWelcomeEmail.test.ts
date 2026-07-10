@@ -4,11 +4,11 @@ import { newsletterSubscriberWelcomeEmail } from '../../supabase/functions/_shar
 describe('newsletterSubscriberWelcomeEmail', () => {
   it('includes the subscriber confirmation copy and updates CTA', () => {
     const html = newsletterSubscriberWelcomeEmail({
-      updatesUrl: 'https://thebasemovement.info/blog',
+      updatesUrl: 'https://www.thebasemovement.org.gh/blog',
     })
 
     expect(html).toContain('Your newsletter subscription is active.')
     expect(html).toContain('Read the latest updates')
-    expect(html).toContain('https://thebasemovement.info/blog')
+    expect(html).toContain('https://www.thebasemovement.org.gh/blog')
   })
 })

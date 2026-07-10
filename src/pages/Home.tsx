@@ -80,7 +80,7 @@ export default function Home() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'The Base Movement',
-    url: 'https://thebasemovement.info',
+    url: 'https://www.thebasemovement.org.gh',
     logo: settings.logo_url,
     sameAs: [
       'https://www.facebook.com/profile.php?id=61579415816496',
@@ -91,7 +91,7 @@ export default function Home() {
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'general info',
-      url: 'https://thebasemovement.info/contact',
+      url: 'https://www.thebasemovement.org.gh/contact',
     },
   }
 

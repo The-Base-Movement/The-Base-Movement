@@ -17,7 +17,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const PROFILE_URL = 'https://www.thebasemovement.info/settings'
+const PROFILE_URL = 'https://www.thebasemovement.org.gh/settings'
 
 async function sendDiscordEmbed(channel: string, embed: Record<string, unknown>): Promise<void> {
   const channelSecrets: Record<string, string> = {

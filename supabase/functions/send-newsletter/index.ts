@@ -54,7 +54,7 @@ function emailHeader(tag: string) {
     style="background:#181d19;border-collapse:collapse">
     <tr>
       <td style="padding:18px 28px;vertical-align:middle">
-        <img class="logo" src="https://thebasemovement.info/branding/logo.png"
+        <img class="logo" src="https://www.thebasemovement.org.gh/branding/logo.png"
           alt="The Base Movement" height="36" width="auto"
           style="height:36px;width:auto;display:block;border:0;max-width:180px" />
       </td>
@@ -116,7 +116,7 @@ function broadcastEmail(d: BroadcastEmailData): string {
       ${d.body}
       ${ctaButton(d.ctaLabel, d.ctaUrl)}
     </div>
-    ${emailFooter(`You're receiving this because you are a verified member of The Base. · <a href="%%UNSUB%%" style="color:#aaa">Unsubscribe</a><br>The Base Movement · Accra, Ghana · thebasemovement.info`)}
+    ${emailFooter(`You're receiving this because you are a verified member of The Base. · <a href="%%UNSUB%%" style="color:#aaa">Unsubscribe</a><br>The Base Movement · Accra, Ghana · www.thebasemovement.org.gh`)}
   </div>
 ${SHELL_CLOSE}`
 }
@@ -344,7 +344,7 @@ Deno.serve(async (req) => {
       }
     }
     if (!senderEmail) {
-      senderEmail = 'noreply@thebasemovement.info'
+      senderEmail = 'noreply@thebasemovement.org.gh'
     }
 
     // Build branded HTML — footer uses %%UNSUB%% substitution tag
@@ -353,7 +353,7 @@ Deno.serve(async (req) => {
       preheader: subject,
       body: `<div style="line-height:1.65;color:#444">${body_html}</div>`,
       ctaLabel: 'Go to your dashboard →',
-      ctaUrl: 'https://thebasemovement.info/dashboard',
+      ctaUrl: 'https://www.thebasemovement.org.gh/dashboard',
     })
 
     let skippedInvalidRecipients = 0

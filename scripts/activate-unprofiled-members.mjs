@@ -52,7 +52,7 @@ async function main() {
   }
 
   // 2. Real Run: Create a temporary admin user to authenticate Edge Function call
-  const tempEmail = `temp_auth_migration_admin_${Date.now()}@thebasemovement.info`
+  const tempEmail = `temp_auth_migration_admin_${Date.now()}@thebasemovement.org.gh`
   const tempPassword = `TempAdminPassword${Math.floor(1000 + Math.random() * 9000)}!`
 
   console.log(`\n🔑 Creating temporary SUPER_ADMIN account: ${tempEmail}`)

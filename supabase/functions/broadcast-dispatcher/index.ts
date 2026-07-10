@@ -73,7 +73,7 @@ Deno.serve(async (req: Request) => {
       body: body ? `<p style="line-height:1.65;color:#444;margin-bottom:14px">${body}</p>` : '',
       region: region ?? targetValue,
       ctaLabel: 'Read the full update →',
-      ctaUrl: 'https://thebasemovement.info/dashboard',
+      ctaUrl: 'https://www.thebasemovement.org.gh/dashboard',
     })
 
     // @ts-expect-error: Deno global

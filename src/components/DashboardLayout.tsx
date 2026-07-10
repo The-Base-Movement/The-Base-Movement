@@ -448,8 +448,8 @@ export default function DashboardLayout() {
         title="Invite others to join The Base"
         url={
           userRegNo
-            ? `https://thebasemovement.info/register?ref=${userRegNo}`
-            : 'https://thebasemovement.info/register'
+            ? `https://www.thebasemovement.org.gh/register?ref=${userRegNo}`
+            : 'https://www.thebasemovement.org.gh/register'
         }
       />
 

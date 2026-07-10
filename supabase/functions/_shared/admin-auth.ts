@@ -143,7 +143,7 @@ export async function requireAuthorizedAdmin(
  * Resolves in order:
  * 1. SENDER_EMAIL environment variable
  * 2. site_settings table (key: newsletter_email)
- * 3. fallback to 'noreply@thebasemovement.info'
+ * 3. fallback to 'noreply@thebasemovement.org.gh'
  */
 export async function getSenderEmail(supabaseAdmin: SupabaseClient): Promise<string> {
   // @ts-expect-error: Deno supports Deno.env
@@ -158,5 +158,5 @@ export async function getSenderEmail(supabaseAdmin: SupabaseClient): Promise<str
       senderEmail = emailSetting.value
     }
   }
-  return senderEmail || 'noreply@thebasemovement.info'
+  return senderEmail || 'noreply@thebasemovement.org.gh'
 }

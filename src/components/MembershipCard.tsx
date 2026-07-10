@@ -343,7 +343,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             }}
           >
             <QRCodeSVG
-              value={`${typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.info'}/verify/${userRegNo || 'GH-XXXXXX'}`}
+              value={`${typeof window !== 'undefined' ? window.location.origin : 'https://www.thebasemovement.org.gh'}/verify/${userRegNo || 'GH-XXXXXX'}`}
               size={64}
               level="H"
             />

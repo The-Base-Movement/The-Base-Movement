@@ -93,7 +93,7 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
   const isTransactional = /otp|verification|temp password|login credentials/i.test(message)
   const finalMessage = isTransactional
     ? message
-    : `${message}\n\nTo opt out: thebasemovement.info/sms-optout`
+    : `${message}\n\nTo opt out: www.thebasemovement.org.gh/sms-optout`
 
   // 4. Batch dispatches to respect gateway TPS (Transactions Per Second) rate-limiting
   const BATCH_SIZE = 50

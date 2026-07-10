@@ -2,6 +2,10 @@ import { supabase } from '@/lib/supabase'
 import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
+import type {
+  PublicKeyCredentialCreationOptionsJSON,
+  PublicKeyCredentialRequestOptionsJSON,
+} from '@simplewebauthn/browser'
 import { ROLE_CATALOG } from '@/lib/roleCatalog'
 
 // Roles whose devices we bind. Keep in sync with TRACKED_ROLES in the
@@ -165,6 +169,23 @@ export async function collectFingerprint(): Promise<string> {
   return sha256Hex(`${deviceUuid}|${visitorId}|${detectOs()}`)
 }
 
+async function requireFunctionData<T>(
+  result: { data: T | null; error: unknown },
+  action: string
+): Promise<T> {
+  if (!result.error) return result.data as T
+
+  const err = result.error as { message?: string; context?: Response }
+  let detail = err.message ?? 'Edge function request failed.'
+  try {
+    const payload = await err.context?.clone().json()
+    if (payload && typeof payload.error === 'string') detail = payload.error
+  } catch {
+    // Keep the Supabase error message when the response is not JSON.
+  }
+  throw new Error(`[webauthn:${action}] ${detail}`)
+}
+
 export const deviceTrackingService = {
   /**
    * Runs the enrol-or-validate flow for the current device via the edge
@@ -320,8 +341,10 @@ export const deviceTrackingService = {
     const begin = await supabase.functions.invoke('webauthn', {
       body: { action: 'register-begin', device_id: deviceId, rebind: opts?.rebind ?? false },
     })
-    if (begin.error) throw begin.error
-    const attResp = await startRegistration({ optionsJSON: begin.data.options })
+    const beginData = await requireFunctionData<{
+      options: PublicKeyCredentialCreationOptionsJSON
+    }>(begin, 'register-begin')
+    const attResp = await startRegistration({ optionsJSON: beginData.options })
     const complete = await supabase.functions.invoke('webauthn', {
       body: {
         action: 'register-complete',
@@ -331,8 +354,11 @@ export const deviceTrackingService = {
         fingerprint_hash: opts?.fingerprintHash,
       },
     })
-    if (complete.error) throw complete.error
-    return complete.data?.verified === true
+    const completeData = await requireFunctionData<{ verified?: boolean }>(
+      complete,
+      'register-complete'
+    )
+    return completeData.verified === true
   },
 
   /**
@@ -347,10 +373,19 @@ export const deviceTrackingService = {
     const begin = await supabase.functions.invoke('webauthn', {
       body: { action: 'authenticate-begin', device_id: deviceId },
     })
-    if (begin.error) throw begin.error
-    if (begin.data?.noCredentials) return 'needs_enrol'
+    const beginData = await requireFunctionData<{
+      options?: PublicKeyCredentialRequestOptionsJSON
+      noCredentials?: boolean
+    }>(
+      begin,
+      'authenticate-begin'
+    )
+    if (beginData.noCredentials) return 'needs_enrol'
+    if (!beginData.options) {
+      throw new Error('[webauthn:authenticate-begin] Missing challenge options.')
+    }
 
-    const authResp = await startAuthentication({ optionsJSON: begin.data.options })
+    const authResp = await startAuthentication({ optionsJSON: beginData.options })
     const complete = await supabase.functions.invoke('webauthn', {
       body: {
         action: 'authenticate-complete',
@@ -359,8 +394,11 @@ export const deviceTrackingService = {
         fingerprint_hash: fingerprintHash,
       },
     })
-    if (complete.error) throw complete.error
-    return complete.data?.verified === true ? 'verified' : 'failed'
+    const completeData = await requireFunctionData<{ verified?: boolean }>(
+      complete,
+      'authenticate-complete'
+    )
+    return completeData.verified === true ? 'verified' : 'failed'
   },
 
   /**

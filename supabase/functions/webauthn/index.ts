@@ -7,7 +7,7 @@
 //
 // The admin is always derived from the verified JWT. The RP ID is derived from
 // the request Origin and validated against an allowlist, so the same code works
-// on localhost today, thebasemovement.info now, and thebasemovement.info
+// on localhost today, thebasemovement.org.gh, and www.thebasemovement.org.gh
 // after the migration (just add it to ALLOWED_RP_ORIGINS).
 
 // @ts-expect-error: Deno URL import
@@ -93,8 +93,8 @@ async function geoLocate(
 
 // Origin allowlist: localhost (any port) for dev, plus configured production
 // origins. RP ID is the registrable domain (strip leading www.) so a single
-// credential is valid on both https://thebasemovement.info and
-// https://www.thebasemovement.info per the WebAuthn spec.
+// credential is valid on both https://thebasemovement.org.gh and
+// https://www.thebasemovement.org.gh per the WebAuthn spec.
 function resolveRp(origin: string | null): { rpID: string; origin: string } | null {
   if (!origin) return null
   let url: URL
@@ -108,7 +108,7 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
 
   // Hardcoded baseline: both bare and www variants are always accepted so a
   // stale ALLOWED_RP_ORIGINS secret can never exclude the live production URL.
-  const BASELINE = ['https://thebasemovement.info', 'https://www.thebasemovement.info']
+  const BASELINE = ['https://thebasemovement.org.gh', 'https://www.thebasemovement.org.gh']
   // @ts-expect-error: Deno global
   const envOrigins = Deno.env.get('ALLOWED_RP_ORIGINS') ?? ''
   const extra = envOrigins
@@ -119,7 +119,7 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   if (!allowed.has(origin)) return null
 
   // Strip leading 'www.' so the RP ID is the registrable domain. A credential
-  // enrolled on www.thebasemovement.info is then also valid on the bare domain
+  // enrolled on www.thebasemovement.org.gh is then also valid on the bare domain
   // and vice versa, per the WebAuthn origin-validation spec.
   const rpID = host.startsWith('www.') ? host.slice(4) : host
   return { rpID, origin }
@@ -402,3 +402,4 @@ serve(async (req: Request) => {
     return json({ error: 'Internal error' }, 500)
   }
 })
+

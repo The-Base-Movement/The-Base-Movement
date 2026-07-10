@@ -112,7 +112,7 @@ Deno.serve(async (req: Request) => {
               voteTarget: row.target_count ?? 5000,
               hoursRemaining,
               options: pollOptions,
-              voteUrl: `https://thebasemovement.info/dashboard/polls/${row.id}`,
+              voteUrl: `https://www.thebasemovement.org.gh/dashboard/polls/${row.id}`,
             })
             return {
               to: [{ email: member.email as string }],

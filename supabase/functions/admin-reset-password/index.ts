@@ -42,7 +42,7 @@ Deno.serve(async (req: Request) => {
     // @ts-expect-error: Deno global
     const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     // @ts-expect-error: Deno global
-    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://thebasemovement.info'
+    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://www.thebasemovement.org.gh'
     const admin = createClient(supabaseUrl, serviceKey)
 
     // Authn + authz the caller.

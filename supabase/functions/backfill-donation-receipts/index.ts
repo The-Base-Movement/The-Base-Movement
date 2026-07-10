@@ -13,7 +13,7 @@ declare const Deno: {
   serve(handler: (req: Request) => Response | Promise<Response>): void
 }
 
-const SITE_BASE = 'https://www.thebasemovement.info'
+const SITE_BASE = 'https://www.thebasemovement.org.gh'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

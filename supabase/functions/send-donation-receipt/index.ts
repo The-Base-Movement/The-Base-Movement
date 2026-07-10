@@ -5,7 +5,7 @@ import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-temp
 import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
 
-const SITE_BASE = 'https://www.thebasemovement.info'
+const SITE_BASE = 'https://www.thebasemovement.org.gh'
 
 function normalizePhone(raw: string): string {
   const cleaned = raw.trim()

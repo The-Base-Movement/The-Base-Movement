@@ -19,7 +19,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const SENDGRID_KEY = Deno.env.get('SENDGRID_API_KEY') ?? ''
 const DISCORD_WEBHOOK = Deno.env.get('DISCORD_ALERTS_WEBHOOK_URL') ?? ''
-const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://www.thebasemovement.info'
+const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://www.thebasemovement.org.gh'
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
 
@@ -36,7 +36,7 @@ async function sendEmail(to: string, subject: string, html: string) {
     },
     body: JSON.stringify({
       personalizations: [{ to: [{ email: to }] }],
-      from: { email: 'info@thebasemovement.info', name: 'The Base Movement' },
+      from: { email: 'info@thebasemovement.org.gh', name: 'The Base Movement' },
       subject,
       content: [{ type: 'text/html', value: html }],
     }),

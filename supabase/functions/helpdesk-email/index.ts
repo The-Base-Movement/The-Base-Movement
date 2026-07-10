@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
       ticketSubject: ticket.subject || 'Support Ticket',
       event,
       comment: comment || undefined,
-      dashboardUrl: 'https://thebasemovement.info/dashboard/tickets',
+      dashboardUrl: 'https://www.thebasemovement.org.gh/dashboard/tickets',
     })
 
     const subjectMap = {

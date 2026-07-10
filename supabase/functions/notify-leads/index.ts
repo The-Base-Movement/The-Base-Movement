@@ -134,8 +134,8 @@ Deno.serve(async (req: Request) => {
       name: (record.full_name ?? '').split(' ')[0] || 'Patriot',
       regNo: record.registration_number ?? '',
       chapter: record.chapter ?? '',
-      dashboardUrl: 'https://thebasemovement.info/dashboard',
-      cardDownloadUrl: 'https://thebasemovement.info/dashboard/membership-card',
+      dashboardUrl: 'https://www.thebasemovement.org.gh/dashboard',
+      cardDownloadUrl: 'https://www.thebasemovement.org.gh/dashboard/membership-card',
     })
 
     // @ts-expect-error: Deno global

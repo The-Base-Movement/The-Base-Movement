@@ -6,7 +6,7 @@
 
 **The Base** is a grassroots political movement dedicated to the transformation of Ghana through patriotism, honesty, and discipline. This platform is the movement's digital headquarters: members join as **Base Ghana** (organised by region and constituency) or **Base Diaspora** (organised by country), and the platform handles everything from registration and chapters to donations, polls, jobs, the store, and member communications.
 
-**Live site:** [thebasemovement.info](https://thebasemovement.info) (migrating to thebasemovement.info)
+**Live site:** [www.thebasemovement.org.gh](https://www.thebasemovement.org.gh) (migrating to www.thebasemovement.org.gh)
 
 ---
 
