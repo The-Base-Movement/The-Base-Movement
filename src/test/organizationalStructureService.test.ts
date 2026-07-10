@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { getRoleCatalogEntry, getDefaultRolePermissions } from '@/lib/roleCatalog'
+import {
+  getRoleCatalogEntry,
+  getDefaultRolePermissions,
+  ROLE_PARENT_GROUPS,
+} from '@/lib/roleCatalog'
 import {
   buildOrganizationalStructureData,
   roleMatchesStructureFilters,
@@ -67,7 +71,7 @@ describe('organizationalStructureService helpers', () => {
       { regions: 16, constituencies: 275, pollingStations: 45000 }
     )
 
-    expect(data.counts.parentGroups).toBe(7)
+    expect(data.counts.parentGroups).toBe(ROLE_PARENT_GROUPS.length + 1)
     expect(data.counts.regions).toBe(16)
     expect(data.counts.constituencies).toBe(275)
     expect(data.counts.pollingStations).toBe(45000)
