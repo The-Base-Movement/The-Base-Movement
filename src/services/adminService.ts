@@ -1655,6 +1655,15 @@ class AdminService {
     return success
   }
 
+  async retryDonationReceipt(donationId: string): Promise<boolean> {
+    const { error } = await supabase.functions.invoke('send-donation-receipt', {
+      body: { donationId },
+    })
+    if (error) return false
+    await this.logAction('DONATION_RECEIPT_RETRY', `DONATIONS/${donationId}`, 'Success')
+    return true
+  }
+
   async getDonationCountByPhone(phone: string, excludeId: string): Promise<number> {
     const { count } = await supabase
       .from('donations')
