@@ -17,6 +17,7 @@ import { ActivitiesTab } from './chapterhub/ActivitiesTab'
 import { RequestsTab } from './chapterhub/RequestsTab'
 import { SettingsTab } from './chapterhub/SettingsTab'
 import { Skeleton } from '@/components/states'
+import { isVerifiedDonation, sumDonationAmounts } from '@/services/donationCalculations'
 
 interface ChapterMember {
   authId: string
@@ -266,7 +267,7 @@ export default function ChapterHub() {
 
   const activeCount = members.filter((m) => m.status === 'Active' || m.status === 'Approved').length
   const pendingCount = members.filter((m) => m.status === 'Pending').length
-  const totalDonated = donations.reduce((s, d) => s + Number(d.amount), 0)
+  const totalDonated = sumDonationAmounts(donations.filter(isVerifiedDonation))
   const filteredMembers = members.filter((m) => {
     const q = memberSearch.toLowerCase()
     return (

@@ -1,6 +1,11 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
 import type { DonationDetail } from '@/types/admin'
+import {
+  fetchDonationMetricRows,
+  isVerifiedDonation,
+  sumDonationAmounts,
+} from '@/services/donationCalculations'
 
 interface DonationCampaignJoin {
   title?: string | null
@@ -254,19 +259,18 @@ class DonationService {
     approvedAmount: number
     flaggedCount: number
   }> {
-    const { data, error } = await supabase.from('donations').select('amount, status')
+    try {
+      const rows = await fetchDonationMetricRows({ select: 'amount, status' })
+      const verifiedRows = rows.filter(isVerifiedDonation)
 
-    if (error || !data) {
+      return {
+        totalContributions: rows.length,
+        pendingCount: rows.filter((d) => d.status === 'Pending').length,
+        approvedAmount: sumDonationAmounts(verifiedRows),
+        flaggedCount: rows.filter((d) => d.status === 'Rejected').length,
+      }
+    } catch {
       return { totalContributions: 0, pendingCount: 0, approvedAmount: 0, flaggedCount: 0 }
-    }
-
-    return {
-      totalContributions: data.length,
-      pendingCount: data.filter((d) => d.status === 'Pending').length,
-      approvedAmount: data
-        .filter((d) => d.status === 'Verified')
-        .reduce((sum, d) => sum + Number(d.amount), 0),
-      flaggedCount: data.filter((d) => d.status === 'Rejected').length, // We'll map Rejected to Flagged for now
     }
   }
 

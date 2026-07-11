@@ -1,4 +1,10 @@
 import { supabase } from '@/lib/supabase'
+import {
+  VERIFIED_DONATION_STATUS,
+  donationAmount,
+  fetchDonationMetricRows,
+  sumDonationAmounts,
+} from '@/services/donationCalculations'
 
 export type FinancePeriod = 'day' | 'week' | 'month' | 'year'
 
@@ -154,7 +160,6 @@ export const financeAnalyticsService = {
   },
 
   async getSummaryStats(chapter?: string): Promise<SummaryStats> {
-    let donQuery = supabase.from('donations').select('amount').eq('status', 'Verified')
     let ledQuery = supabase
       .from('mobilization_ledger')
       .select('amount')
@@ -172,19 +177,21 @@ export const financeAnalyticsService = {
       .from('resource_request_items')
       .select('quantity, store_inventory!inner(price_ghs), resource_requests!inner(status)')
     if (chapter) {
-      donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes, orderRes, licenseRes, resourceRes] = await Promise.all([
-      donQuery,
+    const [donationRows, ledRes, orderRes, licenseRes, resourceRes] = await Promise.all([
+      fetchDonationMetricRows({
+        select: 'amount, status, chapter',
+        status: VERIFIED_DONATION_STATUS,
+        chapter,
+      }),
       ledQuery,
       orderQuery,
       licenseQuery,
       resourceQuery,
     ])
-    if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
-    const donationIncome = (donRes.data ?? []).reduce((s, d) => s + Number(d.amount), 0)
+    const donationIncome = sumDonationAmounts(donationRows)
     const storeIncome = (orderRes.data ?? []).reduce((s, o) => s + Number(o.total_amount), 0)
     const totalIncome = donationIncome + storeIncome
     const ledgerExpenses = (ledRes.data ?? []).reduce((s, l) => s + Number(l.amount), 0)
@@ -210,11 +217,6 @@ export const financeAnalyticsService = {
 
   async getCashflowData(period: FinancePeriod, chapter?: string): Promise<CashflowBucket[]> {
     const start = getPeriodStart(period).toISOString()
-    let donQuery = supabase
-      .from('donations')
-      .select('created_at, amount')
-      .eq('status', 'Verified')
-      .gte('created_at', start)
     let ledQuery = supabase
       .from('mobilization_ledger')
       .select('timestamp, amount')
@@ -227,17 +229,30 @@ export const financeAnalyticsService = {
       .neq('status', 'Cancelled')
       .gte('created_at', start)
     if (chapter) {
-      donQuery = donQuery.eq('chapter', chapter)
       ledQuery = ledQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes, orderRes] = await Promise.all([donQuery, ledQuery, orderQuery])
-    if (donRes.error) throw new Error(donRes.error.message)
+    const [donationRows, ledRes, orderRes] = await Promise.all([
+      fetchDonationMetricRows({
+        select: 'created_at, amount, status, chapter',
+        status: VERIFIED_DONATION_STATUS,
+        chapter,
+        since: start,
+      }),
+      ledQuery,
+      orderQuery,
+    ])
     if (ledRes.error) throw new Error(ledRes.error.message)
+    const verifiedDonations = donationRows
+      .filter((d): d is typeof d & { created_at: string } => typeof d.created_at === 'string')
+      .map((d) => ({
+        created_at: d.created_at,
+        amount: donationAmount(d),
+      }))
     const storeAsDonations = (orderRes.data ?? []).map((o) => ({
       created_at: o.created_at,
-      amount: o.total_amount,
+      amount: Number(o.total_amount),
     }))
-    const allIncome = [...(donRes.data ?? []), ...storeAsDonations]
+    const allIncome = [...verifiedDonations, ...storeAsDonations]
     return bucket(period, allIncome, ledRes.data ?? [])
   },
 
@@ -275,24 +290,22 @@ export const financeAnalyticsService = {
     groupBy: 'campaign' | 'country' = 'campaign'
   ): Promise<ExpenseCategory[]> {
     const start = getPeriodStart(period).toISOString()
-    let query = supabase
-      .from('donations')
-      .select('amount, country, campaign_id, donation_campaigns(title)')
-      .eq('status', 'Verified')
-      .gte('created_at', start)
-    if (chapter) {
-      query = query.eq('chapter', chapter)
-    }
-    const { data, error } = await query
-    if (error) throw new Error(error.message)
-    const entries = data ?? []
+    const entries = await fetchDonationMetricRows({
+      select:
+        'amount, country, campaign_id, donation_campaigns(title), status, chapter, created_at',
+      status: VERIFIED_DONATION_STATUS,
+      chapter,
+      since: start,
+    })
     const totals: Record<string, number> = {}
     for (const e of entries) {
       let key = 'General Fund'
       if (groupBy === 'country') {
         key = e.country || 'Unknown'
       } else {
-        const campaign = e.donation_campaigns as { title?: string | null } | null
+        const campaign = Array.isArray(e.donation_campaigns)
+          ? e.donation_campaigns[0]
+          : e.donation_campaigns
         const campaignTitle = campaign?.title || 'General Fund'
         key = campaignTitle
       }

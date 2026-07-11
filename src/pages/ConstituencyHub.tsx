@@ -6,6 +6,7 @@ import { constituencyService, constituencySlug } from '@/services/constituencySe
 import type { Constituency, ConstituencyLeader } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'
 import { Skeleton } from '@/components/states'
+import { isVerifiedDonation, sumDonationAmounts } from '@/services/donationCalculations'
 import Header from './ConstituencyHub/Header'
 import Kpis from './ConstituencyHub/Kpis'
 import MembersTab from './ConstituencyHub/MembersTab'
@@ -343,7 +344,7 @@ export default function ConstituencyHub() {
   // ── derived ───────────────────────────────────────────────────────────────
 
   const activeCount = members.filter((m) => m.status === 'Active' || m.status === 'Approved').length
-  const totalDonated = donations.reduce((s, d) => s + Number(d.amount), 0)
+  const totalDonated = sumDonationAmounts(donations.filter(isVerifiedDonation))
 
   const filteredMembers = members.filter((m) => {
     const q = memberSearch.toLowerCase()
