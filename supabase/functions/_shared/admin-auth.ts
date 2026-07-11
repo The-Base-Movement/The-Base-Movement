@@ -3,12 +3,22 @@ import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7
 
 const PRIVILEGED_ROLES = new Set(['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE'])
 
-export type AdminPermissions = {
+export type AdminPermission = {
+  action: string
+  resource: string
+}
+
+export type LegacyAdminPermissions = {
   can_manage_members?: boolean
   can_post_blog?: boolean
   can_manage_newsletters?: boolean
+  can_manage_donations?: boolean
+  can_manage_store?: boolean
+  can_view_audit_logs?: boolean
   [key: string]: boolean | undefined
 }
+
+export type AdminPermissions = AdminPermission[] | LegacyAdminPermissions
 
 export interface AdminAuthRow {
   id: string
@@ -27,43 +37,45 @@ export function isPrivilegedAdminRole(role: string | null | undefined): boolean 
   return typeof role === 'string' && PRIVILEGED_ROLES.has(role.toUpperCase())
 }
 
-export function canManageNewsletters(admin: AdminAuthRow | null | undefined): boolean {
-  if (!admin) return false
-  if (isPrivilegedAdminRole(admin.role)) return true
-  if (Array.isArray(admin.permissions)) {
-    return admin.permissions.some(
-      (p) =>
-        p &&
-        typeof p === 'object' &&
-        p.action === 'MANAGE_NEWSLETTERS' &&
-        p.resource === 'NEWSLETTERS'
-    )
-  }
-  return admin.permissions?.can_manage_newsletters === true
+const legacyPermissionFlags: Record<string, keyof LegacyAdminPermissions> = {
+  'VERIFY_MEMBER:MEMBERS': 'can_manage_members',
+  'MANAGE_NEWSLETTERS:NEWSLETTERS': 'can_manage_newsletters',
+  'MANAGE_DONATIONS:DONATIONS': 'can_manage_donations',
+  'MANAGE_INVENTORY:STORE': 'can_manage_store',
+  'VIEW_AUDIT_LOGS:SYSTEM': 'can_view_audit_logs',
 }
 
-export function canManageMembers(admin: AdminAuthRow | null | undefined): boolean {
+export function hasAdminPermission(
+  admin: AdminAuthRow | null | undefined,
+  permission: AdminPermission
+): boolean {
   if (!admin) return false
   if (isPrivilegedAdminRole(admin.role)) return true
+
   if (Array.isArray(admin.permissions)) {
     return admin.permissions.some(
-      (p) => p && typeof p === 'object' && p.action === 'VERIFY_MEMBER' && p.resource === 'MEMBERS'
+      (granted) => granted.action === permission.action && granted.resource === permission.resource
     )
   }
-  return admin.permissions?.can_manage_members === true
+
+  const legacyFlag = legacyPermissionFlags[`${permission.action}:${permission.resource}`]
+  return legacyFlag ? admin.permissions?.[legacyFlag] === true : false
 }
 
-export function canManageDonations(admin: AdminAuthRow | null | undefined): boolean {
-  if (!admin) return false
-  if (isPrivilegedAdminRole(admin.role)) return true
-  if (Array.isArray(admin.permissions)) {
-    return admin.permissions.some(
-      (p) =>
-        p && typeof p === 'object' && p.action === 'MANAGE_DONATIONS' && p.resource === 'DONATIONS'
-    )
-  }
-  return admin.permissions?.can_manage_donations === true
-}
+export const canManageNewsletters = (admin: AdminAuthRow | null | undefined) =>
+  hasAdminPermission(admin, { action: 'MANAGE_NEWSLETTERS', resource: 'NEWSLETTERS' })
+
+export const canManageMembers = (admin: AdminAuthRow | null | undefined) =>
+  hasAdminPermission(admin, { action: 'VERIFY_MEMBER', resource: 'MEMBERS' })
+
+export const canManageDonations = (admin: AdminAuthRow | null | undefined) =>
+  hasAdminPermission(admin, { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
+
+export const canManageStore = (admin: AdminAuthRow | null | undefined) =>
+  hasAdminPermission(admin, { action: 'MANAGE_INVENTORY', resource: 'STORE' })
+
+export const canViewAuditLogs = (admin: AdminAuthRow | null | undefined) =>
+  hasAdminPermission(admin, { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' })
 
 export function requireServiceRoleCall(
   req: Request,

@@ -4,7 +4,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptHtml } from '../_shared/email-templates.ts'
-import { isPrivilegedAdminRole, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
+import { canManageDonations, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
 declare const Deno: {
   env: {
@@ -29,15 +29,10 @@ Deno.serve(async (req: Request) => {
   const supabaseAdmin = createClient(supabaseUrl, serviceKey)
 
   // Authorize caller using admin credentials or service role fallback
-  const authz = await requireAuthorizedAdmin(
-    req,
-    supabaseAdmin,
-    (admin) => isPrivilegedAdminRole(admin.role),
-    {
-      allowServiceRole: true,
-      serviceRoleKey: serviceKey,
-    }
-  )
+  const authz = await requireAuthorizedAdmin(req, supabaseAdmin, canManageDonations, {
+    allowServiceRole: true,
+    serviceRoleKey: serviceKey,
+  })
 
   if (!authz.ok) {
     return new Response(await authz.response.text(), {
