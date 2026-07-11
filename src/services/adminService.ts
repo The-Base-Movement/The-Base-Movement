@@ -501,7 +501,7 @@ class AdminService {
   async getMemberDonations(authId: string): Promise<MemberDonation[]> {
     const { data, error } = await supabase
       .from('donations')
-      .select('id, amount, payment_method, reference, created_at, cleared, description')
+      .select('id, amount, payment_method, reference, created_at, cleared, status, description')
       .eq('member_id', authId)
       .order('created_at', { ascending: false })
 
@@ -516,7 +516,7 @@ class AdminService {
       method: d.payment_method || 'N/A',
       ref: d.reference || 'N/A',
       date: d.created_at,
-      cleared: d.cleared || false,
+      cleared: d.status === 'Verified' || d.cleared || false,
       label: d.description || 'Contribution',
     }))
   }
