@@ -93,7 +93,7 @@ export const getNavGroups = (
         to: '/admin/members',
         icon: 'group',
         label: 'Member directory',
-        permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
+        permission: { action: 'VIEW_MEMBER_DIRECTORY', resource: 'MEMBERS' },
       },
       {
         to: '/admin/verification',
@@ -342,7 +342,7 @@ export const getNavGroups = (
         to: '/admin/administrators',
         icon: 'shield',
         label: 'Administrators',
-        permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        permission: { action: 'VIEW_ADMINS', resource: 'ADMINS' },
       },
       {
         to: '/admin/roles',
