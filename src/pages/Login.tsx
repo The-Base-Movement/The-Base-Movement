@@ -157,48 +157,9 @@ export default function Login() {
         }}
       >
         <div
-          style={{
-            height: 42,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '0 18px',
-            borderBottom: '1px solid hsl(var(--border))',
-            background: 'rgba(255,255,255,0.78)',
-          }}
-        >
-          <span style={{ width: 10, height: 10, borderRadius: 999, background: '#ce1126' }} />
-          <span style={{ width: 10, height: 10, borderRadius: 999, background: '#daa520' }} />
-          <span style={{ width: 10, height: 10, borderRadius: 999, background: '#00843d' }} />
-          <div
-            style={{
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              minWidth: 220,
-              maxWidth: 420,
-              width: '36vw',
-              height: 24,
-              borderRadius: 'var(--radius-pill)',
-              background: 'hsl(var(--container-low))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              color: 'hsl(var(--on-surface-muted))',
-              fontSize: 12,
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              lock
-            </span>
-            thebasemovement.org.gh
-          </div>
-        </div>
-
-        <div
           className="login-browser-grid"
           style={{
-            minHeight: 'calc(min(720px, calc(100vh - 112px)) - 42px)',
+            minHeight: 'min(720px, calc(100vh - 112px))',
             display: 'grid',
             gridTemplateColumns: 'minmax(320px, 420px) minmax(0, 1fr)',
           }}
