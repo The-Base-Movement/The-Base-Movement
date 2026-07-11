@@ -168,7 +168,7 @@ git commit -m "Normalize member network assignments"
 ### Task 2: Enforce assignment integrity in Postgres
 
 **Files:**
-- Create through Supabase CLI, committed as: supabase/migrations/20260711220000_enforce_member_network_assignment.sql
+- Create through Supabase CLI, committed as: supabase/migrations/20260711213939_enforce_member_network_assignment.sql
 - Create: supabase/tests/member_network_assignment.sql
 
 **Interfaces:**
@@ -180,7 +180,7 @@ git commit -m "Normalize member network assignments"
 
 Run: supabase migration new enforce_member_network_assignment
 
-Expected: a timestamped migration. Rename the empty generated file to supabase/migrations/20260711220000_enforce_member_network_assignment.sql before adding SQL.
+Expected: Supabase creates supabase/migrations/20260711213939_enforce_member_network_assignment.sql.
 
 - [ ] **Step 2: Write the failing database test**
 
@@ -368,7 +368,7 @@ grant select on public.admin_member_assignment_issues to authenticated;
 Run:
 
 ~~~bash
-psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20260711220000_enforce_member_network_assignment.sql
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20260711213939_enforce_member_network_assignment.sql
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/tests/member_network_assignment.sql
 ~~~
 
@@ -377,7 +377,7 @@ Expected: both exit 0 and the test rolls back.
 Commit:
 
 ~~~bash
-git add -f supabase/migrations/20260711220000_enforce_member_network_assignment.sql supabase/tests/member_network_assignment.sql
+git add -f supabase/migrations/20260711213939_enforce_member_network_assignment.sql supabase/tests/member_network_assignment.sql
 git commit -m "Enforce member network assignments"
 ~~~
 
