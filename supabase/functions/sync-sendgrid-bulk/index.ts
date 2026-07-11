@@ -13,7 +13,7 @@
 // We batch at 1,000 to stay well within limits and avoid timeouts.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { canManageMembers, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
+import { canManageNewsletters, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
 const BATCH_SIZE = 1000
 
@@ -90,7 +90,7 @@ Deno.serve(async (req: Request) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
-    const authz = await requireAuthorizedAdmin(req, supabase, canManageMembers)
+    const authz = await requireAuthorizedAdmin(req, supabase, canManageNewsletters)
     if (!authz.ok) {
       return new Response(await authz.response.text(), {
         status: authz.response.status,

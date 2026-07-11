@@ -3,7 +3,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
-import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
+import {
+  canManageDonations,
+  getSenderEmail,
+  json,
+  requireAuthorizedAdmin,
+} from '../_shared/admin-auth.ts'
 
 const SITE_BASE = 'https://www.thebasemovement.org.gh'
 
@@ -34,7 +39,13 @@ if (import.meta.main)
     try {
       // @ts-ignore: Deno global
       const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-      const authz = requireServiceRoleCall(req, serviceKey)
+      // @ts-ignore: Deno global
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+      const supabaseAdmin = createClient(supabaseUrl, serviceKey ?? '')
+      const authz = await requireAuthorizedAdmin(req, supabaseAdmin, canManageDonations, {
+        allowServiceRole: true,
+        serviceRoleKey: serviceKey,
+      })
       if (!authz.ok) return authz.response
 
       try {
@@ -50,10 +61,6 @@ if (import.meta.main)
           status: 400,
         })
       }
-
-      // @ts-ignore: Deno global
-      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-      const supabaseAdmin = createClient(supabaseUrl, serviceKey ?? '')
 
       const { data: claimed, error: claimError } = await supabaseAdmin.rpc(
         'claim_donation_receipt',
