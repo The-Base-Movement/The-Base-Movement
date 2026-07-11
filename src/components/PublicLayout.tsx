@@ -12,13 +12,16 @@
  * The admin panel is never wrapped by this layout.
  */
 
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import BackToTop from './BackToTop'
 import { MaintenanceGate } from './MaintenanceGate'
 
 export default function PublicLayout() {
+  const { pathname } = useLocation()
+  const isAuthPage = pathname === '/login'
+
   return (
     <MaintenanceGate>
       <div className="public-layout min-h-screen flex flex-col">
@@ -29,12 +32,12 @@ export default function PublicLayout() {
         >
           Skip to main content
         </a>
-        <Navbar />
+        {!isAuthPage && <Navbar />}
         <main id="main-content" className="flex-1">
           <Outlet />
         </main>
-        <Footer />
-        <BackToTop />
+        {!isAuthPage && <Footer />}
+        {!isAuthPage && <BackToTop />}
       </div>
     </MaintenanceGate>
   )
