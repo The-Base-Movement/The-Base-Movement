@@ -1,3 +1,4 @@
+import { normalizeMemberNetworkAssignment } from '@/lib/memberNetworkAssignment'
 import { supabase } from '@/lib/supabase'
 import { getCroppedImg } from '@/lib/imageUtils'
 import { adminService } from '@/services/adminService'
@@ -158,6 +159,7 @@ export const registrationService = {
     const ghanaReady = platform === 'GHANA' && hasPhoto && !!formData.constituency
     const diasporaReady = platform === 'DIASPORA' && hasPhoto
     const autoApproved = ghanaReady || diasporaReady
+    const networkAssignment = normalizeMemberNetworkAssignment(platform, formData)
 
     // 4. Insert user profile into database
     const { error: dbError } = await supabase.from('users').insert({
@@ -166,13 +168,13 @@ export const registrationService = {
       full_name: formData.fullName,
       email: authEmail,
       registration_number: regNo,
-      platform,
-      country: formData.country,
+      platform: networkAssignment.platform,
+      country: networkAssignment.country,
       phone_number: cleanPhone,
       gender: formData.gender,
-      region: formData.region,
-      constituency: formData.constituency,
-      chapter: formData.chapter,
+      region: networkAssignment.region,
+      constituency: networkAssignment.constituency,
+      chapter: networkAssignment.chapter,
       profession: formData.profession,
       job_industry_id: formData.job?.industryId ?? null,
       job_sub_category_id: formData.job?.subCategoryId ?? null,
