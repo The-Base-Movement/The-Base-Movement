@@ -12,14 +12,14 @@ import SEO from '@/components/SEO'
 const loginSteps = [
   {
     label: 'Members',
-    title: 'Track your chapter work',
+    title: 'Track your chapter and constituency work',
     copy: 'Follow campaigns, dues, reports, and movement activity from one secure member portal.',
     icon: 'groups',
   },
   {
     label: 'Finance',
     title: 'Verified contributions only',
-    copy: 'Donation cards, receipts, and chapter figures stay tied to confirmed movement records.',
+    copy: 'Donation cards, receipts, and chapter or constituency figures stay tied to confirmed movement records.',
     icon: 'payments',
   },
   {
@@ -140,7 +140,7 @@ export default function Login() {
     >
       <SEO
         title="Member Sign In"
-        description="Secure access to the The Base Movement platform. Manage your membership, connect with your chapter, and participate in feedback."
+        description="Secure access to the The Base Movement platform. Manage your membership, connect with your chapter or constituency, and participate in feedback."
         canonical="/login"
       />
 
@@ -406,8 +406,8 @@ export default function Login() {
                   fontSize: 14,
                 }}
               >
-                Access chapter tools, verified donations, events, and field updates from one secure
-                Base dashboard.
+                Access chapter and constituency tools, verified donations, events, and field updates
+                from one secure Base dashboard.
               </p>
 
               <div
