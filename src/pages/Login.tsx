@@ -11,24 +11,45 @@ import SEO from '@/components/SEO'
 
 const loginSteps = [
   {
-    label: 'Identify',
-    title: 'Use your member identity',
-    copy: 'Sign in with your email, phone number, or TBM registration number.',
-    icon: 'badge',
+    label: 'Members',
+    title: 'Track your chapter work',
+    copy: 'Follow campaigns, dues, reports, and movement activity from one secure member portal.',
+    icon: 'groups',
   },
   {
-    label: 'Verify',
-    title: 'Confirm your password',
-    copy: 'Your password unlocks your member dashboard and chapter tools.',
-    icon: 'lock',
+    label: 'Finance',
+    title: 'Verified contributions only',
+    copy: 'Donation cards, receipts, and chapter figures stay tied to confirmed movement records.',
+    icon: 'payments',
   },
   {
-    label: 'Continue',
-    title: 'Return to your work',
+    label: 'Field',
+    title: 'Return to operations fast',
     copy: 'After login, you go back to the dashboard or the page you wanted to open.',
-    icon: 'arrow_forward',
+    icon: 'route',
   },
 ]
+
+const inputStyle = {
+  width: '100%',
+  height: 44,
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-md)',
+  background: 'hsl(var(--surface))',
+  color: 'hsl(var(--on-surface))',
+  padding: '0 42px',
+  fontSize: 13,
+  boxSizing: 'border-box' as const,
+  outline: 'none',
+}
+
+const labelStyle = {
+  display: 'block',
+  marginBottom: 7,
+  fontSize: 11,
+  fontWeight: 700,
+  color: 'hsl(var(--on-surface))',
+}
 
 export default function Login() {
   const { settings } = useBranding()
@@ -41,6 +62,7 @@ export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
   const from = (location.state as { from?: Location })?.from?.pathname || '/dashboard'
+  const logo = settings.logo_url || '/branding/logo.png'
 
   useEffect(() => {
     if (session) navigate('/dashboard', { replace: true })
@@ -78,10 +100,10 @@ export default function Login() {
       if (user) {
         sessionStore.setItem('isLoggedIn', 'true')
         sessionStore.setItem('userName', user.user_metadata?.full_name || 'Patriot')
-        if (user.user_metadata?.avatar_url)
+        if (user.user_metadata?.avatar_url) {
           sessionStore.setItem('userAvatar', user.user_metadata.avatar_url)
+        }
 
-        // Fetch regNo, auto-generate a TBM number if placeholder/missing
         const profile = await adminService.getMemberProfileByAuthId(user.id)
         if (profile) {
           const regNo = /^TBM-(GH|DI)-\d{6}$/.test(profile.id)
@@ -107,235 +129,454 @@ export default function Login() {
   const currentStep = loginSteps[activeStep]
 
   return (
-    <main className="bg-container-low min-h-screen px-4 py-8 lg:px-10 lg:py-10">
+    <main
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #d8e9ee 0%, #f5faf6 48%, #d6e5ea 100%)',
+        padding: 'clamp(18px, 5vw, 56px)',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+      }}
+    >
       <SEO
         title="Member Sign In"
         description="Secure access to the The Base Movement platform. Manage your membership, connect with your chapter, and participate in feedback."
         canonical="/login"
       />
 
-      <div className="mx-auto grid min-h-[calc(100vh-5rem)] w-full max-w-[1120px] items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(360px,440px)]">
-        <section
-          aria-label="Login steps"
-          className="relative overflow-hidden border border-border bg-surface p-6 shadow-sm lg:min-h-[620px] lg:p-10"
-          style={{ borderRadius: 'var(--radius-lg)' }}
+      <div
+        style={{
+          maxWidth: 1160,
+          minHeight: 'min(720px, calc(100vh - 112px))',
+          margin: '0 auto',
+          borderRadius: 'var(--radius-lg)',
+          overflow: 'hidden',
+          background: 'hsl(var(--surface))',
+          boxShadow: '0 26px 80px rgba(20, 40, 32, 0.18)',
+          border: '1px solid rgba(255,255,255,0.72)',
+        }}
+      >
+        <div
+          style={{
+            height: 42,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '0 18px',
+            borderBottom: '1px solid hsl(var(--border))',
+            background: 'rgba(255,255,255,0.78)',
+          }}
         >
-          <div className="flex items-center gap-3">
-            <img src={settings.logo_url} alt="The Base logo" className="h-12 w-12 object-contain" />
-            <div>
-              <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
-                The Base Movement
-              </p>
-              <h1 className="m-0 text-2xl font-semibold tracking-tight text-on-surface lg:text-4xl">
-                Member access, without the noise.
-              </h1>
-            </div>
+          <span style={{ width: 10, height: 10, borderRadius: 999, background: '#ce1126' }} />
+          <span style={{ width: 10, height: 10, borderRadius: 999, background: '#daa520' }} />
+          <span style={{ width: 10, height: 10, borderRadius: 999, background: '#00843d' }} />
+          <div
+            style={{
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              minWidth: 220,
+              maxWidth: 420,
+              width: '36vw',
+              height: 24,
+              borderRadius: 'var(--radius-pill)',
+              background: 'hsl(var(--container-low))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 12,
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              lock
+            </span>
+            thebasemovement.org.gh
           </div>
+        </div>
 
-          <div className="mt-10 grid gap-4" role="tablist" aria-label="Login flow steps">
-            {loginSteps.map((step, index) => {
-              const isActive = index === activeStep
-              return (
-                <button
-                  key={step.label}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => setActiveStep(index)}
-                  className="grid grid-cols-[44px_1fr] gap-4 border bg-transparent p-4 text-left transition-colors"
-                  style={{
-                    borderRadius: 'var(--radius-md)',
-                    borderColor: isActive ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-                    background: isActive ? 'hsl(var(--primary) / 0.06)' : 'transparent',
-                  }}
-                >
+        <div
+          className="login-browser-grid"
+          style={{
+            minHeight: 'calc(min(720px, calc(100vh - 112px)) - 42px)',
+            display: 'grid',
+            gridTemplateColumns: 'minmax(320px, 420px) minmax(0, 1fr)',
+          }}
+        >
+          <section
+            aria-label="Member sign in"
+            style={{
+              padding: 'clamp(28px, 5vw, 48px)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              background: 'hsl(var(--surface))',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 64 }}>
+              <img
+                src={logo}
+                alt="The Base logo"
+                style={{ width: 42, height: 42, objectFit: 'contain' }}
+              />
+              <strong style={{ fontSize: 18, color: 'hsl(var(--on-surface))' }}>The Base</strong>
+            </div>
+
+            <h1
+              style={{
+                margin: 0,
+                color: 'hsl(var(--on-surface))',
+                fontSize: 'clamp(28px, 4vw, 36px)',
+                lineHeight: 1.05,
+                letterSpacing: 0,
+              }}
+            >
+              Hi, welcome back
+            </h1>
+            <p
+              style={{ margin: '10px 0 24px', color: 'hsl(var(--on-surface-muted))', fontSize: 13 }}
+            >
+              Sign in to continue to your movement dashboard.
+            </p>
+
+            <form onSubmit={handleLogin} style={{ display: 'grid', gap: 12 }}>
+              <div>
+                <label htmlFor="member-login-id" style={labelStyle}>
+                  Email, phone, or registration number
+                </label>
+                <div style={{ position: 'relative' }}>
                   <span
-                    className="flex h-11 w-11 items-center justify-center"
+                    className="material-symbols-outlined"
                     style={{
-                      borderRadius: 'var(--radius-sm)',
-                      background: isActive ? 'hsl(var(--primary))' : 'hsl(var(--surface-muted))',
-                      color: isActive ? '#fff' : 'hsl(var(--on-surface-muted))',
+                      position: 'absolute',
+                      left: 14,
+                      top: 12,
+                      fontSize: 18,
+                      color: 'hsl(var(--on-surface-muted))',
                     }}
                   >
-                    <span className="material-symbols-outlined" style={{ fontSize: 21 }}>
-                      {step.icon}
-                    </span>
+                    alternate_email
                   </span>
-                  <span>
-                    <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-on-surface-muted">
-                      Step {index + 1} - {step.label}
-                    </span>
-                    <span className="mt-1 block text-base font-semibold text-on-surface">
-                      {step.title}
-                    </span>
-                    <span className="mt-1 block text-sm leading-6 text-on-surface-muted">
-                      {step.copy}
-                    </span>
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-
-          <div
-            className="mt-8 border border-border bg-card p-5"
-            style={{ borderRadius: 'var(--radius-md)' }}
-          >
-            <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
-              Active step
-            </p>
-            <p className="mb-2 mt-2 text-xl font-semibold text-on-surface">{currentStep.title}</p>
-            <p className="m-0 text-sm leading-6 text-on-surface-muted">{currentStep.copy}</p>
-          </div>
-        </section>
-
-        <section aria-label="Member sign in" className="w-full">
-          <div className="auth-frame">
-            <div className="auth-header-label">Member Sign In</div>
-
-            <div className="auth-content">
-              <div className="auth-brand">
-                <img src={settings.logo_url} alt="Logo" />
-                <div>
-                  <h1>The Base</h1>
-                  <span>Member portal</span>
+                  <input
+                    id="member-login-id"
+                    name="email"
+                    type="text"
+                    autoComplete="username"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="email, 054..., or TBM-DI-267388"
+                    required
+                    style={inputStyle}
+                  />
                 </div>
               </div>
 
-              <h2 className="auth-heading">Welcome back, patriot.</h2>
-              <p className="auth-subheading">Sign in to your member account to continue.</p>
-
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="input-80a9bc"
-                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+              <div>
+                <label htmlFor="member-login-password" style={labelStyle}>
+                  Password
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{
+                      position: 'absolute',
+                      left: 14,
+                      top: 12,
+                      fontSize: 18,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
                   >
-                    Email, Phone, or Reg. No.
-                  </label>
+                    key
+                  </span>
                   <input
-                    name="email"
-                    id="input-80a9bc"
-                    type="text"
-                    autoComplete="username"
-                    className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="kwesi@thebase.gh, 054..., or TBM-DI-267388"
+                    id="member-login-password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="your password"
                     required
+                    style={{ ...inputStyle, paddingRight: 46 }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((value) => !value)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    style={{
+                      position: 'absolute',
+                      right: 12,
+                      top: 9,
+                      border: 0,
+                      background: 'transparent',
+                      color: 'hsl(var(--on-surface-muted))',
+                      cursor: 'pointer',
+                      padding: 4,
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
                 </div>
+              </div>
 
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-center">
-                    <label
-                      htmlFor="input-936899"
-                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                    >
-                      Password
-                    </label>
-                    <Link
-                      to="/forgot-password"
-                      className="text-primary text-[11.5px] font-semibold hover:underline"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      name="password"
-                      id="input-936899"
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="current-password"
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  margin: '2px 0 10px',
+                }}
+              >
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  <input type="checkbox" style={{ accentColor: 'hsl(var(--primary))' }} />
+                  Remember me
+                </label>
+                <Link
+                  to="/forgot-password"
+                  style={{ color: 'hsl(var(--primary))', fontSize: 12, fontWeight: 700 }}
+                >
+                  Forgot password
+                </Link>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                style={{
+                  height: 48,
+                  border: 0,
+                  borderRadius: 'var(--radius-md)',
+                  background: 'hsl(var(--primary))',
+                  color: '#fff',
+                  fontWeight: 700,
+                  cursor: isLoading ? 'wait' : 'pointer',
+                  opacity: isLoading ? 0.76 : 1,
+                }}
+              >
+                {isLoading ? 'Authenticating...' : 'Login'}
+              </button>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr auto 1fr',
+                  alignItems: 'center',
+                  gap: 12,
+                  margin: '14px 0 8px',
+                }}
+              >
+                <span style={{ height: 1, background: 'hsl(var(--border))' }} />
+                <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                  Secure member access
+                </span>
+                <span style={{ height: 1, background: 'hsl(var(--border))' }} />
+              </div>
+
+              <p
+                style={{
+                  margin: 0,
+                  textAlign: 'center',
+                  fontSize: 12,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                Don&apos;t have an account?{' '}
+                <Link to="/register" style={{ color: 'hsl(var(--primary))', fontWeight: 700 }}>
+                  Register
+                </Link>
+              </p>
+            </form>
+          </section>
+
+          <section
+            aria-label="Movement dashboard preview"
+            className="login-showcase-panel"
+            style={{
+              position: 'relative',
+              padding: 'clamp(34px, 6vw, 70px)',
+              overflow: 'hidden',
+              background:
+                'linear-gradient(145deg, hsl(var(--container-low)) 0%, hsl(var(--surface)) 62%)',
+            }}
+          >
+            <div style={{ maxWidth: 560, position: 'relative', zIndex: 1 }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  minHeight: 28,
+                  padding: '0 16px',
+                  border: '1px solid hsl(var(--on-surface))',
+                  borderRadius: 'var(--radius-pill)',
+                  fontSize: 12,
+                  fontWeight: 700,
+                }}
+              >
+                Movement portal
+              </span>
+              <h2
+                style={{
+                  maxWidth: 520,
+                  margin: '24px 0 12px',
+                  fontSize: 'clamp(34px, 5vw, 52px)',
+                  lineHeight: 1.08,
+                  letterSpacing: 0,
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
+                Track and monitor the work that moves Ghana forward
+              </h2>
+              <p
+                style={{
+                  maxWidth: 520,
+                  margin: 0,
+                  color: 'hsl(var(--on-surface-muted))',
+                  lineHeight: 1.7,
+                  fontSize: 14,
+                }}
+              >
+                Access chapter tools, verified donations, events, and field updates from one secure
+                Base dashboard.
+              </p>
+
+              <div
+                style={{
+                  marginTop: 36,
+                  width: 'min(100%, 520px)',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'rgba(255,255,255,0.82)',
+                  boxShadow: '0 22px 48px rgba(20, 40, 32, 0.13)',
+                  padding: 18,
+                }}
+              >
+                {loginSteps.map((step, index) => {
+                  const active = index === activeStep
+                  return (
+                    <button
+                      key={step.label}
+                      type="button"
+                      onClick={() => setActiveStep(index)}
                       style={{
                         width: '100%',
-                        height: 46,
-                        background: 'transparent',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: 'var(--radius-sm)',
-                        paddingLeft: 16,
-                        paddingRight: 44,
-                        fontSize: 14,
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        transition: 'border-color 0.15s',
-                      }}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      style={{
-                        position: 'absolute',
-                        right: 12,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                        cursor: 'pointer',
-                        color: 'hsl(var(--on-surface-muted))',
-                        display: 'flex',
+                        display: 'grid',
+                        gridTemplateColumns: '38px 1fr auto',
+                        gap: 12,
                         alignItems: 'center',
+                        border: 0,
+                        background: active ? 'hsl(var(--primary) / 0.08)' : 'transparent',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '12px 10px',
+                        textAlign: 'left',
+                        cursor: 'pointer',
                       }}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
-                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                        {showPassword ? 'visibility_off' : 'visibility'}
+                      <span
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: 'var(--radius-sm)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: active ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
+                          color: active ? '#fff' : 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 19 }}>
+                          {step.icon}
+                        </span>
+                      </span>
+                      <span>
+                        <strong
+                          style={{
+                            display: 'block',
+                            fontSize: 13,
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
+                          {step.title}
+                        </strong>
+                        <span
+                          style={{
+                            display: 'block',
+                            marginTop: 2,
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          {step.label}
+                        </span>
+                      </span>
+                      <span
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 800,
+                          color: active ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        view
                       </span>
                     </button>
-                  </div>
-                </div>
+                  )
+                })}
+              </div>
 
-                <div className="flex items-center gap-2 pt-1 pb-2">
-                  <input
-                    name="name-769aef"
-                    type="checkbox"
-                    id="remember"
-                    className="w-4 h-4 accent-primary"
-                    defaultChecked
-                  />
-                  <label htmlFor="remember" className="text-[11.5px] font-medium text-on-surface">
-                    Keep me signed in
-                  </label>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full h-[52px] font-medium text-sm tracking-tight flex items-center justify-center gap-2 active:scale-[0.98] transition-transform bg-primary text-white border-none cursor-pointer"
+              <div
+                style={{
+                  marginLeft: 'min(34%, 160px)',
+                  marginTop: -38,
+                  width: 'min(100%, 360px)',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'hsl(var(--surface))',
+                  boxShadow: '0 26px 60px rgba(20, 40, 32, 0.18)',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    height: 34,
+                    background: 'hsl(var(--on-surface))',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '0 16px',
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
                 >
-                  {isLoading ? (
-                    <>
-                      <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
-                      >
-                        progress_activity
-                      </span>{' '}
-                      Authenticating...
-                    </>
-                  ) : (
-                    <>
-                      Sign in{' '}
-                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                        arrow_forward
-                      </span>
-                    </>
-                  )}
-                </button>
-
-                <div className="auth-footer">
-                  New to the movement? <Link to="/register">Create an account →</Link>
+                  {currentStep.label} snapshot
                 </div>
-              </form>
+                <div style={{ padding: 18 }}>
+                  <strong
+                    style={{ display: 'block', marginBottom: 8, color: 'hsl(var(--on-surface))' }}
+                  >
+                    {currentStep.title}
+                  </strong>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 12,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {currentStep.copy}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </main>
   )

@@ -2613,3 +2613,13 @@ td.leadership-col-secondary {
     width: 100%;
   }
 }
+
+@media (max-width: 860px) {
+  .login-browser-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .login-showcase-panel {
+    display: none;
+  }
+}
