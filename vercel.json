@@ -140,7 +140,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!(assets|graphify)/).*)",
+      "source": "/((?!assets|graphify).*)",
       "destination": "/index.html"
     }
   ]
