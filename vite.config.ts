@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       headers: {
         'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
+        'X-Frame-Options': 'SAMEORIGIN',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
       },
