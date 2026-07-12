@@ -152,11 +152,21 @@ export const monthlyDuesService = {
     return data as { enrollment_id: string; status: string }
   },
 
-  /** Ensures the signed-in member's obligation exists for a month. */
-  async ensureMyObligation(month: string): Promise<{ payment_id: string; status: string }> {
+  /**
+   * Ensures the signed-in member's obligation exists for a month. The
+   * currency arguments only snapshot the cosmetic display conversion —
+   * the GHS amount always comes from the active settings server-side.
+   */
+  async ensureMyObligation(
+    month: string,
+    displayCurrency?: string,
+    exchangeRateToGhs?: number
+  ): Promise<{ payment_id: string; status: string }> {
     const { data, error } = await supabase.rpc('ensure_monthly_dues_obligation', {
       p_member_id: null,
       p_month: month,
+      p_display_currency: displayCurrency ?? null,
+      p_exchange_rate_to_ghs: exchangeRateToGhs ?? null,
     })
     if (error) throw error
     return data as { payment_id: string; status: string }

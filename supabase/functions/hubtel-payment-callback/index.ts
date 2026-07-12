@@ -116,6 +116,50 @@ export function donationCallbackResponse(result: { matched: boolean; already_fin
   return { success: true, already: result.already_final }
 }
 
+export interface MonthlyDuesCallbackResult {
+  matched: boolean
+  already_final: boolean
+  amount_mismatch?: boolean
+  status?: string
+}
+
+/**
+ * Maps the apply_hubtel_monthly_dues_callback RPC result onto a handling
+ * decision. Unmatched references fall through to other payment types;
+ * duplicates are acknowledged without reapplying; amount mismatches are
+ * alerted and never marked paid.
+ */
+export function monthlyDuesCallbackDecision(result: MonthlyDuesCallbackResult | null) {
+  if (!result || !result.matched) return null
+  if (result.already_final) return { handled: true, already: true, alert: false }
+  if (result.amount_mismatch) return { handled: true, already: false, alert: true }
+  return { handled: true, already: false, alert: false }
+}
+
+/**
+ * Extracts the settled GHS amount from a Hubtel callback, preferring the
+ * initiation metadata snapshot over the top-level callback amount.
+ */
+export function extractCallbackGhsAmount(payload: Record<string, unknown>): number | null {
+  const data = (payload.Data ?? payload.data) as Record<string, unknown> | undefined
+  const containers = [
+    payload.metadata,
+    payload.Metadata,
+    data && typeof data === 'object' ? data.Metadata : undefined,
+    data && typeof data === 'object' ? data.metadata : undefined,
+  ]
+  for (const container of containers) {
+    if (container && typeof container === 'object') {
+      const value = (container as Record<string, unknown>).ghsAmount
+      const numeric = Number(value)
+      if (value !== undefined && Number.isFinite(numeric) && numeric > 0) return numeric
+    }
+  }
+  const amount = getString(payload, ['Amount', 'amount', 'TotalAmount', 'totalAmount'])
+  const numeric = Number(amount)
+  return amount !== null && Number.isFinite(numeric) && numeric > 0 ? numeric : null
+}
+
 // @ts-expect-error: Deno global
 if (import.meta.main)
   Deno.serve(async (req: Request) => {
@@ -236,7 +280,42 @@ if (import.meta.main)
 
       if (donationError) throw donationError
 
+      // Monthly dues: atomic RPC transition, checked before the store-order
+      // fallback so dues references never mutate orders.
+      let duesDecision: ReturnType<typeof monthlyDuesCallbackDecision> = null
       if (!donationDecision) {
+        const { data: duesResult, error: duesError } = await supabaseAdmin.rpc(
+          'apply_hubtel_monthly_dues_callback',
+          {
+            p_payment_id: reference,
+            p_paid: paid,
+            p_transaction_id: transactionId,
+            p_amount_ghs: extractCallbackGhsAmount(payload),
+          }
+        )
+        if (duesError) throw duesError
+
+        duesDecision = monthlyDuesCallbackDecision(duesResult)
+        if (duesDecision?.already) {
+          return json({ success: true, paid, reference, already: true })
+        }
+        if (duesDecision?.alert) {
+          await sendAlert(
+            'Monthly dues amount mismatch',
+            'A Hubtel callback reported a settlement amount that does not match the dues obligation. The payment was NOT marked paid — reconcile manually.',
+            [
+              { name: 'Reference', value: reference },
+              { name: 'Transaction', value: transactionId ?? '—' },
+            ]
+          )
+          return json({ success: false, paid, reference, mismatch: true })
+        }
+        if (duesDecision?.handled) {
+          return json({ success: true, paid, reference })
+        }
+      }
+
+      if (!donationDecision && !duesDecision) {
         // Idempotency: check if order is already finalized
         const { data: existingOrder } = await supabaseAdmin
           .from('store_orders')

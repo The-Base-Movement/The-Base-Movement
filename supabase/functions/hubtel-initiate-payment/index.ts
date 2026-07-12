@@ -20,7 +20,7 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-type PaymentType = 'donation' | 'order' | 'payment'
+type PaymentType = 'donation' | 'order' | 'monthly_dues' | 'payment'
 
 interface InitiatePaymentBody {
   type?: PaymentType
@@ -166,6 +166,23 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    if (type === 'monthly_dues') {
+      // The obligation snapshot, not the browser, decides amount/member/status.
+      const { data: dues, error } = await supabaseAdmin
+        .from('monthly_dues_payments')
+        .select('id, amount_ghs, status, member_id')
+        .eq('id', reference)
+        .single()
+
+      if (error || !dues) throw new Error('Monthly dues obligation was not found')
+      if (['paid', 'waived', 'cancelled'].includes(dues.status)) {
+        throw new Error('This month has already been settled')
+      }
+      if (Math.abs(Number(dues.amount_ghs) - settlement.ghsAmount) > 0.01) {
+        throw new Error('Dues amount does not match the payment request')
+      }
+    }
+
     const primaryCallback = await buildSignedHubtelCallbackUrl(
       `${supabaseUrl}/functions/v1/hubtel-payment-callback`,
       reference
@@ -195,7 +212,9 @@ Deno.serve(async (req: Request) => {
           ? 'The Base Movement donation'
           : type === 'order'
             ? 'The Base Movement store order'
-            : 'The Base Movement payment',
+            : type === 'monthly_dues'
+              ? 'The Base Movement monthly dues'
+              : 'The Base Movement payment',
       callbackUrl: primaryCallback,
       ...(secondaryCallback ? { secondaryCallbackUrl: secondaryCallback } : {}),
       returnUrl: body.returnUrl ?? fallbackUrl,
@@ -215,13 +234,22 @@ Deno.serve(async (req: Request) => {
       },
       items: [
         {
-          name: type === 'donation' ? 'Donation' : type === 'order' ? 'Store Order' : 'Payment',
+          name:
+            type === 'donation'
+              ? 'Donation'
+              : type === 'order'
+                ? 'Store Order'
+                : type === 'monthly_dues'
+                  ? 'Monthly Dues'
+                  : 'Payment',
           description:
             type === 'donation'
               ? 'Donation to The Base Movement'
               : type === 'order'
                 ? 'The Base Movement merchandise order'
-                : 'Payment to The Base Movement',
+                : type === 'monthly_dues'
+                  ? 'Voluntary monthly dues for The Base Movement'
+                  : 'Payment to The Base Movement',
           quantity: 1,
           unitPrice: Number(settlement.ghsAmount.toFixed(2)),
         },

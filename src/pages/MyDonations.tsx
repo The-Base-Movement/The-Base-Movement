@@ -6,6 +6,7 @@ import type { DonationDetail } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'
 import SEO from '@/components/SEO'
 import DonationReceiptModal from '@/components/donations/DonationReceiptModal'
+import MonthlyDuesTab from '@/components/dues/MonthlyDuesTab'
 
 function StatusPill({ status }: { status: string }) {
   const cls = status === 'Verified' ? 'pill-ok' : status === 'Rejected' ? 'pill-err' : 'pill-warn'
@@ -69,6 +70,7 @@ export default function MyDonations() {
   const [receiptViewRef, setReceiptViewRef] = useState<string>('receipt')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [dateFilter, setDateFilter] = useState<string>('all')
+  const [tab, setTab] = useState<'donations' | 'dues'>('donations')
   useEffect(() => {
     if (!session?.user) return
     adminService.getPersonalDonationHistory(session.user.id).then((data) => {
@@ -191,8 +193,26 @@ export default function MyDonations() {
           </div>
         </div>
 
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          <button
+            className={`btn btn-sm ${tab === 'donations' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+            onClick={() => setTab('donations')}
+          >
+            Donations
+          </button>
+          <button
+            className={`btn btn-sm ${tab === 'dues' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+            onClick={() => setTab('dues')}
+          >
+            Monthly Dues
+          </button>
+        </div>
+
+        {tab === 'dues' && <MonthlyDuesTab />}
+
         {/* KPIs */}
-        {!loading && donations.length > 0 && (
+        {tab === 'donations' && !loading && donations.length > 0 && (
           <div className="kpis" style={{ marginBottom: 20 }}>
             {kpis.map((k) => (
               <div
@@ -238,7 +258,7 @@ export default function MyDonations() {
         )}
 
         {/* Filter controls */}
-        {!loading && donations.length > 0 && (
+        {tab === 'donations' && !loading && donations.length > 0 && (
           <div
             style={{
               marginBottom: 16,
@@ -360,7 +380,7 @@ export default function MyDonations() {
         )}
 
         {/* Content */}
-        {loading ? (
+        {tab === 'dues' ? null : loading ? (
           <div className="panel" style={{ overflow: 'hidden' }}>
             {[0, 1, 2, 3].map((i) => (
               <div

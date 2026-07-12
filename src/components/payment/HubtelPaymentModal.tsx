@@ -16,7 +16,7 @@ interface HubtelPaymentModalProps {
   isOpen: boolean
   checkoutUrl: string | null
   referenceId: string | null
-  type: 'donation' | 'order'
+  type: 'donation' | 'order' | 'monthly_dues'
   onClose: () => void
   onSuccess: () => void
 }
@@ -48,7 +48,12 @@ export function HubtelPaymentModal({
   useEffect(() => {
     if (!isOpen || !referenceId) return
 
-    const table = type === 'donation' ? 'donations' : 'store_orders'
+    const table =
+      type === 'donation'
+        ? 'donations'
+        : type === 'monthly_dues'
+          ? 'monthly_dues_payments'
+          : 'store_orders'
     const channelName = `hubtel_checkout_${type}_${referenceId}`
 
     const channel = supabase
@@ -66,6 +71,13 @@ export function HubtelPaymentModal({
             if (payload.new.status === 'Verified') {
               onSuccess()
             } else if (payload.new.status === 'Rejected') {
+              toast.error('The payment was rejected or failed.')
+              onClose()
+            }
+          } else if (type === 'monthly_dues') {
+            if (payload.new.status === 'paid') {
+              onSuccess()
+            } else if (payload.new.status === 'failed') {
               toast.error('The payment was rejected or failed.')
               onClose()
             }
@@ -95,6 +107,20 @@ export function HubtelPaymentModal({
           if (data.status === 'Verified') {
             onSuccess()
           } else if (data.status === 'Rejected') {
+            toast.error('The payment was rejected or failed.')
+            onClose()
+          }
+        } else if (type === 'monthly_dues') {
+          const { data, error } = await supabase
+            .from('monthly_dues_payments')
+            .select('status')
+            .eq('id', referenceId)
+            .maybeSingle()
+
+          if (error || !data) return
+          if (data.status === 'paid') {
+            onSuccess()
+          } else if (data.status === 'failed') {
             toast.error('The payment was rejected or failed.')
             onClose()
           }
