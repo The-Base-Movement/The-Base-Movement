@@ -171,7 +171,7 @@ export default function Login() {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
-              background: 'hsl(var(--surface))',
+              background: 'hsl(var(--card))',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 64 }}>
@@ -367,9 +367,75 @@ export default function Login() {
               padding: 'clamp(34px, 6vw, 70px)',
               overflow: 'hidden',
               background:
-                'linear-gradient(145deg, hsl(var(--container-low)) 0%, hsl(var(--surface)) 62%)',
+                'linear-gradient(145deg, hsl(var(--container-low)) 0%, hsl(var(--container-hi)) 100%)',
             }}
           >
+            <style>{`
+              @keyframes work-pulse {
+                0%, 100% {
+                  transform: scale(1);
+                  color: hsl(var(--primary));
+                  text-shadow: 0 0 0px hsla(var(--primary), 0);
+                }
+                50% {
+                  transform: scale(1.05);
+                  color: hsl(156, 100%, 30%);
+                  text-shadow: 0 0 8px hsla(var(--primary), 0.35);
+                }
+              }
+
+              @keyframes ghana-shimmer {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+              }
+
+              @keyframes ghana-float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-4px); }
+              }
+
+              .animated-work {
+                display: inline-block;
+                color: hsl(var(--primary));
+                font-weight: var(--font-weight-bold);
+                animation: work-pulse 3s ease-in-out infinite;
+                transition: all 0.3s ease;
+              }
+
+              .animated-ghana {
+                display: inline-block;
+                font-weight: var(--font-weight-black);
+                background: linear-gradient(
+                  to right,
+                  #CE1126 0%,  /* Ghana Red */
+                  #FCD116 50%, /* Ghana Gold */
+                  #006B3F 100% /* Ghana Green */
+                );
+                background-size: 200% auto;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                animation: ghana-shimmer 3s linear infinite, ghana-float 4s ease-in-out infinite;
+              }
+            `}</style>
+
+            {/* Watermark image */}
+            <img
+              src="/branding/patterns/eagle-in-flight.webp"
+              alt=""
+              style={{
+                position: 'absolute',
+                right: '-5%',
+                bottom: '-5%',
+                width: '380px',
+                height: 'auto',
+                opacity: 0.06,
+                pointerEvents: 'none',
+                zIndex: 0,
+                userSelect: 'none',
+              }}
+            />
+
             <div style={{ maxWidth: 560, position: 'relative', zIndex: 1 }}>
               <span
                 style={{
@@ -395,7 +461,8 @@ export default function Login() {
                   color: 'hsl(var(--on-surface))',
                 }}
               >
-                Track and monitor the work that moves Ghana forward
+                Track and monitor the <span className="animated-work">work</span> that moves{' '}
+                <span className="animated-ghana">Ghana</span> forward
               </h2>
               <p
                 style={{
@@ -501,6 +568,7 @@ export default function Login() {
                   background: 'hsl(var(--surface))',
                   boxShadow: '0 26px 60px rgba(20, 40, 32, 0.18)',
                   overflow: 'hidden',
+                  minHeight: 180,
                 }}
               >
                 <div
