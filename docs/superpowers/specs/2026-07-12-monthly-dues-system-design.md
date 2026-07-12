@@ -14,6 +14,7 @@ This design includes:
 - finance settings, operations, analytics, search, filtering, and exports;
 - member analytics and donation/dues exports;
 - automated reminders and delivery deduplication;
+- redacted Discord finance notifications;
 - payment receipts, callback reconciliation, and auditability;
 - local-currency display with GHS settlement and reporting.
 
@@ -31,6 +32,7 @@ It does not introduce a generic payment-provider framework. Hubtel is the only p
 - Email and SMS reminder consent are independent.
 - Consent changes are append-only and timestamped.
 - Reminder schedule is three days before due, on the due date, and three days overdue.
+- Operational dues notifications are sent to a finance Discord webhook configured only as a server secret.
 - Reminders stop after payment, opt-out, or channel-consent withdrawal.
 - Opting out cancels the Hubtel recurring invoice but never deletes payment or consent history.
 - Hubtel callbacks, not the browser, determine successful payment.
@@ -40,6 +42,7 @@ It does not introduce a generic payment-provider framework. Hubtel is the only p
 - Existing Hubtel initiation, signed callbacks, status handling, checkout modal, and GHS settlement.
 - Existing country-to-currency mapping and configured GHS exchange-rate conversion.
 - Existing donation receipt access patterns and transactional email/SMS helpers.
+- Existing server-side Discord notification patterns where available.
 - Existing `MANAGE_DONATIONS:DONATIONS` finance permission boundary.
 - Existing finance dashboard cards, charts, tables, filters, responsive fallbacks, and export conventions.
 - Existing member Profile Settings notification area.
@@ -141,6 +144,7 @@ A unique constraint on `(payment_id, channel, reminder_stage)` prevents duplicat
 - Finance operations require `MANAGE_DONATIONS:DONATIONS`; no new role framework is added.
 - Finance exports use server-authorized queries and exclude national ID and unnecessary PII.
 - Service-role access is limited to callbacks, scheduled obligation creation, reminders, and reconciliation.
+- The Discord webhook is read only from `MONTHLY_DUES_DISCORD_WEBHOOK_URL`; it is never stored in the database or returned to clients.
 - Hubtel callback authenticity and reference binding follow the existing signed callback approach.
 - Callback updates are atomic and idempotent.
 - Raw payment credentials are never stored.
@@ -194,6 +198,18 @@ A scheduled Edge Function runs daily:
 8. Record success or a bounded failure reason without logging message bodies or unnecessary PII.
 
 Payment success suppresses all later reminders for that obligation.
+
+## Discord Finance Notifications
+
+Server-side dues operations send concise finance alerts for:
+
+- successful manual or recurring dues payments;
+- recurring enrollment activation and cancellation;
+- failed or orphaned Hubtel callbacks;
+- reminder job summaries and repeated delivery failures;
+- reconciliation mismatches requiring finance review.
+
+Messages include only operational identifiers, amount/currency, payment month, status, and a link to the authorized finance view. They exclude national ID, full contact details, consent contents, webhook credentials, and unnecessary member PII. Discord delivery failure never changes payment state and is recorded as a non-blocking operational error.
 
 ## Member Experience
 
@@ -299,6 +315,7 @@ Finance exports apply current filters and contain the minimum operational member
 - Reminder consent, schedule, deduplication, and paid-suppression tests.
 - Currency conversion validation and snapshot tests.
 - Export authorization tests.
+- Discord alert redaction, event selection, and non-blocking failure tests.
 
 ### React and services
 
