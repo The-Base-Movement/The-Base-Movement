@@ -457,6 +457,40 @@ class MemberService {
     reason?: string,
     chapterName?: string
   ): Promise<boolean> {
+    if (!approve) {
+      // 1. Get avatar URL to clean up storage
+      const { data: member } = await supabase
+        .from('users')
+        .select('avatar_url')
+        .eq('registration_number', id)
+        .maybeSingle()
+
+      if (member?.avatar_url) {
+        const marker = '/avatars/'
+        const idx = member.avatar_url.indexOf(marker)
+        if (idx !== -1) {
+          const path = decodeURIComponent(
+            member.avatar_url.slice(idx + marker.length).split('?')[0]
+          )
+          if (path) {
+            await supabase.storage.from('avatars').remove([path])
+          }
+        }
+      }
+
+      // 2. Call the secure RPC to completely delete user from auth.users and public.users
+      const { error: purgeErr } = await supabase.rpc('purge_member_completely', {
+        p_reg_no: id,
+      })
+
+      if (purgeErr) {
+        console.error('[DATABASE] Purge member completely failed:', purgeErr)
+        return false
+      }
+
+      return true
+    }
+
     const status = approve ? 'Approved' : 'Rejected'
     const accountStatus = approve ? 'Active' : 'Suspended'
 

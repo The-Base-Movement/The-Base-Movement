@@ -673,9 +673,11 @@ class AdminService {
     reason?: string,
     chapterName?: string
   ): Promise<boolean> {
+    // Fetch profile first, in case they are rejected and deleted
+    const profile = await this.getMemberProfile(id)
+
     const success = await memberService.verifyMember(id, approve, reason, chapterName)
     if (success) {
-      const profile = await this.getMemberProfile(id)
       discordService.memberVerified(id, profile?.name || id, approve, chapterName)
       await this.logAction(
         approve ? 'VERIFY_MEMBER_APPROVE' : 'VERIFY_MEMBER_REJECT',
