@@ -13,6 +13,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { verifyHubtelCallbackSignature } from '../hubtel-payment-shared/callback-auth.ts'
+import { sendMonthlyDuesDiscordAlert } from '../_shared/monthly-dues-discord.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -153,6 +154,11 @@ if (import.meta.main) {
           'Orphaned recurring dues callback',
           `A recurring charge callback matched no enrollment (reference ${reference}). Investigate.`
         )
+        await sendMonthlyDuesDiscordAlert({
+          type: 'callback_anomaly',
+          reference,
+          detail: 'Recurring charge callback matched no enrollment.',
+        })
         return json({ error: 'Unknown enrollment reference' }, 404)
       }
 
@@ -164,6 +170,7 @@ if (import.meta.main) {
           .from('monthly_dues_enrollments')
           .update({ status: 'active' })
           .eq('id', enrollment.id)
+        await sendMonthlyDuesDiscordAlert({ type: 'recurring_activated', reference })
       }
 
       // Map the charge onto the current dues month idempotently.
@@ -199,7 +206,23 @@ if (import.meta.main) {
           'Recurring dues amount mismatch',
           'A recurring charge callback reported an amount that does not match the obligation. The payment was NOT marked paid — reconcile manually.'
         )
+        await sendMonthlyDuesDiscordAlert({
+          type: 'callback_anomaly',
+          reference,
+          detail: 'Recurring charge amount did not match the obligation; not marked paid.',
+        })
         return json({ success: false, reference, mismatch: true })
+      }
+
+      if (charge.success && decision?.handled) {
+        await sendMonthlyDuesDiscordAlert({
+          type: 'payment_success',
+          reference,
+          month,
+          amountGhs: charge.amountGhs ?? undefined,
+          currency: 'GHS',
+          mode: 'recurring',
+        })
       }
 
       return json({ success: true, paid: charge.success, reference })

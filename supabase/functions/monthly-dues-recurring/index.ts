@@ -13,6 +13,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { buildSignedHubtelCallbackUrl } from '../hubtel-payment-shared/callback-auth.ts'
+import { sendMonthlyDuesDiscordAlert } from '../_shared/monthly-dues-discord.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -294,6 +295,10 @@ if (import.meta.main) {
             opted_out_at: new Date().toISOString(),
           })
           .eq('id', enrollment.id)
+        await sendMonthlyDuesDiscordAlert({
+          type: 'recurring_cancelled',
+          reference: enrollment.id,
+        })
       } else {
         // Keep cancellation pending so the member can retry safely.
         await supabaseAdmin

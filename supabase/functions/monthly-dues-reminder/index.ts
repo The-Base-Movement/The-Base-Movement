@@ -15,6 +15,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendSms, normalizeGhanaPhone } from '../_shared/sms.ts'
 import { requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { sendMonthlyDuesDiscordAlert } from '../_shared/monthly-dues-discord.ts'
 
 export type ReminderStage = 'pre_due' | 'due' | 'overdue'
 
@@ -336,6 +337,14 @@ if (import.meta.main) {
     }
 
     console.log('[MONTHLY-DUES-REMINDER]', JSON.stringify(summary))
+    if (summary.sent > 0 || summary.failed > 0) {
+      await sendMonthlyDuesDiscordAlert({
+        type: 'reminder_summary',
+        sent: summary.sent,
+        failed: summary.failed,
+        skipped: summary.skipped,
+      })
+    }
     return new Response(JSON.stringify(summary), {
       headers: { 'Content-Type': 'application/json' },
     })

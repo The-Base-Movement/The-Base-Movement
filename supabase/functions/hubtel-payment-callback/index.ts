@@ -1,6 +1,7 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { verifyHubtelCallbackSignature } from '../hubtel-payment-shared/callback-auth.ts'
+import { sendMonthlyDuesDiscordAlert } from '../_shared/monthly-dues-discord.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -308,9 +309,29 @@ if (import.meta.main)
               { name: 'Transaction', value: transactionId ?? '—' },
             ]
           )
+          await sendMonthlyDuesDiscordAlert({
+            type: 'callback_anomaly',
+            reference,
+            detail: 'Settlement amount did not match the dues obligation; not marked paid.',
+          })
           return json({ success: false, paid, reference, mismatch: true })
         }
         if (duesDecision?.handled) {
+          if (paid) {
+            const { data: duesPayment } = await supabaseAdmin
+              .from('monthly_dues_payments')
+              .select('dues_month, amount_ghs, payment_mode')
+              .eq('id', reference)
+              .maybeSingle()
+            await sendMonthlyDuesDiscordAlert({
+              type: 'payment_success',
+              reference,
+              month: duesPayment?.dues_month ?? undefined,
+              amountGhs: duesPayment ? Number(duesPayment.amount_ghs) : undefined,
+              currency: 'GHS',
+              mode: duesPayment?.payment_mode === 'recurring_hubtel' ? 'recurring' : 'manual',
+            })
+          }
           return json({ success: true, paid, reference })
         }
       }
