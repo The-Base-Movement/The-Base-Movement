@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#1d242c"/>
+      <stop offset="100%" stop-color="#0a0d10"/>
+    </radialGradient>
+    <linearGradient id="tricolor" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#CE1126"/>
+      <stop offset="50%" stop-color="#DAA520"/>
+      <stop offset="100%" stop-color="#006B3F"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2b333d"/>
+      <stop offset="100%" stop-color="#1c2229"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#bg)"/>
+
+  <!-- Tricolor ring, echoing the member avatar frames -->
+  <circle cx="400" cy="400" r="330" fill="none" stroke="url(#tricolor)" stroke-width="10" opacity="0.9"/>
+  <circle cx="400" cy="400" r="316" fill="#11161c"/>
+
+  <!-- Tee silhouette -->
+  <path
+    d="M310 240
+       q 40 -28 90 -28 q 50 0 90 28
+       l 118 62 -42 92 -58 -26
+       v 232 q 0 18 -18 18 h -180 q -18 0 -18 -18
+       v -232 l -58 26 -42 -92 z"
+    fill="url(#shirt)" stroke="#5a6572" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Collar -->
+  <path d="M352 232 q 48 44 96 0 q -22 26 -48 26 q -26 0 -48 -26 z"
+    fill="#11161c" stroke="#5a6572" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Gold star on the chest -->
+  <path
+    d="M400 340 l 22.5 46.5 51 7 -37 35.5 9 50.5 -45.5 -24.5 -45.5 24.5 9 -50.5 -37 -35.5 51 -7 z"
+    fill="#DAA520" opacity="0.95"/>
+</svg>

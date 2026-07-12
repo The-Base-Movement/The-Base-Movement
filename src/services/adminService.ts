@@ -1993,9 +1993,7 @@ class AdminService {
         price: `GH₵ ${Number(i.price_ghs).toLocaleString()}`,
         stock: i.stock_quantity,
         status: i.stock_quantity > 10 ? 'Stable' : i.stock_quantity > 0 ? 'Low Stock' : 'Critical',
-        image:
-          i.image_url ||
-          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop',
+        image: i.image_url || '/branding/product-placeholder.svg',
         description: i.description || '',
         rating: i.rating || 4.8,
         reviews: i.reviews || 0,

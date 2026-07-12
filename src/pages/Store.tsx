@@ -106,11 +106,11 @@ export default function Store() {
             className="flex gap-3 py-3 border-b border-border last:border-0"
           >
             <div className="w-[54px] h-[54px] bg-stone-100 rounded-[4px] shrink-0 flex items-center justify-center font-meta font-medium text-2xl text-stone-200 overflow-hidden">
-              {item.image ? (
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-              ) : (
-                item.name.charAt(0)
-              )}
+              <img
+                src={item.image || '/branding/product-placeholder.svg'}
+                alt={item.name}
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <b className="font-meta text-[12px] font-medium block truncate">{item.name}</b>

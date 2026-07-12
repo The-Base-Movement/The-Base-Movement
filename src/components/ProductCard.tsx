@@ -75,24 +75,13 @@ export function ProductCard({ product, onShare }: ProductProps) {
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-stone-100">
           <Link to={productUrl}>
-            {product.image ? (
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                decoding="async"
-                loading="lazy"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span
-                  className="material-symbols-outlined text-stone-300 group-hover:scale-110 transition-transform duration-500"
-                  style={{ fontSize: 64 }}
-                >
-                  shopping_bag
-                </span>
-              </div>
-            )}
+            <img
+              src={product.image || '/branding/product-placeholder.svg'}
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              decoding="async"
+              loading="lazy"
+            />
           </Link>
 
           <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
