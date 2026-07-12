@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 
-const GRAPHIFY_TREE_URL = '/graphify/GRAPH_TREE.html'
+const GRAPHIFY_URL = '/graphify/graph.html'
 
 export default function ITBrain() {
   const { setCurrentLabel } = usePageLabel()
@@ -98,7 +98,7 @@ export default function ITBrain() {
           </div>
           <a
             className="btn btn-outline btn-sm"
-            href={GRAPHIFY_TREE_URL}
+            href={GRAPHIFY_URL}
             target="_blank"
             rel="noreferrer"
           >
@@ -110,7 +110,7 @@ export default function ITBrain() {
         </div>
         <iframe
           title="Graphify project brain"
-          src={GRAPHIFY_TREE_URL}
+          src={GRAPHIFY_URL}
           style={{
             display: 'block',
             width: '100%',
