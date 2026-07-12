@@ -48,12 +48,11 @@ export function MomoDetails() {
           gap: 8,
         }}
       >
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 18, color: 'hsl(220 80% 55%)' }}
-        >
-          smartphone
-        </span>
+        <img
+          src="/branding/mtn-momo-logo.png"
+          alt="MTN Mobile Money"
+          style={{ width: 30, height: 30, objectFit: 'contain', flex: '0 0 auto' }}
+        />
         <div>
           <p
             style={{

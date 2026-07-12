@@ -5,6 +5,7 @@ import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { formatDistanceToNow } from 'date-fns'
 import { usePerformance } from '@/context/PerformanceContext'
+import { fallbackAvatar } from '@/lib/avatar'
 
 interface Activity {
   name: string
@@ -39,9 +40,7 @@ export function ActivityFeed() {
           timestamp: new Date(d.date),
           loc: d.country || 'Ghana',
           amt: `₵${d.amount}`,
-          img: d.avatarUrl
-            ? d.avatarUrl
-            : `https://i.pravatar.cc/80?u=${encodeURIComponent(d.fullName)}`,
+          img: d.avatarUrl || fallbackAvatar(d.fullName),
         })),
         ...members.map((m) => ({
           name: m.name,
@@ -51,7 +50,7 @@ export function ActivityFeed() {
           timestamp: m.joined ? new Date(m.joined) : new Date(),
           loc: m.region || m.country || 'Ghana',
           status: 'Verified',
-          img: m.avatarUrl || `https://i.pravatar.cc/80?u=${m.name}`,
+          img: m.avatarUrl || fallbackAvatar(m.name),
         })),
       ]
 
@@ -77,9 +76,7 @@ export function ActivityFeed() {
         timestamp: new Date(),
         loc: d.country || 'Global',
         amt: `₵${d.amount}`,
-        img: d.avatarUrl
-          ? d.avatarUrl
-          : `https://i.pravatar.cc/80?u=${encodeURIComponent(d.fullName)}`,
+        img: d.avatarUrl || fallbackAvatar(d.fullName),
       }
       setActivities((prev) => [newActivity, ...prev].slice(0, 10))
     })
@@ -93,7 +90,7 @@ export function ActivityFeed() {
         timestamp: new Date(),
         loc: m.region || m.country || 'Movement HQ',
         status: 'Verified',
-        img: m.avatarUrl || `https://i.pravatar.cc/80?u=${m.name}`,
+        img: m.avatarUrl || fallbackAvatar(m.name),
       }
       setActivities((prev) => [newActivity, ...prev].slice(0, 10))
     })

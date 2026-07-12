@@ -4,6 +4,7 @@ import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/buttons/ui/neon-button'
 import { adminService } from '@/services/adminService'
+import { MALE_AVATAR } from '@/lib/avatar'
 import 'swiper/css'
 import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
@@ -19,8 +20,7 @@ const FALLBACK: Leader = {
   id: 'fallback',
   name: '',
   role: '',
-  avatar_url:
-    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=560&h=720&fit=crop&q=80',
+  avatar_url: MALE_AVATAR,
 }
 
 export function LeaderSlider() {

@@ -95,12 +95,11 @@ export function MomoDetailsEditor() {
             Shown on the public donate page as an alternative payment method.
           </p>
         </div>
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 20, color: 'hsl(220 80% 55%)' }}
-        >
-          smartphone
-        </span>
+        <img
+          src="/branding/mtn-momo-logo.png"
+          alt="MTN Mobile Money"
+          style={{ width: 32, height: 32, objectFit: 'contain', flex: '0 0 auto' }}
+        />
       </div>
 
       <div style={{ padding: 20 }}>
