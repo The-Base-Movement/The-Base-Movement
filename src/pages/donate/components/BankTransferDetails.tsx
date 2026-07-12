@@ -49,6 +49,7 @@ export function BankTransferDetails() {
         overflow: 'hidden',
       }}
     >
+      {/* Header */}
       <div
         style={{
           padding: '12px 16px',
@@ -82,34 +83,57 @@ export function BankTransferDetails() {
         </div>
       </div>
 
+      {/* Rows */}
       <div>
         {rows.map((row, i) => (
           <div
             key={row.key}
             style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: '10px 16px',
+              alignItems: 'stretch',
               borderTop: i === 0 ? 'none' : '1px solid hsl(var(--border))',
             }}
           >
-            <div className="bank-details-text-group">
-              <span className="bank-details-label">{row.label}</span>
-              <span className="bank-details-value">{row.value}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => copy(row.key, row.value)}
-              title={`Copy ${row.label}`}
-              aria-label={`Copy ${row.label}`}
-              className="btn btn-ghost btn-sm"
-              style={{ flex: '0 0 auto', padding: '4px 8px', gap: 4 }}
+            {/* Label cell — distinct background */}
+            <div
+              className="bank-details-label-cell"
+              style={{
+                flex: '0 0 130px',
+                padding: '10px 14px',
+                borderRight: '1px solid hsl(var(--border))',
+                display: 'flex',
+                alignItems: 'center',
+              }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                {copiedKey === row.key ? 'check' : 'content_copy'}
-              </span>
-            </button>
+              <span className="bank-details-label">{row.label}</span>
+            </div>
+
+            {/* Value + copy */}
+            <div
+              style={{
+                flex: 1,
+                padding: '10px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+                minWidth: 0,
+              }}
+            >
+              <span className="bank-details-value">{row.value}</span>
+              <button
+                type="button"
+                onClick={() => copy(row.key, row.value)}
+                title={`Copy ${row.label}`}
+                aria-label={`Copy ${row.label}`}
+                className="btn btn-ghost btn-sm"
+                style={{ flex: '0 0 auto', padding: '4px 8px', gap: 4 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  {copiedKey === row.key ? 'check' : 'content_copy'}
+                </span>
+              </button>
+            </div>
           </div>
         ))}
       </div>

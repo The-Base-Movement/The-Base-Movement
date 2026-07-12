@@ -16,6 +16,7 @@ import {
 import { adminService } from '@/services/adminService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { BankDetailsEditor } from '@/components/admin/BankDetailsEditor'
+import { MomoDetailsEditor } from '@/components/admin/MomoDetailsEditor'
 import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
 import MonthlyDuesPanel from '@/components/admin/finance/MonthlyDuesPanel'
 import type { DonationCampaign } from '@/types/admin'
@@ -1123,6 +1124,10 @@ export default function FinanceDashboard() {
 
           <div style={{ marginTop: 24 }}>
             <BankDetailsEditor />
+          </div>
+
+          <div style={{ marginTop: 24 }}>
+            <MomoDetailsEditor />
           </div>
 
           <div style={{ marginTop: 24 }}>

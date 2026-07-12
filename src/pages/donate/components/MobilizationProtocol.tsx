@@ -3,6 +3,7 @@ import type { DonationCampaign } from '@/types/admin'
 import type { CurrencyInfo } from '@/lib/currency'
 import { formatCurrencyAmount, formatGhsAmount } from '@/lib/currency'
 import { BankTransferDetails } from './BankTransferDetails'
+import { MomoDetails } from './MomoDetails'
 import { TrustSignals, DONATION_TRUST } from '@/components/ui/TrustSignals'
 
 interface FormData {
@@ -572,6 +573,7 @@ export function MobilizationProtocol({
 
           {/* Bank-transfer details fill the panel and give an offline payment path. */}
           <BankTransferDetails />
+          <MomoDetails />
         </form>
 
         <aside
