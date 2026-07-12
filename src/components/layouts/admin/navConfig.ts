@@ -153,6 +153,12 @@ export const getNavGroups = (
         permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
       },
       {
+        to: '/admin/finance/royalty-points',
+        icon: 'workspace_premium',
+        label: 'Royalty points',
+        permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+      },
+      {
         to: '/admin/donations',
         icon: 'payments',
         label: 'Donations',
