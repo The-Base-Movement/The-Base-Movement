@@ -14,6 +14,7 @@ import { getCurrencyForCountry } from '@/lib/currency'
 import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 import DuesPaymentHistory from '@/components/dues/DuesPaymentHistory'
+import { monthlyDuesExportService } from '@/services/monthlyDuesExportService'
 
 const FONT = "'Public Sans', sans-serif"
 
@@ -527,6 +528,37 @@ export default function MonthlyDuesTab() {
           </div>
         </div>
       </div>
+
+      {payments.length > 0 && (
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginBottom: 12 }}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() =>
+              monthlyDuesExportService
+                .exportMemberCsv()
+                .catch(() => toast.error('Could not export your dues history.'))
+            }
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              download
+            </span>
+            Export CSV
+          </button>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() =>
+              monthlyDuesExportService
+                .exportMemberPdf()
+                .catch(() => toast.error('Could not export your dues statement.'))
+            }
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              picture_as_pdf
+            </span>
+            Export PDF
+          </button>
+        </div>
+      )}
 
       <DuesPaymentHistory payments={payments} onRetry={startCheckout} />
 

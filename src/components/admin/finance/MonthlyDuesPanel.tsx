@@ -8,6 +8,7 @@ import {
 } from '@/services/monthlyDuesService'
 import { computeDuesKpis } from '@/services/financeAnalyticsService'
 import MonthlyDuesSettings from '@/components/admin/finance/MonthlyDuesSettings'
+import { monthlyDuesExportService } from '@/services/monthlyDuesExportService'
 
 const FONT = "'Public Sans', sans-serif"
 
@@ -254,6 +255,40 @@ export default function MonthlyDuesPanel() {
             </option>
           ))}
         </select>
+        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() =>
+              monthlyDuesExportService
+                .exportFinanceCsv({
+                  status: statusFilter === 'all' ? undefined : statusFilter,
+                  duesMonth: monthFilter === 'all' ? undefined : monthFilter,
+                })
+                .catch(() => toast.error('Could not export dues records.'))
+            }
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              download
+            </span>
+            Export CSV
+          </button>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() =>
+              monthlyDuesExportService
+                .exportFinancePdf({
+                  status: statusFilter === 'all' ? undefined : statusFilter,
+                  duesMonth: monthFilter === 'all' ? undefined : monthFilter,
+                })
+                .catch(() => toast.error('Could not export the dues report.'))
+            }
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              picture_as_pdf
+            </span>
+            Export PDF
+          </button>
+        </div>
       </div>
 
       {/* Table */}
