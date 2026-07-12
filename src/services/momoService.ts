@@ -9,7 +9,7 @@ export interface MomoDetails {
 }
 
 const EMPTY: MomoDetails = {
-  merchantNumber: '',
+  merchantNumber: '0597567336',
   merchantName: 'The Base Movement',
   network: 'MTN',
   isActive: true,
