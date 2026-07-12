@@ -58,6 +58,11 @@ export interface MonthlyDuesPayment {
   created_at: string
 }
 
+export interface FinanceDuesPaymentRow extends MonthlyDuesPayment {
+  member_name: string | null
+  member_reg_no: string | null
+}
+
 export interface FinanceDuesFilters {
   status?: MonthlyDuesPayment['status']
   duesMonth?: string
@@ -228,11 +233,11 @@ export const monthlyDuesService = {
     if (error) throw error
   },
 
-  /** Filtered dues obligations for the finance table. */
-  async listFinancePayments(filters: FinanceDuesFilters = {}): Promise<MonthlyDuesPayment[]> {
+  /** Filtered dues obligations for the finance table, with member identity. */
+  async listFinancePayments(filters: FinanceDuesFilters = {}): Promise<FinanceDuesPaymentRow[]> {
     let query = supabase
       .from('monthly_dues_payments')
-      .select('*')
+      .select('*, users(full_name, registration_number)')
       .order('due_date', { ascending: false })
       .limit(filters.limit ?? 500)
     if (filters.status) query = query.eq('status', filters.status)
@@ -240,12 +245,18 @@ export const monthlyDuesService = {
     if (filters.paymentMode) query = query.eq('payment_mode', filters.paymentMode)
     const { data, error } = await query
     if (error) throw error
-    return (data ?? []).map((row) => ({
-      ...row,
-      amount_ghs: Number(row.amount_ghs),
-      display_amount: Number(row.display_amount),
-      exchange_rate_to_ghs: Number(row.exchange_rate_to_ghs),
-    })) as MonthlyDuesPayment[]
+    return (data ?? []).map((row) => {
+      const member = Array.isArray(row.users) ? row.users[0] : row.users
+      return {
+        ...row,
+        users: undefined,
+        amount_ghs: Number(row.amount_ghs),
+        display_amount: Number(row.display_amount),
+        exchange_rate_to_ghs: Number(row.exchange_rate_to_ghs),
+        member_name: member?.full_name ?? null,
+        member_reg_no: member?.registration_number ?? null,
+      }
+    }) as FinanceDuesPaymentRow[]
   },
 
   /** All enrollments, for finance KPIs. */

@@ -26,6 +26,36 @@ export interface ExpenseCategory {
   percent: number
 }
 
+export interface DuesKpis {
+  enrolled: number
+  paid: number
+  due: number
+  overdue: number
+  optedOut: number
+  collectedGhs: number
+}
+
+/**
+ * Six finance KPIs for the Monthly Dues tab. Pure — testable without
+ * Supabase. 'due' counts due+pending+failed obligations; 'collectedGhs'
+ * sums paid obligations in GHS.
+ */
+export function computeDuesKpis(
+  enrollments: { status: string }[],
+  payments: { status: string; amount_ghs: number | string }[]
+): DuesKpis {
+  const paid = payments.filter((p) => p.status === 'paid')
+  return {
+    enrolled: enrollments.filter((e) => ['active', 'pending_activation'].includes(e.status)).length,
+    paid: paid.length,
+    due: payments.filter((p) => ['due', 'pending', 'failed'].includes(p.status)).length,
+    overdue: payments.filter((p) => p.status === 'overdue').length,
+    optedOut: enrollments.filter((e) => ['opted_out', 'cancellation_pending'].includes(e.status))
+      .length,
+    collectedGhs: Math.round(paid.reduce((s, p) => s + Number(p.amount_ghs), 0) * 100) / 100,
+  }
+}
+
 export interface TransactionRow {
   id: string
   kind: 'income' | 'expense'
@@ -179,7 +209,12 @@ export const financeAnalyticsService = {
     if (chapter) {
       ledQuery = ledQuery.eq('chapter', chapter)
     }
-    const [donationRows, ledRes, orderRes, licenseRes, resourceRes] = await Promise.all([
+    // Monthly dues are platform-wide (no chapter), so they only count in
+    // the unfiltered view.
+    const duesQuery = chapter
+      ? Promise.resolve({ data: [] as { amount_ghs: number }[] })
+      : supabase.from('monthly_dues_payments').select('amount_ghs').eq('status', 'paid')
+    const [donationRows, ledRes, orderRes, licenseRes, resourceRes, duesRes] = await Promise.all([
       fetchDonationMetricRows({
         select: 'amount, status, chapter',
         status: VERIFIED_DONATION_STATUS,
@@ -189,11 +224,16 @@ export const financeAnalyticsService = {
       orderQuery,
       licenseQuery,
       resourceQuery,
+      duesQuery,
     ])
     if (ledRes.error) throw new Error(ledRes.error.message)
     const donationIncome = sumDonationAmounts(donationRows)
     const storeIncome = (orderRes.data ?? []).reduce((s, o) => s + Number(o.total_amount), 0)
-    const totalIncome = donationIncome + storeIncome
+    const duesIncome = (duesRes.data ?? []).reduce(
+      (s: number, p: { amount_ghs: number | string }) => s + Number(p.amount_ghs),
+      0
+    )
+    const totalIncome = donationIncome + storeIncome + duesIncome
     const ledgerExpenses = (ledRes.data ?? []).reduce((s, l) => s + Number(l.amount), 0)
     const annualLicenseCost = (licenseRes.data ?? []).reduce((s, l) => {
       const cost = Number(l.cost)
@@ -231,7 +271,14 @@ export const financeAnalyticsService = {
     if (chapter) {
       ledQuery = ledQuery.eq('chapter', chapter)
     }
-    const [donationRows, ledRes, orderRes] = await Promise.all([
+    const duesQuery = chapter
+      ? Promise.resolve({ data: [] as { paid_at: string; amount_ghs: number }[] })
+      : supabase
+          .from('monthly_dues_payments')
+          .select('paid_at, amount_ghs')
+          .eq('status', 'paid')
+          .gte('paid_at', start)
+    const [donationRows, ledRes, orderRes, duesRes] = await Promise.all([
       fetchDonationMetricRows({
         select: 'created_at, amount, status, chapter',
         status: VERIFIED_DONATION_STATUS,
@@ -240,6 +287,7 @@ export const financeAnalyticsService = {
       }),
       ledQuery,
       orderQuery,
+      duesQuery,
     ])
     if (ledRes.error) throw new Error(ledRes.error.message)
     const verifiedDonations = donationRows
@@ -252,7 +300,13 @@ export const financeAnalyticsService = {
       created_at: o.created_at,
       amount: Number(o.total_amount),
     }))
-    const allIncome = [...verifiedDonations, ...storeAsDonations]
+    const duesAsIncome = (duesRes.data ?? [])
+      .filter((p: { paid_at: string | null }) => p.paid_at)
+      .map((p: { paid_at: string; amount_ghs: number | string }) => ({
+        created_at: p.paid_at,
+        amount: Number(p.amount_ghs),
+      }))
+    const allIncome = [...verifiedDonations, ...storeAsDonations, ...duesAsIncome]
     return bucket(period, allIncome, ledRes.data ?? [])
   },
 
@@ -363,14 +417,23 @@ export const financeAnalyticsService = {
       ledQuery = ledQuery.eq('chapter', chapter)
       reqQuery = reqQuery.eq('chapter', chapter)
     }
-    const [donRes, ledRes, reqRes, orderRes, licenseRes, resourceTxRes] = await Promise.all([
-      donQuery,
-      ledQuery,
-      reqQuery,
-      orderQuery,
-      licenseQuery,
-      resourceTxQuery,
-    ])
+    const duesTxQuery = supabase
+      .from('monthly_dues_payments')
+      .select('id, paid_at, amount_ghs, payment_mode, status')
+      .eq('status', 'paid')
+      .not('paid_at', 'is', null)
+      .order('paid_at', { ascending: false })
+      .limit(limit)
+    const [donRes, ledRes, reqRes, orderRes, licenseRes, resourceTxRes, duesTxRes] =
+      await Promise.all([
+        donQuery,
+        ledQuery,
+        reqQuery,
+        orderQuery,
+        licenseQuery,
+        resourceTxQuery,
+        chapter ? Promise.resolve({ data: [] }) : duesTxQuery,
+      ])
     if (donRes.error) throw new Error(donRes.error.message)
     if (ledRes.error) throw new Error(ledRes.error.message)
     if (reqRes.error) throw new Error(reqRes.error.message)
@@ -443,9 +506,26 @@ export const financeAnalyticsService = {
         status: r.status,
       }
     })
+    const duesIncome: TransactionRow[] = (duesTxRes.data ?? []).map(
+      (p: { id: string; paid_at: string; amount_ghs: number | string; payment_mode: string }) => ({
+        id: p.id,
+        kind: 'income' as const,
+        description: 'Monthly Dues',
+        date: p.paid_at,
+        chapterOrSource:
+          p.payment_mode === 'offline'
+            ? 'Dues (Offline)'
+            : p.payment_mode === 'recurring_hubtel'
+              ? 'Dues (Recurring)'
+              : 'Dues (Hubtel)',
+        amount: Number(p.amount_ghs),
+        status: 'Verified',
+      })
+    )
     return [
       ...income,
       ...storeIncome,
+      ...duesIncome,
       ...expense,
       ...pendingRejectedExpense,
       ...licenseExpense,
