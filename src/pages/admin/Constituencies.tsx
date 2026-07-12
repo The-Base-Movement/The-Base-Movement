@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { constituencyService } from '@/services/constituencyService'
+import { constituencyService, type MemberAssignmentIssue } from '@/services/constituencyService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
 import type { Constituency } from '@/types/admin'
@@ -29,6 +29,7 @@ const GHANA_REGIONS = [
 export default function AdminConstituencies() {
   const navigate = useNavigate()
   const [constituencies, setConstituencies] = useState<Constituency[]>([])
+  const [assignmentIssues, setAssignmentIssues] = useState<MemberAssignmentIssue[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [regionFilter, setRegionFilter] = useState('All Regions')
@@ -36,8 +37,12 @@ export default function AdminConstituencies() {
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    constituencyService.getConstituencies().then((data) => {
-      setConstituencies(data)
+    Promise.all([
+      constituencyService.getConstituencies(),
+      constituencyService.getAssignmentIssues(),
+    ]).then(([constituencyRows, issueRows]) => {
+      setConstituencies(constituencyRows)
+      setAssignmentIssues(issueRows)
       setLoading(false)
     })
   }, [])
@@ -66,7 +71,6 @@ export default function AdminConstituencies() {
   const total = constituencies.length
   const activeCount = constituencies.filter((c) => c.status === 'Active').length
   const unledCount = constituencies.filter((c) => !c.leaderId).length
-  const totalMembers = constituencies.reduce((sum, c) => sum + c.memberCount, 0)
 
   return (
     <div className="main">
@@ -196,7 +200,7 @@ export default function AdminConstituencies() {
               top: 0,
               bottom: 0,
               width: 3,
-              background: 'hsl(var(--container-low))',
+              background: 'hsl(var(--destructive))',
             }}
           />
           <p
@@ -209,7 +213,7 @@ export default function AdminConstituencies() {
               margin: '0 0 6px',
             }}
           >
-            Total Members
+            Assignment Issues
           </p>
           <p
             style={{
@@ -219,10 +223,57 @@ export default function AdminConstituencies() {
               margin: 0,
             }}
           >
-            {totalMembers}
+            {assignmentIssues.length}
           </p>
         </div>
       </div>
+
+      {assignmentIssues.length > 0 && (
+        <section className="panel" style={{ marginBottom: 20, overflow: 'hidden' }}>
+          <div className="ph">
+            <div>
+              <h2 style={{ margin: 0 }}>Assignment reconciliation</h2>
+              <p style={{ margin: '4px 0 0', color: 'hsl(var(--on-surface-muted))' }}>
+                Members whose network assignment needs administrative review
+              </p>
+            </div>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  {['Member', 'Platform', 'Current assignment', 'Issue'].map((label) => (
+                    <th key={label} style={{ padding: 12, textAlign: 'left' }}>
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {assignmentIssues.map((issue) => (
+                  <tr key={issue.id}>
+                    <td style={{ padding: 12 }}>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={() => navigate('/admin/members/' + issue.id)}
+                      >
+                        {issue.fullName}
+                      </button>
+                    </td>
+                    <td style={{ padding: 12 }}>{issue.platform}</td>
+                    <td style={{ padding: 12 }}>
+                      {issue.constituency || issue.chapter || issue.region || 'Unassigned'}
+                    </td>
+                    <td style={{ padding: 12 }}>
+                      <span className="pill pill-warn">{issue.issueCode.replaceAll('_', ' ')}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       {/* Filters */}
       <div

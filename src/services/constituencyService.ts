@@ -1,3 +1,21 @@
+export type MemberAssignmentIssue = {
+  id: string
+  registrationNumber: string | null
+  fullName: string
+  platform: 'GHANA' | 'DIASPORA'
+  country: string | null
+  region: string | null
+  constituency: string | null
+  chapter: string | null
+  issueCode:
+    | 'missing_constituency'
+    | 'invalid_constituency'
+    | 'ghana_has_chapter'
+    | 'diaspora_has_ghana_assignment'
+    | 'diaspora_country_is_ghana'
+    | 'invalid_diaspora_chapter'
+}
+
 import { supabase } from '@/lib/supabase'
 import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { discordService } from '@/services/discordService'
@@ -11,6 +29,32 @@ export function constituencySlug(name: string): string {
 }
 
 class ConstituencyService {
+  async getAssignmentIssues(): Promise<MemberAssignmentIssue[]> {
+    const { data, error } = await supabase
+      .from('admin_member_assignment_issues')
+      .select(
+        'id, registration_number, full_name, platform, country, region, constituency, chapter, issue_code'
+      )
+      .order('full_name')
+
+    if (error) {
+      console.error('[CONSTITUENCY] Assignment reconciliation failed:', error)
+      return []
+    }
+
+    return (data ?? []).map((row) => ({
+      id: row.id as string,
+      registrationNumber: row.registration_number as string | null,
+      fullName: row.full_name as string,
+      platform: row.platform as 'GHANA' | 'DIASPORA',
+      country: row.country as string | null,
+      region: row.region as string | null,
+      constituency: row.constituency as string | null,
+      chapter: row.chapter as string | null,
+      issueCode: row.issue_code as MemberAssignmentIssue['issueCode'],
+    }))
+  }
+
   private static instance: ConstituencyService
   private constructor() {}
 
