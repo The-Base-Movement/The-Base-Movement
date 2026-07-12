@@ -7,8 +7,8 @@
 //
 // The admin is always derived from the verified JWT. The RP ID is derived from
 // the request Origin and validated against an allowlist, so the same code works
-// on localhost today, thebasemovement.org.gh, and www.thebasemovement.org.gh
-// after the migration (just add it to ALLOWED_RP_ORIGINS).
+// on localhost, thebasemovement.creativeutil.com, and thebasemovement.com after
+// the migration (extra origins can be added via ALLOWED_RP_ORIGINS).
 
 // @ts-expect-error: Deno URL import
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
@@ -106,9 +106,21 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   const host = url.hostname
   if (host === 'localhost' || host === '127.0.0.1') return { rpID: host, origin }
 
-  // Hardcoded baseline: both bare and www variants are always accepted so a
+  // Hardcoded baseline: every origin the app actually serves from, so a
   // stale ALLOWED_RP_ORIGINS secret can never exclude the live production URL.
-  const BASELINE = ['https://thebasemovement.org.gh', 'https://www.thebasemovement.org.gh']
+  // Keep in sync with the domains attached to the Vercel project.
+  const BASELINE = [
+    'https://thebasemovement.info',
+    'https://www.thebasemovement.info',
+    'https://thebasemovement.org.gh',
+    'https://www.thebasemovement.org.gh',
+    'https://thebasemovement.com',
+    'https://www.thebasemovement.com',
+    'https://thebasemovement.creativeutil.com',
+    'https://nevermind-beta.vercel.app',
+    'https://nevermind-stifflers-projects.vercel.app',
+    'https://nevermind-git-main-stifflers-projects.vercel.app',
+  ]
   // @ts-expect-error: Deno global
   const envOrigins = Deno.env.get('ALLOWED_RP_ORIGINS') ?? ''
   const extra = envOrigins
@@ -402,4 +414,3 @@ serve(async (req: Request) => {
     return json({ error: 'Internal error' }, 500)
   }
 })
-
