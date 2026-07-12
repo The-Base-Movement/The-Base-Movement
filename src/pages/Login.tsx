@@ -174,13 +174,44 @@ export default function Login() {
               background: 'hsl(var(--card))',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 64 }}>
-              <img
-                src={logo}
-                alt="The Base logo"
-                style={{ width: 42, height: 42, objectFit: 'contain' }}
-              />
-              <strong style={{ fontSize: 18, color: 'hsl(var(--on-surface))' }}>The Base</strong>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 64,
+                gap: 16,
+              }}
+            >
+              <Link
+                to="/"
+                style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+              >
+                <img
+                  src={logo}
+                  alt="The Base logo"
+                  style={{ width: 42, height: 42, objectFit: 'contain' }}
+                />
+                <strong style={{ fontSize: 18, color: 'hsl(var(--on-surface))' }}>The Base</strong>
+              </Link>
+              <Link
+                to="/"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontSize: 12,
+                  textDecoration: 'none',
+                  fontWeight: 600,
+                }}
+                className="back-to-website-btn"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  arrow_back
+                </span>
+                Back to site
+              </Link>
             </div>
 
             <h1
@@ -416,6 +447,15 @@ export default function Login() {
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 animation: ghana-shimmer 3s linear infinite, ghana-float 4s ease-in-out infinite;
+              }
+
+              .back-to-website-btn {
+                transition: all 0.2s ease-in-out;
+              }
+
+              .back-to-website-btn:hover {
+                color: hsl(var(--primary)) !important;
+                transform: translateX(-4px);
               }
             `}</style>
 
