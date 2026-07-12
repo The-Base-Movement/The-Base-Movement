@@ -56,7 +56,11 @@ Every rate change and manual adjustment records the acting administrator, timest
 
 ## Existing Data
 
-Existing member_points rows remain valid. Existing referral awards are migrated into the canonical ledger only when a matching canonical entry does not already exist. Existing paid financial transactions are not backfilled automatically in this release to avoid issuing unexpected historical balances.
+Existing member_points rows remain valid. Existing referral awards are migrated into the canonical ledger only when a matching canonical entry does not already exist.
+
+Historical paid donations are backfilled: the migration awards accumulated points for every verified or confirmed-paid donation with a valid donations.member_id. Each donation uses its own source reference, so rerunning the migration cannot duplicate an award. Anonymous donations and donations without a member_id are excluded; the backfill does not guess member identity from names, email addresses, or phone numbers.
+
+Historical store purchases and monthly-dues payments are not backfilled in this release.
 
 ## Verification
 
