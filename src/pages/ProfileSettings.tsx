@@ -24,6 +24,7 @@ import { PerformancePrefsPanel } from './settings/PerformancePrefsPanel'
 import { ProfileSettingsHeader } from './settings/ProfileSettingsHeader'
 import { DangerZonePanel } from './settings/DangerZonePanel'
 import { NotificationsPanel } from './settings/NotificationsPanel'
+import MonthlyDuesNotificationSettings from '@/components/settings/MonthlyDuesNotificationSettings'
 
 interface FormState {
   fullName: string
@@ -489,6 +490,8 @@ export default function ProfileSettings() {
           />
 
           <NotificationsPanel />
+
+          <MonthlyDuesNotificationSettings />
 
           {/* Save action */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
