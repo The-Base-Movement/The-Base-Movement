@@ -172,6 +172,23 @@ export const monthlyDuesService = {
     return data as { payment_id: string; status: string }
   },
 
+  /**
+   * Hubtel Recurring Invoice lifecycle for the signed-in member.
+   * 'create' registers the provider invoice for a pending enrollment,
+   * 'verify' reconciles provider state (activating on confirmation),
+   * 'cancel' cancels at the provider — enrollment opts out only on success.
+   */
+  async manageRecurring(
+    action: 'create' | 'verify' | 'cancel'
+  ): Promise<{ status: string; invoiceId?: string; retryable?: boolean }> {
+    const { data, error } = await supabase.functions.invoke('monthly-dues-recurring', {
+      body: { action },
+    })
+    if (error) throw error
+    if (data?.error) throw new Error(data.error)
+    return data as { status: string; invoiceId?: string; retryable?: boolean }
+  },
+
   // ------------------------------------------------------------------
   // Finance (requires MANAGE_DONATIONS:DONATIONS — enforced by RLS/RPC)
   // ------------------------------------------------------------------

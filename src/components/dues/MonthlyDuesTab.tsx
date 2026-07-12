@@ -41,14 +41,19 @@ export default function MonthlyDuesTab() {
   const load = useCallback(async () => {
     if (!session?.user) return
     try {
-      const [duesSettings, myEnrollment, memberProfile] = await Promise.all([
+      const [duesSettings, myEnrollment, memberProfile, latestConsent] = await Promise.all([
         monthlyDuesService.getCurrentSettings(),
         monthlyDuesService.getMyEnrollment(),
         adminService.getMemberProfileByAuthId(session.user.id).catch(() => null),
+        monthlyDuesService.getMyLatestConsent().catch(() => null),
       ])
       setSettings(duesSettings)
       setEnrollment(myEnrollment)
       setProfile(memberProfile)
+      if (latestConsent) {
+        setConsentEmail(latestConsent.email_enabled)
+        setConsentSms(latestConsent.sms_enabled)
+      }
 
       const isEnrolled =
         myEnrollment && ['active', 'pending_activation'].includes(myEnrollment.status)
@@ -127,10 +132,66 @@ export default function MonthlyDuesTab() {
     setBusy(true)
     try {
       await monthlyDuesService.optOut()
+      if (enrollment?.hubtel_invoice_id) {
+        // Cancellation completes only when Hubtel confirms; until then the
+        // enrollment stays cancellation_pending with a retry action.
+        await monthlyDuesService.manageRecurring('cancel').catch(() => null)
+      }
       toast.success('You have opted out of monthly dues.')
       await load()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Opt-out failed.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleEnableRecurring = async () => {
+    if (!settings) return
+    if (
+      !window.confirm(
+        `Enable automatic monthly payments of ₵${settings.amount_ghs.toFixed(2)} via Hubtel? You can cancel at any time.`
+      )
+    )
+      return
+    setBusy(true)
+    try {
+      await monthlyDuesService.enroll(
+        'recurring',
+        consentEmail,
+        consentSms,
+        settings.policy_version
+      )
+      await monthlyDuesService.manageRecurring('create')
+      toast.success('Recurring payments requested. Activation is confirmed by Hubtel.')
+      await load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not enable recurring payments.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleRecurringAction = async (action: 'verify' | 'cancel') => {
+    setBusy(true)
+    try {
+      const result = await monthlyDuesService.manageRecurring(action)
+      if (action === 'verify') {
+        toast[result.status === 'active' ? 'success' : 'info'](
+          result.status === 'active'
+            ? 'Recurring payments are active.'
+            : 'Hubtel has not confirmed activation yet.'
+        )
+      } else {
+        toast[result.retryable ? 'error' : 'success'](
+          result.retryable
+            ? 'Hubtel could not confirm the cancellation yet — try again shortly.'
+            : 'Recurring payments cancelled.'
+        )
+      }
+      await load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'The recurring action failed.')
     } finally {
       setBusy(false)
     }
@@ -189,6 +250,37 @@ export default function MonthlyDuesTab() {
 
   const currency = getCurrencyForCountry(profile?.country)
   const localAmount = Math.round((settings.amount_ghs / currency.ghsRate) * 100) / 100
+
+  if (enrollment?.status === 'cancellation_pending') {
+    return (
+      <div className="panel" style={{ padding: 24 }}>
+        <h3 style={{ margin: 0, fontSize: 14, fontFamily: FONT, color: 'hsl(var(--on-surface))' }}>
+          Cancellation pending
+        </h3>
+        <p
+          style={{
+            margin: '6px 0 16px',
+            fontSize: 12,
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: FONT,
+            lineHeight: 1.6,
+            maxWidth: 480,
+          }}
+        >
+          We asked Hubtel to cancel your recurring dues invoice but have not received confirmation
+          yet. Your enrollment stays paused until Hubtel confirms — nothing further will be charged
+          once cancellation completes.
+        </p>
+        <button
+          className="btn btn-outline-dest btn-sm"
+          disabled={busy}
+          onClick={() => handleRecurringAction('cancel')}
+        >
+          Retry cancellation
+        </button>
+      </div>
+    )
+  }
 
   if (!isEnrolled) {
     return (
@@ -402,9 +494,37 @@ export default function MonthlyDuesTab() {
               manage in notification settings
             </Link>
           </p>
-          <button className="btn btn-outline-dest btn-sm" disabled={busy} onClick={handleOptOut}>
-            Stop monthly dues
-          </button>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {settings.recurring_enrollment_enabled &&
+              enrollment?.payment_mode === 'manual' &&
+              enrollment.status === 'active' && (
+                <button
+                  className="btn btn-outline btn-sm"
+                  disabled={busy}
+                  onClick={handleEnableRecurring}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                    autorenew
+                  </span>
+                  Enable recurring payments
+                </button>
+              )}
+            {enrollment?.payment_mode === 'recurring' &&
+              enrollment.status === 'pending_activation' && (
+                <button
+                  className="btn btn-outline btn-sm"
+                  disabled={busy}
+                  onClick={() => handleRecurringAction('verify')}
+                >
+                  Verify activation
+                </button>
+              )}
+            <button className="btn btn-outline-dest btn-sm" disabled={busy} onClick={handleOptOut}>
+              {enrollment?.payment_mode === 'recurring'
+                ? 'Stop recurring payments'
+                : 'Stop monthly dues'}
+            </button>
+          </div>
         </div>
       </div>
 
