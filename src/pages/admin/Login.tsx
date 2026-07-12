@@ -125,99 +125,67 @@ export default function AdminLogin() {
 
   return (
     <AdminGate>
-      <div
+      <main
         style={{
-          minHeight: '80vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '40px 20px',
+          minHeight: '100vh',
+          padding: 'clamp(18px, 5vw, 56px)',
+          boxSizing: 'border-box',
+          background: 'linear-gradient(135deg, #d8e9ee 0%, #f5faf6 48%, #d6e5ea 100%)',
         }}
       >
         <SEO title="Admin Portal" noindex />
-
-        <div style={{ width: '100%', maxWidth: 420 }}>
-          {/* Card */}
-          <div
+        <div
+          className="login-browser-grid"
+          style={{
+            maxWidth: 1160,
+            minHeight: 'min(720px, calc(100vh - 112px))',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'minmax(320px, 420px) minmax(0, 1fr)',
+            borderRadius: 'var(--radius-lg)',
+            overflow: 'hidden',
+            background: 'hsl(var(--surface))',
+            boxShadow: '0 26px 80px rgba(20,40,32,.18)',
+            border: '1px solid rgba(255,255,255,.72)',
+          }}
+        >
+          <section
+            aria-label="Role manager sign in"
             style={{
-              borderRadius: 8,
-              overflow: 'hidden',
-              boxShadow: '0 20px 60px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.07)',
+              padding: 'clamp(28px, 5vw, 48px)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              background: 'hsl(var(--card))',
             }}
           >
-            {/* Dark header */}
             <div
               style={{
-                background: 'linear-gradient(135deg,#0f1310,#1f2620)',
-                borderTop: '4px solid hsl(var(--primary))',
-                padding: '28px 32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 16,
+                marginBottom: 54,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-                <div
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: '50%',
-                    background: 'rgba(0,107,63,.15)',
-                    border: '1px solid rgba(0,107,63,.25)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
-                  >
-                    shield
-                  </span>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontFamily: "'Public Sans', sans-serif",
-                      color: '#fff',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    Admin Access
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: 'rgba(255,255,255,.4)',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 400,
-                      marginTop: 2,
-                    }}
-                  >
-                    The Base Movement · Restricted Access
-                  </div>
-                </div>
-              </div>
-              {/* Ghana flag stripe */}
-              <div style={{ display: 'flex', height: 3, borderRadius: 2, overflow: 'hidden' }}>
-                <div style={{ flex: 1, background: '#CE1126' }} />
-                <div style={{ flex: 1, background: '#FCD116' }} />
-                <div style={{ flex: 1, background: '#006b3f' }} />
-              </div>
+              <Link
+                to="/"
+                style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+              >
+                <img
+                  src="/branding/logo.png"
+                  alt="The Base logo"
+                  style={{ width: 42, height: 42, objectFit: 'contain' }}
+                />
+                <strong style={{ fontSize: 18, color: 'hsl(var(--on-surface))' }}>The Base</strong>
+              </Link>
+              <span className="pill pill-warn">Restricted</span>
             </div>
 
-            {/* Form body */}
             {!showMfaPrompt ? (
               <form
                 onSubmit={handleLogin}
-                style={{
-                  background: 'hsl(var(--card))',
-                  padding: '28px 32px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 18,
-                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
               >
                 <input
                   name="website_url"
@@ -229,70 +197,95 @@ export default function AdminLogin() {
                   aria-hidden="true"
                   style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0 }}
                 />
-                <div style={{ marginBottom: 2 }}>
-                  <div
+                <div style={{ marginBottom: 8 }}>
+                  <h1
                     style={{
-                      fontSize: 14,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontFamily: "'Public Sans', sans-serif",
+                      margin: 0,
+                      fontSize: 'clamp(28px, 4vw, 36px)',
+                      lineHeight: 1.05,
                       color: 'hsl(var(--on-surface))',
-                      marginBottom: 4,
                     }}
                   >
-                    Admin login
-                  </div>
-                  <div
+                    Role manager sign in
+                  </h1>
+                  <p
                     style={{
-                      fontSize: 12,
+                      margin: '10px 0 0',
+                      fontSize: 13,
                       color: 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 400,
                     }}
                   >
-                    Authorized personnel only
-                  </div>
+                    Continue to the movement Command Center.
+                  </p>
                 </div>
 
-                {/* Email */}
                 <div>
-                  <label htmlFor="input-5337b3" style={labelStyle}>
+                  <label htmlFor="admin-login-email" style={labelStyle}>
                     Email address
                   </label>
-                  <input
-                    aria-label="admin@thebase.org"
-                    name="email"
-                    id="input-5337b3"
-                    type="email"
-                    required
-                    autoComplete="username"
-                    placeholder="admin@thebase.org"
-                    style={fieldStyle}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        position: 'absolute',
+                        left: 14,
+                        top: 12,
+                        fontSize: 18,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      alternate_email
+                    </span>
+                    <input
+                      name="email"
+                      id="admin-login-email"
+                      type="email"
+                      required
+                      autoComplete="username"
+                      placeholder="manager@thebase.org"
+                      style={{
+                        ...fieldStyle,
+                        borderRadius: 'var(--radius-md)',
+                        padding: '0 14px 0 42px',
+                      }}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
                 </div>
 
-                {/* Password */}
                 <div>
-                  <label htmlFor="input-55345f" style={labelStyle}>
+                  <label htmlFor="admin-login-password" style={labelStyle}>
                     Password
                   </label>
                   <div style={{ position: 'relative' }}>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{
+                        position: 'absolute',
+                        left: 14,
+                        top: 12,
+                        fontSize: 18,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      key
+                    </span>
                     <input
-                      aria-label="••••••••"
                       name="password"
-                      id="input-55345f"
+                      id="admin-login-password"
                       type={showPassword ? 'text' : 'password'}
                       required
                       autoComplete="current-password"
                       placeholder="••••••••"
-                      style={{ ...fieldStyle, paddingRight: 42 }}
+                      style={{ ...fieldStyle, borderRadius: 'var(--radius-md)', padding: '0 42px' }}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                       style={{
                         position: 'absolute',
                         right: 12,
@@ -304,7 +297,6 @@ export default function AdminLogin() {
                         padding: 0,
                         color: 'hsl(var(--on-surface-muted))',
                         display: 'flex',
-                        alignItems: 'center',
                       }}
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
@@ -314,60 +306,48 @@ export default function AdminLogin() {
                   </div>
                 </div>
 
-                {/* Submit */}
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="btn btn-dest"
-                  style={{
-                    width: '100%',
-                    justifyContent: 'center',
-                    height: 48,
-                    fontSize: 13,
-                    marginTop: 2,
-                  }}
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'center', height: 48, marginTop: 4 }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                     {isLoading ? 'hourglass_empty' : 'login'}
                   </span>
-                  {isLoading ? 'Authenticating...' : 'Sign in to command →'}
+                  {isLoading ? 'Authenticating...' : 'Continue securely'}
                 </button>
+                <Link
+                  to="/forgot-password"
+                  style={{
+                    textAlign: 'center',
+                    color: 'hsl(var(--primary))',
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  Forgot password?
+                </Link>
               </form>
             ) : (
               <form
                 onSubmit={handleVerifyMfa}
-                style={{
-                  background: 'hsl(var(--card))',
-                  padding: '28px 32px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 18,
-                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: 18 }}
               >
-                <div style={{ marginBottom: 2 }}>
-                  <div
+                <div>
+                  <h1 style={{ margin: 0, fontSize: 28, color: 'hsl(var(--on-surface))' }}>
+                    Verify your identity
+                  </h1>
+                  <p
                     style={{
-                      fontSize: 14,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontFamily: "'Public Sans', sans-serif",
-                      color: 'hsl(var(--on-surface))',
-                      marginBottom: 4,
-                    }}
-                  >
-                    Two-Factor Authentication
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 12,
+                      margin: '10px 0 0',
+                      fontSize: 13,
                       color: 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 400,
                     }}
                   >
-                    Enter the 6-digit code from your authenticator app
-                  </div>
+                    Enter the 6-digit code from your authenticator app.
+                  </p>
                 </div>
-
                 <div>
                   <label htmlFor="input-mfa" style={labelStyle}>
                     Verification code
@@ -376,51 +356,40 @@ export default function AdminLogin() {
                     name="mfaCode"
                     id="input-mfa"
                     type="text"
+                    inputMode="numeric"
                     required
                     autoComplete="one-time-code"
                     placeholder="000 000"
                     maxLength={6}
                     style={{
                       ...fieldStyle,
+                      borderRadius: 'var(--radius-md)',
                       textAlign: 'center',
                       fontSize: 22,
                       letterSpacing: '0.4em',
                       height: 52,
-                      fontWeight: 'var(--font-weight-semibold, 600)',
+                      fontWeight: 600,
                     }}
                     value={mfaCode}
                     onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   />
                 </div>
-
                 <button
                   type="submit"
                   disabled={isLoading || mfaCode.replace(/\D/g, '').length < 6}
                   className="btn btn-primary"
-                  style={{
-                    width: '100%',
-                    justifyContent: 'center',
-                    height: 48,
-                    fontSize: 13,
-                    marginTop: 2,
-                  }}
+                  style={{ width: '100%', justifyContent: 'center', height: 48 }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                     {isLoading ? 'hourglass_empty' : 'verified_user'}
                   </span>
-                  {isLoading ? 'Verifying...' : 'Verify Identity →'}
+                  {isLoading ? 'Verifying...' : 'Verify identity'}
                 </button>
-
                 <button
                   type="button"
                   onClick={() => setShowMfaPrompt(false)}
                   className="btn btn-outline"
-                  style={{
-                    width: '100%',
-                    justifyContent: 'center',
-                    height: 40,
-                    fontSize: 12,
-                  }}
+                  style={{ width: '100%', justifyContent: 'center', height: 40 }}
                   disabled={isLoading}
                 >
                   Back to login
@@ -428,12 +397,11 @@ export default function AdminLogin() {
               </form>
             )}
 
-            {/* Footer */}
             <div
               style={{
-                padding: '14px 32px',
+                marginTop: 28,
+                paddingTop: 18,
                 borderTop: '1px solid hsl(var(--border))',
-                background: 'hsl(var(--container-low))',
                 textAlign: 'center',
               }}
             >
@@ -442,45 +410,190 @@ export default function AdminLogin() {
                 style={{
                   fontSize: 12,
                   fontWeight: 500,
-                  fontFamily: "'Public Sans', sans-serif",
                   color: 'hsl(var(--on-surface-muted))',
                   textDecoration: 'none',
                 }}
               >
-                Member login instead →
+                Member login instead
               </Link>
             </div>
-          </div>
-
-          {/* Security notice */}
-          <div
-            style={{
-              marginTop: 16,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 7,
-              justifyContent: 'center',
-            }}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}
-            >
-              lock
-            </span>
-            <span
+            <div
               style={{
+                marginTop: 16,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 7,
+                justifyContent: 'center',
                 fontSize: 11,
-                fontWeight: 400,
-                fontFamily: "'Public Sans', sans-serif",
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
-              Secured · Admin access is monitored and logged
-            </span>
-          </div>
+              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                lock
+              </span>
+              Admin access is monitored and logged
+            </div>
+          </section>
+
+          <section
+            aria-label="Admin security protocol"
+            className="login-showcase-panel"
+            style={{
+              position: 'relative',
+              display: 'flex',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              padding: 'clamp(40px, 7vw, 76px)',
+              color: '#fff',
+              background: 'linear-gradient(145deg, #0c1812 0%, #163c2a 58%, #0b2519 100%)',
+            }}
+          >
+            <img
+              src="/branding/patterns/eagle-in-flight.webp"
+              alt=""
+              style={{
+                position: 'absolute',
+                right: '-8%',
+                bottom: '-5%',
+                width: 420,
+                opacity: 0.05,
+                pointerEvents: 'none',
+              }}
+            />
+            <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 560 }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  minHeight: 30,
+                  padding: '0 14px',
+                  border: '1px solid rgba(255,255,255,.28)',
+                  borderRadius: 'var(--radius-pill)',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '.08em',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  shield_lock
+                </span>
+                Security protocol
+              </span>
+              <h2
+                style={{
+                  maxWidth: 520,
+                  margin: '24px 0 12px',
+                  fontSize: 'clamp(34px, 5vw, 52px)',
+                  lineHeight: 1.08,
+                  color: '#fff',
+                }}
+              >
+                Privileged access requires verified identity
+              </h2>
+              <p
+                style={{
+                  maxWidth: 520,
+                  margin: 0,
+                  color: 'rgba(255,255,255,.68)',
+                  lineHeight: 1.7,
+                  fontSize: 14,
+                }}
+              >
+                The Command Center protects movement operations through controlled role access and
+                layered authentication.
+              </p>
+
+              <div style={{ marginTop: 36, display: 'grid', gap: 12 }}>
+                {[
+                  [
+                    'badge',
+                    'Verified role access',
+                    'Only approved role managers can enter the Command Center.',
+                  ],
+                  [
+                    'phonelink_lock',
+                    'Mandatory two-factor authentication',
+                    'A verified authenticator code is required for privileged access.',
+                  ],
+                  [
+                    'monitoring',
+                    'Monitored sessions',
+                    'Sign-ins and administrative activity are securely logged.',
+                  ],
+                ].map(([icon, title, copy], index) => (
+                  <div
+                    key={title}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '44px 1fr auto',
+                      gap: 14,
+                      alignItems: 'center',
+                      padding: '16px 18px',
+                      border: '1px solid rgba(255,255,255,.12)',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'rgba(255,255,255,.06)',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 40,
+                        height: 40,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: 'var(--radius-sm)',
+                        color: '#70d5a2',
+                        background: 'rgba(112,213,162,.12)',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 21 }}>
+                        {icon}
+                      </span>
+                    </span>
+                    <span>
+                      <strong style={{ display: 'block', marginBottom: 4, fontSize: 13 }}>
+                        {title}
+                      </strong>
+                      <span
+                        style={{
+                          display: 'block',
+                          color: 'rgba(255,255,255,.58)',
+                          fontSize: 12,
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {copy}
+                      </span>
+                    </span>
+                    <span style={{ color: 'rgba(255,255,255,.32)', fontSize: 11 }}>
+                      0{index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  marginTop: 26,
+                  color: 'rgba(255,255,255,.48)',
+                  fontSize: 11,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  policy
+                </span>
+                Unauthorized access attempts may be investigated.
+              </div>
+            </div>
+          </section>
         </div>
-      </div>
+      </main>
     </AdminGate>
   )
 }
