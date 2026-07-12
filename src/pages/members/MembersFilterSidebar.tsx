@@ -1,15 +1,5 @@
-const professions = [
-  'Healthcare',
-  'Education',
-  'Finance',
-  'Law',
-  'Technology',
-  'Agriculture',
-  'Creative Arts',
-  'Engineering',
-  'Trade',
-  'Research',
-]
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
 const selectSt: React.CSSProperties = {
   width: '100%',
@@ -33,6 +23,7 @@ interface MembersFilterSidebarProps {
   search: string
   selectedProfession: string
   isFiltered: boolean
+  chapterName?: string | null
   onSearchChange: (value: string) => void
   onProfessionChange: (value: string) => void
   onClearFilters: () => void
@@ -42,10 +33,29 @@ export function MembersFilterSidebar({
   search,
   selectedProfession,
   isFiltered,
+  chapterName,
   onSearchChange,
   onProfessionChange,
   onClearFilters,
 }: MembersFilterSidebarProps) {
+  const [professions, setProfessions] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!chapterName) return
+    supabase
+      .from('users')
+      .select('profession')
+      .eq('chapter', chapterName)
+      .not('profession', 'is', null)
+      .then(({ data }) => {
+        if (!data) return
+        const unique = Array.from(
+          new Set(data.map((r) => (r.profession as string | null)?.trim()).filter(Boolean))
+        ).sort() as string[]
+        setProfessions(unique)
+      })
+  }, [chapterName])
+
   return (
     <aside className="panel" style={{ padding: 0 }}>
       <div className="ph">

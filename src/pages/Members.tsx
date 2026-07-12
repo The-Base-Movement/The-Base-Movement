@@ -26,6 +26,8 @@ export default function Members() {
   const [selectedProfession, setSelectedProfession] = useState('all')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 20
 
   useEffect(() => {
     if (authLoading || !myAuthId) return
@@ -113,7 +115,10 @@ export default function Members() {
   const clearFilters = () => {
     setSearch('')
     setSelectedProfession('all')
+    setPage(1)
   }
+  const totalPages = Math.max(1, Math.ceil(filteredMembers.length / PAGE_SIZE))
+  const pagedMembers = filteredMembers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   if (isLoading)
     return (
@@ -193,8 +198,15 @@ export default function Members() {
               search={search}
               selectedProfession={selectedProfession}
               isFiltered={isFiltered}
-              onSearchChange={setSearch}
-              onProfessionChange={setSelectedProfession}
+              chapterName={myChapter}
+              onSearchChange={(v) => {
+                setSearch(v)
+                setPage(1)
+              }}
+              onProfessionChange={(v) => {
+                setSelectedProfession(v)
+                setPage(1)
+              }}
               onClearFilters={clearFilters}
             />
 
@@ -231,21 +243,69 @@ export default function Members() {
               </div>
 
               {filteredMembers.length > 0 ? (
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-                    gap: 12,
-                  }}
-                >
-                  {filteredMembers.map((m) => (
-                    <MemberProfileCard
-                      key={m.id}
-                      member={m}
-                      setSelectedMember={setSelectedMember}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                      gap: 12,
+                    }}
+                  >
+                    {pagedMembers.map((m) => (
+                      <MemberProfileCard
+                        key={m.id}
+                        member={m}
+                        setSelectedMember={setSelectedMember}
+                      />
+                    ))}
+                  </div>
+
+                  {totalPages > 1 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        marginTop: 20,
+                        paddingTop: 16,
+                        borderTop: '1px solid hsl(var(--border))',
+                      }}
+                    >
+                      <button
+                        className="btn btn-outline btn-sm"
+                        disabled={page === 1}
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        style={{ minWidth: 36 }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                          chevron_left
+                        </span>
+                      </button>
+                      <span
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                          minWidth: 80,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Page {page} of {totalPages}
+                      </span>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        disabled={page === totalPages}
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        style={{ minWidth: 36 }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                          chevron_right
+                        </span>
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <EmptyState
                   icon="manage_search"

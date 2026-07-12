@@ -158,11 +158,11 @@ export default function MyDonations() {
             </p>
           </div>
           <div
-            className="actions"
+            className="donations-actions"
             style={{
               width: '100%',
-              display: 'grid',
-              gridTemplateColumns: donations.length > 0 ? 'repeat(2, minmax(0, 1fr))' : '1fr',
+              display: 'flex',
+              flexWrap: 'wrap',
               gap: 10,
             }}
           >
@@ -172,7 +172,7 @@ export default function MyDonations() {
                 onClick={() =>
                   downloadCSV(filteredDonations, sessionStore.getItem('userName') || 'member')
                 }
-                style={{ justifyContent: 'center', width: '100%' }}
+                style={{ justifyContent: 'center', flex: '1 1 140px' }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                   download
@@ -183,7 +183,7 @@ export default function MyDonations() {
             <Link
               to="/dashboard/donate"
               className="btn btn-primary btn-sm"
-              style={{ textDecoration: 'none', justifyContent: 'center', width: '100%' }}
+              style={{ textDecoration: 'none', justifyContent: 'center', flex: '1 1 140px' }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 add
@@ -743,6 +743,16 @@ export default function MyDonations() {
         donationId={receiptViewDonationId}
         reference={receiptViewRef}
         onClose={() => setReceiptViewDonationId(null)}
+      />
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        @media (max-width: 480px) {
+          .donations-actions { flex-direction: column; }
+          .donations-actions .btn { flex: 1 1 100% !important; }
+        }
+      `,
+        }}
       />
     </>
   )

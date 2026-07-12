@@ -32,14 +32,6 @@ export function MembersKPIs({ chapterMembers, verifiedCount, myChapter }: Member
       icon: 'verified',
     },
     {
-      label: 'Ghana network',
-      value: chapterMembers.filter((m) => m.platform === 'GHANA').length,
-      sub: 'Registered in Ghana',
-      bar: 'hsl(var(--accent))',
-      val: 'hsl(var(--on-surface))',
-      icon: 'flag',
-    },
-    {
       label: 'Diaspora network',
       value: chapterMembers.filter((m) => m.platform === 'DIASPORA').length,
       sub: 'International members',
