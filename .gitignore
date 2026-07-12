@@ -40,6 +40,7 @@ dist-ssr
 # Build analysis
 stats.html
 
+.worktrees/
 # Build artifacts
 .venv/
 .vite-react-ssg-temp/
