@@ -23,6 +23,8 @@ export interface RegistrationFormData {
   emergencyRelationship: string
   emergencyNumber: string
   city?: string
+  votersIdCard?: string
+  pollingStationCode?: string
 }
 
 export interface Region {

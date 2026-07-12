@@ -147,6 +147,8 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                 ['Country', member.country || 'Ghana'],
                 ['Joined', member.joined || '—'],
                 ['Type', member.type || 'Citizen'],
+                ['Voters ID', member.votersIdCard || '—'],
+                ['Reg Polling Station', member.pollingStationCode || '—'],
               ].map(([k, v]) => (
                 <Fragment key={k}>
                   <dt

@@ -141,6 +141,10 @@ export default function RegistrationForm({
 
       if (field === 'region') {
         newData.constituency = ''
+        newData.pollingStationCode = ''
+      }
+      if (field === 'constituency') {
+        newData.pollingStationCode = ''
       }
       return newData
     })

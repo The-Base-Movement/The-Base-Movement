@@ -29,7 +29,7 @@ class MemberService {
       supabase
         .from('users')
         .select(
-          'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address'
+          'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,voters_id_card,polling_station_code'
         )
         .is('deleted_at', null)
         .order('joined_at', { ascending: false }),
@@ -65,6 +65,8 @@ class MemberService {
         profession: u.profession || 'Patriot',
         city: u.city || undefined,
         residentialAddress: u.residential_address || undefined,
+        votersIdCard: u.voters_id_card || undefined,
+        pollingStationCode: u.polling_station_code || undefined,
       }))
   }
 
@@ -117,7 +119,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code'
       )
       .eq('registration_number', regNo)
       .maybeSingle()
@@ -155,6 +157,8 @@ class MemberService {
       emergencyName: data.emergency_name || undefined,
       emergencyRelationship: data.emergency_relationship || undefined,
       emergencyPhone: data.emergency_phone || undefined,
+      votersIdCard: data.voters_id_card || undefined,
+      pollingStationCode: data.polling_station_code || undefined,
     }
   }
 
@@ -162,7 +166,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,emergency_name,emergency_relationship,emergency_phone'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code'
       )
       .eq('id', authId)
       .maybeSingle()
@@ -192,6 +196,8 @@ class MemberService {
       emergencyName: data.emergency_name || undefined,
       emergencyRelationship: data.emergency_relationship || undefined,
       emergencyPhone: data.emergency_phone || undefined,
+      votersIdCard: data.voters_id_card || undefined,
+      pollingStationCode: data.polling_station_code || undefined,
     }
   }
 
@@ -413,7 +419,7 @@ class MemberService {
       const { data, error } = await supabase
         .from('users')
         .select(
-          'id,registration_number,full_name,region,constituency,platform,country,phone_number,gender,age_range,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status'
+          'id,registration_number,full_name,region,constituency,platform,country,phone_number,gender,age_range,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status,voters_id_card,polling_station_code'
         )
         .in('verification_status', ['In Review', 'Processing', 'Flagged'])
         .order('joined_at', { ascending: false })
@@ -448,6 +454,8 @@ class MemberService {
       status: u.verification_status,
       photoUrl: u.avatar_url,
       chapter: u.chapter,
+      votersIdCard: u.voters_id_card,
+      pollingStationCode: u.polling_station_code,
     }))
   }
 

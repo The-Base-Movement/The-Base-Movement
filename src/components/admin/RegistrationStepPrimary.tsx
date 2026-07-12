@@ -359,6 +359,53 @@ export function RegistrationStepPrimary(props: RegistrationStepPrimaryProps) {
           </p>
         </div>
       )}
+
+      {platform === 'GHANA' && (
+        <div className="space-y-2">
+          <label
+            htmlFor="input-voters-id-admin"
+            style={{
+              fontSize: '10px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface-muted))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
+          >
+            Voter's ID Card Number{' '}
+            <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+              (optional)
+            </span>
+          </label>
+          <input
+            aria-label="Voter's ID Card Number"
+            name="name-voters-id-admin"
+            id="input-voters-id-admin"
+            placeholder="10-digit Voter ID Number"
+            value={formData.votersIdCard || ''}
+            onChange={(e) => handleChange('votersIdCard', e.target.value)}
+            style={{
+              width: '100%',
+              padding: '14px 18px',
+              fontSize: '14px',
+              background: 'hsl(var(--container-low))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              outline: 'none',
+              color: 'hsl(var(--on-surface))',
+            }}
+          />
+          <p
+            style={{
+              fontSize: '11px',
+              color: 'hsl(var(--on-surface-muted))',
+              marginTop: '4px',
+            }}
+          >
+            Enter your 10-digit Voter's ID Card number.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

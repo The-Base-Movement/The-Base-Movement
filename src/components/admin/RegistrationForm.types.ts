@@ -19,6 +19,8 @@ export interface RegistrationFormData {
   emergencyRelationship: string
   emergencyNumber: string
   ghanaCardNumber: string
+  votersIdCard?: string
+  pollingStationCode?: string
 }
 
 export interface RegistrationSubmission extends RegistrationFormData {

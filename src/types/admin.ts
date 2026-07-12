@@ -28,6 +28,8 @@ export interface Member {
   emergencyPhone?: string
   registrationSource?: 'digital' | 'scan' | 'admin'
   deletedAt?: string
+  votersIdCard?: string
+  pollingStationCode?: string
 }
 
 export interface User {
@@ -58,6 +60,8 @@ export interface User {
   verification_status?: string
   city?: string
   registration_source?: string
+  voters_id_card?: string
+  polling_station_code?: string
 }
 
 export interface Region {
@@ -538,6 +542,8 @@ export interface PendingVerification {
   status: 'In Review' | 'Processing' | 'Flagged' | 'Approved' | 'Rejected'
   photoUrl: string | null
   chapter?: string
+  votersIdCard?: string
+  pollingStationCode?: string
 }
 
 export interface ActivityLog {

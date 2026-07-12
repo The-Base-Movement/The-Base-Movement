@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 import { ageRanges } from './RegistrationForm.constants'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
 
@@ -12,6 +14,48 @@ interface RegistrationStepDemographicsProps {
 
 export function RegistrationStepDemographics(props: RegistrationStepDemographicsProps) {
   const { formData, platform, isMobile, dbRegions, currentConstituencies, handleChange } = props
+
+  const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
+  const [psFocused, setPsFocused] = useState(false)
+  const [psResults, setPsResults] = useState<
+    { code: string; name: string; constituency: string }[]
+  >([])
+
+  useEffect(() => {
+    if (!formData.pollingStationCode) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPsSearch('')
+    }
+  }, [formData.pollingStationCode])
+
+  useEffect(() => {
+    if (!psSearch.trim()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPsResults([])
+      return
+    }
+    if (psSearch === formData.pollingStationCode) return
+
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const { data, error } = await supabase
+          .from('polling_stations')
+          .select('code, name, constituency')
+          .ilike('region', formData.region || '')
+          .ilike('constituency', formData.constituency || '')
+          .or(`code.ilike.%${psSearch}%,name.ilike.%${psSearch}%`)
+          .limit(10)
+
+        if (!error && data) {
+          setPsResults(data)
+        }
+      } catch (err) {
+        console.error('Failed to search polling stations:', err)
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounce)
+  }, [psSearch, formData.region, formData.constituency, formData.pollingStationCode])
 
   return (
     <div className="space-y-8">
@@ -284,6 +328,117 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   ))}
               </select>
             </div>
+
+            {formData.constituency && (
+              <div
+                className="space-y-2"
+                style={{
+                  gridColumn: isMobile ? undefined : 'span 2',
+                  position: 'relative',
+                }}
+              >
+                <label
+                  htmlFor="input-polling-station-admin"
+                  style={{
+                    fontSize: '10px',
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface-muted))',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Polling Station{' '}
+                  <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                    (optional)
+                  </span>
+                </label>
+                <input
+                  aria-label="Polling Station"
+                  name="name-polling-station-admin"
+                  id="input-polling-station-admin"
+                  placeholder="Search polling station by code or name…"
+                  value={psSearch}
+                  onChange={(e) => setPsSearch(e.target.value)}
+                  onFocus={() => setPsFocused(true)}
+                  onBlur={() => {
+                    setTimeout(() => setPsFocused(false), 200)
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '14px 18px',
+                    fontSize: '14px',
+                    background: 'hsl(var(--container-low))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    outline: 'none',
+                    color: 'hsl(var(--on-surface))',
+                    boxSizing: 'border-box',
+                  }}
+                  autoComplete="off"
+                />
+                {psFocused && psResults.length > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      marginTop: '4px',
+                      background: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                      zIndex: 50,
+                      maxHeight: '180px',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    {psResults.map((s) => (
+                      <button
+                        key={s.code}
+                        type="button"
+                        onClick={() => {
+                          handleChange('pollingStationCode', s.code)
+                          setPsSearch(`${s.code} — ${s.name}`)
+                        }}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          width: '100%',
+                          padding: '10px 14px',
+                          textAlign: 'left',
+                          background: 'none',
+                          border: 'none',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          cursor: 'pointer',
+                          gap: '2px',
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            fontSize: '12px',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
+                          {s.code}
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontSize: '11px',
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          {s.name} · {s.constituency}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         ) : (
           <div className="space-y-2">

@@ -149,6 +149,13 @@ export default function Register() {
       if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
         updates.countryCode = dbCountryCodes[value]
       }
+      if (field === 'region') {
+        updates.constituency = ''
+        updates.pollingStationCode = ''
+      }
+      if (field === 'constituency') {
+        updates.pollingStationCode = ''
+      }
       return updates
     })
   }

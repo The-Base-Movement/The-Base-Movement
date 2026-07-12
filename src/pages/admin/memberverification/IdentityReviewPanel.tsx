@@ -157,6 +157,8 @@ export function IdentityReviewPanel({
               ['Education', selectedMember.educationLevel],
               ['Phone', selectedMember.phone],
               ['Submitted', selectedMember.submitted],
+              ["Voter's ID Card", selectedMember.votersIdCard],
+              ['Polling Station', selectedMember.pollingStationCode],
             ].map(([k, v]) => (
               <div key={k}>
                 <dt

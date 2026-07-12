@@ -155,6 +155,8 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
         status: 'Active',
         registration_source: 'admin',
         registered_by: adminService.getCurrentUser()?.id || null,
+        voters_id_card: data.votersIdCard || undefined,
+        polling_station_code: data.pollingStationCode || undefined,
       }
       const { error: dbError } = await adminService.registerMember(newUser)
       if (dbError) throw dbError

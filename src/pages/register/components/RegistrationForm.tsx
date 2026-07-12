@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 import type { Area } from 'react-easy-crop'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
@@ -62,6 +64,48 @@ export function RegistrationForm(props: RegistrationFormProps) {
   } = props
   const displayStep = formStep
   const totalSteps = 4
+
+  const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
+  const [psFocused, setPsFocused] = useState(false)
+  const [psResults, setPsResults] = useState<
+    { code: string; name: string; constituency: string }[]
+  >([])
+
+  useEffect(() => {
+    if (!formData.pollingStationCode) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPsSearch('')
+    }
+  }, [formData.pollingStationCode])
+
+  useEffect(() => {
+    if (!psSearch.trim()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPsResults([])
+      return
+    }
+    if (psSearch === formData.pollingStationCode) return
+
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const { data, error } = await supabase
+          .from('polling_stations')
+          .select('code, name, constituency')
+          .ilike('region', formData.region || '')
+          .ilike('constituency', formData.constituency || '')
+          .or(`code.ilike.%${psSearch}%,name.ilike.%${psSearch}%`)
+          .limit(10)
+
+        if (!error && data) {
+          setPsResults(data)
+        }
+      } catch (err) {
+        console.error('Failed to search polling stations:', err)
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounce)
+  }, [psSearch, formData.region, formData.constituency, formData.pollingStationCode])
 
   return (
     <div className="auth-frame">
@@ -264,68 +308,159 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     it exactly as it appears on your Ghana Card.
                   </p>
                 </div>
+
+                {platform === 'GHANA' && (
+                  <div className="space-y-1.5 animate-in fade-in duration-300">
+                    <label
+                      htmlFor="input-voters-id"
+                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
+                    >
+                      Voter's ID Card Number{' '}
+                      <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                        (Optional)
+                      </span>
+                    </label>
+                    <input
+                      name="name-voters-id"
+                      id="input-voters-id"
+                      value={formData.votersIdCard || ''}
+                      onChange={(e) => onInputChange('votersIdCard', e.target.value)}
+                      className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
+                      placeholder="10-digit Voter ID Number"
+                      autoComplete="off"
+                    />
+                    <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
+                      Enter your 10-digit Voter's ID Card number. This is optional and can be
+                      updated later.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
             {formStep === 2 && (
               <div className="space-y-4 animate-in fade-in duration-500">
                 {platform === 'GHANA' ? (
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="select-64ff20"
-                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                      >
-                        Region
-                      </label>
-                      <select
-                        name="name-64ff20"
-                        id="select-64ff20"
-                        required
-                        value={formData.region}
-                        onChange={(e) => onInputChange('region', e.target.value)}
-                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
-                      >
-                        <option value="">Select Region</option>
-                        {dbRegions.map((r) => (
-                          <option key={r.id} value={r.name}>
-                            {r.name}
-                          </option>
-                        ))}
-                      </select>
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="select-64ff20"
+                          className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                        >
+                          Region
+                        </label>
+                        <select
+                          name="name-64ff20"
+                          id="select-64ff20"
+                          required
+                          value={formData.region}
+                          onChange={(e) => onInputChange('region', e.target.value)}
+                          className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                        >
+                          <option value="">Select Region</option>
+                          {dbRegions.map((r) => (
+                            <option key={r.id} value={r.name}>
+                              {r.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="select-c9e1d3"
+                          className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                        >
+                          Constituency
+                        </label>
+                        <select
+                          name="name-c9e1d3"
+                          id="select-c9e1d3"
+                          required
+                          value={formData.constituency}
+                          onChange={(e) => onInputChange('constituency', e.target.value)}
+                          className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                          disabled={!formData.region}
+                        >
+                          <option value="">Select Constituency</option>
+                          {formData.region &&
+                            dbConstituencies
+                              .filter(
+                                (c) =>
+                                  c.region_id ===
+                                  dbRegions.find((r) => r.name === formData.region)?.id
+                              )
+                              .map((c) => (
+                                <option key={c.name} value={c.name}>
+                                  {c.name}
+                                </option>
+                              ))}
+                        </select>
+                      </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="select-c9e1d3"
-                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                      >
-                        Constituency
-                      </label>
-                      <select
-                        name="name-c9e1d3"
-                        id="select-c9e1d3"
-                        required
-                        value={formData.constituency}
-                        onChange={(e) => onInputChange('constituency', e.target.value)}
-                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
-                        disabled={!formData.region}
-                      >
-                        <option value="">Select Constituency</option>
-                        {formData.region &&
-                          dbConstituencies
-                            .filter(
-                              (c) =>
-                                c.region_id ===
-                                dbRegions.find((r) => r.name === formData.region)?.id
-                            )
-                            .map((c) => (
-                              <option key={c.name} value={c.name}>
-                                {c.name}
-                              </option>
+
+                    {formData.constituency && (
+                      <div className="space-y-1.5 relative">
+                        <label
+                          htmlFor="input-polling-station"
+                          className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
+                        >
+                          Polling Station{' '}
+                          <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                            (Optional)
+                          </span>
+                        </label>
+                        <input
+                          name="name-polling-station"
+                          id="input-polling-station"
+                          value={psSearch}
+                          onChange={(e) => setPsSearch(e.target.value)}
+                          onFocus={() => setPsFocused(true)}
+                          onBlur={() => {
+                            setTimeout(() => setPsFocused(false), 200)
+                          }}
+                          className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
+                          placeholder="Search by code or name…"
+                          autoComplete="off"
+                        />
+                        {psFocused && psResults.length > 0 && (
+                          <div
+                            className="absolute left-0 right-0 mt-1 border border-border rounded-sm shadow-lg max-h-[180px] overflow-y-auto z-50"
+                            style={{ background: 'hsl(var(--card))' }}
+                          >
+                            {psResults.map((s) => (
+                              <button
+                                key={s.code}
+                                type="button"
+                                onClick={() => {
+                                  onInputChange('pollingStationCode', s.code)
+                                  setPsSearch(`${s.code} — ${s.name}`)
+                                }}
+                                className="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-border/50 transition-colors block text-xs"
+                                style={{
+                                  display: 'block',
+                                  width: '100%',
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                <b className="text-on-surface block" style={{ display: 'block' }}>
+                                  {s.code}
+                                </b>
+                                <span
+                                  className="text-on-surface-muted text-[11px]"
+                                  style={{ display: 'block' }}
+                                >
+                                  {s.name} · {s.constituency}
+                                </span>
+                              </button>
                             ))}
-                      </select>
-                    </div>
-                  </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">

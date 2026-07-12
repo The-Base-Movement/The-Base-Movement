@@ -194,6 +194,8 @@ export const registrationService = {
       registration_source: usedScan ? 'scan' : 'digital',
       referred_by: refParam || null,
       registered_by: config.registeredBy || null,
+      voters_id_card: formData.votersIdCard || null,
+      polling_station_code: formData.pollingStationCode || null,
     })
 
     if (dbError) {
