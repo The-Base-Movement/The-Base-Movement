@@ -77,11 +77,7 @@ export function MovementJourney() {
           .eq('registration_number', regNo)
           .single()
         const rawChapter = rawUser?.chapter
-        const hasNamedChapter = !!(
-          rawChapter &&
-          rawChapter.trim() !== '' &&
-          rawChapter !== 'TBM Ghana Chapter'
-        )
+        const hasNamedChapter = !!(rawChapter && rawChapter.trim() !== '')
         const hasChapter = isVerified || hasNamedChapter
         const chapterDisplay = hasNamedChapter
           ? diasporaName(rawChapter!)
