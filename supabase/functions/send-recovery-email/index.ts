@@ -39,32 +39,35 @@ Deno.serve(async (req: Request) => {
 
     const admin = createClient(supabaseUrl, serviceKey)
 
-    // Check if user exists in auth system
-    const {
-      data: { users },
-      error: listError,
-    } = await admin.auth.admin.listUsers()
-    if (listError) {
-      return json({ error: `Failed to check users: ${listError.message}` }, 500)
+    // Lookup user in public.users to get their name
+    const { data: profile, error: profileErr } = await admin
+      .from('users')
+      .select('full_name')
+      .ilike('email', email.trim())
+      .maybeSingle()
+
+    if (profileErr) {
+      console.error('[send-recovery-email] profile fetch error:', profileErr)
     }
 
-    const targetUser = users.find((u) => u.email?.toLowerCase() === email.trim().toLowerCase())
-    if (!targetUser) {
-      // Return success to avoid email enumeration, but do not send email
-      return json({ success: true, message: 'If the email exists, a reset link will be sent.' })
-    }
+    const targetName = profile?.full_name || 'Compatriot'
 
-    const targetName = targetUser.user_metadata?.name || 'Compatriot'
-
-    // Generate the recovery link server-side
+    // Generate the recovery link server-side.
+    // If the user does not exist in auth.users, this will return an error.
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
       type: 'recovery',
       email: email.trim(),
       options: { redirectTo: `${siteUrl}/reset-password` },
     })
 
-    if (linkErr || !linkData?.properties) {
-      return json({ error: `Could not generate reset link: ${linkErr?.message ?? 'unknown'}` }, 400)
+    if (linkErr) {
+      console.warn('[send-recovery-email] generateLink error:', linkErr.message)
+      // Return success to avoid email enumeration even if the user isn't registered
+      return json({ success: true, message: 'If the email exists, a reset link will be sent.' })
+    }
+
+    if (!linkData?.properties) {
+      return json({ error: 'Failed to generate action properties.' }, 500)
     }
 
     const properties = linkData.properties as Record<string, unknown>
