@@ -69,9 +69,9 @@ export function PublicChapterGrid({
       )}
       {filteredTotal === 0 && (
         <EmptyState
-          icon="account_balance"
-          title="No strategic hubs found."
-          body="Try adjusting your search to find a chapter near you."
+          icon="public"
+          title="No diaspora communities found."
+          body="Try adjusting your search to find a community near you."
           bordered
           action={
             <button className="btn btn-outline btn-sm" onClick={onClearSearch}>

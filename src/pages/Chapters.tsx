@@ -113,10 +113,10 @@ export default function Chapters() {
           setChapterDescription('')
         }, 500)
       } else {
-        toast.error('Failed to submit chapter request. Please try again.')
+        toast.error('Failed to submit your interest. Please try again.')
       }
     } catch {
-      toast.error('Strategic communication link failed.')
+      toast.error('Something went wrong. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -210,8 +210,8 @@ export default function Chapters() {
   return (
     <div className="min-h-screen bg-background pb-20">
       <SEO
-        title="Movement Chapters"
-        description="Connect with your local community through our global network of regional hubs."
+        title="Base Diaspora"
+        description="Connect with Base Diaspora communities around the world. Find people in your country or city and contribute skills, networks, and practical support toward Ghana's future."
         canonical="/chapters"
       />
 
@@ -242,7 +242,7 @@ export default function Chapters() {
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
               add
             </span>{' '}
-            Request
+            Start a Community
           </button>
         </div>
 

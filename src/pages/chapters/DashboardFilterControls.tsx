@@ -53,11 +53,11 @@ export function DashboardFilterControls({
           search
         </span>
         <input
-          aria-label="Search chapters…"
+          aria-label="Search Base Diaspora communities"
           name="searchTerm"
           id="input-db9159"
           type="text"
-          placeholder="Search chapters…"
+          placeholder="Search by country, city, or community"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -118,7 +118,7 @@ export function DashboardFilterControls({
           <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
             {showActiveOnly ? 'check_circle' : 'radio_button_unchecked'}
           </span>
-          Active chapters only
+          Active communities only
         </button>
       </div>
 
@@ -138,7 +138,7 @@ export function DashboardFilterControls({
                   marginBottom: 4,
                 }}
               >
-                Total chapters
+                Communities
               </div>
               <div
                 style={{
@@ -192,7 +192,7 @@ export function DashboardFilterControls({
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
             add
           </span>
-          Request a chapter
+          Start a Diaspora Community
         </button>
         <p
           style={{
@@ -202,10 +202,10 @@ export function DashboardFilterControls({
             color: 'hsl(var(--on-surface-muted))',
             textAlign: 'center',
             marginTop: 8,
-            fontStyle: 'italic',
           }}
         >
-          Don&apos;t see your region? Propose a new hub.
+          Do not see your country or city? Help bring the Base Diaspora community together where you
+          live.
         </p>
       </div>
     </div>

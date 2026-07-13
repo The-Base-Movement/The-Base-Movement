@@ -23,6 +23,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
+import { shortDiasporaName } from '@/lib/diaspora'
 
 interface MembershipCardProps {
   userName?: string
@@ -321,8 +322,8 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
 
             {country && country !== 'Ghana' && (
               <>
-                <dt style={dtStyle}>Chapter</dt>
-                <dd style={ddStyle}>{chapter || 'Not Specified'}</dd>
+                <dt style={dtStyle}>Diaspora</dt>
+                <dd style={ddStyle}>{chapter ? shortDiasporaName(chapter) : 'Not Specified'}</dd>
               </>
             )}
 
@@ -383,7 +384,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
 
       {/* Footer */}
       <div style={footStyle}>
-        If found, please return to the nearest Base Movement Chapter or contact the National HQ.
+        If found, please return to the nearest Base Diaspora community or contact the National HQ.
       </div>
 
       <style

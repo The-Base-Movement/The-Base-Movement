@@ -16,7 +16,7 @@ export function DashboardPageHeader({ totalChapters }: DashboardPageHeaderProps)
           marginBottom: 6,
         }}
       >
-        Movement network
+        Global community
       </div>
       <h2
         style={{
@@ -27,7 +27,7 @@ export function DashboardPageHeader({ totalChapters }: DashboardPageHeaderProps)
           margin: '0 0 4px',
         }}
       >
-        Chapters &amp; Hubs
+        Base Diaspora
       </h2>
       <p
         style={{
@@ -38,7 +38,8 @@ export function DashboardPageHeader({ totalChapters }: DashboardPageHeaderProps)
           margin: 0,
         }}
       >
-        Connect with your local community through our network of {totalChapters} regional hubs.
+        Connect with {totalChapters} diaspora communities across countries and cities contributing
+        to Ghana&rsquo;s future.
       </p>
     </div>
   )

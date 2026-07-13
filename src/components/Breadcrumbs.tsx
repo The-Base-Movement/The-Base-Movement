@@ -23,7 +23,7 @@ const LABEL_OVERRIDES: Record<string, string> = {
   broadcasts: 'Broadcasts',
   members: 'Members',
   store: 'Store',
-  chapters: 'Chapters',
+  chapters: 'Diaspora',
   'chapter-ops': 'Chapter Ops',
   settings: 'Settings',
   trash: 'Trash Vault',

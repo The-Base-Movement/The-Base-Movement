@@ -41,11 +41,13 @@ export function ChapterHeader({
                 letterSpacing: '0.05em',
               }}
             >
-              Verified chapter
+              Verified community
             </span>
           </>
         ) : (
-          <span className="pill pill-warn">{status}</span>
+          <span className="pill pill-warn">
+            {status === 'Join Chapter' ? 'Open to join' : status}
+          </span>
         )}
       </div>
       <div
@@ -98,7 +100,7 @@ export function ChapterHeader({
               >
                 group
               </span>
-              {member_count} Active members
+              {member_count} {member_count === 1 ? 'Member' : 'Members'}
             </span>
           </div>
         </div>
@@ -126,7 +128,7 @@ export function ChapterHeader({
                 ? 'Already a member'
                 : joinRequestStatus === 'pending'
                   ? 'Request pending…'
-                  : 'Request to join'}
+                  : 'Join the Diaspora'}
           </button>
         </div>
       </div>

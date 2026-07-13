@@ -18,6 +18,7 @@ import { RequestsTab } from './chapterhub/RequestsTab'
 import { SettingsTab } from './chapterhub/SettingsTab'
 import { Skeleton } from '@/components/states'
 import { isVerifiedDonation, sumDonationAmounts } from '@/services/donationCalculations'
+import { diasporaSlug, matchesChapterSlug } from '@/lib/diaspora'
 
 interface ChapterMember {
   authId: string
@@ -108,13 +109,7 @@ export default function ChapterHub() {
       if (chapterId) {
         mine = chapters.find((c) => c.id === chapterId)
         if (!mine) {
-          mine = chapters.find(
-            (c) =>
-              c.name
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)+/g, '') === chapterId
-          )
+          mine = chapters.find((c) => matchesChapterSlug(c.name, chapterId))
         }
       }
 
@@ -277,12 +272,7 @@ export default function ChapterHub() {
       m.phone.includes(q)
     )
   })
-  const slug = chapter
-    ? chapter.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '')
-    : ''
+  const slug = chapter ? diasporaSlug(chapter.name) : ''
 
   const handleSaveContact = async () => {
     if (!chapter) return

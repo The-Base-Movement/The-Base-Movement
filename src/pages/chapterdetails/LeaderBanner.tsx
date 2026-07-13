@@ -36,7 +36,7 @@ export function LeaderBanner({ chapterSlug }: LeaderBannerProps) {
               color: '#fff',
             }}
           >
-            You are the chapter leader
+            You are the Diaspora Coordinator
           </div>
           <div
             style={{
@@ -47,7 +47,7 @@ export function LeaderBanner({ chapterSlug }: LeaderBannerProps) {
               marginTop: 2,
             }}
           >
-            Manage members, donations and chapter info.
+            Manage members, donations and community info.
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@ export function LeaderBanner({ chapterSlug }: LeaderBannerProps) {
         <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
           open_in_new
         </span>
-        Manage chapter
+        Manage community
       </Link>
     </div>
   )

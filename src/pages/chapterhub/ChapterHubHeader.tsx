@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { diasporaName } from '@/lib/diaspora'
 
 interface Props {
   chapter: Chapter
@@ -13,9 +14,9 @@ export function ChapterHubHeader({ chapter, slug }: Props) {
       <div>
         <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-            account_balance
+            public
           </span>
-          {chapter.name}
+          {diasporaName(chapter.name)}
         </h2>
         <BrandLine />
         <p
@@ -27,7 +28,7 @@ export function ChapterHubHeader({ chapter, slug }: Props) {
             marginTop: 8,
           }}
         >
-          Chapter management hub — {chapter.city_or_region}, {chapter.country}
+          Community management hub — {chapter.city_or_region}, {chapter.country}
         </p>
       </div>
       <div className="actions">

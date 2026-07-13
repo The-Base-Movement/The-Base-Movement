@@ -4,6 +4,7 @@ import { JobSelector } from '@/components/JobSelector'
 import type { JobSelection } from '@/services/jobTaxonomyService'
 import { emergencyRelationships } from '@/components/admin/RegistrationForm.constants'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
+import { diasporaName } from '@/lib/diaspora'
 
 interface FormState {
   fullName: string
@@ -214,7 +215,7 @@ export function PersonalInfoForm({
           {userPlatform !== 'GHANA' && (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <label htmlFor="select-d8a77b" style={labelStyle}>
-                Assigned chapter
+                Diaspora community
               </label>
               <div style={{ position: 'relative' }}>
                 <select
@@ -224,10 +225,10 @@ export function PersonalInfoForm({
                   onChange={(e) => onChange('chapter', e.target.value)}
                   style={selectStyle}
                 >
-                  <option value="">Select Chapter</option>
+                  <option value="">Select your diaspora community</option>
                   {availableChapters.map((name) => (
                     <option key={name} value={name}>
-                      {name}
+                      {diasporaName(name)}
                     </option>
                   ))}
                 </select>

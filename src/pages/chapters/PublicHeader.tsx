@@ -38,13 +38,19 @@ export function PublicHeader({ totalChapters }: PublicHeaderProps) {
       >
         <Breadcrumbs />
         <div className="mt-6">
+          <p className="text-brand-green text-[11px] font-bold tracking-[0.14em] uppercase mb-3">
+            Global Community
+          </p>
           <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6">
-            Movement Chapters
+            Base Diaspora
           </h1>
           <BrandLine />
           <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
-            Connect with your local community through our global network of {totalChapters}+
-            regional hubs.
+            Connect with Ghanaians and friends of Ghana around the world who are contributing their
+            skills, networks, ideas, and practical support toward a stronger future for Ghana.
+          </p>
+          <p className="text-stone-400 mt-3 font-medium text-xs md:text-sm">
+            {totalChapters} diaspora communities across countries and cities
           </p>
         </div>
       </div>

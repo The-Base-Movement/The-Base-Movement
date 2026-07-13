@@ -12,7 +12,7 @@ export function LeaderProfileModal({
   leaderProfile,
   locationName,
   locationRegion,
-  leaderTitle = 'Chapter Leader',
+  leaderTitle = 'Diaspora Coordinator',
   onClose,
 }: LeaderProfileModalProps) {
   return (

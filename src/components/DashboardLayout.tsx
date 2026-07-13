@@ -6,6 +6,7 @@ import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { sessionStore } from '@/lib/sessionStore'
+import { diasporaSlug } from '@/lib/diaspora'
 import { supabase } from '@/lib/supabase'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
@@ -215,7 +216,7 @@ export default function DashboardLayout() {
 
         // Priority 1: user leads a chapter — show manage_accounts icon + Chapter Dashboard sublink
         if (leadChapter) {
-          const slug = toSlug(leadChapter)
+          const slug = diasporaSlug(leadChapter)
           setMyChapterLink({
             to: `/dashboard/chapters/${slug}`,
             icon: 'manage_accounts',
@@ -227,7 +228,7 @@ export default function DashboardLayout() {
         // Priority 2: regular member assigned to a chapter
         if (dbChapter) {
           setMyChapterLink({
-            to: `/dashboard/chapters/${toSlug(dbChapter)}`,
+            to: `/dashboard/chapters/${diasporaSlug(dbChapter)}`,
             icon: 'group',
           })
         } else {

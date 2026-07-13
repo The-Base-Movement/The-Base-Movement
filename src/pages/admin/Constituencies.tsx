@@ -5,6 +5,10 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
 import type { Constituency } from '@/types/admin'
 import { Pagination } from '@/components/Pagination'
+import { toast } from 'sonner'
+import { Modal } from './regions/Modal'
+import { DeleteModal } from './regions/DeleteModal'
+import { inputSt } from './regions/utils'
 
 const GHANA_REGIONS = [
   'All Regions',
@@ -36,16 +40,114 @@ export default function AdminConstituencies() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
 
+  // CRUD states
+  const [regions, setRegions] = useState<{ id: number; name: string }[]>([])
+  const [isSaving, setIsSaving] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  const [addModalOpen, setAddModalOpen] = useState(false)
+  const [editConstituency, setEditConstituency] = useState<Constituency | null>(null)
+  const [deleteConstituency, setDeleteConstituency] = useState<Constituency | null>(null)
+
+  // Form input states
+  const [inputValue, setInputValue] = useState('')
+  const [selectedRegionId, setSelectedRegionId] = useState<number | ''>('')
+
+  // Advanced edit fields
+  const [editName, setEditName] = useState('')
+  const [editRegionId, setEditRegionId] = useState<number | ''>('')
+  const [editStatus, setEditStatus] = useState('')
+  const [editDescription, setEditDescription] = useState('')
+  const [editMeetingSchedule, setEditMeetingSchedule] = useState('')
+  const [editLocalFocus, setEditLocalFocus] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+  const [editPhoneNumber, setEditPhoneNumber] = useState('')
+
+  const refresh = () => {
+    setLoading(true)
+    setRefreshKey((k) => k + 1)
+  }
+
   useEffect(() => {
     Promise.all([
       constituencyService.getConstituencies(),
       constituencyService.getAssignmentIssues(),
-    ]).then(([constituencyRows, issueRows]) => {
+      constituencyService.getRegions(),
+    ]).then(([constituencyRows, issueRows, regionRows]) => {
       setConstituencies(constituencyRows)
       setAssignmentIssues(issueRows)
+      setRegions(regionRows)
       setLoading(false)
     })
-  }, [])
+  }, [refreshKey])
+
+  const handleAddConstituency = async () => {
+    if (!inputValue.trim() || !selectedRegionId) return
+    setIsSaving(true)
+    const ok = await constituencyService.createConstituency(
+      Number(selectedRegionId),
+      inputValue.trim()
+    )
+    setIsSaving(false)
+    if (ok) {
+      toast.success(`Constituency "${inputValue.trim()}" created`)
+      setAddModalOpen(false)
+      setInputValue('')
+      setSelectedRegionId('')
+      refresh()
+    } else {
+      toast.error('Failed to create constituency')
+    }
+  }
+
+  const handleEditClick = (c: Constituency) => {
+    setEditConstituency(c)
+    setEditName(c.name)
+    setEditRegionId(c.regionId)
+    setEditStatus(c.status)
+    setEditDescription(c.description || '')
+    setEditMeetingSchedule(c.meetingSchedule || '')
+    setEditLocalFocus(c.localFocus || '')
+    setEditEmail(c.email || '')
+    setEditPhoneNumber(c.phoneNumber || '')
+  }
+
+  const handleUpdateConstituency = async () => {
+    if (!editConstituency || !editName.trim() || !editRegionId) return
+    setIsSaving(true)
+    const ok = await constituencyService.updateConstituency(editConstituency.id, {
+      name: editName.trim(),
+      regionId: Number(editRegionId),
+      status: editStatus,
+      description: editDescription || undefined,
+      meetingSchedule: editMeetingSchedule || undefined,
+      localFocus: editLocalFocus || undefined,
+      email: editEmail || undefined,
+      phoneNumber: editPhoneNumber || undefined,
+    })
+    setIsSaving(false)
+    if (ok) {
+      toast.success(`Constituency updated successfully`)
+      setEditConstituency(null)
+      refresh()
+    } else {
+      toast.error('Failed to update constituency')
+    }
+  }
+
+  const handleDeleteConstituency = async () => {
+    if (!deleteConstituency) return
+    setIsSaving(true)
+    const ok = await constituencyService.deleteConstituency(deleteConstituency.id)
+    setIsSaving(false)
+    if (ok) {
+      toast.success(`Constituency "${deleteConstituency.name}" deleted`)
+      setDeleteConstituency(null)
+      refresh()
+    } else {
+      toast.error('Failed to delete constituency')
+    }
+  }
 
   const filtered = useMemo(() => {
     const list = constituencies.filter((c) => {
@@ -74,7 +176,25 @@ export default function AdminConstituencies() {
 
   return (
     <div className="main">
-      <AdminPageHeader title="Constituencies" description="Manage Ghana constituency hubs" />
+      <AdminPageHeader
+        title="Constituencies"
+        description="Manage Ghana constituency hubs"
+        actions={
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              setInputValue('')
+              setSelectedRegionId('')
+              setAddModalOpen(true)
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              add
+            </span>
+            Define new constituency
+          </button>
+        }
+      />
 
       {/* KPI row */}
       <div className="kpis" style={{ marginBottom: 24 }}>
@@ -433,12 +553,37 @@ export default function AdminConstituencies() {
                     </span>
                   </td>
                   <td style={{ padding: '12px 16px' }}>
-                    <button
-                      className="btn btn-outline btn-sm"
-                      onClick={() => navigate(`/admin/constituencies/${c.id}`)}
-                    >
-                      View Hub
-                    </button>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={() => navigate(`/admin/constituencies/${c.id}`)}
+                      >
+                        View Hub
+                      </button>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={() => handleEditClick(c)}
+                        title="Edit Constituency"
+                        style={{ padding: '4px 8px', display: 'inline-flex', alignItems: 'center' }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                          edit
+                        </span>
+                      </button>
+                      <button
+                        className="btn btn-outline btn-sm btn-dest-text"
+                        onClick={() => setDeleteConstituency(c)}
+                        title="Delete Constituency"
+                        style={{ padding: '4px 8px', display: 'inline-flex', alignItems: 'center' }}
+                      >
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
+                        >
+                          delete
+                        </span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -512,13 +657,38 @@ export default function AdminConstituencies() {
               >
                 {c.leaderName ?? <span style={{ fontStyle: 'italic' }}>No coordinator</span>}
               </p>
-              <button
-                className="btn btn-outline btn-sm"
-                style={{ width: '100%' }}
-                onClick={() => navigate(`/admin/constituencies/${c.id}`)}
-              >
-                View Hub
-              </button>
+              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                <button
+                  className="btn btn-outline btn-sm"
+                  style={{ flex: 1 }}
+                  onClick={() => navigate(`/admin/constituencies/${c.id}`)}
+                >
+                  View Hub
+                </button>
+                <button
+                  className="btn btn-outline btn-sm"
+                  style={{ padding: '0 12px', display: 'inline-flex', alignItems: 'center' }}
+                  onClick={() => handleEditClick(c)}
+                  title="Edit Constituency"
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                    edit
+                  </span>
+                </button>
+                <button
+                  className="btn btn-outline btn-sm btn-dest-text"
+                  style={{ padding: '0 12px', display: 'inline-flex', alignItems: 'center' }}
+                  onClick={() => setDeleteConstituency(c)}
+                  title="Delete Constituency"
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
+                  >
+                    delete
+                  </span>
+                </button>
+              </div>
             </div>
           ))
         )}
@@ -531,6 +701,325 @@ export default function AdminConstituencies() {
           onPageChange={setCurrentPage}
           totalItems={filtered.length}
           pageSize={ITEMS_PER_PAGE}
+        />
+      )}
+      {/* ── Modals ── */}
+
+      {/* Add Constituency */}
+      {addModalOpen && (
+        <Modal
+          title="Define new constituency"
+          subtitle="Add a constituency hub to a region"
+          onClose={() => setAddModalOpen(false)}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div>
+              <label
+                htmlFor="input-con-name"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Constituency name
+              </label>
+              <input
+                name="inputValue"
+                id="input-con-name"
+                autoFocus
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="e.g. Ablekuma Central"
+                style={inputSt}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="select-con-region"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Region
+              </label>
+              <select
+                id="select-con-region"
+                value={selectedRegionId}
+                onChange={(e) => setSelectedRegionId(Number(e.target.value))}
+                style={inputSt}
+              >
+                <option value="">— select region —</option>
+                {regions.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+            <button
+              onClick={() => setAddModalOpen(false)}
+              className="btn btn-outline"
+              style={{ flex: 1, height: 42 }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddConstituency}
+              disabled={isSaving || !inputValue.trim() || !selectedRegionId}
+              className="btn btn-primary"
+              style={{ flex: 1, height: 42 }}
+            >
+              {isSaving ? 'Saving…' : 'Create constituency'}
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {/* Edit Constituency */}
+      {editConstituency && (
+        <Modal
+          title="Edit constituency"
+          subtitle={`Editing: ${editConstituency.name}`}
+          onClose={() => setEditConstituency(null)}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 14,
+              maxHeight: '60vh',
+              overflowY: 'auto',
+              paddingRight: 4,
+            }}
+          >
+            <div>
+              <label
+                htmlFor="edit-con-name"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Constituency name
+              </label>
+              <input
+                name="editName"
+                id="edit-con-name"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                style={inputSt}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="edit-con-region"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Region
+              </label>
+              <select
+                id="edit-con-region"
+                value={editRegionId}
+                onChange={(e) => setEditRegionId(Number(e.target.value))}
+                style={inputSt}
+              >
+                {regions.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="edit-con-status"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Status
+              </label>
+              <select
+                id="edit-con-status"
+                value={editStatus}
+                onChange={(e) => setEditStatus(e.target.value)}
+                style={inputSt}
+              >
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="edit-con-desc"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Description
+              </label>
+              <textarea
+                id="edit-con-desc"
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                style={{
+                  ...inputSt,
+                  height: 70,
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                  resize: 'vertical',
+                }}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="edit-con-schedule"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Meeting Schedule
+              </label>
+              <input
+                id="edit-con-schedule"
+                value={editMeetingSchedule}
+                onChange={(e) => setEditMeetingSchedule(e.target.value)}
+                placeholder="e.g. Saturdays at 4:00 PM"
+                style={inputSt}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="edit-con-focus"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Local Focus
+              </label>
+              <input
+                id="edit-con-focus"
+                value={editLocalFocus}
+                onChange={(e) => setEditLocalFocus(e.target.value)}
+                placeholder="e.g. Voter registration"
+                style={inputSt}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="edit-con-email"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Email
+              </label>
+              <input
+                id="edit-con-email"
+                type="email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                style={inputSt}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="edit-con-phone"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'block',
+                  marginBottom: 6,
+                }}
+              >
+                Phone Number
+              </label>
+              <input
+                id="edit-con-phone"
+                value={editPhoneNumber}
+                onChange={(e) => setEditPhoneNumber(e.target.value)}
+                style={inputSt}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+            <button
+              onClick={() => setEditConstituency(null)}
+              className="btn btn-outline"
+              style={{ flex: 1, height: 42 }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleUpdateConstituency}
+              disabled={isSaving || !editName.trim() || !editRegionId}
+              className="btn btn-primary"
+              style={{ flex: 1, height: 42 }}
+            >
+              {isSaving ? 'Saving…' : 'Save changes'}
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {/* Delete Constituency */}
+      {deleteConstituency && (
+        <DeleteModal
+          label="constituency"
+          itemName={`${deleteConstituency.name} (${deleteConstituency.regionName})`}
+          onClose={() => setDeleteConstituency(null)}
+          onConfirm={handleDeleteConstituency}
+          isLoading={isSaving}
         />
       )}
     </div>

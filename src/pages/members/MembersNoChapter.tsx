@@ -24,7 +24,7 @@ export function MembersNoChapter() {
           marginBottom: 8,
         }}
       >
-        You haven't joined a chapter yet
+        You haven't joined a diaspora community yet
       </div>
       <div
         style={{
@@ -37,14 +37,14 @@ export function MembersNoChapter() {
           margin: '0 auto 24px',
         }}
       >
-        Join your constituency chapter to connect with compatriots in your area and see your local
+        Join a Base Diaspora community to connect with compatriots in your area and see your local
         directory.
       </div>
       <Link to="/dashboard/chapters" className="btn btn-primary" style={{ display: 'inline-flex' }}>
         <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
           explore
         </span>
-        Browse chapters
+        Browse Base Diaspora
       </Link>
     </div>
   )

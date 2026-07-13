@@ -41,7 +41,7 @@ export function AnnouncementsPanel({ announcements, leaderAvatarUrl }: Announcem
             letterSpacing: '0.05em',
           }}
         >
-          Chapter updates
+          Community updates
         </span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -101,7 +101,7 @@ export function AnnouncementsPanel({ announcements, leaderAvatarUrl }: Announcem
                     letterSpacing: '0.04em',
                   }}
                 >
-                  Chapter Leader
+                  Diaspora Coordinator
                 </span>
                 <span
                   style={{

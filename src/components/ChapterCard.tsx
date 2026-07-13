@@ -11,6 +11,7 @@
 import { Link } from 'react-router-dom'
 import { type Chapter } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'
+import { diasporaName, diasporaSlug, coordinatorDisplayName } from '@/lib/diaspora'
 
 interface ChapterCardProps {
   chapter: Chapter
@@ -27,7 +28,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
   const isDiaspora = chapter.country !== 'Ghana'
   const isFeatured = chapter.member_count > 500
 
-  const badge = isDiaspora ? 'Diaspora' : isFeatured ? 'Featured' : isActive ? 'Active' : 'Regional'
+  const badge = isDiaspora ? 'Diaspora' : isFeatured ? 'Featured' : isActive ? 'Active' : 'Ghana'
   const headerBg = isFeatured ? 'hsl(var(--primary))' : isActive ? 'hsl(var(--accent))' : '#181d19'
   const headerTextColor = isActive && !isFeatured ? '#000' : '#fff'
   const headerMutedColor =
@@ -38,8 +39,8 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
         : 'hsl(var(--accent))'
 
   const leader = chapter.leadership?.[0]
-  const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
-  const leaderRole = leader?.role || (isDiaspora ? 'Hub coordinator' : 'Branch chair')
+  const leaderName = coordinatorDisplayName(leader?.name || chapter.leader_name)
+  const leaderRole = leader?.role || 'Diaspora Coordinator'
   const leaderInitial = leaderName.charAt(0).toUpperCase()
   const leaderImage = leader?.imageUrl || chapter.leader_avatar_url
 
@@ -48,10 +49,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
 
   const regionLabel = chapter.region || chapter.city_or_region
   const flagUrl = chapter.flag_url || null
-  const slug = chapter.name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '')
+  const slug = diasporaSlug(chapter.name)
 
   const isLeader = !!(authUserId && chapter.leader_id === authUserId)
   const isUserChapter =
@@ -92,7 +90,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
               whiteSpace: 'nowrap',
             }}
           >
-            {chapter.name}
+            {diasporaName(chapter.name)}
             {flagUrl && (
               <img
                 src={flagUrl}
@@ -154,9 +152,12 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
           }}
         >
           {[
-            { v: chapter.member_count.toLocaleString(), l: 'Members' },
-            { v: eventsCount, l: 'Events' },
-            { v: programsCount, l: 'Programs' },
+            {
+              v: chapter.member_count.toLocaleString(),
+              l: chapter.member_count === 1 ? 'Member' : 'Members',
+            },
+            { v: eventsCount, l: eventsCount === 1 ? 'Event' : 'Events' },
+            { v: programsCount, l: programsCount === 1 ? 'Programme' : 'Programmes' },
           ].map(({ v, l }) => (
             <div key={l}>
               <div
@@ -279,6 +280,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
           ) : (
             <Link
               to={`/dashboard/chapters/${slug}`}
+              aria-label={`Join the Diaspora — ${diasporaName(chapter.name)}`}
               style={{
                 flexShrink: 0,
                 padding: '6px 12px',
@@ -291,7 +293,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
                 display: 'inline-block',
               }}
             >
-              Join
+              Join the Diaspora
             </Link>
           )}
         </div>

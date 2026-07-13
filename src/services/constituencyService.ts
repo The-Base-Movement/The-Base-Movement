@@ -243,6 +243,8 @@ class ConstituencyService {
     patch: Partial<
       Pick<
         Constituency,
+        | 'name'
+        | 'regionId'
         | 'leaderId'
         | 'leaderName'
         | 'description'
@@ -254,7 +256,9 @@ class ConstituencyService {
       >
     >
   ): Promise<boolean> {
-    const updateData: Record<string, string | null | undefined> = {}
+    const updateData: Record<string, string | number | null | undefined> = {}
+    if (patch.name !== undefined) updateData.name = patch.name
+    if (patch.regionId !== undefined) updateData.region_id = patch.regionId
     if (patch.leaderId !== undefined) updateData.leader_id = patch.leaderId || null
     if (patch.leaderName !== undefined) updateData.leader_name = patch.leaderName || null
     if (patch.description !== undefined) updateData.description = patch.description || null
@@ -419,6 +423,45 @@ class ConstituencyService {
   async deleteAnnouncement(id: string) {
     const { error } = await supabase.from('constituency_announcements').delete().eq('id', id)
     if (error) throw error
+  }
+
+  async createConstituency(regionId: number, name: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('ghana_constituencies')
+      .insert({ name, region_id: regionId })
+
+    if (error) {
+      console.error('[CONSTITUENCY] Create failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async deleteConstituency(id: number): Promise<boolean> {
+    const { error } = await supabase.from('ghana_constituencies').delete().eq('id', id)
+
+    if (error) {
+      console.error('[CONSTITUENCY] Deletion failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async getRegions(): Promise<{ id: number; name: string }[]> {
+    const { data, error } = await supabase
+      .from('ghana_regions')
+      .select('id, name')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[CONSTITUENCY] Fetch regions failed:', error)
+      return []
+    }
+
+    return (data || []).map((r) => ({
+      id: r.id as number,
+      name: r.name as string,
+    }))
   }
 }
 

@@ -126,19 +126,19 @@ export default function Sidebar({
                 : []),
             ]
           : [
-              { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+              { to: '/dashboard/chapters', icon: 'public', label: 'Diaspora' },
               ...(myChapterLink
                 ? [
                     {
                       to: myChapterLink.to,
                       icon: myChapterLink.icon,
-                      label: 'My Chapter',
+                      label: 'My Community',
                       subItems: myChapterLink.subLinkTo
                         ? [
                             {
                               to: myChapterLink.subLinkTo,
                               icon: 'manage_accounts',
-                              label: 'Chapter Dashboard',
+                              label: 'Community Dashboard',
                             },
                           ]
                         : undefined,

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { ChapterLeader } from '@/types/admin'
+import { coordinatorDisplayName } from '@/lib/diaspora'
 
 interface LeadershipSidebarProps {
   chapterSlug: string
@@ -43,7 +44,7 @@ export function LeadershipSidebar({
             borderBottom: '1px solid hsl(var(--border))',
           }}
         >
-          Chapter leadership
+          Community Leadership
         </h3>
 
         {leader_name ? (
@@ -78,11 +79,11 @@ export function LeadershipSidebar({
                 {leaderAvatarUrl ? (
                   <img
                     src={leaderAvatarUrl}
-                    alt={leader_name}
+                    alt={coordinatorDisplayName(leader_name)}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
-                  leader_name.charAt(0).toUpperCase()
+                  coordinatorDisplayName(leader_name).charAt(0).toUpperCase()
                 )}
               </div>
               <div>
@@ -94,7 +95,7 @@ export function LeadershipSidebar({
                     fontFamily: "'Public Sans', sans-serif",
                   }}
                 >
-                  {leader_name}
+                  {coordinatorDisplayName(leader_name)}
                 </div>
                 <div
                   style={{
@@ -107,7 +108,7 @@ export function LeadershipSidebar({
                     fontFamily: "'Public Sans', sans-serif",
                   }}
                 >
-                  Chapter Leader
+                  Diaspora Coordinator
                 </div>
               </div>
             </div>
@@ -138,7 +139,7 @@ export function LeadershipSidebar({
                   <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                     manage_accounts
                   </span>
-                  Manage chapter
+                  Manage community
                 </Link>
               )}
             </div>
@@ -223,7 +224,7 @@ export function LeadershipSidebar({
                   letterSpacing: '0.06em',
                 }}
               >
-                Leadership pending
+                Coordinator to be appointed
               </p>
             </div>
           ) : null}
@@ -319,7 +320,7 @@ export function LeadershipSidebar({
               fontFamily: "'Public Sans', sans-serif",
             }}
           >
-            This chapter is officially recognized and verified by The Base National Headquarters.
+            This community is officially recognised and verified by The Base National Headquarters.
             All activities are coordinated with the central movement agenda.
           </p>
           <span
@@ -366,15 +367,15 @@ export function LeadershipSidebar({
             fontFamily: "'Public Sans', sans-serif",
           }}
         >
-          Your donations to this specific chapter help fund local townhalls and community outreach
-          programs in {city_or_region}.
+          Your donations to this community help fund local townhalls and community outreach
+          programmes in {city_or_region}.
         </p>
         <Link
           to="/dashboard/donate"
           className="btn btn-primary"
           style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}
         >
-          Donate to chapter
+          Support this community
         </Link>
       </div>
     </div>

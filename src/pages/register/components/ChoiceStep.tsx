@@ -49,7 +49,7 @@ export function ChoiceStep({
           <PlatformCard
             title="Base Ghana"
             subtitle="Local membership"
-            description="Designed for compatriots currently living within the 16 regions of Ghana."
+            description="Join through your constituency and take part in community action where you live."
             icon={
               <span className="material-symbols-outlined" style={{ fontSize: compact ? 20 : 24 }}>
                 location_on
@@ -64,7 +64,7 @@ export function ChoiceStep({
           <PlatformCard
             title="Base Diaspora"
             subtitle="Global membership"
-            description="Tailored for Ghanaians and supporters living abroad."
+            description="Join a global community of Ghanaians and friends of Ghana contributing from abroad."
             icon={
               <span className="material-symbols-outlined" style={{ fontSize: compact ? 20 : 24 }}>
                 public
@@ -255,7 +255,7 @@ function PlatformCard({
               : 'text-brand-gold group-hover:text-brand-gold/80'
           )}
         >
-          {active ? 'Selected platform' : 'Join platform'}{' '}
+          {active ? 'Selected platform' : `Join ${title}`}{' '}
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
             {active ? 'check_circle' : 'arrow_forward'}
           </span>

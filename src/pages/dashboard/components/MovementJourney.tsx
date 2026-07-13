@@ -4,6 +4,7 @@ import { adminService } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
 import { useAuth } from '@/context/AuthContext'
+import { diasporaName } from '@/lib/diaspora'
 
 interface Step {
   title: string
@@ -83,12 +84,12 @@ export function MovementJourney() {
         )
         const hasChapter = isVerified || hasNamedChapter
         const chapterDisplay = hasNamedChapter
-          ? rawChapter!
+          ? diasporaName(rawChapter!)
           : isVerified
             ? 'Assigned by HQ'
             : 'Up next'
         journeySteps.push({
-          title: 'Join local chapter',
+          title: 'Join a community',
           date: chapterDisplay,
           status: hasChapter ? 'Complete' : hasDonated ? 'In progress' : 'Up next',
           type: hasChapter ? 'c' : hasDonated ? 'd' : 't',

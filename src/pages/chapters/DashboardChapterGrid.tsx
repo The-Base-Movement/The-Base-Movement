@@ -32,7 +32,7 @@ export function DashboardChapterGrid({
               marginBottom: 8,
             }}
           >
-            account_balance
+            public
           </span>
           <p
             style={{
@@ -43,7 +43,7 @@ export function DashboardChapterGrid({
               color: 'hsl(var(--on-surface-muted))',
             }}
           >
-            No chapters found matching your query.
+            No diaspora communities found matching your search.
           </p>
           <button
             className="btn btn-outline btn-sm"

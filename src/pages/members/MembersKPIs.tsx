@@ -1,4 +1,5 @@
 import type { Member } from '@/types/admin'
+import { diasporaName } from '@/lib/diaspora'
 
 interface MembersKPIsProps {
   chapterMembers: Member[]
@@ -16,9 +17,9 @@ export function MembersKPIs({ chapterMembers, verifiedCount, myChapter }: Member
     icon: string
   }[] = [
     {
-      label: 'Chapter members',
+      label: 'Diaspora members',
       value: chapterMembers.length,
-      sub: myChapter,
+      sub: diasporaName(myChapter),
       bar: 'hsl(var(--on-surface))',
       val: 'hsl(var(--on-surface))',
       icon: 'groups',

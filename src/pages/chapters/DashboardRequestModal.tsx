@@ -80,7 +80,7 @@ export function DashboardRequestModal({
               className="material-symbols-outlined"
               style={{ fontSize: 18, color: 'hsl(var(--primary))' }}
             >
-              account_balance
+              public
             </span>
             <span
               style={{
@@ -90,7 +90,7 @@ export function DashboardRequestModal({
                 color: '#fff',
               }}
             >
-              Request a chapter
+              Start a Diaspora Community
             </span>
           </div>
           <p
@@ -103,7 +103,9 @@ export function DashboardRequestModal({
               lineHeight: 1.5,
             }}
           >
-            Proposals are reviewed by the National Executive Committee for strategic alignment.
+            Base Diaspora communities bring people together by country or city to connect, organise
+            constructive activities, and support Ghana&rsquo;s future. Submit your interest to help
+            start a community where you live.
           </p>
         </div>
 
@@ -129,7 +131,7 @@ export function DashboardRequestModal({
                 marginBottom: 6,
               }}
             >
-              Request Submitted
+              Thank you
             </div>
             <p
               style={{
@@ -140,8 +142,9 @@ export function DashboardRequestModal({
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
-              Your proposal for <strong>{chapterLocation}</strong> has been logged. Coordinators
-              will contact you shortly.
+              Your interest in starting a Base Diaspora community in{' '}
+              <strong>{chapterLocation}</strong> has been received. Our team will contact you after
+              reviewing your submission.
             </p>
           </div>
         ) : (
@@ -151,7 +154,7 @@ export function DashboardRequestModal({
           >
             <div>
               <label htmlFor="input-c66f5d" style={labelSt}>
-                Chapter location / country
+                Country or territory, and city or region
               </label>
               <div style={{ position: 'relative' }}>
                 <span
@@ -169,11 +172,11 @@ export function DashboardRequestModal({
                   location_on
                 </span>
                 <input
-                  aria-label="e.g. Kumasi, Ashanti Region or London, UK"
+                  aria-label="Country or territory, and city or region"
                   name="chapterLocation"
                   id="input-c66f5d"
                   required
-                  placeholder="e.g. Kumasi, Ashanti Region or London, UK"
+                  placeholder="e.g. London, United Kingdom or Toronto, Canada"
                   value={chapterLocation}
                   onChange={(e) => setChapterLocation(e.target.value)}
                   style={{ ...inputSt, paddingLeft: 32 }}
@@ -182,15 +185,15 @@ export function DashboardRequestModal({
             </div>
             <div>
               <label htmlFor="textarea-3c577c" style={labelSt}>
-                Why start a chapter here?
+                Why do you want to start this diaspora community?
               </label>
               <textarea
-                aria-label="Describe local interest and your vision for organizing this hub…"
+                aria-label="Why do you want to start this diaspora community?"
                 name="chapterDescription"
                 id="textarea-3c577c"
                 required
                 rows={4}
-                placeholder="Describe local interest and your vision for organizing this hub…"
+                placeholder="Describe local interest and your vision for this community…"
                 value={chapterDescription}
                 onChange={(e) => setChapterDescription(e.target.value)}
                 style={{
@@ -220,7 +223,7 @@ export function DashboardRequestModal({
                 disabled={isSubmitting}
                 style={{ minWidth: 120, justifyContent: 'center' }}
               >
-                {isSubmitting ? 'Submitting…' : 'Submit request'}
+                {isSubmitting ? 'Submitting…' : 'Submit interest'}
               </button>
             </div>
           </form>

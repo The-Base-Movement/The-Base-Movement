@@ -32,7 +32,7 @@ export function AboutPanel({
             letterSpacing: '0.05em',
           }}
         >
-          About this chapter
+          About this community
         </span>
       </div>
       <p
@@ -57,9 +57,9 @@ export function AboutPanel({
           lineHeight: 1.65,
         }}
       >
-        Whether you're looking to volunteer, stay informed about local policy discussions, or
-        connect with fellow movement members, the {name} provides the platform for meaningful civic
-        engagement and collective action within {city_or_region}.
+        Whether you&rsquo;re looking to volunteer, stay informed, or connect with fellow members,{' '}
+        {name} provides the platform for meaningful civic engagement and practical contribution
+        within {city_or_region}.
       </p>
       <div
         style={{
@@ -97,7 +97,7 @@ export function AboutPanel({
               fontFamily: "'Public Sans', sans-serif",
             }}
           >
-            {local_focus || 'Grassroots mobilization'}
+            {local_focus || 'Community organising'}
           </div>
         </div>
         <div
@@ -128,7 +128,7 @@ export function AboutPanel({
               fontFamily: "'Public Sans', sans-serif",
             }}
           >
-            {meeting_schedule || 'Contact chapter for schedule'}
+            {meeting_schedule || 'Contact the community for schedule'}
           </div>
         </div>
       </div>

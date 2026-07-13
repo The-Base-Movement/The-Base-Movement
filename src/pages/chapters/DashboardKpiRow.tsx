@@ -13,23 +13,23 @@ export function DashboardKpiRow({
 }: DashboardKpiRowProps) {
   const kpis = [
     {
-      label: 'Diaspora chapters',
+      label: 'Diaspora communities',
       value: diasporaCount,
-      sub: 'International hubs',
+      sub: 'Around the world',
       bar: 'hsl(var(--accent))',
       icon: 'public',
     },
     {
-      label: 'Total chapters',
+      label: 'Active communities',
       value: totalCount,
-      sub: 'Active network',
+      sub: 'Diaspora Network',
       bar: 'hsl(var(--on-surface))',
-      icon: 'account_balance',
+      icon: 'diversity_3',
     },
     {
       label: 'Countries',
       value: countryCount,
-      sub: 'Global presence',
+      sub: 'Countries and cities represented',
       bar: 'hsl(var(--primary))',
       icon: 'travel_explore',
     },

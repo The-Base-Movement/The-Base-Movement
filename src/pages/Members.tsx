@@ -10,6 +10,7 @@ import { MembersNoChapter } from './members/MembersNoChapter'
 import { MembersKPIs } from './members/MembersKPIs'
 import { MembersFilterSidebar } from './members/MembersFilterSidebar'
 import MembershipCard from '@/components/MembershipCard'
+import { diasporaName } from '@/lib/diaspora'
 
 function isVerified(m: Member) {
   return m.status === 'Active' || m.status === 'Approved' || !m.status
@@ -176,8 +177,8 @@ export default function Members() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <SEO
-        title="Chapter Directory"
-        description="Connect with compatriots in your chapter constituency."
+        title="Community Directory"
+        description="Connect with compatriots in your Base Diaspora community."
         canonical="/members"
       />
 
@@ -230,7 +231,7 @@ export default function Members() {
                   }}
                 >
                   {filteredMembers.length} member{filteredMembers.length !== 1 ? 's' : ''} in{' '}
-                  {myChapter}
+                  {diasporaName(myChapter)}
                 </span>
                 {isFiltered && (
                   <button className="btn btn-outline btn-sm" onClick={clearFilters}>
@@ -341,7 +342,8 @@ export default function Members() {
                   }}
                 >
                   "Our strength lies in our unity at the grassroots. Every verified member of this
-                  chapter is a pillar in the foundation of the new Ghana we are building together."
+                  community is a pillar in the foundation of the new Ghana we are building
+                  together."
                 </p>
               </div>
             </div>
@@ -507,7 +509,13 @@ export default function Members() {
                 }}
               >
                 {[
-                  { icon: 'home_pin', label: 'Chapter', value: selectedMember.chapter },
+                  {
+                    icon: 'home_pin',
+                    label: 'Community',
+                    value: selectedMember.chapter
+                      ? diasporaName(selectedMember.chapter)
+                      : undefined,
+                  },
                   { icon: 'location_on', label: 'Region', value: selectedMember.region },
                   { icon: 'work', label: 'Profession', value: selectedMember.profession },
                   ...(selectedMember.constituency

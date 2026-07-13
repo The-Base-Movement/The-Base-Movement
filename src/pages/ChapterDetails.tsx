@@ -20,19 +20,15 @@ import type { ChapterAnnouncement } from './chapterdetails/AnnouncementsPanel'
 import { ActivitiesPanel } from './chapterdetails/ActivitiesPanel'
 import { LeadershipSidebar } from './chapterdetails/LeadershipSidebar'
 import { LeaderProfileModal } from './chapterdetails/LeaderProfileModal'
+import { diasporaName, diasporaSlug, matchesChapterSlug } from '@/lib/diaspora'
 
 export default function ChapterDetails() {
   const { slug } = useParams<{ slug: string }>()
   const { chapters, isLoading } = useChapters()
   const { user } = useAuth()
   const authUserId = user?.id ?? null
-  const chapter: Chapter | undefined = chapters.find(
-    (c) =>
-      c.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '') === slug
-  )
+  // Matches both the new base-diaspora-<location> slugs and legacy chapter-name slugs
+  const chapter: Chapter | undefined = chapters.find((c) => matchesChapterSlug(c.name, slug))
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
@@ -213,7 +209,7 @@ export default function ChapterDetails() {
     }
     if (!chapter) return
     if (hasJoined || joinRequestStatus === 'approved') {
-      toast(`You are already a member of ${chapter.name}`)
+      toast(`You are already a member of ${diasporaName(chapter.name)}`)
       return
     }
     if (joinRequestStatus === 'pending') {
@@ -227,14 +223,14 @@ export default function ChapterDetails() {
     setIsJoining(false)
     if (alreadyInChapter) {
       toast.error(
-        'You are already a member of another chapter. You must leave or be removed from your current chapter before joining a new one.'
+        'You are already a member of another diaspora community. You must leave or be removed from your current community before joining a new one.'
       )
     } else if (alreadyRequested) {
       setJoinRequestStatus('pending')
       toast('Your join request is already pending.')
     } else if (success) {
       setJoinRequestStatus('pending')
-      toast.success('Join request sent! The chapter leader will review it shortly.')
+      toast.success('Join request sent! The Diaspora Coordinator will review it shortly.')
     } else {
       toast.error('Failed to send join request. Please try again.')
     }
@@ -293,10 +289,10 @@ export default function ChapterDetails() {
               marginBottom: 16,
             }}
           >
-            Chapter not found
+            Diaspora community not found
           </h2>
           <Link to="/dashboard/chapters" className="btn btn-primary">
-            Back to chapters
+            Back to Base Diaspora
           </Link>
         </div>
       </div>
@@ -304,22 +300,20 @@ export default function ChapterDetails() {
   }
 
   const isActive = chapter.status === 'Active' || chapter.status === 'Member'
-  const chapterSlug = chapter.name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '')
+  const chapterSlug = diasporaSlug(chapter.name)
+  const displayName = diasporaName(chapter.name)
 
   return (
     <div className="main">
       <SEO
-        title={`${chapter.name} Chapter`}
-        description={`Learn about The Base Movement's ${chapter.name} chapter — leadership, activities, and how to get involved.`}
+        title={displayName}
+        description={`Learn about ${displayName} — community leadership, events, and how to get involved.`}
         canonical={`/chapters/${slug}`}
       />
       {isLeader && <LeaderBanner chapterSlug={chapterSlug} />}
 
       <ChapterHeader
-        name={chapter.name}
+        name={displayName}
         status={chapter.status}
         isActive={isActive}
         city_or_region={chapter.city_or_region}
@@ -335,7 +329,7 @@ export default function ChapterDetails() {
       <div className="main-sidebar">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--stack-md, 20px)' }}>
           <AboutPanel
-            name={chapter.name}
+            name={displayName}
             description={chapter.description ?? ''}
             city_or_region={chapter.city_or_region}
             local_focus={chapter.local_focus}
@@ -372,7 +366,7 @@ export default function ChapterDetails() {
       {isProfileOpen && leaderProfile && (
         <LeaderProfileModal
           leaderProfile={leaderProfile}
-          locationName={chapter.name}
+          locationName={displayName}
           locationRegion={chapter.city_or_region}
           onClose={() => setIsProfileOpen(false)}
         />
@@ -381,7 +375,7 @@ export default function ChapterDetails() {
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
-        title={`Join ${chapter.name}`}
+        title={`Join ${displayName}`}
         url={window.location.href}
       />
     </div>

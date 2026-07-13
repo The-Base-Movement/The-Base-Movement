@@ -33,7 +33,7 @@ const NAV_LINKS = [
   { label: 'The Plan', publicPath: '/our-agenda', dashPath: '/dashboard/agenda' },
   { label: 'Updates', publicPath: '/blog', dashPath: '/dashboard/blog' },
   { label: 'Polls', publicPath: '/polls', dashPath: '/dashboard/polls' },
-  { label: 'Chapters', publicPath: '/chapters', dashPath: '/dashboard/chapters' },
+  { label: 'Diaspora', publicPath: '/chapters', dashPath: '/dashboard/chapters' },
   { label: 'Donate', publicPath: '/donate', dashPath: '/dashboard/donate' },
   { label: 'Contact', publicPath: '/contact', dashPath: '/dashboard/contact' },
   { label: 'Impact', publicPath: '/impact', dashPath: '/dashboard/impact' },
@@ -49,7 +49,7 @@ const PRIMARY_NAV_LABELS = new Set([
   'The Plan',
   'Updates',
   'Polls',
-  'Chapters',
+  'Diaspora',
   'Donate',
   'Contact',
 ])

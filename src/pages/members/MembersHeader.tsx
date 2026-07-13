@@ -1,4 +1,5 @@
 import { SortToggle } from '@/components/ui/SortToggle'
+import { diasporaName } from '@/lib/diaspora'
 
 interface MembersHeaderProps {
   myChapter: string | null | undefined
@@ -42,7 +43,7 @@ export function MembersHeader({ myChapter, sortOrder, onToggleSort }: MembersHea
               animation: 'pulse 1.4s infinite',
             }}
           />
-          {myChapter ? myChapter : 'Your chapter'}
+          {myChapter ? diasporaName(myChapter) : 'Your community'}
         </div>
         <h2
           style={{
@@ -53,7 +54,7 @@ export function MembersHeader({ myChapter, sortOrder, onToggleSort }: MembersHea
             margin: 0,
           }}
         >
-          Chapter directory
+          Community directory
         </h2>
       </div>
       {myChapter && <SortToggle value={sortOrder} onChange={onToggleSort} />}

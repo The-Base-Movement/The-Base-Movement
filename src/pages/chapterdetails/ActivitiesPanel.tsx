@@ -157,7 +157,7 @@ export function ActivitiesPanel({ activities }: ActivitiesPanelProps) {
                 letterSpacing: '0.06em',
               }}
             >
-              No recent activities recorded
+              No community events have been announced yet.
             </p>
           </div>
         )}

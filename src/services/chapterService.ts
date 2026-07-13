@@ -609,8 +609,8 @@ class ChapterService {
         return supabase.functions.invoke('send-push-notification', {
           body: {
             userIds: [leaderId],
-            title: 'New chapter member',
-            body: 'A new compatriot has joined your chapter.',
+            title: 'New community member',
+            body: 'A new compatriot has joined your diaspora community.',
             url: '/dashboard/chapter-hub',
           },
         })

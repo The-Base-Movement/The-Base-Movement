@@ -13,7 +13,7 @@ const FOOTER_COLS = [
     links: [
       { label: 'The plan', to: '/our-agenda' },
       { label: 'Impact', to: '/impact' },
-      { label: 'Chapters', to: '/chapters' },
+      { label: 'Diaspora', to: '/chapters' },
       { label: 'Polls', to: '/polls' },
     ],
   },

@@ -27,7 +27,7 @@ export function DashboardMobileFilterToggle({
         <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
           add
         </span>
-        Request chapter
+        Start a Community
       </button>
     </div>
   )
