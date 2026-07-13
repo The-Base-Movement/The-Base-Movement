@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { constituencyService } from '@/services/constituencyService'
 import { chapterService } from '@/services/chapterService'
+import { diasporaName } from '@/lib/diaspora'
 
 const GHANA_REGIONS = [
   'Ahafo',
@@ -270,7 +271,7 @@ export function ContactForm({
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
               public
             </span>
-            Diaspora chapter
+            Base Diaspora community
             <span className="text-slate-400 font-normal ml-1">— optional</span>
           </p>
 
@@ -305,7 +306,7 @@ export function ContactForm({
               htmlFor="chapter"
               className="text-micro font-medium text-charcoal-dark font-meta tracking-tight"
             >
-              Chapter
+              Community
             </label>
             <select
               id="chapter"
@@ -319,12 +320,12 @@ export function ContactForm({
                 {loadingChapters
                   ? 'Loading…'
                   : formData.country
-                    ? `Select chapter in ${formData.country}`
-                    : 'Select chapter'}
+                    ? `Select your community in ${formData.country}`
+                    : 'Select your community'}
               </option>
               {filteredChapters.map((c) => (
                 <option key={c.id} value={c.name}>
-                  {c.name}
+                  {diasporaName(c.name)}
                 </option>
               ))}
             </select>
