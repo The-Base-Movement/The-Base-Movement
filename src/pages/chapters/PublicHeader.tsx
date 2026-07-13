@@ -50,7 +50,7 @@ export function PublicHeader({ totalChapters }: PublicHeaderProps) {
             skills, networks, ideas, and practical support toward a stronger future for Ghana.
           </p>
           <p className="text-stone-400 mt-3 font-medium text-xs md:text-sm">
-            {totalChapters} diaspora communities across countries and cities
+            {totalChapters} diaspora communities around the world
           </p>
         </div>
       </div>

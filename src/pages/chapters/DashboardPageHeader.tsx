@@ -38,8 +38,8 @@ export function DashboardPageHeader({ totalChapters }: DashboardPageHeaderProps)
           margin: 0,
         }}
       >
-        Connect with {totalChapters} diaspora communities across countries and cities contributing
-        to Ghana&rsquo;s future.
+        Connect with {totalChapters} diaspora communities around the world contributing to
+        Ghana&rsquo;s future.
       </p>
     </div>
   )

@@ -57,7 +57,7 @@ export function DashboardFilterControls({
           name="searchTerm"
           id="input-db9159"
           type="text"
-          placeholder="Search by country, city, or community"
+          placeholder="Search by country or community"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{

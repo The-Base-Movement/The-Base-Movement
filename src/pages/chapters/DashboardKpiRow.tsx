@@ -29,7 +29,7 @@ export function DashboardKpiRow({
     {
       label: 'Countries',
       value: countryCount,
-      sub: 'Countries and cities represented',
+      sub: 'Countries represented',
       bar: 'hsl(var(--primary))',
       icon: 'travel_explore',
     },

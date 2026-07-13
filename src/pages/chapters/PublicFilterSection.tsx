@@ -39,7 +39,7 @@ export function PublicFilterSection({
                 aria-label="Search Base Diaspora communities"
                 name="searchTerm"
                 id="input-caa685"
-                placeholder="Search by country, city, or community"
+                placeholder="Search by country or community"
                 className="w-full pl-10 h-11 bg-stone-50 border border-stone-200 rounded-none focus:outline-none focus:border-brand-green font-medium text-xs"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -72,9 +72,7 @@ export function PublicFilterSection({
           </div>
           <div className="h-px bg-white/10" />
           <div>
-            <p className="text-brand-gold text-[10px] font-bold tracking-tight">
-              Countries and Cities Represented
-            </p>
+            <p className="text-brand-gold text-[10px] font-bold tracking-tight">Global Reach</p>
             <p className="text-5xl font-meta font-bold tracking-tighter mt-2">{countryCount}</p>
             <p className="text-[10px] font-bold text-stone-500 mt-1">Countries represented</p>
           </div>
