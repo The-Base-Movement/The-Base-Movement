@@ -109,18 +109,7 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   // Hardcoded baseline: every origin the app actually serves from, so a
   // stale ALLOWED_RP_ORIGINS secret can never exclude the live production URL.
   // Keep in sync with the domains attached to the Vercel project.
-  const BASELINE = [
-    'https://thebasemovement.info',
-    'https://www.thebasemovement.info',
-    'https://thebasemovement.org.gh',
-    'https://www.thebasemovement.org.gh',
-    'https://thebasemovement.com',
-    'https://www.thebasemovement.com',
-    'https://thebasemovement.creativeutil.com',
-    'https://nevermind-beta.vercel.app',
-    'https://nevermind-stifflers-projects.vercel.app',
-    'https://nevermind-git-main-stifflers-projects.vercel.app',
-  ]
+  const BASELINE = ['https://thebasemovement.org.gh', 'https://www.thebasemovement.org.gh']
   // @ts-expect-error: Deno global
   const envOrigins = Deno.env.get('ALLOWED_RP_ORIGINS') ?? ''
   const extra = envOrigins
