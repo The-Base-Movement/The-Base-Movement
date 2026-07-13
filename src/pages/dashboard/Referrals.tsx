@@ -5,6 +5,7 @@ import { referralService } from '@/services/referralService'
 import { ShareModal } from '@/components/ShareModal'
 import type { ReferredMember, ReferralStats, ReferralLeaderboardEntry } from '@/types/referrals'
 import ReferralCard from './referrals/ReferralCard'
+import { fallbackAvatar } from '@/lib/avatar'
 import SEO from '@/components/SEO'
 
 function SkeletonCard() {
@@ -80,6 +81,8 @@ export default function Referrals() {
   const [shareOpen, setShareOpen] = useState(false)
 
   const [userRegNo] = useState(() => sessionStore.getItem('userRegNo') ?? '')
+  const [userName] = useState(() => sessionStore.getItem('userName') ?? 'You')
+  const [userAvatar] = useState(() => sessionStore.getItem('userAvatar'))
   const shareUrl = userRegNo
     ? `https://www.thebasemovement.org.gh/register?ref=${userRegNo}`
     : 'https://www.thebasemovement.org.gh/register'
@@ -226,7 +229,7 @@ export default function Referrals() {
               fontFamily: "'Public Sans', sans-serif",
             }}
           >
-            Your Referrals
+            Referral Tree
           </p>
           <button className="btn btn-outline btn-sm" onClick={() => setShareOpen(true)}>
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
@@ -281,7 +284,85 @@ export default function Referrals() {
               </button>
             </div>
           ) : (
-            referrals.map((m) => <ReferralCard key={m.id} member={m} />)
+            <div>
+              {/* Root node — the current member */}
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '6px 0 12px' }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--primary))',
+                    flexShrink: 0,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <img
+                    src={userAvatar || fallbackAvatar(userName)}
+                    alt={userName}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 14,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    You
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    {userRegNo ? `${userRegNo} · ` : ''}
+                    {referrals.length} direct referral{referrals.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+              </div>
+
+              {/* Branches — only members referred directly by the current member */}
+              {referrals.map((m, i) => {
+                const isLast = i === referrals.length - 1
+                return (
+                  <div key={m.id} style={{ display: 'flex' }}>
+                    <div style={{ width: 40, flexShrink: 0, position: 'relative' }}>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: 19,
+                          top: 0,
+                          height: isLast ? 38 : '100%',
+                          borderLeft: '2px solid hsl(var(--border))',
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: 19,
+                          top: 36,
+                          width: 21,
+                          borderTop: '2px solid hsl(var(--border))',
+                        }}
+                      />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 10 }}>
+                      <ReferralCard member={m} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           )}
         </div>
       </div>
