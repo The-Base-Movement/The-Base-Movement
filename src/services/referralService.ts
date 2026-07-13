@@ -23,23 +23,23 @@ export interface ClaimReferralResult {
 }
 
 export const referralService = {
-  /** The registration number of whoever referred the current member, or null. */
-  async getMyReferrer(): Promise<string | null> {
+  /** Who referred the current member (null if nobody yet) plus their join date, for the 90-day claim window. */
+  async getReferralClaimInfo(): Promise<{ referredBy: string | null; joinedAt: string | null }> {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) return null
+    if (!user) return { referredBy: null, joinedAt: null }
 
     const { data, error } = await supabase
       .from('users')
-      .select('referred_by')
+      .select('referred_by, joined_at')
       .eq('id', user.id)
       .maybeSingle()
     if (error) {
-      console.warn('[referralService] getMyReferrer:', error)
-      return null
+      console.warn('[referralService] getReferralClaimInfo:', error)
+      return { referredBy: null, joinedAt: null }
     }
-    return data?.referred_by ?? null
+    return { referredBy: data?.referred_by ?? null, joinedAt: data?.joined_at ?? null }
   },
 
   /**

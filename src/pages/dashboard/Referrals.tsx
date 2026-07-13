@@ -90,6 +90,8 @@ export default function Referrals() {
   const [loading, setLoading] = useState(true)
   const [shareOpen, setShareOpen] = useState(false)
   const [myReferrer, setMyReferrer] = useState<string | null>(null)
+  // Days left in the 90-day claim window; null when the join date is unknown.
+  const [claimDaysLeft, setClaimDaysLeft] = useState<number | null>(null)
   const [referrerLoaded, setReferrerLoaded] = useState(false)
   const [claimCode, setClaimCode] = useState('')
   const [claiming, setClaiming] = useState(false)
@@ -124,10 +126,15 @@ export default function Referrals() {
         if (!cancelled) setLoading(false)
       })
     referralService
-      .getMyReferrer()
-      .then((ref) => {
+      .getReferralClaimInfo()
+      .then((info) => {
         if (!cancelled) {
-          setMyReferrer(ref)
+          setMyReferrer(info.referredBy)
+          setClaimDaysLeft(
+            info.joinedAt
+              ? 90 - Math.floor((Date.now() - new Date(info.joinedAt).getTime()) / 86_400_000)
+              : null
+          )
           setReferrerLoaded(true)
         }
       })
@@ -263,20 +270,37 @@ export default function Referrals() {
         ))}
       </div>
 
-      {/* Claim referral panel — only for members with no referrer recorded */}
-      {referrerLoaded && !myReferrer && (
+      {/* Claim referral panel — only for members with no referrer recorded
+          and still inside the 90-day claim window */}
+      {referrerLoaded && !myReferrer && (claimDaysLeft === null || claimDaysLeft > 0) && (
         <div className="panel" style={{ padding: '16px 20px', marginBottom: 24 }}>
-          <p
+          <div
             style={{
-              margin: '0 0 4px',
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 14,
-              color: 'hsl(var(--on-surface))',
-              fontFamily: "'Public Sans', sans-serif",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 8,
+              flexWrap: 'wrap',
+              marginBottom: 4,
             }}
           >
-            Were you invited by someone?
-          </p>
+            <p
+              style={{
+                margin: 0,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                fontSize: 14,
+                color: 'hsl(var(--on-surface))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
+            >
+              Were you invited by someone?
+            </p>
+            {claimDaysLeft !== null && (
+              <span className={`pill ${claimDaysLeft <= 14 ? 'pill-warn' : 'pill-ok'}`}>
+                {claimDaysLeft} day{claimDaysLeft !== 1 ? 's' : ''} left
+              </span>
+            )}
+          </div>
           <p
             style={{
               margin: '0 0 12px',
