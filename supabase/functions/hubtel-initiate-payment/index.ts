@@ -20,7 +20,7 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-type PaymentType = 'donation' | 'order' | 'monthly_dues' | 'payment'
+type PaymentType = 'donation' | 'group_donation' | 'order' | 'monthly_dues' | 'payment'
 
 interface InitiatePaymentBody {
   type?: PaymentType
@@ -152,6 +152,27 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    if (type === 'group_donation') {
+      // reference is the shared group_id; the charge must equal the sum of
+      // every member's Pending portion.
+      const { data: rows, error } = await supabaseAdmin
+        .from('donations')
+        .select('amount, status')
+        .eq('group_id', reference)
+
+      if (error || !rows?.length) throw new Error('Group donation was not found')
+      if (rows.some((r: { status: string }) => r.status !== 'Pending')) {
+        throw new Error('Group donation has already been processed')
+      }
+      const total = rows.reduce(
+        (sum: number, r: { amount: number | string }) => sum + Number(r.amount),
+        0
+      )
+      if (Math.abs(total - settlement.ghsAmount) > 0.01) {
+        throw new Error('Group donation total does not match the payment request')
+      }
+    }
+
     if (type === 'order') {
       const { data: order, error } = await supabaseAdmin
         .from('store_orders')
@@ -210,11 +231,13 @@ Deno.serve(async (req: Request) => {
       description:
         type === 'donation'
           ? 'The Base Movement donation'
-          : type === 'order'
-            ? 'The Base Movement store order'
-            : type === 'monthly_dues'
-              ? 'The Base Movement monthly dues'
-              : 'The Base Movement payment',
+          : type === 'group_donation'
+            ? 'The Base Movement group donation'
+            : type === 'order'
+              ? 'The Base Movement store order'
+              : type === 'monthly_dues'
+                ? 'The Base Movement monthly dues'
+                : 'The Base Movement payment',
       callbackUrl: primaryCallback,
       ...(secondaryCallback ? { secondaryCallbackUrl: secondaryCallback } : {}),
       returnUrl: body.returnUrl ?? fallbackUrl,
@@ -237,19 +260,23 @@ Deno.serve(async (req: Request) => {
           name:
             type === 'donation'
               ? 'Donation'
-              : type === 'order'
-                ? 'Store Order'
-                : type === 'monthly_dues'
-                  ? 'Monthly Dues'
-                  : 'Payment',
+              : type === 'group_donation'
+                ? 'Group Donation'
+                : type === 'order'
+                  ? 'Store Order'
+                  : type === 'monthly_dues'
+                    ? 'Monthly Dues'
+                    : 'Payment',
           description:
             type === 'donation'
               ? 'Donation to The Base Movement'
-              : type === 'order'
-                ? 'The Base Movement merchandise order'
-                : type === 'monthly_dues'
-                  ? 'Voluntary monthly dues for The Base Movement'
-                  : 'Payment to The Base Movement',
+              : type === 'group_donation'
+                ? 'Group donation to The Base Movement'
+                : type === 'order'
+                  ? 'The Base Movement merchandise order'
+                  : type === 'monthly_dues'
+                    ? 'Voluntary monthly dues for The Base Movement'
+                    : 'Payment to The Base Movement',
           quantity: 1,
           unitPrice: Number(settlement.ghsAmount.toFixed(2)),
         },

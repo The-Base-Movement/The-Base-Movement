@@ -32,6 +32,21 @@ interface DonationRow {
   users?: DonationUserJoin | null
 }
 
+export interface GroupDonationPortion {
+  registrationNumber: string
+  amountGhs: number
+}
+
+export interface GroupDonationResult {
+  ok: boolean
+  error?: string
+  registration_numbers?: string[]
+  dry_run?: boolean
+  group_id?: string
+  total_ghs?: number
+  members?: { registration_number: string; full_name: string | null; amount_ghs: number }[]
+}
+
 class DonationService {
   private static instance: DonationService
 
@@ -251,6 +266,30 @@ class DonationService {
 
   async getPendingDonations(): Promise<DonationDetail[]> {
     return this.getDonations('Pending')
+  }
+
+  /**
+   * Validates (dryRun) or creates a group donation: one Pending donation row
+   * per member, all sharing a group_id that becomes the Hubtel payment
+   * reference. Amounts are GHS. Validation runs server-side in the RPC.
+   */
+  async createGroupDonation(
+    portions: GroupDonationPortion[],
+    payerPhone: string,
+    opts: { campaignId?: string | null; country?: string; dryRun?: boolean } = {}
+  ): Promise<GroupDonationResult> {
+    const { data, error } = await supabase.rpc('create_group_donation', {
+      p_portions: portions.map((p) => ({
+        registration_number: p.registrationNumber,
+        amount_ghs: p.amountGhs.toFixed(2),
+      })),
+      p_payer_phone: payerPhone,
+      p_campaign_id: opts.campaignId ?? null,
+      p_country: opts.country ?? 'Ghana',
+      p_dry_run: opts.dryRun ?? false,
+    })
+    if (error) throw error
+    return data as GroupDonationResult
   }
 
   async getDonationStats(): Promise<{

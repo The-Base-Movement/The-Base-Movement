@@ -16,7 +16,7 @@ interface HubtelPaymentModalProps {
   isOpen: boolean
   checkoutUrl: string | null
   referenceId: string | null
-  type: 'donation' | 'order' | 'monthly_dues'
+  type: 'donation' | 'group_donation' | 'order' | 'monthly_dues'
   onClose: () => void
   onSuccess: () => void
 }
@@ -56,47 +56,64 @@ export function HubtelPaymentModal({
           : 'store_orders'
     const channelName = `hubtel_checkout_${type}_${referenceId}`
 
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: table,
-          filter: `id=eq.${referenceId}`,
-        },
-        (payload) => {
-          if (type === 'donation') {
-            if (payload.new.status === 'Verified') {
-              onSuccess()
-            } else if (payload.new.status === 'Rejected') {
-              toast.error('The payment was rejected or failed.')
-              onClose()
-            }
-          } else if (type === 'monthly_dues') {
-            if (payload.new.status === 'paid') {
-              onSuccess()
-            } else if (payload.new.status === 'failed') {
-              toast.error('The payment was rejected or failed.')
-              onClose()
-            }
-          } else {
-            if (payload.new.payment_status === 'Paid') {
-              onSuccess()
-            } else if (payload.new.status === 'Cancelled') {
-              toast.error('The order was cancelled or payment failed.')
-              onClose()
-            }
-          }
-        }
-      )
-      .subscribe()
+    // ponytail: group rows belong to other members, so RLS hides them from
+    // realtime; the polling below uses the get_group_donation_status RPC.
+    const channel =
+      type === 'group_donation'
+        ? null
+        : supabase
+            .channel(channelName)
+            .on(
+              'postgres_changes',
+              {
+                event: 'UPDATE',
+                schema: 'public',
+                table: table,
+                filter: `id=eq.${referenceId}`,
+              },
+              (payload) => {
+                if (type === 'donation') {
+                  if (payload.new.status === 'Verified') {
+                    onSuccess()
+                  } else if (payload.new.status === 'Rejected') {
+                    toast.error('The payment was rejected or failed.')
+                    onClose()
+                  }
+                } else if (type === 'monthly_dues') {
+                  if (payload.new.status === 'paid') {
+                    onSuccess()
+                  } else if (payload.new.status === 'failed') {
+                    toast.error('The payment was rejected or failed.')
+                    onClose()
+                  }
+                } else {
+                  if (payload.new.payment_status === 'Paid') {
+                    onSuccess()
+                  } else if (payload.new.status === 'Cancelled') {
+                    toast.error('The order was cancelled or payment failed.')
+                    onClose()
+                  }
+                }
+              }
+            )
+            .subscribe()
 
     // Fallback polling every 3 seconds
     const interval = setInterval(async () => {
       try {
-        if (type === 'donation') {
+        if (type === 'group_donation') {
+          const { data, error } = await supabase.rpc('get_group_donation_status', {
+            p_group_id: referenceId,
+          })
+
+          if (error || !data) return
+          if (data.total > 0 && data.verified === data.total) {
+            onSuccess()
+          } else if (data.rejected > 0) {
+            toast.error('The payment was rejected or failed.')
+            onClose()
+          }
+        } else if (type === 'donation') {
           const { data, error } = await supabase
             .from('donations')
             .select('status')
@@ -146,7 +163,7 @@ export function HubtelPaymentModal({
 
     return () => {
       clearInterval(interval)
-      void supabase.removeChannel(channel)
+      if (channel) void supabase.removeChannel(channel)
     }
   }, [isOpen, referenceId, type, onSuccess, onClose])
 

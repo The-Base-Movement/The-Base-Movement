@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase'
 
 export interface HubtelCheckoutMetadata {
   donationId?: string
+  groupId?: string
   orderId?: string
   monthlyDuesPaymentId?: string
   memberId?: string
@@ -53,11 +54,13 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
     body: {
       type: request.metadata?.donationId
         ? 'donation'
-        : request.metadata?.orderId
-          ? 'order'
-          : request.metadata?.monthlyDuesPaymentId
-            ? 'monthly_dues'
-            : 'payment',
+        : request.metadata?.groupId
+          ? 'group_donation'
+          : request.metadata?.orderId
+            ? 'order'
+            : request.metadata?.monthlyDuesPaymentId
+              ? 'monthly_dues'
+              : 'payment',
       reference: request.reference,
       amount: request.amount,
       currency: request.currency,

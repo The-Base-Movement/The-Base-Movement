@@ -281,6 +281,50 @@ if (import.meta.main)
 
       if (donationError) throw donationError
 
+      // Group donations: the reference is a shared group_id settling every
+      // member row at once. Each row's points trigger fires individually.
+      if (!donationDecision) {
+        const { data: groupResult, error: groupError } = await supabaseAdmin.rpc(
+          'apply_hubtel_group_donation_callback',
+          { p_group_id: reference, p_paid: paid, p_transaction_id: transactionId }
+        )
+        if (groupError) throw groupError
+
+        if (groupResult?.matched) {
+          if (groupResult.already_final) {
+            return json({ success: true, paid, reference, already: true })
+          }
+          if (paid) {
+            for (const donationId of (groupResult.donation_ids ?? []) as string[]) {
+              supabaseAdmin.functions
+                .invoke('send-donation-receipt', { body: { donationId } })
+                .catch((e: unknown) => {
+                  console.error('[HUBTEL-CALLBACK] Group receipt invocation failed:', e)
+                })
+            }
+            await sendPaymentNotification(
+              'Group Donation Confirmed ✅',
+              'A successful group donation was processed.',
+              0xfcd116,
+              [
+                { name: 'Members', value: String(groupResult.member_count ?? '—'), inline: true },
+                {
+                  name: 'Amount',
+                  value: `₵ ${Number(groupResult.total_amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                  inline: true,
+                },
+                {
+                  name: 'Reference',
+                  value: reference.substring(0, 8).toUpperCase(),
+                  inline: true,
+                },
+              ]
+            )
+          }
+          return json({ success: true, paid, reference })
+        }
+      }
+
       // Monthly dues: atomic RPC transition, checked before the store-order
       // fallback so dues references never mutate orders.
       let duesDecision: ReturnType<typeof monthlyDuesCallbackDecision> = null

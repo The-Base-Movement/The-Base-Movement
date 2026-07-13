@@ -25,6 +25,7 @@ import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
+import { GroupDonatePanel } from './donate/components/GroupDonatePanel'
 import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
 
@@ -48,6 +49,7 @@ export default function PublicDonate() {
     'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
   >('idle')
   const [historyTab, setHistoryTab] = useState<'contributions' | 'spending'>('contributions')
+  const [donateMode, setDonateMode] = useState<'individual' | 'group'>('individual')
   const [searchQuery, setSearchQuery] = useState('')
   const [contributionFilter, setContributionFilter] = useState<'all' | 'me'>('all')
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
@@ -361,23 +363,55 @@ export default function PublicDonate() {
                   ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
               }}
             />
-            <MobilizationProtocol
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-              formData={formData}
-              setFormData={setFormData}
-              paymentState={paymentState}
-              checkoutUrl={checkoutUrl}
-              isLoggedIn={isLoggedIn}
-              countriesLoading={countriesLoading}
-              countries={countries}
-              currency={selectedCurrency}
-              ghsAmount={ghsDonationAmount}
-              campaigns={campaigns}
-              onSubmit={handleSubmit}
-              onReopenCheckout={() => setIsPaymentModalOpen(true)}
-              onOpenAudit={() => setIsHistoryModalOpen(true)}
-            />
+            <div
+              id="donate-mode-toggle"
+              style={{ display: 'flex', gap: 8, marginTop: 24, flexWrap: 'wrap' }}
+            >
+              <button
+                type="button"
+                className={`btn ${donateMode === 'individual' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                onClick={() => setDonateMode('individual')}
+              >
+                Donate as individual
+              </button>
+              <button
+                type="button"
+                className={`btn ${donateMode === 'group' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                onClick={() => setDonateMode('group')}
+              >
+                Donate as a group
+              </button>
+            </div>
+
+            {donateMode === 'group' && (
+              <GroupDonatePanel
+                campaignId={formData.campaignId || campaigns[0]?.id || null}
+                countries={countries}
+                defaultName={formData.fullName}
+                defaultPhone={formData.phone}
+                defaultCountry={formData.country}
+              />
+            )}
+
+            {donateMode === 'individual' && (
+              <MobilizationProtocol
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+                formData={formData}
+                setFormData={setFormData}
+                paymentState={paymentState}
+                checkoutUrl={checkoutUrl}
+                isLoggedIn={isLoggedIn}
+                countriesLoading={countriesLoading}
+                countries={countries}
+                currency={selectedCurrency}
+                ghsAmount={ghsDonationAmount}
+                campaigns={campaigns}
+                onSubmit={handleSubmit}
+                onReopenCheckout={() => setIsPaymentModalOpen(true)}
+                onOpenAudit={() => setIsHistoryModalOpen(true)}
+              />
+            )}
 
             {pastCampaigns.length > 0 && (
               <>
