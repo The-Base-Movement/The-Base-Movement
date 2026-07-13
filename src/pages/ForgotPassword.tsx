@@ -81,10 +81,11 @@ export default function ForgotPassword() {
     }
     setIsLoading(true)
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/reset-password`,
+      const { data, error } = await supabase.functions.invoke('send-recovery-email', {
+        body: { email: email.trim() },
       })
       if (error) throw error
+      if (data?.error) throw new Error(data.error)
       setEmailSent(true)
     } catch (err: unknown) {
       console.error('[EMAIL RESET ERROR]', err)
