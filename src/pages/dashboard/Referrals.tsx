@@ -7,6 +7,16 @@ import type { ReferredMember, ReferralStats, ReferralLeaderboardEntry } from '@/
 import ReferralCard from './referrals/ReferralCard'
 import { fallbackAvatar } from '@/lib/avatar'
 import SEO from '@/components/SEO'
+import { toast } from 'sonner'
+
+const CLAIM_ERRORS: Record<string, string> = {
+  invalid_code: 'That referral code was not found. Check it and try again.',
+  already_referred: 'Your account already has a referrer recorded.',
+  self_referral: 'You cannot enter your own referral code.',
+  window_expired: 'Referral codes can only be entered within 90 days of joining.',
+  not_registered: 'Your member profile could not be found.',
+  not_authenticated: 'Please log in again and retry.',
+}
 
 function SkeletonCard() {
   return (
@@ -79,6 +89,10 @@ export default function Referrals() {
   const [leaderboard, setLeaderboard] = useState<ReferralLeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [shareOpen, setShareOpen] = useState(false)
+  const [myReferrer, setMyReferrer] = useState<string | null>(null)
+  const [referrerLoaded, setReferrerLoaded] = useState(false)
+  const [claimCode, setClaimCode] = useState('')
+  const [claiming, setClaiming] = useState(false)
 
   const [userRegNo] = useState(() => sessionStore.getItem('userRegNo') ?? '')
   const [userName] = useState(() => sessionStore.getItem('userName') ?? 'You')
@@ -109,10 +123,43 @@ export default function Referrals() {
       .catch(() => {
         if (!cancelled) setLoading(false)
       })
+    referralService
+      .getMyReferrer()
+      .then((ref) => {
+        if (!cancelled) {
+          setMyReferrer(ref)
+          setReferrerLoaded(true)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setReferrerLoaded(true)
+      })
     return () => {
       cancelled = true
     }
   }, [userRegNo])
+
+  const handleClaim = async () => {
+    const code = claimCode.trim()
+    if (!code) {
+      toast.error('Enter the referral code you were given.')
+      return
+    }
+    setClaiming(true)
+    try {
+      const result = await referralService.claimReferral(code)
+      if (result.ok) {
+        setMyReferrer(result.referrer_registration_number ?? code.toUpperCase())
+        toast.success(`You are now recorded as invited by ${result.referrer_name}.`)
+      } else {
+        toast.error(CLAIM_ERRORS[result.error ?? ''] ?? 'Could not record the referral.')
+      }
+    } catch {
+      toast.error('Could not record the referral. Please try again.')
+    } finally {
+      setClaiming(false)
+    }
+  }
 
   const kpis = [
     {
@@ -215,6 +262,56 @@ export default function Referrals() {
           </div>
         ))}
       </div>
+
+      {/* Claim referral panel — only for members with no referrer recorded */}
+      {referrerLoaded && !myReferrer && (
+        <div className="panel" style={{ padding: '16px 20px', marginBottom: 24 }}>
+          <p
+            style={{
+              margin: '0 0 4px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              fontSize: 14,
+              color: 'hsl(var(--on-surface))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            Were you invited by someone?
+          </p>
+          <p
+            style={{
+              margin: '0 0 12px',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            If you joined without using their link, enter their referral code (their membership
+            number) so they get credit for inviting you.
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              value={claimCode}
+              onChange={(e) => setClaimCode(e.target.value)}
+              placeholder="e.g. TBM-GH-000123"
+              style={{
+                flex: '1 1 220px',
+                boxSizing: 'border-box',
+                padding: '8px 12px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-xs)',
+                fontSize: 14,
+                fontFamily: "'Public Sans', sans-serif",
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--card))',
+              }}
+            />
+            <button className="btn btn-primary btn-sm" onClick={handleClaim} disabled={claiming}>
+              {claiming ? 'Recording…' : 'Record my inviter'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Referral list panel */}
       <div className="panel" style={{ padding: 0, overflow: 'hidden', marginBottom: 24 }}>

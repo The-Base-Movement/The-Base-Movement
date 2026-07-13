@@ -147,6 +147,7 @@ export function GroupDonatePanel({
         campaignId,
         country: payerCountry,
         groupName,
+        payerName,
       })
       if (!result.ok || !result.group_id || !result.total_ghs) {
         toast.error(describeError(result))

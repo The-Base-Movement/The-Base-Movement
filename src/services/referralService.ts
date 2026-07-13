@@ -15,7 +15,47 @@ interface ReferralRow {
   joined_at: string
 }
 
+export interface ClaimReferralResult {
+  ok: boolean
+  error?: string
+  referrer_name?: string
+  referrer_registration_number?: string
+}
+
 export const referralService = {
+  /** The registration number of whoever referred the current member, or null. */
+  async getMyReferrer(): Promise<string | null> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return null
+
+    const { data, error } = await supabase
+      .from('users')
+      .select('referred_by')
+      .eq('id', user.id)
+      .maybeSingle()
+    if (error) {
+      console.warn('[referralService] getMyReferrer:', error)
+      return null
+    }
+    return data?.referred_by ?? null
+  },
+
+  /**
+   * Credits an inviter after the fact: a member who registered without a
+   * ?ref= link enters the inviter's referral code (their registration
+   * number). Validation — one claim ever, no self-referral, 90-day window —
+   * lives in the claim_referral RPC.
+   */
+  async claimReferral(code: string): Promise<ClaimReferralResult> {
+    const { data, error } = await supabase.rpc('claim_referral', {
+      p_referral_code: code.trim(),
+    })
+    if (error) throw error
+    return data as ClaimReferralResult
+  },
+
   async getMyReferrals(): Promise<ReferredMember[]> {
     const {
       data: { user },

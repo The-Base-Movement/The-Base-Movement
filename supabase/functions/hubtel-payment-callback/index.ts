@@ -312,6 +312,11 @@ if (import.meta.main)
                   value: (groupResult.group_name as string) || 'Unnamed group',
                   inline: true,
                 },
+                {
+                  name: 'Paid by',
+                  value: (groupResult.paid_by_name as string) || 'Anonymous Compatriot',
+                  inline: true,
+                },
                 { name: 'Members', value: String(groupResult.member_count ?? '—'), inline: true },
                 {
                   name: 'Amount',

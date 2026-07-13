@@ -281,6 +281,7 @@ class DonationService {
       country?: string
       dryRun?: boolean
       groupName?: string | null
+      payerName?: string | null
     } = {}
   ): Promise<GroupDonationResult> {
     const { data, error } = await supabase.rpc('create_group_donation', {
@@ -293,6 +294,7 @@ class DonationService {
       p_country: opts.country ?? 'Ghana',
       p_dry_run: opts.dryRun ?? false,
       p_group_name: opts.groupName?.trim() || null,
+      p_payer_name: opts.payerName?.trim() || null,
     })
     if (error) throw error
     return data as GroupDonationResult
