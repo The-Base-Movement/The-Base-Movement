@@ -11,6 +11,8 @@ import { toast } from 'sonner'
 
 const CLAIM_ERRORS: Record<string, string> = {
   invalid_code: 'That referral code was not found. Check it and try again.',
+  bad_length:
+    'Referral codes have six digits after TBM-GH or TBM-DI (e.g. TBM-DI-123456). Yours has the wrong number of digits — check the code with your inviter.',
   already_referred: 'Your account already has a referrer recorded.',
   self_referral: 'You cannot enter your own referral code.',
   window_expired: 'Referral codes can only be entered within 90 days of joining.',
