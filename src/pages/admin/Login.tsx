@@ -315,7 +315,7 @@ export default function AdminLogin() {
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                     {isLoading ? 'hourglass_empty' : 'login'}
                   </span>
-                  {isLoading ? 'Authenticating...' : 'Continue securely'}
+                  {isLoading ? 'Authenticating...' : 'Sign-In'}
                 </button>
                 <Link
                   to="/forgot-password"
