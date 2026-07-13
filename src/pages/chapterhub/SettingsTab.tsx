@@ -104,7 +104,7 @@ export function SettingsTab({
                 letterSpacing: '0.05em',
               }}
             >
-              Chapter profile
+              Community profile
             </span>
           </div>
           <button
@@ -120,14 +120,14 @@ export function SettingsTab({
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label htmlFor="textarea-ba58d1" style={lbl}>
-              About this chapter
+              About this community
             </label>
             <textarea
               name="descDraft"
               id="textarea-ba58d1"
               value={descDraft}
               onChange={(e) => onDescChange(e.target.value)}
-              placeholder="Describe your chapter's mission, goals, and focus areas…"
+              placeholder="Describe your community's mission, goals, and focus areas…"
               rows={4}
               style={{
                 width: '100%',
@@ -293,7 +293,7 @@ export function SettingsTab({
         >
           <div>
             <label htmlFor="input-17e0b1" style={lbl}>
-              Chapter email
+              Community email
             </label>
             <input
               name="emailDraft"
@@ -307,7 +307,7 @@ export function SettingsTab({
           </div>
           <div>
             <label htmlFor="input-ec7459" style={lbl}>
-              Chapter phone
+              Community phone
             </label>
             <input
               name="phoneDraft"
