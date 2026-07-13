@@ -180,6 +180,14 @@ export const routes: RouteObject[] = [
     element: <RegistrationFormPreview />,
   },
   {
+    path: '/command',
+    element: <AdminLogin />,
+  },
+  {
+    path: '/admin-login',
+    element: <AdminLogin />,
+  },
+  {
     element: <ProtectedRoute />,
     children: [
       {
@@ -382,8 +390,6 @@ export const routes: RouteObject[] = [
       { path: '/press', element: <Press /> },
       { path: '/verify/:id', element: <VerifyID /> },
       { path: '/payment-complete', element: <PaymentComplete /> },
-      { path: '/command', element: <AdminLogin /> },
-      { path: '/admin-login', element: <AdminLogin /> },
       { path: '/preview-officer', element: <PreviewOfficer /> },
       { path: '/officers', element: <Officers /> },
       { path: '/officers/:slug', element: <OfficerDetail /> },
