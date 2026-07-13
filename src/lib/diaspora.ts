@@ -13,10 +13,11 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '')
 
-/** Location extracted from a stored chapter name, e.g. 'TBM Belgium Chapter' → 'Belgium'. */
+/** Location extracted from a stored name, e.g. 'TBM Belgium Chapter' or 'Base Diaspora — Belgium' → 'Belgium'. */
 export function diasporaLocation(rawName: string): string {
   return (
     rawName
+      .replace(/^Base Diaspora\s*[—–-]\s*/i, '')
       .replace(/^TBM\s+/i, '')
       .replace(/\s+Chapter$/i, '')
       .trim() || rawName
@@ -44,10 +45,14 @@ export function legacyChapterSlug(rawName: string): string {
   return slugify(rawName)
 }
 
-/** True when a URL slug refers to this chapter — accepts both new and legacy slugs. */
+/** True when a URL slug refers to this chapter — accepts new, legacy, and pre-rename TBM slugs. */
 export function matchesChapterSlug(rawName: string, slug: string | undefined): boolean {
   if (!slug) return false
-  return diasporaSlug(rawName) === slug || legacyChapterSlug(rawName) === slug
+  return (
+    diasporaSlug(rawName) === slug ||
+    legacyChapterSlug(rawName) === slug ||
+    slugify(`tbm ${diasporaLocation(rawName)} chapter`) === slug
+  )
 }
 
 /** Public-facing coordinator name — hides internal 'Unassigned' placeholder. */
