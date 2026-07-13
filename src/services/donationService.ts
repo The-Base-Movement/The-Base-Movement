@@ -276,7 +276,12 @@ class DonationService {
   async createGroupDonation(
     portions: GroupDonationPortion[],
     payerPhone: string,
-    opts: { campaignId?: string | null; country?: string; dryRun?: boolean } = {}
+    opts: {
+      campaignId?: string | null
+      country?: string
+      dryRun?: boolean
+      groupName?: string | null
+    } = {}
   ): Promise<GroupDonationResult> {
     const { data, error } = await supabase.rpc('create_group_donation', {
       p_portions: portions.map((p) => ({
@@ -287,6 +292,7 @@ class DonationService {
       p_campaign_id: opts.campaignId ?? null,
       p_country: opts.country ?? 'Ghana',
       p_dry_run: opts.dryRun ?? false,
+      p_group_name: opts.groupName?.trim() || null,
     })
     if (error) throw error
     return data as GroupDonationResult

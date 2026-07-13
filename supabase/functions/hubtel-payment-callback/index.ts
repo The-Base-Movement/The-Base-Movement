@@ -307,6 +307,11 @@ if (import.meta.main)
               'A successful group donation was processed.',
               0xfcd116,
               [
+                {
+                  name: 'Group',
+                  value: (groupResult.group_name as string) || 'Unnamed group',
+                  inline: true,
+                },
                 { name: 'Members', value: String(groupResult.member_count ?? '—'), inline: true },
                 {
                   name: 'Amount',

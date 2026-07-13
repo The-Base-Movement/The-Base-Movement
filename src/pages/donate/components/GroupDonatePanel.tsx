@@ -4,6 +4,7 @@ import { donationService, type GroupDonationResult } from '@/services/donationSe
 import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
+import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
 import type { Country } from '@/services/adminService'
 import { DonateSuccessPanel } from './DonateSuccessPanel'
 
@@ -30,6 +31,7 @@ export function GroupDonatePanel({
 }: GroupDonatePanelProps) {
   const [pasteText, setPasteText] = useState('')
   const [preview, setPreview] = useState<GroupDonationResult | null>(null)
+  const [groupName, setGroupName] = useState('')
   const [payerName, setPayerName] = useState(defaultName)
   const [payerPhone, setPayerPhone] = useState(defaultPhone)
   const [payerCountry, setPayerCountry] = useState(defaultCountry || 'Ghana')
@@ -39,7 +41,12 @@ export function GroupDonatePanel({
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
-  const parsePortions = (text: string) =>
+  // Amounts are entered in the payer country's currency and converted to GHS
+  // once, here — the rows, the Hubtel charge and the sum check all use the
+  // same GHS numbers, so there is no double-conversion drift.
+  const currency = getCurrencyForCountry(payerCountry)
+
+  const parseEntries = (text: string) =>
     text
       .split('\n')
       .map((line) => line.trim())
@@ -48,9 +55,18 @@ export function GroupDonatePanel({
         const parts = line.split(/[,\t ]+/).filter(Boolean)
         return {
           registrationNumber: parts.slice(0, -1).join(' '),
-          amountGhs: Number(parts[parts.length - 1]),
+          entered: Number(parts[parts.length - 1]),
         }
       })
+
+  const toGhsPortions = (entries: ReturnType<typeof parseEntries>) =>
+    entries.map((e) => ({
+      registrationNumber: e.registrationNumber,
+      amountGhs: Number(convertToGhs(e.entered, currency).toFixed(2)),
+    }))
+
+  const enteredByReg = (entries: ReturnType<typeof parseEntries>) =>
+    new Map(entries.map((e) => [e.registrationNumber.toUpperCase(), e.entered]))
 
   const describeError = (result: GroupDonationResult) => {
     const regs = (result.registration_numbers ?? []).join(', ')
@@ -82,8 +98,8 @@ export function GroupDonatePanel({
   }
 
   const handlePreview = async () => {
-    const portions = parsePortions(pasteText)
-    if (portions.length < 2) {
+    const entries = parseEntries(pasteText)
+    if (entries.length < 2) {
       toast.error('Paste at least 2 lines, one per member: REG-NUMBER AMOUNT')
       return
     }
@@ -94,10 +110,11 @@ export function GroupDonatePanel({
     }
     setBusy(true)
     try {
-      const result = await donationService.createGroupDonation(portions, phone.e164, {
+      const result = await donationService.createGroupDonation(toGhsPortions(entries), phone.e164, {
         campaignId,
         country: payerCountry,
         dryRun: true,
+        groupName,
       })
       if (!result.ok) {
         setPreview(null)
@@ -125,10 +142,11 @@ export function GroupDonatePanel({
     }
     setBusy(true)
     try {
-      const portions = parsePortions(pasteText)
-      const result = await donationService.createGroupDonation(portions, phone.e164, {
+      const entries = parseEntries(pasteText)
+      const result = await donationService.createGroupDonation(toGhsPortions(entries), phone.e164, {
         campaignId,
         country: payerCountry,
+        groupName,
       })
       if (!result.ok || !result.group_id || !result.total_ghs) {
         toast.error(describeError(result))
@@ -137,15 +155,19 @@ export function GroupDonatePanel({
       setGroupId(result.group_id)
       const url = await initiateHubtelCheckout({
         reference: result.group_id,
+        // The charge is always the stored GHS total; the entered currency is
+        // metadata only, so the sum check on the server is exact.
         amount: result.total_ghs,
         currency: 'GHS',
         name: payerName.trim(),
         phone: phone.e164,
         metadata: {
           groupId: result.group_id,
+          groupName: groupName.trim() || undefined,
           memberCount: result.members?.length,
           ghsAmount: result.total_ghs,
           currency: 'GHS',
+          sourceCurrency: currency.code,
         },
       })
       setCheckoutUrl(url)
@@ -200,13 +222,25 @@ export function GroupDonatePanel({
           </h3>
           <p style={{ margin: '4px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
             One member pays for the whole group. Every listed member is credited and rewarded for
-            their own portion. Amounts are in GHS.
+            their own portion. Amounts follow the payer country&apos;s currency ({currency.code}).
           </p>
         </div>
       </div>
 
+      <div style={{ marginBottom: 16 }}>
+        <label style={labelStyle}>Group name (optional)</label>
+        <input
+          type="text"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+          maxLength={120}
+          placeholder="e.g. Kumasi Youth Wing"
+          style={inputStyle}
+        />
+      </div>
+
       <label style={labelStyle}>
-        Member list — one line per member: registration number, then amount
+        Member list — one line per member: registration number, then amount in {currency.code}
       </label>
       <textarea
         value={pasteText}
@@ -249,7 +283,10 @@ export function GroupDonatePanel({
           <label style={labelStyle}>Payer country</label>
           <select
             value={payerCountry}
-            onChange={(e) => setPayerCountry(e.target.value)}
+            onChange={(e) => {
+              setPayerCountry(e.target.value)
+              setPreview(null) // country sets the currency; converted amounts go stale
+            }}
             style={inputStyle}
           >
             {countries.map((c) => (
@@ -267,11 +304,16 @@ export function GroupDonatePanel({
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr>
-                  {['Member', 'Registration no.', 'Amount (GHS)'].map((h) => (
+                  {[
+                    'Member',
+                    'Registration no.',
+                    ...(currency.code !== 'GHS' ? [`Amount (${currency.code})`] : []),
+                    'Amount (GHS)',
+                  ].map((h) => (
                     <th
                       key={h}
                       style={{
-                        textAlign: h === 'Amount (GHS)' ? 'right' : 'left',
+                        textAlign: h.startsWith('Amount') ? 'right' : 'left',
                         padding: '8px 10px',
                         borderBottom: '1px solid hsl(var(--border))',
                         fontSize: 10,
@@ -307,6 +349,23 @@ export function GroupDonatePanel({
                     >
                       {m.registration_number}
                     </td>
+                    {currency.code !== 'GHS' && (
+                      <td
+                        style={{
+                          padding: '8px 10px',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          textAlign: 'right',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {(
+                          enteredByReg(parseEntries(pasteText)).get(m.registration_number) ?? 0
+                        ).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </td>
+                    )}
                     <td
                       style={{
                         padding: '8px 10px',
@@ -334,12 +393,25 @@ export function GroupDonatePanel({
               color: 'hsl(var(--on-surface))',
             }}
           >
+            {currency.code !== 'GHS' && (
+              <>
+                {currency.symbol}{' '}
+                {parseEntries(pasteText)
+                  .reduce((sum, e) => sum + e.entered, 0)
+                  .toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}{' '}
+                ≈{' '}
+              </>
+            )}
             Total: ₵{' '}
             {Number(preview.total_ghs ?? 0).toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}{' '}
             · {(preview.members ?? []).length} members
+            {groupName.trim() ? ` · ${groupName.trim()}` : ''}
           </p>
         </div>
       )}
