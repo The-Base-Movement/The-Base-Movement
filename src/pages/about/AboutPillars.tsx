@@ -44,7 +44,7 @@ const PILLARS = [
     bg: 'hsl(var(--accent) / 0.08)',
     title: 'Ghana Network',
     description:
-      'Organized across all 275 constituencies, mobilizing patriots at the grassroots with region-by-region coordination.',
+      'Organized across all 275 constituencies, mobilizing compatriots at the grassroots with region-by-region coordination.',
     side: 'right' as const,
   },
   {
@@ -53,7 +53,7 @@ const PILLARS = [
     bg: 'hsl(var(--primary) / 0.08)',
     title: 'Diaspora Network',
     description:
-      'Uniting Ghanaian patriots worldwide, from London to New York to Dubai, under one movement and one agenda.',
+      'Uniting Ghanaian compatriots worldwide, from London to New York to Dubai, under one movement and one agenda.',
     side: 'right' as const,
   },
 ]

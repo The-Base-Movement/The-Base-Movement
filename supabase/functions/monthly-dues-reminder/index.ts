@@ -276,7 +276,7 @@ if (import.meta.main) {
           claimId = claimed.id
         }
 
-        const firstName = member?.full_name?.split(' ')[0] ?? 'Patriot'
+        const firstName = member?.full_name?.split(' ')[0] ?? 'Compatriot'
         const amount = `${obligation.display_currency} ${Number(obligation.display_amount).toFixed(2)} (₵${Number(obligation.amount_ghs).toFixed(2)})`
         const payUrl = `${SITE_URL}/dashboard/donations`
 

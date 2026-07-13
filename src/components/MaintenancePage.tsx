@@ -21,7 +21,7 @@ interface MaintenancePageProps {
 
 const DEFAULT_TITLE = 'Back shortly.'
 const DEFAULT_MESSAGE =
-  'We are carrying out scheduled maintenance. This usually takes less than 15 minutes. Thank you for your patience, patriot.'
+  'We are carrying out scheduled maintenance. This usually takes less than 15 minutes. Thank you for your patience, compatriot.'
 
 /**
  * Full-screen maintenance splash shown to the public site while IT has

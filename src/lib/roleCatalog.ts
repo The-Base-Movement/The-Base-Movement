@@ -204,15 +204,7 @@ const entries = [
     false,
   ],
 
-  [
-    'NATIONAL_COORDINATOR',
-    'National Coordinator / National Chairperson',
-    'NCC',
-    ops,
-    'national',
-    true,
-    true,
-  ],
+  ['NATIONAL_COORDINATOR', 'Coordinating Committee', 'NCC', ops, 'national', true, true],
   ['ORGANIZER', 'National Organiser', 'NCC', ops, 'national', false, false],
   ['NATIONAL_SECRETARY', 'National Secretary', 'NCC', ops, 'national', false, false],
   [

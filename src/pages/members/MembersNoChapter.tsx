@@ -37,7 +37,7 @@ export function MembersNoChapter() {
           margin: '0 auto 24px',
         }}
       >
-        Join your constituency chapter to connect with patriots in your area and see your local
+        Join your constituency chapter to connect with compatriots in your area and see your local
         directory.
       </div>
       <Link to="/dashboard/chapters" className="btn btn-primary" style={{ display: 'inline-flex' }}>

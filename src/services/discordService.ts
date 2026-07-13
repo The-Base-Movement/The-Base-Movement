@@ -43,7 +43,7 @@ export const discordService = {
   memberRegistered(name: string, platform: string, regionOrCountry: string, regNo: string): void {
     post(
       {
-        title: '🇬🇭 New Patriot Registered',
+        title: '🇬🇭 New Compatriot Registered',
         color: 0x006b3f,
         fields: [
           { name: 'Name', value: name || '—', inline: true },
@@ -154,7 +154,7 @@ export const discordService = {
         title: '📍 Member Joined Chapter',
         color: 0x006b3f,
         fields: [
-          { name: 'Patriot', value: name || '—', inline: true },
+          { name: 'Compatriot', value: name || '—', inline: true },
           { name: 'Reg No', value: regNo || '—', inline: true },
           { name: 'Chapter', value: chapterName || '—', inline: true },
           { name: 'Region/Country', value: regionOrCountry || '—', inline: true },
@@ -450,7 +450,7 @@ export const discordService = {
         title: '📥 Financial Ledger Downloaded',
         color: 0x5865f2,
         fields: [
-          { name: 'Patriot', value: name || '—', inline: true },
+          { name: 'Compatriot', value: name || '—', inline: true },
           { name: 'Reg No', value: regNo || '—', inline: true },
           { name: 'Ledger Type', value: ledgerType || '—', inline: true },
         ],

@@ -59,13 +59,13 @@ Deno.serve(async (req: Request) => {
     const { data: users, error: userError } = await userQuery
     if (userError) throw userError
 
-    interface Patriot {
+    interface Compatriot {
       id: string
       full_name: string
       phone_number: string | null
       email: string | null
     }
-    const recipients = (users as Patriot[])?.filter((u) => u.phone_number || u.email) || []
+    const recipients = (users as Compatriot[])?.filter((u) => u.phone_number || u.email) || []
 
     const html = broadcastEmail({
       subject: subject ?? 'Movement update',
@@ -127,7 +127,7 @@ Deno.serve(async (req: Request) => {
     )
 
     // Push notifications — fire and forget
-    const userIds = (users as Patriot[])?.map((u) => u.id) ?? []
+    const userIds = (users as Compatriot[])?.map((u) => u.id) ?? []
     if (userIds.length > 0) {
       // @ts-expect-error: Deno global
       const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''

@@ -213,7 +213,7 @@ if (import.meta.main)
         const phone = normalizePhone(rawPhone)
         const sms = await sendSms(
           [phone],
-          `Hi ${row.full_name.split(' ')[0]}! Your ${amountStr} contribution to The Base Movement is confirmed. Ref: ${row.reference}. View your receipt in the member dashboard. Thank you, Patriot!`
+          `Hi ${row.full_name.split(' ')[0]}! Your ${amountStr} contribution to The Base Movement is confirmed. Ref: ${row.reference}. View your receipt in the member dashboard. Thank you, Compatriot!`
         )
         if (sms.ok) {
           smsSent = true

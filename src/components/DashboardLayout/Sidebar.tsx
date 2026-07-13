@@ -496,7 +496,7 @@ export default function Sidebar({
                 {userName?.toLowerCase()}
               </b>
               <span className="block text-[10px] text-white/50 truncate">
-                Patriot ID: {userRegNo?.slice(0, 8)}
+                Compatriot ID: {userRegNo?.slice(0, 8)}
               </span>
             </div>
           </div>

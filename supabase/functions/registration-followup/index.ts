@@ -239,7 +239,7 @@ Deno.serve(async (req) => {
       const missing = getMissingSteps(member as UserRow)
       if (missing.length === 0) continue
 
-      const name = member.full_name || 'Patriot'
+      const name = member.full_name || 'Compatriot'
 
       // Send email if available
       if (member.email && sgKey && senderEmail) {

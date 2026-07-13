@@ -148,7 +148,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
             {formStep === 1 && 'Join the movement to build a better Ghana.'}
             {formStep === 2 && 'Used to assign you to your local branch.'}
             {formStep === 3 && 'This photo appears on your official membership card.'}
-            {formStep === 4 && 'Almost there, patriot. Confirm your details.'}
+            {formStep === 4 && 'Almost there, compatriot. Confirm your details.'}
           </p>
         </div>
 
@@ -214,7 +214,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     onChange={(e) => onInputChange('email', e.target.value)}
                     autoComplete="username"
                     className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                    placeholder="patriot@thebase.gh"
+                    placeholder="compatriot@thebase.gh"
                   />
                   <EmailSuggestion
                     email={formData.email || ''}

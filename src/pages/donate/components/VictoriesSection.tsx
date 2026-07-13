@@ -44,7 +44,7 @@ export function VictoriesSection({ pastCampaigns }: VictoriesSectionProps) {
             fontFamily: "'Public Sans', sans-serif",
           }}
         >
-          Historical proof of patriot mobilization success.
+          Historical proof of compatriot mobilization success.
         </p>
       </div>
 

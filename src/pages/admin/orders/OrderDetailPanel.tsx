@@ -121,7 +121,7 @@ export function OrderDetailPanel({
           </div>
         </div>
 
-        {/* Patriot */}
+        {/* Compatriot */}
         <div
           style={{
             paddingTop: 20,

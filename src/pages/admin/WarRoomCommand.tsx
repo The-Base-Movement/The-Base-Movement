@@ -366,7 +366,7 @@ export default function WarRoomCommand() {
           trend={{ direction: 'neutral', value: 'Sync' }}
         />
         <TacticalKPI
-          label="Verified patriots"
+          label="Verified compatriots"
           value={memberCount.toLocaleString()}
           description={`${chapterCount} active chapters`}
           variant="green"

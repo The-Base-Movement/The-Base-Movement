@@ -171,7 +171,7 @@ export function StatCards({
       color="ink"
       label="Member Since"
       value={memberSince || '—'}
-      delta="Active Patriot"
+      delta="Active Compatriot"
       icon="calendar_today"
     />,
     <Tile

@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
       year: 'numeric',
     })
     const amountStr = Number(d.amount).toLocaleString()
-    const firstName = d.full_name?.split(' ')[0] ?? 'Patriot'
+    const firstName = d.full_name?.split(' ')[0] ?? 'Compatriot'
 
     // Send email
     if (email) {

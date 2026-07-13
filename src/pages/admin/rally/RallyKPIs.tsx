@@ -52,7 +52,7 @@ export function RallyKPIs({ actions, attendance }: RallyKPIsProps) {
       <TacticalKPI
         label="Attendance"
         value={attendance.length}
-        description="Manifested patriots"
+        description="Manifested compatriots"
         variant="gold"
       />
 

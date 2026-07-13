@@ -36,7 +36,7 @@ export function DashboardKpiRow({
     {
       label: 'Diaspora members',
       value: diasporaMemberCount.toLocaleString(),
-      sub: 'Global patriots',
+      sub: 'Global compatriots',
       bar: 'hsl(var(--accent))',
       icon: 'groups',
     },

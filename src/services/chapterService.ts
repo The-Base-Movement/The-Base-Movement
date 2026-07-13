@@ -610,7 +610,7 @@ class ChapterService {
           body: {
             userIds: [leaderId],
             title: 'New chapter member',
-            body: 'A new patriot has joined your chapter.',
+            body: 'A new compatriot has joined your chapter.',
             url: '/dashboard/chapter-hub',
           },
         })

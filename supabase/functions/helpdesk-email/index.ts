@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    const firstName = user.full_name?.split(' ')[0] || user.full_name || 'Patriot'
+    const firstName = user.full_name?.split(' ')[0] || user.full_name || 'Compatriot'
     const html = helpdeskEmail({
       name: firstName,
       ticketSubject: ticket.subject || 'Support Ticket',

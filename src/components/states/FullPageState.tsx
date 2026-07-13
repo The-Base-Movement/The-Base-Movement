@@ -52,7 +52,7 @@ const DEFAULTS: Record<
     watermark: '⚙',
     eyebrow: 'Scheduled maintenance',
     title: 'Back shortly.',
-    body: 'We are updating the member portal. This usually takes less than 15 minutes. Thank you for your patience, patriot.',
+    body: 'We are updating the member portal. This usually takes less than 15 minutes. Thank you for your patience, compatriot.',
     primaryLabel: '',
     dark: false,
   },

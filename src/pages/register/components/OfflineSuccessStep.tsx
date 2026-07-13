@@ -101,7 +101,7 @@ export function OfflineSuccessStep({
               </span>
               <div>
                 <h4 className="text-xs font-semibold text-on-surface font-meta mb-0.5">
-                  Patriot Registration Draft Created
+                  Compatriot Registration Draft Created
                 </h4>
                 <p className="text-[11px] text-on-surface-muted font-medium">
                   Form data for <strong>{formData.fullName}</strong> captured successfully.
@@ -170,7 +170,7 @@ export function OfflineSuccessStep({
               </h4>
               <p className="text-[11px] text-on-surface-muted font-medium leading-relaxed mb-4">
                 {isOnline
-                  ? 'Your device is online. Trigger synchronization to permanently upload this patriot to HQ.'
+                  ? 'Your device is online. Trigger synchronization to permanently upload this compatriot to HQ.'
                   : 'You are currently offline. Check your network or data settings. Manual retry triggers upload.'}
               </p>
             </div>
@@ -227,7 +227,7 @@ export function OfflineSuccessStep({
           >
             <div>
               <h4 className="font-meta font-semibold text-xs text-on-surface tracking-tight mb-2">
-                Register Next Patriot
+                Register Next Compatriot
               </h4>
               <p className="text-[11px] text-on-surface-muted font-medium leading-relaxed mb-4">
                 Working in a low-signal area? You can proceed to register another Ghanaian citizen

@@ -275,7 +275,7 @@ export default function ProductDetails() {
           />
         </div>
 
-        {/* Patriot Reviews Section */}
+        {/* Compatriot Reviews Section */}
         <Reviews product={product} />
 
         {/* Specifications & Details */}

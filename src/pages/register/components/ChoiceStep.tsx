@@ -49,7 +49,7 @@ export function ChoiceStep({
           <PlatformCard
             title="Base Ghana"
             subtitle="Local membership"
-            description="Designed for patriots currently living within the 16 regions of Ghana."
+            description="Designed for compatriots currently living within the 16 regions of Ghana."
             icon={
               <span className="material-symbols-outlined" style={{ fontSize: compact ? 20 : 24 }}>
                 location_on

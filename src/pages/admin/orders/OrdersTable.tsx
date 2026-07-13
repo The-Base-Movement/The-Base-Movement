@@ -71,7 +71,7 @@ export function OrdersTable({
             <table className="table">
               <thead>
                 <tr>
-                  {['Order ID', 'Patriot', 'Hub', 'Amount', 'Status', 'Date', 'Actions'].map(
+                  {['Order ID', 'Compatriot', 'Hub', 'Amount', 'Status', 'Date', 'Actions'].map(
                     (h) => (
                       <th key={h}>{h}</th>
                     )

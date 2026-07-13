@@ -99,7 +99,7 @@ export default function Login() {
       const user = authService.getUser()
       if (user) {
         sessionStore.setItem('isLoggedIn', 'true')
-        sessionStore.setItem('userName', user.user_metadata?.full_name || 'Patriot')
+        sessionStore.setItem('userName', user.user_metadata?.full_name || 'Compatriot')
         if (user.user_metadata?.avatar_url) {
           sessionStore.setItem('userAvatar', user.user_metadata.avatar_url)
         }
@@ -116,7 +116,7 @@ export default function Login() {
 
       window.dispatchEvent(new Event('storage'))
 
-      toast.success('Welcome back, patriot!')
+      toast.success('Welcome back, compatriot!')
       navigate(from, { replace: true })
     } catch (error) {
       console.error('Login error:', error)

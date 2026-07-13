@@ -30,7 +30,7 @@ export const EMAIL_TEMPLATES: {
     description: 'Event or rally invitation with date, location, and RSVP',
     defaultSubject: 'You Are Invited — The Base Movement Rally',
     html: `<h2 style="margin:0 0 6px;font-family:'Public Sans',Arial;font-size:22px;font-weight:800;color:#181d19">Event Title</h2>
-<p style="margin:0 0 20px;font-size:14px;color:#6f7a71">Join us for this important gathering of patriots</p>
+<p style="margin:0 0 20px;font-size:14px;color:#6f7a71">Join us for this important gathering of compatriots</p>
 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#f4f4f4;border-radius:8px;margin-bottom:20px">
   <tr>
     <td style="padding:20px">
@@ -51,7 +51,7 @@ export const EMAIL_TEMPLATES: {
     description: 'Membership news, benefits, or important notices',
     defaultSubject: 'Membership Update — The Base Movement',
     html: `<h2 style="margin:0 0 12px;font-family:'Public Sans',Arial;font-size:22px;font-weight:800;color:#181d19">Member Notice</h2>
-<p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#444">Dear Patriot, we have an important update regarding your membership.</p>
+<p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#444">Dear Compatriot, we have an important update regarding your membership.</p>
 <ul style="margin:0 0 20px;padding-left:20px;font-size:15px;line-height:2;color:#444">
   <li>Key point one goes here</li>
   <li>Key point two goes here</li>

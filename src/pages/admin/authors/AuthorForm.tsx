@@ -600,8 +600,8 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                   <input
                     id="af-name"
                     name="af-name"
-                    aria-label="e.g. Kwame Patriot"
-                    placeholder="e.g. Kwame Patriot"
+                    aria-label="e.g. Kwame Compatriot"
+                    placeholder="e.g. Kwame Compatriot"
                     value={formData.name || ''}
                     onChange={handleNameChange}
                     style={inputSt}
@@ -615,8 +615,8 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                   <input
                     id="af-slug"
                     name="af-slug"
-                    aria-label="kwame-patriot"
-                    placeholder="kwame-patriot"
+                    aria-label="kwame-compatriot"
+                    placeholder="kwame-compatriot"
                     value={formData.slug || ''}
                     onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
                     style={inputSt}

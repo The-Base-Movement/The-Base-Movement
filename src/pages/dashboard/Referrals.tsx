@@ -138,7 +138,7 @@ export default function Referrals() {
     <div className="main">
       <SEO
         title="My Referrals"
-        description="Track the patriots you've invited to The Base Movement."
+        description="Track the compatriots you've invited to The Base Movement."
       />
 
       {/* Page header */}
@@ -163,7 +163,7 @@ export default function Referrals() {
             fontFamily: "'Public Sans', sans-serif",
           }}
         >
-          Patriots you brought into The Base Movement
+          Compatriots you brought into The Base Movement
         </p>
       </div>
 
@@ -274,7 +274,7 @@ export default function Referrals() {
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                No referrals yet — share your link to invite patriots.
+                No referrals yet — share your link to invite compatriots.
               </p>
               <button className="btn btn-outline btn-sm" onClick={() => setShareOpen(true)}>
                 Share your link

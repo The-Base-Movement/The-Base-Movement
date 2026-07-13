@@ -63,7 +63,7 @@ export default function AdminDashboard() {
   const [broadcast, setBroadcast] = useState({
     title: 'Eastern region jobs program — first cohort begins Monday',
     content:
-      'Patriots — the first 600 youth begin paid apprenticeships across 14 districts of the Eastern region this Monday.',
+      'Compatriots — the first 600 youth begin paid apprenticeships across 14 districts of the Eastern region this Monday.',
     target_type: 'REGION' as Broadcast['target_type'],
     target_value: 'Eastern',
     priority: 'Normal' as Broadcast['priority'],
@@ -322,7 +322,7 @@ export default function AdminDashboard() {
                 />
                 <KPI
                   variant="g"
-                  label="Patriots"
+                  label="Compatriots"
                   value="--"
                   delta="--"
                   description="Total verified citizens registered across the national movement database."

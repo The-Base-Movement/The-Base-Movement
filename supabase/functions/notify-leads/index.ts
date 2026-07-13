@@ -131,7 +131,7 @@ Deno.serve(async (req: Request) => {
     // Build welcome email for the new member
     const memberEmail: string | undefined = record.email
     const html = welcomeEmail({
-      name: (record.full_name ?? '').split(' ')[0] || 'Patriot',
+      name: (record.full_name ?? '').split(' ')[0] || 'Compatriot',
       regNo: record.registration_number ?? '',
       chapter: record.chapter ?? '',
       dashboardUrl: 'https://www.thebasemovement.org.gh/dashboard',

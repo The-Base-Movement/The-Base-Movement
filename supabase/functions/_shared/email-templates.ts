@@ -94,7 +94,7 @@ export function welcomeEmail(d: WelcomeEmailData): string {
     <div style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Akwaaba, ${d.name} 🇬🇭</div>
       <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">You are now a verified member of The Base.</h1>
-      <p style="line-height:1.65;color:#444;margin-bottom:14px">Your Ghana Card has been confirmed. Your membership is active and your registration number is ready. Welcome to a movement of <strong>${total}</strong> patriots building Ghana's future.</p>
+      <p style="line-height:1.65;color:#444;margin-bottom:14px">Your Ghana Card has been confirmed. Your membership is active and your registration number is ready. Welcome to a movement of <strong>${total}</strong> compatriots building Ghana's future.</p>
       ${statRow([
         { value: d.regNo, label: 'Reg. no.' },
         { value: 'Verified', label: 'Status', color: '#006B3F' },
@@ -133,7 +133,7 @@ export function newsletterSubscriberWelcomeEmail(d: NewsletterSubscriberWelcomeE
       <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:44px;color:rgba(255,255,255,.16);letter-spacing:-.04em">The Base</span>
     </div>
     <div style="padding:28px 28px 24px">
-      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Patriot —</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Compatriot —</div>
       <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Your newsletter subscription is active.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:14px">You will now receive updates from The Base Movement on policy, organizing, community action, and major movement milestones.</p>
       <p style="line-height:1.65;color:#444;margin-bottom:14px">We keep our emails focused: major announcements, public updates, and the work being done across Ghana and abroad.</p>
@@ -177,7 +177,7 @@ export function donationReceiptEmail(d: DonationReceiptEmailData): string {
 
   return `${SHELL_OPEN}
   <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
-    Your ${d.amount} contribution is confirmed. Receipt ref: ${d.reference}. Thank you, patriot.
+    Your ${d.amount} contribution is confirmed. Receipt ref: ${d.reference}. Thank you, compatriot.
   </div>
   <div style="background:#fff;border:1px solid #e4e9e2;border-radius:8px;overflow:hidden">
     ${TOP_BAR}
@@ -225,9 +225,9 @@ ${SHELL_CLOSE}`
 // ---------------------------------------------------------------------------
 
 export interface BroadcastEmailData {
-  subject: string // e.g. "Lapaz registered 1,247 new patriots in one weekend."
+  subject: string // e.g. "Lapaz registered 1,247 new compatriots in one weekend."
   preheader: string // short preview text
-  greeting?: string // e.g. "Patriots —"
+  greeting?: string // e.g. "Compatriots —"
   body: string // HTML allowed (e.g. "<p>...</p><p>...</p>")
   region?: string // pill label e.g. "Greater Accra"
   heroText?: string // large ghost text in hero e.g. "1,247"
@@ -241,7 +241,7 @@ export interface BroadcastEmailData {
 }
 
 export function broadcastEmail(d: BroadcastEmailData): string {
-  const greeting = d.greeting ?? 'Patriots —'
+  const greeting = d.greeting ?? 'Compatriots —'
   const heroBg = d.heroColor ?? 'linear-gradient(135deg,#181d19,#0f1310)'
   const heroText = d.heroText ?? 'The Base'
 
@@ -642,7 +642,7 @@ export function passwordResetEmail(d: PasswordResetEmailData): string {
     ${TOP_BAR}
     ${emailHeader('Account security')}
     <div style="padding:28px 28px 24px">
-      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Dear Patriot,</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Dear Compatriot,</div>
       <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1.2;color:#181d19;margin:0 0 14px">Reset your Base password.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:20px">An administrator has initiated a password reset request for your account. Please click the button below to choose a new password.</p>
       ${ctaButton('Choose a new password →', d.resetLink, '#006B3F')}

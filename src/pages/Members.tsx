@@ -75,7 +75,7 @@ export default function Members() {
           region: u.region || '',
           constituency: u.constituency || '',
           country: u.country || 'Ghana',
-          profession: u.profession || 'Patriot',
+          profession: u.profession || 'Compatriot',
           avatarUrl: u.avatar_url || undefined,
           status: (u.status as Member['status']) || 'Pending',
           joined: u.joined_at || '',
@@ -177,7 +177,7 @@ export default function Members() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <SEO
         title="Chapter Directory"
-        description="Connect with patriots in your chapter constituency."
+        description="Connect with compatriots in your chapter constituency."
         canonical="/members"
       />
 

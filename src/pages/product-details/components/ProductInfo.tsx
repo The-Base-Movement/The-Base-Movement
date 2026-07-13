@@ -171,7 +171,7 @@ export function ProductInfo({
           <div className="p-6 bg-stone-50 border-l-4 border-brand-green space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-micro font-medium text-stone-900 tracking-tight">
-                Patriot customization
+                Compatriot customization
               </p>
               <span className="text-micro font-medium text-brand-green bg-brand-green/10 px-2 py-0.5">
                 Free

@@ -4,7 +4,7 @@ import { BrandLine } from '@/components/ui/BrandLine'
 import { ButtonAccent } from '@/components/buttons/ButtonAccent'
 
 const TRUST_SIGNALS = [
-  { icon: 'groups', value: '10,000+', label: 'Patriots' },
+  { icon: 'groups', value: '10,000+', label: 'Compatriots' },
   { icon: 'map', value: '16', label: 'Regions' },
   { icon: 'public', value: 'Global', label: 'Diaspora' },
 ]
@@ -127,8 +127,8 @@ export function AboutCTA() {
             ...reveal(160),
           }}
         >
-          Add your name. Strengthen the cause. Ghana First. Join a network of patriots dedicated to
-          building a resilient, sovereign foundation.
+          Add your name. Strengthen the cause. Ghana First. Join a network of compatriots dedicated
+          to building a resilient, sovereign foundation.
         </p>
 
         {/* Trust signals row */}

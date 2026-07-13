@@ -167,7 +167,7 @@ serve(async (req: Request) => {
       if (member.email && sgKey && senderEmail) {
         try {
           const html = csvImportWelcomeEmail({
-            name: member.full_name || 'Patriot',
+            name: member.full_name || 'Compatriot',
             regNo: member.registration_number,
             phone: member.phone_number || 'N/A',
             tempPassword,
@@ -204,7 +204,7 @@ serve(async (req: Request) => {
       // Send SMS
       const normalizedPhone = normalizePhoneNumber(member.phone_number)
       if (normalizedPhone) {
-        const msg = `Welcome to The Base, ${member.full_name || 'Patriot'}!\n\nYour temporary password: ${tempPassword}\n\nLogin at www.thebasemovement.org.gh/login and complete your profile (upload your photo & set constituency) to active your card.`
+        const msg = `Welcome to The Base, ${member.full_name || 'Compatriot'}!\n\nYour temporary password: ${tempPassword}\n\nLogin at www.thebasemovement.org.gh/login and complete your profile (upload your photo & set constituency) to active your card.`
         const result = await sendSms([normalizedPhone], msg)
         if (result.ok) {
           smsSent++

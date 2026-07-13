@@ -90,7 +90,7 @@ interface BroadcastEmailData {
 }
 
 function broadcastEmail(d: BroadcastEmailData): string {
-  const greeting = d.greeting ?? 'Patriots —'
+  const greeting = d.greeting ?? 'Compatriots —'
   const heroBg = d.heroColor ?? 'linear-gradient(135deg,#181d19,#0f1310)'
   const heroText = d.heroText ?? 'The Base'
 

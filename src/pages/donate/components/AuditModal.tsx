@@ -9,7 +9,7 @@ interface AuditModalProps {
 }
 
 function maskName(fullName: string): string {
-  if (!fullName || fullName.toLowerCase() === 'anonymous patriot') return 'Anonymous'
+  if (!fullName || fullName.toLowerCase() === 'anonymous compatriot') return 'Anonymous'
   const parts = fullName.trim().split(/\s+/)
   if (parts.length === 1) return parts[0]
   return `${parts[0]} ${parts[parts.length - 1][0]}.`

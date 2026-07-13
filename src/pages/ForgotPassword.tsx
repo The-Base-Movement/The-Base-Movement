@@ -50,7 +50,7 @@ export default function ForgotPassword() {
   const handleRequestOTP = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!phone || !regNo) {
-      toast.error('Please enter both your phone number and Patriot ID.')
+      toast.error('Please enter both your phone number and Compatriot ID.')
       return
     }
     setIsLoading(true)
@@ -175,7 +175,7 @@ export default function ForgotPassword() {
               >
                 <div>
                   <label htmlFor="regNo" style={labelStyle}>
-                    Patriot ID (Reg No)
+                    Compatriot ID (Reg No)
                   </label>
                   <input
                     id="regNo"

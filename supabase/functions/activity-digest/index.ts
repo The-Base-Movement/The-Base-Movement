@@ -71,7 +71,7 @@ serve(async (req: Request) => {
       color: 0x006b3f,
       fields: [
         {
-          name: '🇬🇭 New Patriots',
+          name: '🇬🇭 New Compatriots',
           value: `**${num(reg.total)}** total\n• Ghana: ${num(reg.ghana)}\n• Diaspora: ${num(reg.diaspora)}`,
           inline: true,
         },
@@ -104,7 +104,11 @@ serve(async (req: Request) => {
     if (!discordRes.ok) {
       const detail = await discordRes.text()
       console.error(`[ACTIVITY-DIGEST] Discord error ${discordRes.status}: ${detail}`)
-      return json({ error: `Discord returned ${discordRes.status}`, detail }, discordRes.status, corsHeaders)
+      return json(
+        { error: `Discord returned ${discordRes.status}`, detail },
+        discordRes.status,
+        corsHeaders
+      )
     }
 
     return json({ success: true }, 200, corsHeaders)

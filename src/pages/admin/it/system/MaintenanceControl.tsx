@@ -4,7 +4,7 @@ import { adminService } from '@/services/adminService'
 
 const DEFAULT_TITLE = 'Back shortly.'
 const DEFAULT_MESSAGE =
-  'We are carrying out scheduled maintenance. This usually takes less than 15 minutes. Thank you for your patience, patriot.'
+  'We are carrying out scheduled maintenance. This usually takes less than 15 minutes. Thank you for your patience, compatriot.'
 
 /**
  * IT control for the public-site maintenance splash. Writes the

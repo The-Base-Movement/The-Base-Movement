@@ -529,7 +529,7 @@ export function PublicImpactView({
                           textOverflow: 'ellipsis',
                         }}
                       >
-                        {item.fullName || 'Anonymous Patriot'}
+                        {item.fullName || 'Anonymous Compatriot'}
                       </p>
                       <p
                         style={{

@@ -507,7 +507,7 @@ export function ProductFormDialog({
                 }}
               />
               <span style={{ ...labelSt, marginBottom: 0 }}>
-                Allow patriot customization (name / constituency text)
+                Allow compatriot customization (name / constituency text)
               </span>
             </label>
 

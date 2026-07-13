@@ -102,7 +102,7 @@ Deno.serve(async (req: Request) => {
         const personalizations = batch
           .filter((m) => m.email)
           .map((member) => {
-            const firstName = (member.full_name ?? '').split(' ')[0] || 'Patriot'
+            const firstName = (member.full_name ?? '').split(' ')[0] || 'Compatriot'
             const html = pollClosingEmail({
               name: firstName,
               pollTitle: row.title,

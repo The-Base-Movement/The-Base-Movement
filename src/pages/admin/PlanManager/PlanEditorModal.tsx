@@ -188,7 +188,7 @@ export default function PlanEditorModal({
                 <option value="hsl(156 100% 21%)">Base Emerald</option>
                 <option value="hsl(45 80% 45%)">Base Gold</option>
                 <option value="hsl(0 85% 45%)">Base Crimson</option>
-                <option value="hsl(210 100% 40%)">Patriot Blue</option>
+                <option value="hsl(210 100% 40%)">Compatriot Blue</option>
               </select>
             </div>
           </div>

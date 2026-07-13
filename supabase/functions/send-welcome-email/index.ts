@@ -148,7 +148,7 @@ Deno.serve(async (req) => {
       if (row.phone_number) {
         const sms = await sendSms(
           [row.phone_number],
-          buildWelcomeSms(row.full_name || 'Patriot', row.registration_number)
+          buildWelcomeSms(row.full_name || 'Compatriot', row.registration_number)
         )
         if (sms.ok) smsSent++
         else smsFailed++

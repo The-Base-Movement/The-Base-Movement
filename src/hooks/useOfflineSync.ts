@@ -99,7 +99,7 @@ export function useOfflineSync() {
     if (pendingDrafts.length === 0) return
 
     setIsSyncing(true)
-    toast.info(`PATRIOT ONLINE: Synchronizing ${pendingDrafts.length} draft registrations...`)
+    toast.info(`COMPATRIOT ONLINE: Synchronizing ${pendingDrafts.length} draft registrations...`)
 
     let successCount = 0
     for (const draft of pendingDrafts) {
@@ -113,7 +113,7 @@ export function useOfflineSync() {
     await loadDrafts()
 
     if (successCount > 0) {
-      toast.success(`Successfully uploaded ${successCount} patriot profiles.`)
+      toast.success(`Successfully uploaded ${successCount} compatriot profiles.`)
     }
   }, [isSyncing, loadDrafts, syncSingleDraft])
 

@@ -311,7 +311,7 @@ export function WarRoomMap({ regionalStats }: WarRoomMapProps) {
                   color: 'rgba(255,255,255,0.4)',
                 }}
               >
-                patriots
+                compatriots
               </span>
             </div>
             <div

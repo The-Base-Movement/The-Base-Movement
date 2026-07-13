@@ -259,7 +259,7 @@ if (import.meta.main)
           [
             {
               name: 'From',
-              value: (donation as any).full_name || 'Anonymous Patriot',
+              value: (donation as any).full_name || 'Anonymous Compatriot',
               inline: true,
             },
             {
@@ -390,7 +390,7 @@ if (import.meta.main)
             `A store order of **₵${Number((order as any).total_amount).toFixed(2)}** was successfully paid.`,
             0xdaa520, // Accent / Brand Gold color
             [
-              { name: 'Customer Name', value: (order as any).full_name || 'Anonymous Patriot' },
+              { name: 'Customer Name', value: (order as any).full_name || 'Anonymous Compatriot' },
               { name: 'Order ID', value: order.id.substring(0, 8) },
               { name: 'Email', value: (order as any).email || '—' },
               { name: 'Transaction ID', value: transactionId || '—' },

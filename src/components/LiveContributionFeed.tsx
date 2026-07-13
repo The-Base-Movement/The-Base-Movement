@@ -17,7 +17,7 @@ import { usePerformance } from '@/context/PerformanceContext'
 import type { DonationDetail } from '@/types/admin'
 
 function maskName(fullName: string): string {
-  if (!fullName || fullName.toLowerCase() === 'anonymous patriot') return 'Anonymous Patriot'
+  if (!fullName || fullName.toLowerCase() === 'anonymous compatriot') return 'Anonymous Compatriot'
   const parts = fullName.trim().split(/\s+/)
   if (parts.length === 1) return parts[0]
   return `${parts[0]} ${parts[parts.length - 1][0]}.`

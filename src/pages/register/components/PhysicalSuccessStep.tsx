@@ -13,7 +13,7 @@ export function PhysicalSuccessStep({ onUploadAnother }: PhysicalSuccessStepProp
         </span>
       </div>
       <h2 className="text-2xl font-semibold text-on-surface mb-3 tracking-tight">
-        Form Received, Patriot!
+        Form Received, Compatriot!
       </h2>
       <p className="text-[14px] text-on-surface-muted leading-relaxed mb-8">
         Your physical registration form has been securely uploaded to the Command Center. Our admin

@@ -88,7 +88,7 @@ Deno.serve(async (req: Request) => {
     }
 
     let targetEmail = ''
-    let targetName = 'Patriot'
+    let targetName = 'Compatriot'
     let isProvisionedNow = false
 
     const { data: targetAuth, error: targetError } = await admin.auth.admin.getUserById(user_id)
@@ -167,7 +167,7 @@ Deno.serve(async (req: Request) => {
       isProvisionedNow = true
     } else {
       targetEmail = targetAuth.user.email ?? ''
-      targetName = targetAuth.user.user_metadata?.name || 'Patriot'
+      targetName = targetAuth.user.user_metadata?.name || 'Compatriot'
     }
 
     if (!targetEmail) {

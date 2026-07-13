@@ -88,7 +88,7 @@ export function OperationalMetrics({ selectedAction, attendance }: OperationalMe
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
-      {/* How many confirmed patriots are on the ground */}
+      {/* How many confirmed compatriots are on the ground */}
       <MetricCard
         label="Verified strength"
         icon="verified"

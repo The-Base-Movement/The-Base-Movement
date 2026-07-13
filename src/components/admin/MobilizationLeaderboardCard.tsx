@@ -3,7 +3,7 @@
  * -------------------------------------------------------------
  * Displays a chapter ranking card inside the Admin Command Leaderboard.
  * Details the chapter's name, region, cumulative mobilization points, active
- * patriot count, unlocked badges, and highlighted top-3 podium rankings.
+ * compatriot count, unlocked badges, and highlighted top-3 podium rankings.
  */
 
 import type { ChapterLeaderboard } from '@/types/admin'

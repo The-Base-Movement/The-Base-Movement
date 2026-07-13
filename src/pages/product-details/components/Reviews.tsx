@@ -61,7 +61,7 @@ export function Reviews({ product }: ReviewsProps) {
     }
     setSubmitting(true)
     const authorName =
-      (currentUser.user_metadata?.full_name as string | undefined) || 'Patriot Member'
+      (currentUser.user_metadata?.full_name as string | undefined) || 'Compatriot Member'
     const { data, error } = await supabase
       .from('reviews')
       .insert({
@@ -254,7 +254,7 @@ export function Reviews({ product }: ReviewsProps) {
                     <span className="material-symbols-outlined" style={{ fontSize: 10 }}>
                       verified_user
                     </span>{' '}
-                    Verified patriot
+                    Verified compatriot
                   </span>
                 )}
               </div>
@@ -274,7 +274,7 @@ export function Reviews({ product }: ReviewsProps) {
         ) : (
           <div className="col-span-full py-16 bg-stone-50 text-center border border-dashed border-stone-200">
             <p className="text-micro font-bold text-stone-400 tracking-tight">
-              Be the first patriot to review this gear.
+              Be the first compatriot to review this gear.
             </p>
           </div>
         )}
