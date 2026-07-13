@@ -16,6 +16,7 @@
  */
 
 import type { Member } from '@/types/admin'
+import { GenderAvatar } from '@/components/GenderAvatar'
 
 interface MemberProfileCardProps {
   member: Member
@@ -80,12 +81,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           ) : (
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 22, color: 'hsl(var(--on-surface-muted))' }}
-            >
-              person
-            </span>
+            <GenderAvatar gender={member.gender} size={44} />
           )}
         </div>
         <span className={isVerified ? 'pill pill-ok' : 'pill pill-warn'}>

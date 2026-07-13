@@ -11,6 +11,7 @@ import { MembersKPIs } from './members/MembersKPIs'
 import { MembersFilterSidebar } from './members/MembersFilterSidebar'
 import MembershipCard from '@/components/MembershipCard'
 import { diasporaName } from '@/lib/diaspora'
+import { GenderAvatar } from '@/components/GenderAvatar'
 
 function isVerified(m: Member) {
   return m.status === 'Active' || m.status === 'Approved' || !m.status
@@ -78,6 +79,7 @@ export default function Members() {
           country: u.country || 'Ghana',
           profession: u.profession || 'Compatriot',
           avatarUrl: u.avatar_url || undefined,
+          gender: u.gender || undefined,
           status: (u.status as Member['status']) || 'Pending',
           joined: u.joined_at || '',
           type: u.platform === 'DIASPORA' ? 'Premium' : 'Standard',
@@ -407,22 +409,7 @@ export default function Members() {
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      background: 'hsl(var(--primary))',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'hsl(var(--on-surface))',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 20,
-                    }}
-                  >
-                    {selectedMember.name?.[0] || 'M'}
-                  </div>
+                  <GenderAvatar gender={selectedMember.gender} size={52} />
                 )}
               </div>
               <button
