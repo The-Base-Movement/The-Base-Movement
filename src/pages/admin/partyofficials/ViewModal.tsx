@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom'
 import type { PartyOfficial, PartyTier } from './utils'
+import { fallbackAvatar } from '@/lib/avatar'
 
 interface ViewModalProps {
   official: PartyOfficial
@@ -133,7 +134,7 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
               }}
             >
               <img
-                src={official.avatar_url || '/officer-placeholder.png'}
+                src={official.avatar_url || fallbackAvatar(official.name)}
                 alt={official.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />

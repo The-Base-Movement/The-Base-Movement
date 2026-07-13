@@ -1,5 +1,6 @@
 import type { PartyOfficial, PartyTier } from './utils'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { fallbackAvatar } from '@/lib/avatar'
 
 interface OfficialsTableProps {
   loading: boolean
@@ -45,7 +46,7 @@ function Avatar({ url, name }: { url?: string; name: string }) {
       }}
     >
       <img
-        src={url || '/officer-placeholder.png'}
+        src={url || fallbackAvatar(name)}
         alt={name}
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />

@@ -18,6 +18,7 @@
 
 import { useState, useEffect } from 'react'
 import { XIcon, LinkedInIcon, FacebookIcon, InstagramIcon } from '@/components/icons/SocialIcons'
+import { fallbackAvatar } from '@/lib/avatar'
 
 export type OfficerTier = string
 
@@ -154,7 +155,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             }}
           >
             <img
-              src={officer.avatarUrl || '/officer-placeholder.png'}
+              src={officer.avatarUrl || fallbackAvatar(officer.name)}
               alt={officer.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
