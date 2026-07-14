@@ -611,6 +611,9 @@ export default function MediaWall() {
               </label>
               <input
                 type="text"
+                id="briefing-title"
+                name="briefing-title"
+                aria-label="Briefing title"
                 value={compTitle}
                 onChange={(e) => setCompTitle(e.target.value)}
                 placeholder="Briefing title"
@@ -644,6 +647,9 @@ export default function MediaWall() {
                 Body
               </label>
               <textarea
+                id="briefing-body"
+                name="briefing-body"
+                aria-label="Briefing body"
                 value={compBody}
                 onChange={(e) => setCompBody(e.target.value)}
                 placeholder="Write the briefing content..."
@@ -748,6 +754,9 @@ export default function MediaWall() {
               </label>
               <input
                 type="date"
+                id="briefing-publish-by"
+                name="briefing-publish-by"
+                aria-label="Publish by date"
                 value={compPublishBy}
                 onChange={(e) => setCompPublishBy(e.target.value)}
                 style={{

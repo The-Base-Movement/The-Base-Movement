@@ -208,6 +208,9 @@ export default function CommsWall() {
         </p>
         <input
           type="url"
+          id="comms-link"
+          name="comms-link"
+          aria-label="Link to send to the media team"
           placeholder="Paste a video or post link (https://…)"
           value={link}
           onChange={(e) => setLink(e.target.value)}
@@ -226,6 +229,9 @@ export default function CommsWall() {
           }}
         />
         <textarea
+          id="comms-note"
+          name="comms-note"
+          aria-label="Note about the link (optional)"
           placeholder="Add a short note (optional)"
           value={note}
           onChange={(e) => setNote(e.target.value)}
@@ -444,6 +450,9 @@ export default function CommsWall() {
                     <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                       <input
                         type="text"
+                        id="comms-comment"
+                        name="comms-comment"
+                        aria-label="Add a comment"
                         placeholder="Add a comment…"
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}

@@ -151,6 +151,7 @@ export default function MediaMembers() {
       {/* Search */}
       <div className="panel" style={{ padding: 16, marginBottom: 20 }}>
         <label
+          htmlFor="comms-member-search"
           style={{
             display: 'block',
             fontSize: 11,
@@ -165,6 +166,8 @@ export default function MediaMembers() {
         </label>
         <input
           type="text"
+          id="comms-member-search"
+          name="comms-member-search"
           placeholder="Search by name or registration number…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
