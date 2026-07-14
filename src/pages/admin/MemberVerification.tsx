@@ -85,8 +85,8 @@ export default function MemberVerification() {
       } else {
         toast.success('AI scan complete — high identity match confidence.')
       }
-    } catch {
-      toast.error('AI assistant unavailable.')
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'AI assistant unavailable.')
     } finally {
       setAiAnalyzing(false)
     }
