@@ -31,12 +31,9 @@ export function RolesManagementTab() {
       color: 'hsl(var(--on-surface))',
     },
     {
-      role: 'Chapter Lead',
+      role: 'Constituency Lead',
       desc: 'Local verification and mobilization management.',
-      count:
-        (counts['ChapterLead'] || 0) +
-        (counts['CONSTITUENCY_LEAD'] || 0) +
-        (counts['ORGANIZER'] || 0),
+      count: (counts['CONSTITUENCY_LEAD'] || 0) + (counts['ORGANIZER'] || 0),
       icon: 'groups',
       color: 'hsl(var(--on-surface))',
     },

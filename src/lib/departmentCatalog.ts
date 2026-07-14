@@ -119,8 +119,8 @@ const operationsRoles: AdminRole[] = [
   'CONSTITUENCY_ORGANISER',
   'CONSTITUENCY_LOGISTICS_OFFICER',
   'CONSTITUENCY_DEPUTY',
-  'CHAPTER_LEAD',
-  'CHAPTER_SECRETARY',
+  'BASE_DIASPORA_LEAD',
+  'BASE_DIASPORA_SECRETARY',
   'FIELD_AGENT',
   'POLLING_STATION_COORDINATOR',
   'POLLING_STATION_AGENT',
@@ -145,7 +145,7 @@ const financeRoles: AdminRole[] = [
   'REGIONAL_FINANCE_OFFICER',
   'CONSTITUENCY_FINANCE_OFFICER',
   'CONSTITUENCY_TREASURER',
-  'CHAPTER_TREASURER',
+  'BASE_DIASPORA_TREASURER',
 ]
 
 const policyRoles: AdminRole[] = [
@@ -212,13 +212,10 @@ const rccRoles: AdminRole[] = [
 const cccRoles: AdminRole[] = [
   ...operationsRoles.filter(
     (role) =>
-      role.startsWith('CONSTITUENCY_') ||
-      role.startsWith('CHAPTER_') ||
-      role === 'FIELD_AGENT' ||
-      role === 'MEMBERSHIP_OFFICER'
+      role.startsWith('CONSTITUENCY_') || role === 'FIELD_AGENT' || role === 'MEMBERSHIP_OFFICER'
   ),
   ...mediaRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
-  ...financeRoles.filter((role) => role.startsWith('CONSTITUENCY_') || role.startsWith('CHAPTER_')),
+  ...financeRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
   ...policyRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
   ...welfareRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
   ...securityRoles.filter((role) => role.startsWith('CONSTITUENCY_')),
@@ -226,9 +223,9 @@ const cccRoles: AdminRole[] = [
 
 const diasporaRoles: AdminRole[] = [
   'DIASPORA_AFFAIRS_OFFICER',
-  'CHAPTER_LEAD',
-  'CHAPTER_SECRETARY',
-  'CHAPTER_TREASURER',
+  'BASE_DIASPORA_LEAD',
+  'BASE_DIASPORA_SECRETARY',
+  'BASE_DIASPORA_TREASURER',
 ]
 
 const pollingStationRoles: AdminRole[] = ['POLLING_STATION_COORDINATOR', 'POLLING_STATION_AGENT']
@@ -260,7 +257,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
   {
     id: 'diaspora-affairs',
     name: 'Diaspora Affairs',
-    levelLabel: 'Diaspora chapter command',
+    levelLabel: 'Base Diaspora command',
     icon: 'public',
     sortOrder: 3,
     handlerRoles: withElevated(diasporaRoles),

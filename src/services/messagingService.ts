@@ -138,11 +138,11 @@ class MessagingService {
       .maybeSingle()
     if (ch?.leader_id) return ch.leader_id as string
 
-    // Fallback: provisioned CHAPTER_LEAD admin
+    // Fallback: provisioned Base Diaspora lead admin
     const { data: chl } = await supabase
       .from('admins')
       .select('id')
-      .eq('role', 'CHAPTER_LEAD')
+      .eq('role', 'BASE_DIASPORA_LEAD')
       .eq('chapter', chapter)
       .limit(1)
       .maybeSingle()
@@ -494,7 +494,7 @@ class MessagingService {
       supabase.from('admins').select('role').eq('id', leaderId).maybeSingle(),
     ])
     if (!profile) return null
-    const fallbackRole = scopeType === 'chapter' ? 'CHAPTER_LEAD' : 'CONSTITUENCY_LEAD'
+    const fallbackRole = scopeType === 'chapter' ? 'BASE_DIASPORA_LEAD' : 'CONSTITUENCY_LEAD'
     return {
       id: profile.id as string,
       full_name: (profile.full_name as string | null) ?? 'Leader',

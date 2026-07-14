@@ -7,8 +7,8 @@ import type { Chapter } from '@/types/admin'
 import type { ChapterMember, ChapterDonation } from './chapterhub/types'
 
 const PHONE_VISIBLE_ROLES = new Set([
-  'CHAPTER_LEAD',
-  'CHAPTER_SECRETARY',
+  'BASE_DIASPORA_LEAD',
+  'BASE_DIASPORA_SECRETARY',
   'CONSTITUENCY_LEAD',
   'SUPER_ADMIN',
   'FOUNDER',

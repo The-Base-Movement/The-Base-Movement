@@ -54,7 +54,12 @@ type UserCanInput = AdminUser & {
 }
 
 export const ROLE_ALIASES: Partial<Record<string, AdminRole>> = {
-  CHAPTER_LEADER: 'CHAPTER_LEAD',
+  // Legacy "chapter" codes now resolve to the Base Diaspora roles they were
+  // rebranded to, so any value still stored under the old name keeps working.
+  CHAPTER_LEADER: 'BASE_DIASPORA_LEAD',
+  CHAPTER_LEAD: 'BASE_DIASPORA_LEAD',
+  CHAPTER_SECRETARY: 'BASE_DIASPORA_SECRETARY',
+  CHAPTER_TREASURER: 'BASE_DIASPORA_TREASURER',
   EXECUTIVE_MEMBER: 'EXECUTIVE',
   NATIONAL_ORGANISER: 'ORGANIZER',
   NATIONAL_MEDIA_DIRECTOR: 'COMMUNICATIONS_OFFICER',
@@ -329,8 +334,18 @@ const entries = [
     false,
     false,
   ],
-  ['CHAPTER_LEAD', 'Chapter Leader', 'CCC', ops, 'constituency', false, false],
-  ['CHAPTER_SECRETARY', 'Chapter Secretary', 'CCC', ops, 'constituency', false, false],
+  // ponytail: national scope (no per-country scope type exists); add a
+  // 'country' RoleScopeType if diaspora leads must be pinned to one country.
+  ['BASE_DIASPORA_LEAD', 'Base Diaspora Lead', 'DIASPORA AFFAIRS', ops, 'national', false, false],
+  [
+    'BASE_DIASPORA_SECRETARY',
+    'Base Diaspora Secretary',
+    'DIASPORA AFFAIRS',
+    ops,
+    'national',
+    false,
+    false,
+  ],
   ['FIELD_AGENT', 'Field Agent', 'CCC', ops, 'constituency', false, false],
   [
     'POLLING_STATION_COORDINATOR',
@@ -407,7 +422,15 @@ const entries = [
     false,
   ],
   ['CONSTITUENCY_DEPUTY', 'Constituency Deputy', 'CCC', ops, 'constituency', false, false],
-  ['CHAPTER_TREASURER', 'Chapter Treasurer', 'CCC', finance, 'constituency', false, false],
+  [
+    'BASE_DIASPORA_TREASURER',
+    'Base Diaspora Treasurer',
+    'DIASPORA AFFAIRS',
+    finance,
+    'national',
+    false,
+    false,
+  ],
   ['STORE_MANAGER', 'Store Manager', 'NCC', ops, 'national', false, false],
 ] as const
 
