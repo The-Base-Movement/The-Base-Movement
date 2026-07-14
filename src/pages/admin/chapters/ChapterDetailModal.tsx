@@ -183,15 +183,20 @@ export function ChapterDetailModal({
                   onChange={(e) => onFormChange('country', e.target.value)}
                 >
                   <option value="">Select country...</option>
-                  {countries.map((c) => (
-                    <option key={c.id || c.name} value={c.name}>
-                      {c.flag_url ? `${getCountryFlag(c.flag_url, true)} ` : ''}
-                      {c.name}
-                    </option>
-                  ))}
-                  {!countries.some((c) => c.name === formData.country) && formData.country && (
-                    <option value={formData.country}>{formData.country}</option>
-                  )}
+                  {/* Chapters are Diaspora-only, so Ghana is never an option. */}
+                  {countries
+                    .filter((c) => c.name.trim().toLowerCase() !== 'ghana')
+                    .map((c) => (
+                      <option key={c.id || c.name} value={c.name}>
+                        {c.flag_url ? `${getCountryFlag(c.flag_url, true)} ` : ''}
+                        {c.name}
+                      </option>
+                    ))}
+                  {formData.country &&
+                    formData.country.trim().toLowerCase() !== 'ghana' &&
+                    !countries.some((c) => c.name === formData.country) && (
+                      <option value={formData.country}>{formData.country}</option>
+                    )}
                 </select>
               </div>
               <div>

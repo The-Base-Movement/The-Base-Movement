@@ -22,7 +22,7 @@ export function useChapterForm() {
   const [formData, setFormData] = useState<ChapterFormData>({
     name: '',
     city_or_region: '',
-    country: 'Ghana',
+    country: '',
     description: '',
     status: 'Pending',
     leader_name: '',
@@ -48,7 +48,7 @@ export function useChapterForm() {
     setFormData({
       name: '',
       city_or_region: '',
-      country: 'Ghana',
+      country: '',
       description: '',
       status: 'Pending',
       leader_name: '',
@@ -63,7 +63,7 @@ export function useChapterForm() {
     setFormData({
       name: chapter.name,
       city_or_region: chapter.city_or_region,
-      country: chapter.country || 'Ghana',
+      country: chapter.country || '',
       description: '',
       status: chapter.status,
       leader_name: chapter.leader_name || '',
@@ -82,10 +82,16 @@ export function useChapterForm() {
 
   const handleSaveChapter = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Chapters are Diaspora-only: a country is required and it cannot be Ghana.
+    const country = formData.country.trim()
+    if (!country || country.toLowerCase() === 'ghana') {
+      toast.error('Chapters are Diaspora-only. Pick a country other than Ghana.')
+      return
+    }
     const chapterData = {
       name: formData.name,
       city_or_region: formData.city_or_region,
-      country: formData.country,
+      country,
       leader_name: formData.leader_name || 'Unassigned',
       member_count: 0,
       status: formData.status as Chapter['status'],
@@ -93,9 +99,11 @@ export function useChapterForm() {
     if (editingChapterId) {
       const success = await updateChapter(editingChapterId, chapterData)
       if (success) toast.success(`Chapter "${formData.name}" updated.`)
+      else toast.error('Could not update the chapter.')
     } else {
       const success = await addChapter(chapterData)
       if (success) toast.success(`Chapter "${formData.name}" registered.`)
+      else toast.error('Could not register the chapter.')
     }
     closeModal()
   }
