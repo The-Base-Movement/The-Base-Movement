@@ -336,6 +336,8 @@ export const getNavGroups = (
         subItems: [
           { to: '/admin/media-hub', icon: 'dashboard', label: 'The Wall' },
           { to: '/admin/media-hub/assignments', icon: 'assignment', label: 'Assignments' },
+          { to: '/admin/media-hub/inbox', icon: 'inbox', label: 'Inbox' },
+          { to: '/admin/media-hub/members', icon: 'group', label: 'Members' },
         ],
       },
     ],

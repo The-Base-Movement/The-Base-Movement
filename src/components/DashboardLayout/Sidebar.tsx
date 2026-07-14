@@ -47,6 +47,7 @@ interface Props {
   likedCount: number
   referralCount: number
   messageCount: number
+  hasComms?: boolean
   setIsShareModalOpen: (v: boolean) => void
   onClose?: () => void
   toggleTheme: () => void
@@ -74,6 +75,7 @@ export default function Sidebar({
   likedCount,
   referralCount,
   messageCount,
+  hasComms,
   setIsShareModalOpen,
   onClose,
   toggleTheme,
@@ -152,6 +154,7 @@ export default function Sidebar({
     {
       label: 'Get Involved',
       items: [
+        ...(hasComms ? [{ to: '/dashboard/comms', icon: 'campaign', label: 'Comms Hub' }] : []),
         { to: '/dashboard/jobs', icon: 'work', label: 'Jobs' },
         { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
         { to: '/dashboard/store', icon: 'storefront', label: 'Store' },

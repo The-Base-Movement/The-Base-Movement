@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { sessionStore } from '@/lib/sessionStore'
 import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
+import { donationService } from '@/services/donationService'
 import type { DonationDetail } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'
 import SEO from '@/components/SEO'
@@ -126,6 +127,9 @@ export default function MyDonations() {
         setLoading(false)
       })
     }
+
+    // Silently generate the receipt for this newly-verified donation
+    donationService.backfillReceipts(false).catch(() => {})
   }
   useEffect(() => {
     if (!session?.user) return

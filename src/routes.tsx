@@ -118,6 +118,8 @@ const ITDepartmentLayout = lazy(() => import('./pages/admin/it/ITDepartmentLayou
 const MediaHubLayout = lazy(() => import('./pages/admin/media-hub/MediaHubLayout'))
 const MediaWall = lazy(() => import('./pages/admin/media-hub/MediaWall'))
 const MediaAssignments = lazy(() => import('./pages/admin/media-hub/MediaAssignments'))
+const MediaInbox = lazy(() => import('./pages/admin/media-hub/MediaInbox'))
+const MediaMembers = lazy(() => import('./pages/admin/media-hub/MediaMembers'))
 const ITDashboard = lazy(() => import('./pages/admin/it/ITDashboard'))
 const ITBrain = lazy(() => import('./pages/admin/it/ITBrain'))
 const ITNotes = lazy(() => import('./pages/admin/it/ITNotes'))
@@ -148,6 +150,7 @@ const AdminConstituencyLeadHub = lazy(() => import('./pages/admin/ConstituencyLe
 const ConstituencyHub = lazy(() => import('./pages/ConstituencyHub'))
 const NotificationsPage = lazy(() => import('./pages/Notifications'))
 const DashboardMessages = lazy(() => import('./pages/dashboard/Messages'))
+const CommsWall = lazy(() => import('./pages/dashboard/CommsWall'))
 const AdminMessages = lazy(() => import('./pages/admin/Messages'))
 
 export const routes: RouteObject[] = [
@@ -243,6 +246,7 @@ export const routes: RouteObject[] = [
           { path: '/dashboard/referrals', element: <Referrals /> },
           { path: '/dashboard/notifications', element: <NotificationsPage /> },
           { path: '/dashboard/messages', element: <DashboardMessages /> },
+          { path: '/dashboard/comms', element: <CommsWall /> },
           { path: '/dashboard/tickets', element: <MyTickets /> },
         ],
       },
@@ -352,6 +356,8 @@ export const routes: RouteObject[] = [
               { path: '/admin/media-hub', element: <MediaWall /> },
               { path: '/admin/media-hub/wall', element: <MediaWall /> },
               { path: '/admin/media-hub/assignments', element: <MediaAssignments /> },
+              { path: '/admin/media-hub/inbox', element: <MediaInbox /> },
+              { path: '/admin/media-hub/members', element: <MediaMembers /> },
             ],
           },
         ],

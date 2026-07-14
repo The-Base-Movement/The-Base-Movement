@@ -189,6 +189,8 @@ export default function FinancialAudit() {
       )
       if (action === 'Verified') {
         donationService.sendReceipt(donationId)
+        // Silently backfill any verified donations that slipped through without a receipt
+        donationService.backfillReceipts(false).catch(() => {})
       }
       setSelectedDonation(null)
       fetchData(true)

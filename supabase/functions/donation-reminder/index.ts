@@ -154,7 +154,7 @@ Deno.serve(async (req) => {
     remindedCount++
   }
 
-  // 3. Discord summary
+  // 4. Discord summary
   if (remindedCount > 0 || cancelledCount > 0) {
     const parts = []
     if (remindedCount > 0)
@@ -162,6 +162,21 @@ Deno.serve(async (req) => {
     if (cancelledCount > 0)
       parts.push(`🚫 Auto-cancelled ${cancelledCount} donation(s) older than 7 days`)
     await postDiscord(`**Donation Reminder Report**\n${parts.join('\n')}`)
+  }
+
+  // 5. Silently backfill any verified donations that are still missing a receipt
+  try {
+    const backfillUrl = `${SUPABASE_URL}/functions/v1/backfill-donation-receipts`
+    await fetch(backfillUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${SERVICE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ force: false }),
+    })
+  } catch {
+    // Non-fatal — receipt backfill runs opportunistically
   }
 
   return new Response(JSON.stringify({ reminded: remindedCount, cancelled: cancelledCount }), {

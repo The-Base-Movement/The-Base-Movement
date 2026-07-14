@@ -14,6 +14,19 @@ const PRIORITY_BAR: Record<string, string> = {
   urgent: 'hsl(var(--destructive))',
 }
 
+type Audience = 'team' | 'media' | 'mobilization' | 'both'
+
+const AUDIENCE_OPTIONS: { value: Audience; label: string }[] = [
+  { value: 'team', label: 'Team only' },
+  { value: 'media', label: 'Media members' },
+  { value: 'mobilization', label: 'Mobilization members' },
+  { value: 'both', label: 'Media + Mobilization' },
+]
+
+const AUDIENCE_LABEL: Record<string, string> = Object.fromEntries(
+  AUDIENCE_OPTIONS.map((o) => [o.value, o.label])
+)
+
 const FILTERS = ['all', 'routine', 'important', 'urgent'] as const
 type Filter = (typeof FILTERS)[number]
 
@@ -45,6 +58,7 @@ export default function MediaWall() {
   const [compTitle, setCompTitle] = useState('')
   const [compBody, setCompBody] = useState('')
   const [compPriority, setCompPriority] = useState<'routine' | 'important' | 'urgent'>('routine')
+  const [compAudience, setCompAudience] = useState<Audience>('team')
   const [compPublishBy, setCompPublishBy] = useState('')
   const [compPinned, setCompPinned] = useState(false)
 
@@ -172,6 +186,7 @@ export default function MediaWall() {
         title: compTitle.trim(),
         body: compBody.trim(),
         priority: compPriority,
+        audience: compAudience,
         pinned: compPinned,
         publish_by: compPublishBy || undefined,
       })
@@ -182,6 +197,7 @@ export default function MediaWall() {
         setCompTitle('')
         setCompBody('')
         setCompPriority('routine')
+        setCompAudience('team')
         setCompPublishBy('')
         setCompPinned(false)
         // Reload
@@ -193,7 +209,7 @@ export default function MediaWall() {
     } finally {
       setSubmitting(false)
     }
-  }, [compTitle, compBody, compPriority, compPinned, compPublishBy, user?.name])
+  }, [compTitle, compBody, compPriority, compAudience, compPinned, compPublishBy, user?.name])
 
   return (
     <div>
@@ -301,6 +317,12 @@ export default function MediaWall() {
                       }}
                     />
                   )}
+                  <span
+                    className={`pill ${b.audience === 'team' ? 'pill-mute' : 'pill-ok'}`}
+                    style={{ fontSize: 10, marginLeft: 'auto' }}
+                  >
+                    {AUDIENCE_LABEL[b.audience] ?? 'Team only'}
+                  </span>
                 </div>
 
                 {/* Title */}
@@ -669,6 +691,46 @@ export default function MediaWall() {
                   </button>
                 ))}
               </div>
+
+              {/* Audience */}
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  marginBottom: 6,
+                }}
+              >
+                Share with
+              </label>
+              <div style={{ display: 'flex', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
+                {AUDIENCE_OPTIONS.map((a) => (
+                  <button
+                    key={a.value}
+                    className={
+                      compAudience === a.value ? 'btn btn-active-tab' : 'btn btn-inactive-tab'
+                    }
+                    onClick={() => setCompAudience(a.value)}
+                    style={{ fontSize: 12 }}
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </div>
+              <p
+                style={{
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                  margin: '0 0 14px',
+                }}
+              >
+                {compAudience === 'team'
+                  ? 'Internal only — stays inside the media team.'
+                  : 'Also shown to tagged members on their Comms Hub.'}
+              </p>
 
               {/* Publish by */}
               <label

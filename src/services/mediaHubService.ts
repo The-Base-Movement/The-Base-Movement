@@ -2,11 +2,14 @@ import { supabase } from '@/lib/supabase'
 import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 // ── Types ──
 
+export type BriefingAudience = 'team' | 'media' | 'mobilization' | 'both'
+
 export interface Briefing {
   id: string
   title: string
   body: string
   priority: 'routine' | 'important' | 'urgent'
+  audience: BriefingAudience
   pinned: boolean
   author_id: string
   author_name?: string
@@ -45,6 +48,27 @@ export interface Assignment {
   deadline: string | null
   created_at: string
   updated_at: string
+}
+
+export type CommsRole = 'MEDIA' | 'MOBILIZATION'
+
+export interface WallSubmission {
+  id: string
+  author_id: string
+  author_name?: string
+  author_avatar?: string
+  link: string
+  note: string | null
+  status: 'new' | 'reviewed' | 'archived'
+  created_at: string
+}
+
+export interface CommsMember {
+  id: string
+  name: string
+  registration_number: string | null
+  platform: string | null
+  roles: CommsRole[]
 }
 
 const MEDIA_ROLES = [
@@ -136,6 +160,7 @@ export const mediaHubService = {
     title: string
     body: string
     priority: string
+    audience?: BriefingAudience
     pinned?: boolean
     publish_by?: string
   }): Promise<string | null> {
@@ -146,6 +171,7 @@ export const mediaHubService = {
         title: data.title,
         body: data.body,
         priority: data.priority,
+        audience: data.audience ?? 'team',
         pinned: data.pinned ?? false,
         publish_by: data.publish_by ?? null,
         author_id: userId,
@@ -165,6 +191,7 @@ export const mediaHubService = {
       title: string
       body: string
       priority: string
+      audience: BriefingAudience
       pinned: boolean
       publish_by: string | null
     }>
@@ -443,5 +470,107 @@ export const mediaHubService = {
         role: u.role,
       }
     })
+  },
+
+  // ── Member submissions (inbox) ──
+
+  async getInboxSubmissions(): Promise<WallSubmission[]> {
+    const { data } = await supabase
+      .from('media_wall_submissions')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (!data?.length) return []
+
+    const userMap = await resolveUserNames(data.map((s) => s.author_id))
+    return data.map((s) => ({
+      ...s,
+      author_name: userMap.get(s.author_id)?.full_name,
+      author_avatar: userMap.get(s.author_id)?.avatar_url ?? undefined,
+    }))
+  },
+
+  async updateSubmissionStatus(id: string, status: WallSubmission['status']): Promise<boolean> {
+    const { error } = await supabase.from('media_wall_submissions').update({ status }).eq('id', id)
+    if (error) console.error('updateSubmissionStatus error:', error)
+    return !error
+  },
+
+  // ── Member comms tags (front-end Media / Mobilization members) ──
+
+  async getCommsMembers(): Promise<CommsMember[]> {
+    const { data: rows } = await supabase.from('member_comms_roles').select('user_id, role')
+    if (!rows?.length) return []
+
+    const byUser = new Map<string, CommsRole[]>()
+    for (const r of rows) {
+      const list = byUser.get(r.user_id) ?? []
+      list.push(r.role as CommsRole)
+      byUser.set(r.user_id, list)
+    }
+
+    const { data: profiles } = await supabase
+      .from('users')
+      .select('id, full_name, registration_number, platform')
+      .in('id', [...byUser.keys()])
+
+    return (profiles ?? []).map((p) => ({
+      id: p.id,
+      name: p.full_name ?? 'Unknown',
+      registration_number: p.registration_number,
+      platform: p.platform,
+      roles: byUser.get(p.id) ?? [],
+    }))
+  },
+
+  async searchMembers(query: string): Promise<CommsMember[]> {
+    const q = query.trim()
+    if (q.length < 2) return []
+    const { data } = await supabase
+      .from('users')
+      .select('id, full_name, registration_number, platform')
+      .or(`full_name.ilike.%${q}%,registration_number.ilike.%${q}%`)
+      .limit(15)
+    if (!data?.length) return []
+
+    const { data: roleRows } = await supabase
+      .from('member_comms_roles')
+      .select('user_id, role')
+      .in(
+        'user_id',
+        data.map((d) => d.id)
+      )
+    const byUser = new Map<string, CommsRole[]>()
+    for (const r of roleRows ?? []) {
+      const list = byUser.get(r.user_id) ?? []
+      list.push(r.role as CommsRole)
+      byUser.set(r.user_id, list)
+    }
+
+    return data.map((p) => ({
+      id: p.id,
+      name: p.full_name ?? 'Unknown',
+      registration_number: p.registration_number,
+      platform: p.platform,
+      roles: byUser.get(p.id) ?? [],
+    }))
+  },
+
+  async assignCommsRole(userId: string, role: CommsRole): Promise<boolean> {
+    const actorId = await getCurrentUserId()
+    const { error } = await supabase
+      .from('member_comms_roles')
+      .upsert({ user_id: userId, role, assigned_by: actorId }, { onConflict: 'user_id,role' })
+    if (error) console.error('assignCommsRole error:', error)
+    return !error
+  },
+
+  async removeCommsRole(userId: string, role: CommsRole): Promise<boolean> {
+    const { error } = await supabase
+      .from('member_comms_roles')
+      .delete()
+      .eq('user_id', userId)
+      .eq('role', role)
+    if (error) console.error('removeCommsRole error:', error)
+    return !error
   },
 }

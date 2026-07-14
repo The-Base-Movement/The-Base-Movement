@@ -14,6 +14,7 @@ import { useStore } from '@/hooks/useStore'
 import { useInactivityTimeout } from '@/hooks/useInactivityTimeout'
 import { contentService } from '@/services/contentService'
 import { messagingService } from '@/services/messagingService'
+import { commsWallService } from '@/services/commsWallService'
 import Sidebar from '@/components/DashboardLayout/Sidebar'
 import Topbar from '@/components/layouts/dashboard/Topbar'
 import DashboardAdminBanner from '@/components/layouts/dashboard/DashboardAdminBanner'
@@ -51,6 +52,7 @@ export default function DashboardLayout() {
   const [likedCount, setLikedCount] = useState(0)
   const [referralCount, setReferralCount] = useState(0)
   const [messageCount, setMessageCount] = useState(0)
+  const [hasComms, setHasComms] = useState(false)
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme')
     const adminDarkMode = localStorage.getItem('admin_dark_mode')
@@ -131,6 +133,15 @@ export default function DashboardLayout() {
     if (!session?.user?.id) return
     void messagingService.getMemberUnreadTotal(session.user.id).then(setMessageCount)
   }, [session, location.pathname])
+
+  // Comms Hub access — member tagged as Media/Mobilization gets the sidebar entry
+  useEffect(() => {
+    if (!session?.user?.id) return
+    void commsWallService
+      .getMyRoles()
+      .then((roles) => setHasComms(roles.length > 0))
+      .catch(() => setHasComms(false))
+  }, [session])
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -396,6 +407,7 @@ export default function DashboardLayout() {
     if (path === '/dashboard/referrals') return 'Referrals'
     if (path === '/dashboard/my-donations') return 'My Donations'
     if (path === '/dashboard/tickets') return 'My Tickets'
+    if (path === '/dashboard/comms') return 'Comms Hub'
     if (path === '/dashboard/wishlist') return 'Wishlist'
     if (path === '/dashboard/cart') return 'Cart'
     if (path === '/dashboard/checkout') return 'Checkout'
@@ -465,6 +477,7 @@ export default function DashboardLayout() {
         likedCount={likedCount}
         referralCount={referralCount}
         messageCount={messageCount}
+        hasComms={hasComms}
         setIsShareModalOpen={setIsShareModalOpen}
         onClose={() => setIsSidebarOpen(false)}
         toggleTheme={toggleTheme}
