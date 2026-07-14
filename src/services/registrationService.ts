@@ -154,10 +154,13 @@ export const registrationService = {
       }
     }
 
-    // 3. Determine auto-approval eligibility
-    const hasPhoto = !!finalAvatarUrl
-    const ghanaReady = platform === 'GHANA' && hasPhoto && !!formData.constituency
-    const diasporaReady = platform === 'DIASPORA' && hasPhoto
+    // 3. Determine auto-approval eligibility.
+    // Photo upload is intentionally NOT required — gating on it kills conversion,
+    // and it is a soft/optional verification step. Auto-approve when the required
+    // steps pass: Ghana needs a constituency; Diaspora needs only a submitted form
+    // (chapter assignment is optional). Flagged members are never created here.
+    const ghanaReady = platform === 'GHANA' && !!formData.constituency
+    const diasporaReady = platform === 'DIASPORA'
     const autoApproved = ghanaReady || diasporaReady
     const networkAssignment = normalizeMemberNetworkAssignment(platform, formData)
 

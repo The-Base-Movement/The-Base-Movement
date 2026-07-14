@@ -258,7 +258,7 @@ export function IdentityReviewPanel({
         <div style={{ padding: '14px 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
             { label: 'Form submitted', done: true, required: true },
-            { label: 'Photo uploaded', done: !!selectedMember.photoUrl, required: true },
+            { label: 'Photo uploaded', done: !!selectedMember.photoUrl, required: false },
             ...(selectedMember.platform === 'GHANA'
               ? [
                   {
