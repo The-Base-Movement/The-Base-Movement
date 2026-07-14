@@ -403,7 +403,7 @@
 
   .home-hero-trust-signals {
     display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     justify-items: start;
     width: 100%;
   }
