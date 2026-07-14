@@ -132,12 +132,14 @@ export function StatCards({
   contributionYTD,
   rank,
   platform,
+  points,
 }: {
   memberStatus: string
   memberSince: string
   contributionYTD: { total: number; lastMonth: number }
   rank: { rank: number; delta: string }
   platform?: string
+  points: number
 }) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
   const rankLabel = platform === 'DIASPORA' ? 'Chapter Rank' : 'Constituency Rank'
@@ -182,6 +184,14 @@ export function StatCards({
       delta={rank.delta}
       icon="military_tech"
     />,
+    <Tile
+      key="points"
+      color="black"
+      label="Accumulated Points"
+      value={points ? points.toLocaleString() : '0'}
+      delta="Royalty Rewards"
+      icon="stars"
+    />,
   ]
 
   if (isMobile) {
@@ -198,13 +208,14 @@ export function StatCards({
   }
 
   return (
-    <div className="stats4 animate-in fade-in slide-in-from-top-4 duration-500">
+    <div className="stats5 animate-in fade-in slide-in-from-top-4 duration-500">
       {tiles}
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        .stats4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-        @media (max-width: 1024px) { .stats4 { grid-template-columns: repeat(2, 1fr); } }
+        .stats5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
+        @media (max-width: 1200px) { .stats5 { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 900px) { .stats5 { grid-template-columns: repeat(2, 1fr); } }
         ${tileStyles}
       `,
         }}

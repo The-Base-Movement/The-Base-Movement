@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [contributionStats, setContributionStats] = useState({ total: 0, lastMonth: 0 })
   const [rankInfo, setRankInfo] = useState({ rank: 99, delta: 'Stable' })
+  const [points, setPoints] = useState(0)
 
   useEffect(() => {
     async function fetchData() {
@@ -72,7 +73,7 @@ export default function Dashboard() {
           })
 
           // Fetch additional stats
-          const [donations, rank] = await Promise.all([
+          const [donations, rank, pts] = await Promise.all([
             donationService.getMemberDonationStats({
               authId: liveMember.authId,
               phone: liveMember.phone,
@@ -82,9 +83,11 @@ export default function Dashboard() {
               constituency: liveMember.constituency,
               chapter: liveMember.chapter,
             }),
+            gamificationService.getMemberPoints(liveMember.authId || ''),
           ])
           setContributionStats({ total: donations.total, lastMonth: donations.lastMonth })
           setRankInfo({ rank: rank.rank, delta: rank.delta })
+          setPoints(pts)
         }
       } catch (err) {
         console.warn('[DASHBOARD] Stats sync failed:', err)
@@ -151,6 +154,7 @@ export default function Dashboard() {
         contributionYTD={contributionStats}
         rank={rankInfo}
         platform={member?.platform || sessionStore.getItem('userPlatform') || 'GHANA'}
+        points={points}
       />
 
       <div className="dash-content">
