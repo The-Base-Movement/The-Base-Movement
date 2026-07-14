@@ -168,7 +168,12 @@ export const registrationService = {
     const { error: dbError } = await supabase.from('users').insert({
       id: authData.user?.id,
       national_id: formData.idNumber,
-      full_name: formData.fullName,
+      // Normalize the name so scan/import artifacts (leading "1. ", double spaces)
+      // don't leak into the record the way they did for the early bulk imports.
+      full_name: formData.fullName
+        .replace(/^\s*[0-9]+[.)]\s*/, '')
+        .replace(/\s+/g, ' ')
+        .trim(),
       email: authEmail,
       registration_number: regNo,
       platform: networkAssignment.platform,

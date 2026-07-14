@@ -7,6 +7,7 @@ import { RecentActivityPanel } from './dashboard/components/RecentActivityPanel'
 import { StatCards } from './dashboard/components/StatCards'
 import MembershipCard from '@/components/MembershipCard'
 import { QuickActions } from './dashboard/components/QuickActions'
+import { ProfileCompletion } from './dashboard/components/ProfileCompletion'
 import { ActivityFeed } from './dashboard/components/ActivityFeed'
 import { MovementJourney } from './dashboard/components/MovementJourney'
 import { donationService } from '@/services/donationService'
@@ -146,6 +147,15 @@ export default function Dashboard() {
           Akwaaba, {member?.full_name?.split(' ')[0] || 'Kwesi'} 👋
         </h2>
       </div>
+
+      {/* Profile completion nudge → 100% verified badge */}
+      {member && (
+        <ProfileCompletion
+          avatarUrl={member.avatar_url}
+          regNo={member.registration_number}
+          hasCoreDetails={!!(member.full_name && (member.constituency || member.country))}
+        />
+      )}
 
       {/* Stat Tiles */}
       <StatCards
