@@ -163,6 +163,12 @@ class MemberService {
   }
 
   async getMemberProfileByAuthId(authId: string): Promise<Member | null> {
+    try {
+      await supabase.rpc('link_imported_member_profile')
+    } catch (e) {
+      console.warn('[memberService] Auto-link imported member profile failed:', e)
+    }
+
     const { data, error } = await supabase
       .from('users')
       .select(
