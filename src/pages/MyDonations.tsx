@@ -7,6 +7,15 @@ import { useAuth } from '@/context/AuthContext'
 import SEO from '@/components/SEO'
 import DonationReceiptModal from '@/components/donations/DonationReceiptModal'
 import MonthlyDuesTab from '@/components/dues/MonthlyDuesTab'
+import { toast } from 'sonner'
+import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
+
+function isRetryable(d: DonationDetail) {
+  if (d.status !== 'Pending') return false
+  const diffTime = Date.now() - new Date(d.date).getTime()
+  return diffTime < 7 * 24 * 60 * 60 * 1000
+}
 
 function StatusPill({ status }: { status: string }) {
   const cls = status === 'Verified' ? 'pill-ok' : status === 'Rejected' ? 'pill-err' : 'pill-warn'
@@ -71,6 +80,53 @@ export default function MyDonations() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [dateFilter, setDateFilter] = useState<string>('all')
   const [tab, setTab] = useState<'donations' | 'dues'>('donations')
+  const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+  const [isRetrying, setIsRetrying] = useState<string | null>(null)
+
+  const handleRetryPayment = async (d: DonationDetail) => {
+    setIsRetrying(d.id)
+    try {
+      const url = await initiateHubtelCheckout({
+        reference: d.id,
+        amount: parseFloat(d.amount),
+        currency: 'GHS',
+        name: d.fullName,
+        phone: d.phone,
+        metadata: {
+          donationId: d.id,
+          memberId: d.memberId,
+          campaignId: d.campaignId,
+        },
+      })
+      setCheckoutUrl(url)
+      setActiveDonationId(d.id)
+      setIsPaymentModalOpen(true)
+    } catch (err: unknown) {
+      console.error('Failed to retry payment:', err)
+      const msg =
+        err instanceof Error ? err.message : 'Could not restart secure checkout. Please try again.'
+      toast.error(msg)
+    } finally {
+      setIsRetrying(null)
+    }
+  }
+
+  const handlePaymentSuccess = () => {
+    setIsPaymentModalOpen(false)
+    setCheckoutUrl(null)
+    setActiveDonationId(null)
+    toast.success('Payment confirmed. Thank you for supporting the movement.')
+
+    if (session?.user) {
+      setLoading(true)
+      adminService.getPersonalDonationHistory(session.user.id).then((data) => {
+        setDonations(data)
+        setLoading(false)
+      })
+    }
+  }
   useEffect(() => {
     if (!session?.user) return
     adminService.getPersonalDonationHistory(session.user.id).then((data) => {
@@ -637,6 +693,22 @@ export default function MyDonations() {
                             </span>
                             View Receipt
                           </button>
+                        ) : isRetryable(d) ? (
+                          <button
+                            className="btn btn-sm"
+                            style={{
+                              whiteSpace: 'nowrap',
+                              background: 'hsl(var(--primary))',
+                              color: '#fff',
+                            }}
+                            disabled={isRetrying === d.id}
+                            onClick={() => handleRetryPayment(d)}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                              {isRetrying === d.id ? 'hourglass_top' : 'refresh'}
+                            </span>
+                            {isRetrying === d.id ? 'Starting…' : 'Retry Payment'}
+                          </button>
                         ) : (
                           <span
                             style={{
@@ -645,7 +717,7 @@ export default function MyDonations() {
                               fontFamily: "'Public Sans', sans-serif",
                             }}
                           >
-                            {d.status === 'Verified' ? '—' : 'Pending'}
+                            {d.status === 'Verified' ? '—' : d.status}
                           </span>
                         )}
                       </td>
@@ -731,6 +803,24 @@ export default function MyDonations() {
                       View Receipt
                     </button>
                   )}
+                  {isRetryable(d) && (
+                    <button
+                      className="btn btn-sm"
+                      style={{
+                        marginTop: 8,
+                        alignSelf: 'flex-start',
+                        background: 'hsl(var(--primary))',
+                        color: '#fff',
+                      }}
+                      disabled={isRetrying === d.id}
+                      onClick={() => handleRetryPayment(d)}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        {isRetrying === d.id ? 'hourglass_top' : 'refresh'}
+                      </span>
+                      {isRetrying === d.id ? 'Starting…' : 'Retry Payment'}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -743,6 +833,18 @@ export default function MyDonations() {
         donationId={receiptViewDonationId}
         reference={receiptViewRef}
         onClose={() => setReceiptViewDonationId(null)}
+      />
+      <HubtelPaymentModal
+        isOpen={isPaymentModalOpen}
+        checkoutUrl={checkoutUrl}
+        referenceId={activeDonationId}
+        type="donation"
+        onClose={() => {
+          setIsPaymentModalOpen(false)
+          setCheckoutUrl(null)
+          setActiveDonationId(null)
+        }}
+        onSuccess={handlePaymentSuccess}
       />
       <style
         dangerouslySetInnerHTML={{
