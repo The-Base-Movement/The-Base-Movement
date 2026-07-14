@@ -8,15 +8,6 @@ import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
 import type { AuthResponse } from '@supabase/supabase-js'
 
-async function getDummyEmail(phone: string): Promise<string> {
-  const clean = phone.replace('+', '').trim()
-  const msgBuffer = new TextEncoder().encode(clean)
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-  return `${hashHex.slice(0, 16)}@thebase.org`
-}
-
 function normalizeRegistrationPhone(countryCode: string, contactNumber: string): string {
   const raw = contactNumber.trim().replace(/\s+/g, '')
   if (raw.startsWith('+')) return raw
@@ -77,8 +68,6 @@ export const registrationService = {
 
     const authEmail = formData.email ? formData.email.trim() : null
     const cleanPhone = normalizeRegistrationPhone(formData.countryCode, formData.contactNumber)
-    const dummyEmail = await getDummyEmail(cleanPhone)
-    const finalAuthEmail = authEmail || dummyEmail
     const duplicate = await findDuplicateRegistration(cleanPhone, authEmail)
     if (duplicate) {
       throw new Error(
@@ -95,20 +84,25 @@ export const registrationService = {
     const randomNum = String(Math.floor(1000 + Math.random() * 9000))
     const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
 
-    // 1. Sign up user in Supabase Auth
-    const { data: signUpData, error: authError } = await supabase.auth.signUp({
-      email: finalAuthEmail,
+    // 1. Sign up user in Supabase Auth (using email if provided, else phone)
+    const signUpParams = {
       password: formData.password!,
       options: { data: { full_name: formData.fullName } },
-    })
+      ...(authEmail ? { email: authEmail } : { phone: cleanPhone }),
+    }
+
+    const { data: signUpData, error: authError } = await supabase.auth.signUp(signUpParams)
     const authData: AuthResponse['data'] = signUpData
 
     if (authError) {
       if (authError.message?.toLowerCase().includes('already registered')) {
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: finalAuthEmail,
+        const signInParams = {
           password: formData.password!,
-        })
+          ...(authEmail ? { email: authEmail } : { phone: cleanPhone }),
+        }
+
+        const { data: signInData, error: signInError } =
+          await supabase.auth.signInWithPassword(signInParams)
 
         if (!signInError && signInData.user) {
           authData.user = signInData.user

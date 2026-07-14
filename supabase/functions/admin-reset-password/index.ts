@@ -78,20 +78,18 @@ Deno.serve(async (req: Request) => {
       if (digits.startsWith('0')) return `+233${digits.slice(1)}`
       return `+233${digits}`
     }
-    async function getDummyEmail(phone: string): Promise<string> {
-      const clean = phone.replace('+', '').trim()
-      const msgBuffer = new TextEncoder().encode(clean)
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
-      const hashArray = Array.from(new Uint8Array(hashBuffer))
-      const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-      return `${hashHex.slice(0, 16)}@thebase.org`
-    }
 
     let targetEmail = ''
     let targetName = 'Compatriot'
     let isProvisionedNow = false
 
     const { data: targetAuth, error: targetError } = await admin.auth.admin.getUserById(user_id)
+
+    let targetEmail = ''
+    let targetPhone = ''
+    let targetName = 'Compatriot'
+    let isProvisionedNow = false
+    const tempPassword = generateTempPassword()
 
     if (targetError || !targetAuth?.user) {
       // User not found in auth.users — check if they exist in public.users (imported member)
@@ -107,9 +105,7 @@ Deno.serve(async (req: Request) => {
 
       // Provision auth credentials on the fly
       const normalizedPhone = normalizePhoneNumber(profile.phone_number)
-      const finalEmail =
-        profile.email || (normalizedPhone ? await getDummyEmail(normalizedPhone) : '')
-      if (!finalEmail) {
+      if (!profile.email && !normalizedPhone) {
         return json(
           {
             error:
@@ -119,16 +115,17 @@ Deno.serve(async (req: Request) => {
         )
       }
 
-      const tempPassword = generateTempPassword()
       const createParams: Record<string, unknown> = {
-        email: finalEmail,
         password: tempPassword,
-        email_confirm: true,
         user_metadata: {
           reg_no: profile.registration_number,
           name: profile.full_name,
           must_change_password: true,
         },
+      }
+      if (profile.email) {
+        createParams.email = profile.email
+        createParams.email_confirm = true
       }
       if (normalizedPhone) {
         createParams.phone = normalizedPhone
@@ -162,24 +159,42 @@ Deno.serve(async (req: Request) => {
         )
       }
 
-      targetEmail = finalEmail
+      targetEmail = profile.email || ''
+      targetPhone = normalizedPhone || ''
       targetName = profile.full_name
       isProvisionedNow = true
     } else {
       targetEmail = targetAuth.user.email ?? ''
+      targetPhone = targetAuth.user.phone ?? ''
       targetName = targetAuth.user.user_metadata?.name || 'Compatriot'
     }
 
+    // For phone-only accounts, recovery links cannot be used.
+    // Instead, we assign a temporary password directly.
     if (!targetEmail) {
-      return json(
-        { error: 'This member has no email address on file, so a reset link cannot be sent.' },
-        400
-      )
+      const updateParams: Record<string, unknown> = { password: tempPassword }
+      const { error: updateErr } = await admin.auth.admin.updateUserById(user_id, updateParams)
+      if (updateErr) {
+        return json({ error: `Failed to update password: ${updateErr.message}` }, 400)
+      }
+
+      await admin
+        .from('users')
+        .update({
+          must_change_password: true,
+          temp_password_sent_at: new Date().toISOString(),
+        })
+        .eq('id', user_id)
+
+      return json({
+        success: true,
+        emailed: false,
+        tempPassword,
+        message: 'Password updated. Share this temporary password with the member.',
+      })
     }
 
-    // Generate the recovery link server-side. redirectTo must be in the project's
-    // allowed redirect URLs (Auth → URL Configuration). The member lands on
-    // /reset-password, which handles the PASSWORD_RECOVERY event.
+    // Generate the recovery link server-side for email accounts.
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
       type: 'recovery',
       email: targetEmail,
@@ -192,10 +207,9 @@ Deno.serve(async (req: Request) => {
     const emailOtp = properties.email_otp as string
     const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(targetEmail)}&token=${emailOtp}`
 
-    // Email the link via SendGrid (best-effort — only for real non-placeholder emails).
+    // Email the link via SendGrid (best-effort).
     let emailed = false
-    const realEmail = targetEmail && !targetEmail.endsWith('@thebase.org') ? targetEmail : ''
-    if (sgKey && realEmail) {
+    if (sgKey && targetEmail) {
       try {
         const senderEmail = await getSenderEmail(admin)
         const html = passwordResetEmail({
@@ -207,7 +221,7 @@ Deno.serve(async (req: Request) => {
           method: 'POST',
           headers: { Authorization: `Bearer ${sgKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            personalizations: [{ to: [{ email: realEmail }] }],
+            personalizations: [{ to: [{ email: targetEmail }] }],
             from: { email: senderEmail, name: 'The Base Movement' },
             subject: 'Reset your Base Movement password',
             content: [
@@ -231,7 +245,14 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    return json({ success: true, emailed, email: realEmail || targetEmail, actionLink: customLink })
+    // If we just provisioned an email account, return the temp password as fallback
+    return json({
+      success: true,
+      emailed,
+      email: targetEmail,
+      actionLink: customLink,
+      tempPassword: isProvisionedNow ? tempPassword : undefined,
+    })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[admin-reset-password] ${msg}`)

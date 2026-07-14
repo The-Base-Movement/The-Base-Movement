@@ -36,15 +36,6 @@ function normalizePhoneNumber(raw: string): string {
   return `+233${digits}`
 }
 
-async function getDummyEmail(phone: string): Promise<string> {
-  const clean = phone.replace('+', '').trim()
-  const msgBuffer = new TextEncoder().encode(clean)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-  return `${hashHex.slice(0, 16)}@thebase.org`
-}
-
 serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -88,25 +79,26 @@ serve(async (req: Request) => {
       const tempPassword = generateTempPassword()
 
       try {
-        // 1. A phone-only member gets a placeholder email; an email-only member
-        //    (admin/recovery account) gets no phone at all.
-        const finalEmail =
-          member.email || (normalizedPhone ? await getDummyEmail(normalizedPhone) : '')
-        if (!finalEmail) {
+        // 1. A member must have an email or a phone number.
+        if (!member.email && !normalizedPhone) {
           failedUsers.push({ reg_no: member.reg_no, reason: 'No email or phone provided.' })
           continue
         }
 
         const createParams: Record<string, unknown> = {
-          email: finalEmail,
           password: tempPassword,
-          email_confirm: true,
           user_metadata: {
             reg_no: member.reg_no,
             name: member.name,
             must_change_password: true,
           },
         }
+
+        if (member.email) {
+          createParams.email = member.email
+          createParams.email_confirm = true
+        }
+
         if (normalizedPhone) {
           createParams.phone = normalizedPhone
           createParams.phone_confirm = true

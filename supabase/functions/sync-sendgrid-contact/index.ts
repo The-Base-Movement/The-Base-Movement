@@ -60,78 +60,116 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-    const listId: string | undefined = Deno.env.get('SENDGRID_LIST_ID')
+    const resendApiKey: string | undefined = Deno.env.get('RESEND_API_KEY')
 
-    if (!sgKey) {
-      console.warn('[SENDGRID] SENDGRID_API_KEY not set — skipping contact sync for', email)
+    if (!resendApiKey) {
+      console.warn('[RESEND] RESEND_API_KEY not set — skipping contact sync for', email)
       return new Response(JSON.stringify({ skipped: true, reason: 'no api key' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
 
-    const contact: Record<string, string> = {
+    // 1. Ensure contact properties (schema fields) exist in Resend
+    const props = [
+      { key: 'reg_no', type: 'string' },
+      { key: 'region', type: 'string' },
+      { key: 'constituency', type: 'string' },
+      { key: 'platform', type: 'string' },
+      { key: 'membership_status', type: 'string' },
+    ]
+    for (const prop of props) {
+      try {
+        await fetch('https://api.resend.com/contact-properties', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify(prop),
+        })
+      } catch (e) {
+        // Safe to ignore if already exists or schema setup fails
+      }
+    }
+
+    // 2. Attempt to create the contact in Resend
+    const contactPayload = {
       email,
       first_name,
       last_name,
+      unsubscribed: false,
+      properties: {
+        reg_no,
+        region,
+        constituency,
+        platform,
+        membership_status: status,
+      },
     }
 
-    // Custom fields are referenced by the field name they were created with
-    // in your SendGrid account (Marketing > Contacts > Custom Fields).
-    // We include these as reserved fields where SendGrid accepts them,
-    // and as custom_fields for the rest.
-    const payload: Record<string, unknown> = {
-      contacts: [
-        {
-          ...contact,
-          custom_fields: {
-            // These keys must match the SendGrid custom field names you've created.
-            // Create them at: SendGrid > Marketing > Contacts > Custom Fields
-            // Field names used here: e_0 through e_4 are placeholders — replace with
-            // your actual field IDs after creating them in the SendGrid dashboard.
-            reg_no,
-            region,
-            constituency,
-            platform,
-            membership_status: status,
-          },
-        },
-      ],
-    }
-
-    if (listId) {
-      payload.list_ids = [listId]
-    }
-
-    const res = await fetch('https://api.sendgrid.com/v3/marketing/contacts', {
-      method: 'PUT',
+    const res = await fetch('https://api.resend.com/contacts', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${sgKey}`,
+        Authorization: `Bearer ${resendApiKey}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(contactPayload),
     })
 
-    if (res.status === 202) {
-      // SendGrid returns 202 Accepted — contact sync is queued asynchronously
+    if (res.ok) {
       const data = await res.json()
-      console.warn('[SENDGRID] Contact sync accepted for', email, '— job_id:', data.job_id)
-      return new Response(JSON.stringify({ success: true, job_id: data.job_id }), {
+      console.warn('[RESEND] Contact sync created for', email, '— id:', data.id)
+      return new Response(JSON.stringify({ success: true, id: data.id }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
+
+    // 3. Fallback: If contact already exists, update via PATCH
+    const errBody = await res.text()
+    console.warn(
+      '[RESEND] Contact creation failed (might already exist), attempting update. Detail:',
+      errBody
+    )
+
+    const updateRes = await fetch(`https://api.resend.com/contacts/${encodeURIComponent(email)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        first_name,
+        last_name,
+        properties: {
+          reg_no,
+          region,
+          constituency,
+          platform,
+          membership_status: status,
+        },
+      }),
+    })
+
+    if (updateRes.ok) {
+      const updateData = await updateRes.json()
+      console.warn('[RESEND] Contact sync updated for', email, '— id:', updateData.id)
+      return new Response(JSON.stringify({ success: true, id: updateData.id }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     } else {
-      const errText = await res.text()
-      console.error('[SENDGRID] Contact sync failed for', email, res.status, errText)
-      return new Response(JSON.stringify({ error: errText }), {
+      const updateErrText = await updateRes.text()
+      console.error('[RESEND] Contact sync failed for', email, updateRes.status, updateErrText)
+      return new Response(JSON.stringify({ error: updateErrText }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       })
     }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
-    console.error('[SENDGRID-CONTACT-ERROR]', message)
+    console.error('[RESEND-CONTACT-ERROR]', message)
     return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,

@@ -1,21 +1,15 @@
 // @ts-nocheck
-// THE BASE: SENDGRID BULK CONTACT SYNC
+// THE BASE: SENDGRID BULK CONTACT SYNC (MIGRATED TO RESEND)
 // Fetches all members from the database and upserts them into
-// the SendGrid marketing contacts list in batches of 1,000.
+// the Resend global contacts list.
 //
-// Required secrets: SENDGRID_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
-// Optional secret:  SENDGRID_LIST_ID — if set, contacts are added to that list
+// Required secrets: RESEND_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 //
 // Invocation: POST (no body required; admin-auth enforced via service role)
-// Returns: { total, batches, job_ids: string[] }
-//
-// SendGrid Contacts API accepts up to 30,000 contacts per request.
-// We batch at 1,000 to stay well within limits and avoid timeouts.
+// Returns: { total, success, failed }
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageNewsletters, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
-
-const BATCH_SIZE = 1000
 
 interface MemberRow {
   id: string
@@ -36,29 +30,67 @@ function splitName(full: string | null): { first_name: string; last_name: string
   }
 }
 
-async function syncBatch(
-  contacts: object[],
-  sgKey: string,
-  listId: string | undefined
-): Promise<string> {
-  const payload: Record<string, unknown> = { contacts }
-  if (listId) payload.list_ids = [listId]
+async function syncResendContactsInBulk(contacts: any[], resendApiKey: string) {
+  const CONCURRENCY_LIMIT = 8
+  let index = 0
+  const results = { success: 0, failed: 0 }
 
-  const res = await fetch('https://api.sendgrid.com/v3/marketing/contacts', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sgKey}`,
-    },
-    body: JSON.stringify(payload),
-  })
+  async function worker() {
+    while (index < contacts.length) {
+      const currentIdx = index++
+      const contact = contacts[currentIdx]
+      if (!contact) break
 
-  if (res.status === 202) {
-    const data = await res.json()
-    return (data.job_id as string) ?? 'unknown'
+      try {
+        const createRes = await fetch('https://api.resend.com/contacts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify(contact),
+        })
+
+        if (createRes.ok) {
+          results.success++
+          continue
+        }
+
+        // If it failed (e.g. contact already exists), update via PATCH
+        const updateRes = await fetch(
+          `https://api.resend.com/contacts/${encodeURIComponent(contact.email)}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${resendApiKey}`,
+            },
+            body: JSON.stringify({
+              first_name: contact.first_name,
+              last_name: contact.last_name,
+              properties: contact.properties,
+            }),
+          }
+        )
+
+        if (updateRes.ok) {
+          results.success++
+        } else {
+          results.failed++
+        }
+      } catch (err) {
+        results.failed++
+      }
+    }
   }
-  const errText = await res.text()
-  throw new Error(`SendGrid batch failed: ${res.status} ${errText}`)
+
+  // Spawn workers
+  const workers = Array.from({ length: Math.min(CONCURRENCY_LIMIT, contacts.length) }, () =>
+    worker()
+  )
+  await Promise.all(workers)
+
+  return results
 }
 
 const corsHeaders = {
@@ -76,11 +108,10 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-    const listId: string | undefined = Deno.env.get('SENDGRID_LIST_ID')
+    const resendApiKey: string | undefined = Deno.env.get('RESEND_API_KEY')
 
-    if (!sgKey) {
-      return new Response(JSON.stringify({ skipped: true, reason: 'SENDGRID_API_KEY not set' }), {
+    if (!resendApiKey) {
+      return new Response(JSON.stringify({ skipped: true, reason: 'RESEND_API_KEY not set' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
@@ -98,6 +129,29 @@ Deno.serve(async (req: Request) => {
       })
     }
 
+    // Ensure contact properties exist in Resend
+    const props = [
+      { key: 'reg_no', type: 'string' },
+      { key: 'region', type: 'string' },
+      { key: 'constituency', type: 'string' },
+      { key: 'platform', type: 'string' },
+      { key: 'membership_status', type: 'string' },
+    ]
+    for (const prop of props) {
+      try {
+        await fetch('https://api.resend.com/contact-properties', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify(prop),
+        })
+      } catch (e) {
+        // Safe to ignore if already exists or schema setup fails
+      }
+    }
+
     // Fetch all members with an email
     const { data, error } = await supabase
       .from('users')
@@ -107,9 +161,7 @@ Deno.serve(async (req: Request) => {
 
     if (error) throw error
 
-    // Keep only rows with a syntactically valid email. The DB filter excludes
-    // null/'' but whitespace-only or malformed values slip through and SendGrid
-    // rejects the whole batch with "email is required".
+    // Keep only rows with a syntactically valid email.
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const members: MemberRow[] = (data ?? [])
       .map((m: MemberRow) => ({ ...m, email: (m.email ?? '').trim() }))
@@ -117,7 +169,7 @@ Deno.serve(async (req: Request) => {
     const total = members.length
 
     if (total === 0) {
-      return new Response(JSON.stringify({ total: 0, batches: 0, job_ids: [] }), {
+      return new Response(JSON.stringify({ total: 0, success: 0, failed: 0 }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
@@ -130,7 +182,8 @@ Deno.serve(async (req: Request) => {
         email: m.email,
         first_name,
         last_name,
-        custom_fields: {
+        unsubscribed: false,
+        properties: {
           reg_no: m.registration_number ?? '',
           region: m.region ?? '',
           constituency: m.constituency ?? '',
@@ -140,21 +193,20 @@ Deno.serve(async (req: Request) => {
       }
     })
 
-    // Dispatch in batches
-    const jobIds: string[] = []
-    for (let i = 0; i < contacts.length; i += BATCH_SIZE) {
-      const batch = contacts.slice(i, i + BATCH_SIZE)
-      const jobId = await syncBatch(batch, sgKey, listId)
-      jobIds.push(jobId)
-      console.warn(
-        `[SENDGRID-BULK] Batch ${Math.floor(i / BATCH_SIZE) + 1} accepted — job_id: ${jobId}`
-      )
-    }
+    // Sync in bulk using concurrency queue
+    const syncResult = await syncResendContactsInBulk(contacts, resendApiKey)
 
-    return new Response(JSON.stringify({ total, batches: jobIds.length, job_ids: jobIds }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    })
+    return new Response(
+      JSON.stringify({
+        total,
+        success: syncResult.success,
+        failed: syncResult.failed,
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    )
   } catch (err: unknown) {
     const message =
       err instanceof Error
@@ -162,7 +214,7 @@ Deno.serve(async (req: Request) => {
         : typeof err === 'object' && err !== null
           ? JSON.stringify(err)
           : String(err)
-    console.error('[SENDGRID-BULK-ERROR]', message)
+    console.error('[RESEND-BULK-ERROR]', message)
     return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,

@@ -172,20 +172,24 @@ serve(async (req: Request) => {
     }
 
     const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(profile.id)
-    if (authUserError || !authUser?.user?.email) {
+    if (authUserError || (!authUser?.user?.email && !authUser?.user?.phone)) {
       const next = registerFailure(now, currentThrottle)
       throttleStore.set(throttleKey, next.entry)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)
     }
 
-    // Sign in with the real auth email using the anon client so the resulting
+    // Sign in with the real auth email or phone using the anon client so the resulting
     // session is a normal user session (not service-role)
     const anon = createClient(supabaseUrl, anonKey)
-    const { data, error } = await anon.auth.signInWithPassword({
-      email: authUser.user.email,
-      password,
-    })
+    const signInParams: Record<string, string> = { password }
+    if (authUser.user.email) {
+      signInParams.email = authUser.user.email
+    } else {
+      signInParams.phone = authUser.user.phone ?? ''
+    }
+
+    const { data, error } = await anon.auth.signInWithPassword(signInParams as any)
 
     if (error || !data.session) {
       const next = registerFailure(now, currentThrottle)

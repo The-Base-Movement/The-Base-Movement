@@ -81,7 +81,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const currentAuthEmail = targetAuth.user.email ?? ''
-    const needsEmail = currentAuthEmail.endsWith(PLACEHOLDER_DOMAIN)
+    const needsEmail = !currentAuthEmail || currentAuthEmail.endsWith(PLACEHOLDER_DOMAIN)
 
     if (check_only) {
       const { data: profile } = await admin
