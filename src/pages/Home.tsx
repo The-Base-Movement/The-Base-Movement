@@ -1,6 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-import { adminService, type BlogPost, type Milestone, type Poll } from '@/services/adminService'
-import { contentService } from '@/services/contentService'
+import { useMemo, useRef, useState } from 'react'
+import {
+  useBlogPosts,
+  usePublicStats,
+  useMilestones,
+  useActivePolls,
+} from '@/hooks/queries/usePublicContent'
 import { usePerformance } from '@/context/PerformanceContext'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
@@ -22,6 +26,17 @@ import { WingDivider } from '@/components/ui/WingDivider'
 gsap.registerPlugin(ScrollTrigger)
 
 const MILESTONE_COLORS = ['#CE1126', '#DAA520', '#181d19', '#006B3F']
+
+// Stable fallback so the stats-dependent GSAP effect doesn't retrigger each render before data loads.
+const DEFAULT_STATS = {
+  members: 0,
+  chapters: 0,
+  regions: 0,
+  diaspora: 0,
+  membersDelta: '...',
+  chaptersDelta: '...',
+  diasporaDelta: '...',
+}
 
 const fallbackMilestones = [
   {
@@ -62,18 +77,24 @@ export default function Home() {
   const { settings } = useBranding()
   const statsGridRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 })
-  const [latestPosts, setLatestPosts] = useState<BlogPost[]>([])
-  const [milestones, setMilestones] = useState<Milestone[]>([])
-  const [activePolls, setActivePolls] = useState<Poll[]>([])
-  const [stats, setStats] = useState({
-    members: 0,
-    chapters: 0,
-    regions: 0,
-    diaspora: 0,
-    membersDelta: '...',
-    chaptersDelta: '...',
-    diasporaDelta: '...',
-  })
+  const { data: blogPosts } = useBlogPosts()
+  const { data: statsData } = usePublicStats()
+  const { data: milestonesData } = useMilestones()
+  const { data: pollsData } = useActivePolls()
+
+  const latestPosts = useMemo(() => (blogPosts ?? []).slice(0, 3), [blogPosts])
+  const stats = statsData ?? DEFAULT_STATS
+  const milestones = useMemo(
+    () =>
+      [...(milestonesData ?? [])]
+        .sort((a, b) => new Date(a.target_date).getTime() - new Date(b.target_date).getTime())
+        .slice(0, 4),
+    [milestonesData]
+  )
+  const activePolls = useMemo(
+    () => (pollsData ?? []).filter((p) => p.status === 'Active').slice(0, 2),
+    [pollsData]
+  )
   const { lowBandwidthMode } = usePerformance()
 
   const organizationSchema = {
@@ -94,30 +115,6 @@ export default function Home() {
       url: 'https://www.thebasemovement.org.gh/contact',
     },
   }
-
-  useEffect(() => {
-    contentService
-      .getBlogPosts()
-      .then((data) => setLatestPosts(data.slice(0, 3)))
-      .catch(() => {})
-    adminService
-      .getPublicStats()
-      .then(setStats)
-      .catch(() => {})
-    adminService
-      .getMilestones()
-      .then((data) => {
-        const sorted = [...data].sort(
-          (a, b) => new Date(a.target_date).getTime() - new Date(b.target_date).getTime()
-        )
-        setMilestones(sorted.slice(0, 4))
-      })
-      .catch(() => {})
-    adminService
-      .getPolls()
-      .then((data) => setActivePolls(data.filter((p) => p.status === 'Active').slice(0, 2)))
-      .catch(() => {})
-  }, [])
 
   useGSAP(
     () => {
