@@ -390,7 +390,7 @@
   .home-hero-meta-panel {
     display: inline-flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 0;
     padding: 14px 16px;
     border: 1px solid rgba(255, 255, 255, 0.18);
@@ -402,7 +402,10 @@
   }
 
   .home-hero-trust-signals {
-    justify-content: center;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: start;
+    width: 100%;
   }
 
   .mobile-urgent-badge {
@@ -1727,7 +1730,8 @@ td.leadership-col-secondary {
   }
 
   .home-hero-trust-signals {
-    justify-content: flex-start;
+    grid-template-columns: repeat(4, max-content);
+    width: auto;
   }
 }
 

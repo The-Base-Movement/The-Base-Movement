@@ -313,7 +313,7 @@ export function HeroSection({
                 arrow_forward
               </span>
             </Link>
-            <div className="mt-4 flex justify-center md:justify-start">
+            <div className="mt-4 flex justify-start">
               <TrustSignals items={SIGNUP_TRUST} tone="dark" className="home-hero-trust-signals" />
             </div>
           </div>

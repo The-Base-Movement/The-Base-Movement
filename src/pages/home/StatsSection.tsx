@@ -48,9 +48,9 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
           />
           <StatCard
             accent="#DAA520"
-            eye="Branches"
+            eye="Base Diaspora"
             value={stats.chapters}
-            label="Community branches active in nearly every district"
+            label="Base Diaspora networks organised by country worldwide"
             sparkHeights={[5, 6, 7, 7, 9, 10, 10, 12, 13, 14, 16, 18]}
             delta={stats.chaptersDelta}
             deltaIcon="up"

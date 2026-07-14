@@ -53,7 +53,7 @@ const PILLARS = [
     bg: 'hsl(var(--primary) / 0.08)',
     title: 'Diaspora Network',
     description:
-      'Uniting Ghanaian compatriots worldwide, from London to New York to Dubai, under one movement and one agenda.',
+      'Uniting Ghanaian compatriots worldwide, from the United Kingdom to the United States to Germany, under one movement and one agenda.',
     side: 'right' as const,
   },
 ]
