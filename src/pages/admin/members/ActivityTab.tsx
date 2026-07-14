@@ -319,7 +319,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
             >
               {[
                 ['Full name', member.name],
-                ['Reg number', member.id.substring(0, 12).toUpperCase()],
+                ['Reg number', member.id.toUpperCase()],
                 ['Email', member.email || '—'],
                 ['Mobile', member.phone || '—'],
                 ['Region', member.region || '—'],

@@ -51,9 +51,29 @@ tsconfig.*.tsbuildinfo
 supabase/config.toml
 supabase/.temp/
 supabase/**/*.sql
-docs/**
-!docs/security_checks/
-!docs/security_checks/remediation_log.md
+
+# Docs — never commit (all subdirectories included)
+docs/
+
+# Test files — kept locally only
+src/test/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# AI agent and tooling directories — local dev only
+.agents/
+.agent/
+agent/
+.codex/
+.claude/
+.superpowers/
+.windsurf/
+.playwright-mcp/
+graphify-out/
+AGENTS.md
+CLAUDE.md
 
 # Python caching
 __pycache__/

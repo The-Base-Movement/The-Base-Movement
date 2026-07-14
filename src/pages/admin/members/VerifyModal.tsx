@@ -190,7 +190,7 @@ export function VerifyModal({
                       fontVariantNumeric: 'tabular-nums',
                     }}
                   >
-                    {m.id.substring(0, 12)}
+                    {m.id}
                   </span>
                 </div>
               </div>

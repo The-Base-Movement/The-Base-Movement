@@ -281,7 +281,7 @@ export function MembersTable({
                             fontVariantNumeric: 'tabular-nums',
                           }}
                         >
-                          {member.id.substring(0, 12).toUpperCase()}
+                          {member.id.toUpperCase()}
                         </span>
                       </div>
                     </div>

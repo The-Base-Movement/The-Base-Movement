@@ -130,7 +130,7 @@ export default function MemberListCard({
               fontVariantNumeric: 'tabular-nums',
             }}
           >
-            {member.id.substring(0, 12).toUpperCase()}
+            {member.id.toUpperCase()}
           </span>
         </div>
         <span className={statusClass} style={{ flexShrink: 0 }}>

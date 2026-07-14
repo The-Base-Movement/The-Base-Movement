@@ -437,7 +437,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                                       whiteSpace: 'nowrap',
                                     }}
                                   >
-                                    {member.id.substring(0, 12)} · {member.region}
+                                    {member.id} · {member.region}
                                   </p>
                                 </div>
                                 <span

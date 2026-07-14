@@ -280,7 +280,7 @@ export function MemberDetailPanel({
                     letterSpacing: '.04em',
                   }}
                 >
-                  {member.id.substring(0, 12).toUpperCase()}
+                  {member.id.toUpperCase()}
                 </div>
                 <div
                   className="desktop-only"
