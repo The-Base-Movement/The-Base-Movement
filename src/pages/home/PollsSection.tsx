@@ -24,7 +24,7 @@ export function PollsSection({ activePolls }: PollsSectionProps) {
               Open polls
             </h2>
             <p className="text-xs text-muted-foreground/60 mt-1">
-              Member voice surveys. Results visible to chapter leadership.
+              Member voice surveys. Results visible to movement leadership.
             </p>
           </div>
           <Link

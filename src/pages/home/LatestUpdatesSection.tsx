@@ -30,7 +30,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
               Latest updates
             </h2>
             <p className="text-xs text-muted-foreground/60 mt-2">
-              Stories from our communities, branches, and partners.
+              Stories from our communities, networks, and partners.
             </p>
             <div className={cn('bl', 'mt-4')}>
               <div />

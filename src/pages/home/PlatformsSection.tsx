@@ -18,8 +18,8 @@ export function PlatformsSection() {
               For Citizens in Ghana.
             </h3>
             <p className="text-base text-muted-foreground mb-8 leading-relaxed font-body-md">
-              Get involved in your district. Join your local branch, take part in community
-              activity, and support practical action for jobs and development.
+              Get involved in your constituency. Take part in community activity and support
+              practical action for jobs and development.
             </p>
             <ButtonPrimary asChild className="w-full sm:w-auto">
               <Link to="/register?platform=GHANA">
