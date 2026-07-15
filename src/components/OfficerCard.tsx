@@ -175,11 +175,13 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             alignItems: 'stretch',
           }}
         >
-          {/* Left/Top: Full Image */}
+          {/* Left/Top: Full Image — box matches the source 4:5 portrait so the
+              whole framed headshot shows instead of being cropped. */}
           <div
             style={{
-              width: isMobile ? '100%' : 150,
-              height: isMobile ? 220 : '100%',
+              width: isMobile ? '100%' : Math.round(cardHeight * 0.8),
+              height: isMobile ? 'auto' : '100%',
+              aspectRatio: isMobile ? '4 / 5' : undefined,
               flexShrink: 0,
               overflow: 'hidden',
               borderTopLeftRadius: 16,
@@ -192,13 +194,11 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             <img
               src={officer.avatarUrl || fallbackAvatar(officer.name)}
               alt={officer.name}
-              // Anchor to the top so portrait headshots keep the head/face in
-              // frame — center-cropping the short mobile window cut off the head.
               style={{
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                objectPosition: '60% top',
+                objectPosition: 'center top',
               }}
             />
           </div>
