@@ -29,7 +29,7 @@ const HorizontalRail = () => (
   <div
     style={{
       position: 'absolute',
-      top: 0,
+      top: 16,
       left: '5%',
       right: '5%',
       height: 0,
@@ -75,7 +75,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
   }
 
   return (
-    <div style={{ paddingBottom: '60px', position: 'relative' }}>
+    <div style={{ paddingBottom: '60px', position: 'relative', paddingTop: '16px' }}>
       <HorizontalRail />
       <Swiper
         modules={[Autoplay, Pagination]}
@@ -87,7 +87,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
           0: { slidesPerView: 1 },
           768: { slidesPerView: 2 },
         }}
-        style={{ overflow: 'visible' }}
+        style={{ overflow: 'hidden', paddingTop: '16px', marginTop: '-16px' }}
         className="officials-swiper"
       >
         {Children.map(children, (child) => (
