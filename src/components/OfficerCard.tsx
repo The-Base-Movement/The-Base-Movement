@@ -79,7 +79,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
         position: 'relative',
         width: isMobile ? '100%' : cardWidth,
         maxWidth: isMobile ? undefined : cardWidth,
-        height: '100%',
+        height: isMobile ? 'auto' : '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -139,17 +139,38 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             WebkitMaskImage: 'radial-gradient(circle at 50% 0px, transparent 18px, black 19px)',
             maskImage: 'radial-gradient(circle at 50% 0px, transparent 18px, black 19px)',
             width: '100%',
-            height: cardHeight,
-            display: 'flex',
-            flexDirection: 'row',
+            height: isMobile ? 'auto' : cardHeight,
+            display: isMobile ? 'column' : 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             alignItems: 'stretch',
           }}
         >
-          {/* Left: Card Body */}
+          {/* Left/Top: Full Image */}
+          <div
+            style={{
+              width: isMobile ? '100%' : 150,
+              height: isMobile ? 220 : '100%',
+              flexShrink: 0,
+              overflow: 'hidden',
+              borderTopLeftRadius: 16,
+              borderBottomLeftRadius: isMobile ? 0 : 16,
+              borderTopRightRadius: isMobile ? 16 : 0,
+              borderBottomRightRadius: 0,
+              background: 'hsl(var(--container-low))',
+            }}
+          >
+            <img
+              src={officer.avatarUrl || fallbackAvatar(officer.name)}
+              alt={officer.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+
+          {/* Right/Bottom: Card Body */}
           <div
             style={{
               flex: 1,
-              padding: isMobile ? '36px 12px 16px 16px' : '44px 20px 20px 24px',
+              padding: isMobile ? '24px 20px 24px 20px' : '44px 20px 20px 20px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -350,25 +371,6 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
                 </a>
               )}
             </div>
-          </div>
-
-          {/* Right: Full Image */}
-          <div
-            style={{
-              width: isMobile ? 110 : 150,
-              height: '100%',
-              flexShrink: 0,
-              overflow: 'hidden',
-              borderTopRightRadius: 16,
-              borderBottomRightRadius: 16,
-              background: 'hsl(var(--container-low))',
-            }}
-          >
-            <img
-              src={officer.avatarUrl || fallbackAvatar(officer.name)}
-              alt={officer.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
           </div>
         </div>
       </div>

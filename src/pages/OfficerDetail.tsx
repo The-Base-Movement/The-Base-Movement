@@ -89,14 +89,24 @@ function PortraitAvatar({
   size?: number
 }) {
   const [errored, setErrored] = useState(false)
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 600 : false
+  )
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 600)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
   const showInitials = !url || errored
   return (
     <div
       style={{
         position: 'relative',
         flexShrink: 0,
-        width: size,
-        aspectRatio: '4 / 5',
+        width: isMobile ? '100%' : size,
+        maxWidth: isMobile ? 320 : undefined,
+        aspectRatio: showInitials ? '4 / 5' : undefined,
         borderRadius: 'var(--radius-lg)',
         overflow: 'hidden',
         background: showInitials
@@ -130,7 +140,7 @@ function PortraitAvatar({
           src={url ?? ''}
           alt={name}
           onError={() => setErrored(true)}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          style={{ width: '100%', height: 'auto', display: 'block' }}
         />
       )}
     </div>
