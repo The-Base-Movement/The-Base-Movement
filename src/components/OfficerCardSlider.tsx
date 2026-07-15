@@ -18,7 +18,7 @@ import { Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
-const SLIDER_MIN = 5
+const SLIDER_MIN = 3
 
 interface OfficerCardSliderProps {
   children: ReactNode
@@ -85,15 +85,13 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         spaceBetween={24}
         breakpoints={{
           0: { slidesPerView: 1 },
-          768: { slidesPerView: 'auto' },
+          768: { slidesPerView: 2 },
         }}
         style={{ overflow: 'visible' }}
         className="officials-swiper"
       >
         {Children.map(children, (child) => (
-          <SwiperSlide style={{ width: 'auto', display: 'flex', alignItems: 'stretch' }}>
-            {child}
-          </SwiperSlide>
+          <SwiperSlide style={{ display: 'flex', alignItems: 'stretch' }}>{child}</SwiperSlide>
         ))}
       </Swiper>
       <style

@@ -40,6 +40,30 @@ export interface OfficerProfile {
   }
 }
 
+function getFirstSentence(text: string): string {
+  const clean = text.replace(/\s+/g, ' ').trim()
+
+  // Find all sentence-ending punctuation marks followed by space or end of string
+  const matches = clean.matchAll(/[.!?](?:\s|$)/g)
+  for (const match of matches) {
+    const index = match.index
+    if (index !== undefined) {
+      const preceding = clean.slice(0, index).toLowerCase()
+      // Check if the period is likely part of an abbreviation
+      const isAbbreviation =
+        preceding.endsWith('dr') ||
+        preceding.endsWith('mr') ||
+        preceding.endsWith('mrs') ||
+        preceding.endsWith('ms') ||
+        preceding.endsWith('prof')
+      if (!isAbbreviation) {
+        return clean.slice(0, index + 1)
+      }
+    }
+  }
+  return clean
+}
+
 export interface OfficerCardProps {
   officer: OfficerProfile
   onClick?: (officer: OfficerProfile) => void
@@ -248,7 +272,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
               />
 
               {/* Bio */}
-              {officer.bio && officer.tier === 'executive' && (
+              {officer.bio && (
                 <p
                   style={{
                     margin: 0,
@@ -264,7 +288,7 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {officer.bio}
+                  {getFirstSentence(officer.bio)}
                 </p>
               )}
             </div>
