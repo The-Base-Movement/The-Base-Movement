@@ -68,7 +68,10 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
 
   // Top tier gets a taller lanyard and wider card
   const lanyardHeight = tierIndex === 0 ? 80 : tierIndex === 1 ? 100 : 60
-  const cardWidth = tierIndex === 0 ? 340 : 300
+  const desktopHeight = tierIndex === 0 ? 255 : 215
+  const mobileHeight = tierIndex === 0 ? 215 : 180
+  const cardHeight = isMobile ? mobileHeight : desktopHeight
+  const cardWidth = tierIndex === 0 ? 460 : 400
 
   return (
     <div
@@ -133,25 +136,232 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
           style={{
             background: 'hsl(var(--card))',
             borderRadius: 16,
-            padding: '48px 24px 24px',
             WebkitMaskImage: 'radial-gradient(circle at 50% 0px, transparent 18px, black 19px)',
             maskImage: 'radial-gradient(circle at 50% 0px, transparent 18px, black 19px)',
             width: '100%',
+            height: cardHeight,
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
+            flexDirection: 'row',
+            alignItems: 'stretch',
           }}
         >
-          {/* Photo */}
+          {/* Left: Card Body */}
           <div
             style={{
-              width: 120,
-              height: 120,
-              borderRadius: '50%',
-              background: 'hsl(var(--container-low))',
+              flex: 1,
+              padding: isMobile ? '36px 12px 16px 16px' : '44px 20px 20px 24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              textAlign: 'left',
               overflow: 'hidden',
-              marginBottom: 20,
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Name */}
+              <h3
+                style={{
+                  margin: 0,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: officer.tier === 'executive' ? 18 : 16,
+                  color: 'hsl(var(--on-surface))',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {officer.name}
+              </h3>
+
+              {/* Role and Region */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 4 }}>
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {officer.role}
+                </span>
+                {officer.region && (
+                  <span
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 10,
+                      color: tierColor,
+                      background: `color-mix(in srgb, ${tierColor} 10%, transparent)`,
+                      padding: '1px 6px',
+                      borderRadius: 99,
+                      alignSelf: 'flex-start',
+                    }}
+                  >
+                    {officer.region}
+                  </span>
+                )}
+              </div>
+
+              {/* Color Separator Dash */}
+              <div
+                style={{
+                  width: 24,
+                  height: 2,
+                  borderRadius: 1,
+                  background: tierColor,
+                  margin: '10px 0',
+                }}
+              />
+
+              {/* Bio */}
+              {officer.bio && officer.tier === 'executive' && (
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 400,
+                    fontSize: 11,
+                    color: 'hsl(var(--on-surface-muted))',
+                    lineHeight: 1.4,
+                    display: '-webkit-box',
+                    WebkitLineClamp: isMobile ? 2 : 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {officer.bio}
+                </p>
+              )}
+            </div>
+
+            {/* Social Icons at Bottom */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 12,
+                justifyContent: 'flex-start',
+                width: '100%',
+                marginTop: 8,
+              }}
+            >
+              {officer.socials?.facebook && (
+                <a
+                  href={officer.socials.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    opacity: 0.4,
+                    transition: 'opacity 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
+                >
+                  <FacebookIcon size={14} />
+                </a>
+              )}
+              {officer.socials?.instagram && (
+                <a
+                  href={officer.socials.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    opacity: 0.4,
+                    transition: 'opacity 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
+                >
+                  <InstagramIcon size={14} />
+                </a>
+              )}
+              {officer.socials?.linkedin && (
+                <a
+                  href={officer.socials.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    opacity: 0.4,
+                    transition: 'opacity 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
+                >
+                  <LinkedInIcon size={14} />
+                </a>
+              )}
+              {officer.socials?.twitter && (
+                <a
+                  href={officer.socials.twitter}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    opacity: 0.4,
+                    transition: 'opacity 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
+                >
+                  <XIcon size={14} />
+                </a>
+              )}
+              {officer.socials?.email && (
+                <a
+                  href={`mailto:${officer.socials.email}`}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    color: 'hsl(var(--on-surface))',
+                    opacity: 0.4,
+                    transition: 'opacity 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    mail
+                  </span>
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Full Image */}
+          <div
+            style={{
+              width: isMobile ? 110 : 150,
+              height: '100%',
+              flexShrink: 0,
+              overflow: 'hidden',
+              borderTopRightRadius: 16,
+              borderBottomRightRadius: 16,
+              background: 'hsl(var(--container-low))',
             }}
           >
             <img
@@ -159,169 +369,6 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
               alt={officer.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
-          </div>
-
-          {/* Name */}
-          <h3
-            style={{
-              margin: 0,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: officer.tier === 'executive' ? 20 : 18,
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            {officer.name}
-          </h3>
-
-          {/* Color Separator Dash */}
-          <div
-            style={{
-              width: 24,
-              height: 3,
-              borderRadius: 2,
-              background: tierColor,
-              margin: '12px auto',
-            }}
-          />
-
-          {/* Role and Bio */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
-            <span
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 13,
-                color: 'hsl(var(--on-surface-muted))',
-              }}
-            >
-              {officer.role}
-            </span>
-            {officer.region && (
-              <span
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 11,
-                  color: tierColor,
-                  background: `color-mix(in srgb, ${tierColor} 10%, transparent)`,
-                  padding: '2px 8px',
-                  borderRadius: 99,
-                  alignSelf: 'center',
-                }}
-              >
-                {officer.region}
-              </span>
-            )}
-            {officer.bio && officer.tier === 'executive' && (
-              <p
-                style={{
-                  margin: '8px 0 0 0',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 400,
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                  lineHeight: 1.5,
-                }}
-              >
-                {officer.bio}
-              </p>
-            )}
-          </div>
-
-          {/* Social Icons at Bottom */}
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', width: '100%' }}>
-            {officer.socials?.facebook && (
-              <a
-                href={officer.socials.facebook}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  opacity: 0.4,
-                  transition: 'opacity 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
-              >
-                <FacebookIcon size={16} />
-              </a>
-            )}
-            {officer.socials?.instagram && (
-              <a
-                href={officer.socials.instagram}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  opacity: 0.4,
-                  transition: 'opacity 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
-              >
-                <InstagramIcon size={16} />
-              </a>
-            )}
-            {officer.socials?.linkedin && (
-              <a
-                href={officer.socials.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  opacity: 0.4,
-                  transition: 'opacity 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
-              >
-                <LinkedInIcon size={16} />
-              </a>
-            )}
-            {officer.socials?.twitter && (
-              <a
-                href={officer.socials.twitter}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  opacity: 0.4,
-                  transition: 'opacity 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
-              >
-                <XIcon size={16} />
-              </a>
-            )}
-            {officer.socials?.email && (
-              <a
-                href={`mailto:${officer.socials.email}`}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  color: 'hsl(var(--on-surface))',
-                  opacity: 0.4,
-                  transition: 'opacity 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.4')}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                  mail
-                </span>
-              </a>
-            )}
           </div>
         </div>
       </div>
