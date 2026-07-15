@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite",
-    "build": "npm run build:client && npm run build:server && node scripts/prerender.mjs",
+    "build": "npm run build:client && npm run build:server && node scripts/prerender.mjs && node scripts/generate-sitemap.mjs",
     "build:client": "cross-env NODE_OPTIONS=--max-old-space-size=4096 tsc -b && cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "build:server": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build --ssr src/entry-server.tsx --outDir dist/server",
     "lint": "eslint .",

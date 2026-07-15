@@ -8,30 +8,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { STATIC_ROUTES } from './public-routes.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const toAbsolute = (p) => path.resolve(__dirname, p)
 
-// Keep in sync with public/sitemap.xml (static indexable pages).
-const routesToPrerender = [
-  '/',
-  '/about',
-  '/register',
-  '/our-agenda',
-  '/officers',
-  '/chapters',
-  '/blog',
-  '/jobs',
-  '/impact',
-  '/polls',
-  '/store',
-  '/constituencies',
-  '/donate',
-  '/press',
-  '/contact',
-  '/privacy',
-  '/terms'
-]
+const routesToPrerender = STATIC_ROUTES.map((r) => r.path)
 
 // Main function to run the production SSG build for specified static routes
 async function prerender() {
