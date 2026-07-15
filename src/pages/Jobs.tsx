@@ -158,7 +158,7 @@ export default function Jobs() {
       }
     >
       <SEO
-        title="Jobs Board | The Base Movement"
+        title="Jobs Board"
         description="Browse job opportunities within The Base Movement network."
       />
 

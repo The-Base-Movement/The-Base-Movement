@@ -70,7 +70,7 @@ export default function Officers() {
   return (
     <main className="bg-background min-h-screen">
       <SEO
-        title="Leadership | The Base"
+        title="Leadership"
         description="Meet the dedicated executives and officers driving our strategic vision and national mobilization."
       />
 

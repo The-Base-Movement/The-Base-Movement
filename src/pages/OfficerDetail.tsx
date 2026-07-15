@@ -573,7 +573,7 @@ export default function OfficerDetail() {
       }}
     >
       <SEO
-        title={`${officer.name} | The Base`}
+        title={officer.name}
         description={
           officer.bio ? shortSummary(officer.bio, 155) : `${officer.name} — ${officer.role}`
         }
