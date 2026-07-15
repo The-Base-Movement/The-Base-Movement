@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { OfficerCard, type OfficerProfile } from '@/components/OfficerCard'
 import { OfficerCardSlider } from '@/components/OfficerCardSlider'
@@ -7,6 +7,13 @@ import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 import { ScrollReveal } from '@/components/ScrollReveal'
 
 export function HomeOfficers() {
+  const navigate = useNavigate()
+  const toSlug = (name: string) =>
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+
   const [officers, setOfficers] = useState<OfficerProfile[]>([])
   const [topTier, setTopTier] = useState<{
     id: string
@@ -101,7 +108,12 @@ export function HomeOfficers() {
         >
           <OfficerCardSlider>
             {officers.map((officer) => (
-              <OfficerCard key={officer.id} officer={officer} tierIndex={0} />
+              <OfficerCard
+                key={officer.id}
+                officer={officer}
+                tierIndex={0}
+                onClick={(o) => navigate(`/officers/${toSlug(o.name)}`)}
+              />
             ))}
           </OfficerCardSlider>
         </ScrollReveal>
