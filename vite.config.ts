@@ -115,6 +115,7 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
+      passWithNoTests: true,
       coverage: {
         reporter: ['text', 'lcov'],
         exclude: ['node_modules', 'src/test'],
