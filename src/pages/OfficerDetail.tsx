@@ -7,6 +7,7 @@ import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Button } from '@/components/buttons/ui/neon-button'
 import SEO from '@/components/SEO'
+import DOMPurify from 'dompurify'
 
 interface OfficerFull {
   id: string
@@ -52,6 +53,21 @@ function initials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
+/** Bios authored in the rich editor are HTML; legacy ones are plain text. */
+function looksLikeHtml(bio: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(bio)
+}
+
+/** Flatten HTML to plain text (for meta descriptions and hero summaries). */
+function stripTags(bio: string): string {
+  return bio
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 /** Split a biography into clean paragraphs (double newline, then single). */
 function bioParagraphs(bio: string): string[] {
   const byBlock = bio
@@ -67,7 +83,7 @@ function bioParagraphs(bio: string): string[] {
 
 /** A short hero "dek" — only used when the bio is long enough to avoid echoing it whole. */
 function shortSummary(bio: string, max = 175): string {
-  const clean = bio.replace(/\s+/g, ' ').trim()
+  const clean = stripTags(bio).replace(/\s+/g, ' ').trim()
   if (clean.length <= max) return clean
   const slice = clean.slice(0, max)
   const dot = slice.lastIndexOf('. ')
@@ -484,9 +500,12 @@ export default function OfficerDetail() {
   const accentColor = tierColor ?? TIER_COLOR[tierIndex] ?? 'hsl(var(--primary))'
   const firstName = officer.name.split(' ')[0]
   const tierLabel = tierTitle || officer.tier
-  const paragraphs = officer.bio ? bioParagraphs(officer.bio) : []
+  const bioIsHtml = !!officer.bio && looksLikeHtml(officer.bio)
+  const bioHtml = bioIsHtml ? DOMPurify.sanitize(officer.bio!) : ''
+  const paragraphs = officer.bio && !bioIsHtml ? bioParagraphs(officer.bio) : []
+  const hasBio = bioIsHtml || paragraphs.length > 0
   // Only echo a hero "dek" when the bio is long enough that it won't duplicate the body.
-  const dek = officer.bio && officer.bio.trim().length > 220 ? shortSummary(officer.bio) : null
+  const dek = officer.bio && stripTags(officer.bio).length > 220 ? shortSummary(officer.bio) : null
 
   const socialLinks = [
     officer.facebook_url && {
@@ -770,24 +789,32 @@ export default function OfficerDetail() {
           {/* Biography — the main body */}
           <article style={{ ...cardStyle, padding: 'clamp(24px, 4vw, 40px)' }}>
             <p style={{ ...sectionHeading, marginBottom: 16 }}>About {firstName}</p>
-            {paragraphs.length > 0 ? (
-              <div style={{ maxWidth: '68ch' }}>
-                {paragraphs.map((para, i) => (
-                  <p
-                    key={i}
-                    style={{
-                      fontFamily: FONT,
-                      fontWeight: 'var(--font-weight-normal, 400)',
-                      fontSize: 16,
-                      color: 'hsl(var(--on-surface))',
-                      lineHeight: 1.8,
-                      margin: i === 0 ? 0 : '18px 0 0',
-                    }}
-                  >
-                    {para}
-                  </p>
-                ))}
-              </div>
+            {hasBio ? (
+              bioIsHtml ? (
+                <div
+                  className="officer-bio"
+                  style={{ maxWidth: '68ch' }}
+                  dangerouslySetInnerHTML={{ __html: bioHtml }}
+                />
+              ) : (
+                <div style={{ maxWidth: '68ch' }}>
+                  {paragraphs.map((para, i) => (
+                    <p
+                      key={i}
+                      style={{
+                        fontFamily: FONT,
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                        fontSize: 16,
+                        color: 'hsl(var(--on-surface))',
+                        lineHeight: 1.8,
+                        margin: i === 0 ? 0 : '18px 0 0',
+                      }}
+                    >
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              )
             ) : (
               <div
                 style={{
@@ -1055,6 +1082,31 @@ export default function OfficerDetail() {
       </section>
 
       <style>{`
+        .officer-bio {
+          font-family: ${FONT};
+          font-size: 16px;
+          line-height: 1.8;
+          color: hsl(var(--on-surface));
+        }
+        .officer-bio p { margin: 0 0 18px; }
+        .officer-bio p:first-child { margin-top: 0; }
+        .officer-bio h1, .officer-bio h2, .officer-bio h3 {
+          font-weight: var(--font-weight-semibold, 600);
+          color: hsl(var(--on-surface));
+          margin: 28px 0 12px;
+          line-height: 1.3;
+        }
+        .officer-bio h2 { font-size: 22px; }
+        .officer-bio h3 { font-size: 18px; }
+        .officer-bio ul, .officer-bio ol { margin: 0 0 18px; padding-left: 24px; }
+        .officer-bio li { margin-bottom: 6px; }
+        .officer-bio a { color: hsl(var(--primary)); text-decoration: underline; }
+        .officer-bio img { max-width: 100%; height: auto; border-radius: var(--radius-md); margin: 18px 0; }
+        .officer-bio blockquote {
+          margin: 18px 0; padding: 8px 18px;
+          border-left: 3px solid hsl(var(--primary));
+          color: hsl(var(--on-surface-muted)); font-style: italic;
+        }
         @media (max-width: 900px) {
           .lp-body { grid-template-columns: 1fr !important; }
         }

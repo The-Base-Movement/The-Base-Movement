@@ -41,7 +41,13 @@ export interface OfficerProfile {
 }
 
 function getFirstSentence(text: string): string {
-  const clean = text.replace(/\s+/g, ' ').trim()
+  // Bios may be rich HTML from the editor — strip tags before extracting a sentence.
+  const clean = text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim()
 
   // Find all sentence-ending punctuation marks followed by space or end of string
   const matches = clean.matchAll(/[.!?](?:\s|$)/g)

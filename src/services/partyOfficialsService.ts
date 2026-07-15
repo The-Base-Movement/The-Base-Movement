@@ -12,6 +12,16 @@ export const partyOfficialsService = {
     return (data ?? []) as PartyOfficial[]
   },
 
+  async getOfficialById(id: string): Promise<PartyOfficial | null> {
+    const { data, error } = await supabase
+      .from('party_officials')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle()
+    if (error) throw error
+    return (data as PartyOfficial) ?? null
+  },
+
   async getTiers(): Promise<PartyTier[]> {
     const { data } = await supabase
       .from('party_tiers')

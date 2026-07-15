@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState, useMemo } from 'react'
-import { contentService } from '@/services/contentService'
+import { useNavigate } from 'react-router-dom'
 import { partyOfficialsService } from '@/services/partyOfficialsService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -15,21 +15,18 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 // Modular imports
 import type { PartyOfficial, PartyTier } from './partyofficials/utils'
 import { OfficialsTable } from './partyofficials/OfficialsTable'
-import { OfficialModal } from './partyofficials/OfficialModal'
 import { TiersModal } from './partyofficials/TiersModal'
 import { ViewModal } from './partyofficials/ViewModal'
 
 // Main component displaying the roster of officials, tiered groups, and modals
 export default function PartyOfficials() {
+  const navigate = useNavigate()
   const [officials, setOfficials] = useState<PartyOfficial[]>([])
   const [tiers, setTiers] = useState<PartyTier[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
   const [viewingOfficial, setViewingOfficial] = useState<PartyOfficial | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
   const [isTiersModalOpen, setIsTiersModalOpen] = useState(false)
   const [tierFormData, setTierFormData] = useState<Partial<PartyTier>>({
     name: '',
@@ -38,21 +35,6 @@ export default function PartyOfficials() {
     order_index: 0,
   })
   const [editingTierId, setEditingTierId] = useState<string | null>(null)
-
-  const [formData, setFormData] = useState<Partial<PartyOfficial>>({
-    name: '',
-    role: '',
-    tier: '',
-    region: '',
-    bio: '',
-    avatar_url: '',
-    facebook_url: '',
-    instagram_url: '',
-    twitter_url: '',
-    linkedin_url: '',
-    email: '',
-    order_index: 0,
-  })
 
   // Fetch registered officials ordered by priority indices
   async function fetchOfficials() {
@@ -78,52 +60,9 @@ export default function PartyOfficials() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Open the direct official addition/edition modal
-  const handleOpenModal = (official?: PartyOfficial) => {
-    if (official) {
-      setFormData(official)
-      setIsEditing(true)
-    } else {
-      setFormData({
-        name: '',
-        role: '',
-        tier: '',
-        region: '',
-        bio: '',
-        avatar_url: '',
-        facebook_url: '',
-        instagram_url: '',
-        twitter_url: '',
-        linkedin_url: '',
-        email: '',
-        order_index: 0,
-      })
-      setIsEditing(false)
-    }
-    setIsModalOpen(true)
-  }
-
-  // Upload representative avatar asset
-  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setIsUploading(true)
-    try {
-      const url = await contentService.uploadImage(file, 'party-officials')
-      if (url) {
-        setFormData((prev) => ({ ...prev, avatar_url: url }))
-        toast.success('Image uploaded to media library')
-      } else {
-        toast.error('Upload failed')
-      }
-    } catch {
-      toast.error('An error occurred during upload')
-    } finally {
-      setIsUploading(false)
-      e.target.value = ''
-    }
-  }
+  // Navigate to the full add/edit page (replaces the old modal)
+  const openForm = (official?: PartyOfficial) =>
+    navigate(official ? `/admin/party-officials/${official.id}/edit` : '/admin/party-officials/new')
 
   // Remove official entry
   const handleDelete = async (id: string) => {
@@ -137,48 +76,6 @@ export default function PartyOfficials() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.name || !formData.role) {
-      toast.error('Name and role are required')
-      return
-    }
-
-    const payload = {
-      name: formData.name,
-      role: formData.role,
-      tier: formData.tier,
-      region: formData.region || null,
-      bio: formData.bio || null,
-      avatar_url: formData.avatar_url || null,
-      facebook_url: formData.facebook_url || null,
-      instagram_url: formData.instagram_url || null,
-      twitter_url: formData.twitter_url || null,
-      linkedin_url: formData.linkedin_url || null,
-      email: formData.email || null,
-      order_index: formData.order_index || 0,
-    }
-
-    if (isEditing && formData.id) {
-      try {
-        await partyOfficialsService.updateOfficial(formData.id, payload)
-        toast.success('Official updated')
-        setIsModalOpen(false)
-        fetchOfficials()
-      } catch {
-        toast.error('Failed to update official')
-      }
-    } else {
-      try {
-        await partyOfficialsService.createOfficial(payload)
-        toast.success('Official created')
-        setIsModalOpen(false)
-        fetchOfficials()
-      } catch {
-        toast.error('Failed to create official')
-      }
-    }
-  }
   const filteredOfficials = useMemo(() => {
     const list = officials.filter((o) => {
       const q = searchQuery.toLowerCase()
@@ -208,7 +105,7 @@ export default function PartyOfficials() {
               </span>
               Manage Tiers
             </button>
-            <button className="btn btn-primary btn-sm" onClick={() => handleOpenModal()}>
+            <button className="btn btn-primary btn-sm" onClick={() => openForm()}>
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                 add
               </span>
@@ -222,7 +119,7 @@ export default function PartyOfficials() {
         loading={loading}
         officials={filteredOfficials}
         tiers={tiers}
-        handleOpenModal={handleOpenModal}
+        handleOpenModal={openForm}
         handleDelete={handleDelete}
         handleView={(official) => setViewingOfficial(official)}
         searchQuery={searchQuery}
@@ -231,19 +128,6 @@ export default function PartyOfficials() {
         onSortChange={setSortOrder}
       />
 
-      {isModalOpen && (
-        <OfficialModal
-          isEditing={isEditing}
-          setIsModalOpen={setIsModalOpen}
-          formData={formData}
-          setFormData={setFormData}
-          tiers={tiers}
-          handleUploadImage={handleUploadImage}
-          isUploading={isUploading}
-          handleSubmit={handleSubmit}
-        />
-      )}
-
       {viewingOfficial && (
         <ViewModal
           official={viewingOfficial}
@@ -251,7 +135,7 @@ export default function PartyOfficials() {
           onClose={() => setViewingOfficial(null)}
           onEdit={(official) => {
             setViewingOfficial(null)
-            handleOpenModal(official)
+            openForm(official)
           }}
         />
       )}

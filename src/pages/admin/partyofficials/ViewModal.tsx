@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import DOMPurify from 'dompurify'
 import type { PartyOfficial, PartyTier } from './utils'
 import { fallbackAvatar } from '@/lib/avatar'
 
@@ -195,7 +196,7 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
               >
                 Biography
               </p>
-              <p
+              <div
                 style={{
                   margin: 0,
                   fontFamily: "'Public Sans', sans-serif",
@@ -204,9 +205,8 @@ export function ViewModal({ official, tiers, onClose, onEdit }: ViewModalProps) 
                   color: 'hsl(var(--on-surface))',
                   lineHeight: 1.6,
                 }}
-              >
-                {official.bio}
-              </p>
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(official.bio) }}
+              />
             </div>
           )}
 
