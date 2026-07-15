@@ -2,19 +2,44 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageMembers, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
+// Government-data identity verification via Smile ID (Electoral Commission /
+// NIA). Scaffolded end-to-end but gated: until the SMILE_ID_* secrets are set
+// (access still being acquired) it returns a clear "awaiting access" state.
+//
+// When credentials land: confirm the endpoint + id_type against your specific
+// Smile ID product docs (Enhanced KYC / ID Verification for Ghana), set the
+// SMILE_ID_* secrets, and the live call below activates automatically.
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const KYC_BUCKET = 'member-kyc'
-const OPENAI_MODEL = 'gpt-4o-mini' // vision-capable; cheap enough for per-member scans
+// Smile ID production base; override per environment/product via SMILE_ID_BASE_URL.
+const DEFAULT_SMILE_BASE = 'https://api.smileidentity.com'
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
+}
+
+/** Smile ID request signature: base64( HMAC-SHA256(api_key, timestamp + partner_id + "sid_request") ). */
+async function smileSignature(apiKey: string, partnerId: string, timestamp: string) {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(apiKey),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  )
+  const mac = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    new TextEncoder().encode(timestamp + partnerId + 'sid_request')
+  )
+  return btoa(String.fromCharCode(...new Uint8Array(mac)))
 }
 
 serve(async (req: Request) => {
@@ -35,123 +60,107 @@ serve(async (req: Request) => {
     }
 
     const { idNumber } = await req.json()
-    if (!idNumber)
+    if (!idNumber) {
       return json({ success: false, error: 'Member ID (registration number) is required.' }, 400)
-
-    const openaiKey = Deno.env.get('OPENAI_API_KEY')
-    if (!openaiKey) {
-      // The scan pipeline is wired end-to-end; it just needs the key to run.
-      return json(
-        {
-          success: false,
-          error:
-            'AI identity scanning is not configured yet. Add the OPENAI_API_KEY secret to enable it.',
-        },
-        200
-      )
     }
 
-    // 1. Resolve the member and their photos. idNumber is the registration number.
+    // 1. Resolve the member and the government IDs we hold for them.
     const { data: user } = await supabase
       .from('users')
-      .select('id, full_name, avatar_url, constituency, region, platform')
+      .select('id, full_name, voters_id_card')
       .eq('registration_number', idNumber)
       .maybeSingle()
-
     if (!user) return json({ success: false, error: 'Member not found.' }, 404)
 
-    // 2. Gather every image we have: public avatar + any private KYC documents.
-    const images: { label: string; url: string }[] = []
-    if (typeof user.avatar_url === 'string' && user.avatar_url.startsWith('http')) {
-      images.push({ label: 'Profile photo', url: user.avatar_url })
+    // Ghana Card number is pgcrypto-encrypted; decrypt via the admin RPC. Best
+    // effort — if unavailable we fall back to the (plaintext) voter's ID.
+    let ghanaCard: string | null = null
+    try {
+      const { data } = await supabase.rpc('admin_get_national_id', { reg_no: idNumber })
+      if (typeof data === 'string' && data.trim()) ghanaCard = data.trim()
+    } catch {
+      /* fall through to voter ID */
     }
 
-    const { data: kyc } = await supabase
-      .from('member_kyc')
-      .select('ghana_card_front_path, selfie_path')
-      .eq('user_id', user.id)
-      .maybeSingle()
+    const target = ghanaCard
+      ? { idType: 'GHANA_CARD', idNumber: ghanaCard, source: 'NIA (Ghana Card)' }
+      : user.voters_id_card
+        ? {
+            idType: 'VOTER_ID',
+            idNumber: String(user.voters_id_card),
+            source: 'Electoral Commission',
+          }
+        : null
 
-    for (const [label, path] of [
-      ['Ghana Card (front)', kyc?.ghana_card_front_path],
-      ['KYC selfie', kyc?.selfie_path],
-    ] as const) {
-      if (!path) continue
-      const { data: signed } = await supabase.storage.from(KYC_BUCKET).createSignedUrl(path, 300)
-      if (signed?.signedUrl) images.push({ label, url: signed.signedUrl })
-    }
-
-    // 3. Nothing to look at — report honestly instead of guessing.
-    if (images.length === 0) {
+    if (!target) {
       return json({
         success: true,
         data: {
           confidence: 0,
           matches: [],
           status: 'Review',
-          notes: 'No profile photo or ID document on file to scan.',
+          notes: 'No Ghana Card or Voter ID number on file to verify.',
         },
       })
     }
 
-    // 4. Ask OpenAI vision to assess the images against the member's details.
-    const prompt =
-      `You are an identity-verification assistant for a political-movement membership platform in Ghana. ` +
-      `The member's registered name is "${user.full_name}". ` +
-      `Assess the attached image(s), which may include a profile photo, a Ghana Card, and/or a selfie. ` +
-      `Decide whether they plausibly represent a genuine, single real person and, where an ID document is present, ` +
-      `whether the name/photo on it is consistent with the member. Do NOT invent details you cannot see. ` +
-      `Respond ONLY as JSON with this exact shape: ` +
-      `{"confidence": <integer 0-100>, "status": "Verified" | "Review", "matches": string[], "flags": string[]}. ` +
-      `"matches" lists things that check out (e.g. "Clear human face", "Name on card matches"). ` +
-      `"flags" lists concerns (e.g. "Photo is a screenshot", "Face not visible", "Possible document mismatch"). ` +
-      `Use status "Verified" only when confidence >= 75 and there are no serious flags.`
-
-    const content: unknown[] = [{ type: 'text', text: prompt }]
-    for (const img of images) {
-      content.push({ type: 'text', text: img.label })
-      content.push({ type: 'image_url', image_url: { url: img.url } })
+    // 2. Config gate — the integration is ready but access is still being acquired.
+    const partnerId = Deno.env.get('SMILE_ID_PARTNER_ID')
+    const apiKey = Deno.env.get('SMILE_ID_API_KEY')
+    if (!partnerId || !apiKey) {
+      return json({
+        success: false,
+        notConfigured: true,
+        error:
+          'Government identity verification (Smile ID / EC / NIA) is not configured yet — awaiting data access.',
+      })
     }
 
-    const aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+    // 3. Live Smile ID call. Endpoint/payload follow Smile ID's ID-verification
+    //    format; confirm the exact product path for Ghana when access is granted.
+    const baseUrl = Deno.env.get('SMILE_ID_BASE_URL') || DEFAULT_SMILE_BASE
+    const timestamp = new Date().toISOString()
+    const signature = await smileSignature(apiKey, partnerId, timestamp)
+
+    const smileRes = await fetch(`${baseUrl}/v1/id_verification`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${openaiKey}`,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: OPENAI_MODEL,
-        messages: [{ role: 'user', content }],
-        response_format: { type: 'json_object' },
-        max_tokens: 400,
+        partner_id: partnerId,
+        signature,
+        timestamp,
+        country: 'GH',
+        id_type: target.idType,
+        id_number: target.idNumber,
+        partner_params: { user_id: user.id, job_type: 5 },
       }),
     })
 
-    if (!aiRes.ok) {
-      const detail = await aiRes.text()
-      console.error('[KYC] OpenAI error:', aiRes.status, detail)
-      return json({ success: false, error: `AI provider error (${aiRes.status}).` }, 502)
+    if (!smileRes.ok) {
+      const detail = await smileRes.text()
+      console.error('[KYC] Smile ID error:', smileRes.status, detail)
+      return json(
+        { success: false, error: `Government verification failed (${smileRes.status}).` },
+        502
+      )
     }
 
-    const aiJson = await aiRes.json()
-    let verdict: { confidence?: number; status?: string; matches?: string[]; flags?: string[] } = {}
-    try {
-      verdict = JSON.parse(aiJson.choices?.[0]?.message?.content ?? '{}')
-    } catch {
-      return json({ success: false, error: 'Could not parse AI response.' }, 502)
-    }
-
-    const confidence = Math.max(0, Math.min(100, Math.round(Number(verdict.confidence) || 0)))
-    const flagged = verdict.status !== 'Verified' || confidence < 75
+    const result = await smileRes.json()
+    // Smile ID returns ResultCode/ResultText and matched fields. Map to our shape.
+    const verified =
+      result?.ResultCode === '1012' || result?.Actions?.Verify_ID_Number === 'Verified'
+    const matches: string[] = []
+    if (result?.FullName) matches.push(`Name on record: ${result.FullName}`)
+    if (verified) matches.push(`${target.source} record verified`)
 
     return json({
       success: true,
       data: {
-        confidence,
-        matches: Array.isArray(verdict.matches) ? verdict.matches : [],
-        flags: Array.isArray(verdict.flags) ? verdict.flags : [],
-        status: flagged ? 'Review' : 'Verified',
-        scannedImages: images.map((i) => i.label),
+        confidence: verified ? 100 : 0,
+        matches,
+        flags: verified ? [] : [result?.ResultText || 'ID number could not be verified'],
+        status: verified ? 'Verified' : 'Review',
+        source: target.source,
       },
     })
   } catch (error) {
