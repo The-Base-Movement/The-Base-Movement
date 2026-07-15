@@ -54,8 +54,16 @@ export function AgendaCovenant({ isLoggedIn }: AgendaCovenantProps) {
           }}
         >
           These Aims define the Ghana we are building. These Objectives are the steps we will be
-          held accountable to. Together, they form THE BASE's covenant with every Ghanaian who
-          believes this country can, and must, do better.
+          held accountable to. Together, they form{' '}
+          <span
+            style={{
+              color: 'hsl(var(--primary))',
+              fontWeight: 'var(--font-weight-medium, 500)',
+            }}
+          >
+            THE BASE
+          </span>
+          's covenant with every Ghanaian who believes this country can, and must, do better.
         </p>
         <p
           style={{
