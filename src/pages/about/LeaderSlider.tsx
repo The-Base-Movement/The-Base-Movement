@@ -33,11 +33,6 @@ export function LeaderSlider() {
   }, [])
 
   const multiple = leaders.length > 1
-  // Swiper loop needs enough slides or it silently disables and stops on the last
-  // one. Duplicate the set until there are at least 4 so the loop runs infinitely.
-  const slides = multiple
-    ? Array.from({ length: Math.ceil(4 / leaders.length) }, () => leaders).flat()
-    : leaders
 
   return (
     <div
@@ -74,15 +69,14 @@ export function LeaderSlider() {
           <Swiper
             modules={[Autoplay, EffectFade, Pagination]}
             effect="fade"
-            loop={multiple}
-            loopAdditionalSlides={1}
+            rewind={multiple}
             autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
             pagination={multiple ? { clickable: true } : false}
             style={{ width: '100%', height: '100%' }}
             className="leader-swiper"
           >
-            {slides.map((leader, i) => (
-              <SwiperSlide key={`${leader.id}-${i}`}>
+            {leaders.map((leader) => (
+              <SwiperSlide key={leader.id}>
                 <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                   <img
                     src={leader.avatar_url || FALLBACK.avatar_url!}
@@ -116,12 +110,16 @@ export function LeaderSlider() {
                       <p
                         style={{
                           fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 'var(--font-weight-normal, 400)',
+                          fontWeight: 'var(--font-weight-medium, 500)',
                           fontSize: 10,
                           color: 'hsl(var(--accent))',
                           margin: 0,
                           textTransform: 'uppercase',
                           letterSpacing: '0.07em',
+                          alignSelf: 'flex-start',
+                          background: 'rgba(0,0,0,0.55)',
+                          padding: '2px 8px',
+                          borderRadius: 'var(--radius-pill)',
                         }}
                       >
                         {leader.role}
