@@ -2,16 +2,36 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { ButtonAccent } from '@/components/buttons/ButtonAccent'
-
-const TRUST_SIGNALS = [
-  { icon: 'groups', value: '10,000+', label: 'Compatriots' },
-  { icon: 'map', value: '16', label: 'Regions' },
-  { icon: 'public', value: 'Global', label: 'Diaspora' },
-]
+import { supabase } from '@/lib/supabase'
 
 export function AboutCTA() {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  const [totalMembers, setTotalMembers] = useState('10,000+')
+
+  useEffect(() => {
+    async function fetchTotalMembers() {
+      try {
+        const { data, error } = await supabase.rpc('get_registered_member_count')
+        if (error) {
+          console.warn('[AboutCTA] Failed to fetch member count:', error)
+          return
+        }
+        if (data !== null && data !== undefined) {
+          setTotalMembers(`${Number(data).toLocaleString()}+`)
+        }
+      } catch (e) {
+        console.warn('[AboutCTA] Error fetching member count:', e)
+      }
+    }
+    fetchTotalMembers()
+  }, [])
+
+  const trustSignals = [
+    { icon: 'groups', value: totalMembers, label: 'Compatriots' },
+    { icon: 'map', value: '16', label: 'Regions' },
+    { icon: 'public', value: 'Global', label: 'Diaspora' },
+  ]
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -146,7 +166,7 @@ export function AboutCTA() {
             ...reveal(240),
           }}
         >
-          {TRUST_SIGNALS.map((signal, i) => (
+          {trustSignals.map((signal, i) => (
             <div
               key={signal.label}
               style={{
@@ -157,7 +177,7 @@ export function AboutCTA() {
                 gap: 6,
                 padding: '8px 24px',
                 borderRight:
-                  i < TRUST_SIGNALS.length - 1 ? '1px solid rgba(255,255,255,0.12)' : 'none',
+                  i < trustSignals.length - 1 ? '1px solid rgba(255,255,255,0.12)' : 'none',
               }}
             >
               <span
