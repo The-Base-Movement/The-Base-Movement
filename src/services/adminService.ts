@@ -1176,10 +1176,20 @@ class AdminService {
   async getAboutOfficials(): Promise<
     { id: string; name: string; role: string; avatar_url: string | null }[]
   > {
+    // Show the top "Leaders" tier — the same label the homepage leads with —
+    // resolved dynamically from party_tiers rather than a hardcoded tier name.
+    const { data: tiers } = await supabase
+      .from('party_tiers')
+      .select('name')
+      .order('order_index', { ascending: true })
+      .limit(1)
+    const topTier = tiers?.[0]?.name
+    if (!topTier) return []
+
     const { data, error } = await supabase
       .from('party_officials')
       .select('id, name, role, avatar_url')
-      .eq('tier', 'executive')
+      .eq('tier', topTier)
       .order('order_index', { ascending: true })
     if (error || !data) return []
     return data
