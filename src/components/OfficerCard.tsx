@@ -186,7 +186,14 @@ export function OfficerCard({ officer, onClick, tierIndex = 2 }: OfficerCardProp
             <img
               src={officer.avatarUrl || fallbackAvatar(officer.name)}
               alt={officer.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              // Anchor to the top so portrait headshots keep the head/face in
+              // frame — center-cropping the short mobile window cut off the head.
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: '60% top',
+              }}
             />
           </div>
 
