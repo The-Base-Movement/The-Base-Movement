@@ -81,7 +81,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         modules={[Autoplay, Pagination]}
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
-        loop={true}
+        loop={false}
         spaceBetween={24}
         breakpoints={{
           0: { slidesPerView: 1 },
@@ -91,7 +91,9 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         className="officials-swiper"
       >
         {Children.map(children, (child) => (
-          <SwiperSlide style={{ display: 'flex', alignItems: 'stretch' }}>{child}</SwiperSlide>
+          <SwiperSlide style={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center' }}>
+            {child}
+          </SwiperSlide>
         ))}
       </Swiper>
       <style
