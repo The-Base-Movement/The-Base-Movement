@@ -8,6 +8,7 @@ import { RegistrationForm } from './register/components/RegistrationForm'
 import { SuccessStep } from './register/components/SuccessStep'
 import { PhysicalSuccessStep } from './register/components/PhysicalSuccessStep'
 import { scanFormFile } from '@/lib/scanForm'
+import { scanFormAI } from '@/lib/scanFormAI'
 import { useRegistrationData } from './register/useRegistrationData'
 import { useRegistrationSubmit } from './register/useRegistrationSubmit'
 import type { RegistrationFormData } from '@/types/registration'
@@ -177,7 +178,16 @@ export default function Register() {
     setIsScanningForm(true)
     setScanStatus('Preparing…')
     try {
-      const { platform: detectedPlatform, fields } = await scanFormFile(file, setScanStatus)
+      // Prefer the AI scanner (OpenAI vision); fall back to offline OCR if it is
+      // unavailable (e.g. key not configured yet, rate-limited, or network error).
+      let scanned
+      try {
+        scanned = await scanFormAI(file, setScanStatus)
+      } catch (aiErr) {
+        console.warn('[SCAN] AI scan unavailable, using offline OCR:', aiErr)
+        scanned = await scanFormFile(file, setScanStatus)
+      }
+      const { platform: detectedPlatform, fields } = scanned
       handlePlatformChange(detectedPlatform)
       if (fields.contactNumber) {
         fields.contactNumber = cleanPhoneInput(fields.contactNumber, fields.countryCode || '+233')
