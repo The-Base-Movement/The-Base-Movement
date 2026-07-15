@@ -33,6 +33,11 @@ export function LeaderSlider() {
   }, [])
 
   const multiple = leaders.length > 1
+  // Swiper loop needs enough slides or it silently disables and stops on the last
+  // one. Duplicate the set until there are at least 4 so the loop runs infinitely.
+  const slides = multiple
+    ? Array.from({ length: Math.ceil(4 / leaders.length) }, () => leaders).flat()
+    : leaders
 
   return (
     <div
@@ -76,8 +81,8 @@ export function LeaderSlider() {
             style={{ width: '100%', height: '100%' }}
             className="leader-swiper"
           >
-            {leaders.map((leader) => (
-              <SwiperSlide key={leader.id}>
+            {slides.map((leader, i) => (
+              <SwiperSlide key={`${leader.id}-${i}`}>
                 <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                   <img
                     src={leader.avatar_url || FALLBACK.avatar_url!}
