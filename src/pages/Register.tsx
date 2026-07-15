@@ -24,7 +24,12 @@ export default function Register() {
   const { session } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const platformParam = searchParams.get('platform')
+  // Normalize the ?platform= slug so any casing (diaspora / Diaspora / DIASPORA)
+  // resolves; anything else is ignored and the choice screen shows instead.
+  const platformParam = (() => {
+    const raw = searchParams.get('platform')?.toUpperCase()
+    return raw === 'GHANA' || raw === 'DIASPORA' ? raw : null
+  })()
   const refParam = searchParams.get('ref')
 
   useEffect(() => {
