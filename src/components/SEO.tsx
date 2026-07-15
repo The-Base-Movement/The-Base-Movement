@@ -16,6 +16,7 @@
  */
 
 import { Helmet } from 'react-helmet-async'
+import { useLocation } from 'react-router-dom'
 import { useBranding } from '@/hooks/useBranding'
 
 interface SEOProps {
@@ -38,6 +39,7 @@ export default function SEO({
   noindex,
 }: SEOProps) {
   const { settings } = useBranding()
+  const { pathname } = useLocation()
 
   const siteName = 'The Base Movement'
   const fullTitle = title
@@ -48,7 +50,9 @@ export default function SEO({
   const metaDescription = description || defaultDescription
   const image = ogImage || settings.og_image_url
   const siteUrl = 'https://www.thebasemovement.org.gh'
-  const canonicalPath = canonical ?? (typeof window !== 'undefined' ? window.location.pathname : '')
+  // Router location works during SSR/prerender too (StaticRouter), so canonical
+  // and og:url are present in the static HTML crawlers see — not just client-side.
+  const canonicalPath = canonical ?? pathname
   const canonicalUrl = canonicalPath ? `${siteUrl}${canonicalPath}` : null
 
   const organizationSchema = {

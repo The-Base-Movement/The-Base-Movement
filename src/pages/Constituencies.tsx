@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import SEO from '@/components/SEO'
 import { constituencyService } from '@/services/constituencyService'
 import { useAuth } from '@/context/AuthContext'
 import { ConstituencyCard } from '@/components/ConstituencyCard'
@@ -204,6 +205,10 @@ export default function Constituencies() {
   if (!isDashboard) {
     return (
       <div className="min-h-screen pb-20" style={{ background: 'hsl(var(--background))' }}>
+        <SEO
+          title="Constituencies"
+          description="Explore The Base Movement's organizing presence across all 275 constituencies of Ghana and connect with the movement in your area."
+        />
         {/* Page hero header */}
         <header
           style={{ background: 'hsl(var(--card))', borderBottom: '1px solid hsl(var(--border))' }}

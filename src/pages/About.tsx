@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import SEO from '@/components/SEO'
 import { adminService } from '@/services/adminService'
 import { AboutHero } from './about/AboutHero'
 import { AboutPillars } from './about/AboutPillars'
@@ -50,6 +51,10 @@ export default function About() {
         overflowX: 'hidden',
       }}
     >
+      <SEO
+        title="About"
+        description="Learn about The Base Movement — a grassroots political movement for Ghana built on patriotism, honesty, and discipline, uniting compatriots at home and across the diaspora behind a Ghana First agenda."
+      />
       {/* Hero */}
       <section
         style={{

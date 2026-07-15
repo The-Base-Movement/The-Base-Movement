@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import SEO from '@/components/SEO'
 import { trackEvent } from '@/lib/analytics'
 import {
   adminService,
@@ -263,12 +264,20 @@ export default function PublicDonate() {
     }
   }
 
+  const seo = (
+    <SEO
+      title="Donate"
+      description="Support The Base Movement. Your donation funds grassroots organizing, civic education, and youth jobs across Ghana and the diaspora."
+    />
+  )
+
   if (loading && !submitted) {
     return (
       <div
         className="page-root"
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}
       >
+        {seo}
         <div className="spinner"></div>
       </div>
     )
@@ -279,6 +288,7 @@ export default function PublicDonate() {
       className="page-root"
       style={{ background: 'hsl(var(--card))', minHeight: '100vh', paddingBottom: 80 }}
     >
+      {seo}
       <header
         style={{
           background: 'hsl(var(--background))',

@@ -12,19 +12,25 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const toAbsolute = (p) => path.resolve(__dirname, p)
 
+// Keep in sync with public/sitemap.xml (static indexable pages).
 const routesToPrerender = [
-  '/', 
-  '/blog', 
-  '/our-agenda', 
-  '/contact', 
-  '/donate', 
-  '/store', 
-  '/impact', 
-  '/polls', 
+  '/',
+  '/about',
+  '/register',
+  '/our-agenda',
+  '/officers',
   '/chapters',
+  '/blog',
+  '/jobs',
+  '/impact',
+  '/polls',
+  '/store',
+  '/constituencies',
+  '/donate',
+  '/press',
+  '/contact',
   '/privacy',
-  '/terms',
-  '/press'
+  '/terms'
 ]
 
 // Main function to run the production SSG build for specified static routes
