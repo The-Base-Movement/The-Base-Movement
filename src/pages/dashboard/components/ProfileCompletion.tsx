@@ -26,6 +26,7 @@ export function ProfileCompletion({ avatarUrl, regNo, hasCoreDetails }: Props) {
   )
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const cameraRef = useRef<HTMLInputElement>(null)
 
   const checks = [
     { label: 'Account created', done: true },
@@ -233,20 +234,45 @@ export function ProfileCompletion({ avatarUrl, regNo, hasCoreDetails }: Props) {
                 onChange={handleFile}
                 style={{ display: 'none' }}
               />
-              <button
-                className="btn btn-primary"
-                onClick={() => fileRef.current?.click()}
-                disabled={uploading}
-                style={{ width: '100%', marginBottom: 8 }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 18, marginRight: 6 }}
+              {/* capture="user" opens the front camera directly on phones */}
+              <input
+                ref={cameraRef}
+                type="file"
+                accept="image/*"
+                capture="user"
+                onChange={handleFile}
+                style={{ display: 'none' }}
+              />
+              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => cameraRef.current?.click()}
+                  disabled={uploading}
+                  style={{ flex: 1 }}
                 >
-                  upload
-                </span>
-                {uploading ? 'Uploading…' : 'Upload a photo'}
-              </button>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 18, marginRight: 6 }}
+                  >
+                    photo_camera
+                  </span>
+                  Take a selfie
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                  style={{ flex: 1 }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 18, marginRight: 6 }}
+                  >
+                    photo_library
+                  </span>
+                  {uploading ? 'Uploading…' : 'Upload'}
+                </button>
+              </div>
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={dismiss}

@@ -17,6 +17,7 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
 
   const handleFile = (file: File | undefined) => {
     if (!file) return
@@ -48,22 +49,56 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
         className="hidden"
         onChange={(e) => handleFile(e.target.files?.[0])}
       />
+      {/* capture="user" opens the front camera directly on phones for a live selfie */}
+      <input
+        ref={cameraInputRef}
+        id="member-photo-camera"
+        name="memberPhotoCamera"
+        type="file"
+        accept="image/*"
+        capture="user"
+        className="hidden"
+        onChange={(e) => handleFile(e.target.files?.[0])}
+      />
 
       {!photoUrl ? (
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="w-full flex flex-col items-center justify-center gap-3 py-12 border-2 border-dashed border-border bg-container-low text-on-surface-muted hover:border-primary hover:text-primary transition-colors cursor-pointer"
-          style={{ borderRadius: 'var(--radius-md)' }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 40 }}>
-            add_a_photo
-          </span>
-          <span className="text-sm font-medium">Upload your photo</span>
-          <span className="text-[11px]">
-            Take a selfie or choose a clear photo of your face — JPG or PNG
-          </span>
-        </button>
+        <div className="flex flex-col items-center gap-3">
+          <div
+            className="w-full flex flex-col items-center justify-center gap-2 py-10 border-2 border-dashed border-border bg-container-low text-on-surface-muted"
+            style={{ borderRadius: 'var(--radius-md)' }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 40 }}>
+              add_a_photo
+            </span>
+            <span className="text-[11px] text-center px-4">
+              Add a clear photo of your face — take a selfie now or upload one
+            </span>
+          </div>
+          <div className="flex w-full gap-2">
+            <button
+              type="button"
+              onClick={() => cameraInputRef.current?.click()}
+              className="flex-1 h-[42px] text-[12px] font-medium bg-[hsl(var(--primary))] text-white cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              style={{ borderRadius: 'var(--radius-sm)' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 17 }}>
+                photo_camera
+              </span>
+              Take a selfie
+            </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-1 h-[42px] text-[12px] font-medium border border-border bg-white text-on-surface cursor-pointer hover:bg-container-low transition-colors flex items-center justify-center gap-2"
+              style={{ borderRadius: 'var(--radius-sm)' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 17 }}>
+                photo_library
+              </span>
+              Upload photo
+            </button>
+          </div>
+        </div>
       ) : (
         <>
           <div
