@@ -414,20 +414,24 @@ class MemberService {
     return true
   }
 
-  async getPendingVerifications(): Promise<PendingVerification[]> {
+  async getPendingVerifications(
+    statuses: string[] = ['In Review', 'Processing', 'Flagged'],
+    maxRows = Number.POSITIVE_INFINITY
+  ): Promise<PendingVerification[]> {
     const PAGE = 1000
     let from = 0
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let all: any[] = []
 
-    // Supabase caps results at 1000 rows by default — paginate to get all
-    while (true) {
+    // Supabase caps results at 1000 rows by default — paginate to get all,
+    // stopping early at maxRows (used to cap large terminal buckets like Approved).
+    while (all.length < maxRows) {
       const { data, error } = await supabase
         .from('users')
         .select(
           'id,registration_number,full_name,region,constituency,platform,country,phone_number,gender,age_range,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status,voters_id_card,polling_station_code'
         )
-        .in('verification_status', ['In Review', 'Processing', 'Flagged'])
+        .in('verification_status', statuses)
         .order('joined_at', { ascending: false })
         .range(from, from + PAGE - 1)
 
@@ -440,6 +444,7 @@ class MemberService {
       if (!data || data.length < PAGE) break
       from += PAGE
     }
+    if (all.length > maxRows) all = all.slice(0, maxRows)
 
     return all.map((u) => ({
       id: u.registration_number,
@@ -463,6 +468,41 @@ class MemberService {
       votersIdCard: u.voters_id_card,
       pollingStationCode: u.polling_station_code,
     }))
+  }
+
+  /** Live count of members in each verification stage — for the queue KPI tiles. */
+  async getVerificationCounts(): Promise<Record<string, number>> {
+    const statuses = ['In Review', 'Processing', 'Flagged', 'Approved', 'Rejected']
+    const entries = await Promise.all(
+      statuses.map(async (s) => {
+        const { count } = await supabase
+          .from('users')
+          .select('id', { count: 'exact', head: true })
+          .eq('verification_status', s)
+        return [s, count || 0] as const
+      })
+    )
+    return Object.fromEntries(entries)
+  }
+
+  /**
+   * Move a member between verification stages (In Review / Processing / Flagged /
+   * Approved / Rejected) without deleting them — used by the manual review
+   * controls. Approve uses verifyMember() instead (it also runs bonuses/emails);
+   * this keeps a rejected member on record so it stays visible in the queue.
+   */
+  async updateVerificationStatus(id: string, status: string): Promise<boolean> {
+    const accountStatus =
+      status === 'Approved' ? 'Active' : status === 'Rejected' ? 'Suspended' : 'Pending'
+    const { error } = await supabase
+      .from('users')
+      .update({ verification_status: status, status: accountStatus })
+      .eq('registration_number', id)
+    if (error) {
+      console.error('[DATABASE] Update verification status failed:', error)
+      return false
+    }
+    return true
   }
 
   async verifyMember(

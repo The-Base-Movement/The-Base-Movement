@@ -663,8 +663,23 @@ class AdminService {
     }
   }
 
-  async getPendingVerifications(): Promise<PendingVerification[]> {
-    return memberService.getPendingVerifications()
+  async getPendingVerifications(
+    statuses?: string[],
+    maxRows?: number
+  ): Promise<PendingVerification[]> {
+    return memberService.getPendingVerifications(statuses, maxRows)
+  }
+
+  async getVerificationCounts(): Promise<Record<string, number>> {
+    return memberService.getVerificationCounts()
+  }
+
+  async updateVerificationStatus(id: string, status: string): Promise<boolean> {
+    const success = await memberService.updateVerificationStatus(id, status)
+    if (success) {
+      await this.logAction('UPDATE_VERIFICATION_STATUS', `MEMBERS/${id}`, 'Success', { status })
+    }
+    return success
   }
 
   async verifyMember(

@@ -1,11 +1,23 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { adminService, type PendingVerification } from '@/services/adminService'
+import type { Member } from '@/types/admin'
 import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+
+// Which verification stages each filter loads. Approved is a large terminal
+// bucket, so it's capped; the KPI tiles always show true totals via getVerificationCounts.
+const STATUS_FETCH: Record<string, { statuses: string[]; max?: number }> = {
+  All: { statuses: ['In Review', 'Processing', 'Flagged'] },
+  'In Review': { statuses: ['In Review'] },
+  Processing: { statuses: ['Processing'] },
+  Flagged: { statuses: ['Flagged'] },
+  Approved: { statuses: ['Approved'], max: 1000 },
+  Rejected: { statuses: ['Rejected'] },
+}
 
 // Modular imports
 import { PAGE_SIZE } from './memberverification/utils'
@@ -32,20 +44,41 @@ export default function MemberVerification() {
   } | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
-  useEffect(() => {
+  const [counts, setCounts] = useState<Record<string, number>>({})
+
+  const refreshCounts = () => {
     adminService
-      .getPendingVerifications()
-      .then(setMembers)
+      .getVerificationCounts()
+      .then(setCounts)
       .catch(() => {})
-      .finally(() => setLoading(false))
+  }
+
+  // Load the list for the active filter (server-side per status) + the KPI counts.
+  useEffect(() => {
+    let active = true
+    const cfg = STATUS_FETCH[statusFilter] ?? STATUS_FETCH.All
+    adminService
+      .getPendingVerifications(cfg.statuses, cfg.max)
+      .then((d) => {
+        if (active) setMembers(d)
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+    return () => {
+      active = false
+    }
+  }, [statusFilter])
+
+  useEffect(() => {
+    refreshCounts()
   }, [])
 
-  const pendingCount = members.filter(
-    (m) => m.status === 'In Review' || m.status === 'Processing'
-  ).length
-  const flaggedCount = members.filter((m) => m.status === 'Flagged').length
-  const approvedCount = members.filter((m) => m.status === 'Approved').length
-  const rejectedCount = members.filter((m) => m.status === 'Rejected').length
+  const pendingCount = (counts['In Review'] || 0) + (counts['Processing'] || 0)
+  const flaggedCount = counts['Flagged'] || 0
+  const approvedCount = counts['Approved'] || 0
+  const rejectedCount = counts['Rejected'] || 0
 
   const handleNewRegistration = (data: RegistrationSubmission) => {
     const newMember: PendingVerification = {
@@ -92,22 +125,65 @@ export default function MemberVerification() {
     }
   }
 
-  const handleVerdict = async (approve: boolean) => {
+  const patchSelected = (patch: Partial<PendingVerification>) => {
     if (!selectedMember) return
-    if (approve && !selectedMember.photoUrl) {
+    setMembers((prev) => prev.map((m) => (m.id === selectedMember.id ? { ...m, ...patch } : m)))
+    setSelectedMember((prev) => (prev ? { ...prev, ...patch } : null))
+  }
+
+  // Approve runs the full pipeline (bonus, welcome email, chapter count).
+  const handleApprove = async () => {
+    if (!selectedMember) return
+    if (!selectedMember.photoUrl) {
       toast.error('Cannot approve member without a profile photo.')
       return
     }
-    const newStatus: PendingVerification['status'] = approve ? 'Approved' : 'Rejected'
-    setMembers((prev) =>
-      prev.map((m) => (m.id === selectedMember.id ? { ...m, status: newStatus } : m))
-    )
-    setSelectedMember((prev) => (prev ? { ...prev, status: newStatus } : null))
+    patchSelected({ status: 'Approved' })
     try {
-      await adminService.verifyMember(selectedMember.id, approve, undefined, selectedMember.chapter)
-      toast.success(`${selectedMember.name} has been ${newStatus.toLowerCase()}.`)
+      await adminService.verifyMember(selectedMember.id, true, undefined, selectedMember.chapter)
+      toast.success(`${selectedMember.name} has been approved.`)
+      refreshCounts()
     } catch {
-      toast.error('Failed to update verification status.')
+      toast.error('Failed to approve member.')
+    }
+  }
+
+  // Any other stage move (Flag / Processing / Reject / back to In Review) — a
+  // soft status change that keeps the record so it stays visible in the queue.
+  const handleStatusChange = async (newStatus: PendingVerification['status']) => {
+    if (!selectedMember) return
+    if (newStatus === 'Approved') return handleApprove()
+    patchSelected({ status: newStatus })
+    try {
+      const ok = await adminService.updateVerificationStatus(selectedMember.id, newStatus)
+      if (!ok) throw new Error()
+      toast.success(`Moved to ${newStatus}.`)
+      refreshCounts()
+    } catch {
+      toast.error('Failed to update status.')
+    }
+  }
+
+  // Save corrected details, then send the member back to In Review.
+  const handleSaveEdit = async (fields: Partial<Member>) => {
+    if (!selectedMember) return
+    try {
+      await adminService.updateMemberProfile(selectedMember.id, fields)
+      await adminService.updateVerificationStatus(selectedMember.id, 'In Review')
+      patchSelected({
+        name: fields.name ?? selectedMember.name,
+        phone: fields.phone ?? selectedMember.phone,
+        region: fields.region ?? selectedMember.region,
+        constituency: fields.constituency ?? selectedMember.constituency,
+        profession: fields.profession ?? selectedMember.profession,
+        emergencyName: fields.emergencyName ?? selectedMember.emergencyName,
+        emergencyPhone: fields.emergencyPhone ?? selectedMember.emergencyPhone,
+        status: 'In Review',
+      })
+      toast.success('Details updated — moved to In Review.')
+      refreshCounts()
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Failed to save changes.')
     }
   }
 
@@ -116,6 +192,7 @@ export default function MemberVerification() {
     setCurrentPage(1)
   }
   const handleFilter = (val: PendingVerification['status'] | 'All') => {
+    setLoading(true)
     setStatusFilter(val)
     setCurrentPage(1)
   }
@@ -271,7 +348,8 @@ export default function MemberVerification() {
             aiResult={aiResult}
             aiAnalyzing={aiAnalyzing}
             handleAiScan={handleAiScan}
-            handleVerdict={handleVerdict}
+            onStatusChange={handleStatusChange}
+            onSaveEdit={handleSaveEdit}
             setViewingVaultRecord={setViewingVaultRecord}
           />
         ) : (

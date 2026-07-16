@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { statusPill } from './utils'
 import type { PendingVerification } from '@/services/adminService'
+import type { Member } from '@/types/admin'
 
 interface IdentityReviewPanelProps {
   selectedMember: PendingVerification
@@ -11,8 +13,37 @@ interface IdentityReviewPanelProps {
   } | null
   aiAnalyzing: boolean
   handleAiScan: () => Promise<void>
-  handleVerdict: (approve: boolean) => Promise<void>
+  onStatusChange: (status: PendingVerification['status']) => void
+  onSaveEdit: (fields: Partial<Member>) => Promise<void>
   setViewingVaultRecord: (m: PendingVerification) => void
+}
+
+// The verification stages a reviewer can move a member between.
+const STAGES: {
+  status: PendingVerification['status']
+  label: string
+  icon: string
+  color: string
+}[] = [
+  { status: 'In Review', label: 'In Review', icon: 'rate_review', color: 'hsl(var(--accent))' },
+  { status: 'Processing', label: 'Processing', icon: 'hourglass_top', color: 'hsl(var(--accent))' },
+  { status: 'Flagged', label: 'Flagged', icon: 'flag', color: '#a87d10' },
+  { status: 'Rejected', label: 'Rejected', icon: 'cancel', color: 'hsl(var(--destructive))' },
+  { status: 'Approved', label: 'Approved', icon: 'verified_user', color: 'hsl(var(--primary))' },
+]
+
+const editInputSt: React.CSSProperties = {
+  width: '100%',
+  height: 34,
+  padding: '0 10px',
+  border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--container-low))',
+  borderRadius: 4,
+  fontFamily: "'Public Sans', sans-serif",
+  fontSize: 12.5,
+  color: 'hsl(var(--on-surface))',
+  boxSizing: 'border-box',
+  outline: 'none',
 }
 
 export function IdentityReviewPanel({
@@ -21,9 +52,48 @@ export function IdentityReviewPanel({
   aiResult,
   aiAnalyzing,
   handleAiScan,
-  handleVerdict,
+  onStatusChange,
+  onSaveEdit,
   setViewingVaultRecord,
 }: IdentityReviewPanelProps) {
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [form, setForm] = useState<Partial<Member>>({})
+
+  const startEdit = () => {
+    setForm({
+      name: selectedMember.name,
+      phone: selectedMember.phone,
+      region: selectedMember.region,
+      constituency: selectedMember.constituency,
+      profession: selectedMember.profession,
+      emergencyName: selectedMember.emergencyName,
+      emergencyPhone: selectedMember.emergencyPhone,
+    })
+    setEditing(true)
+  }
+
+  const saveEdit = async () => {
+    if (!form.name?.trim()) return
+    setSaving(true)
+    try {
+      await onSaveEdit(form)
+      setEditing(false)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const EDIT_FIELDS: { key: keyof Member; label: string }[] = [
+    { key: 'name', label: 'Full name' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'region', label: 'Region' },
+    { key: 'constituency', label: 'Constituency' },
+    { key: 'profession', label: 'Profession' },
+    { key: 'emergencyName', label: 'Emergency name' },
+    { key: 'emergencyPhone', label: 'Emergency phone' },
+  ]
+
   return (
     <div
       style={{
@@ -140,28 +210,128 @@ export function IdentityReviewPanel({
           </div>
         </div>
 
-        {/* Field grid */}
-        <div style={{ background: 'hsl(var(--card))', padding: '18px 22px' }}>
-          <dl
-            className="verify-field-grid"
-            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 18px' }}
+        {/* Field grid / inline edit form */}
+        {editing ? (
+          <div
+            style={{
+              background: 'hsl(var(--card))',
+              padding: '18px 22px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+            }}
           >
-            {[
-              ['Platform', selectedMember.platform],
-              ['Country', selectedMember.country],
-              ['Gender', selectedMember.gender],
-              ['Age range', selectedMember.ageRange],
-              ['Region', selectedMember.region],
-              ['Constituency', selectedMember.constituency],
-              ['Profession', selectedMember.profession],
-              ['Education', selectedMember.educationLevel],
-              ['Phone', selectedMember.phone],
-              ['Submitted', selectedMember.submitted],
-              ["Voter's ID Card", selectedMember.votersIdCard],
-              ['Polling Station', selectedMember.pollingStationCode],
-            ].map(([k, v]) => (
-              <div key={k}>
-                <dt
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 14px' }}>
+              {EDIT_FIELDS.map((f) => (
+                <div key={f.key} style={{ gridColumn: f.key === 'name' ? '1 / -1' : 'auto' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 9.5,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      letterSpacing: '.06em',
+                      textTransform: 'uppercase',
+                      marginBottom: 3,
+                    }}
+                  >
+                    {f.label}
+                  </label>
+                  <input
+                    style={editInputSt}
+                    value={(form[f.key] as string) || ''}
+                    onChange={(e) => setForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
+                  />
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => setEditing(false)}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={saveEdit}
+                disabled={saving || !form.name?.trim()}
+              >
+                {saving ? 'Saving…' : 'Save & move to review'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ background: 'hsl(var(--card))', padding: '18px 22px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+              <button className="btn btn-outline btn-sm" onClick={startEdit}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 14, marginRight: 4 }}
+                >
+                  edit
+                </span>
+                Edit details
+              </button>
+            </div>
+            <dl
+              className="verify-field-grid"
+              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 18px' }}
+            >
+              {[
+                ['Platform', selectedMember.platform],
+                ['Country', selectedMember.country],
+                ['Gender', selectedMember.gender],
+                ['Age range', selectedMember.ageRange],
+                ['Region', selectedMember.region],
+                ['Constituency', selectedMember.constituency],
+                ['Profession', selectedMember.profession],
+                ['Education', selectedMember.educationLevel],
+                ['Phone', selectedMember.phone],
+                ['Submitted', selectedMember.submitted],
+                ["Voter's ID Card", selectedMember.votersIdCard],
+                ['Polling Station', selectedMember.pollingStationCode],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <dt
+                    style={{
+                      fontSize: 9.5,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      letterSpacing: '.06em',
+                      textTransform: 'uppercase',
+                      fontFamily: "'Public Sans', sans-serif",
+                      marginBottom: 2,
+                    }}
+                  >
+                    {k}
+                  </dt>
+                  <dd
+                    style={{
+                      margin: 0,
+                      fontSize: 12.5,
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 'var(--font-weight-normal, 400)',
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {v || '—'}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            {/* Emergency contact */}
+            {(selectedMember.emergencyName || selectedMember.emergencyPhone) && (
+              <div
+                style={{
+                  marginTop: 14,
+                  paddingTop: 14,
+                  borderTop: '1px solid hsl(var(--border))',
+                }}
+              >
+                <div
                   style={{
                     fontSize: 9.5,
                     fontWeight: 'var(--font-weight-medium, 500)',
@@ -169,84 +339,48 @@ export function IdentityReviewPanel({
                     letterSpacing: '.06em',
                     textTransform: 'uppercase',
                     fontFamily: "'Public Sans', sans-serif",
-                    marginBottom: 2,
+                    marginBottom: 8,
                   }}
                 >
-                  {k}
-                </dt>
-                <dd
-                  style={{
-                    margin: 0,
-                    fontSize: 12.5,
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 'var(--font-weight-normal, 400)',
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                >
-                  {v || '—'}
-                </dd>
+                  Emergency contact
+                </div>
+                <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 18px' }}>
+                  {[
+                    ['Name', selectedMember.emergencyName],
+                    ['Relation', selectedMember.emergencyRelationship],
+                    ['Phone', selectedMember.emergencyPhone],
+                  ].map(([k, v]) => (
+                    <div key={k}>
+                      <dt
+                        style={{
+                          fontSize: 9.5,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface-muted))',
+                          letterSpacing: '.06em',
+                          textTransform: 'uppercase',
+                          fontFamily: "'Public Sans', sans-serif",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {k}
+                      </dt>
+                      <dd
+                        style={{
+                          margin: 0,
+                          fontSize: 12,
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                        }}
+                      >
+                        {v || '—'}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-            ))}
-          </dl>
-
-          {/* Emergency contact */}
-          {(selectedMember.emergencyName || selectedMember.emergencyPhone) && (
-            <div
-              style={{
-                marginTop: 14,
-                paddingTop: 14,
-                borderTop: '1px solid hsl(var(--border))',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 9.5,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface-muted))',
-                  letterSpacing: '.06em',
-                  textTransform: 'uppercase',
-                  fontFamily: "'Public Sans', sans-serif",
-                  marginBottom: 8,
-                }}
-              >
-                Emergency contact
-              </div>
-              <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 18px' }}>
-                {[
-                  ['Name', selectedMember.emergencyName],
-                  ['Relation', selectedMember.emergencyRelationship],
-                  ['Phone', selectedMember.emergencyPhone],
-                ].map(([k, v]) => (
-                  <div key={k}>
-                    <dt
-                      style={{
-                        fontSize: 9.5,
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        color: 'hsl(var(--on-surface-muted))',
-                        letterSpacing: '.06em',
-                        textTransform: 'uppercase',
-                        fontFamily: "'Public Sans', sans-serif",
-                        marginBottom: 2,
-                      }}
-                    >
-                      {k}
-                    </dt>
-                    <dd
-                      style={{
-                        margin: 0,
-                        fontSize: 12,
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                      }}
-                    >
-                      {v || '—'}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Verification checklist */}
@@ -451,102 +585,70 @@ export function IdentityReviewPanel({
         </div>
       </div>
 
-      {/* Action buttons */}
-      {(selectedMember.status === 'In Review' ||
-        selectedMember.status === 'Processing' ||
-        selectedMember.status === 'Flagged') && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <button
-            className="btn btn-dest"
-            style={{ justifyContent: 'center', height: 44 }}
-            onClick={() => handleVerdict(false)}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              cancel
-            </span>
-            Reject
-          </button>
-          <button
-            className="btn btn-primary"
-            style={{
-              justifyContent: 'center',
-              height: 44,
-              opacity: !selectedMember.photoUrl ? 0.5 : 1,
-              cursor: !selectedMember.photoUrl ? 'not-allowed' : 'pointer',
-            }}
-            disabled={!selectedMember.photoUrl}
-            title={!selectedMember.photoUrl ? 'Profile photo is required for verification' : ''}
-            onClick={() => handleVerdict(true)}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-              verified_user
-            </span>
-            Approve
-          </button>
-        </div>
-      )}
-
-      {selectedMember.status === 'Approved' && (
+      {/* Verification stage control — move the member between stages */}
+      <div className="panel" style={{ padding: '14px 18px' }}>
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '12px 16px',
-            background: 'rgba(0,107,63,.07)',
-            border: '1px solid rgba(0,107,63,.2)',
-            borderRadius: 4,
+            fontSize: 9.5,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: 'hsl(var(--on-surface-muted))',
+            letterSpacing: '.06em',
+            textTransform: 'uppercase',
+            marginBottom: 10,
           }}
         >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: 18, color: 'hsl(var(--primary))' }}
-          >
-            verified_user
-          </span>
-          <span
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12.5,
-              color: 'hsl(var(--primary))',
-            }}
-          >
-            Member approved and admitted.
-          </span>
+          Verification stage
         </div>
-      )}
-
-      {selectedMember.status === 'Rejected' && (
-        <div
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {STAGES.map((s) => {
+            const active = selectedMember.status === s.status
+            const noPhoto = s.status === 'Approved' && !selectedMember.photoUrl
+            const disabled = active || noPhoto
+            return (
+              <button
+                key={s.status}
+                onClick={() => onStatusChange(s.status)}
+                disabled={disabled}
+                title={noPhoto ? 'Profile photo is required to approve' : ''}
+                style={{
+                  gridColumn: s.status === 'Approved' ? '1 / -1' : 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  height: 42,
+                  borderRadius: 6,
+                  cursor: disabled ? 'default' : 'pointer',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 12,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  border: `1px solid ${active ? s.color : 'hsl(var(--border))'}`,
+                  background: active ? s.color : 'hsl(var(--card))',
+                  color: active ? '#fff' : noPhoto ? 'hsl(var(--on-surface-muted))' : s.color,
+                  opacity: noPhoto ? 0.55 : 1,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  {active ? 'check' : s.icon}
+                </span>
+                {s.label}
+              </button>
+            )
+          })}
+        </div>
+        <p
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '12px 16px',
-            background: 'rgba(206,17,38,.07)',
-            border: '1px solid rgba(206,17,38,.2)',
-            borderRadius: 4,
+            margin: '10px 0 0',
+            fontSize: 10.5,
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: "'Public Sans', sans-serif",
           }}
         >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: 18, color: 'hsl(var(--destructive))' }}
-          >
-            cancel
-          </span>
-          <span
-            style={{
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 12.5,
-              color: 'hsl(var(--destructive))',
-            }}
-          >
-            Registration rejected.
-          </span>
-        </div>
-      )}
+          Currently{' '}
+          <strong style={{ color: 'hsl(var(--on-surface))' }}>{selectedMember.status}</strong>.
+          Editing the details moves the member back to In Review.
+        </p>
+      </div>
 
       {/* Biometric + audit vault links */}
       {selectedMember.photoUrl && (
