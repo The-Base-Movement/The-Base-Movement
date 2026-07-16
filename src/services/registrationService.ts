@@ -9,6 +9,10 @@ import type { Area } from 'react-easy-crop'
 
 function normalizeRegistrationPhone(countryCode: string, contactNumber: string): string {
   const raw = contactNumber.trim().replace(/\s+/g, '')
+  // No number entered → no phone. Never return a bare country code (e.g. "+1"),
+  // which would otherwise collide with every other blank-phone member on that
+  // dial code and trigger a false "already exists".
+  if (!raw) return ''
   if (raw.startsWith('+')) return raw
   return `${countryCode}${raw.replace(/^0+/, '')}`
 }
@@ -31,7 +35,9 @@ async function findDuplicateRegistration(
   authEmail: string | null
 ): Promise<'email' | 'phone' | null> {
   const [phoneRes, emailRes] = await Promise.all([
-    supabase.from('users').select('phone_number').eq('phone_number', phoneNumber).limit(1),
+    phoneNumber
+      ? supabase.from('users').select('phone_number').eq('phone_number', phoneNumber).limit(1)
+      : Promise.resolve({ data: [], error: null }),
     authEmail
       ? supabase.from('users').select('email').ilike('email', authEmail).limit(1)
       : Promise.resolve({ data: [], error: null }),
@@ -106,7 +112,7 @@ export const registrationService = {
       registration_number: regNo,
       platform: networkAssignment.platform,
       country: networkAssignment.country,
-      phone_number: cleanPhone,
+      phone_number: cleanPhone || null,
       gender: formData.gender,
       region: networkAssignment.region,
       constituency: networkAssignment.constituency,
