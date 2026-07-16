@@ -88,7 +88,7 @@ export default function MemberVerification() {
 
   const handleNewRegistration = (data: RegistrationSubmission) => {
     const newMember: PendingVerification = {
-      id: data.registrationNumber,
+      id: crypto.randomUUID(),
       name: data.fullName,
       region: data.region || data.country,
       constituency: data.constituency || data.chapter || '—',

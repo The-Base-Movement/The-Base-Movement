@@ -264,10 +264,9 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
 
     try {
       const yearStr = new Date().getFullYear().toString().slice(-2)
-      const usersToInsert: User[] = validRecords.map((record, index) => {
+      const usersToInsert: User[] = validRecords.map((record) => {
         const platform = record.data.region ? 'GHANA' : 'DIASPORA'
-        const baseNum = Math.floor(1000 + Math.random() * 9000)
-        const suffix = String((baseNum + index) % 10000).padStart(4, '0')
+        const suffix = BigInt('0x' + crypto.randomUUID().replace(/-/g, '')).toString()
         const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${suffix}`
 
         return {

@@ -217,23 +217,27 @@ class MemberService {
     if (error || !data) return null
 
     const existing = data.registration_number as string | null
-    const isTbmFormat = existing && /^TBM-(GH|DI)-\d{6}$/.test(existing)
+    const isTbmFormat = existing && /^TBM-(GH|DI)-\d{6,}$/.test(existing)
     if (isTbmFormat) return existing
 
-    const yearStr = new Date().getFullYear().toString().slice(-2)
-    const randomNum = String(Math.floor(1000 + Math.random() * 9000))
-    const platform = (data.platform as string) || 'GHANA'
-    const newRegNo = `TBM-${platform === 'DIASPORA' ? 'DI' : 'GH'}-${yearStr}${randomNum}`
+    const { data: updated, error: updateError } = await supabase
+      .from('users')
+      .update({ registration_number: '' })
+      .eq('id', authId)
+      .select('registration_number')
+      .single()
 
-    await supabase.from('users').update({ registration_number: newRegNo }).eq('id', authId)
-
-    return newRegNo
+    return updateError ? null : updated.registration_number
   }
 
-  async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
-    const { error } = await supabase.from('users').insert([data])
+  async registerMember(data: User): Promise<{ data: string | null; error: PostgrestError | null }> {
+    const { data: inserted, error } = await supabase
+      .from('users')
+      .insert([data])
+      .select('registration_number')
+      .single()
 
-    return { data: !error, error }
+    return { data: inserted?.registration_number ?? null, error }
   }
 
   async bulkRegisterMembers(
@@ -246,7 +250,7 @@ class MemberService {
     for (let i = 0; i < users.length; i += batchSize) {
       const batch = users.slice(i, i + batchSize)
 
-      // Pre-check phone numbers, emails, and registration numbers so duplicates are skipped/resolved
+      // Pre-check imported identifiers so duplicates are skipped.
       const phones = batch.map((u) => u.phone_number).filter(Boolean)
       const emails = batch.map((u) => u.email).filter(Boolean) as string[]
       const regNos = batch.map((u) => u.registration_number).filter(Boolean)
@@ -256,7 +260,9 @@ class MemberService {
         emails.length > 0
           ? supabase.from('users').select('email').in('email', emails)
           : Promise.resolve({ data: [] }),
-        supabase.from('users').select('registration_number').in('registration_number', regNos),
+        regNos.length > 0
+          ? supabase.from('users').select('registration_number').in('registration_number', regNos)
+          : Promise.resolve({ data: [] }),
       ])
 
       const existingPhones = new Set(phoneRes.data?.map((u) => u.phone_number) ?? [])
@@ -271,23 +277,17 @@ class MemberService {
         .filter((u) => {
           if (existingPhones.has(u.phone_number) || seenPhones.has(u.phone_number)) return false
           if (u.email && (existingEmails.has(u.email) || seenEmails.has(u.email))) return false
+          if (
+            u.registration_number &&
+            (existingRegNos.has(u.registration_number) || seenRegNos.has(u.registration_number))
+          )
+            return false
           seenPhones.add(u.phone_number)
           if (u.email) seenEmails.add(u.email)
+          if (u.registration_number) seenRegNos.add(u.registration_number)
           return true
         })
-        .map((u) => {
-          let regNo = u.registration_number
-          const platform = u.platform || 'GHANA'
-          const yearStr = new Date().getFullYear().toString().slice(-2)
-
-          // If the registration number collides with an existing one, or is a duplicate within the current batch, regenerate
-          while (!regNo || existingRegNos.has(regNo) || seenRegNos.has(regNo)) {
-            const randomNum = String(Math.floor(1000 + Math.random() * 9000))
-            regNo = `TBM-${platform === 'DIASPORA' ? 'DI' : 'GH'}-${yearStr}${randomNum}`
-          }
-          seenRegNos.add(regNo)
-          return { ...u, registration_number: regNo }
-        })
+        .map((u) => ({ ...u, registration_number: u.registration_number || '' }))
 
       totalSkipped += batch.length - newRecords.length
 

@@ -112,34 +112,16 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
     setIsSubmittingRegistration(true)
     const newId = crypto.randomUUID()
     try {
-      let finalAvatarUrl = null
-      if (data.photoUrl && data.croppedAreaPixels) {
-        try {
-          const croppedBlob = await getCroppedImg(data.photoUrl, data.croppedAreaPixels)
-          if (croppedBlob) {
-            const fileName = adminService.generateAvatarPath(data.registrationNumber)
-            const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
-            if (uploadError) {
-              console.error('[REGISTRATION] Avatar upload failed:', uploadError)
-              toast.error('Member registered, but avatar upload failed due to storage permissions.')
-            } else {
-              finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
-            }
-          }
-        } catch (err) {
-          console.error('[REGISTRATION] Image processing failed:', err)
-        }
-      }
       const newUser = {
         id: newId,
         full_name: data.fullName,
         email: data.email || null,
-        registration_number: data.registrationNumber,
+        registration_number: '',
         platform: data.platform,
         country: data.country,
         phone_number: data.contactNumber,
         gender: data.gender,
-        avatar_url: finalAvatarUrl,
+        avatar_url: null,
         age_range: data.ageRange,
         residential_address: data.residentialAddress,
         region: data.region,
@@ -158,15 +140,37 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
         voters_id_card: data.votersIdCard || undefined,
         polling_station_code: data.pollingStationCode || undefined,
       }
-      const { error: dbError } = await adminService.registerMember(newUser)
+      const { data: registrationNumber, error: dbError } =
+        await adminService.registerMember(newUser)
       if (dbError) throw dbError
+      if (!registrationNumber) throw new Error('Registration number was not created.')
+
+      if (data.photoUrl && data.croppedAreaPixels) {
+        try {
+          const croppedBlob = await getCroppedImg(data.photoUrl, data.croppedAreaPixels)
+          if (croppedBlob) {
+            const fileName = adminService.generateAvatarPath(newId)
+            const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
+            if (uploadError) {
+              console.error('[REGISTRATION] Avatar upload failed:', uploadError)
+              toast.error('Member registered, but avatar upload failed due to storage permissions.')
+            } else {
+              await adminService.updateMemberProfile(registrationNumber, {
+                avatarUrl: adminService.getAvatarPublicUrl(fileName),
+              })
+            }
+          }
+        } catch (err) {
+          console.error('[REGISTRATION] Image processing failed:', err)
+        }
+      }
 
       // Provision a login account so the new member can actually sign in
       // (directory insert alone leaves them without auth). Credentials are sent
       // by email if present, else SMS.
       if (data.email || data.contactNumber) {
         const acct = await adminService.createMemberLogin({
-          reg_no: data.registrationNumber,
+          reg_no: registrationNumber,
           name: data.fullName,
           email: data.email,
           phone: data.contactNumber,

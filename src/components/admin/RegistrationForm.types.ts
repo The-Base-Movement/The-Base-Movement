@@ -24,7 +24,6 @@ export interface RegistrationFormData {
 }
 
 export interface RegistrationSubmission extends RegistrationFormData {
-  registrationNumber: string
   platform: string
   photoUrl: string | null
   croppedAreaPixels?: Area | null

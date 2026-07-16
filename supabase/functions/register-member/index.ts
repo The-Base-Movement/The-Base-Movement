@@ -79,7 +79,11 @@ serve(async (req: Request) => {
     const userId = created.user.id
 
     // 3. Insert the member profile. On ANY failure, roll back the auth user.
-    const { error: dbErr } = await supabase.from('users').insert({ ...userRow, id: userId })
+    const { data: savedUser, error: dbErr } = await supabase
+      .from('users')
+      .insert({ ...userRow, id: userId })
+      .select('registration_number')
+      .single()
     if (dbErr) {
       await supabase.auth.admin
         .deleteUser(userId)
@@ -98,6 +102,8 @@ serve(async (req: Request) => {
       console.error('[register-member] users insert failed, rolled back:', dbErr.message)
       return json({ success: false, error: 'Could not save your details. Please try again.' }, 500)
     }
+
+    const registrationNumber = savedUser.registration_number
 
     // 4. Referral points — best-effort, never blocks a completed registration.
     if (refParam) {
@@ -121,7 +127,7 @@ serve(async (req: Request) => {
           email: contactEmail,
           first_name: nameParts[0] ?? '',
           last_name: nameParts.slice(1).join(' '),
-          reg_no: userRow.registration_number ?? '',
+          reg_no: registrationNumber,
           region: userRow.region ?? '',
           constituency: userRow.constituency ?? '',
           platform: userRow.platform ?? '',
@@ -131,7 +137,7 @@ serve(async (req: Request) => {
       }).catch((e) => console.warn('[register-member] Resend contact sync dispatch failed:', e))
     }
 
-    return json({ success: true, userId, regNo: userRow.registration_number })
+    return json({ success: true, userId, regNo: registrationNumber })
   } catch (err) {
     console.error('[register-member] error:', err)
     return json({ success: false, error: 'Registration failed. Please try again.' }, 500)

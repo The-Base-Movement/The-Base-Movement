@@ -21,7 +21,6 @@ import type { RegistrationFormData, RegistrationSubmission } from './Registratio
 import { useRegistrationData } from '@/pages/register/useRegistrationData'
 import { toast } from 'sonner'
 import { cleanPhoneInput } from '@/lib/phoneValidation'
-import { generateRegistrationNumber } from '@/services/registrationService'
 
 export type { RegistrationSubmission } from './RegistrationForm.types'
 
@@ -175,12 +174,9 @@ export default function RegistrationForm({
       if (modalElement) modalElement.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       setIsSubmitting(true)
-      const regNo = generateRegistrationNumber(platform)
-
       if (onSubmitData) {
         onSubmitData({
           ...formData,
-          registrationNumber: regNo,
           platform,
           photoUrl,
           croppedAreaPixels,

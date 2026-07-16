@@ -17,12 +17,6 @@ function normalizeRegistrationPhone(countryCode: string, contactNumber: string):
   return `${countryCode}${raw.replace(/^0+/, '')}`
 }
 
-export function generateRegistrationNumber(platform: string, now = new Date()): string {
-  const year = now.getFullYear().toString().slice(-2)
-  const suffix = Math.floor(100000 + Math.random() * 900000)
-  return `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${year}${suffix}`
-}
-
 export function duplicateRegistrationMessage(
   field: 'email' | 'phone' | 'registration_number',
   authEmail: string | null,
@@ -94,8 +88,6 @@ export const registrationService = {
       )
     }
 
-    const regNo = generateRegistrationNumber(platform)
-
     // 1. Determine auto-approval eligibility.
     // Photo upload is intentionally NOT required — gating on it kills conversion,
     // and it is a soft/optional verification step. Auto-approve when the required
@@ -116,7 +108,7 @@ export const registrationService = {
         .replace(/\s+/g, ' ')
         .trim(),
       email: authEmail,
-      registration_number: regNo,
+      registration_number: null,
       platform: networkAssignment.platform,
       country: networkAssignment.country,
       phone_number: cleanPhone || null,
@@ -168,6 +160,7 @@ export const registrationService = {
       error?: string
       field?: 'email' | 'phone' | 'registration_number'
       userId?: string
+      regNo?: string
     } | null
 
     if (!regResult?.success) {
@@ -187,6 +180,8 @@ export const registrationService = {
     }
 
     const newUserId = regResult.userId as string
+    const regNo = regResult.regNo
+    if (!regNo) throw new Error('Registration number was not created. Please try again.')
 
     // 4. Sign the new member in so the app has a session (mirrors the old signUp).
     const { data: authData } = await supabase.auth.signInWithPassword({

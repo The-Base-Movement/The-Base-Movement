@@ -390,12 +390,12 @@ class AdminService {
     return memberService.ensureRegistrationNumber(authId)
   }
 
-  async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
+  async registerMember(data: User): Promise<{ data: string | null; error: PostgrestError | null }> {
     const result = await memberService.registerMember(data)
-    if (!result.error) {
-      await this.logAction('MEMBER_REGISTER', `MEMBERS/${data.registration_number}`, 'Success', {
+    if (!result.error && result.data) {
+      await this.logAction('MEMBER_REGISTER', `MEMBERS/${result.data}`, 'Success', {
         name: data.full_name,
-        regNo: data.registration_number,
+        regNo: result.data,
       })
     }
     return result
