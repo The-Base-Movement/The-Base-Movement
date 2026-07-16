@@ -37,10 +37,9 @@ serve(async (req: Request) => {
       return json({ success: false, error: 'Missing required registration details.' }, 400)
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(supabaseUrl, serviceKey)
 
     // 1. Pre-check for an existing member (clean, specific message).
     const [phoneRes, emailRes] = await Promise.all([
@@ -100,6 +99,31 @@ serve(async (req: Request) => {
       await supabase
         .rpc('award_referral_points', { p_new_member_id: userId })
         .catch((e: unknown) => console.warn('[register-member] referral RPC failed:', e))
+    }
+
+    // 5. Capture the member into Resend marketing contacts (fire-and-forget;
+    //    never blocks or fails a completed registration). Only members with an
+    //    email can be a Resend contact.
+    const contactEmail = authEmail || userRow.email
+    if (contactEmail) {
+      const nameParts = String(fullName ?? userRow.full_name ?? '')
+        .trim()
+        .split(/\s+/)
+      fetch(`${supabaseUrl}/functions/v1/sync-sendgrid-contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${serviceKey}` },
+        body: JSON.stringify({
+          email: contactEmail,
+          first_name: nameParts[0] ?? '',
+          last_name: nameParts.slice(1).join(' '),
+          reg_no: userRow.registration_number ?? '',
+          region: userRow.region ?? '',
+          constituency: userRow.constituency ?? '',
+          platform: userRow.platform ?? '',
+          status: userRow.status ?? '',
+          source: 'member',
+        }),
+      }).catch((e) => console.warn('[register-member] Resend contact sync dispatch failed:', e))
     }
 
     return json({ success: true, userId, regNo: userRow.registration_number })

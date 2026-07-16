@@ -136,6 +136,7 @@ Deno.serve(async (req: Request) => {
       { key: 'constituency', type: 'string' },
       { key: 'platform', type: 'string' },
       { key: 'membership_status', type: 'string' },
+      { key: 'source', type: 'string' },
     ]
     for (const prop of props) {
       try {
@@ -166,19 +167,12 @@ Deno.serve(async (req: Request) => {
     const members: MemberRow[] = (data ?? [])
       .map((m: MemberRow) => ({ ...m, email: (m.email ?? '').trim() }))
       .filter((m: MemberRow) => EMAIL_RE.test(m.email))
-    const total = members.length
 
-    if (total === 0) {
-      return new Response(JSON.stringify({ total: 0, success: 0, failed: 0 }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      })
-    }
-
-    // Build contact objects
-    const contacts = members.map((m) => {
+    // Build member contact objects, keyed by lowercased email for dedup.
+    const byEmail = new Map<string, Record<string, unknown>>()
+    for (const m of members) {
       const { first_name, last_name } = splitName(m.full_name)
-      return {
+      byEmail.set(m.email.toLowerCase(), {
         email: m.email,
         first_name,
         last_name,
@@ -189,9 +183,46 @@ Deno.serve(async (req: Request) => {
           constituency: m.constituency ?? '',
           platform: m.platform ?? '',
           membership_status: m.status ?? '',
+          source: 'member',
         },
-      }
-    })
+      })
+    }
+
+    // Also back-fill active newsletter subscribers (source=newsletter). A
+    // subscriber who is already a member keeps the richer member record.
+    const { data: subsData } = await supabase
+      .from('newsletter_subscribers')
+      .select('email')
+      .eq('status', 'Active')
+      .not('email', 'is', null)
+    for (const s of subsData ?? []) {
+      const email = (s.email ?? '').trim()
+      if (!EMAIL_RE.test(email) || byEmail.has(email.toLowerCase())) continue
+      byEmail.set(email.toLowerCase(), {
+        email,
+        first_name: '',
+        last_name: '',
+        unsubscribed: false,
+        properties: {
+          reg_no: '',
+          region: '',
+          constituency: '',
+          platform: '',
+          membership_status: 'Subscriber',
+          source: 'newsletter',
+        },
+      })
+    }
+
+    const contacts = Array.from(byEmail.values())
+    const total = contacts.length
+
+    if (total === 0) {
+      return new Response(JSON.stringify({ total: 0, success: 0, failed: 0 }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
 
     // Sync in bulk using concurrency queue
     const syncResult = await syncResendContactsInBulk(contacts, resendApiKey)

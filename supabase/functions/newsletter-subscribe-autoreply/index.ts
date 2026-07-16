@@ -34,10 +34,9 @@ Deno.serve(async (req) => {
   try {
     const sgKey = Deno.env.get('SENDGRID_API_KEY')
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(supabaseUrl, serviceKey)
 
     const { email, phone, subscriberId } = await req.json()
     if (!email || typeof email !== 'string') throw new Error('email is required')
@@ -83,6 +82,14 @@ Deno.serve(async (req) => {
         status: 200,
       })
     }
+
+    // Capture the subscriber into Resend marketing contacts (fire-and-forget),
+    // tagged source=newsletter so they're distinguishable from members.
+    fetch(`${supabaseUrl}/functions/v1/sync-sendgrid-contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${serviceKey}` },
+      body: JSON.stringify({ email: normalizedEmail, source: 'newsletter', status: 'Subscriber' }),
+    }).catch((e) => console.warn('[newsletter-autoreply] Resend contact sync dispatch failed:', e))
 
     let emailSent = false
     let smsSent = false

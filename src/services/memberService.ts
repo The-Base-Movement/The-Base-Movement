@@ -883,10 +883,10 @@ class MemberService {
     }))
   }
 
-  async syncSendgridBulk(): Promise<{ total: number; batches: number }> {
+  async syncSendgridBulk(): Promise<{ total: number; success: number; failed: number }> {
     const { data, error } = await supabase.functions.invoke('sync-sendgrid-bulk')
     if (error) throw error
-    return data as { total: number; batches: number }
+    return data as { total: number; success: number; failed: number }
   }
 }
 

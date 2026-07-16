@@ -51,6 +51,7 @@ Deno.serve(async (req: Request) => {
       constituency = '',
       platform = '',
       status = '',
+      source = 'member',
     } = body as Record<string, string>
 
     if (!email) {
@@ -77,6 +78,7 @@ Deno.serve(async (req: Request) => {
       { key: 'constituency', type: 'string' },
       { key: 'platform', type: 'string' },
       { key: 'membership_status', type: 'string' },
+      { key: 'source', type: 'string' },
     ]
     for (const prop of props) {
       try {
@@ -105,6 +107,7 @@ Deno.serve(async (req: Request) => {
         constituency,
         platform,
         membership_status: status,
+        source,
       },
     }
 

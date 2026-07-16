@@ -25,9 +25,9 @@ export default function MembersList() {
     setIsSyncingSendGrid(true)
     setSyncResult(null)
     try {
-      const { total, batches } = await memberService.syncSendgridBulk()
+      const { total, success, failed } = await memberService.syncSendgridBulk()
       setSyncResult(
-        `✓ ${total.toLocaleString()} members synced across ${batches} batch${batches !== 1 ? 'es' : ''}.`
+        `✓ ${total.toLocaleString()} contacts synced to Resend — ${success.toLocaleString()} ok${failed ? `, ${failed.toLocaleString()} failed` : ''}.`
       )
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e)
