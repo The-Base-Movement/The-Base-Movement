@@ -6,7 +6,6 @@ import { discordService } from '@/services/discordService'
 import { sessionStore } from '@/lib/sessionStore'
 import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
-import type { AuthResponse } from '@supabase/supabase-js'
 
 function normalizeRegistrationPhone(countryCode: string, contactNumber: string): string {
   const raw = contactNumber.trim().replace(/\s+/g, '')
@@ -84,71 +83,7 @@ export const registrationService = {
     const randomNum = String(Math.floor(1000 + Math.random() * 9000))
     const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
 
-    // 1. Sign up user in Supabase Auth (using email if provided, else phone)
-    const signUpParams = {
-      password: formData.password!,
-      options: { data: { full_name: formData.fullName } },
-      ...(authEmail ? { email: authEmail } : { phone: cleanPhone }),
-    }
-
-    const { data: signUpData, error: authError } = await supabase.auth.signUp(signUpParams)
-    const authData: AuthResponse['data'] = signUpData
-
-    if (authError) {
-      if (authError.message?.toLowerCase().includes('already registered')) {
-        const signInParams = {
-          password: formData.password!,
-          ...(authEmail ? { email: authEmail } : { phone: cleanPhone }),
-        }
-
-        const { data: signInData, error: signInError } =
-          await supabase.auth.signInWithPassword(signInParams)
-
-        if (!signInError && signInData.user) {
-          authData.user = signInData.user
-          authData.session = signInData.session
-        } else {
-          throw new Error(
-            duplicateRegistrationMessage(
-              authEmail ? 'email' : 'phone',
-              authEmail,
-              formData.countryCode,
-              formData.contactNumber
-            )
-          )
-        }
-      } else if (authError.status === 429 || authError.message?.toLowerCase().includes('rate')) {
-        const seconds = authError.message?.match(/(\d+)\s*second/)?.[1] || '60'
-        throw new Error(`RATE_LIMIT:${seconds}`)
-      } else {
-        throw authError
-      }
-    }
-
-    // 2. Upload avatar if photo/selfie exists
-    let finalAvatarUrl = null
-    const avatarSource = selfieUrl || photoUrl
-    if (avatarSource && authData.user) {
-      try {
-        const croppedBlob = croppedAreaPixels
-          ? await getCroppedImg(avatarSource, croppedAreaPixels)
-          : await (await fetch(avatarSource)).blob()
-
-        if (croppedBlob) {
-          // Owner-folder path ({userId}/…) so it passes the avatars storage RLS.
-          const fileName = adminService.generateAvatarPath(authData.user.id)
-          const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
-          if (!uploadError) {
-            finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
-            await supabase.auth.updateUser({ data: { avatar_url: finalAvatarUrl } })
-          }
-        }
-      } catch (err) {
-        console.error('Failed to process/upload avatar during registration service execution:', err)
-      }
-    }
-
-    // 3. Determine auto-approval eligibility.
+    // 1. Determine auto-approval eligibility.
     // Photo upload is intentionally NOT required — gating on it kills conversion,
     // and it is a soft/optional verification step. Auto-approve when the required
     // steps pass: Ghana needs a constituency; Diaspora needs only a submitted form
@@ -158,9 +93,8 @@ export const registrationService = {
     const autoApproved = ghanaReady || diasporaReady
     const networkAssignment = normalizeMemberNetworkAssignment(platform, formData)
 
-    // 4. Insert user profile into database
-    const { error: dbError } = await supabase.from('users').insert({
-      id: authData.user?.id,
+    // 2. Build the member profile row (avatar added afterwards, best-effort).
+    const userRow = {
       national_id: formData.idNumber,
       // Normalize the name so scan/import artifacts (leading "1. ", double spaces)
       // don't leak into the record the way they did for the early bulk imports.
@@ -185,7 +119,7 @@ export const registrationService = {
       status: autoApproved ? 'Active' : 'Pending',
       verification_status: autoApproved ? 'Approved' : 'In Review',
       age_range: formData.ageRange,
-      avatar_url: finalAvatarUrl,
+      avatar_url: null,
       education_level: formData.educationLevel,
       emergency_name: formData.emergencyContactName,
       emergency_relationship: formData.emergencyRelationship,
@@ -198,28 +132,78 @@ export const registrationService = {
       registered_by: config.registeredBy || null,
       voters_id_card: formData.votersIdCard || null,
       polling_station_code: formData.pollingStationCode || null,
-    })
-
-    if (dbError) {
-      if (dbError.code === '23505') {
-        throw new Error('A member with those registration details already exists. Please sign in.')
-      }
-      throw dbError
     }
 
-    // Award referral points to the referrer — fire-and-forget, must not block registration
-    if (refParam && authData.user?.id) {
-      const memberId = authData.user.id
-      ;(async () => {
-        try {
-          const { error } = await supabase.rpc('award_referral_points', {
-            p_new_member_id: memberId,
-          })
-          if (error) console.warn('[referral] registration points RPC failed:', error)
-        } catch {
-          // non-critical — registration already succeeded
+    // 3. Create the auth user AND the member row ATOMICALLY on the server. The
+    //    edge function rolls back the auth user if the insert fails, so a failed
+    //    attempt never leaves an orphaned account that blocks a retry.
+    const { data: reg, error: fnError } = await supabase.functions.invoke('register-member', {
+      body: {
+        authEmail,
+        phone: cleanPhone,
+        password: formData.password,
+        fullName: formData.fullName,
+        userRow,
+        refParam,
+      },
+    })
+
+    // A non-2xx response surfaces as fnError with the JSON body on error.context.
+    const regResult = (reg ??
+      (await (fnError as { context?: Response })?.context?.json?.().catch(() => null))) as {
+      success?: boolean
+      error?: string
+      field?: 'email' | 'phone'
+      userId?: string
+    } | null
+
+    if (!regResult?.success) {
+      if (regResult?.error === 'duplicate') {
+        throw new Error(
+          duplicateRegistrationMessage(
+            regResult.field ?? (authEmail ? 'email' : 'phone'),
+            authEmail,
+            formData.countryCode,
+            formData.contactNumber
+          )
+        )
+      }
+      throw new Error(
+        regResult?.error || fnError?.message || 'Registration failed. Please try again.'
+      )
+    }
+
+    const newUserId = regResult.userId as string
+
+    // 4. Sign the new member in so the app has a session (mirrors the old signUp).
+    const { data: authData } = await supabase.auth.signInWithPassword({
+      password: formData.password!,
+      ...(authEmail ? { email: authEmail } : { phone: cleanPhone }),
+    })
+
+    // 5. Upload avatar — optional, best-effort. The member already exists, so a
+    //    failure here can never orphan anything; they can add a photo later.
+    let finalAvatarUrl: string | null = null
+    const avatarSource = selfieUrl || photoUrl
+    if (avatarSource && authData?.user) {
+      try {
+        const croppedBlob = croppedAreaPixels
+          ? await getCroppedImg(avatarSource, croppedAreaPixels)
+          : await (await fetch(avatarSource)).blob()
+
+        if (croppedBlob) {
+          // Owner-folder path ({userId}/…) so it passes the avatars storage RLS.
+          const fileName = adminService.generateAvatarPath(newUserId)
+          const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
+          if (!uploadError) {
+            finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
+            await supabase.auth.updateUser({ data: { avatar_url: finalAvatarUrl } })
+            await supabase.from('users').update({ avatar_url: finalAvatarUrl }).eq('id', newUserId)
+          }
         }
-      })()
+      } catch (err) {
+        console.error('Failed to process/upload avatar during registration:', err)
+      }
     }
 
     discordService.memberRegistered(
