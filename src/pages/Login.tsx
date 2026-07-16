@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
+import { supabase } from '@/lib/supabase'
 import { sessionStore } from '@/lib/sessionStore'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
@@ -59,6 +60,15 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
+
+  // Forgot-password panel (swaps in place of the login form — no separate page)
+  const [view, setView] = useState<'login' | 'forgot'>('login')
+  const [fpMethod, setFpMethod] = useState<'phone' | 'email'>('phone')
+  const [fpPhone, setFpPhone] = useState('')
+  const [fpEmail, setFpEmail] = useState('')
+  const [fpEmailSent, setFpEmailSent] = useState(false)
+  const [fpLoading, setFpLoading] = useState(false)
+
   const navigate = useNavigate()
   const location = useLocation()
   const from = (location.state as { from?: Location })?.from?.pathname || '/dashboard'
@@ -124,6 +134,59 @@ export default function Login() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleRequestOTP = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!fpPhone.trim()) {
+      toast.error('Please enter your registered phone number.')
+      return
+    }
+    setFpLoading(true)
+    try {
+      const { data, error } = await supabase.functions.invoke('send-otp', {
+        body: { phone: fpPhone.trim() },
+      })
+      if (error) throw error
+      toast.success(data?.message || 'Verification code sent!')
+      navigate('/verify-otp', { state: { phone: fpPhone.trim() } })
+    } catch (err: unknown) {
+      console.error('[OTP SEND ERROR]', err)
+      toast.error(
+        err instanceof Error ? err.message : 'Unable to send the code right now. Please try again.'
+      )
+    } finally {
+      setFpLoading(false)
+    }
+  }
+
+  const handleEmailReset = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!fpEmail.trim()) {
+      toast.error('Please enter your registered email address.')
+      return
+    }
+    setFpLoading(true)
+    try {
+      const { data, error } = await supabase.functions.invoke('send-recovery-email', {
+        body: { email: fpEmail.trim() },
+      })
+      if (error) throw error
+      if (data?.error) throw new Error(data.error)
+      setFpEmailSent(true)
+    } catch (err: unknown) {
+      console.error('[EMAIL RESET ERROR]', err)
+      toast.error(
+        err instanceof Error ? err.message : 'Failed to send reset email. Please try again.'
+      )
+    } finally {
+      setFpLoading(false)
+    }
+  }
+
+  const backToLogin = () => {
+    setView('login')
+    setFpEmailSent(false)
   }
 
   const currentStep = loginSteps[activeStep]
@@ -215,180 +278,448 @@ export default function Login() {
               </Link>
             </div>
 
-            <h1
-              style={{
-                margin: 0,
-                color: 'hsl(var(--on-surface))',
-                fontSize: 'clamp(28px, 4vw, 36px)',
-                lineHeight: 1.05,
-                letterSpacing: 0,
-              }}
-            >
-              Hi, welcome back
-            </h1>
-            <p
-              style={{ margin: '10px 0 24px', color: 'hsl(var(--on-surface-muted))', fontSize: 13 }}
-            >
-              Sign in to continue to your movement dashboard.
-            </p>
-
-            <form onSubmit={handleLogin} style={{ display: 'grid', gap: 12 }}>
-              <div>
-                <label htmlFor="member-login-id" style={labelStyle}>
-                  Email, phone, or registration number
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{
-                      position: 'absolute',
-                      left: 14,
-                      top: 12,
-                      fontSize: 18,
-                      color: 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    alternate_email
-                  </span>
-                  <input
-                    id="member-login-id"
-                    name="email"
-                    type="text"
-                    autoComplete="username"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="email, 054..., or TBM-DI-267388"
-                    required
-                    style={inputStyle}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="member-login-password" style={labelStyle}>
-                  Password
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{
-                      position: 'absolute',
-                      left: 14,
-                      top: 12,
-                      fontSize: 18,
-                      color: 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    key
-                  </span>
-                  <input
-                    id="member-login-password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="your password"
-                    required
-                    style={{ ...inputStyle, paddingRight: 46 }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((value) => !value)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    style={{
-                      position: 'absolute',
-                      right: 12,
-                      top: 9,
-                      border: 0,
-                      background: 'transparent',
-                      color: 'hsl(var(--on-surface-muted))',
-                      cursor: 'pointer',
-                      padding: 4,
-                    }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  margin: '2px 0 10px',
-                }}
-              >
-                <label
+            {view === 'login' && (
+              <>
+                <h1
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 7,
-                    fontSize: 12,
+                    margin: 0,
                     color: 'hsl(var(--on-surface))',
+                    fontSize: 'clamp(28px, 4vw, 36px)',
+                    lineHeight: 1.05,
+                    letterSpacing: 0,
                   }}
                 >
-                  <input type="checkbox" style={{ accentColor: 'hsl(var(--primary))' }} />
-                  Remember me
-                </label>
-                <Link
-                  to="/forgot-password"
-                  style={{ color: 'hsl(var(--primary))', fontSize: 12, fontWeight: 700 }}
+                  Hi, welcome back
+                </h1>
+                <p
+                  style={{
+                    margin: '10px 0 24px',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 13,
+                  }}
                 >
-                  Forgot password
-                </Link>
-              </div>
+                  Sign in to continue to your movement dashboard.
+                </p>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                style={{
-                  height: 48,
-                  border: 0,
-                  borderRadius: 'var(--radius-md)',
-                  background: 'hsl(var(--primary))',
-                  color: '#fff',
-                  fontWeight: 700,
-                  cursor: isLoading ? 'wait' : 'pointer',
-                  opacity: isLoading ? 0.76 : 1,
-                }}
-              >
-                {isLoading ? 'Authenticating...' : 'Login'}
-              </button>
+                <form onSubmit={handleLogin} style={{ display: 'grid', gap: 12 }}>
+                  <div>
+                    <label htmlFor="member-login-id" style={labelStyle}>
+                      Email, phone, or registration number
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          position: 'absolute',
+                          left: 14,
+                          top: 12,
+                          fontSize: 18,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        alternate_email
+                      </span>
+                      <input
+                        id="member-login-id"
+                        name="email"
+                        type="text"
+                        autoComplete="username"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="email, 054..., or TBM-DI-267388"
+                        required
+                        style={inputStyle}
+                      />
+                    </div>
+                  </div>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto 1fr',
-                  alignItems: 'center',
-                  gap: 12,
-                  margin: '14px 0 8px',
-                }}
-              >
-                <span style={{ height: 1, background: 'hsl(var(--border))' }} />
-                <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
-                  Secure member access
-                </span>
-                <span style={{ height: 1, background: 'hsl(var(--border))' }} />
-              </div>
+                  <div>
+                    <label htmlFor="member-login-password" style={labelStyle}>
+                      Password
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          position: 'absolute',
+                          left: 14,
+                          top: 12,
+                          fontSize: 18,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        key
+                      </span>
+                      <input
+                        id="member-login-password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="your password"
+                        required
+                        style={{ ...inputStyle, paddingRight: 46 }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((value) => !value)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        style={{
+                          position: 'absolute',
+                          right: 12,
+                          top: 9,
+                          border: 0,
+                          background: 'transparent',
+                          color: 'hsl(var(--on-surface-muted))',
+                          cursor: 'pointer',
+                          padding: 4,
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                          {showPassword ? 'visibility_off' : 'visibility'}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
 
-              <p
-                style={{
-                  margin: 0,
-                  textAlign: 'center',
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                Don&apos;t have an account?{' '}
-                <Link to="/register" style={{ color: 'hsl(var(--primary))', fontWeight: 700 }}>
-                  Register
-                </Link>
-              </p>
-            </form>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      margin: '2px 0 10px',
+                    }}
+                  >
+                    <label
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 7,
+                        fontSize: 12,
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      <input type="checkbox" style={{ accentColor: 'hsl(var(--primary))' }} />
+                      Remember me
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setView('forgot')}
+                      style={{
+                        border: 0,
+                        background: 'transparent',
+                        padding: 0,
+                        cursor: 'pointer',
+                        color: 'hsl(var(--primary))',
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      Forgot password
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    style={{
+                      height: 48,
+                      border: 0,
+                      borderRadius: 'var(--radius-md)',
+                      background: 'hsl(var(--primary))',
+                      color: '#fff',
+                      fontWeight: 700,
+                      cursor: isLoading ? 'wait' : 'pointer',
+                      opacity: isLoading ? 0.76 : 1,
+                    }}
+                  >
+                    {isLoading ? 'Authenticating...' : 'Login'}
+                  </button>
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr auto 1fr',
+                      alignItems: 'center',
+                      gap: 12,
+                      margin: '14px 0 8px',
+                    }}
+                  >
+                    <span style={{ height: 1, background: 'hsl(var(--border))' }} />
+                    <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
+                      Secure member access
+                    </span>
+                    <span style={{ height: 1, background: 'hsl(var(--border))' }} />
+                  </div>
+
+                  <p
+                    style={{
+                      margin: 0,
+                      textAlign: 'center',
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Don&apos;t have an account?{' '}
+                    <Link to="/register" style={{ color: 'hsl(var(--primary))', fontWeight: 700 }}>
+                      Register
+                    </Link>
+                  </p>
+                </form>
+              </>
+            )}
+
+            {view === 'forgot' && (
+              <>
+                <h1
+                  style={{
+                    margin: 0,
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 'clamp(28px, 4vw, 36px)',
+                    lineHeight: 1.05,
+                    letterSpacing: 0,
+                  }}
+                >
+                  Reset your password
+                </h1>
+                <p
+                  style={{
+                    margin: '10px 0 24px',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 13,
+                  }}
+                >
+                  Choose how to reset it — an SMS code to your registered phone, or a secure link to
+                  your registered email.
+                </p>
+
+                {/* Method tabs */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-md)',
+                    overflow: 'hidden',
+                    marginBottom: 20,
+                  }}
+                >
+                  {(['phone', 'email'] as const).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => {
+                        setFpMethod(m)
+                        setFpEmailSent(false)
+                      }}
+                      style={{
+                        padding: '10px 0',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 6,
+                        transition: 'background 0.15s',
+                        background: fpMethod === m ? 'hsl(var(--primary))' : 'transparent',
+                        color: fpMethod === m ? '#fff' : 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                        {m === 'phone' ? 'sms' : 'mail'}
+                      </span>
+                      {m === 'phone' ? 'SMS code' : 'Email link'}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Phone / SMS reset */}
+                {fpMethod === 'phone' && (
+                  <form onSubmit={handleRequestOTP} style={{ display: 'grid', gap: 12 }}>
+                    <div>
+                      <label htmlFor="fp-phone" style={labelStyle}>
+                        Registered phone number
+                      </label>
+                      <div style={{ position: 'relative' }}>
+                        <span
+                          className="material-symbols-outlined"
+                          style={{
+                            position: 'absolute',
+                            left: 14,
+                            top: 12,
+                            fontSize: 18,
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          smartphone
+                        </span>
+                        <input
+                          id="fp-phone"
+                          type="tel"
+                          value={fpPhone}
+                          onChange={(e) => setFpPhone(e.target.value)}
+                          placeholder="e.g. 054XXXXXXX or +233..."
+                          required
+                          style={inputStyle}
+                        />
+                      </div>
+                    </div>
+                    <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                      We&apos;ll text a 6-digit code to this number. It expires in 10 minutes.
+                    </p>
+                    <button
+                      type="submit"
+                      disabled={fpLoading}
+                      style={{
+                        height: 48,
+                        border: 0,
+                        borderRadius: 'var(--radius-md)',
+                        background: 'hsl(var(--primary))',
+                        color: '#fff',
+                        fontWeight: 700,
+                        cursor: fpLoading ? 'wait' : 'pointer',
+                        opacity: fpLoading ? 0.76 : 1,
+                      }}
+                    >
+                      {fpLoading ? 'Sending…' : 'Send SMS code'}
+                    </button>
+                  </form>
+                )}
+
+                {/* Email reset */}
+                {fpMethod === 'email' && !fpEmailSent && (
+                  <form onSubmit={handleEmailReset} style={{ display: 'grid', gap: 12 }}>
+                    <div>
+                      <label htmlFor="fp-email" style={labelStyle}>
+                        Registered email address
+                      </label>
+                      <div style={{ position: 'relative' }}>
+                        <span
+                          className="material-symbols-outlined"
+                          style={{
+                            position: 'absolute',
+                            left: 14,
+                            top: 12,
+                            fontSize: 18,
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          mail
+                        </span>
+                        <input
+                          id="fp-email"
+                          type="email"
+                          autoComplete="email"
+                          value={fpEmail}
+                          onChange={(e) => setFpEmail(e.target.value)}
+                          placeholder="you@example.com"
+                          required
+                          style={inputStyle}
+                        />
+                      </div>
+                    </div>
+                    <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                      We&apos;ll email a secure reset link. It expires in 1 hour.
+                    </p>
+                    <button
+                      type="submit"
+                      disabled={fpLoading}
+                      style={{
+                        height: 48,
+                        border: 0,
+                        borderRadius: 'var(--radius-md)',
+                        background: 'hsl(var(--primary))',
+                        color: '#fff',
+                        fontWeight: 700,
+                        cursor: fpLoading ? 'wait' : 'pointer',
+                        opacity: fpLoading ? 0.76 : 1,
+                      }}
+                    >
+                      {fpLoading ? 'Sending…' : 'Send reset link'}
+                    </button>
+                  </form>
+                )}
+
+                {/* Email sent confirmation */}
+                {fpMethod === 'email' && fpEmailSent && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 12,
+                      padding: '8px 0',
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 40, color: 'hsl(var(--primary))' }}
+                    >
+                      mark_email_read
+                    </span>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        color: 'hsl(var(--on-surface-muted))',
+                        textAlign: 'center',
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      A reset link has been sent to <strong>{fpEmail}</strong>. Check your inbox
+                      (and spam) and click the link to set a new password.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setFpEmailSent(false)}
+                      style={{
+                        border: '1px solid hsl(var(--border))',
+                        background: 'transparent',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '8px 14px',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      Try a different email
+                    </button>
+                  </div>
+                )}
+
+                <p
+                  style={{
+                    margin: '18px 0 0',
+                    textAlign: 'center',
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  Remembered your password?{' '}
+                  <button
+                    type="button"
+                    onClick={backToLogin}
+                    style={{
+                      border: 0,
+                      background: 'transparent',
+                      padding: 0,
+                      cursor: 'pointer',
+                      color: 'hsl(var(--primary))',
+                      fontWeight: 700,
+                      fontSize: 12,
+                    }}
+                  >
+                    Back to sign in →
+                  </button>
+                </p>
+              </>
+            )}
           </section>
 
           <section
