@@ -1,11 +1,37 @@
 import path from 'path'
 import react from '@vitejs/plugin-react'
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import type { Config as SVGOConfig } from 'svgo'
 
 /// <reference types="vitest" />
+
+// Unique id for this build — the git SHA on Vercel, a timestamp locally. Baked
+// into the client bundle as import.meta.env.VITE_BUILD_ID AND written to
+// /version.json, so the running app can detect when a newer build has been
+// deployed and prompt a reload.
+const BUILD_ID = process.env.VERCEL_GIT_COMMIT_SHA || `dev-${Date.now()}`
+
+// Emit version.json into the CLIENT build output only (not the SSR bundle).
+function emitVersionJson(): Plugin {
+  let isSsr = false
+  return {
+    name: 'emit-version-json',
+    apply: 'build',
+    configResolved(config) {
+      isSsr = !!config.build.ssr
+    },
+    generateBundle() {
+      if (isSsr) return
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({ buildId: BUILD_ID }),
+      })
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -15,6 +41,7 @@ export default defineConfig(({ mode }) => {
     base: '/',
     plugins: [
       react(),
+      emitVersionJson(),
       mode === 'production' &&
         ViteImageOptimizer({
           exclude: ['**/flags/**'],
@@ -101,6 +128,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
+      'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID),
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.SUPABASE_URL),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.SUPABASE_ANON_KEY),
       'import.meta.env.VITE_TINYMCE_API_KEY': JSON.stringify(env.TINYMCE_API_KEY),
