@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { statusPill } from './utils'
 import type { PendingVerification } from '@/services/adminService'
 import type { Member } from '@/types/admin'
+import type { Region, Constituency } from '@/types/registration'
+import { JobSelector } from '@/components/JobSelector'
+import { emptyJobSelection, type JobSelection } from '@/services/jobTaxonomyService'
 
 interface IdentityReviewPanelProps {
   selectedMember: PendingVerification
@@ -14,7 +17,10 @@ interface IdentityReviewPanelProps {
   aiAnalyzing: boolean
   handleAiScan: () => Promise<void>
   onStatusChange: (status: PendingVerification['status']) => void
-  onSaveEdit: (fields: Partial<Member>) => Promise<void>
+  onSaveEdit: (fields: Partial<Member> & { job?: JobSelection }) => Promise<void>
+  dbRegions: Region[]
+  dbConstituencies: Constituency[]
+  dbCountries: string[]
   setViewingVaultRecord: (m: PendingVerification) => void
 }
 
@@ -54,11 +60,18 @@ export function IdentityReviewPanel({
   handleAiScan,
   onStatusChange,
   onSaveEdit,
+  dbRegions,
+  dbConstituencies,
+  dbCountries,
   setViewingVaultRecord,
 }: IdentityReviewPanelProps) {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState<Partial<Member>>({})
+  const [job, setJob] = useState<JobSelection>(emptyJobSelection)
+  const [professionLabel, setProfessionLabel] = useState('')
+
+  const isDiaspora = selectedMember.platform === 'DIASPORA'
 
   const startEdit = () => {
     setForm({
@@ -66,33 +79,45 @@ export function IdentityReviewPanel({
       phone: selectedMember.phone,
       region: selectedMember.region,
       constituency: selectedMember.constituency,
-      profession: selectedMember.profession,
+      country: selectedMember.country,
       emergencyName: selectedMember.emergencyName,
       emergencyPhone: selectedMember.emergencyPhone,
     })
+    setJob(emptyJobSelection)
+    setProfessionLabel(selectedMember.profession || '')
     setEditing(true)
   }
+
+  const setField = (key: keyof Member, value: string) =>
+    setForm((prev) => ({ ...prev, [key]: value }))
+
+  // Constituencies for the member's chosen region (matches the registration form).
+  const constituencyOptions = useMemo(() => {
+    const regionId = dbRegions.find((r) => r.name === form.region)?.id
+    return dbConstituencies.filter((c) => !regionId || c.region_id === regionId)
+  }, [dbRegions, dbConstituencies, form.region])
 
   const saveEdit = async () => {
     if (!form.name?.trim()) return
     setSaving(true)
     try {
-      await onSaveEdit(form)
+      const jobPicked = job.industryId !== null || job.isOther
+      await onSaveEdit({ ...form, ...(jobPicked ? { job, profession: professionLabel } : {}) })
       setEditing(false)
     } finally {
       setSaving(false)
     }
   }
 
-  const EDIT_FIELDS: { key: keyof Member; label: string }[] = [
-    { key: 'name', label: 'Full name' },
-    { key: 'phone', label: 'Phone' },
-    { key: 'region', label: 'Region' },
-    { key: 'constituency', label: 'Constituency' },
-    { key: 'profession', label: 'Profession' },
-    { key: 'emergencyName', label: 'Emergency name' },
-    { key: 'emergencyPhone', label: 'Emergency phone' },
-  ]
+  const editLabelSt: React.CSSProperties = {
+    display: 'block',
+    fontSize: 9.5,
+    fontWeight: 'var(--font-weight-medium, 500)',
+    color: 'hsl(var(--on-surface-muted))',
+    letterSpacing: '.06em',
+    textTransform: 'uppercase',
+    marginBottom: 3,
+  }
 
   return (
     <div
@@ -222,28 +247,105 @@ export function IdentityReviewPanel({
             }}
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 14px' }}>
-              {EDIT_FIELDS.map((f) => (
-                <div key={f.key} style={{ gridColumn: f.key === 'name' ? '1 / -1' : 'auto' }}>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: 9.5,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface-muted))',
-                      letterSpacing: '.06em',
-                      textTransform: 'uppercase',
-                      marginBottom: 3,
-                    }}
-                  >
-                    {f.label}
-                  </label>
-                  <input
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={editLabelSt}>Full name</label>
+                <input
+                  style={editInputSt}
+                  value={form.name || ''}
+                  onChange={(e) => setField('name', e.target.value)}
+                />
+              </div>
+              <div>
+                <label style={editLabelSt}>Phone</label>
+                <input
+                  style={editInputSt}
+                  value={form.phone || ''}
+                  onChange={(e) => setField('phone', e.target.value)}
+                />
+              </div>
+
+              {isDiaspora ? (
+                <div>
+                  <label style={editLabelSt}>Country</label>
+                  <select
                     style={editInputSt}
-                    value={(form[f.key] as string) || ''}
-                    onChange={(e) => setForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
-                  />
+                    value={form.country || ''}
+                    onChange={(e) => setField('country', e.target.value)}
+                  >
+                    <option value="">Select country</option>
+                    {dbCountries.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              ))}
+              ) : (
+                <>
+                  <div>
+                    <label style={editLabelSt}>Region</label>
+                    <select
+                      style={editInputSt}
+                      value={form.region || ''}
+                      onChange={(e) =>
+                        setForm((prev) => ({ ...prev, region: e.target.value, constituency: '' }))
+                      }
+                    >
+                      <option value="">Select region</option>
+                      {dbRegions.map((r) => (
+                        <option key={r.name} value={r.name}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={editLabelSt}>Constituency</label>
+                    <select
+                      style={editInputSt}
+                      value={form.constituency || ''}
+                      disabled={!form.region}
+                      onChange={(e) => setField('constituency', e.target.value)}
+                    >
+                      <option value="">Select constituency</option>
+                      {constituencyOptions.map((c) => (
+                        <option key={`${c.region_id}-${c.name}`} value={c.name}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={editLabelSt}>
+                  Profession{professionLabel ? ` · current: ${professionLabel}` : ''}
+                </label>
+                <JobSelector
+                  value={job}
+                  onChange={setJob}
+                  onLabelChange={setProfessionLabel}
+                  idPrefix="kyc-edit"
+                />
+              </div>
+
+              <div>
+                <label style={editLabelSt}>Emergency name</label>
+                <input
+                  style={editInputSt}
+                  value={form.emergencyName || ''}
+                  onChange={(e) => setField('emergencyName', e.target.value)}
+                />
+              </div>
+              <div>
+                <label style={editLabelSt}>Emergency phone</label>
+                <input
+                  style={editInputSt}
+                  value={form.emergencyPhone || ''}
+                  onChange={(e) => setField('emergencyPhone', e.target.value)}
+                />
+              </div>
             </div>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
               <button

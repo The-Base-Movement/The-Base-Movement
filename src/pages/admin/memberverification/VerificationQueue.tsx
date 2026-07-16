@@ -14,6 +14,9 @@ interface VerificationQueueProps {
   constituencyFilter: string
   setConstituencyFilter: (val: string) => void
   constituencies: string[]
+  countryFilter: string
+  setCountryFilter: (val: string) => void
+  countries: string[]
   filtered: PendingVerification[]
   paginated: PendingVerification[]
   selectedMember: PendingVerification | null
@@ -35,6 +38,9 @@ export function VerificationQueue({
   constituencyFilter,
   setConstituencyFilter,
   constituencies,
+  countryFilter,
+  setCountryFilter,
+  countries,
   filtered,
   paginated,
   selectedMember,
@@ -171,6 +177,52 @@ export function VerificationQueue({
           >
             <option value="">All constituencies</option>
             {constituencies.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 9,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            public
+          </span>
+          <select
+            name="countryFilter"
+            value={countryFilter}
+            onChange={(e) => {
+              setCountryFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            style={{
+              height: 36,
+              paddingLeft: 30,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 4,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 12,
+              background: 'hsl(var(--card))',
+              color: 'hsl(var(--on-surface))',
+              outline: 'none',
+              cursor: 'pointer',
+            }}
+            aria-label="Filter by Base Diaspora country"
+          >
+            <option value="">All Base Diaspora</option>
+            {countries.map((c) => (
               <option key={c} value={c}>
                 {c}
               </option>

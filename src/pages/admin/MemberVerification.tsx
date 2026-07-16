@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { adminService, type PendingVerification } from '@/services/adminService'
 import type { Member } from '@/types/admin'
+import type { JobSelection } from '@/services/jobTaxonomyService'
 import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
@@ -24,6 +25,7 @@ import { PAGE_SIZE } from './memberverification/utils'
 import { VerificationQueue } from './memberverification/VerificationQueue'
 import { IdentityReviewPanel } from './memberverification/IdentityReviewPanel'
 import { AuditVaultModal } from './memberverification/AuditVaultModal'
+import { useRegistrationData } from '@/pages/register/useRegistrationData'
 
 export default function MemberVerification() {
   const [members, setMembers] = useState<PendingVerification[]>([])
@@ -43,6 +45,10 @@ export default function MemberVerification() {
     flagged: boolean
   } | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [countryFilter, setCountryFilter] = useState('')
+
+  // Region / constituency / country lookups for the filters + inline edit form.
+  const { dbRegions, dbConstituencies, dbCountries } = useRegistrationData()
 
   const [counts, setCounts] = useState<Record<string, number>>({})
 
@@ -165,7 +171,7 @@ export default function MemberVerification() {
   }
 
   // Save corrected details, then send the member back to In Review.
-  const handleSaveEdit = async (fields: Partial<Member>) => {
+  const handleSaveEdit = async (fields: Partial<Member> & { job?: JobSelection }) => {
     if (!selectedMember) return
     try {
       await adminService.updateMemberProfile(selectedMember.id, fields)
@@ -175,6 +181,7 @@ export default function MemberVerification() {
         phone: fields.phone ?? selectedMember.phone,
         region: fields.region ?? selectedMember.region,
         constituency: fields.constituency ?? selectedMember.constituency,
+        country: fields.country ?? selectedMember.country,
         profession: fields.profession ?? selectedMember.profession,
         emergencyName: fields.emergencyName ?? selectedMember.emergencyName,
         emergencyPhone: fields.emergencyPhone ?? selectedMember.emergencyPhone,
@@ -197,14 +204,16 @@ export default function MemberVerification() {
     setCurrentPage(1)
   }
 
-  const constituencies = Array.from(
-    new Set(members.map((m) => m.constituency).filter(Boolean))
-  ).sort()
+  // Full constituency + country lists from the DB (not just what's loaded), so
+  // you can filter to any Ghana constituency or any Base Diaspora country.
+  const constituencies = dbConstituencies.map((c) => c.name).sort()
+  const countries = dbCountries.slice().sort()
 
   const filtered = members.filter(
     (m) =>
       (statusFilter === 'All' || m.status === statusFilter) &&
       (constituencyFilter === '' || m.constituency === constituencyFilter) &&
+      (countryFilter === '' || m.country === countryFilter) &&
       ((m.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
         (m.id?.toLowerCase() || '').includes(search.toLowerCase()) ||
         (m.region?.toLowerCase() || '').includes(search.toLowerCase()) ||
@@ -328,6 +337,9 @@ export default function MemberVerification() {
           constituencyFilter={constituencyFilter}
           setConstituencyFilter={setConstituencyFilter}
           constituencies={constituencies}
+          countryFilter={countryFilter}
+          setCountryFilter={setCountryFilter}
+          countries={countries}
           filtered={filtered}
           paginated={paginated}
           selectedMember={selectedMember}
@@ -350,6 +362,9 @@ export default function MemberVerification() {
             handleAiScan={handleAiScan}
             onStatusChange={handleStatusChange}
             onSaveEdit={handleSaveEdit}
+            dbRegions={dbRegions}
+            dbConstituencies={dbConstituencies}
+            dbCountries={dbCountries}
             setViewingVaultRecord={setViewingVaultRecord}
           />
         ) : (
