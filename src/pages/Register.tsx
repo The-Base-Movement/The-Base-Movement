@@ -226,6 +226,8 @@ export default function Register() {
   function validateStep(step: number): string | null {
     if (step === 1) {
       if (!formData.fullName.trim()) return 'Full name is required.'
+      if (!/^[\p{L}\s'-]+$/u.test(formData.fullName.trim()))
+        return 'Name can only contain letters, spaces, hyphens, and apostrophes.'
       if (formData.fullName.trim().split(/\s+/).length < 2)
         return 'Please enter your full name (first and last).'
       if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
