@@ -24,7 +24,6 @@ export default function VerifyOTP() {
 
   // Retrieve pre-filled phone number if available from ForgotPassword redirection state
   const redirectedPhone = (location.state as { phone?: string })?.phone || ''
-  const redirectedRegNo = (location.state as { regNo?: string })?.regNo || ''
 
   const [phone, setPhone] = useState(redirectedPhone)
   const [otp, setOtp] = useState('')
@@ -90,14 +89,8 @@ export default function VerifyOTP() {
     setResendTimer(60) // 1 minute cooldown
 
     try {
-      if (!redirectedRegNo) {
-        toast.error('Please restart password recovery before resending the code.')
-        setResendTimer(0)
-        return
-      }
-
       const { data: resData, error } = await supabase.functions.invoke('send-otp', {
-        body: { phone: phone.trim(), reg_no: redirectedRegNo },
+        body: { phone: phone.trim() },
       })
 
       if (error) throw error

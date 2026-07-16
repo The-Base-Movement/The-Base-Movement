@@ -39,7 +39,6 @@ export default function ForgotPassword() {
 
   // Phone tab state
   const [phone, setPhone] = useState('')
-  const [regNo, setRegNo] = useState('')
 
   // Email tab state
   const [email, setEmail] = useState('')
@@ -49,18 +48,18 @@ export default function ForgotPassword() {
 
   const handleRequestOTP = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!phone || !regNo) {
-      toast.error('Please enter both your phone number and Compatriot ID.')
+    if (!phone) {
+      toast.error('Please enter your registered phone number.')
       return
     }
     setIsLoading(true)
     try {
       const { data, error } = await supabase.functions.invoke('send-otp', {
-        body: { phone: phone.trim(), reg_no: regNo.trim().toUpperCase() },
+        body: { phone: phone.trim() },
       })
       if (error) throw error
       toast.success(data?.message || 'Verification code sent successfully!')
-      navigate('/verify-otp', { state: { phone: phone.trim(), regNo: regNo.trim().toUpperCase() } })
+      navigate('/verify-otp', { state: { phone: phone.trim() } })
     } catch (err: unknown) {
       console.error('[OTP SEND ERROR]', err)
       toast.error(
@@ -174,20 +173,6 @@ export default function ForgotPassword() {
                 onSubmit={handleRequestOTP}
                 style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
               >
-                <div>
-                  <label htmlFor="regNo" style={labelStyle}>
-                    Compatriot ID (Reg No)
-                  </label>
-                  <input
-                    id="regNo"
-                    type="text"
-                    style={inputStyle}
-                    value={regNo}
-                    onChange={(e) => setRegNo(e.target.value)}
-                    placeholder="TBM-GH-XXXXXX"
-                    required
-                  />
-                </div>
                 <div>
                   <label htmlFor="phone" style={labelStyle}>
                     Registered Phone Number
