@@ -44,9 +44,12 @@ export default function Register() {
     }
   })()
 
-  const [step, setStep] = useState<'choice' | 'form'>(
-    platformParam ? 'form' : _savedDraft?.formData ? 'form' : 'choice'
-  )
+  // The plain Register button (no ?platform=) must always land on the platform
+  // choice screen — never auto-select or resume straight into the form. A saved
+  // draft still prefills the fields once a platform is chosen, but the visitor
+  // picks the platform first. Only an explicit ?platform= (home-page network
+  // CTAs) skips choice.
+  const [step, setStep] = useState<'choice' | 'form'>(platformParam ? 'form' : 'choice')
   const [formStep, setFormStep] = useState<number>(_savedDraft?.formStep || 1)
   const [platform, setPlatform] = useState(platformParam || _savedDraft?.platform || 'GHANA')
   const [showPassword, setShowPassword] = useState(false)
