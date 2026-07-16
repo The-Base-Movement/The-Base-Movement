@@ -1191,13 +1191,22 @@ class AdminService {
   async getAboutOfficials(): Promise<
     { id: string; name: string; role: string; avatar_url: string | null }[]
   > {
-    // Show the top "Leaders" tier — the same label the homepage leads with —
-    // resolved dynamically from party_tiers rather than a hardcoded tier name.
-    const { data: tiers } = await supabase
+    // Show the "Leaders" tier resolved dynamically from party_tiers where title matches 'Leaders'
+    let { data: tiers } = await supabase
       .from('party_tiers')
       .select('name')
-      .order('order_index', { ascending: true })
+      .ilike('title', 'leaders')
       .limit(1)
+
+    if (!tiers || tiers.length === 0) {
+      const { data: fallbackTiers } = await supabase
+        .from('party_tiers')
+        .select('name')
+        .order('order_index', { ascending: true })
+        .limit(1)
+      tiers = fallbackTiers
+    }
+
     const topTier = tiers?.[0]?.name
     if (!topTier) return []
 

@@ -132,7 +132,8 @@ export default function Login() {
     <main
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #d8e9ee 0%, #f5faf6 48%, #d6e5ea 100%)',
+        background:
+          'linear-gradient(135deg, hsl(var(--surface-warm)) 0%, hsl(var(--background)) 100%)',
         padding: 'clamp(18px, 5vw, 56px)',
         boxSizing: 'border-box',
         overflow: 'hidden',
@@ -153,7 +154,7 @@ export default function Login() {
           overflow: 'hidden',
           background: 'hsl(var(--surface))',
           boxShadow: '0 26px 80px rgba(20, 40, 32, 0.18)',
-          border: '1px solid rgba(255,255,255,0.72)',
+          border: '1px solid hsl(var(--border))',
         }}
       >
         <div
@@ -522,9 +523,10 @@ export default function Login() {
                   marginTop: 36,
                   width: 'min(100%, 520px)',
                   borderRadius: 'var(--radius-md)',
-                  background: 'rgba(255,255,255,0.82)',
+                  background: 'hsl(var(--card))',
                   boxShadow: '0 22px 48px rgba(20, 40, 32, 0.13)',
                   padding: 18,
+                  border: '1px solid hsl(var(--border))',
                 }}
               >
                 {loginSteps.map((step, index) => {
@@ -614,8 +616,8 @@ export default function Login() {
                 <div
                   style={{
                     height: 34,
-                    background: 'hsl(var(--on-surface))',
-                    color: '#fff',
+                    background: 'hsl(var(--primary))',
+                    color: 'hsl(var(--primary-foreground))',
                     display: 'flex',
                     alignItems: 'center',
                     padding: '0 16px',
