@@ -2,7 +2,7 @@
 // THE BASE: SENDGRID SINGLE-CONTACT SYNC
 // Upserts one member into the SendGrid marketing contacts list.
 //
-// Required secret: SENDGRID_API_KEY
+// Required secret: RESEND_API_KEY
 // Optional secret: SENDGRID_LIST_ID  — if set, contact is added to a specific list
 //
 // Invocation: POST with JSON body:

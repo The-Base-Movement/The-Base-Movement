@@ -4,6 +4,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { csvImportWelcomeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
+import { sendEmail } from '../_shared/email.ts'
 import {
   canManageMembers,
   json,
@@ -47,8 +48,6 @@ serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     // @ts-ignore: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    // @ts-ignore: Deno global
-    const sgKey = Deno.env.get('SENDGRID_API_KEY')
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -72,7 +71,7 @@ serve(async (req: Request) => {
     const createdUsers = []
     const skippedUsers = []
     const failedUsers = []
-    const senderEmail = sgKey ? await getSenderEmail(supabaseAdmin) : ''
+    const senderEmail = await getSenderEmail(supabaseAdmin)
 
     for (const member of members) {
       const normalizedPhone = normalizePhoneNumber(member.phone)
@@ -145,7 +144,7 @@ serve(async (req: Request) => {
         }
 
         // 3. Deliver credentials — email if the member has one, else SMS.
-        if (member.email && sgKey) {
+        if (member.email) {
           try {
             const html = csvImportWelcomeEmail({
               name: member.name,
@@ -154,22 +153,14 @@ serve(async (req: Request) => {
               tempPassword,
               loginUrl: 'https://www.thebasemovement.org.gh/login',
             })
-            const emailRes = await fetch('https://api.sendgrid.com/v3/mail/send', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
-              body: JSON.stringify({
-                personalizations: [{ to: [{ email: member.email }] }],
-                from: {
-                  email: senderEmail,
-                  name: 'The Base Movement',
-                },
-                subject: 'Your Base Movement account is ready',
-                content: [{ type: 'text/html', value: html }],
-              }),
+            const r = await sendEmail({
+              to: member.email,
+              from: `The Base Movement <${senderEmail}>`,
+              subject: 'Your Base Movement account is ready',
+              html,
             })
-            if (!emailRes.ok) {
-              const emailErr = await emailRes.text()
-              console.error(`[CSV-IMPORT] SendGrid email failed for ${member.reg_no}:`, emailErr)
+            if (!r.ok) {
+              console.error(`[CSV-IMPORT] Resend email failed for ${member.reg_no}:`, r.detail)
             }
           } catch (emailErr) {
             console.error(`[CSV-IMPORT] Email dispatch error for ${member.reg_no}:`, emailErr)

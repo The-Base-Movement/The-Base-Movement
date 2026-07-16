@@ -66,9 +66,9 @@ serve(async (req: Request) => {
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
-    const { phone, reg_no } = await req.json()
-    if (!phone || !reg_no) {
-      return json({ error: 'Phone and registration number are required.' }, 400)
+    const { phone } = await req.json()
+    if (!phone) {
+      return json({ error: 'Phone number is required.' }, 400)
     }
 
     const now = Date.now()
@@ -127,7 +127,6 @@ serve(async (req: Request) => {
       .from('users')
       .select('id, full_name')
       .eq('phone_number', normalizedPhone)
-      .eq('registration_number', reg_no.trim())
       .maybeSingle()
 
     if (userError || !user) {

@@ -1,12 +1,14 @@
 // THE BASE: POLL CLOSING NOTIFICATION EMAIL
 // Called manually or via a scheduled job when a poll is 24h from closing.
-// Set SENDGRID_API_KEY in Supabase secrets to activate sending.
+// Set RESEND_API_KEY in Supabase secrets to activate sending.
 // Invoke with: { pollId, targetRegion? }
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { pollClosingEmail } from '../_shared/email-templates.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
+// @ts-expect-error: Deno supports URL imports
+import { sendEmailBatch } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -87,64 +89,34 @@ Deno.serve(async (req: Request) => {
     }
     const recipients = ((members ?? []) as Member[]).filter((m) => m.email)
 
-    // @ts-ignore: Deno global
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-
-    let sentCount = 0
-    const BATCH = 100
-
     const senderEmail = await getSenderEmail(supabaseAdmin)
+    const from = `The Base Movement <${senderEmail}>`
 
-    for (let i = 0; i < recipients.length; i += BATCH) {
-      const batch = recipients.slice(i, i + BATCH)
-
-      if (sgKey) {
-        const personalizations = batch
-          .filter((m) => m.email)
-          .map((member) => {
-            const firstName = (member.full_name ?? '').split(' ')[0] || 'Compatriot'
-            const html = pollClosingEmail({
-              name: firstName,
-              pollTitle: row.title,
-              preheader: `The ${region} poll closes in ${hoursRemaining} hours. ${row.response_count.toLocaleString()} members have voted. You haven't yet.`,
-              region,
-              voteCount: row.response_count,
-              voteTarget: row.target_count ?? 5000,
-              hoursRemaining,
-              options: pollOptions,
-              voteUrl: `https://www.thebasemovement.org.gh/dashboard/polls/${row.id}`,
-            })
-            return {
-              to: [{ email: member.email as string }],
-              dynamic_template_data: {},
-              substitutions: { html },
-            }
-          })
-
-        for (const p of personalizations) {
-          await fetch('https://api.sendgrid.com/v3/mail/send', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
-            body: JSON.stringify({
-              personalizations: [{ to: p.to }],
-              from: {
-                email: senderEmail,
-                name: 'The Base Movement',
-              },
-              subject: `This poll closes in ${hoursRemaining} hours. Your vote counts.`,
-              content: [{ type: 'text/html', value: p.substitutions.html }],
-            }),
-          })
-          sentCount++
+    const messages = recipients
+      .filter((m) => m.email)
+      .map((member) => {
+        const firstName = (member.full_name ?? '').split(' ')[0] || 'Compatriot'
+        const html = pollClosingEmail({
+          name: firstName,
+          pollTitle: row.title,
+          preheader: `The ${region} poll closes in ${hoursRemaining} hours. ${row.response_count.toLocaleString()} members have voted. You haven't yet.`,
+          region,
+          voteCount: row.response_count,
+          voteTarget: row.target_count ?? 5000,
+          hoursRemaining,
+          options: pollOptions,
+          voteUrl: `https://www.thebasemovement.org.gh/dashboard/polls/${row.id}`,
+        })
+        return {
+          to: member.email as string,
+          from,
+          subject: `This poll closes in ${hoursRemaining} hours. Your vote counts.`,
+          html,
         }
-      }
-    }
+      })
 
-    if (!sgKey) {
-      console.warn(
-        `[POLL-NOTIFY] SENDGRID_API_KEY not set — would send to ${recipients.length} members`
-      )
-    }
+    const emailResult = await sendEmailBatch(messages)
+    const sentCount = emailResult.sent
 
     // Push notifications for all matching members — fire and forget
     const memberIds = ((members ?? []) as Member[]).map((m) => m.id)

@@ -16,6 +16,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendSms, normalizeGhanaPhone } from '../_shared/sms.ts'
 import { requireServiceRoleCall } from '../_shared/admin-auth.ts'
 import { sendMonthlyDuesDiscordAlert } from '../_shared/monthly-dues-discord.ts'
+import { sendEmail as sendResendEmail } from '../_shared/email.ts'
 
 export type ReminderStage = 'pre_due' | 'due' | 'overdue'
 
@@ -142,27 +143,18 @@ function duesEmailHtml(d: {
 if (import.meta.main) {
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  const SENDGRID_KEY = Deno.env.get('SENDGRID_API_KEY') ?? ''
   const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://www.thebasemovement.org.gh'
 
   const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
 
   async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
-    if (!SENDGRID_KEY) return false
-    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${SENDGRID_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: to }] }],
-        from: { email: 'info@thebasemovement.org.gh', name: 'The Base Movement' },
-        subject,
-        content: [{ type: 'text/html', value: html }],
-      }),
+    const r = await sendResendEmail({
+      to,
+      from: 'The Base Movement <info@thebasemovement.org.gh>',
+      subject,
+      html,
     })
-    return res.ok
+    return r.ok
   }
 
   Deno.serve(async (req: Request) => {

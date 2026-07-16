@@ -1,13 +1,15 @@
 // THE BASE: MOBILIZATION NOTIFICATION EDGE FUNCTION
 // Sends a welcome email to new verified members via SendGrid,
 // then syncs the member into the SendGrid marketing contacts list.
-// Set SENDGRID_API_KEY (+ optionally SENDGRID_LIST_ID) in Supabase secrets.
+// Set RESEND_API_KEY (+ optionally SENDGRID_LIST_ID) in Supabase secrets.
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { welcomeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
+// @ts-expect-error: Deno supports URL imports
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -138,29 +140,19 @@ Deno.serve(async (req: Request) => {
       cardDownloadUrl: 'https://www.thebasemovement.org.gh/dashboard/membership-card',
     })
 
-    // @ts-expect-error: Deno global
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-
-    if (sgKey && memberEmail) {
+    if (memberEmail) {
       const senderEmail = await getSenderEmail(supabaseAdmin)
-      const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
-        body: JSON.stringify({
-          personalizations: [{ to: [{ email: memberEmail }] }],
-          from: { email: senderEmail, name: 'The Base Movement' },
-          subject: 'You are now a verified member of The Base.',
-          content: [{ type: 'text/html', value: html }],
-        }),
+      const r = await sendEmail({
+        to: memberEmail,
+        from: `The Base Movement <${senderEmail}>`,
+        subject: 'You are now a verified member of The Base.',
+        html,
       })
-      if (res.ok) {
-        console.warn('[EMAIL] Accepted by SendGrid for', memberEmail, res.status)
+      if (r.ok) {
+        console.warn('[EMAIL] Accepted by Resend for', memberEmail)
       } else {
-        const errBody = await res.text()
-        console.error('[EMAIL] SendGrid rejected email to', memberEmail, res.status, errBody)
+        console.error('[EMAIL] Resend rejected email to', memberEmail, r.detail)
       }
-    } else {
-      console.warn('[EMAIL] SENDGRID_API_KEY not set — skipping send to', memberEmail)
     }
 
     // Sync new member into SendGrid marketing contacts list (fire-and-forget)

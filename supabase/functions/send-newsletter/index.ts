@@ -4,12 +4,13 @@
 // template, sends via SendGrid /v3/mail/send in batches of 1,000, and updates
 // the newsletters row.
 //
-// Required secret: SENDGRID_API_KEY
+// Required secret: RESEND_API_KEY
 // Auto-injected:   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageNewsletters, json, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 import { createNewsletterUnsubscribeToken } from '../_shared/newsletter-unsubscribe-capability.ts'
+import { sendEmailBatch } from '../_shared/email.ts'
 
 const BATCH_SIZE = 1000
 
@@ -209,10 +210,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    if (!sgKey) {
-      return json({ skipped: true, reason: 'SENDGRID_API_KEY not set' }, 200, corsHeaders)
+    if (!Deno.env.get('RESEND_API_KEY')) {
+      return json({ skipped: true, reason: 'RESEND_API_KEY not set' }, 200, corsHeaders)
     }
 
     const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceKey)
@@ -357,63 +357,43 @@ Deno.serve(async (req) => {
     })
 
     let skippedInvalidRecipients = 0
+    const from = `The Base Movement <${senderEmail}>`
 
-    // Send in batches
-    let batchCount = 0
-    for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
-      const batch = recipients.slice(i, i + BATCH_SIZE)
-      const personalizations: Personalization[] = []
-      for (const { email, id } of batch) {
-        try {
-          personalizations.push({
-            to: [{ email }],
-            substitutions: {
-              '%%UNSUB%%': `${supabaseUrl}/functions/v1/newsletter-unsubscribe?token=${await createNewsletterUnsubscribeToken(id)}`,
-            },
-            // custom_args are echoed back in SendGrid event webhooks — used to link
-            // delivery events to the correct newsletters row
-            custom_args: { newsletter_id },
-          })
-        } catch (error) {
-          skippedInvalidRecipients++
-          console.error('[NEWSLETTER] Skipping recipient with invalid unsubscribe identity:', {
-            id,
-            email,
-            error: error instanceof Error ? error.message : String(error),
-          })
-        }
-      }
-
-      if (personalizations.length === 0) continue
-
-      const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${sgKey}`,
-        },
-        body: JSON.stringify({
-          personalizations,
-          from: { email: senderEmail, name: 'The Base Movement' },
+    // Build one personalized message per recipient — the unsubscribe link is
+    // inlined into each copy of the HTML (Resend has no per-recipient
+    // substitution tags like SendGrid's %%UNSUB%%).
+    const messages = []
+    for (const { email, id } of recipients) {
+      try {
+        const unsub = `${supabaseUrl}/functions/v1/newsletter-unsubscribe?token=${await createNewsletterUnsubscribeToken(id)}`
+        messages.push({
+          to: email,
+          from,
           subject,
-          content: [{ type: 'text/html', value: html }],
-        }),
-      })
-
-      if (res.status !== 202) {
-        const errText = await res.text()
-        await supabase
-          .from('newsletters')
-          .update({ status: 'failed', error_message: `SendGrid error ${res.status}: ${errText}` })
-          .eq('id', newsletter_id)
-        throw new Error(`SendGrid batch ${batchCount + 1} failed: ${res.status} ${errText}`)
+          html: html.replaceAll('%%UNSUB%%', unsub),
+        })
+      } catch (error) {
+        skippedInvalidRecipients++
+        console.error('[NEWSLETTER] Skipping recipient with invalid unsubscribe identity:', {
+          id,
+          email,
+          error: error instanceof Error ? error.message : String(error),
+        })
       }
-
-      batchCount++
-      console.warn(`[NEWSLETTER] Batch ${batchCount} sent (${batch.length} recipients)`)
     }
 
-    const sentRecipientCount = recipients.length - skippedInvalidRecipients
+    // Resend batch endpoint sends up to 100 individual emails per call.
+    const emailResult = await sendEmailBatch(messages)
+    const batchCount = Math.ceil(messages.length / 100)
+    if (emailResult.sent === 0 && messages.length > 0) {
+      await supabase
+        .from('newsletters')
+        .update({ status: 'failed', error_message: `Resend send failed: ${emailResult.detail}` })
+        .eq('id', newsletter_id)
+      throw new Error(`Newsletter send failed: ${emailResult.detail}`)
+    }
+
+    const sentRecipientCount = emailResult.sent
     if (sentRecipientCount <= 0) {
       await supabase
         .from('newsletters')

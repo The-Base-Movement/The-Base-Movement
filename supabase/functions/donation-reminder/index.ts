@@ -14,10 +14,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { pendingDonationEmail } from '../_shared/email-templates.ts'
 import { sendSms, normalizeGhanaPhone } from '../_shared/sms.ts'
 import { requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { sendEmail as sendResendEmail } from '../_shared/email.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const SENDGRID_KEY = Deno.env.get('SENDGRID_API_KEY') ?? ''
 const DISCORD_WEBHOOK = Deno.env.get('DISCORD_ALERTS_WEBHOOK_URL') ?? ''
 const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://www.thebasemovement.org.gh'
 
@@ -27,19 +27,11 @@ const SIX_HOURS_MS = 6 * 60 * 60 * 1000
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
 
 async function sendEmail(to: string, subject: string, html: string) {
-  if (!SENDGRID_KEY) return
-  await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${SENDGRID_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: to }] }],
-      from: { email: 'info@thebasemovement.org.gh', name: 'The Base Movement' },
-      subject,
-      content: [{ type: 'text/html', value: html }],
-    }),
+  await sendResendEmail({
+    to,
+    from: 'The Base Movement <info@thebasemovement.org.gh>',
+    subject,
+    html,
   })
 }
 

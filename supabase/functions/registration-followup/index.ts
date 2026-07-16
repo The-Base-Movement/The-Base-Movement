@@ -5,12 +5,13 @@
 //
 // Designed to run on a cron schedule (e.g. every 30 minutes) or invoked manually.
 // Auto-injected: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
-// Required secrets: SENDGRID_API_KEY, MNOTIFY_API_KEY
+// Required secrets: RESEND_API_KEY, MNOTIFY_API_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { sendSms } from '../_shared/sms.ts'
 import { incompleteRegistrationEmail } from '../_shared/email-templates.ts'
 import { canManageMembers, getSenderEmail, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -64,7 +65,6 @@ function getMissingSteps(u: UserRow): string[] {
 }
 
 async function sendFollowupEmail(
-  sgKey: string,
   senderEmail: string,
   email: string,
   name: string,
@@ -76,21 +76,14 @@ async function sendFollowupEmail(
     profileUrl: PROFILE_URL,
   })
 
-  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sgKey}`,
-    },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email }] }],
-      from: { email: senderEmail, name: 'The Base Movement' },
-      subject: `Complete your registration, ${name.split(' ')[0]}`,
-      content: [{ type: 'text/html', value: html }],
-    }),
+  const r = await sendEmail({
+    to: email,
+    from: `The Base Movement <${senderEmail}>`,
+    subject: `Complete your registration, ${name.split(' ')[0]}`,
+    html,
   })
 
-  return res.status === 202
+  return r.ok
 }
 
 function buildSmsMessage(name: string, missingSteps: string[]): string {
@@ -214,8 +207,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    const sgKey = Deno.env.get('SENDGRID_API_KEY')
-    const senderEmail = sgKey ? await getSenderEmail(supabase) : null
+    const senderEmail = await getSenderEmail(supabase)
 
     // 1. Find incomplete members who haven't been nudged in the last 24h
     const cutoff24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
@@ -242,8 +234,8 @@ Deno.serve(async (req) => {
       const name = member.full_name || 'Compatriot'
 
       // Send email if available
-      if (member.email && sgKey && senderEmail) {
-        const sent = await sendFollowupEmail(sgKey, senderEmail, member.email, name, missing)
+      if (member.email && senderEmail) {
+        const sent = await sendFollowupEmail(senderEmail, member.email, name, missing)
         if (sent) emailsSent++
       }
 

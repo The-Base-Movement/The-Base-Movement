@@ -15,6 +15,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail } from '../_shared/admin-auth.ts'
 import { passwordResetEmail } from '../_shared/email-templates.ts'
+// @ts-expect-error: Deno supports URL imports
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -39,8 +41,6 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     // @ts-expect-error: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    // @ts-expect-error: Deno global
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     // @ts-expect-error: Deno global
     const siteUrl = Deno.env.get('SITE_URL') ?? 'https://www.thebasemovement.org.gh'
     const admin = createClient(supabaseUrl, serviceKey)
@@ -207,9 +207,9 @@ Deno.serve(async (req: Request) => {
     const emailOtp = properties.email_otp as string
     const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(targetEmail)}&token=${emailOtp}`
 
-    // Email the link via SendGrid (best-effort).
+    // Email the link via Resend (best-effort).
     let emailed = false
-    if (sgKey && targetEmail) {
+    if (targetEmail) {
       try {
         const senderEmail = await getSenderEmail(admin)
         const html = passwordResetEmail({
@@ -217,29 +217,17 @@ Deno.serve(async (req: Request) => {
           resetLink: customLink,
           expiryHours: 24,
         })
-        const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${sgKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            personalizations: [{ to: [{ email: targetEmail }] }],
-            from: { email: senderEmail, name: 'The Base Movement' },
-            subject: 'Reset your Base Movement password',
-            content: [
-              {
-                type: 'text/plain',
-                value:
-                  `An administrator started a password reset for your account.\n\n` +
-                  `Open this link to choose a new password (valid for 24 hours):\n${customLink}\n\n` +
-                  `If you did not request this password reset, please ignore this email safely. Your account remains secure.`,
-              },
-              {
-                type: 'text/html',
-                value: html,
-              },
-            ],
-          }),
+        const r = await sendEmail({
+          to: targetEmail,
+          from: `The Base Movement <${senderEmail}>`,
+          subject: 'Reset your Base Movement password',
+          html,
+          text:
+            `An administrator started a password reset for your account.\n\n` +
+            `Open this link to choose a new password (valid for 24 hours):\n${customLink}\n\n` +
+            `If you did not request this password reset, please ignore this email safely. Your account remains secure.`,
         })
-        emailed = res.ok
+        emailed = r.ok
       } catch (e) {
         console.error('[admin-reset-password] email failed:', e)
       }

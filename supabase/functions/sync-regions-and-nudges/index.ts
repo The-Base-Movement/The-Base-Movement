@@ -5,13 +5,14 @@
 //
 // Designed to run on a cron schedule or invoked manually.
 // Auto-injected: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
-// Required secrets: SENDGRID_API_KEY, MNOTIFY_API_KEY
+// Required secrets: RESEND_API_KEY, MNOTIFY_API_KEY
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { sendSms } from '../_shared/sms.ts'
 import { csvImportWelcomeEmail } from '../_shared/email-templates.ts'
 import { canManageMembers, getSenderEmail, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -46,7 +47,6 @@ serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const sgKey = Deno.env.get('SENDGRID_API_KEY')
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
     const authz = await requireAuthorizedAdmin(req, supabaseAdmin, canManageMembers, {
@@ -60,7 +60,7 @@ serve(async (req: Request) => {
       })
     }
 
-    const senderEmail = sgKey ? await getSenderEmail(supabaseAdmin) : ''
+    const senderEmail = await getSenderEmail(supabaseAdmin)
 
     // 1. One-time Sync: Auto-resolve region for members who have a constituency but no region
     const { data: unsynced, error: unsyncedErr } = await supabaseAdmin
@@ -164,7 +164,7 @@ serve(async (req: Request) => {
         .eq('id', member.id)
 
       // Send Email
-      if (member.email && sgKey && senderEmail) {
+      if (member.email && senderEmail) {
         try {
           const html = csvImportWelcomeEmail({
             name: member.full_name || 'Compatriot',
@@ -174,28 +174,24 @@ serve(async (req: Request) => {
             loginUrl: 'https://www.thebasemovement.org.gh/login',
           })
 
-          const emailRes = await fetch('https://api.sendgrid.com/v3/mail/send', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
-            body: JSON.stringify({
-              personalizations: [{ to: [{ email: member.email }] }],
-              from: { email: senderEmail, name: 'The Base Movement' },
-              subject: 'Complete your Base Movement profile',
-              content: [{ type: 'text/html', value: html }],
-            }),
+          const r = await sendEmail({
+            to: member.email,
+            from: `The Base Movement <${senderEmail}>`,
+            subject: 'Complete your Base Movement profile',
+            html,
           })
 
-          if (emailRes.ok) {
+          if (r.ok) {
             emailsSent++
           } else {
             console.error(
               `[SYNC-NUDGES] Email delivery failed for ${member.registration_number}:`,
-              await emailRes.text()
+              r.detail
             )
           }
         } catch (emailErr) {
           console.error(
-            `[SYNC-NUDGES] SendGrid dispatch exception for ${member.registration_number}:`,
+            `[SYNC-NUDGES] Resend dispatch exception for ${member.registration_number}:`,
             emailErr
           )
         }

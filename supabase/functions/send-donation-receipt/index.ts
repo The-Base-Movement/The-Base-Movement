@@ -3,6 +3,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
+// @ts-expect-error: Deno supports URL imports
+import { sendEmail } from '../_shared/email.ts'
 import {
   canManageDonations,
   getSenderEmail,
@@ -184,26 +186,15 @@ if (import.meta.main)
           monthlyUrl: `${SITE_BASE}/dashboard/donate`,
         })
 
-        // @ts-expect-error: Deno global
-        const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-
-        if (sgKey) {
-          const senderEmail = await getSenderEmail(supabaseAdmin)
-          const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
-            body: JSON.stringify({
-              personalizations: [{ to: [{ email: memberEmail }] }],
-              from: { email: senderEmail, name: 'The Base Movement' },
-              subject: `Your ${amountStr} contribution is confirmed — Receipt ${row.reference}`,
-              content: [{ type: 'text/html', value: emailHtml }],
-            }),
-          })
-          emailSent = res.ok
-          console.log('[RECEIPT] Email sent to', memberEmail, res.status)
-        } else {
-          console.warn('[RECEIPT] SENDGRID_API_KEY not set — would send to', memberEmail)
-        }
+        const senderEmail = await getSenderEmail(supabaseAdmin)
+        const r = await sendEmail({
+          to: memberEmail,
+          from: `The Base Movement <${senderEmail}>`,
+          subject: `Your ${amountStr} contribution is confirmed — Receipt ${row.reference}`,
+          html: emailHtml,
+        })
+        emailSent = r.ok
+        console.log('[RECEIPT] Email dispatch to', memberEmail, r.ok ? 'ok' : r.detail)
       }
 
       // ── 3. Send SMS via MNotify ───────────────────────────────────────────────

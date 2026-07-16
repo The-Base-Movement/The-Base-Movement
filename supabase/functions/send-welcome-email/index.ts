@@ -4,12 +4,13 @@
 // Invoked fire-and-forget from adminService.verifyMember().
 //
 // Auto-injected: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
-// Required secrets: SENDGRID_API_KEY for email, MNOTIFY_API_KEY for SMS
+// Required secrets: RESEND_API_KEY for email, MNOTIFY_API_KEY for SMS
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageMembers, requireAuthorizedAdmin, getSenderEmail } from '../_shared/admin-auth.ts'
 import { welcomeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,33 +22,6 @@ function buildWelcomeSms(name: string, regNo: string): string {
   return `Hi ${firstName}, welcome to The Base Movement. Your membership is active and your registration number is ${regNo}. Visit www.thebasemovement.org.gh/dashboard to get started.`
 }
 
-async function sendWelcomeEmail(
-  sgKey: string,
-  senderEmail: string,
-  email: string,
-  firstName: string,
-  html: string
-) {
-  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sgKey}`,
-    },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email }] }],
-      from: { email: senderEmail, name: 'The Base Movement' },
-      subject: `Welcome to The Base, ${firstName} — you're now a verified member`,
-      content: [{ type: 'text/html', value: html }],
-    }),
-  })
-
-  if (res.status !== 202) {
-    const errText = await res.text()
-    throw new Error(`SendGrid error ${res.status}: ${errText}`)
-  }
-}
-
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') {
@@ -55,8 +29,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
-
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey)
 
@@ -135,13 +107,17 @@ Deno.serve(async (req) => {
         continue
       }
 
-      if (row.email && sgKey) {
-        try {
-          await sendWelcomeEmail(sgKey, senderEmail, row.email, firstName, html)
-          emailSent++
-        } catch (error) {
+      if (row.email) {
+        const r = await sendEmail({
+          to: row.email,
+          from: `The Base Movement <${senderEmail}>`,
+          subject: `Welcome to The Base, ${firstName} — you're now a verified member`,
+          html,
+        })
+        if (r.ok) emailSent++
+        else {
           emailFailed++
-          console.error('[WELCOME] Email send failed for', row.email, error)
+          console.error('[WELCOME] Email send failed for', row.email, r.detail)
         }
       }
 

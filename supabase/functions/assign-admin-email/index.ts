@@ -13,11 +13,13 @@
 //   { user_id: string, check_only: true }            → { needsEmail, currentEmail }
 //   { user_id: string, email: string }               → performs the switch
 //
-// Optional secret: SENDGRID_API_KEY (notifies the appointee of their login email)
+// Optional secret: RESEND_API_KEY (notifies the appointee of their login email)
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail } from '../_shared/admin-auth.ts'
+// @ts-expect-error: Deno supports URL imports
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -44,8 +46,6 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     // @ts-expect-error: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    // @ts-expect-error: Deno global
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
 
     const admin = createClient(supabaseUrl, serviceKey)
 
@@ -121,26 +121,17 @@ Deno.serve(async (req: Request) => {
     await admin.from('users').update({ email: newEmail }).eq('id', user_id)
 
     // ── Notify the appointee (best-effort) ──
-    if (sgKey) {
+    {
       try {
         const senderEmail = await getSenderEmail(admin)
-        await fetch('https://api.sendgrid.com/v3/mail/send', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${sgKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            personalizations: [{ to: [{ email: newEmail }] }],
-            from: { email: senderEmail, name: 'The Base Movement' },
-            subject: 'Admin access granted — The Base Movement',
-            content: [
-              {
-                type: 'text/plain',
-                value:
-                  `You have been granted administrative access to The Base Movement.\n\n` +
-                  `Sign in to the admin panel with this email address (${newEmail}) and your existing password.\n\n` +
-                  `For security, please set up two-factor authentication in Settings → Security after your first login.`,
-              },
-            ],
-          }),
+        await sendEmail({
+          to: newEmail,
+          from: `The Base Movement <${senderEmail}>`,
+          subject: 'Admin access granted — The Base Movement',
+          text:
+            `You have been granted administrative access to The Base Movement.\n\n` +
+            `Sign in to the admin panel with this email address (${newEmail}) and your existing password.\n\n` +
+            `For security, please set up two-factor authentication in Settings → Security after your first login.`,
         })
       } catch (mailErr) {
         console.warn('[ASSIGN-ADMIN-EMAIL] Notification email failed:', mailErr)

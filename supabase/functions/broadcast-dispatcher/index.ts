@@ -1,12 +1,14 @@
 // THE BASE: MULTI-CHANNEL BROADCAST DISPATCHER
 // Handles SMS/email dispatch for Urgent broadcasts.
-// Set SENDGRID_API_KEY in Supabase secrets to activate email sending.
+// Set RESEND_API_KEY in Supabase secrets to activate email sending.
 
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { broadcastEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
+// @ts-expect-error: Deno supports URL imports
+import { sendEmailBatch } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -76,32 +78,20 @@ Deno.serve(async (req: Request) => {
       ctaUrl: 'https://www.thebasemovement.org.gh/dashboard',
     })
 
-    // @ts-expect-error: Deno global
-    const sgKey: string | undefined = Deno.env.get('SENDGRID_API_KEY')
     const emailRecipients = recipients.filter((u) => u.email).map((u) => u.email as string)
 
-    if (sgKey && emailRecipients.length > 0) {
+    if (emailRecipients.length > 0) {
       const senderEmail = await getSenderEmail(supabaseAdmin)
-      // SendGrid supports up to 1000 personalizations per call
-      const BATCH = 1000
-      for (let i = 0; i < emailRecipients.length; i += BATCH) {
-        const batch = emailRecipients.slice(i, i + BATCH)
-        const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
-          body: JSON.stringify({
-            personalizations: batch.map((email) => ({ to: [{ email }] })),
-            from: { email: senderEmail, name: 'The Base Movement' },
-            subject: subject ?? 'Movement update',
-            content: [{ type: 'text/html', value: html }],
-          }),
-        })
-        console.warn(`[EMAIL] Broadcast batch ${i / BATCH + 1}:`, res.status)
-      }
-    } else {
-      console.warn(
-        `[EMAIL] SENDGRID_API_KEY not set — would send to ${emailRecipients.length} addresses`
+      const from = `The Base Movement <${senderEmail}>`
+      const result = await sendEmailBatch(
+        emailRecipients.map((email) => ({
+          to: email,
+          from,
+          subject: subject ?? 'Movement update',
+          html,
+        }))
       )
+      console.warn(`[EMAIL] Broadcast dispatched: ${result.sent} sent, ${result.failed} failed`)
     }
 
     const phoneRecipients = recipients.filter((u) => u.phone_number)

@@ -4,11 +4,12 @@
 // Called fire-and-forget from the frontend helpdesk hooks.
 //
 // Body: { ticketId: string, event: 'submitted'|'resolved'|'closed'|'comment', comment?: string }
-// Required secret: SENDGRID_API_KEY
+// Required secret: RESEND_API_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 import { helpdeskEmail } from '../_shared/email-templates.ts'
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,13 +22,6 @@ Deno.serve(async (req) => {
     return new Response('Method Not Allowed', { status: 405, headers: corsHeaders })
 
   try {
-    const sgKey = Deno.env.get('SENDGRID_API_KEY')
-    if (!sgKey) {
-      return new Response(JSON.stringify({ skipped: true, reason: 'SENDGRID_API_KEY not set' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
-
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey)
     const authz = await requireAuthorizedAdmin(req, supabase, () => true, {
@@ -83,21 +77,16 @@ Deno.serve(async (req) => {
 
     const senderEmail = await getSenderEmail(supabase)
 
-    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sgKey}` },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: user.email, name: user.full_name }] }],
-        from: { email: senderEmail, name: 'The Base Movement' },
-        subject: subjectMap[event] || 'Support Update',
-        content: [{ type: 'text/html', value: html }],
-      }),
+    const r = await sendEmail({
+      to: user.email,
+      from: `The Base Movement <${senderEmail}>`,
+      subject: subjectMap[event] || 'Support Update',
+      html,
     })
 
-    if (!res.ok) {
-      const body = await res.text()
-      console.error('[HELPDESK EMAIL] SendGrid error:', res.status, body)
-      throw new Error(`SendGrid ${res.status}`)
+    if (!r.ok) {
+      console.error('[HELPDESK EMAIL] Resend error:', r.detail)
+      throw new Error(`Resend send failed: ${r.detail}`)
     }
 
     return new Response(JSON.stringify({ sent: true }), {

@@ -7,6 +7,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail } from '../_shared/admin-auth.ts'
 import { newsletterSubscriberWelcomeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
+import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -32,8 +33,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const sgKey = Deno.env.get('SENDGRID_API_KEY')
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, serviceKey)
@@ -94,29 +93,21 @@ Deno.serve(async (req) => {
     let emailSent = false
     let smsSent = false
 
-    if (sgKey) {
+    {
       const html = newsletterSubscriberWelcomeEmail({
         updatesUrl: 'https://www.thebasemovement.org.gh/blog',
       })
       const senderEmail = await getSenderEmail(supabase)
 
-      const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${sgKey}`,
-        },
-        body: JSON.stringify({
-          personalizations: [{ to: [{ email: normalizedEmail }] }],
-          from: { email: senderEmail, name: 'The Base Movement' },
-          subject: 'Welcome to The Base newsletter',
-          content: [{ type: 'text/html', value: html }],
-        }),
+      const r = await sendEmail({
+        to: normalizedEmail,
+        from: `The Base Movement <${senderEmail}>`,
+        subject: 'Welcome to The Base newsletter',
+        html,
       })
 
-      if (res.status !== 202) {
-        const errText = await res.text()
-        throw new Error(`SendGrid error ${res.status}: ${errText}`)
+      if (!r.ok) {
+        throw new Error(`Resend send failed: ${r.detail}`)
       }
       emailSent = true
     }
