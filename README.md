@@ -22,7 +22,7 @@
 | Icons         | Material Symbols Outlined (exclusively — no Lucide)          |
 | Backend       | Supabase (Postgres + RLS, Auth, Edge Functions, Storage)     |
 | Payments      | Hubtel (mobile money + card) via edge functions              |
-| Email / SMS   | SendGrid, Resend, Africa's Talking                           |
+| Email / SMS   | SendGrid, Resend, mNotify (BMS) SMS                          |
 | Build         | Hybrid SSR + static prerendering (`scripts/prerender.mjs`)   |
 | Forms         | React Hook Form + Zod                                        |
 | Rich text     | TinyMCE (blog editor)                                        |

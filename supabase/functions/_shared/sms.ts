@@ -25,6 +25,21 @@ export interface SmsResult {
   detail: string
 }
 
+/**
+ * MNotify (BMS) success responses are JSON of the form
+ * { "status": "success", "code": "2000", ... }. Parse it rather than
+ * substring-matching so an incidental "success" in an error body — or a
+ * non-JSON gateway error — can't be mistaken for a delivered blast.
+ */
+function isAccepted(responseText: string): boolean {
+  try {
+    const parsed = JSON.parse(responseText)
+    return parsed?.status === 'success' || String(parsed?.code) === '2000'
+  } catch {
+    return false
+  }
+}
+
 function getCallbackSecret(): string | null {
   // @ts-expect-error: Deno global
   return Deno.env.get('MNOTIFY_CALLBACK_SECRET') ?? Deno.env.get('MNOTIFY_API_KEY') ?? null
@@ -129,7 +144,7 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
             recipient: batch,
             sender,
             message: finalMessage,
-            is_schedule: 'false',
+            is_schedule: false,
             schedule_date: '',
             callback_url: callbackUrl,
           }),
@@ -148,7 +163,7 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
       totalDispatched += batch.length
     }
 
-    const accepted = lastResponseText.includes('"success"')
+    const accepted = isAccepted(lastResponseText)
     if (!accepted) {
       console.error('[SMS] MNotify rejected final batch:', lastResponseText)
     }
