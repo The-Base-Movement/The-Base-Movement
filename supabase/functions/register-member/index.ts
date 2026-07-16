@@ -85,10 +85,15 @@ serve(async (req: Request) => {
         .deleteUser(userId)
         .catch((e) => console.error('[register-member] rollback deleteUser failed:', e))
       if (dbErr.code === '23505') {
-        return json(
-          { success: false, error: 'duplicate', field: authEmail ? 'email' : 'phone' },
-          409
-        )
+        const field = dbErr.message.includes('registration_number')
+          ? 'registration_number'
+          : dbErr.message.includes('email')
+            ? 'email'
+            : dbErr.message.includes('phone')
+              ? 'phone'
+              : null
+        if (field) return json({ success: false, error: 'duplicate', field }, 409)
+        return json({ success: false, error: 'A member with these details already exists.' }, 409)
       }
       console.error('[register-member] users insert failed, rolled back:', dbErr.message)
       return json({ success: false, error: 'Could not save your details. Please try again.' }, 500)

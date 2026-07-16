@@ -17,12 +17,21 @@ function normalizeRegistrationPhone(countryCode: string, contactNumber: string):
   return `${countryCode}${raw.replace(/^0+/, '')}`
 }
 
+export function generateRegistrationNumber(platform: string, now = new Date()): string {
+  const year = now.getFullYear().toString().slice(-2)
+  const suffix = Math.floor(100000 + Math.random() * 900000)
+  return `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${year}${suffix}`
+}
+
 export function duplicateRegistrationMessage(
-  field: 'email' | 'phone',
+  field: 'email' | 'phone' | 'registration_number',
   authEmail: string | null,
   countryCode: string,
   contactNumber: string
 ): string {
+  if (field === 'registration_number') {
+    return 'That registration number was just issued to another member. Please submit again.'
+  }
   if (field === 'email') {
     return `An account with the email "${authEmail}" already exists. Please sign in with your email and password instead.`
   }
@@ -85,9 +94,7 @@ export const registrationService = {
       )
     }
 
-    const yearStr = new Date().getFullYear().toString().slice(-2)
-    const randomNum = String(Math.floor(1000 + Math.random() * 9000))
-    const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
+    const regNo = generateRegistrationNumber(platform)
 
     // 1. Determine auto-approval eligibility.
     // Photo upload is intentionally NOT required — gating on it kills conversion,
@@ -159,7 +166,7 @@ export const registrationService = {
       (await (fnError as { context?: Response })?.context?.json?.().catch(() => null))) as {
       success?: boolean
       error?: string
-      field?: 'email' | 'phone'
+      field?: 'email' | 'phone' | 'registration_number'
       userId?: string
     } | null
 
