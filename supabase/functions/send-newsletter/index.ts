@@ -371,6 +371,9 @@ Deno.serve(async (req) => {
           from,
           subject,
           html: html.replaceAll('%%UNSUB%%', unsub),
+          // Echoed back in Resend webhook events → links delivery/open/click
+          // events to this newsletter (see resend-webhook function).
+          tags: [{ name: 'newsletter_id', value: newsletter_id }],
         })
       } catch (error) {
         skippedInvalidRecipients++

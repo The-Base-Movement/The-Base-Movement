@@ -21,6 +21,9 @@ export interface EmailMessage {
   text?: string
   from?: string
   replyTo?: string
+  // Resend tags — echoed back in webhook events. Used to link a delivery event
+  // to its source (e.g. { name: 'newsletter_id', value: <uuid> }).
+  tags?: { name: string; value: string }[]
 }
 
 export interface EmailResult {
@@ -54,6 +57,7 @@ export async function sendEmail(msg: EmailMessage): Promise<EmailResult> {
         html: msg.html,
         text: msg.text,
         reply_to: msg.replyTo,
+        tags: msg.tags,
       }),
     })
     const text = await res.text()
@@ -93,6 +97,7 @@ export async function sendEmailBatch(
       html: m.html,
       text: m.text,
       reply_to: m.replyTo,
+      tags: m.tags,
     }))
     try {
       const res = await fetch(RESEND_BATCH_ENDPOINT, {
