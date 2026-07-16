@@ -1,4 +1,24 @@
-import { parsePhoneNumberFromString } from 'libphonenumber-js/max'
+import { parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonenumber-js/max'
+
+// Cap the input to the maximum number of digits the selected country allows, so
+// a field can never hold more digits than a valid number for that country.
+// Non-digit characters (spaces, dashes the user types) are preserved.
+export function capToCountryDigits(value: string, countryCode = '+233'): string {
+  const code = countryCode.replace(/[^\d]/g, '')
+  if (!code) return value
+  let digits = ''
+  let out = ''
+  for (const ch of value) {
+    if (/\d/.test(ch)) {
+      // Reject the next digit only if it would push the number past the max length.
+      if (validatePhoneNumberLength(digits + ch, { defaultCallingCode: code }) === 'TOO_LONG')
+        continue
+      digits += ch
+    }
+    out += ch
+  }
+  return out
+}
 
 // ponytail: one function, two callers (register + login). Returns null if valid, error string if not.
 export function validatePhone(number: string, countryCode = '+233'): string | null {
@@ -32,5 +52,5 @@ export function cleanPhoneInput(value: string, countryCode = '+233'): string {
 
   // Strip leading zeros and spaces immediately after
   cleaned = cleaned.replace(/^\s*0+\s*/, '')
-  return cleaned
+  return capToCountryDigits(cleaned, countryCode)
 }

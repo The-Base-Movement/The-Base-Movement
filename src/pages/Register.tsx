@@ -18,7 +18,7 @@ import { OfflineBanner } from '@/components/OfflineBanner'
 import { OfflineSuccessStep } from './register/components/OfflineSuccessStep'
 import { saveDraftRegistration } from '@/utils/offlineDb'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
-import { validatePhone, cleanPhoneInput } from '@/lib/phoneValidation'
+import { validatePhone, cleanPhoneInput, capToCountryDigits } from '@/lib/phoneValidation'
 
 export default function Register() {
   const { session } = useAuth()
@@ -151,6 +151,9 @@ export default function Register() {
       if (field === 'contactNumber' && typeof val === 'string') {
         val = cleanPhoneInput(val, prev.countryCode) as RegistrationFormData[K]
       }
+      if (field === 'emergencyNumber' && typeof val === 'string') {
+        val = capToCountryDigits(val, prev.countryCode) as RegistrationFormData[K]
+      }
       const updates = { ...prev, [field]: val }
       if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
         updates.countryCode = dbCountryCodes[value]
@@ -226,8 +229,8 @@ export default function Register() {
   function validateStep(step: number): string | null {
     if (step === 1) {
       if (!formData.fullName.trim()) return 'Full name is required.'
-      if (!/^[\p{L}\s'-]+$/u.test(formData.fullName.trim()))
-        return 'Name can only contain letters, spaces, hyphens, and apostrophes.'
+      if (!/^[\p{L}\s.'’-]+$/u.test(formData.fullName.trim()))
+        return 'Name can only contain letters, spaces, periods, hyphens, and apostrophes.'
       if (formData.fullName.trim().split(/\s+/).length < 2)
         return 'Please enter your full name (first and last).'
       if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
@@ -248,8 +251,8 @@ export default function Register() {
     }
     if (step === 4) {
       if (!formData.emergencyContactName.trim()) return 'Emergency contact name is required.'
-      if (!/^[\p{L}\s'-]+$/u.test(formData.emergencyContactName.trim())) {
-        return 'Emergency contact name can only contain letters, spaces, hyphens, and apostrophes.'
+      if (!/^[\p{L}\s.'’-]+$/u.test(formData.emergencyContactName.trim())) {
+        return 'Emergency contact name can only contain letters, spaces, periods, hyphens, and apostrophes.'
       }
       if (!formData.emergencyNumber.trim()) return 'Emergency contact number is required.'
     }
