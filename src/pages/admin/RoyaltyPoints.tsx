@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { Pagination } from '@/components/Pagination'
 import { royaltyPointsService } from '@/services/royaltyPointsService'
 import type { RoyaltyPointsAdminData, RoyaltyPointsSource } from '@/types/royaltyPoints'
 
 const FONT = "'Public Sans', sans-serif"
+const PAGE_SIZE = 20
 
 const SOURCE_LABELS: Record<RoyaltyPointsSource, string> = {
   referral_registration: 'Referral — registration',
@@ -416,6 +418,8 @@ export default function RoyaltyPoints() {
   const [ledgerSearch, setLedgerSearch] = useState('')
   const [sourceFilter, setSourceFilter] = useState<'all' | RoyaltyPointsSource>('all')
   const [adjusting, setAdjusting] = useState(false)
+  const [balancePage, setBalancePage] = useState(1)
+  const [ledgerPage, setLedgerPage] = useState(1)
 
   // Loading starts true; the refresh button re-arms it in the event handler.
   const load = useCallback(() => {
@@ -460,6 +464,18 @@ export default function RoyaltyPoints() {
     }
     return rows
   }, [data, ledgerSearch, sourceFilter])
+  const balanceTotalPages = Math.max(1, Math.ceil(balances.length / PAGE_SIZE))
+  const safeBalancePage = Math.min(balancePage, balanceTotalPages)
+  const pagedBalances = useMemo(() => {
+    const start = (safeBalancePage - 1) * PAGE_SIZE
+    return balances.slice(start, start + PAGE_SIZE)
+  }, [balances, safeBalancePage])
+  const ledgerTotalPages = Math.max(1, Math.ceil(ledger.length / PAGE_SIZE))
+  const safeLedgerPage = Math.min(ledgerPage, ledgerTotalPages)
+  const pagedLedger = useMemo(() => {
+    const start = (safeLedgerPage - 1) * PAGE_SIZE
+    return ledger.slice(start, start + PAGE_SIZE)
+  }, [ledger, safeLedgerPage])
 
   const summary = data?.summary
 
@@ -561,7 +577,7 @@ export default function RoyaltyPoints() {
                   </td>
                 </tr>
               )}
-              {balances.map((b) => (
+              {pagedBalances.map((b) => (
                 <tr key={b.userId}>
                   <td style={tdStyle}>{b.name}</td>
                   <td style={{ ...tdStyle, color: 'hsl(var(--on-surface-muted))' }}>
@@ -582,6 +598,13 @@ export default function RoyaltyPoints() {
             </tbody>
           </table>
         </div>
+        <Pagination
+          currentPage={safeBalancePage}
+          totalPages={balanceTotalPages}
+          onPageChange={setBalancePage}
+          totalItems={balances.length}
+          pageSize={PAGE_SIZE}
+        />
       </div>
 
       <div className="panel" style={{ padding: 20, marginTop: 16 }}>
@@ -641,7 +664,7 @@ export default function RoyaltyPoints() {
                   </td>
                 </tr>
               )}
-              {ledger.map((l) => (
+              {pagedLedger.map((l) => (
                 <tr key={l.id}>
                   <td style={tdStyle}>
                     {l.name ?? '—'}{' '}
@@ -675,6 +698,13 @@ export default function RoyaltyPoints() {
             </tbody>
           </table>
         </div>
+        <Pagination
+          currentPage={safeLedgerPage}
+          totalPages={ledgerTotalPages}
+          onPageChange={setLedgerPage}
+          totalItems={ledger.length}
+          pageSize={PAGE_SIZE}
+        />
       </div>
 
       {adjusting && (

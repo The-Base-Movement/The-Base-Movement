@@ -12,6 +12,7 @@ import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { Pagination } from '@/components/Pagination'
 
 // Subcomponents
 import { DonationsTable } from './donationverification/DonationsTable'
@@ -51,6 +52,8 @@ const DEFAULT_FILTERS: FilterState = {
   dateTo: '',
   country: 'All',
 }
+
+const DONATIONS_PAGE_SIZE = 20
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
@@ -115,6 +118,7 @@ export default function FinancialAudit() {
   const [isBackfilling, setIsBackfilling] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
+  const [currentPage, setCurrentPage] = useState(1)
   const filterPanelRef = useRef<HTMLDivElement>(null)
 
   const hasActiveFilters =
@@ -256,6 +260,12 @@ export default function FinancialAudit() {
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
     })
   }, [donations, searchQuery, filters, sortOrder])
+  const totalPages = Math.max(1, Math.ceil(filteredDonations.length / DONATIONS_PAGE_SIZE))
+  const safePage = Math.min(currentPage, totalPages)
+  const pagedDonations = useMemo(() => {
+    const start = (safePage - 1) * DONATIONS_PAGE_SIZE
+    return filteredDonations.slice(start, start + DONATIONS_PAGE_SIZE)
+  }, [filteredDonations, safePage])
 
   const handleExport = () => {
     try {
@@ -488,7 +498,10 @@ export default function FinancialAudit() {
             name="searchQuery"
             id="input-4a5fad"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setCurrentPage(1)
+              setSearchQuery(e.target.value)
+            }}
             placeholder="Search by name, reference, phone…"
             style={{ ...fieldStyle, paddingLeft: 32 }}
             aria-label="Search donations"
@@ -509,6 +522,7 @@ export default function FinancialAudit() {
             <button
               key={tab.value}
               onClick={() => {
+                setCurrentPage(1)
                 setStatusFilter(tab.value)
                 setSelectedDonation(null)
               }}
@@ -538,7 +552,13 @@ export default function FinancialAudit() {
           ))}
         </div>
 
-        <SortToggle value={sortOrder} onChange={setSortOrder} />
+        <SortToggle
+          value={sortOrder}
+          onChange={(value) => {
+            setCurrentPage(1)
+            setSortOrder(value)
+          }}
+        />
 
         {/* Filters button + dropdown */}
         <div style={{ position: 'relative', flexGrow: 1 }} ref={filterPanelRef}>
@@ -607,7 +627,10 @@ export default function FinancialAudit() {
                   </span>
                   {hasActiveFilters && (
                     <button
-                      onClick={() => setFilters(DEFAULT_FILTERS)}
+                      onClick={() => {
+                        setCurrentPage(1)
+                        setFilters(DEFAULT_FILTERS)
+                      }}
                       style={{
                         background: 'none',
                         border: 'none',
@@ -848,13 +871,24 @@ export default function FinancialAudit() {
         style={{ gridTemplateColumns: selectedDonation ? '1fr min(460px, 100%)' : '1fr' }}
       >
         <DonationsTable
-          filteredDonations={filteredDonations}
+          filteredDonations={pagedDonations}
           selectedDonation={selectedDonation}
           setSelectedDonation={setSelectedDonation}
           setInternalNote={setInternalNote}
           isLoading={isLoading}
           statusFilter={statusFilter}
         />
+        {!isLoading && filteredDonations.length > 0 && (
+          <div className="panel" style={{ marginTop: 12 }}>
+            <Pagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={filteredDonations.length}
+              pageSize={DONATIONS_PAGE_SIZE}
+            />
+          </div>
+        )}
 
         {selectedDonation && (
           <DonationDetailSidebar

@@ -8,6 +8,7 @@
 import { type CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { toast } from 'sonner'
+import { Pagination } from '@/components/Pagination'
 import { adminService } from '@/services/adminService'
 import {
   jobTaxonomyService,
@@ -52,6 +53,7 @@ interface Filters {
   level: string | null
 }
 const EMPTY_FILTERS: Filters = { industryId: null, subCategoryId: null, roleId: null, level: null }
+const CUSTOM_TITLES_PAGE_SIZE = 20
 
 // Helper function to count and aggregate analytics rows by a dynamic group-by key
 function countBy(rows: JobAnalyticsRow[], key: (r: JobAnalyticsRow) => string | null): Slice[] {
@@ -86,6 +88,8 @@ export default function JobsAnalytics() {
   const [loading, setLoading] = useState(true)
   const [denied, setDenied] = useState(false)
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
+  const [customTitleSearch, setCustomTitleSearch] = useState('')
+  const [customTitlePage, setCustomTitlePage] = useState(1)
 
   // Resolve the admin role (handles a cold load where getCurrentUser is null).
   useEffect(() => {
@@ -156,6 +160,20 @@ export default function JobsAnalytics() {
     () => countBy(customRows, (r) => (r.custom_title ? r.custom_title.trim() : null)),
     [customRows]
   )
+  const filteredCustomTitles = useMemo(() => {
+    const q = customTitleSearch.trim().toLowerCase()
+    if (!q) return customTitles
+    return customTitles.filter((title) => title.name.toLowerCase().includes(q))
+  }, [customTitles, customTitleSearch])
+  const customTitlePages = Math.max(
+    1,
+    Math.ceil(filteredCustomTitles.length / CUSTOM_TITLES_PAGE_SIZE)
+  )
+  const safeCustomTitlePage = Math.min(customTitlePage, customTitlePages)
+  const pagedCustomTitles = useMemo(() => {
+    const start = (safeCustomTitlePage - 1) * CUSTOM_TITLES_PAGE_SIZE
+    return filteredCustomTitles.slice(start, start + CUSTOM_TITLES_PAGE_SIZE)
+  }, [filteredCustomTitles, safeCustomTitlePage])
 
   const subOptions = useMemo(
     () =>
@@ -314,7 +332,10 @@ export default function JobsAnalytics() {
         <select
           value={filters.level ?? ''}
           style={selectStyle}
-          onChange={(e) => setFilters((f) => ({ ...f, level: e.target.value || null }))}
+          onChange={(e) => {
+            setCustomTitlePage(1)
+            setFilters((f) => ({ ...f, level: e.target.value || null }))
+          }}
         >
           <option value="">All job levels</option>
           {['Entry', 'Professional', 'Senior / Specialist', 'Management', 'Other'].map((l) => (
@@ -326,7 +347,10 @@ export default function JobsAnalytics() {
         {hasFilters && (
           <button
             className="btn btn-ghost btn-sm"
-            onClick={() => setFilters(EMPTY_FILTERS)}
+            onClick={() => {
+              setCustomTitlePage(1)
+              setFilters(EMPTY_FILTERS)
+            }}
             style={{ marginLeft: 'auto' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
@@ -436,7 +460,10 @@ export default function JobsAnalytics() {
             <PieCard
               title="By Job Level"
               data={byLevel}
-              onSlice={(name) => setFilters((f) => ({ ...f, level: name }))}
+              onSlice={(name) => {
+                setCustomTitlePage(1)
+                setFilters((f) => ({ ...f, level: name }))
+              }}
             />
             <PieCard title="By Job Role (top 12)" data={byRole.slice(0, 12)} />
           </div>
@@ -463,7 +490,46 @@ export default function JobsAnalytics() {
               </div>
               <span className="pill pill-warn">{customCount} total</span>
             </div>
-            {customTitles.length === 0 ? (
+            {/* Search */}
+            <div style={{ padding: '0 16px 14px' }}>
+              <div style={{ position: 'relative', maxWidth: 320 }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: 'absolute',
+                    left: 9,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  search
+                </span>
+                <input
+                  aria-label="Search custom job titles"
+                  placeholder="Search custom titles…"
+                  value={customTitleSearch}
+                  onChange={(e) => {
+                    setCustomTitlePage(1)
+                    setCustomTitleSearch(e.target.value)
+                  }}
+                  style={{
+                    width: '100%',
+                    height: 34,
+                    padding: '0 12px 0 32px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--card))',
+                    color: 'hsl(var(--on-surface))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 12.5,
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+            </div>
+            {filteredCustomTitles.length === 0 ? (
               <p
                 style={{
                   padding: 20,
@@ -498,7 +564,7 @@ export default function JobsAnalytics() {
                     </tr>
                   </thead>
                   <tbody>
-                    {customTitles.map((c) => (
+                    {pagedCustomTitles.map((c) => (
                       <tr key={c.name}>
                         <td
                           style={{
@@ -526,6 +592,13 @@ export default function JobsAnalytics() {
                 </table>
               </div>
             )}
+            <Pagination
+              currentPage={safeCustomTitlePage}
+              totalPages={customTitlePages}
+              onPageChange={setCustomTitlePage}
+              totalItems={filteredCustomTitles.length}
+              pageSize={CUSTOM_TITLES_PAGE_SIZE}
+            />
           </div>
         </>
       )}

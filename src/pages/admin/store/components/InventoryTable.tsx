@@ -103,13 +103,23 @@ export function InventoryTable({
           padding: '10px 14px',
           borderBottom: '1px solid hsl(var(--border))',
           display: 'flex',
-          flexDirection: 'column',
+          flexWrap: 'wrap',
+          alignItems: 'center',
           gap: 8,
           background: 'hsl(var(--container-low))',
         }}
       >
         {/* Category pills — horizontally scrollable strip */}
-        <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2 }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 4,
+            overflowX: 'auto',
+            paddingBottom: 2,
+            flex: '1 1 340px',
+            minWidth: 0,
+          }}
+        >
           {categories.map((cat) => (
             <button
               key={cat}
