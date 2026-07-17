@@ -132,6 +132,7 @@ export default function ProfileSettings() {
   const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
   const [authId, setAuthId] = useState<string | null>(null)
+  const [accountName, setAccountName] = useState('')
 
   const [form, setForm] = useState<FormState>({
     fullName: '',
@@ -199,6 +200,7 @@ export default function ProfileSettings() {
       }
 
       if (profile) {
+        setAccountName(profile.name)
         const profileCountry = profile.country || (userPlatform === 'GHANA' ? 'Ghana' : '')
         const phoneParts = splitProfilePhone(profile.phone || '', profileCountry, uniqueCountries)
         setForm({
@@ -521,7 +523,7 @@ export default function ProfileSettings() {
             )}
           </div>
 
-          <DangerZonePanel />
+          <DangerZonePanel fullName={accountName} />
         </form>
       </div>
 
