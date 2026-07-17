@@ -1,10 +1,4 @@
-﻿import { useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
 import { Sparkline } from './Sparkline'
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface StatCardProps {
   accent: string
@@ -27,32 +21,8 @@ export function StatCard({
   delta,
   deltaIcon,
 }: StatCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const numRef = useRef<HTMLSpanElement>(null)
-
-  useGSAP(
-    () => {
-      if (!cardRef.current || !numRef.current) return
-      const el = numRef.current
-      const obj = { val: 0 }
-      gsap.to(obj, {
-        val: value,
-        duration: 1.8,
-        ease: 'power3.out',
-        onUpdate() {
-          el.textContent = Math.round(obj.val).toLocaleString()
-        },
-        onComplete() {
-          el.textContent = value.toLocaleString()
-        },
-      })
-    },
-    { scope: cardRef, dependencies: [value] }
-  )
-
   return (
     <div
-      ref={cardRef}
       style={{
         background: 'hsl(var(--card))',
         border: '1px solid hsl(var(--border))',
@@ -123,7 +93,7 @@ export function StatCard({
           fontVariantNumeric: 'tabular-nums',
         }}
       >
-        <span ref={numRef}>0</span>
+        <span>{value.toLocaleString()}</span>
         {suffix && (
           <small
             style={{

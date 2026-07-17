@@ -1,10 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { BlogPost, MediaAsset, Author, PressRelease, MediaKitAsset } from '@/types/admin'
-import { adminService } from '@/services/adminService'
 import { compressForUpload } from '@/lib/imageUtils'
-import { discordService } from '@/services/discordService'
-import { mediaHubService } from '@/services/mediaHubService'
-import { redirectService } from '@/services/redirectService'
 import mediaManifest from '@/data/media-manifest.json'
 
 interface DBAuthor {
@@ -54,6 +50,14 @@ type BlogPostSnapshot = {
   status: BlogPost['status']
 }
 
+type ContentActivityAction =
+  | 'created'
+  | 'updated'
+  | 'submitted'
+  | 'published'
+  | 'unpublished'
+  | 'trashed'
+
 class ContentService {
   private static instance: ContentService
 
@@ -87,9 +91,10 @@ class ContentService {
   }
 
   private async notifyMediaContentActivity(
-    action: Parameters<typeof mediaHubService.createContentActivityAlert>[0]['action'],
+    action: ContentActivityAction,
     post: BlogPostSnapshot
   ): Promise<void> {
+    const { mediaHubService } = await import('@/services/mediaHubService')
     await mediaHubService
       .createContentActivityAlert({
         action,
@@ -259,6 +264,7 @@ class ContentService {
       return false
     }
     if (post.status === 'Published') {
+      const { discordService } = await import('@/services/discordService')
       discordService.blogPostPublished(
         post.title,
         post.category || '',
@@ -302,6 +308,7 @@ class ContentService {
     let { error } = await supabase.from('blog_posts').update(updateData).eq('id', id)
 
     if (!error && post.slug && beforeUpdate && beforeUpdate.slug !== post.slug) {
+      const { redirectService } = await import('@/services/redirectService')
       await redirectService
         .createRedirectRule({
           sourcePath: `/blog/${beforeUpdate.slug}`,
@@ -333,6 +340,7 @@ class ContentService {
       return false
     }
     if (post.status === 'Published' && post.title && post.slug) {
+      const { discordService } = await import('@/services/discordService')
       discordService.blogPostPublished(
         post.title,
         post.category || '',
@@ -614,9 +622,9 @@ class ContentService {
         return mediaManifest.publicAssets || []
       case 'priorities':
         return [
-          '/priorities/agro_processing_illustration.png',
-          '/priorities/digital_economy_illustration.png',
-          '/priorities/ghana_network_map.png',
+          '/priorities/agro_processing_illustration.webp',
+          '/priorities/digital_economy_illustration.webp',
+          '/priorities/ghana_network_map.webp',
         ]
       default:
         return []
@@ -717,6 +725,7 @@ class ContentService {
     }
 
     const adminId = await this.getActorId()
+    const { adminService } = await import('@/services/adminService')
     await adminService.logAction('Create Author', 'AUTHORS', 'Success', {
       name: author.name,
       adminId,
@@ -742,6 +751,7 @@ class ContentService {
     }
 
     const adminId = await this.getActorId()
+    const { adminService } = await import('@/services/adminService')
     await adminService.logAction('Update Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -759,6 +769,7 @@ class ContentService {
     }
 
     const adminId = await this.getActorId()
+    const { adminService } = await import('@/services/adminService')
     await adminService.logAction('Trash Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -801,6 +812,7 @@ class ContentService {
     }
 
     const adminId = await this.getActorId()
+    const { adminService } = await import('@/services/adminService')
     await adminService.logAction('Restore Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -815,6 +827,7 @@ class ContentService {
     }
 
     const adminId = await this.getActorId()
+    const { adminService } = await import('@/services/adminService')
     await adminService.logAction('Delete Author', 'AUTHORS', 'Success', { id, adminId })
 
     return true
@@ -917,6 +930,7 @@ class ContentService {
     }
 
     const adminId = await this.getActorId()
+    const { adminService } = await import('@/services/adminService')
     await adminService.logAction('Create Media Category', 'SYSTEM', 'Success', {
       name,
       label,

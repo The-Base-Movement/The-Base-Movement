@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import SEO from '@/components/SEO'
 import { trackEvent } from '@/lib/analytics'
-import {
-  adminService,
-  type Country,
-  type DonationCampaign,
-  type DonationDetail,
-  type MobilizationLedger,
+import type {
+  Country,
+  DonationCampaign,
+  DonationDetail,
+  MobilizationLedger,
 } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { memberService } from '@/services/memberService'
@@ -106,6 +105,7 @@ export default function PublicDonate() {
       }
 
       try {
+        const { adminService } = await import('@/services/adminService')
         const [countryData, activeCampaigns, victories, stats, allHistory, personal, spending] =
           await Promise.all([
             adminService.getCountries(),

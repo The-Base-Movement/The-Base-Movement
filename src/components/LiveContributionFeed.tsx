@@ -12,7 +12,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { adminService } from '@/services/adminService'
 import { usePerformance } from '@/context/PerformanceContext'
 import type { DonationDetail } from '@/types/admin'
 
@@ -96,7 +95,6 @@ function DonorAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) 
     />
   )
 }
-
 export function LiveContributionFeed() {
   const { lowBandwidthMode } = usePerformance()
   const [donations, setDonations] = useState<DonationDetail[]>([])
@@ -104,41 +102,38 @@ export function LiveContributionFeed() {
   const feedRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Initial fetch of recent donations
-    async function fetchRecentDonations() {
+    let mounted = true
+    let subscription: { unsubscribe: () => void } | null = null
+
+    void (async () => {
+      const { adminService } = await import('@/services/adminService')
+
       try {
         const data = await adminService.getPublicDonationFeed(15)
-        setDonations(data)
+        if (mounted) setDonations(data)
       } catch (error) {
         console.error('[LIVE FEED] Initial fetch failed:', error)
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
-    }
 
-    fetchRecentDonations()
+      if (lowBandwidthMode || !mounted) return
 
-    // Disable real-time in Low-Bandwidth mode to save data/battery
-    if (lowBandwidthMode) return
+      subscription = adminService.subscribeToPublicDonations((newDonation: DonationDetail) => {
+        setDonations((prev) => {
+          if (prev.some((d) => d.id === newDonation.id)) return prev
+          return [newDonation, ...prev.slice(0, 14)]
+        })
 
-    // Subscribe to real-time updates via central service
-    const subscription = adminService.subscribeToPublicDonations((newDonation) => {
-      setDonations((prev) => {
-        // Prevent duplicates in case of race conditions
-        if (prev.some((d) => d.id === newDonation.id)) return prev
-        return [newDonation, ...prev.slice(0, 14)]
+        if (feedRef.current) {
+          feedRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+        }
       })
-
-      // Auto-scroll to top when a new donation arrives
-      if (feedRef.current) {
-        feedRef.current.scrollTo({ top: 0, behavior: 'smooth' })
-      }
-    })
+    })()
 
     return () => {
-      if (subscription) {
-        subscription.unsubscribe()
-      }
+      mounted = false
+      subscription?.unsubscribe()
     }
   }, [lowBandwidthMode])
 

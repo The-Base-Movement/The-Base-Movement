@@ -1,12 +1,10 @@
 import { Suspense } from 'react'
 import { useRoutes } from 'react-router-dom'
-import { StoreProvider } from './types/StoreProvider'
 import ScrollToTop from './components/ScrollToTop'
 import ReadingProgressBar from './components/ReadingProgressBar'
 import { LoadingScreen } from './components/LoadingScreen'
 import { PerformanceProvider } from './context/PerformanceContext'
 import { BrandingProvider } from './context/BrandingContext'
-import { ChaptersProvider } from '@/context/ChaptersContext'
 import { AuthProvider } from '@/context/AuthContext'
 import { routes } from './routes'
 import { Toaster as SonnerToaster } from 'sonner'
@@ -25,21 +23,17 @@ export default function App() {
       <PerformanceProvider>
         <BrandingProvider>
           <AuthProvider>
-            <ChaptersProvider>
-              <StoreProvider>
-                <Analytics />
-                <ScrollToTop />
-                <ReadingProgressBar />
-                <Toaster />
-                {isClient && (
-                  <>
-                    <SonnerToaster position="top-right" richColors />
-                    <VersionChecker />
-                  </>
-                )}
-                <Suspense fallback={<LoadingScreen />}>{content}</Suspense>
-              </StoreProvider>
-            </ChaptersProvider>
+            <Analytics />
+            <ScrollToTop />
+            <ReadingProgressBar />
+            <Toaster />
+            {isClient && (
+              <>
+                <SonnerToaster position="top-right" richColors />
+                <VersionChecker />
+              </>
+            )}
+            <Suspense fallback={<LoadingScreen />}>{content}</Suspense>
           </AuthProvider>
         </BrandingProvider>
       </PerformanceProvider>

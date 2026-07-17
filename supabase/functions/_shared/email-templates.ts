@@ -9,30 +9,37 @@ const SHELL_OPEN = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@media only screen and (max-width:600px){
+  body{padding:0!important}
+  .email-wrap{width:100%!important}
+  .email-card{border-radius:0!important}
+  .email-header td{padding:14px 16px!important}
+  .email-logo{height:28px!important;max-width:140px!important}
+  .email-preheader,.email-body,.email-footer{padding-left:16px!important;padding-right:16px!important}
+  .email-hero{height:96px!important}
+  .email-hero-text{font-size:30px!important}
+  .email-title{font-size:22px!important;line-height:1.2!important}
+  .stat-col{display:block!important;width:100%!important;padding:0 0 10px!important}
+}
+</style>
 </head>
 <body style="margin:0;padding:32px 0;background:#f4f4f4;font-family:'Work Sans',Arial,sans-serif;font-size:14px;color:#1a1a1a">
-<div style="max-width:600px;margin:0 auto">`
+<div class="email-wrap" style="max-width:600px;margin:0 auto;width:100%">`
 
 const SHELL_CLOSE = `</div></body></html>`
 
 function emailHeader(tag: string) {
   return `
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
+  <table class="email-header" width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
     style="background:#181d19;border-collapse:collapse">
     <tr>
-      <td style="padding:20px 28px;vertical-align:middle">
-        <table cellpadding="0" cellspacing="0" border="0" role="presentation">
-          <tr>
-            <td style="padding-right:10px;vertical-align:middle">
-              <div style="width:28px;height:28px;background:#CE1126;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:13px;color:#fff;text-align:center;line-height:28px">B</div>
-            </td>
-            <td style="vertical-align:middle">
-              <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:14px;color:#fff">The Base Movement</span>
-            </td>
-          </tr>
-        </table>
+      <td style="padding:18px 28px;vertical-align:middle">
+        <img class="email-logo" src="https://www.thebasemovement.org.gh/branding/logo.png"
+          alt="The Base Movement" height="36"
+          style="display:block;height:36px;width:auto;max-width:180px;border:0" />
       </td>
-      <td style="padding:20px 28px;vertical-align:middle;text-align:right;white-space:nowrap">
+      <td style="padding:18px 28px;vertical-align:middle;text-align:right;white-space:nowrap">
         <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase">${tag}</span>
       </td>
     </tr>
@@ -43,7 +50,7 @@ const TOP_BAR = `<div style="height:5px;background:linear-gradient(to right,#CE1
 
 function emailFooter(lines: string) {
   return `
-  <div style="background:#f9f9f9;padding:16px 28px;font-size:11px;color:#aaa;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;line-height:1.7">
+  <div class="email-footer" style="background:#f9f9f9;padding:16px 28px;font-size:11px;color:#aaa;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;line-height:1.7">
     ${lines}
     <div style="width:80px;height:3px;background:linear-gradient(to right,#CE1126,#DAA520,#006B3F);border-radius:99px;margin-top:10px"></div>
   </div>`
@@ -57,13 +64,19 @@ function statRow(stats: Array<{ value: string; label: string; color?: string }>)
   const cells = stats
     .map(
       (s) => `
-    <div style="background:#f6fbf4;border-radius:4px;padding:12px;text-align:center">
-      <div style="font-family:'Public Sans',Arial;font-weight:800;font-size:22px;color:${s.color ?? '#181d19'};font-variant-numeric:tabular-nums">${s.value}</div>
-      <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:3px">${s.label}</div>
-    </div>`
+      <td class="stat-col" width="33.33%" style="padding:0 5px 10px;vertical-align:top">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#f6fbf4;border-radius:4px;border-collapse:separate">
+          <tr>
+            <td style="padding:12px;text-align:center">
+              <div style="font-family:'Public Sans',Arial;font-weight:800;font-size:22px;color:${s.color ?? '#181d19'};font-variant-numeric:tabular-nums">${s.value}</div>
+              <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:3px">${s.label}</div>
+            </td>
+          </tr>
+        </table>
+      </td>`
     )
     .join('')
-  return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:18px 0">${cells}</div>`
+  return `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin:18px 0"><tr>${cells}</tr></table>`
 }
 
 // ---------------------------------------------------------------------------
@@ -82,18 +95,18 @@ export interface WelcomeEmailData {
 export function welcomeEmail(d: WelcomeEmailData): string {
   const total = d.totalMembers ?? '355,212'
   return `${SHELL_OPEN}
-  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+  <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
     Welcome to The Base, ${d.name}. Your Ghana Card has been verified — here's what's next.
   </div>
-  <div style="background:#fff;border-radius:4px;overflow:hidden">
+  <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Member portal')}
-    <div style="background:linear-gradient(135deg,#181d19,#0f1310);height:140px;display:flex;align-items:center;justify-content:center">
-      <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:48px;color:rgba(255,255,255,.12);letter-spacing:-.04em">Ghana First</span>
+    <div class="email-hero" style="background:linear-gradient(135deg,#181d19,#0f1310);height:140px;display:flex;align-items:center;justify-content:center">
+      <span class="email-hero-text" style="font-family:'Public Sans',Arial;font-weight:800;font-size:48px;color:rgba(255,255,255,.12);letter-spacing:-.04em">Ghana First</span>
     </div>
-    <div style="padding:28px 28px 24px">
+    <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Akwaaba, ${d.name} 🇬🇭</div>
-      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">You are now a verified member of The Base.</h1>
+      <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">You are now a verified member of The Base.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:14px">Your Ghana Card has been confirmed. Your membership is active and your registration number is ready. Welcome to a movement of <strong>${total}</strong> compatriots building Ghana's future.</p>
       ${statRow([
         { value: d.regNo, label: 'Reg. no.' },
@@ -123,18 +136,18 @@ export interface NewsletterSubscriberWelcomeEmailData {
 
 export function newsletterSubscriberWelcomeEmail(d: NewsletterSubscriberWelcomeEmailData): string {
   return `${SHELL_OPEN}
-  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+  <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
     You are now subscribed to updates from The Base Movement.
   </div>
-  <div style="background:#fff;border-radius:4px;overflow:hidden">
+  <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Newsletter subscription')}
-    <div style="background:linear-gradient(135deg,#181d19,#0f1310);height:140px;display:flex;align-items:center;justify-content:center">
-      <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:44px;color:rgba(255,255,255,.16);letter-spacing:-.04em">The Base</span>
+    <div class="email-hero" style="background:linear-gradient(135deg,#181d19,#0f1310);height:140px;display:flex;align-items:center;justify-content:center">
+      <span class="email-hero-text" style="font-family:'Public Sans',Arial;font-weight:800;font-size:44px;color:rgba(255,255,255,.16);letter-spacing:-.04em">The Base</span>
     </div>
-    <div style="padding:28px 28px 24px">
+    <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Compatriot —</div>
-      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Your newsletter subscription is active.</h1>
+      <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Your newsletter subscription is active.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:14px">You will now receive updates from The Base Movement on policy, organizing, community action, and major movement milestones.</p>
       <p style="line-height:1.65;color:#444;margin-bottom:14px">We keep our emails focused: major announcements, public updates, and the work being done across Ghana and abroad.</p>
       ${ctaButton('Read the latest updates →', d.updatesUrl, '#006B3F')}
@@ -176,7 +189,7 @@ export function donationReceiptEmail(d: DonationReceiptEmailData): string {
   }
 
   return `${SHELL_OPEN}
-  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+  <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
     Your ${d.amount} contribution is confirmed. Receipt ref: ${d.reference}. Thank you, compatriot.
   </div>
   <div style="background:#fff;border:1px solid #e4e9e2;border-radius:8px;overflow:hidden">
@@ -251,18 +264,18 @@ export function broadcastEmail(d: BroadcastEmailData): string {
   const fieldPill = `<span style="display:inline-block;padding:3px 9px;border-radius:99px;font-family:'Public Sans',Arial;font-weight:800;font-size:10px;background:rgba(0,107,63,.1);color:#006B3F;border:1px solid rgba(0,107,63,.2)">Field report</span>`
 
   return `${SHELL_OPEN}
-  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+  <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
     ${d.preheader}
   </div>
-  <div style="background:#fff;border-radius:4px;overflow:hidden">
+  <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Movement update')}
-    <div style="background:${heroBg};height:140px;display:flex;align-items:center;justify-content:center">
-      <span style="font-family:'Public Sans',Arial;font-weight:800;font-size:48px;color:rgba(255,255,255,.25);letter-spacing:-.04em">${heroText}</span>
+    <div class="email-hero" style="background:${heroBg};height:140px;display:flex;align-items:center;justify-content:center">
+      <span class="email-hero-text" style="font-family:'Public Sans',Arial;font-weight:800;font-size:48px;color:rgba(255,255,255,.25);letter-spacing:-.04em">${heroText}</span>
     </div>
-    <div style="padding:28px 28px 24px">
+    <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">${greeting}</div>
-      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">${d.subject}</h1>
+      <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">${d.subject}</h1>
       <div style="display:flex;gap:6px;margin-bottom:14px">${regionPill}${fieldPill}</div>
       ${d.body}
       ${d.stats ? statRow(d.stats) : ''}
@@ -320,15 +333,15 @@ export function pollClosingEmail(d: PollClosingEmailData): string {
     'Results are published publicly 48 hours after closing. The regional coordinator is required to respond within 7 days explaining how results will influence planning.'
 
   return `${SHELL_OPEN}
-  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+  <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
     ${d.preheader}
   </div>
-  <div style="background:#fff;border-radius:4px;overflow:hidden">
+  <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Poll · closing soon')}
-    <div style="padding:28px 28px 24px">
+    <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">${d.name} —</div>
-      <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">This poll closes in ${hrs}. Your vote counts.</h1>
+      <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">This poll closes in ${hrs}. Your vote counts.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:14px">You haven't voted in the ${d.region} regional poll. <strong>${voteCountFmt}</strong> of your fellow members have. The results go directly to the regional coordinator before the next planning session.</p>
       <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:16px;letter-spacing:-.01em;color:#181d19;margin:22px 0 8px">${d.pollTitle}</h2>
       ${pollOptions}
@@ -359,10 +372,10 @@ export interface CsvImportWelcomeEmailData {
 
 export function csvImportWelcomeEmail(d: CsvImportWelcomeEmailData): string {
   return `${SHELL_OPEN}
-  <div style="background:#fff;border-radius:4px;overflow:hidden">
+  <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Account setup')}
-    <div style="padding:28px 28px 24px">
+    <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Welcome, ${d.name} 🇬🇭</div>
       <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1.2;color:#181d19;margin:0 0 14px">Your Base Movement account is ready.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:20px">An administrator has set up your account. Use the credentials below to log in for the first time — you will be asked to set a new password immediately.</p>
@@ -635,13 +648,13 @@ export function passwordResetEmail(d: PasswordResetEmailData): string {
   const hours = d.expiryHours ?? 24
   const hrsText = hours === 1 ? '1 hour' : `${hours} hours`
   return `${SHELL_OPEN}
-  <div style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+  <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
     Reset link for your Base Movement account. Valid for ${hrsText}.
   </div>
-  <div style="background:#fff;border-radius:4px;overflow:hidden">
+  <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Account security')}
-    <div style="padding:28px 28px 24px">
+    <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Dear Compatriot,</div>
       <h1 style="font-family:'Public Sans',Arial;font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1.2;color:#181d19;margin:0 0 14px">Reset your Base password.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:20px">An administrator has initiated a password reset request for your account. Please click the button below to choose a new password.</p>
