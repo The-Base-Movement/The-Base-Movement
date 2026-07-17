@@ -1,6 +1,6 @@
 # The Base Movement - Ghana First
 
-![The Base Banner](docs/media/the-base-banner-1.png)
+![The Base Banner](public/branding/base-banner-image.png)
 
 ## Mission: Ghana First, Jobs for the Youth!
 

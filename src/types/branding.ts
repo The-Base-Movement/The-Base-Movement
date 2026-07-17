@@ -46,7 +46,7 @@ export const defaultSettings: BrandingSettings = {
   og_image_url: '/branding/og-image.png',
   twitter_card_url: '/branding/twitter-card.png',
   founder_image_url: '/branding/founder-image.jpg',
-  hero_bg_url: '/branding/hero-background-image.png',
+  hero_bg_url: '/branding/hero-background-image.webp',
   banner_image_url: '/branding/base-banner-image.png',
   party_hq_image_url: '/branding/party-headquarters-image.webp',
   primary_color: '156 100% 21%',

@@ -65,7 +65,7 @@ export function MemberReadinessTable({
           </p>
         </div>
         <img
-          src="/branding/patterns/eagle-in-flight.png"
+          src="/branding/patterns/eagle-in-flight.webp"
           alt=""
           style={{
             position: 'absolute',

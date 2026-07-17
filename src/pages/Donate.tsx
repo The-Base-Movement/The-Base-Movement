@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import SEO from '@/components/SEO'
 import { trackEvent } from '@/lib/analytics'
-import {
-  adminService,
-  type Country,
-  type DonationCampaign,
-  type DonationDetail,
-  type MobilizationLedger,
+import type {
+  Country,
+  DonationCampaign,
+  DonationDetail,
+  MobilizationLedger,
 } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { memberService } from '@/services/memberService'
@@ -106,6 +105,7 @@ export default function PublicDonate() {
       }
 
       try {
+        const { adminService } = await import('@/services/adminService')
         const [countryData, activeCampaigns, victories, stats, allHistory, personal, spending] =
           await Promise.all([
             adminService.getCountries(),
@@ -200,7 +200,7 @@ export default function PublicDonate() {
         return
       }
 
-      const campaignId = formData.campaignId || campaigns[0]?.id || null
+      const campaignId = formData.campaignId || null
 
       const { data, error } = await supabase
         .from('donations')
@@ -232,7 +232,7 @@ export default function PublicDonate() {
           donationId: data.id,
           memberId: formData.memberId || undefined,
           membershipNumber: formData.membershipNumber || undefined,
-          campaignId: campaignId || undefined,
+          campaignId: campaignId ?? undefined,
           jurisdiction: formData.country,
           currency: selectedCurrency.code,
           currencySymbol: selectedCurrency.symbol,
@@ -395,7 +395,7 @@ export default function PublicDonate() {
 
             {donateMode === 'group' && (
               <GroupDonatePanel
-                campaignId={formData.campaignId || campaigns[0]?.id || null}
+                campaignId={formData.campaignId || null}
                 countries={countries}
                 defaultName={formData.fullName}
                 defaultPhone={formData.phone}

@@ -1,9 +1,15 @@
 /**
  * @file sentry.ts
- * @description Provides a initialization wrapper for Sentry application monitoring in production mode.
+ * @description Provides a lazy initialization wrapper for Sentry monitoring so
+ * the SDK stays out of the main boot graph unless it is actually enabled.
  */
 
-import * as Sentry from '@sentry/react'
+let sentryModulePromise: Promise<typeof import('@sentry/react')> | null = null
+
+function loadSentry() {
+  sentryModulePromise ??= import('@sentry/react')
+  return sentryModulePromise
+}
 
 /**
  * Initializes Sentry application instrumentation settings for production logs.
@@ -30,35 +36,46 @@ export function initSentry() {
     'ceCurrentVideo.tele498',
   ]
 
-  Sentry.init({
-    dsn,
-    environment: import.meta.env.MODE,
-    sendDefaultPii: true,
-    // ponytail: lowered to avoid 429 rate-limit on free tier
-    tracesSampleRate: 0.02,
-    replaysSessionSampleRate: 0.01,
-    replaysOnErrorSampleRate: 0.5,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }),
-    ],
-    beforeSend(event) {
-      const msg = event.exception?.values?.[0]?.value ?? ''
-      if (IGNORED_ERRORS.some((pattern) => msg.includes(pattern))) return null
+  void loadSentry().then((Sentry) => {
+    Sentry.init({
+      dsn,
+      environment: import.meta.env.MODE,
+      sendDefaultPii: true,
+      // ponytail: lowered to avoid 429 rate-limit on free tier
+      tracesSampleRate: 0.02,
+      replaysSessionSampleRate: 0.01,
+      replaysOnErrorSampleRate: 0.5,
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }),
+      ],
+      beforeSend(event) {
+        const msg = event.exception?.values?.[0]?.value ?? ''
+        if (IGNORED_ERRORS.some((pattern) => msg.includes(pattern))) return null
 
-      const frames = event.exception?.values?.[0]?.stacktrace?.frames
-      if (
-        frames?.some(
-          (f) => f.filename?.includes('extensions://') || f.filename?.includes('moz-extension://')
-        )
-      ) {
-        return null
-      }
+        const frames = event.exception?.values?.[0]?.stacktrace?.frames
+        if (
+          frames?.some(
+            (f) => f.filename?.includes('extensions://') || f.filename?.includes('moz-extension://')
+          )
+        ) {
+          return null
+        }
 
-      return event
-    },
-    ignoreErrors: IGNORED_ERRORS,
+        return event
+      },
+      ignoreErrors: IGNORED_ERRORS,
+    })
   })
 }
 
-export { Sentry }
+export function captureException(
+  error: unknown,
+  context?: Parameters<typeof import('@sentry/react').captureException>[1]
+) {
+  const dsn = import.meta.env.VITE_SENTRY_DSN
+  if (!dsn || import.meta.env.DEV) return
+  void loadSentry().then((Sentry) => {
+    Sentry.captureException(error, context)
+  })
+}

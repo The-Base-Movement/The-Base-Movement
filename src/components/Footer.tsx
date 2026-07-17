@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { FacebookIcon, InstagramIcon, TikTokIcon, YouTubeIcon } from './icons/SocialIcons'
-import { adminService } from '../services/adminService'
 import { useBranding } from '@/hooks/useBranding'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
+import { publicSiteService } from '@/services/publicSiteService'
 
 const FOOTER_COLS = [
   {
@@ -54,7 +54,7 @@ export default function Footer() {
       return
     }
     setSubmitting(true)
-    const success = await adminService.subscribeToNewsletter(email.trim(), phone.trim())
+    const success = await publicSiteService.subscribeToNewsletter(email.trim(), phone.trim())
     setSubmitting(false)
     if (success) {
       setSubscribed(true)

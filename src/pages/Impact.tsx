@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import SEO from '@/components/SEO'
-import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { chapterService } from '@/services/chapterService'
@@ -11,6 +10,7 @@ import { DashboardKpiTiles } from './impact/DashboardKpiTiles'
 import { DashboardMainColumn } from './impact/DashboardMainColumn'
 import { DashboardActivityFeed } from './impact/DashboardActivityFeed'
 import { PublicImpactView } from './impact/PublicImpactView'
+import { publicSiteService } from '@/services/publicSiteService'
 
 export default function Impact() {
   const location = useLocation()
@@ -57,9 +57,11 @@ export default function Impact() {
           regionalCounts,
           totalRegistered,
         ] = await Promise.all([
-          adminService.getGlobalMobilizationStats(),
+          import('@/services/adminService').then(({ adminService }) =>
+            adminService.getGlobalMobilizationStats()
+          ),
           donationService.getPublicDonationFeed(50),
-          adminService.getPublicStats(),
+          publicSiteService.getPublicStats(),
           chapterService.getActiveChapterCount(),
           memberService.getRegionalMemberCounts(),
           memberService.getTotalRegisteredCount(),

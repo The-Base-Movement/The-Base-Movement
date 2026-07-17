@@ -6,10 +6,10 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { adminService } from '@/services/adminService'
 import { Helmet } from 'react-helmet-async'
 import { defaultSettings, type BrandingSettings } from '@/types/branding'
 import { BrandingContext } from '@/hooks/useBranding'
+import { publicSiteService } from '@/services/publicSiteService'
 
 /**
  * Provider component for the site branding context.
@@ -24,7 +24,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
 
   const refreshSettings = useCallback(async () => {
     try {
-      const data = await adminService.getSiteSettings()
+      const data = await publicSiteService.getSiteSettings()
       setSettings((prev) => ({
         ...prev,
         ...(data as Partial<BrandingSettings>),
@@ -39,7 +39,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
 
     async function initializeBranding() {
       try {
-        const data = await adminService.getSiteSettings()
+        const data = await publicSiteService.getSiteSettings()
         if (isMounted) {
           setSettings((prev) => ({
             ...prev,

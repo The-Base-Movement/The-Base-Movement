@@ -3,14 +3,13 @@ import { sessionStore } from '@/lib/sessionStore'
 import { EmptyState } from '@/components/states'
 import { useLocation } from 'react-router-dom'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
-import { adminService } from '@/services/adminService'
 import type { Poll, PollOption } from '@/types/admin'
 import { toast } from 'sonner'
 import { useIsClient } from '@/hooks/useIsClient'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SEO from '@/components/SEO'
+import { pollService } from '@/services/pollService'
 
-// Modular Components
 import { PollKPIs } from './polls/components/PollKPIs'
 import { ClosedPollsPanel } from './polls/components/ClosedPollsPanel'
 import { PollsSidebar } from './polls/components/PollsSidebar'
@@ -32,7 +31,7 @@ export default function Polls() {
   useEffect(() => {
     async function loadPolls() {
       try {
-        const data = await adminService.getPolls()
+        const data = await pollService.getPolls()
         setPolls(data)
       } catch (err) {
         console.error('Failed to load polls:', err)
@@ -49,7 +48,7 @@ export default function Polls() {
 
   const handleVote = async (pollId: string, optionId: string) => {
     setVoting(pollId)
-    const success = await adminService.voteInPoll(pollId, optionId)
+    const success = await pollService.voteInPoll(pollId, optionId)
     if (success) {
       setPolls((prev) =>
         prev.map((p) => {
@@ -85,7 +84,6 @@ export default function Polls() {
 
   const content = (
     <>
-      {/* Page title — dashboard only; public page has its own hero */}
       {isDashboard && (
         <div style={{ marginBottom: 20 }}>
           <div
@@ -128,7 +126,6 @@ export default function Polls() {
         </div>
       )}
 
-      {/* KPI row */}
       <PollKPIs
         loading={loading}
         activePolls={activePolls}
@@ -139,7 +136,6 @@ export default function Polls() {
       />
 
       <div className="main-sidebar" style={{ alignItems: 'start' }}>
-        {/* Main: active polls + closed polls on mobile */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <SearchBar
             value={searchQuery}
@@ -207,7 +203,6 @@ export default function Polls() {
             ))
           )}
 
-          {/* Closed polls — shown inline on mobile below active polls */}
           <div className="mobile-only">
             <ClosedPollsPanel
               closedPolls={closedPolls}
@@ -217,7 +212,6 @@ export default function Polls() {
           </div>
         </div>
 
-        {/* Sidebar — desktop only for widgets, closed polls included */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <PollsSidebar
             totalVotes={totalVotes}
@@ -252,7 +246,6 @@ export default function Polls() {
         canonical="/polls"
       />
 
-      {/* Hero — dark gradient matching blog hero */}
       <header
         style={{
           position: 'relative',

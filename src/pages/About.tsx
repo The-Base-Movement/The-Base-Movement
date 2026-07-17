@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import SEO from '@/components/SEO'
-import { adminService } from '@/services/adminService'
+import { publicSiteService } from '@/services/publicSiteService'
 import { AboutHero } from './about/AboutHero'
 import { AboutPillars } from './about/AboutPillars'
 import { AboutStats } from './about/AboutStats'
@@ -22,7 +22,7 @@ export default function About() {
   const [siteSettings, setSiteSettings] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    adminService
+    publicSiteService
       .getPublicStats()
       .then((s) => {
         setStats({
@@ -37,7 +37,7 @@ export default function About() {
       })
       .catch(() => {})
 
-    adminService
+    publicSiteService
       .getSiteSettings()
       .then((s) => setSiteSettings(s as Record<string, string>))
       .catch(() => {})
@@ -55,7 +55,6 @@ export default function About() {
         title="About"
         description="Learn about The Base Movement — a grassroots political movement for Ghana built on patriotism, honesty, and discipline, uniting compatriots at home and across the diaspora behind a Ghana First agenda."
       />
-      {/* Hero */}
       <section
         style={{
           padding: 'clamp(64px, 10vw, 100px) clamp(16px, 5vw, 32px) clamp(48px, 6vw, 72px)',
@@ -66,7 +65,6 @@ export default function About() {
 
       <WingDivider />
 
-      {/* Pillars */}
       <section
         style={{
           maxWidth: 1200,
@@ -86,7 +84,6 @@ export default function About() {
 
       <WingDivider />
 
-      {/* Stats */}
       <section
         style={{
           padding: 'clamp(48px, 6vw, 80px) clamp(16px, 5vw, 48px)',
@@ -100,7 +97,6 @@ export default function About() {
 
       <WingDivider />
 
-      {/* CTA */}
       <section
         style={{
           maxWidth: 1200,
