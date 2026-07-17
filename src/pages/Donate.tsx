@@ -200,7 +200,7 @@ export default function PublicDonate() {
         return
       }
 
-      const campaignId = formData.campaignId || campaigns[0]?.id || null
+      const campaignId = formData.campaignId || null
 
       const { data, error } = await supabase
         .from('donations')
@@ -232,7 +232,7 @@ export default function PublicDonate() {
           donationId: data.id,
           memberId: formData.memberId || undefined,
           membershipNumber: formData.membershipNumber || undefined,
-          campaignId: campaignId || undefined,
+          campaignId: campaignId ?? undefined,
           jurisdiction: formData.country,
           currency: selectedCurrency.code,
           currencySymbol: selectedCurrency.symbol,
@@ -395,7 +395,7 @@ export default function PublicDonate() {
 
             {donateMode === 'group' && (
               <GroupDonatePanel
-                campaignId={formData.campaignId || campaigns[0]?.id || null}
+                campaignId={formData.campaignId || null}
                 countries={countries}
                 defaultName={formData.fullName}
                 defaultPhone={formData.phone}

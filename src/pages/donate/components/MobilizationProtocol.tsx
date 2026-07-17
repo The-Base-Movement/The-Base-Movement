@@ -137,8 +137,7 @@ export function MobilizationProtocol({
 }: MobilizationProtocolProps) {
   const status = statusCopy(paymentState)
   const quickAmounts = ['50', '100', '250', '500']
-  const selectedCampaign =
-    campaigns.find((campaign) => campaign.id === formData.campaignId) || campaigns[0]
+  const selectedCampaign = campaigns.find((campaign) => campaign.id === formData.campaignId) || null
   const selectedCountry = countries.find((country) => country.name === formData.country)
   const steps = [
     { id: 1, label: 'Amount' },
@@ -353,7 +352,6 @@ export function MobilizationProtocol({
                 <select
                   name="donation-campaign"
                   id="campaign"
-                  required
                   autoComplete="off"
                   value={formData.campaignId}
                   onChange={(e) => {
@@ -367,7 +365,7 @@ export function MobilizationProtocol({
                     cursor: 'pointer',
                   }}
                 >
-                  <option value="">Default priority</option>
+                  <option value="">No strategic priority</option>
                   {campaigns.map((campaign) => (
                     <option key={campaign.id} value={campaign.id}>
                       {campaign.title}
@@ -672,7 +670,7 @@ export function MobilizationProtocol({
                     textAlign: 'right',
                   }}
                 >
-                  {selectedCampaign?.title || 'General fund'}
+                  {selectedCampaign?.title || 'General donation'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
