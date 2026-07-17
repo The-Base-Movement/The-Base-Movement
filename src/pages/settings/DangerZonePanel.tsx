@@ -1,23 +1,35 @@
-export function DangerZonePanel() {
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { authService } from '@/services/authService'
+
+export function DangerZonePanel({ fullName }: { fullName: string }) {
+  const [confirmation, setConfirmation] = useState('')
+  const [loading, setLoading] = useState(false)
+  const confirmed = confirmation.trim() === fullName.trim() && fullName.trim().length > 0
+
+  const deactivate = async () => {
+    if (!confirmed) return
+    setLoading(true)
+    try {
+      await authService.deactivateAccount(confirmation)
+      window.location.assign('/login')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to deactivate account')
+      setLoading(false)
+    }
+  }
+
   return (
     <div
       style={{
         marginTop: 8,
         padding: '20px 22px',
         border: '2px dashed hsl(var(--destructive) / 25%)',
-        borderRadius: 6,
+        borderRadius: 'var(--radius-sm)',
         background: 'hsl(var(--destructive) / 3%)',
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 16,
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div>
           <div
             style={{
@@ -42,17 +54,35 @@ export function DangerZonePanel() {
               fontSize: 12,
               color: 'hsl(var(--on-surface-muted))',
               fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-normal, 400)',
-              maxWidth: 420,
+              maxWidth: 520,
               lineHeight: 1.55,
             }}
           >
-            Deactivating your account will permanently delete all your contribution history and
-            movement records. This action cannot be undone.
+            Deactivating your membership blocks sign-in and removes your profile from active member
+            lists. An administrator can restore it later.
           </p>
         </div>
-        <button type="button" className="btn btn-dest btn-sm">
-          Deactivate membership
+
+        <label style={{ fontSize: 12, color: 'hsl(var(--on-surface))', maxWidth: 420 }}>
+          Type <strong>{fullName}</strong> to confirm
+          <input
+            type="text"
+            value={confirmation}
+            onChange={(event) => setConfirmation(event.target.value)}
+            autoComplete="off"
+            disabled={loading}
+            style={{ width: '100%', boxSizing: 'border-box', marginTop: 6 }}
+          />
+        </label>
+
+        <button
+          type="button"
+          className="btn btn-dest btn-sm"
+          disabled={!confirmed || loading}
+          onClick={deactivate}
+          style={{ alignSelf: 'flex-start' }}
+        >
+          {loading ? 'Deactivating…' : 'Deactivate membership'}
         </button>
       </div>
     </div>

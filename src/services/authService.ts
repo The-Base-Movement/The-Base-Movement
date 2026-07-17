@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import type { Session, User, AuthResponse } from '@supabase/supabase-js'
 import { deviceTrackingService } from './deviceTrackingService'
 import { userActivityService } from './userActivityService'
+import { sessionStore } from '@/lib/sessionStore'
 
 export interface AuthSession {
   session: Session | null
@@ -293,6 +294,16 @@ class AuthService {
   async unenrollMfa(factorId: string) {
     const { error } = await supabase.auth.mfa.unenroll({ factorId })
     if (error) throw error
+  }
+
+  async deactivateAccount(fullName: string): Promise<void> {
+    const { error } = await supabase.functions.invoke('deactivate-account', {
+      body: { fullName },
+    })
+    if (error) throw new Error(error.message || 'Failed to deactivate account')
+
+    sessionStore.clearAll()
+    await supabase.auth.signOut({ scope: 'global' })
   }
 }
 
