@@ -375,7 +375,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
           }}
         >
           <img
-            src="/branding/patterns/eagle-in-flight.png"
+            src="/branding/patterns/eagle-in-flight.webp"
             alt=""
             style={{ width: '90%', maxWidth: 300, objectFit: 'contain' }}
           />

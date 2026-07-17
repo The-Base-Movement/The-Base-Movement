@@ -388,7 +388,7 @@ export default function OrderSummary() {
                 }}
               >
                 <img
-                  src="/branding/patterns/eagle-in-flight.png"
+                  src="/branding/patterns/eagle-in-flight.webp"
                   alt=""
                   style={{ width: 320, height: 320, objectFit: 'contain' }}
                   decoding="async"

@@ -159,7 +159,7 @@ export default function StrategicPriorities() {
 
     setIsUploadingImage(true)
     try {
-      const url = await contentService.uploadImage(file, 'priorities')
+      const url = await contentService.uploadImage(file, 'strategic-focus')
       if (url) {
         setFormData((prev) => ({ ...prev, imageUrl: url }))
         toast.success('Priority image uploaded successfully.')

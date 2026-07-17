@@ -501,8 +501,8 @@ class ContentService {
     })
 
     // 4. Merge local-only assets with dynamic uploads
-    if (path === 'priorities') {
-      const localPriorities = await this.getLocalAssets('priorities')
+    if (path === 'strategic-focus') {
+      const localPriorities = await this.getLocalAssets('strategic-focus')
       return [...normalizedUrls, ...localPriorities]
     }
 
@@ -620,11 +620,11 @@ class ContentService {
         return [...(mediaManifest.branding || []), ...(mediaManifest.publicAssets || [])]
       case 'public-assets':
         return mediaManifest.publicAssets || []
-      case 'priorities':
+      case 'strategic-focus':
         return [
-          '/priorities/agro_processing_illustration.webp',
-          '/priorities/digital_economy_illustration.webp',
-          '/priorities/ghana_network_map.webp',
+          '/strategic-focus/agro_processing_illustration.webp',
+          '/strategic-focus/digital_economy_illustration.webp',
+          '/strategic-focus/ghana_network_map.webp',
         ]
       default:
         return []
@@ -902,7 +902,7 @@ class ContentService {
         { id: 'logos-favicons', label: 'Logos & Favicons' },
         { id: 'public-assets', label: 'Public Assets' },
         { id: 'party-officials', label: 'Party Officials' },
-        { id: 'priorities', label: 'Strategic Priorities' },
+        { id: 'strategic-focus', label: 'Strategic Focus' },
       ]
     }
 
@@ -911,8 +911,8 @@ class ContentService {
       label: item.label,
     }))
 
-    if (!foldersList.some((f) => f.id === 'priorities')) {
-      foldersList.push({ id: 'priorities', label: 'Strategic Priorities' })
+    if (!foldersList.some((f) => f.id === 'strategic-focus')) {
+      foldersList.push({ id: 'strategic-focus', label: 'Strategic Focus' })
     }
 
     return foldersList

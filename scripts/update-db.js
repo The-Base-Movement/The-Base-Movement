@@ -43,12 +43,14 @@ async function updateCampaign(title, imageUrl) {
 
 // Main execution function to coordinate patch requests for all target campaigns
 async function run() {
-  console.log('Updating legacy Unsplash images in the database with local priorities illustration paths...')
-  await updateCampaign('2026 Election Mobilization', '/priorities/ghana_network_map.png')
-  await updateCampaign('Digital Infrastructure Fund', '/priorities/digital_economy_illustration.png')
-  await updateCampaign('National Headquarters Renovation', '/priorities/agro_processing_illustration.png')
-  await updateCampaign('2025 Regional Youth Outreach', '/priorities/ghana_network_map.png')
+  console.log('Updating legacy Unsplash images in the database with local strategic focus illustration paths...')
+  await updateCampaign('2026 Election Mobilization', '/strategic-focus/ghana_network_map.webp')
+  await updateCampaign('Digital Infrastructure Fund', '/strategic-focus/digital_economy_illustration.webp')
+  await updateCampaign('National Headquarters Renovation', '/strategic-focus/agro_processing_illustration.webp')
+  await updateCampaign('2025 Regional Youth Outreach', '/strategic-focus/ghana_network_map.webp')
   console.log('Database updates finished.')
 }
 
 run().catch(console.error)
+
+
