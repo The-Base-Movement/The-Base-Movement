@@ -300,7 +300,7 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
     setIsDeletingMembers(false)
     setIsDeleteModalOpen(false)
     setSelectedIds(new Set())
-    toast.success(`${successCount} member${successCount !== 1 ? 's' : ''} moved to trash.`)
+    toast.success(`${successCount} member${successCount !== 1 ? 's' : ''} deleted.`)
     fetchMembers()
   }
 
