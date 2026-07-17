@@ -82,6 +82,3 @@ __pycache__/
 # ML service tests (kept locally)
 ml-service/tests/
 
-# Local review scratch files
-/tmp-*.sql
-/supabase/job-title-review-*.md
