@@ -8,10 +8,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import dotenv from 'dotenv'
 import { STATIC_ROUTES } from './public-routes.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const toAbsolute = (p) => path.resolve(__dirname, p)
+
+dotenv.config({ path: toAbsolute('../.env') })
+dotenv.config({ path: toAbsolute('../.env.local'), override: true })
 
 const routesToPrerender = STATIC_ROUTES.map((r) => r.path)
 
@@ -119,3 +123,4 @@ async function prerender() {
 }
 
 prerender()
+

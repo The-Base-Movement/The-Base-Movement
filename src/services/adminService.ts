@@ -1031,7 +1031,7 @@ class AdminService {
     memberId?: string | null
     campaignId?: string | null
   }): Promise<boolean> {
-    const campaignId = donationData.campaignId || (await this.getDefaultDonationCampaignId())
+    const campaignId = donationData.campaignId || null
 
     const { error } = await supabase.from('donations').insert({
       full_name: donationData.fullName,

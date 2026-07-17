@@ -41,7 +41,7 @@ export function PriorityModal({
     if (isOpen) {
       Promise.resolve().then(() => setIsLoadingLibrary(true))
       contentService
-        .getMediaFiles('priorities')
+        .getMediaFiles('strategic-focus')
         .then((urls) => setLibraryImages(urls))
         .catch((err) => console.error('Failed to load library images', err))
         .finally(() => {
@@ -604,7 +604,7 @@ export function PriorityModal({
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
-                        Uploading media to priorities archive...
+                        Uploading media to strategic focus archive...
                       </span>
                     </div>
                   ) : (
@@ -655,7 +655,7 @@ export function PriorityModal({
                           marginTop: 2,
                         }}
                       >
-                        Max size 5MB • priorities category
+                        Max size 5MB • strategic focus category
                       </span>
                     </label>
                   )}

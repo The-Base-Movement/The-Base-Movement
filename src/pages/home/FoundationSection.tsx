@@ -9,7 +9,7 @@ export function FoundationSection() {
     >
       {/* Eagle watermark */}
       <img
-        src="/branding/patterns/eagle-in-flight.png"
+        src="/branding/patterns/eagle-in-flight.webp"
         aria-hidden="true"
         style={{
           position: 'absolute',

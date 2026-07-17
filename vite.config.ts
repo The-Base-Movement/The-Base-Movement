@@ -44,7 +44,13 @@ export default defineConfig(({ mode }) => {
       emitVersionJson(),
       mode === 'production' &&
         ViteImageOptimizer({
-          exclude: ['**/flags/**'],
+          exclude: [
+            '**/flags/**',
+            '**/branding/**',
+            '**/priorities/**',
+            '**/avatars/**',
+            '**/noise.png',
+          ],
           png: { compressionLevel: 9, adaptiveFiltering: true },
           jpeg: { quality: 90, mozjpeg: true },
           jpg: { quality: 90, mozjpeg: true },

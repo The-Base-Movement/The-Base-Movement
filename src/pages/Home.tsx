@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useMemo, useRef, useState } from 'react'
 import {
   useBlogPosts,
   usePublicStats,
@@ -8,26 +8,39 @@ import {
 import { usePerformance } from '@/context/PerformanceContext'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
-import { HomeOfficers } from '@/components/HomeOfficers'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
 
 import { HeroSection, MobileHeroUpdatesTicker } from './home/HeroSection'
-import { StatsSection } from './home/StatsSection'
-import { RoadmapSection } from './home/RoadmapSection'
-import { NetworkStructureSection } from './home/NetworkStructureSection'
-import { FoundationSection } from './home/FoundationSection'
-import { LatestUpdatesSection } from './home/LatestUpdatesSection'
-import { PlatformsSection } from './home/PlatformsSection'
-import { PollsSection } from './home/PollsSection'
 import { WingDivider } from '@/components/ui/WingDivider'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const MILESTONE_COLORS = ['#CE1126', '#DAA520', '#181d19', '#006B3F']
 
-// Stable fallback so the stats-dependent GSAP effect doesn't retrigger each render before data loads.
+const HomeOfficers = lazy(() =>
+  import('@/components/HomeOfficers').then((module) => ({ default: module.HomeOfficers }))
+)
+const LatestUpdatesSection = lazy(() =>
+  import('./home/LatestUpdatesSection').then((module) => ({ default: module.LatestUpdatesSection }))
+)
+const NetworkStructureSection = lazy(() =>
+  import('./home/NetworkStructureSection').then((module) => ({
+    default: module.NetworkStructureSection,
+  }))
+)
+const PollsSection = lazy(() =>
+  import('./home/PollsSection').then((module) => ({ default: module.PollsSection }))
+)
+const FoundationSection = lazy(() =>
+  import('./home/FoundationSection').then((module) => ({ default: module.FoundationSection }))
+)
+const PlatformsSection = lazy(() =>
+  import('./home/PlatformsSection').then((module) => ({ default: module.PlatformsSection }))
+)
+const RoadmapSection = lazy(() =>
+  import('./home/RoadmapSection').then((module) => ({ default: module.RoadmapSection }))
+)
+const StatsSection = lazy(() =>
+  import('./home/StatsSection').then((module) => ({ default: module.StatsSection }))
+)
+
 const DEFAULT_STATS = {
   members: 0,
   chapters: 0,
@@ -116,55 +129,6 @@ export default function Home() {
     },
   }
 
-  useGSAP(
-    () => {
-      if (!statsGridRef.current) return
-      gsap.fromTo(
-        statsGridRef.current.children,
-        { opacity: 0, y: 30, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          ease: 'power2.out',
-          stagger: 0.08,
-        }
-      )
-    },
-    { scope: statsGridRef, dependencies: [stats] }
-  )
-
-  useGSAP(() => {
-    gsap.utils.toArray<HTMLElement>('[data-fade]').forEach((el) => {
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: 36 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.75,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-        }
-      )
-    })
-    gsap.utils.toArray<HTMLElement>('[data-fade-stagger]').forEach((container) => {
-      gsap.fromTo(
-        Array.from(container.children),
-        { opacity: 0, y: 32 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.65,
-          ease: 'power3.out',
-          stagger: 0.08,
-          scrollTrigger: { trigger: container, start: 'top 85%', once: true },
-        }
-      )
-    })
-  })
-
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
@@ -199,36 +163,52 @@ export default function Home() {
 
       <MobileHeroUpdatesTicker latestPosts={latestPosts} />
 
-      <StatsSection statsGridRef={statsGridRef} stats={stats} />
+      <Suspense fallback={null}>
+        <StatsSection statsGridRef={statsGridRef} stats={stats} />
+      </Suspense>
 
       <WingDivider />
 
-      <PlatformsSection />
+      <Suspense fallback={null}>
+        <PlatformsSection />
+      </Suspense>
 
       <WingDivider />
 
-      <FoundationSection />
+      <Suspense fallback={null}>
+        <FoundationSection />
+      </Suspense>
 
       <WingDivider />
 
-      <RoadmapSection roadmapItems={roadmapItems} />
+      <Suspense fallback={null}>
+        <RoadmapSection roadmapItems={roadmapItems} />
+      </Suspense>
 
       <WingDivider />
 
-      <NetworkStructureSection />
+      <Suspense fallback={null}>
+        <NetworkStructureSection />
+      </Suspense>
 
       <WingDivider />
 
-      <HomeOfficers />
+      <Suspense fallback={null}>
+        <HomeOfficers />
+      </Suspense>
 
       <WingDivider />
 
-      <LatestUpdatesSection latestPosts={latestPosts} />
+      <Suspense fallback={null}>
+        <LatestUpdatesSection latestPosts={latestPosts} />
+      </Suspense>
 
       {activePolls.length > 0 && (
         <>
           <WingDivider />
-          <PollsSection activePolls={activePolls} />
+          <Suspense fallback={null}>
+            <PollsSection activePolls={activePolls} />
+          </Suspense>
         </>
       )}
     </main>

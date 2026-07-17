@@ -49,7 +49,7 @@ const SCOPE_OPTIONS: RoleScopeType[] = ['national', 'region', 'constituency', 'p
 const ALL_PARENT_GROUPS: OrgParentGroup[] = [...ROLE_PARENT_GROUPS, 'Polling Stations']
 const LEVEL_FLOW = [
   { label: 'Board', detail: 'Governance and final approval' },
-  { label: 'National Level', detail: 'National ICT, Security / Intel and NCC' },
+  { label: 'National Level', detail: 'National ICT, Security / Intel, Diaspora Affairs and NCC' },
   { label: 'Regional Level', detail: 'RCC supervision across regions' },
   { label: 'Constituency Level', detail: 'CCC coordination and grassroots operations' },
   { label: 'Polling Stations', detail: 'Ground-level reporting and verification' },
@@ -527,6 +527,7 @@ function HierarchyMap({
   const board = byGroup.get('BOARD')
   const ict = byGroup.get('NATIONAL ICT')
   const security = byGroup.get('SECURITY / INTEL')
+  const diaspora = byGroup.get('DIASPORA AFFAIRS')
   const ncc = byGroup.get('NCC')
   const rcc = byGroup.get('RCC')
   const ccc = byGroup.get('CCC')
@@ -572,7 +573,7 @@ function HierarchyMap({
               Command Structure Map
             </p>
             <p style={{ margin: '3px 0 0', color: 'hsl(var(--on-surface-muted))', fontSize: 12 }}>
-              Board connects to NCC. National ICT and Security / Intel feed into NCC, then NCC flows
+              Board connects to NCC. National ICT, Security / Intel and Diaspora Affairs feed into
               down through RCC, CCC and polling stations.
             </p>
           </div>
@@ -657,6 +658,17 @@ function HierarchyMap({
               />
             ) : (
               <EmptyNode label="Security / Intel has no matching roles" />
+            )}
+            {diaspora ? (
+              <ParentGroupNode
+                group="DIASPORA AFFAIRS"
+                roles={diaspora.roles}
+                compact
+                viewMode={viewMode}
+                onSelect={onSelect}
+              />
+            ) : (
+              <EmptyNode label="Diaspora Affairs has no matching roles" />
             )}
           </div>
           {ncc ? (
