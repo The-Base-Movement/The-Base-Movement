@@ -116,11 +116,13 @@ export function useHelpdesk(departmentId: string) {
   }, [])
 
   const fetchHandlers = useCallback(async () => {
+    // Some dashboards (diaspora-affairs, ncc, rcc, ccc) have no helpdesk_departments
+    // row, so use maybeSingle — .single() 406s when the row is absent.
     const dept = await supabase
       .from('helpdesk_departments')
       .select('handler_roles')
       .eq('id', departmentId)
-      .single()
+      .maybeSingle()
     if (!dept.data?.handler_roles?.length) return
     const { data } = await supabase.from('users').select('id, full_name').order('full_name')
     setHandlers(data ?? [])
