@@ -138,7 +138,7 @@ export function EditModal({
               { key: 'region', label: 'Region', type: 'region-select' },
               { key: 'constituency', label: 'Constituency', type: 'constituency-select' },
               { key: 'country', label: 'Country', type: 'text' },
-              { key: 'chapter', label: 'Chapter', type: 'text' },
+              { key: 'chapter', label: 'Base Diaspora', type: 'text' },
               { key: 'city', label: 'City / Town', type: 'text' },
               { key: 'residentialAddress', label: 'Residential address', type: 'text' },
             ] as const
@@ -224,6 +224,7 @@ export function EditModal({
                   id={`input-edit-${field.key}`}
                   value={(form[field.key as keyof typeof form] as string) ?? ''}
                   onChange={(e) => onChange(field.key, e.target.value)}
+                  disabled={member.platform !== 'DIASPORA'}
                   style={{
                     width: '100%',
                     height: 42,
@@ -237,9 +238,10 @@ export function EditModal({
                     color: 'hsl(var(--on-surface))',
                     outline: 'none',
                     boxSizing: 'border-box',
+                    opacity: member.platform !== 'DIASPORA' ? 0.5 : 1,
                   }}
                 >
-                  <option value="">— select chapter —</option>
+                  <option value="">— select Base Diaspora —</option>
                   {(chapters ?? []).map((name) => (
                     <option key={name} value={name}>
                       {name}

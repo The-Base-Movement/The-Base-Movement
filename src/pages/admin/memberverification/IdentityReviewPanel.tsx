@@ -505,7 +505,7 @@ export function IdentityReviewPanel({
                 ]
               : [
                   {
-                    label: `Chapter assignment (${selectedMember.chapter || 'Not set'})`,
+                    label: `Base Diaspora assignment (${selectedMember.chapter || 'Not set'})`,
                     done: !!selectedMember.chapter,
                     required: false,
                   },
