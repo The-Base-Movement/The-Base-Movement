@@ -17,10 +17,11 @@ export function normalizePhoneNumber(input: string): string | null {
     return `+233${local9}`
   }
 
-  // Fallback for valid international / diaspora format (starts with '+')
+  // Fallback for valid international / diaspora format (starts with '+').
+  // Cap at 15 digits — E.164 max — so malformed over-long numbers are rejected.
   if (cleaned.startsWith('+')) {
     const plusDigits = cleaned.slice(1).replace(/\D/g, '')
-    if (plusDigits.length >= 7) {
+    if (plusDigits.length >= 7 && plusDigits.length <= 15) {
       return `+${plusDigits}`
     }
   }
