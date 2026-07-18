@@ -5,6 +5,15 @@ type BackfillRequest = {
   limit?: number
   dryRun?: boolean
   startAfterId?: string
+  ids?: string[]
+}
+
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+
+function usableEmail(input: unknown): string | null {
+  if (typeof input !== 'string') return null
+  const email = input.trim()
+  return EMAIL_RE.test(email) ? email : null
 }
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
@@ -56,17 +65,22 @@ Deno.serve(async (req) => {
     const limit = Math.min(Math.max(body.limit ?? 200, 1), 500)
     const dryRun = body.dryRun ?? true
     const startAfterId = body.startAfterId
+    const targetIds = Array.isArray(body.ids) ? body.ids.filter((v) => typeof v === 'string') : null
 
-    let query = supabase
-      .from('users')
-      .select('id, phone_number')
-      .not('phone_number', 'is', null)
-      .neq('phone_number', '')
-      .order('id', { ascending: true })
-      .limit(limit)
+    let query = supabase.from('users').select('id, phone_number, email')
 
-    if (startAfterId) {
-      query = query.gt('id', startAfterId)
+    if (targetIds && targetIds.length > 0) {
+      // Targeted mode: provision exactly these ids, no cursor paging.
+      query = query.in('id', targetIds.slice(0, 500))
+    } else {
+      // Scan mode: anyone reachable by phone OR email.
+      query = query
+        .or('phone_number.not.is.null,email.not.is.null')
+        .order('id', { ascending: true })
+        .limit(limit)
+      if (startAfterId) {
+        query = query.gt('id', startAfterId)
+      }
     }
 
     const { data: candidates, error: candidatesError } = await query
@@ -86,8 +100,10 @@ Deno.serve(async (req) => {
     let scanned = 0
     let alreadyLinked = 0
     let missingAuth = 0
-    let invalidPhone = 0
+    let noContact = 0
     let created = 0
+    let createdViaPhone = 0
+    let createdViaEmail = 0
     let createFailed = 0
     const failures: Array<{ id: string; reason: string }> = []
 
@@ -95,10 +111,11 @@ Deno.serve(async (req) => {
       scanned += 1
       const id = String(row.id)
       const normalizedPhone = normalizePhoneNumber(String(row.phone_number ?? ''))
+      const email = usableEmail(row.email)
 
-      if (!normalizedPhone) {
-        invalidPhone += 1
-        if (failures.length < 50) failures.push({ id, reason: 'invalid_phone' })
+      if (!normalizedPhone && !email) {
+        noContact += 1
+        if (failures.length < 50) failures.push({ id, reason: 'no_contact' })
         continue
       }
 
@@ -119,35 +136,62 @@ Deno.serve(async (req) => {
 
       if (dryRun) continue
 
-      const { error: createErr } = await supabase.auth.admin.createUser({
-        id,
-        phone: normalizedPhone,
-        phone_confirm: true,
-        password: randomPassword(24),
-      })
+      // Prefer phone; fall back to email if phone is absent or GoTrue rejects it.
+      let createErr: { message: string } | null = null
+      if (normalizedPhone) {
+        const res = await supabase.auth.admin.createUser({
+          id,
+          phone: normalizedPhone,
+          phone_confirm: true,
+          password: randomPassword(24),
+        })
+        if (!res.error) {
+          created += 1
+          createdViaPhone += 1
+          continue
+        }
+        createErr = res.error
+      }
 
-      if (createErr) {
-        createFailed += 1
-        if (failures.length < 50) failures.push({ id, reason: `create_error:${createErr.message}` })
-      } else {
-        created += 1
+      if (email) {
+        const res = await supabase.auth.admin.createUser({
+          id,
+          email,
+          email_confirm: true,
+          password: randomPassword(24),
+        })
+        if (!res.error) {
+          created += 1
+          createdViaEmail += 1
+          continue
+        }
+        createErr = res.error
+      }
+
+      createFailed += 1
+      if (failures.length < 50) {
+        failures.push({ id, reason: `create_error:${createErr?.message ?? 'unknown'}` })
       }
     }
 
-    const nextCursor = users.length > 0 ? String(users[users.length - 1].id) : null
+    const targeted = Boolean(targetIds && targetIds.length > 0)
+    const nextCursor = !targeted && users.length > 0 ? String(users[users.length - 1].id) : null
 
     return new Response(
       JSON.stringify({
         ok: true,
         dryRun,
+        mode: targeted ? 'targeted' : 'scan',
         limit,
         startAfterId: startAfterId ?? null,
         nextCursor,
         scanned,
         alreadyLinked,
         missingAuth,
-        invalidPhone,
+        noContact,
         created,
+        createdViaPhone,
+        createdViaEmail,
         createFailed,
         failures,
       }),
