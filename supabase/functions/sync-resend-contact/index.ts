@@ -1,12 +1,11 @@
 // @ts-nocheck
-// THE BASE: SENDGRID SINGLE-CONTACT SYNC
-// Upserts one member into the SendGrid marketing contacts list.
+// THE BASE: RESEND SINGLE-CONTACT SYNC
+// Upserts one member/subscriber into the Resend marketing contacts list.
 //
 // Required secret: RESEND_API_KEY
-// Optional secret: SENDGRID_LIST_ID  — if set, contact is added to a specific list
 //
 // Invocation: POST with JSON body:
-//   { email, first_name, last_name, reg_no, region, constituency, platform, status }
+//   { email, first_name, last_name, reg_no, region, constituency, platform, status, source }
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageMembers, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
@@ -90,7 +89,7 @@ Deno.serve(async (req: Request) => {
           },
           body: JSON.stringify(prop),
         })
-      } catch (e) {
+      } catch {
         // Safe to ignore if already exists or schema setup fails
       }
     }

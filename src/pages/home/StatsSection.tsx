@@ -17,6 +17,10 @@ interface StatsSectionProps {
 }
 
 export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
+  // Live quarter stamp. suppressHydrationWarning on the node keeps it quiet if a
+  // prerender was baked in a prior quarter — the client value wins.
+  const now = new Date()
+  const updated = `Updated · Q${Math.floor(now.getMonth() / 3) + 1} ${now.getFullYear()}`
   return (
     <section
       aria-labelledby="stats-heading"
@@ -30,8 +34,11 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
           >
             Movement at a glance
           </h2>
-          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-[.06em] mt-1.5 block">
-            Updated · Q2 2026
+          <span
+            suppressHydrationWarning
+            className="text-[10px] font-medium text-muted-foreground uppercase tracking-[.06em] mt-1.5 block"
+          >
+            {updated}
           </span>
         </div>
 

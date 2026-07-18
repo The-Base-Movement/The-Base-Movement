@@ -120,7 +120,7 @@ serve(async (req: Request) => {
       const nameParts = String(fullName ?? userRow.full_name ?? '')
         .trim()
         .split(/\s+/)
-      fetch(`${supabaseUrl}/functions/v1/sync-sendgrid-contact`, {
+      fetch(`${supabaseUrl}/functions/v1/sync-resend-contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${serviceKey}` },
         body: JSON.stringify({

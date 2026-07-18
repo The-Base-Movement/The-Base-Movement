@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
 
     // Capture the subscriber into Resend marketing contacts (fire-and-forget),
     // tagged source=newsletter so they're distinguishable from members.
-    fetch(`${supabaseUrl}/functions/v1/sync-sendgrid-contact`, {
+    fetch(`${supabaseUrl}/functions/v1/sync-resend-contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${serviceKey}` },
       body: JSON.stringify({ email: normalizedEmail, source: 'newsletter', status: 'Subscriber' }),
