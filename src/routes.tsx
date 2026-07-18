@@ -94,6 +94,7 @@ const AdminMLIntelligence = lazy(() => import('./pages/admin/MLIntelligence'))
 const AdminNewsletter = lazy(() => import('./pages/admin/Newsletter'))
 const AdminNewsletterAnalytics = lazy(() => import('./pages/admin/NewsletterAnalytics'))
 const AdminPasswordResets = lazy(() => import('./pages/admin/PasswordResets'))
+const AdminImportSync = lazy(() => import('./pages/admin/ImportSync'))
 const AdminWarRoomCommand = lazy(() => import('./pages/admin/WarRoomCommand'))
 const AdminGroundGameCommand = lazy(() => import('./pages/admin/GroundGameCommand'))
 const AdminDeployMission = lazy(() => import('./pages/admin/DeployMission'))
@@ -349,6 +350,7 @@ export const routes: RouteObject[] = [
               { path: '/admin/roles', element: <AdminRolesManager /> },
               { path: '/admin/notifications', element: <AdminNotifications /> },
               { path: '/admin/password-resets', element: <AdminPasswordResets /> },
+              { path: '/admin/import-sync', element: <AdminImportSync /> },
               { path: '/admin/departments', element: <DepartmentsIndex /> },
               { path: '/admin/departments/:deptId', element: <DepartmentDashboard /> },
               {
