@@ -381,6 +381,7 @@ export const getNavGroups = (
           },
           { to: '/admin/it-department/system', icon: 'shield', label: 'System' },
           { to: '/admin/password-resets', icon: 'lock_reset', label: 'Password Resets' },
+          { to: '/admin/import-sync', icon: 'sync', label: 'Import Sync' },
           { to: '/admin/it-department/licenses', icon: 'license', label: 'Licenses' },
           { to: '/admin/it-department/assets', icon: 'inventory_2', label: 'Assets' },
           { to: '/admin/it-department/hierarchy', icon: 'account_tree', label: 'Hierarchy' },

@@ -102,6 +102,25 @@ export interface PasswordResetRecord {
   created_at: string
 }
 
+export interface ImportAuditReport {
+  unlinked_total?: number
+  no_contact?: number
+  dup_contact_groups?: number
+  dup_name_groups_context?: number
+  dup_contact?: Array<{ by: string; key: string; count: number; regs: string[] }>
+}
+
+export interface ImportAuditRecord {
+  id: number
+  ran_at: string
+  source: string | null
+  provisioned: number
+  via_phone: number
+  via_email: number
+  failed: number
+  report: ImportAuditReport | null
+}
+
 // Re-export all types so consumers can import from either location
 export type {
   Member,
@@ -3407,6 +3426,16 @@ class AdminService {
       .limit(500)
     if (error) throw error
     return (data ?? []) as PasswordResetRecord[]
+  }
+
+  async getImportAudits(): Promise<ImportAuditRecord[]> {
+    const { data, error } = await supabase
+      .from('import_audit')
+      .select('id, ran_at, source, provisioned, via_phone, via_email, failed, report')
+      .order('ran_at', { ascending: false })
+      .limit(200)
+    if (error) throw error
+    return (data ?? []) as ImportAuditRecord[]
   }
 }
 
