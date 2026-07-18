@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase'
 import { createSignedStorageUrl } from '@/lib/storageObject'
 import { toast } from 'sonner'
 import { discordService } from '@/services/discordService'
+import { getDepartmentCatalogRow } from '@/lib/departmentCatalog'
 import type {
   HelpdeskDepartment,
   HelpdeskTicket,
@@ -112,18 +113,28 @@ export function useHelpdesk(departmentId: string) {
       .select('id, name, handler_roles, restricted_submitter_roles, icon, sort_order, active')
       .eq('active', true)
       .order('sort_order')
-    setDepartments(data ?? [])
-  }, [])
+    const rows = (data ?? []) as HelpdeskDepartment[]
+    // Virtual/command departments (diaspora-affairs, ncc, rcc, ccc, …) live in the
+    // department catalog, not the DB. Fall back to it so access control resolves.
+    if (departmentId && !rows.some((d) => d.id === departmentId)) {
+      const fallback = getDepartmentCatalogRow(departmentId)
+      if (fallback) rows.push(fallback as HelpdeskDepartment)
+    }
+    setDepartments(rows)
+  }, [departmentId])
 
   const fetchHandlers = useCallback(async () => {
     // Some dashboards (diaspora-affairs, ncc, rcc, ccc) have no helpdesk_departments
-    // row, so use maybeSingle — .single() 406s when the row is absent.
+    // row, so use maybeSingle — .single() 406s when the row is absent — then fall
+    // back to the department catalog for their handler roles.
     const dept = await supabase
       .from('helpdesk_departments')
       .select('handler_roles')
       .eq('id', departmentId)
       .maybeSingle()
-    if (!dept.data?.handler_roles?.length) return
+    const handlerRoles =
+      dept.data?.handler_roles ?? getDepartmentCatalogRow(departmentId)?.handler_roles
+    if (!handlerRoles?.length) return
     const { data } = await supabase.from('users').select('id, full_name').order('full_name')
     setHandlers(data ?? [])
   }, [departmentId])
