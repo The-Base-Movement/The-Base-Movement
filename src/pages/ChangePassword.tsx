@@ -3,6 +3,31 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
+import PasswordField, { PasswordMatchHint } from '@/components/PasswordField'
+import { matchTone } from '@/components/passwordMatch'
+
+const cpLabelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 11,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  color: 'hsl(var(--on-surface-muted))',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  marginBottom: 6,
+}
+
+const cpInputStyle: React.CSSProperties = {
+  width: '100%',
+  height: 46,
+  background: 'transparent',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-sm)',
+  paddingLeft: 16,
+  fontSize: 14,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  outline: 'none',
+  boxSizing: 'border-box',
+}
 
 function sanitiseAuthError(err: unknown, fallback: string): string {
   const msg = err instanceof Error ? err.message : ''
@@ -128,77 +153,28 @@ export default function ChangePassword() {
           onSubmit={handlePasswordChange}
           style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label
-              htmlFor="new-pass"
-              style={{
-                fontSize: 11,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface-muted))',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-              }}
-            >
-              New Permanent Password
-            </label>
-            <input
-              id="new-pass"
-              type="password"
-              autoComplete="new-password"
-              style={{
-                width: '100%',
-                height: 46,
-                background: 'transparent',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-sm)',
-                paddingLeft: 16,
-                fontSize: 14,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min. 6 characters"
-              required
-            />
-          </div>
+          <PasswordField
+            id="new-pass"
+            label="New Permanent Password"
+            value={password}
+            onChange={setPassword}
+            placeholder="Min. 6 characters"
+            labelStyle={cpLabelStyle}
+            inputStyle={cpInputStyle}
+          />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label
-              htmlFor="confirm-pass"
-              style={{
-                fontSize: 11,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface-muted))',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-              }}
-            >
-              Confirm Permanent Password
-            </label>
-            <input
-              id="confirm-pass"
-              type="password"
-              autoComplete="new-password"
-              style={{
-                width: '100%',
-                height: 46,
-                background: 'transparent',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 'var(--radius-sm)',
-                paddingLeft: 16,
-                fontSize: 14,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm password"
-              required
-            />
-          </div>
+          <PasswordField
+            id="confirm-pass"
+            label="Confirm Permanent Password"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            placeholder="Confirm password"
+            tone={matchTone(password, confirmPassword)}
+            labelStyle={cpLabelStyle}
+            inputStyle={cpInputStyle}
+          />
+
+          <PasswordMatchHint tone={matchTone(password, confirmPassword)} />
 
           <button
             type="submit"
