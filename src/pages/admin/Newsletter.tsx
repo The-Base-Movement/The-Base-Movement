@@ -217,7 +217,7 @@ export default function NewsletterPage() {
             fontFamily: "'Public Sans', sans-serif",
           }}
         >
-          Compose and send branded email newsletters to members and staff via SendGrid.
+          Compose and send branded email newsletters to members and staff via Resend.
         </p>
       </div>
 

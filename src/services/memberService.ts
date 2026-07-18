@@ -893,7 +893,9 @@ class MemberService {
     }))
   }
 
-  async syncSendgridBulk(): Promise<{ total: number; success: number; failed: number }> {
+  // Bulk-sync members to Resend marketing contacts. The edge function is still
+  // deployed under its legacy name 'sync-sendgrid-bulk' (it runs Resend internally).
+  async syncResendBulk(): Promise<{ total: number; success: number; failed: number }> {
     const { data, error } = await supabase.functions.invoke('sync-sendgrid-bulk')
     if (error) throw error
     return data as { total: number; success: number; failed: number }

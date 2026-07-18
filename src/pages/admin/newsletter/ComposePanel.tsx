@@ -251,7 +251,7 @@ export function ComposePanel({ isSending, onSend, onSchedule }: ComposePanelProp
               fontFamily: "'Public Sans', sans-serif",
             }}
           >
-            Sent via SendGrid · wrapped in branded template
+            Sent via Resend · wrapped in branded template
           </p>
         </div>
         <img

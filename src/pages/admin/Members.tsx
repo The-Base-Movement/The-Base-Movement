@@ -18,14 +18,14 @@ import { useMembersActions } from './members/useMembersActions'
 export default function MembersList() {
   const { lowBandwidthMode } = usePerformance()
   const [isImportingCSV, setIsImportingCSV] = useState(false)
-  const [isSyncingSendGrid, setIsSyncingSendGrid] = useState(false)
+  const [isSyncingContacts, setIsSyncingContacts] = useState(false)
   const [syncResult, setSyncResult] = useState<string | null>(null)
 
-  async function handleSyncSendGrid() {
-    setIsSyncingSendGrid(true)
+  async function handleSyncContacts() {
+    setIsSyncingContacts(true)
     setSyncResult(null)
     try {
-      const { total, success, failed } = await memberService.syncSendgridBulk()
+      const { total, success, failed } = await memberService.syncResendBulk()
       setSyncResult(
         `✓ ${total.toLocaleString()} contacts synced to Resend — ${success.toLocaleString()} ok${failed ? `, ${failed.toLocaleString()} failed` : ''}.`
       )
@@ -33,7 +33,7 @@ export default function MembersList() {
       const msg = e instanceof Error ? e.message : String(e)
       setSyncResult(`✗ Sync failed: ${msg}`)
     } finally {
-      setIsSyncingSendGrid(false)
+      setIsSyncingContacts(false)
     }
   }
 
@@ -108,12 +108,12 @@ export default function MembersList() {
     <div className="main">
       <MembersHeader
         isExporting={isExporting}
-        isSyncingSendGrid={isSyncingSendGrid}
+        isSyncingContacts={isSyncingContacts}
         membersCount={members.length}
         onExport={handleExport}
         onAddMember={() => setIsAdding(true)}
         onImportCSV={() => setIsImportingCSV(true)}
-        onSyncSendGrid={handleSyncSendGrid}
+        onSyncContacts={handleSyncContacts}
       />
 
       {syncResult && (
