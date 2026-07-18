@@ -2,22 +2,22 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 interface MembersHeaderProps {
   isExporting: boolean
-  isSyncingSendGrid: boolean
+  isSyncingContacts: boolean
   membersCount: number
   onExport: () => void
   onAddMember: () => void
   onImportCSV: () => void
-  onSyncSendGrid: () => void
+  onSyncContacts: () => void
 }
 
 export function MembersHeader({
   isExporting,
-  isSyncingSendGrid,
+  isSyncingContacts,
   membersCount,
   onExport,
   onAddMember,
   onImportCSV,
-  onSyncSendGrid,
+  onSyncContacts,
 }: MembersHeaderProps) {
   return (
     <AdminPageHeader
@@ -28,14 +28,14 @@ export function MembersHeader({
         <>
           <button
             className="btn btn-outline btn-sm"
-            onClick={onSyncSendGrid}
-            disabled={isSyncingSendGrid || membersCount === 0}
-            title="Sync all members to SendGrid mailing list"
+            onClick={onSyncContacts}
+            disabled={isSyncingContacts || membersCount === 0}
+            title="Sync all members to the Resend contacts list"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               sync
             </span>
-            {isSyncingSendGrid ? 'Syncing…' : 'Sync SendGrid'}
+            {isSyncingContacts ? 'Syncing…' : 'Sync Contacts'}
           </button>
           <button
             className="btn btn-outline btn-sm"

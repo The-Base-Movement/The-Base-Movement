@@ -467,7 +467,7 @@ class AdminService {
   /**
    * Admin-initiated password reset for a member. Generates a Supabase recovery
    * link via the admin-reset-password edge function (service role) and emails it
-   * to the member via SendGrid; the member clicks it and lands on
+   * to the member via Resend; the member clicks it and lands on
    * /reset-password to choose a new password. The action link is also returned
    * so the admin can copy/share it if email delivery fails.
    */
