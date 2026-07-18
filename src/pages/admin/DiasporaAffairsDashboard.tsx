@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { Helpdesk } from '@/components/admin/Helpdesk'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { Pagination } from '@/components/Pagination'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { adminService } from '@/services/adminService'
 
@@ -19,11 +20,14 @@ const QUICK_LINKS = [
   { to: '/admin/broadcasts', icon: 'campaign', label: 'Diaspora communications' },
   { to: '/admin/leadership', icon: 'groups_2', label: 'Diaspora leads' },
 ]
+const COUNTRIES_PAGE_SIZE = 20
 
 export default function DiasporaAffairsDashboard() {
   const { setCurrentLabel } = usePageLabel()
   const [chapters, setChapters] = useState<DiasporaChapter[]>([])
   const [loading, setLoading] = useState(true)
+  const [countrySearch, setCountrySearch] = useState('')
+  const [countryPage, setCountryPage] = useState(1)
 
   useEffect(() => {
     setCurrentLabel('Diaspora Affairs')
@@ -54,6 +58,17 @@ export default function DiasporaAffairsDashboard() {
       (left, right) => right.count - left.count || left.country.localeCompare(right.country)
     )
   }, [chapters])
+  const filteredCountryRows = useMemo(() => {
+    const q = countrySearch.trim().toLowerCase()
+    if (!q) return countryRows
+    return countryRows.filter((row) => row.country.toLowerCase().includes(q))
+  }, [countryRows, countrySearch])
+  const countryTotalPages = Math.max(1, Math.ceil(filteredCountryRows.length / COUNTRIES_PAGE_SIZE))
+  const safeCountryPage = Math.min(countryPage, countryTotalPages)
+  const pagedCountryRows = useMemo(() => {
+    const start = (safeCountryPage - 1) * COUNTRIES_PAGE_SIZE
+    return filteredCountryRows.slice(start, start + COUNTRIES_PAGE_SIZE)
+  }, [filteredCountryRows, safeCountryPage])
 
   return (
     <div className="main">
@@ -168,17 +183,53 @@ export default function DiasporaAffairsDashboard() {
             </p>
           </div>
         </div>
+        <div style={{ marginBottom: 12, maxWidth: 320, position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 9,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 16,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            search
+          </span>
+          <input
+            aria-label="Filter countries"
+            placeholder="Filter countries…"
+            value={countrySearch}
+            onChange={(e) => {
+              setCountryPage(1)
+              setCountrySearch(e.target.value)
+            }}
+            style={{
+              width: '100%',
+              height: 34,
+              padding: '0 12px 0 32px',
+              borderRadius: 'var(--radius-sm)',
+              border: '1px solid hsl(var(--border))',
+              background: 'hsl(var(--card))',
+              color: 'hsl(var(--on-surface))',
+              fontFamily: "'Public Sans', sans-serif",
+              fontSize: 12.5,
+              boxSizing: 'border-box',
+            }}
+          />
+        </div>
         {loading ? (
           <p style={{ margin: 0, fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
             Loading diaspora chapters...
           </p>
-        ) : countryRows.length === 0 ? (
+        ) : filteredCountryRows.length === 0 ? (
           <p style={{ margin: 0, fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
             No diaspora chapters found.
           </p>
         ) : (
           <div style={{ display: 'grid', gap: 8 }}>
-            {countryRows.map((row) => (
+            {pagedCountryRows.map((row) => (
               <div
                 key={row.country}
                 style={{
@@ -199,6 +250,13 @@ export default function DiasporaAffairsDashboard() {
             ))}
           </div>
         )}
+        <Pagination
+          currentPage={safeCountryPage}
+          totalPages={countryTotalPages}
+          onPageChange={setCountryPage}
+          totalItems={filteredCountryRows.length}
+          pageSize={COUNTRIES_PAGE_SIZE}
+        />
       </div>
 
       <div className="ph" style={{ marginBottom: 8 }}>

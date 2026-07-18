@@ -600,16 +600,7 @@ class MemberService {
   }
 
   async deleteMember(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('users')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('registration_number', id)
-
-    if (error) {
-      console.error('[DATABASE] Member soft-delete failed:', error)
-      return false
-    }
-    return true
+    return this.permanentlyDeleteMember(id)
   }
 
   async getTrashedMembers(): Promise<Member[]> {
@@ -657,10 +648,29 @@ class MemberService {
   }
 
   async permanentlyDeleteMember(id: string): Promise<boolean> {
-    const { error } = await supabase.from('users').delete().eq('registration_number', id)
+    const { data: member } = await supabase
+      .from('users')
+      .select('avatar_url')
+      .eq('registration_number', id)
+      .maybeSingle()
+
+    if (member?.avatar_url) {
+      const marker = '/avatars/'
+      const idx = member.avatar_url.indexOf(marker)
+      if (idx !== -1) {
+        const path = decodeURIComponent(member.avatar_url.slice(idx + marker.length).split('?')[0])
+        if (path) {
+          await supabase.storage.from('avatars').remove([path])
+        }
+      }
+    }
+
+    const { error } = await supabase.rpc('purge_member_completely', {
+      p_reg_no: id,
+    })
 
     if (error) {
-      console.error('[DATABASE] Member permanent deletion failed:', error)
+      console.error('[DATABASE] Member deletion failed:', error)
       return false
     }
     return true

@@ -718,7 +718,7 @@ class AdminService {
 
   async deleteMember(id: string): Promise<boolean> {
     const success = await memberService.deleteMember(id)
-    if (success) await this.logAction('SOFT_DELETE_MEMBER', `MEMBERS/${id}`, 'Warning')
+    if (success) await this.logAction('DELETE_MEMBER', `MEMBERS/${id}`, 'Warning')
     return success
   }
 
