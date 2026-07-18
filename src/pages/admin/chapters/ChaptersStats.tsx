@@ -92,7 +92,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                   itemStyle={{ color: 'hsl(var(--on-surface))' }}
                   formatter={(value: number, name: string) => [
                     name === 'memberCount' ? `${value} members` : `${value} chapters`,
-                    name === 'memberCount' ? 'Mobilization strength' : 'Chapter density',
+                    name === 'memberCount' ? 'Mobilization strength' : 'Diaspora density',
                   ]}
                   labelStyle={{
                     color: 'hsl(var(--accent))',

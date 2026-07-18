@@ -138,7 +138,7 @@ export default function ChaptersManagement() {
   return (
     <div className="main">
       <AdminPageHeader
-        title="Chapters"
+        title="Diaspora"
         icon="location_on"
         description="Oversee and manage regional chapters and local mobilization units."
         actions={

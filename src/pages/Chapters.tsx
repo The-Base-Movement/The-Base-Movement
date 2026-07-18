@@ -102,7 +102,7 @@ export default function Chapters() {
         region: 'National',
         constituency: 'To be assigned',
         vision_statement: chapterDescription,
-        experience_summary: 'Submitted via Chapter Request Hub',
+        experience_summary: 'Submitted via Diaspora Request Hub',
       })
       if (success) {
         setSubmissionSuccess(true)

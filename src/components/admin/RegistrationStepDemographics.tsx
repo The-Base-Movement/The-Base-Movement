@@ -455,10 +455,10 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
               Assigned chapter <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
             <input
-              aria-label="E.g. UK Chapter - London"
+              aria-label="E.g. Base Diaspora — UK"
               name="name-4d1480"
               id="input-4d1480"
-              placeholder="E.g. UK Chapter - London"
+              placeholder="E.g. Base Diaspora — UK"
               required
               value={formData.chapter}
               onChange={(e) => handleChange('chapter', e.target.value)}

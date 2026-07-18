@@ -239,7 +239,7 @@ export function MemberReadinessTable({
                 {[
                   'Member',
                   'Reg #',
-                  'Chapter',
+                  'Diaspora',
                   'Constituency',
                   'Polling station code',
                   'Status',

@@ -559,7 +559,7 @@ export default function OfficerDetail() {
     ? [
         { key: 'members', label: 'Registered members', value: stats.members },
         { key: 'regions', label: 'Regions', value: stats.regions },
-        { key: 'chapters', label: 'Chapters', value: stats.chapters },
+        { key: 'chapters', label: 'Diaspora', value: stats.chapters },
         { key: 'diaspora', label: 'Diaspora countries', value: stats.diaspora },
       ].filter((s) => s.value > 0)
     : []

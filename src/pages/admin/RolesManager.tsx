@@ -41,7 +41,7 @@ const PERMISSION_GROUPS: {
     ],
   },
   {
-    label: 'Chapters',
+    label: 'Diaspora',
     resource: 'CHAPTERS',
     items: [
       { action: 'MANAGE_CHAPTER', label: 'Create & manage chapters' },

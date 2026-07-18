@@ -134,7 +134,7 @@ export function ChapterDetailModal({
             >
               <div>
                 <label htmlFor="input-9869cd" style={labelStyle}>
-                  Chapter name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+                  Diaspora name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
                 <input
                   aria-label="e.g. Adabraka hub"

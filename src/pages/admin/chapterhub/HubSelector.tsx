@@ -26,7 +26,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
   return (
     <div className="main">
       <AdminPageHeader
-        title="Chapter Operations"
+        title="Diaspora Operations"
         icon="hub"
         description="Select a chapter to view its members, donations, and operational status."
       />

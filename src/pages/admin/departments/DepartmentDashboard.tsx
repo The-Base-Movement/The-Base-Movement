@@ -67,8 +67,8 @@ const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
   ],
   'diaspora-affairs': [
     { to: '/admin/diaspora-affairs', icon: 'dashboard', label: 'Diaspora Dashboard', color: GREEN },
-    { to: '/admin/chapters', icon: 'public', label: 'Diaspora Chapters', color: GREEN },
-    { to: '/admin/chapter-ops', icon: 'groups', label: 'Chapter Operations', color: GREEN },
+    { to: '/admin/chapters', icon: 'public', label: 'Diaspora', color: GREEN },
+    { to: '/admin/chapter-ops', icon: 'groups', label: 'Diaspora Operations', color: GREEN },
     { to: '/admin/members', icon: 'group', label: 'Diaspora Members', color: GOLD },
     { to: '/admin/broadcasts', icon: 'campaign', label: 'Diaspora Communications', color: GOLD },
     { to: '/admin/polls', icon: 'query_stats', label: 'Diaspora Research', color: RED },

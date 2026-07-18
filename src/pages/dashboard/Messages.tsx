@@ -14,7 +14,7 @@ function roleLabel(role: string): string {
 }
 
 function scopeLabel(conv: Conversation): string {
-  if (conv.scope_type === 'chapter') return `Chapter: ${conv.scope_value}`
+  if (conv.scope_type === 'chapter') return `Diaspora: ${conv.scope_value}`
   if (conv.scope_type === 'constituency') return `Constituency: ${conv.scope_value}`
   if (conv.scope_type === 'group_chapter') return `📢 ${conv.scope_value} Forum`
   if (conv.scope_type === 'group_constituency') return `📢 ${conv.scope_value} Forum`

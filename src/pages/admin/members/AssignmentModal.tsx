@@ -174,7 +174,7 @@ export function AssignmentModal({
                     transition: 'all 0.15s',
                   }}
                 >
-                  {type === 'chapter' ? 'Chapter Hub' : 'Constituency'}
+                  {type === 'chapter' ? 'Diaspora Hub' : 'Constituency'}
                 </button>
               ))}
             </div>

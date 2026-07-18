@@ -139,7 +139,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
-                {viewLeader.profession || 'Chapter Officer'}
+                {viewLeader.profession || 'Diaspora Officer'}
               </p>
               <span
                 className={`pill ${viewLeader.status === 'Active' || viewLeader.status === 'Approved' ? 'pill-ok' : 'pill-warn'}`}
@@ -156,7 +156,7 @@ export function LeaderProfileModal({ viewLeader, onClose }: LeaderProfileModalPr
                 label: 'Registration ID',
                 value: viewLeader.registration_number,
               },
-              { icon: 'apartment', label: 'Chapter', value: viewLeader.chapter_name },
+              { icon: 'apartment', label: 'Diaspora', value: viewLeader.chapter_name },
               { icon: 'phone', label: 'Phone', value: viewLeader.phone_number },
               {
                 icon: 'public',

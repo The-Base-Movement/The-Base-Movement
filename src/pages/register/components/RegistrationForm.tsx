@@ -595,7 +595,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       onChange={(e) => onInputChange('chapter', e.target.value)}
                       className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
                     >
-                      <option value="">Select Chapter</option>
+                      <option value="">Select Diaspora Community</option>
                       {(dbChapters || []).map((c) => (
                         <option key={c} value={c}>
                           {c}

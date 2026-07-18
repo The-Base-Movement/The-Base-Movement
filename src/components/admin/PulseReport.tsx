@@ -69,7 +69,7 @@ export function PulseReport() {
       icon: 'trending_up',
     },
     {
-      label: 'Active Chapters',
+      label: 'Active Diaspora Communities',
       value: pulse.activeChapters.toString(),
       change: 'Live',
       trend: 'neutral',
