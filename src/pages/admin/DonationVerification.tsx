@@ -870,25 +870,27 @@ export default function FinancialAudit() {
         className="donation-split"
         style={{ gridTemplateColumns: selectedDonation ? '1fr min(460px, 100%)' : '1fr' }}
       >
-        <DonationsTable
-          filteredDonations={pagedDonations}
-          selectedDonation={selectedDonation}
-          setSelectedDonation={setSelectedDonation}
-          setInternalNote={setInternalNote}
-          isLoading={isLoading}
-          statusFilter={statusFilter}
-        />
-        {!isLoading && filteredDonations.length > 0 && (
-          <div className="panel" style={{ marginTop: 12 }}>
-            <Pagination
-              currentPage={safePage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-              totalItems={filteredDonations.length}
-              pageSize={DONATIONS_PAGE_SIZE}
-            />
-          </div>
-        )}
+        <div style={{ minWidth: 0 }}>
+          <DonationsTable
+            filteredDonations={pagedDonations}
+            selectedDonation={selectedDonation}
+            setSelectedDonation={setSelectedDonation}
+            setInternalNote={setInternalNote}
+            isLoading={isLoading}
+            statusFilter={statusFilter}
+          />
+          {!isLoading && filteredDonations.length > 0 && (
+            <div className="panel" style={{ marginTop: 12 }}>
+              <Pagination
+                currentPage={safePage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredDonations.length}
+                pageSize={DONATIONS_PAGE_SIZE}
+              />
+            </div>
+          )}
+        </div>
 
         {selectedDonation && (
           <DonationDetailSidebar

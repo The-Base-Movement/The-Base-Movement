@@ -142,20 +142,10 @@ serve(async (req: Request) => {
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
-    // 3. Mark the OTP as used to prevent replay attacks
-    const { error: updateOtpError } = await supabaseAdmin
-      .from('password_reset_otps')
-      .update({ used: true })
-      .eq('id', otpRecord.id)
-
-    if (updateOtpError) {
-      throw new Error(`Failed to invalidate verification code: ${updateOtpError.message}`)
-    }
-
-    // 4. Resolve the auth user ID from public users table mapped by phone number
+    // 3. Resolve the member profile mapped by phone number
     const { data: user, error: userError } = await supabaseAdmin
       .from('users')
-      .select('id')
+      .select('id, email, full_name, registration_number')
       .eq('phone_number', normalizedPhone)
       .maybeSingle()
 
@@ -166,22 +156,61 @@ serve(async (req: Request) => {
       })
     }
 
-    // 5. Update user's password in auth.users
-    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(user.id, {
+    // 4. Update an existing account, or activate a legacy/imported profile on first reset.
+    let authUserId = user.id
+    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(authUserId, {
       password: newPassword,
       user_metadata: { must_change_password: false },
     })
 
     if (authError) {
-      throw new Error(`Auth layer reset failed: ${authError.message}`)
+      if (authError.status !== 404) {
+        throw new Error(`Auth layer reset failed: ${authError.message}`)
+      }
+
+      const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email: user.email || undefined,
+        phone: normalizedPhone,
+        password: newPassword,
+        email_confirm: !!user.email,
+        phone_confirm: true,
+        user_metadata: {
+          name: user.full_name,
+          reg_no: user.registration_number,
+          must_change_password: false,
+        },
+      })
+      if (createError || !created.user) {
+        throw new Error(
+          `Auth account activation failed: ${createError?.message || 'No user returned'}`
+        )
+      }
+
+      authUserId = created.user.id
+      const { error: linkError } = await supabaseAdmin
+        .from('users')
+        .update({ id: authUserId, must_change_password: false })
+        .eq('id', user.id)
+      if (linkError) {
+        await supabaseAdmin.auth.admin.deleteUser(authUserId)
+        throw new Error(`Profile linking failed: ${linkError.message}`)
+      }
     }
 
-    // 6. Update database profiles setting must_change_password to false
-    await supabaseAdmin.from('users').update({ must_change_password: false }).eq('id', user.id)
-    await supabaseAdmin
+    // 5. Consume the OTP only after the password reset has succeeded.
+    const { error: profileError } = await supabaseAdmin
+      .from('users')
+      .update({ must_change_password: false })
+      .eq('id', authUserId)
+    if (profileError) throw new Error(`Profile update failed: ${profileError.message}`)
+
+    const { error: updateOtpError } = await supabaseAdmin
       .from('password_reset_otps')
       .update({ used: true })
       .eq('phone', normalizedPhone)
+    if (updateOtpError) {
+      throw new Error(`Failed to invalidate verification code: ${updateOtpError.message}`)
+    }
     verifyThrottleStore.delete(throttleKey)
 
     return new Response(

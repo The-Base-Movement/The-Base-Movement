@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Swiper as SwiperInstance } from 'swiper'
 import { Pagination } from 'swiper/modules'
@@ -18,6 +18,7 @@ interface HeroSectionProps {
   lowBandwidthMode: boolean
 }
 
+const DEFAULT_HERO_BG = '/branding/hero-background-image.webp'
 function HeroUpdatesSlider({ latestPosts }: { latestPosts: BlogPost[] }) {
   const updates = latestPosts.slice(0, 3)
   const swiperRef = useRef<SwiperInstance | null>(null)
@@ -219,6 +220,9 @@ export function HeroSection({
   onMouseMove,
   lowBandwidthMode,
 }: HeroSectionProps) {
+  const [failedHeroBgUrl, setFailedHeroBgUrl] = useState<string | null>(null)
+  const resolvedHeroBgUrl = heroBgUrl && failedHeroBgUrl !== heroBgUrl ? heroBgUrl : DEFAULT_HERO_BG
+
   return (
     <section
       aria-labelledby="hero-heading"
@@ -229,15 +233,18 @@ export function HeroSection({
       {!lowBandwidthMode ? (
         <>
           <img
-            src={heroBgUrl || '/hero-bg.png'}
+            src={resolvedHeroBgUrl}
             alt=""
             aria-hidden="true"
             className="home-hero-bg absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
+            onError={() => {
+              if (heroBgUrl && resolvedHeroBgUrl !== DEFAULT_HERO_BG) setFailedHeroBgUrl(heroBgUrl)
+            }}
           />
           <div
             className="absolute inset-0 z-0 opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
             style={{
-              backgroundImage: `url('${heroBgUrl || '/hero-bg.png'}')`,
+              backgroundImage: `url('${resolvedHeroBgUrl}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               WebkitMaskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,

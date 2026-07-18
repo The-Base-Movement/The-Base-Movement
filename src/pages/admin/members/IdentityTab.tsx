@@ -143,7 +143,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                 ['Gender', member.gender || '—'],
                 ['Region', member.region || '—'],
                 ['Constituency', member.constituency || '—'],
-                ['Chapter', member.chapter || '—'],
+                ['Base Diaspora', member.chapter || '—'],
                 ['Country', member.country || 'Ghana'],
                 ['Joined', member.joined || '—'],
                 ['Type', member.type || 'Citizen'],

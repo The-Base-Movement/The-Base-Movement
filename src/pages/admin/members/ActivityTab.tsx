@@ -324,7 +324,7 @@ export function ActivityTab({ member, logs, donations }: ActivityTabProps) {
                 ['Mobile', member.phone || '—'],
                 ['Region', member.region || '—'],
                 ['Constituency', member.constituency || '—'],
-                ['Chapter', member.chapter || '—'],
+                ['Base Diaspora', member.chapter || '—'],
                 ['Joined', member.joined || '—'],
               ].map(([k, v]) => (
                 <Fragment key={k}>
