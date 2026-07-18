@@ -26,12 +26,13 @@ export const publicSiteService = {
       }
     }
 
+    // get_public_stats() returns keys: members, diaspora, chapters, regions, countries.
     return {
-      members: Number(data.members_total ?? 0),
-      chapters: Number(data.chapters_total ?? 0),
-      regions: Number(data.regions_total ?? 16),
-      diaspora: Number(data.diaspora_total ?? 0),
-      countries: Number(data.countries_total ?? 0),
+      members: Number(data.members ?? 0),
+      chapters: Number(data.chapters ?? 0),
+      regions: Number(data.regions ?? 16),
+      diaspora: Number(data.diaspora ?? 0),
+      countries: Number(data.countries ?? 0),
       membersDelta: String(data.members_delta ?? ''),
       chaptersDelta: String(data.chapters_delta ?? ''),
       diasporaDelta: String(data.diaspora_delta ?? ''),

@@ -6,6 +6,7 @@ interface Stats {
   chapters: number
   regions: number
   diaspora: number
+  countries: number
   membersDelta: string
   chaptersDelta: string
   diasporaDelta: string
@@ -55,9 +56,9 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
           />
           <StatCard
             accent="#DAA520"
-            eye="Base Diaspora"
-            value={stats.chapters}
-            label="Base Diaspora networks organised by country worldwide"
+            eye="Diaspora Countries"
+            value={stats.countries}
+            label="Countries worldwide with Base Diaspora members"
             sparkHeights={[5, 6, 7, 7, 9, 10, 10, 12, 13, 14, 16, 18]}
             delta={stats.chaptersDelta}
             deltaIcon="up"

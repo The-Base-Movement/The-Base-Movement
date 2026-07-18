@@ -121,12 +121,22 @@ Deno.serve(async (req: Request) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
-    const authz = await requireAuthorizedAdmin(req, supabase, canManageNewsletters)
-    if (!authz.ok) {
-      return new Response(await authz.response.text(), {
-        status: authz.response.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+
+    // Auth: the nightly pg_cron auto-sync sends the shared cron job token
+    // (BACKFILL_JOB_TOKEN — project-wide secret); the manual admin button sends an
+    // admin JWT. Accept either. This function runs verify_jwt=false (see
+    // supabase/config.toml) so the non-JWT cron token reaches us.
+    const cronToken = Deno.env.get('BACKFILL_JOB_TOKEN')
+    const bearer = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
+    const isCron = !!cronToken && bearer === cronToken
+    if (!isCron) {
+      const authz = await requireAuthorizedAdmin(req, supabase, canManageNewsletters)
+      if (!authz.ok) {
+        return new Response(await authz.response.text(), {
+          status: authz.response.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
     }
 
     // Ensure contact properties exist in Resend

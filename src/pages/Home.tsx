@@ -46,6 +46,7 @@ const DEFAULT_STATS = {
   chapters: 0,
   regions: 0,
   diaspora: 0,
+  countries: 0,
   membersDelta: '...',
   chaptersDelta: '...',
   diasporaDelta: '...',
