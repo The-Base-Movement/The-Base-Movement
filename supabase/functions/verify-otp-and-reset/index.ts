@@ -169,6 +169,7 @@ serve(async (req: Request) => {
       }
 
       const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
+        id: user.id,
         email: user.email || undefined,
         phone: normalizedPhone,
         password: newPassword,
@@ -187,14 +188,6 @@ serve(async (req: Request) => {
       }
 
       authUserId = created.user.id
-      const { error: linkError } = await supabaseAdmin
-        .from('users')
-        .update({ id: authUserId, must_change_password: false })
-        .eq('id', user.id)
-      if (linkError) {
-        await supabaseAdmin.auth.admin.deleteUser(authUserId)
-        throw new Error(`Profile linking failed: ${linkError.message}`)
-      }
     }
 
     // 5. Consume the OTP only after the password reset has succeeded.
