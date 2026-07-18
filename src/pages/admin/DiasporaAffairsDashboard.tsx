@@ -15,7 +15,7 @@ interface DiasporaChapter {
 
 const QUICK_LINKS = [
   { to: '/admin/chapters', icon: 'public', label: 'Manage diaspora chapters' },
-  { to: '/admin/chapter-ops', icon: 'hub', label: 'Chapter operations' },
+  { to: '/admin/chapter-ops', icon: 'hub', label: 'Diaspora operations' },
   { to: '/admin/members', icon: 'group', label: 'Diaspora members' },
   { to: '/admin/broadcasts', icon: 'campaign', label: 'Diaspora communications' },
   { to: '/admin/leadership', icon: 'groups_2', label: 'Diaspora leads' },
@@ -88,7 +88,7 @@ export default function DiasporaAffairsDashboard() {
 
       <div className="kpis" style={{ marginBottom: 24 }}>
         <TacticalKPI
-          label="Diaspora Chapters"
+          label="Diaspora Communities"
           value={loading ? '...' : chapters.length.toLocaleString()}
           variant="green"
           description="Non-Ghana chapter hubs"

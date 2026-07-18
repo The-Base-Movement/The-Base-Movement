@@ -535,7 +535,7 @@ export function MemberDetailPanel({
                       val: pollVotes.length || '—',
                       sub: 'Poll activity',
                     },
-                    { label: 'Chapter activity', val: '—', sub: 'Events attended YTD' },
+                    { label: 'Diaspora activity', val: '—', sub: 'Events attended YTD' },
                     {
                       label: 'Membership tier',
                       val: member.type || 'Citizen',

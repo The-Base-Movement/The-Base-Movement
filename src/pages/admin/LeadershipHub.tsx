@@ -312,7 +312,7 @@ export default function LeadershipHub() {
           trend={{ direction: 'up', value: 'Active' }}
         />
         <TacticalKPI
-          label="Active Chapters"
+          label="Active Diaspora Communities"
           value={new Set(applications.map((a: ChapterApplication) => a.proposed_chapter_name)).size}
           variant="green"
           description="Regional sectors"

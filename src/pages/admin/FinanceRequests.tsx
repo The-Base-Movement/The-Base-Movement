@@ -196,7 +196,7 @@ export default function FinanceRequests() {
     e.preventDefault()
     const parsed = parseFloat(amount)
     if (!chapter) {
-      toast.error(scope === 'region' ? 'Region is required' : 'Chapter is required')
+      toast.error(scope === 'region' ? 'Region is required' : 'Diaspora is required')
       return
     }
     if (isNaN(parsed) || parsed < 0.01) {
@@ -494,7 +494,7 @@ export default function FinanceRequests() {
                 }}
               >
                 <option value="region">Region</option>
-                <option value="chapter">Chapter</option>
+                <option value="chapter">Diaspora</option>
               </select>
             </div>
 
@@ -764,7 +764,7 @@ export default function FinanceRequests() {
                     {[
                       'Date',
                       'Type',
-                      'Region / Chapter',
+                      'Region / Diaspora',
                       'Amount',
                       'Status',
                       'Approved By',
@@ -866,7 +866,7 @@ export default function FinanceRequests() {
           const rows: { label: string; value: React.ReactNode }[] = [
             { label: 'Request Type', value: TYPE_LABELS[r.request_type] },
             { label: 'Category', value: r.category || '—' },
-            { label: 'Region / Chapter', value: r.chapter || '—' },
+            { label: 'Region / Diaspora', value: r.chapter || '—' },
             { label: 'Amount', value: fmtAmount(r.amount) },
             { label: 'Status', value: statusPill(r.status) },
             { label: 'Submitted', value: `${date} at ${time}` },

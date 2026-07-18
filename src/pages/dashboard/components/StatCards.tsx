@@ -142,7 +142,7 @@ export function StatCards({
   points: number
 }) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
-  const rankLabel = platform === 'DIASPORA' ? 'Chapter Rank' : 'Constituency Rank'
+  const rankLabel = platform === 'DIASPORA' ? 'Diaspora Rank' : 'Constituency Rank'
 
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768)

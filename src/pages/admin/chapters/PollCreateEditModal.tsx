@@ -267,7 +267,7 @@ export function PollCreateEditModal({
               type="text"
               value={pollTitle}
               onChange={(e) => onTitleChange(e.target.value)}
-              placeholder="e.g. Chapter Leadership Election 2025"
+              placeholder="e.g. Diaspora Leadership Election 2025"
               style={fieldStyle}
             />
           </div>

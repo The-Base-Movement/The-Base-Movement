@@ -702,7 +702,7 @@ export default function AdminMemberDetail() {
                 : 'No donations yet',
             },
             { label: 'Polls voted', val: pollVotes.length || '—', sub: 'Poll activity' },
-            { label: 'Chapter activity', val: eventsYtd || '—', sub: 'Events attended YTD' },
+            { label: 'Diaspora activity', val: eventsYtd || '—', sub: 'Events attended YTD' },
             {
               label: 'Membership tier',
               val: member.type || 'Citizen',

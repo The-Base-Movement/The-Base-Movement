@@ -180,7 +180,7 @@ export function SpendingLedgerTable({
                 background: 'hsl(var(--container-low))',
               }}
             >
-              {['Description', 'Category', 'Chapter', 'Amount', 'Date', ''].map((h, i) => (
+              {['Description', 'Category', 'Diaspora', 'Amount', 'Date', ''].map((h, i) => (
                 <th
                   key={i}
                   style={{

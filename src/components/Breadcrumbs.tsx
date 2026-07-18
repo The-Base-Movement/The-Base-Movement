@@ -24,7 +24,7 @@ const LABEL_OVERRIDES: Record<string, string> = {
   members: 'Members',
   store: 'Store',
   chapters: 'Diaspora',
-  'chapter-ops': 'Chapter Ops',
+  'chapter-ops': 'Diaspora Ops',
   settings: 'Settings',
   trash: 'Trash Vault',
   'media-library': 'Media Library',
@@ -82,7 +82,7 @@ const SKIP_SEGMENTS = new Set(['dashboard', 'admin'])
  * Strips dash hyphens, capitalizes words, and handles UUID detail codes.
  */
 function getLabel(value: string, pathname: string, post?: string): string {
-  if (value === 'chapters' && pathname.startsWith('/admin')) return 'Chapter Management'
+  if (value === 'chapters' && pathname.startsWith('/admin')) return 'Diaspora Management'
   if (LABEL_OVERRIDES[value]) return LABEL_OVERRIDES[value]
   if (/^[0-9a-f-]{8,}$/i.test(value) || !isNaN(Number(value))) return post || 'Details'
   return value

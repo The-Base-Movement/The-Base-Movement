@@ -135,7 +135,7 @@ export function AppointedLeadersTable({
             }}
           >
             <tr>
-              {['Officer', 'Chapter', 'Phone', 'Actions'].map((h) => (
+              {['Officer', 'Diaspora', 'Phone', 'Actions'].map((h) => (
                 <th
                   key={h}
                   style={{

@@ -103,7 +103,7 @@ export function QuickBroadcastComposer({
             <option value="ALL">National (All Members)</option>
             <option value="REGION">Regional Targeting</option>
             <option value="CONSTITUENCY">Constituency Targeting</option>
-            <option value="DIASPORA">Diaspora Chapters</option>
+            <option value="DIASPORA">Diaspora Communities</option>
           </select>
 
           {broadcast.target_type === 'REGION' && (
@@ -223,7 +223,7 @@ export function QuickBroadcastComposer({
                   color: 'hsl(var(--on-surface))',
                 }}
               >
-                <option value="ALL">All Diaspora Chapters</option>
+                <option value="ALL">All Diaspora Communities</option>
                 {diasporaChapters.map((c) => (
                   <option key={c.id} value={c.name}>
                     {c.name} ({c.country})

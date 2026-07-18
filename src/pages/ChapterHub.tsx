@@ -241,7 +241,7 @@ export default function ChapterHub() {
     setProcessingRequestId(null)
     if (ok) {
       setJoinRequests((prev) => prev.filter((r) => r.id !== requestId))
-      toast.success('Member approved and added to chapter.')
+      toast.success('Member approved and added to your diaspora community.')
     } else {
       toast.error('Failed to approve request.')
     }
@@ -303,7 +303,7 @@ export default function ChapterHub() {
         prev ? { ...prev, description: descDraft, local_focus: focusTags.join(', ') } : prev
       )
       queryClient.invalidateQueries({ queryKey: ['chapters'] })
-      toast.success('Chapter profile updated.')
+      toast.success('Diaspora profile updated.')
     } else {
       toast.error('Failed to save changes.')
     }

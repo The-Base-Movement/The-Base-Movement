@@ -197,7 +197,7 @@ export default function AdminDashboard() {
 
     try {
       // Aggregate real regional data
-      const headers = ['Region', 'Member Count', 'Chapters', 'Performance Status', 'Activity Level']
+      const headers = ['Region', 'Member Count', 'Diaspora', 'Performance Status', 'Activity Level']
       const rows = regionalStats.map((r) => [
         r.region,
         r.memberCount,

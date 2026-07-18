@@ -86,7 +86,7 @@ export default function MobilizationMetrics() {
       toast.error('No data available to export.')
       return
     }
-    const headers = ['Rank', 'Chapter', 'Region', 'Members', 'Badges', 'Impact Points']
+    const headers = ['Rank', 'Diaspora', 'Region', 'Members', 'Badges', 'Impact Points']
     const csvContent = [
       headers.join(','),
       ...leaderboard.map((entry, index) =>
@@ -209,7 +209,7 @@ export default function MobilizationMetrics() {
           trend={{ direction: 'up', value: 'Live' }}
         />
         <TacticalKPI
-          label="Active Chapters"
+          label="Active Diaspora Communities"
           value={pulse?.activeChapters || 0}
           description="Verified chapters"
         />

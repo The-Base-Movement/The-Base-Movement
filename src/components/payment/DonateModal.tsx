@@ -187,7 +187,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
   }
 
   const contextLabel = context
-    ? `${context.type === 'chapter' ? 'Chapter' : 'Constituency'}: ${context.name}`
+    ? `${context.type === 'chapter' ? 'Diaspora' : 'Constituency'}: ${context.name}`
     : 'The Base Movement'
   const selectedCountry = countries.find((country) => country.name === form.country)
 

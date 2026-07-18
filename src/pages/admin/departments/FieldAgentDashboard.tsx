@@ -90,7 +90,7 @@ export default function FieldAgentDashboard() {
       label: 'Member Directory',
       color: 'hsl(var(--on-surface))',
     },
-    { to: '/admin/chapters', icon: 'groups', label: 'Chapters', color: 'hsl(var(--primary))' },
+    { to: '/admin/chapters', icon: 'groups', label: 'Diaspora', color: 'hsl(var(--primary))' },
   ]
 
   return (

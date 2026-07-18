@@ -231,7 +231,7 @@ export default function FinanceDashboard() {
                   boxSizing: 'border-box',
                 }}
               >
-                <option value="">All Chapters</option>
+                <option value="">All Diaspora Communities</option>
                 {chapters.map((c) => (
                   <option key={c} value={c}>
                     {c}
@@ -887,7 +887,7 @@ export default function FinanceDashboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                    {['Description', 'Type', 'Date', 'Chapter / Source', 'Amount', 'Status'].map(
+                    {['Description', 'Type', 'Date', 'Diaspora / Source', 'Amount', 'Status'].map(
                       (h) => (
                         <th
                           key={h}

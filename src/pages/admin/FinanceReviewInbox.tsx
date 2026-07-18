@@ -249,7 +249,7 @@ export default function FinanceReviewInbox() {
     const headers = [
       'Requester',
       'Type',
-      'Region / Chapter',
+      'Region / Diaspora',
       'Amount',
       'Status',
       'Resolved At Tier',
@@ -764,7 +764,7 @@ export default function FinanceReviewInbox() {
                         {[
                           'Requester',
                           'Type',
-                          'Region / Chapter',
+                          'Region / Diaspora',
                           'Amount',
                           'Status',
                           'Resolved At Tier',
@@ -946,7 +946,7 @@ export default function FinanceReviewInbox() {
             },
             { label: 'Request Type', value: TYPE_LABELS[r.request_type] },
             { label: 'Category', value: r.category || '—' },
-            { label: 'Region / Chapter', value: r.chapter || '—' },
+            { label: 'Region / Diaspora', value: r.chapter || '—' },
             { label: 'Amount', value: fmtAmount(r.amount) },
             { label: 'Status', value: statusPill(r.status) },
             { label: 'Resolved At Tier', value: `Tier ${r.approval_tier}` },
