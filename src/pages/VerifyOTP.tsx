@@ -4,6 +4,30 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
+import PasswordField, { PasswordMatchHint } from '@/components/PasswordField'
+import { matchTone } from '@/components/passwordMatch'
+
+const otpLabelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 10.5,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  color: 'hsl(var(--on-surface-muted))',
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  marginBottom: 6,
+}
+
+const otpInputStyle: React.CSSProperties = {
+  width: '100%',
+  height: 46,
+  background: 'transparent',
+  border: '1px solid hsl(var(--border))',
+  padding: '0 16px',
+  fontSize: 14,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  outline: 'none',
+  boxSizing: 'border-box',
+}
 
 function sanitiseAuthError(err: unknown, fallback: string): string {
   const msg = err instanceof Error ? err.message : ''
@@ -182,45 +206,28 @@ export default function VerifyOTP() {
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="newPassword"
-                  className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                >
-                  New Password
-                </label>
-                <input
-                  name="newPassword"
-                  id="newPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
+              <PasswordField
+                id="newPassword"
+                label="New Password"
+                value={newPassword}
+                onChange={setNewPassword}
+                placeholder="••••••••"
+                labelStyle={otpLabelStyle}
+                inputStyle={otpInputStyle}
+              />
 
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="confirmPassword"
-                  className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                >
-                  Confirm New Password
-                </label>
-                <input
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
+              <PasswordField
+                id="confirmPassword"
+                label="Confirm New Password"
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                placeholder="••••••••"
+                tone={matchTone(newPassword, confirmPassword)}
+                labelStyle={otpLabelStyle}
+                inputStyle={otpInputStyle}
+              />
+
+              <PasswordMatchHint tone={matchTone(newPassword, confirmPassword)} />
 
               <button
                 type="submit"

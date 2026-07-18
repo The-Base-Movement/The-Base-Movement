@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
+import PasswordField, { PasswordMatchHint } from '@/components/PasswordField'
+import { matchTone } from '@/components/passwordMatch'
 
 /**
  * Supabase Auth returns a raw character-set dump when the password policy
@@ -64,7 +66,6 @@ export default function ResetPassword() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [showPass, setShowPass] = useState(false)
   // MFA step-up: accounts with TOTP enabled must reach AAL2 before the password
   // can be changed, so we prompt for the authenticator code first.
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null)
@@ -529,63 +530,26 @@ export default function ResetPassword() {
                   onSubmit={handleReset}
                   style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
                 >
-                  <div>
-                    <label htmlFor="new-pass" style={labelStyle}>
-                      New Password
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        id="new-pass"
-                        type={showPass ? 'text' : 'password'}
-                        autoComplete="new-password"
-                        style={{ ...inputStyle, paddingRight: 44 }}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Min. 6 characters"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPass((v) => !v)}
-                        style={{
-                          position: 'absolute',
-                          right: 12,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: 'hsl(var(--on-surface-muted))',
-                          padding: 0,
-                          display: 'flex',
-                        }}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-                          {showPass ? 'visibility_off' : 'visibility'}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="confirm-pass" style={labelStyle}>
-                      Confirm New Password
-                    </label>
-                    <input
-                      id="confirm-pass"
-                      type="password"
-                      autoComplete="new-password"
-                      style={inputStyle}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repeat password"
-                      required
-                    />
-                  </div>
-                  {password && confirmPassword && password !== confirmPassword && (
-                    <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--destructive))' }}>
-                      Passwords do not match.
-                    </p>
-                  )}
+                  <PasswordField
+                    id="new-pass"
+                    label="New Password"
+                    value={password}
+                    onChange={setPassword}
+                    placeholder="Min. 6 characters"
+                    labelStyle={labelStyle}
+                    inputStyle={inputStyle}
+                  />
+                  <PasswordField
+                    id="confirm-pass"
+                    label="Confirm New Password"
+                    value={confirmPassword}
+                    onChange={setConfirmPassword}
+                    placeholder="Repeat password"
+                    tone={matchTone(password, confirmPassword)}
+                    labelStyle={labelStyle}
+                    inputStyle={inputStyle}
+                  />
+                  <PasswordMatchHint tone={matchTone(password, confirmPassword)} />
                   <button
                     type="submit"
                     disabled={isLoading || !password || !confirmPassword}
