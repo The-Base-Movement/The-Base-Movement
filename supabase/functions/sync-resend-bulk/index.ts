@@ -1,7 +1,7 @@
 // @ts-nocheck
-// THE BASE: SENDGRID BULK CONTACT SYNC (MIGRATED TO RESEND)
-// Fetches all members from the database and upserts them into
-// the Resend global contacts list.
+// THE BASE: RESEND BULK CONTACT SYNC
+// Fetches all members (+ active newsletter subscribers) from the database and
+// upserts them into the Resend global contacts list.
 //
 // Required secrets: RESEND_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 //
@@ -30,7 +30,7 @@ function splitName(full: string | null): { first_name: string; last_name: string
   }
 }
 
-async function syncResendContactsInBulk(contacts: any[], resendApiKey: string) {
+async function syncResendContactsInBulk(contacts: Record<string, unknown>[], resendApiKey: string) {
   const CONCURRENCY_LIMIT = 8
   let index = 0
   const results = { success: 0, failed: 0 }
@@ -78,7 +78,7 @@ async function syncResendContactsInBulk(contacts: any[], resendApiKey: string) {
         } else {
           results.failed++
         }
-      } catch (err) {
+      } catch {
         results.failed++
       }
     }
@@ -148,7 +148,7 @@ Deno.serve(async (req: Request) => {
           },
           body: JSON.stringify(prop),
         })
-      } catch (e) {
+      } catch {
         // Safe to ignore if already exists or schema setup fails
       }
     }

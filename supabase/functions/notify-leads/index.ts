@@ -174,7 +174,7 @@ Deno.serve(async (req: Request) => {
       // @ts-expect-error: Deno global
       const serviceKey: string = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
-      fetch(`${supabaseUrl}/functions/v1/sync-sendgrid-contact`, {
+      fetch(`${supabaseUrl}/functions/v1/sync-resend-contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,8 +182,8 @@ Deno.serve(async (req: Request) => {
         },
         body: JSON.stringify(contactPayload),
       })
-        .then((r) => console.warn('[SENDGRID-SYNC] contact sync dispatched, status', r.status))
-        .catch((e) => console.error('[SENDGRID-SYNC] dispatch error', e))
+        .then((r) => console.warn('[RESEND-SYNC] contact sync dispatched, status', r.status))
+        .catch((e) => console.error('[RESEND-SYNC] dispatch error', e))
     }
 
     // 1. Chapter Lead SMS notification (Diaspora)
