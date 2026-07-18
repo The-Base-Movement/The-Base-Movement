@@ -66,7 +66,7 @@ export function AdminGate({ children }: AdminGateProps) {
         justifyContent: 'center',
         backgroundColor: '#0a0d0b',
         backgroundImage:
-          "linear-gradient(rgba(10, 13, 11, 0.78), rgba(10, 13, 11, 0.88)), url('/branding/restricted-access-area-bg.png')",
+          "linear-gradient(rgba(10, 13, 11, 0.78), rgba(10, 13, 11, 0.88)), url('/branding/restricted-access-area-bg.webp')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         fontFamily: "'Public Sans', sans-serif",

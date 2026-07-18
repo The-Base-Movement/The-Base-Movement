@@ -321,7 +321,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundImage:
-                      "linear-gradient(hsl(var(--background) / 0.76), hsl(var(--background) / 0.86)), url('/branding/restricted-access-area-bg.png')",
+                      "linear-gradient(hsl(var(--background) / 0.76), hsl(var(--background) / 0.86)), url('/branding/restricted-access-area-bg.webp')",
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     borderRadius: 'var(--radius-lg)',
