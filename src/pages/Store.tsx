@@ -17,6 +17,7 @@ import { CategoryFilter } from './store/CategoryFilter'
 import { ProductGrid } from './store/ProductGrid'
 import { Pagination } from '@/components/Pagination'
 import { OrderStepper } from './store/OrderStepper'
+import { EmptyState } from '@/components/states'
 
 const categories = ['All', 'Apparel', 'Accessories', 'Books', 'Print']
 
@@ -77,6 +78,8 @@ export default function Store() {
   const filteredProducts = products.filter(
     (p) => activeCategory === 'All' || p.category === activeCategory
   )
+  // No real products yet → show a branded "launching soon" state, not an empty grid.
+  const storeEmpty = !loading && products.length === 0
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
@@ -212,7 +215,7 @@ export default function Store() {
       <div className="page-container pt-8">
         <Breadcrumbs />
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+        <div className={`grid grid-cols-1 gap-8 ${storeEmpty ? '' : 'lg:grid-cols-[1fr_360px]'}`}>
           <section>
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
@@ -264,63 +267,81 @@ export default function Store() {
               </Link>
             </div>
 
-            <CategoryFilter
-              categories={categories}
-              activeCategory={activeCategory}
-              filteredCount={filteredProducts.length}
-              onSelect={(cat) => {
-                setActiveCategory(cat)
-                setCurrentPage(1)
-              }}
-            />
+            {storeEmpty ? (
+              <EmptyState
+                icon="storefront"
+                title="Our store is launching soon"
+                body="We're preparing official movement gear — 100% of proceeds go to youth jobs programs. Check back shortly, or join the movement to be first to know."
+                bordered
+                action={
+                  <Link to="/register" className="btn btn-primary btn-sm">
+                    Join the movement
+                  </Link>
+                }
+              />
+            ) : (
+              <>
+                <CategoryFilter
+                  categories={categories}
+                  activeCategory={activeCategory}
+                  filteredCount={filteredProducts.length}
+                  onSelect={(cat) => {
+                    setActiveCategory(cat)
+                    setCurrentPage(1)
+                  }}
+                />
 
-            <ProductGrid loading={loading} products={paginatedProducts} onShare={handleShare} />
+                <ProductGrid loading={loading} products={paginatedProducts} onShare={handleShare} />
 
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </>
+            )}
           </section>
 
-          <aside className="relative hidden lg:block">
-            <div
-              className="lg:sticky lg:top-8 border border-border rounded-[6px] overflow-hidden flex flex-col"
-              style={{ background: 'hsl(var(--card))' }}
-            >
-              <h3 className="font-meta font-medium text-[16px] px-[18px] py-[18px] border-b border-border flex items-center justify-between m-0">
-                Your cart
-                <span className="bg-primary text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
-                  {cartCount}
-                </span>
-              </h3>
-              <div className="px-[18px] max-h-[320px] overflow-y-auto">{renderCartItems()}</div>
+          {!storeEmpty && (
+            <aside className="relative hidden lg:block">
               <div
-                className="p-[18px] border-t border-border"
+                className="lg:sticky lg:top-8 border border-border rounded-[6px] overflow-hidden flex flex-col"
                 style={{ background: 'hsl(var(--card))' }}
               >
-                {renderCartSummary()}
-              </div>
-              <div className="p-[18px] pt-3.5 pb-4">
-                <Link to={checkoutPath} className="btn btn-accent w-full" style={{ height: 56 }}>
-                  Checkout securely →
-                </Link>
-                <div className="flex gap-1.5 justify-center mt-3 opacity-40">
-                  {['Mobile Money', 'Bank Card', 'Wallets', 'GhQR'].map((m) => (
-                    <span
-                      key={m}
-                      className="text-[9px] font-semibold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"
-                    >
-                      {m}
-                    </span>
-                  ))}
+                <h3 className="font-meta font-medium text-[16px] px-[18px] py-[18px] border-b border-border flex items-center justify-between m-0">
+                  Your cart
+                  <span className="bg-primary text-white px-2 py-0.5 rounded-full text-[10px] font-medium">
+                    {cartCount}
+                  </span>
+                </h3>
+                <div className="px-[18px] max-h-[320px] overflow-y-auto">{renderCartItems()}</div>
+                <div
+                  className="p-[18px] border-t border-border"
+                  style={{ background: 'hsl(var(--card))' }}
+                >
+                  {renderCartSummary()}
+                </div>
+                <div className="p-[18px] pt-3.5 pb-4">
+                  <Link to={checkoutPath} className="btn btn-accent w-full" style={{ height: 56 }}>
+                    Checkout securely →
+                  </Link>
+                  <div className="flex gap-1.5 justify-center mt-3 opacity-40">
+                    {['Mobile Money', 'Bank Card', 'Wallets', 'GhQR'].map((m) => (
+                      <span
+                        key={m}
+                        className="text-[9px] font-semibold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]"
+                      >
+                        {m}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </aside>
+            </aside>
+          )}
         </div>
 
-        <OrderStepper />
+        {!storeEmpty && <OrderStepper />}
       </div>
 
       <ShareModal
