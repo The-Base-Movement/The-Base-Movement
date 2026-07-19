@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import type { Poll, PollStats } from '@/types/admin'
 import { userActivityService } from '@/services/userActivityService'
 import { discordService } from '@/services/discordService'
+import { trackMetric } from '@/lib/sentry'
 
 class PollService {
   private static instance: PollService
@@ -167,6 +168,7 @@ class PollService {
         poll_id: pollId,
         option_id: optionId,
       })
+      trackMetric((m) => m.count('poll_vote', 1))
       return true
     } catch (err) {
       console.error('[DATABASE] Vote submission failed:', err)

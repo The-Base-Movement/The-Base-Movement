@@ -4,6 +4,7 @@ import { getCroppedImg } from '@/lib/imageUtils'
 import { adminService } from '@/services/adminService'
 import { discordService } from '@/services/discordService'
 import { sessionStore } from '@/lib/sessionStore'
+import { trackMetric } from '@/lib/sentry'
 import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
 
@@ -220,6 +221,8 @@ export const registrationService = {
       platform === 'GHANA' ? formData.region || '' : formData.country || '',
       regNo
     )
+
+    trackMetric((m) => m.count('member_registered', 1, { attributes: { platform } }))
 
     // 4. Store session details in sessionStorage (tab-scoped, not persisted cross-session)
     sessionStore.setItem('isLoggedIn', 'true')
