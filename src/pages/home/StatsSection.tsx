@@ -1,4 +1,5 @@
-import type { RefObject } from 'react'
+import { memo, useEffect, type RefObject } from 'react'
+import { gsap } from 'gsap'
 import { StatCard } from './StatCard'
 
 interface Stats {
@@ -17,11 +18,57 @@ interface StatsSectionProps {
   stats: Stats
 }
 
-export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
+function StatsSectionInner({ statsGridRef, stats }: StatsSectionProps) {
   // Live quarter stamp. suppressHydrationWarning on the node keeps it quiet if a
   // prerender was baked in a prior quarter — the client value wins.
   const now = new Date()
   const updated = `Updated · Q${Math.floor(now.getMonth() / 3) + 1} ${now.getFullYear()}`
+
+  // GSAP count-up: numbers tick from 0 to their value when the grid scrolls into
+  // view. SSR renders the real values (SEO/no-JS); this only runs on the client.
+  useEffect(() => {
+    const grid = statsGridRef.current
+    if (!grid) return
+    const spans = Array.from(grid.querySelectorAll<HTMLElement>('[data-countup]'))
+    if (!spans.length) return
+    // Wait for real data — don't animate the 0 placeholder before the RPC resolves.
+    if (spans.every((s) => (Number(s.dataset.countup) || 0) === 0)) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    // Park at 0 on the client (the section is usually still below the fold).
+    spans.forEach((s) => (s.textContent = '0'))
+
+    const tweens: gsap.core.Tween[] = []
+    let started = false
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (started || !entries.some((e) => e.isIntersecting)) return
+        started = true
+        spans.forEach((span) => {
+          const target = Number(span.dataset.countup) || 0
+          const obj = { v: 0 }
+          tweens.push(
+            gsap.to(obj, {
+              v: target,
+              duration: 1.4,
+              ease: 'power2.out',
+              onUpdate: () => {
+                span.textContent = Math.round(obj.v).toLocaleString()
+              },
+            })
+          )
+        })
+        io.disconnect()
+      },
+      { threshold: 0.35 }
+    )
+    io.observe(grid)
+    return () => {
+      io.disconnect()
+      tweens.forEach((t) => t.kill())
+    }
+  }, [statsGridRef, stats])
+
   return (
     <section
       aria-labelledby="stats-heading"
@@ -86,3 +133,7 @@ export function StatsSection({ statsGridRef, stats }: StatsSectionProps) {
     </section>
   )
 }
+
+// Memoised so Home's frequent re-renders (mouse-tracking state) don't reset the
+// imperative count-up mid-animation.
+export const StatsSection = memo(StatsSectionInner)

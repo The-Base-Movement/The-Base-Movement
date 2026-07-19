@@ -93,7 +93,7 @@ export function StatCard({
           fontVariantNumeric: 'tabular-nums',
         }}
       >
-        <span>{value.toLocaleString()}</span>
+        <span data-countup={value}>{value.toLocaleString()}</span>
         {suffix && (
           <small
             style={{
