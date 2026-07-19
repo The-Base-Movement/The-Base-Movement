@@ -56,7 +56,7 @@ export function StrategicPriorities({
         </p>
       </div>
 
-      <div className="campaign-grid">
+      <div className="campaign-grid" data-fade-stagger>
         {loading
           ? Array.from({ length: pageSize }).map((_, i) => (
               <div

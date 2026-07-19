@@ -48,7 +48,7 @@ export function VictoriesSection({ pastCampaigns }: VictoriesSectionProps) {
         </p>
       </div>
 
-      <div className="stat-grid">
+      <div className="stat-grid" data-fade-stagger>
         {pastCampaigns.map((c) => (
           <div
             key={c.id}
