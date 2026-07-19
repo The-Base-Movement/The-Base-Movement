@@ -113,10 +113,15 @@ export default function Home() {
 
   const organizationSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'PoliticalParty',
     name: 'The Base Movement',
+    // Brand variants people actually search (from GSC) so Google maps these
+    // navigational queries to this entity. Only names that are ours to claim.
+    alternateName: ['The Base Movement Ghana', 'Base Movement Ghana', 'TBM'],
     url: 'https://www.thebasemovement.org.gh',
     logo: settings.logo_url,
+    slogan: 'Ghana First, Jobs for the Youth!',
+    areaServed: ['Ghana', 'Diaspora'],
     sameAs: [
       'https://www.facebook.com/profile.php?id=61579415816496',
       'https://www.instagram.com/thebasemovementgh',
@@ -152,7 +157,11 @@ export default function Home() {
 
   return (
     <main className="bg-background font-body-md">
-      <SEO title="Ghana First, Jobs for the Youth!" canonical="/" jsonLd={organizationSchema} />
+      <SEO
+        title="The Base Movement Ghana | Ghana First, Jobs for the Youth"
+        canonical="/"
+        jsonLd={organizationSchema}
+      />
 
       <HeroSection
         heroBgUrl={settings.hero_bg_url || '/hero-bg.png'}

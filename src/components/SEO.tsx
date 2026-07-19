@@ -43,7 +43,9 @@ export default function SEO({
 
   const siteName = 'The Base Movement'
   const fullTitle = title
-    ? `${title} | ${siteName}`
+    ? title.includes(siteName)
+      ? title // already brand-qualified (e.g. homepage) — don't double-append
+      : `${title} | ${siteName}`
     : `${siteName} – Ghana First, Jobs for the Youth!`
   const defaultDescription =
     'We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens in Ghana and across the diaspora working for a more productive future.'
