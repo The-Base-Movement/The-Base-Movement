@@ -45,9 +45,12 @@ export function initSentry() {
       tracesSampleRate: 0.02,
       replaysSessionSampleRate: 0.01,
       replaysOnErrorSampleRate: 0.5,
+      enableLogs: true,
       integrations: [
         Sentry.browserTracingIntegration(),
         Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }),
+        // ponytail: warn+error only — capturing log/info/debug would flood the free-tier quota
+        Sentry.consoleLoggingIntegration({ levels: ['warn', 'error'] }),
       ],
       beforeSend(event) {
         const msg = event.exception?.values?.[0]?.value ?? ''
@@ -67,6 +70,16 @@ export function initSentry() {
       ignoreErrors: IGNORED_ERRORS,
     })
   })
+}
+
+/**
+ * Emit a Sentry metric without eagerly importing the SDK (keeps the lazy-load).
+ * Usage: trackMetric(m => m.count('register_submitted', 1))
+ */
+export function trackMetric(fn: (m: typeof import('@sentry/react').metrics) => void) {
+  const dsn = import.meta.env.VITE_SENTRY_DSN
+  if (!dsn || import.meta.env.DEV) return
+  void loadSentry().then((Sentry) => fn(Sentry.metrics))
 }
 
 export function captureException(

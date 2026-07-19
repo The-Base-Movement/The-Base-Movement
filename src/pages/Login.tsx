@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
 import { validatePhone } from '@/lib/phoneValidation'
+import { trackMetric } from '@/lib/sentry'
 import SEO from '@/components/SEO'
 
 const loginSteps = [
@@ -105,6 +106,7 @@ export default function Login() {
 
     try {
       await authService.login(email, password)
+      trackMetric((m) => m.count('login', 1))
 
       const user = authService.getUser()
       if (user) {
