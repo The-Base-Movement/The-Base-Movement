@@ -13,6 +13,7 @@ import { useIsClient } from '@/hooks/useIsClient'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Analytics } from './components/Analytics'
 import { VersionChecker } from './components/VersionChecker'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
 export default function App() {
   const content = useRoutes(routes)
@@ -24,6 +25,7 @@ export default function App() {
         <BrandingProvider>
           <AuthProvider>
             <Analytics />
+            <VercelAnalytics />
             <ScrollToTop />
             <ReadingProgressBar />
             <Toaster />
