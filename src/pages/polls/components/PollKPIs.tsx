@@ -18,7 +18,7 @@ export function PollKPIs({
   isDashboard,
 }: PollKPIsProps) {
   return (
-    <div className="kpis" style={{ marginBottom: 24 }}>
+    <div className="kpis" style={{ marginBottom: 24 }} data-fade-stagger>
       {[
         {
           label: 'Active polls',

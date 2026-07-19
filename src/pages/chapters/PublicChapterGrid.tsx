@@ -24,7 +24,7 @@ export function PublicChapterGrid({
 }: PublicChapterGridProps) {
   return (
     <div className="flex-1">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-fade-stagger>
         {paginatedChapters
           .filter((c) => !!c && !!c.id)
           .map((chapter) => (

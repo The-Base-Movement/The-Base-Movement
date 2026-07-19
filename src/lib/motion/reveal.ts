@@ -28,7 +28,8 @@ export function setupReveals(root: ParentNode = document): () => void {
       y: 0,
       duration: M.duration,
       ease: M.ease,
-      stagger: M.stagger,
+      // Cap total stagger so large grids (many cards) don't drag on.
+      stagger: Math.min(M.stagger, 0.6 / Math.max(targets.length, 1)),
       overwrite: true,
       onComplete: () => gsap.set(targets, { willChange: 'auto' }),
     })
