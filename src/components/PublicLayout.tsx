@@ -17,10 +17,14 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import BackToTop from './BackToTop'
 import { MaintenanceGate } from './MaintenanceGate'
+import { useSiteMotion } from '@/hooks/useSiteMotion'
 
 export default function PublicLayout() {
   const { pathname } = useLocation()
   const isAuthPage = pathname === '/login'
+
+  // Scroll-reveal + hero entrance for all public pages (opt-in via data attrs).
+  useSiteMotion()
 
   return (
     <MaintenanceGate>
