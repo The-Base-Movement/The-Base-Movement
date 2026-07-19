@@ -315,7 +315,7 @@ export default function Constituencies() {
           style={{ maxWidth: 1280, margin: '0 auto', padding: '40px clamp(16px, 4vw, 32px) 60px' }}
         >
           {/* KPI row */}
-          <div className="kpis" style={{ marginBottom: 32 }}>
+          <div className="kpis" style={{ marginBottom: 32 }} data-fade-stagger>
             {[
               { label: 'Constituencies', value: total, bar: 'hsl(var(--primary))' },
               { label: 'Active', value: activeCount, bar: 'hsl(var(--accent))' },

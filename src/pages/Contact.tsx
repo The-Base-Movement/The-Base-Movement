@@ -98,7 +98,7 @@ export default function Contact() {
       </div>
 
       <div className="page-container mt-12 md:mt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12" data-fade>
           {/* Contact Info */}
           <ContactInfoPanel
             contactEmail={contactEmail as string}
