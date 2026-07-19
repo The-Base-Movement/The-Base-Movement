@@ -3,13 +3,18 @@
  *   - [data-fade]         → the element fades + rises once when scrolled in.
  *   - [data-fade-stagger] → the element's direct children stagger in.
  *
- * Content is hidden via JS (never CSS) so SSR / no-JS always renders it visible.
- * No-ops under prefers-reduced-motion or the app's `.low-bandwidth` mode
- * (which also force-shows these targets via CSS as a backstop).
+ * Incremental + idempotent: each element is handled once (marked with
+ * `data-fade-done`), so it's safe to call repeatedly as async / lazy content
+ * mounts. Content is hidden via JS (never CSS) so SSR / no-JS renders it
+ * visible. No-ops under prefers-reduced-motion or the app's `.low-bandwidth`
+ * mode (which also force-show these targets via CSS as a backstop).
  */
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { initMotion, reducedMotion, M } from './gsapCore'
+
+const DONE = 'data-fade-done'
+export const PENDING_SELECTOR = `[data-fade]:not([${DONE}]), [data-fade-stagger]:not([${DONE}])`
 
 export function setupReveals(root: ParentNode = document): () => void {
   initMotion()
@@ -29,16 +34,18 @@ export function setupReveals(root: ParentNode = document): () => void {
     })
 
   // [data-fade] — batched so several entering together share one clean stagger.
-  const singles = gsap.utils.toArray<HTMLElement>('[data-fade]', root)
+  const singles = gsap.utils.toArray<HTMLElement>(`[data-fade]:not([${DONE}])`, root)
   if (singles.length) {
+    singles.forEach((el) => el.setAttribute(DONE, ''))
     gsap.set(singles, { opacity: 0, y: M.distance, willChange: 'transform, opacity' })
     triggers.push(...ScrollTrigger.batch(singles, { start: M.start, once: true, onEnter: reveal }))
   }
 
   // [data-fade-stagger] — each group reveals its own direct children on enter.
-  gsap.utils.toArray<HTMLElement>('[data-fade-stagger]', root).forEach((group) => {
+  gsap.utils.toArray<HTMLElement>(`[data-fade-stagger]:not([${DONE}])`, root).forEach((group) => {
     const kids = Array.from(group.children) as HTMLElement[]
     if (!kids.length) return
+    group.setAttribute(DONE, '')
     gsap.set(kids, { opacity: 0, y: M.distance, willChange: 'transform, opacity' })
     triggers.push(
       ScrollTrigger.create({
