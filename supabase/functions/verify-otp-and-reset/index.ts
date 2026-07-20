@@ -168,10 +168,14 @@ serve(async (req: Request) => {
       // instead of an opaque 500. Supabase returns HTTP 422 / code 'weak_password'.
       const authCode = (authError as { code?: string }).code
       if (authError.status === 422 || authCode === 'weak_password') {
+        // Surface GoTrue's actual reason — it may be "leaked in a data breach"
+        // (Pwned password protection) or a complexity/length rule. A hard-coded
+        // message would mislead when the real cause is a breached password.
         return delayedJson(
           {
             error:
-              'Password is too weak. Use at least 8 characters including an uppercase letter, a lowercase letter, and a number.',
+              authError.message ||
+              'That password is too weak or has appeared in a known data breach. Please choose a different, unique password.',
           },
           400
         )
