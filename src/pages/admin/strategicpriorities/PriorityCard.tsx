@@ -9,6 +9,11 @@ interface PriorityCardProps {
 
 export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) {
   const [imageError, setImageError] = useState(false)
+  // Progress along the 0 → target scale, capped at 100% and safe when target is 0.
+  const pct =
+    campaign.targetAmount > 0
+      ? Math.min(Math.round((campaign.raisedAmount / campaign.targetAmount) * 100), 100)
+      : 0
 
   return (
     <div
@@ -148,7 +153,10 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                   color: 'hsl(var(--on-surface))',
                 }}
               >
-                {((campaign.raisedAmount / campaign.targetAmount) * 100).toFixed(0)}%
+                <span style={{ color: 'hsl(var(--primary))' }}>
+                  ${campaign.raisedAmount.toLocaleString()}
+                </span>{' '}
+                ({pct}%)
               </span>
             </div>
             <div
@@ -163,7 +171,7 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                 style={{
                   height: '100%',
                   background: 'hsl(var(--primary))',
-                  width: `${Math.min((campaign.raisedAmount / campaign.targetAmount) * 100, 100)}%`,
+                  width: `${pct}%`,
                   transition: 'width 1s',
                 }}
               />
@@ -177,11 +185,9 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
                 fontSize: 10,
               }}
             >
-              <span style={{ color: 'hsl(var(--primary))' }}>
-                ${campaign.raisedAmount.toLocaleString()}
-              </span>
+              <span style={{ color: 'hsl(var(--on-surface-muted))' }}>$0</span>
               <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
-                of ${campaign.targetAmount.toLocaleString()}
+                ${campaign.targetAmount.toLocaleString()}
               </span>
             </div>
           </div>

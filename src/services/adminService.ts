@@ -1781,16 +1781,23 @@ class AdminService {
       image_url: string
     }
 
-    return (data || []).map((c: DBCampaign) => ({
-      id: c.id,
-      title: c.title,
-      description: c.description,
-      targetAmount: Number(c.target_amount),
-      raisedAmount: Number(c.raised_amount),
-      endDate: c.end_date,
-      status: c.status,
-      imageUrl: c.image_url,
-    }))
+    return (
+      (data || [])
+        .map((c: DBCampaign) => ({
+          id: c.id,
+          title: c.title,
+          description: c.description,
+          targetAmount: Number(c.target_amount),
+          raisedAmount: Number(c.raised_amount),
+          endDate: c.end_date,
+          status: c.status,
+          imageUrl: c.image_url,
+        }))
+        // A victory means the target was actually reached. Campaigns closed only
+        // because their end date passed (raised < target) are not victories — they
+        // keep their accumulated amount but must not be shown as completed missions.
+        .filter((c) => c.targetAmount > 0 && c.raisedAmount >= c.targetAmount)
+    )
   }
 
   async getGlobalMobilizationStats(): Promise<{
