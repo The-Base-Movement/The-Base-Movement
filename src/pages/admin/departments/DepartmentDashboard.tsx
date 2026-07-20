@@ -392,7 +392,8 @@ export default function DepartmentDashboard() {
       </div>
 
       {/* KPI tiles */}
-      <div className="kpis" style={{ marginBottom: 24 }}>
+      {/* 6 stat cards → 3 per row (override the global .kpis 4-col grid); mobile carousel unaffected */}
+      <div className="kpis" style={{ marginBottom: 24, gridTemplateColumns: 'repeat(3, 1fr)' }}>
         {kpis.map((kpi) => (
           <div
             key={kpi.label}
