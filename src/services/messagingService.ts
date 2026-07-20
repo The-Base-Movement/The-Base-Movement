@@ -921,6 +921,19 @@ class MessagingService {
     }
   }
 
+  // ponytail: hardcoded to the real helpdesk_departments row id, since the
+  // Movement Management catalog route (`movement-management`, hyphenated)
+  // doesn't match the seeded DB row id (`movement_management`, underscored).
+  // The assign/revoke RPCs hardcode the same row internally.
+  async getMovementSecretaryId(): Promise<string | null> {
+    const { data } = await supabase
+      .from('helpdesk_departments')
+      .select('secretary_id')
+      .eq('id', 'movement_management')
+      .maybeSingle()
+    return (data as { secretary_id: string | null } | null)?.secretary_id ?? null
+  }
+
   async getUserProfile(
     userId: string
   ): Promise<{ id: string; full_name: string; avatar_url: string | null } | null> {

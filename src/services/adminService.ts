@@ -979,6 +979,26 @@ class AdminService {
     return true
   }
 
+  async assignMovementSecretary(userId: string): Promise<boolean> {
+    const { error } = await supabase.rpc('assign_movement_secretary', { p_user_id: userId })
+    if (error) {
+      console.error('[DATABASE] Failed to assign movement secretary:', error)
+      return false
+    }
+    await this.logAction('MOVEMENT_SECRETARY_ASSIGN', `ADMINS/${userId}`, 'Success')
+    return true
+  }
+
+  async revokeMovementSecretary(userId: string): Promise<boolean> {
+    const { error } = await supabase.rpc('revoke_movement_secretary', { p_user_id: userId })
+    if (error) {
+      console.error('[DATABASE] Failed to revoke movement secretary:', error)
+      return false
+    }
+    await this.logAction('MOVEMENT_SECRETARY_REVOKE', `ADMINS/${userId}`, 'Success')
+    return true
+  }
+
   async createDonationCampaign(
     campaign: Omit<DonationCampaign, 'id' | 'raisedAmount'>
   ): Promise<boolean> {
