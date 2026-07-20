@@ -37,6 +37,17 @@ export interface NavItem {
     action: AdminPermission['action']
     resource: AdminPermission['resource']
   }
+  /**
+   * Additional permissions that ALSO grant access, on top of `permission` (OR logic).
+   * Purely additive — never narrows the existing `permission` gate. Use this instead of
+   * `allowedRoles` when a permission-gated item needs to open up to a role holding a
+   * different permission, since `allowedRoles` overrides `permission` entirely rather
+   * than combining with it.
+   */
+  additionalPermissions?: {
+    action: AdminPermission['action']
+    resource: AdminPermission['resource']
+  }[]
   subItems?: NavItem[]
 }
 
@@ -164,12 +175,16 @@ export const getNavGroups = (
         label: 'Donations',
         pill: pendingDonationsCount > 0 ? pendingDonationsCount.toString() : undefined,
         permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+        // Movement Manager / Movement Manager Secretary hold view-only donation access.
+        additionalPermissions: [{ action: 'VIEW_DONATIONS', resource: 'DONATIONS' }],
       },
       {
         to: '/admin/spending-ledger',
         icon: 'receipt_long',
         label: 'Expenses',
         permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+        // Movement Manager / Movement Manager Secretary manage the spending ledger directly.
+        additionalPermissions: [{ action: 'MANAGE_SPENDING_LEDGER', resource: 'FINANCE' }],
       },
       {
         to: '/admin/finance-requests',
@@ -213,6 +228,8 @@ export const getNavGroups = (
         icon: 'location_on',
         label: 'Jurisdictions',
         permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        // Movement Manager holds VIEW_CONSTITUENCY_OPS (read-only view of regions/constituencies).
+        additionalPermissions: [{ action: 'VIEW_CONSTITUENCY_OPS', resource: 'OPERATIONS' }],
       },
     ],
   },
@@ -237,6 +254,8 @@ export const getNavGroups = (
         icon: 'map',
         label: 'Constituency management',
         permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
+        // Movement Manager holds VIEW_CONSTITUENCY_OPS (read-only view of constituencies).
+        additionalPermissions: [{ action: 'VIEW_CONSTITUENCY_OPS', resource: 'OPERATIONS' }],
       },
       {
         to: '/admin/chapter-ops',
@@ -255,6 +274,8 @@ export const getNavGroups = (
         icon: 'ballot',
         label: 'Polling stations',
         permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        // Movement Manager holds VIEW_POLLING_STATIONS (read-only, page has no write actions).
+        additionalPermissions: [{ action: 'VIEW_POLLING_STATIONS', resource: 'OPERATIONS' }],
       },
       {
         to: '/admin/broadcasts',

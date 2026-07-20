@@ -12,6 +12,11 @@ import { RegionsKPIs } from './regions/RegionsKPIs'
 import { RegionsList } from './regions/RegionsList'
 
 export default function AdminRegions() {
+  // This page has no pre-existing write-permission gate (any role that could already reach
+  // it had full CRUD). Movement Manager gets read-only nav access via VIEW_CONSTITUENCY_OPS,
+  // so hide writes specifically for that role rather than introducing a MANAGE_ permission
+  // check that would narrow access for other roles that never held one here before.
+  const canManage = adminService.getCurrentUser()?.role !== 'MOVEMENT_MANAGER'
   const [regions, setRegions] = useState<Region[]>([])
   const [conMap, setConMap] = useState<ConMap>({})
   const [searchQuery, setSearchQuery] = useState('')
@@ -193,18 +198,20 @@ export default function AdminRegions() {
         icon="location_on"
         description="Manage administrative regions and electoral jurisdictions."
         actions={
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              setInputValue('')
-              setAddRegionModal(true)
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              add
-            </span>
-            Define new region
-          </button>
+          canManage ? (
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                setInputValue('')
+                setAddRegionModal(true)
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                add
+              </span>
+              Define new region
+            </button>
+          ) : undefined
         }
       />
 
@@ -261,6 +268,7 @@ export default function AdminRegions() {
         constituencySearch={constituencySearch}
         setConstituencySearch={setConstituencySearch}
         isLoading={isLoading}
+        canManage={canManage}
         setInputValue={setInputValue}
         setEditRegionModal={setEditRegionModal}
         setDeleteRegionModal={setDeleteRegionModal}

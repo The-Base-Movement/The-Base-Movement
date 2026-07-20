@@ -20,6 +20,11 @@ type RouteAccessSpec = {
     action: AdminPermission['action']
     resource: AdminPermission['resource']
   }
+  /** Additional permissions that ALSO grant access (OR'd with `permission`) — additive only. */
+  additionalPermissions?: {
+    action: AdminPermission['action']
+    resource: AdminPermission['resource']
+  }[]
   /** Flag showing if route is only accessible by SUPER_ADMIN or FOUNDER roles */
   superAdminOnly?: boolean
   /** Flag showing if route is only accessible by leadership roles (EXECUTIVE/SUPER_ADMIN/FOUNDER) */
@@ -161,6 +166,7 @@ function buildNavRouteRules(): RouteRule[] {
       const spec: RouteAccessSpec = {
         allowedRoles: (item.allowedRoles as AdminRole[] | undefined) ?? inherited?.allowedRoles,
         permission: item.permission ?? inherited?.permission,
+        additionalPermissions: item.additionalPermissions ?? inherited?.additionalPermissions,
         superAdminOnly: item.superAdminOnly ?? inherited?.superAdminOnly,
         executiveOnly: item.executiveOnly ?? inherited?.executiveOnly,
       }
@@ -271,11 +277,14 @@ export function getAdminRouteAccessDecision(
     }
   }
 
-  if (rule.permission) {
-    const allowed = userCan(user, rule.permission)
+  if (rule.permission || rule.additionalPermissions?.length) {
+    const allowed =
+      (rule.permission ? userCan(user, rule.permission) : false) ||
+      (rule.additionalPermissions?.some((permission) => userCan(user, permission)) ?? false)
+    const primary = rule.permission ?? rule.additionalPermissions?.[0]
     return {
       allowed,
-      reason: allowed ? null : `Requires ${rule.permission.action} on ${rule.permission.resource}.`,
+      reason: allowed || !primary ? null : `Requires ${primary.action} on ${primary.resource}.`,
       rule,
     }
   }

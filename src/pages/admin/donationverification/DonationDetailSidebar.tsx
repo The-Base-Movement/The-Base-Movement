@@ -163,6 +163,10 @@ export function DonationDetailSidebar({
   const mb = methodBadge(selectedDonation.method)
   const sp = statusPill(selectedDonation.status)
   const automated = autoChecks(selectedDonation, priorCount)
+  // Route access requires MANAGE_DONATIONS/DONATIONS for every existing role that can reach
+  // this page — Movement Manager / Secretary get in via the additive VIEW_DONATIONS
+  // permission instead, so this check hides verify/reject/refund actions for them only.
+  const canManageDonations = adminService.can('MANAGE_DONATIONS', 'DONATIONS')
 
   return (
     <aside
@@ -429,41 +433,48 @@ export function DonationDetailSidebar({
       </div>
 
       {/* Actions */}
-      <div
-        style={{ padding: '0 20px 18px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}
-      >
-        <button
-          className="btn btn-outline btn-sm"
-          onClick={() => onVerify(selectedDonation.id, selectedDonation.fullName, 'Rejected')}
-          disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
+      {canManageDonations && (
+        <div
+          style={{
+            padding: '0 20px 18px',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 8,
+          }}
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-            flag
-          </span>
-          Flag
-        </button>
-        <button
-          className="btn btn-outline btn-sm"
-          onClick={() => onRefund(selectedDonation.id, selectedDonation.fullName)}
-          disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-            close
-          </span>
-          Refund
-        </button>
-        <button
-          className="btn btn-primary"
-          style={{ gridColumn: '1/3', justifyContent: 'center' }}
-          onClick={() => onVerify(selectedDonation.id, selectedDonation.fullName, 'Verified')}
-          disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-            verified
-          </span>
-          {isVerifying === selectedDonation.id ? 'Processing…' : 'Approve & receipt'}
-        </button>
-      </div>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => onVerify(selectedDonation.id, selectedDonation.fullName, 'Rejected')}
+            disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              flag
+            </span>
+            Flag
+          </button>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => onRefund(selectedDonation.id, selectedDonation.fullName)}
+            disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              close
+            </span>
+            Refund
+          </button>
+          <button
+            className="btn btn-primary"
+            style={{ gridColumn: '1/3', justifyContent: 'center' }}
+            onClick={() => onVerify(selectedDonation.id, selectedDonation.fullName, 'Verified')}
+            disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              verified
+            </span>
+            {isVerifying === selectedDonation.id ? 'Processing…' : 'Approve & receipt'}
+          </button>
+        </div>
+      )}
     </aside>
   )
 }

@@ -91,6 +91,10 @@ function matchesMethod(d: DonationDetail, m: MethodOption): boolean {
 // Primary page component managing donation verification flows and state
 export default function FinancialAudit() {
   const currentUser = adminService.getCurrentUser()
+  // Route access requires MANAGE_DONATIONS/DONATIONS for every existing role that can reach
+  // this page — Movement Manager / Secretary get in via the additive VIEW_DONATIONS
+  // permission instead, so this hides the receipt-mutating actions for them only.
+  const canManageDonations = adminService.can('MANAGE_DONATIONS', 'DONATIONS')
   const canExport =
     currentUser?.role === 'FOUNDER' ||
     currentUser?.role === 'SUPER_ADMIN' ||
@@ -338,7 +342,7 @@ export default function FinancialAudit() {
         description="Match MoMo transactions, confirm card receipts, and clear pending donations against the chapter ledger."
         actions={
           <>
-            {statusFilter === 'Verified' && (
+            {statusFilter === 'Verified' && canManageDonations && (
               <>
                 <button
                   className="btn btn-outline btn-sm"

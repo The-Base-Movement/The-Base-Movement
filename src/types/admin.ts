@@ -684,6 +684,8 @@ export type AdminRole =
   | 'STORE_MANAGER'
   | 'YOUTH_LEADER'
   | 'MOVEMENT_LEADER'
+  | 'MOVEMENT_MANAGER'
+  | 'MOVEMENT_MANAGER_SECRETARY'
 
 export interface AdminPermission {
   action:
@@ -713,6 +715,8 @@ export interface AdminPermission {
     | 'VIEW_ADMINS'
     | 'VIEW_MEMBER_DIRECTORY'
     | 'SUBMIT_IT_TICKET'
+    | 'VIEW_DONATIONS'
+    | 'MANAGE_SPENDING_LEDGER'
   resource:
     | 'MEMBERS'
     | 'CHAPTERS'
