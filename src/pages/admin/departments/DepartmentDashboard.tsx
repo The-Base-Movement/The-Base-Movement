@@ -65,6 +65,10 @@ const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
       color: GOLD,
     },
   ],
+  'movement-management': [
+    { to: '/admin/donations', icon: 'volunteer_activism', label: 'Donations', color: GOLD },
+    { to: '/admin/spending-ledger', icon: 'account_balance', label: 'Spending Ledger', color: INK },
+  ],
   'diaspora-affairs': [
     { to: '/admin/diaspora-affairs', icon: 'dashboard', label: 'Diaspora Dashboard', color: GREEN },
     { to: '/admin/chapters', icon: 'public', label: 'Diaspora', color: GREEN },

@@ -5,6 +5,7 @@ export type RoleParentGroup =
   | 'NATIONAL ICT'
   | 'SECURITY / INTEL'
   | 'NCC'
+  | 'MOVEMENT MANAGEMENT'
   | 'DIASPORA AFFAIRS'
   | 'RCC'
   | 'CCC'
@@ -432,6 +433,24 @@ const entries = [
     false,
   ],
   ['STORE_MANAGER', 'Store Manager', 'NCC', ops, 'national', false, false],
+  [
+    'MOVEMENT_MANAGER',
+    'Movement Manager',
+    'MOVEMENT MANAGEMENT',
+    undefined,
+    'national',
+    false,
+    true,
+  ],
+  [
+    'MOVEMENT_MANAGER_SECRETARY',
+    'Movement Manager Secretary',
+    'MOVEMENT MANAGEMENT',
+    undefined,
+    'national',
+    false,
+    true,
+  ],
 ] as const
 
 export const ROLE_CATALOG: RoleCatalogEntry[] = entries.map(
@@ -451,6 +470,7 @@ export const ROLE_PARENT_GROUPS: RoleParentGroup[] = [
   'NATIONAL ICT',
   'SECURITY / INTEL',
   'NCC',
+  'MOVEMENT MANAGEMENT',
   'DIASPORA AFFAIRS',
   'RCC',
   'CCC',
@@ -535,6 +555,23 @@ export function getDefaultRolePermissions(role: string): AdminPermission[] {
       p('VIEW_DIRECTIVES', 'OPERATIONS'),
       p('VIEW_DEPLOY_ASSET', 'OPERATIONS'),
       p('VIEW_PARTY_OFFICIALS', 'PARTY'),
+    ]
+  }
+
+  if (role === 'MOVEMENT_MANAGER') {
+    return [
+      p('VIEW_CONSTITUENCY_OPS', 'OPERATIONS'),
+      p('VIEW_POLLING_STATIONS', 'OPERATIONS'),
+      p('VIEW_DONATIONS', 'DONATIONS'),
+      p('MANAGE_SPENDING_LEDGER', 'FINANCE'),
+      p('SUBMIT_IT_TICKET', 'IT_SUPPORT'),
+    ]
+  }
+  if (role === 'MOVEMENT_MANAGER_SECRETARY') {
+    return [
+      p('VIEW_DONATIONS', 'DONATIONS'),
+      p('MANAGE_SPENDING_LEDGER', 'FINANCE'),
+      p('SUBMIT_IT_TICKET', 'IT_SUPPORT'),
     ]
   }
 
