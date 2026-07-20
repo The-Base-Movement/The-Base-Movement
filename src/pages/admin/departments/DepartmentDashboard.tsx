@@ -66,6 +66,9 @@ const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
     },
   ],
   movement_management: [
+    { to: '/admin/regions', icon: 'travel_explore', label: 'Regions', color: GREEN },
+    { to: '/admin/constituencies', icon: 'groups', label: 'Constituencies', color: GREEN },
+    { to: '/admin/polling-stations', icon: 'ballot', label: 'Polling Stations', color: GREEN },
     { to: '/admin/donations', icon: 'volunteer_activism', label: 'Donations', color: GOLD },
     { to: '/admin/spending-ledger', icon: 'account_balance', label: 'Spending Ledger', color: INK },
   ],
