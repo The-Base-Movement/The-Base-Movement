@@ -17,6 +17,7 @@ export interface HelpdeskDepartment {
   sort_order: number
   active: boolean
   lead_id?: string | null
+  secretary_id?: string | null
 }
 
 export interface HelpdeskTicket {

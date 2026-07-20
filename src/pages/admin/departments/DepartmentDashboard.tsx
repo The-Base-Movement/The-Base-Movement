@@ -65,7 +65,7 @@ const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
       color: GOLD,
     },
   ],
-  'movement-management': [
+  movement_management: [
     { to: '/admin/donations', icon: 'volunteer_activism', label: 'Donations', color: GOLD },
     { to: '/admin/spending-ledger', icon: 'account_balance', label: 'Spending Ledger', color: INK },
   ],
@@ -154,8 +154,16 @@ export default function DepartmentDashboard() {
   const [selectedLead, setSelectedLead] = useState('')
   const [savingLead, setSavingLead] = useState(false)
 
+  const [secretaryId, setSecretaryId] = useState<string | null>(null)
+  const [secretary, setSecretary] = useState<LeadProfile | null>(null)
+  const [secretaryOpen, setSecretaryOpen] = useState(false)
+  const [selectedSecretary, setSelectedSecretary] = useState('')
+  const [savingSecretary, setSavingSecretary] = useState(false)
+
   const currentRole = adminService.getCurrentUser()?.role
   const isSuper = currentRole === 'SUPER_ADMIN' || currentRole === 'FOUNDER'
+  const canManageSecretary =
+    catalogDept?.id === 'movement_management' && (currentRole === 'MOVEMENT_MANAGER' || isSuper)
 
   useEffect(() => {
     if (dept) setCurrentLabel(dept.name)
@@ -186,6 +194,59 @@ export default function DepartmentDashboard() {
       cancelled = true
     }
   }, [catalogDept, deptId])
+
+  async function loadSecretary() {
+    const id = await messagingService.getMovementSecretaryId()
+    setSecretaryId(id)
+    if (id) {
+      const profile = await messagingService.getUserProfile(id)
+      setSecretary((profile as LeadProfile) ?? null)
+    } else {
+      setSecretary(null)
+    }
+  }
+
+  useEffect(() => {
+    if (catalogDept?.id !== 'movement_management') return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadSecretary()
+  }, [catalogDept])
+
+  async function openAssignSecretary() {
+    setSelectedSecretary('')
+    setSecretaryOpen(true)
+    if (adminOptions.length === 0) {
+      const options = await messagingService.getAdminOptions()
+      setAdminOptions(options)
+    }
+  }
+
+  async function saveSecretary() {
+    if (!selectedSecretary) return
+    setSavingSecretary(true)
+    const ok = await adminService.assignMovementSecretary(selectedSecretary)
+    if (ok) {
+      toast.success('Movement secretary assigned')
+      setSecretaryOpen(false)
+      await loadSecretary()
+    } else {
+      toast.error('Failed to assign movement secretary')
+    }
+    setSavingSecretary(false)
+  }
+
+  async function revokeSecretary() {
+    if (!secretaryId) return
+    setSavingSecretary(true)
+    const ok = await adminService.revokeMovementSecretary(secretaryId)
+    if (ok) {
+      toast.success('Movement secretary revoked')
+      await loadSecretary()
+    } else {
+      toast.error('Failed to revoke movement secretary')
+    }
+    setSavingSecretary(false)
+  }
 
   async function openAppoint() {
     setSelectedLead(dept?.lead_id ?? '')
@@ -448,6 +509,88 @@ export default function DepartmentDashboard() {
         </div>
       )}
 
+      {canManageSecretary && (
+        <div className="panel" style={{ marginBottom: 24, padding: 20 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  background: 'hsl(var(--container-low))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  flexShrink: 0,
+                }}
+              >
+                {secretary?.avatar_url ? (
+                  <img
+                    src={secretary.avatar_url}
+                    alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+                  >
+                    person
+                  </span>
+                )}
+              </div>
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  Movement Secretary
+                </p>
+                <p
+                  style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}
+                >
+                  {secretary ? secretary.full_name : 'None assigned'}
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <button className="btn btn-outline btn-sm" onClick={() => void openAssignSecretary()}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  person_add
+                </span>
+                {secretary ? 'Change' : 'Assign'}
+              </button>
+              {secretary && (
+                <button
+                  className="btn btn-outline-dest btn-sm"
+                  disabled={savingSecretary}
+                  onClick={() => void revokeSecretary()}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    person_remove
+                  </span>
+                  Revoke
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {showSubCommittees && (
         <div className="panel" style={{ marginBottom: 24, padding: 20 }}>
           <p
@@ -593,6 +736,85 @@ export default function DepartmentDashboard() {
                 onClick={() => void saveLead()}
               >
                 {savingLead ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign/change movement secretary modal */}
+      {secretaryOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setSecretaryOpen(false)}
+        >
+          <div
+            className="panel"
+            style={{
+              maxWidth: 400,
+              width: '100%',
+              padding: 24,
+              borderRadius: 'var(--radius-lg)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p
+              style={{
+                margin: '0 0 4px',
+                fontSize: 15,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              {secretary ? 'Change' : 'Assign'} Movement Secretary
+            </p>
+            <p style={{ margin: '0 0 16px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+              Pick from provisioned administrators. Assigning a new secretary replaces any existing
+              one.
+            </p>
+            <select
+              value={selectedSecretary}
+              onChange={(e) => setSelectedSecretary(e.target.value)}
+              style={{
+                width: '100%',
+                height: 38,
+                padding: '0 10px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--background))',
+                boxSizing: 'border-box',
+                marginBottom: 18,
+              }}
+            >
+              <option value="">— Select administrator —</option>
+              {adminOptions.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.full_name} ({a.role})
+                </option>
+              ))}
+            </select>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button className="btn btn-outline btn-sm" onClick={() => setSecretaryOpen(false)}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary btn-sm"
+                disabled={savingSecretary || !selectedSecretary}
+                onClick={() => void saveSecretary()}
+              >
+                {savingSecretary ? 'Saving…' : 'Save'}
               </button>
             </div>
           </div>

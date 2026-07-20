@@ -921,6 +921,18 @@ class MessagingService {
     }
   }
 
+  // Dedicated lookup of the Movement Management secretary from its
+  // helpdesk_departments row (id 'movement_management' — matches the catalog id
+  // and the assign/revoke RPCs).
+  async getMovementSecretaryId(): Promise<string | null> {
+    const { data } = await supabase
+      .from('helpdesk_departments')
+      .select('secretary_id')
+      .eq('id', 'movement_management')
+      .maybeSingle()
+    return (data as { secretary_id: string | null } | null)?.secretary_id ?? null
+  }
+
   async getUserProfile(
     userId: string
   ): Promise<{ id: string; full_name: string; avatar_url: string | null } | null> {
