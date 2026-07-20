@@ -73,7 +73,34 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
     },
   })
 
-  if (error) throw error
+  if (error) {
+    let detailMsg = error.message
+    if (
+      'context' in error &&
+      error.context &&
+      typeof (error.context as Record<string, unknown>).json === 'function'
+    ) {
+      try {
+        const body = (await (error.context as { json: () => Promise<unknown> }).json()) as Record<
+          string,
+          unknown
+        >
+        if (body && typeof body === 'object' && typeof body.error === 'string') {
+          detailMsg = body.error
+          if (body.details && typeof body.details === 'object') {
+            const raw = body.details as Record<string, unknown>
+            const sub = raw.message || raw.responseMessage || raw.error || raw.description
+            if (sub && typeof sub === 'string') {
+              detailMsg += `: ${sub}`
+            }
+          }
+        }
+      } catch {
+        // Fall back to original error message
+      }
+    }
+    throw new Error(detailMsg || 'Hubtel payment initiation failed.')
+  }
 
   const checkoutUrl = getCheckoutUrl(data)
   if (!checkoutUrl) throw new Error('Hubtel did not return a checkout URL.')

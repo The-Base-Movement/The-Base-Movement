@@ -77,9 +77,11 @@ export default function HubtelButton({
       setIsModalOpen(true)
       onStarted?.()
       onCheckoutReady?.(url)
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('[HubtelButton] payment initiation failed:', err)
-      toast.error('Could not start secure payment. Please try again.')
+      const msg =
+        err instanceof Error ? err.message : 'Could not start secure payment. Please try again.'
+      toast.error(msg)
       onError?.()
       setLoading(false)
     }

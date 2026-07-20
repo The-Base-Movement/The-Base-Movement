@@ -250,7 +250,7 @@ export default function PublicDonate() {
         currency: selectedCurrency.code,
         ghsAmount,
       })
-    } catch {
+    } catch (err: unknown) {
       if (donationIdToCleanUp) {
         await supabase
           .from('donations')
@@ -260,7 +260,9 @@ export default function PublicDonate() {
       }
       setActiveDonationId(null)
       setPaymentState('failed')
-      toast.error('Could not start secure checkout. Please try again.')
+      const msg =
+        err instanceof Error ? err.message : 'Could not start secure checkout. Please try again.'
+      toast.error(msg)
     }
   }
 
