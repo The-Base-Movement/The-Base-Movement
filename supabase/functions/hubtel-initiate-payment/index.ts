@@ -204,14 +204,23 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    const shortRef = reference.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)
+    const hubtelClientRef = `${shortRef}_${Date.now().toString(36)}`
     const primaryCallback = await buildSignedHubtelCallbackUrl(
       `${supabaseUrl}/functions/v1/hubtel-payment-callback`,
+      hubtelClientRef,
+      undefined,
       reference
     )
     // @ts-expect-error: Deno global
     const secondaryCallbackBase = Deno.env.get('HUBTEL_SECONDARY_CALLBACK_URL')
     const secondaryCallback = secondaryCallbackBase
-      ? await buildSignedHubtelCallbackUrl(secondaryCallbackBase, reference)
+      ? await buildSignedHubtelCallbackUrl(
+          secondaryCallbackBase,
+          hubtelClientRef,
+          undefined,
+          reference
+        )
       : undefined
     const fallbackUrl =
       body.returnUrl ??
@@ -243,7 +252,7 @@ Deno.serve(async (req: Request) => {
       returnUrl: body.returnUrl ?? fallbackUrl,
       cancellationUrl: body.cancellationUrl ?? fallbackUrl,
       merchantAccountNumber: accountNumber,
-      clientReference: reference,
+      clientReference: hubtelClientRef,
       customerName: name,
       customerPhoneNumber: normalizedPhone,
       customerEmail: body.email || 'donations@thebasemovement.org.gh',
@@ -303,13 +312,32 @@ Deno.serve(async (req: Request) => {
 
     if (!hubtelRes.ok) {
       console.error('[HUBTEL] Initiation failed', hubtelRes.status, payload)
-      return json({ error: 'Hubtel payment initiation failed', details: payload }, 502)
+      let errorDetail = ''
+      if (
+        Array.isArray(payload.data) &&
+        (payload.data as Record<string, unknown>[])[0]?.errorMessage
+      ) {
+        errorDetail = String((payload.data as Record<string, unknown>[])[0].errorMessage)
+      } else if (typeof payload.message === 'string') {
+        errorDetail = payload.message
+      } else if (typeof payload.Message === 'string') {
+        errorDetail = payload.Message
+      } else {
+        errorDetail = JSON.stringify(payload)
+      }
+      return json(
+        {
+          error: `Hubtel payment initiation failed (${hubtelRes.status}): ${errorDetail}`,
+          details: payload,
+        },
+        400
+      )
     }
 
     const checkoutUrl = getCheckoutUrl(payload)
     if (!checkoutUrl) {
       console.error('[HUBTEL] Missing checkout URL', payload)
-      return json({ error: 'Hubtel did not return a checkout URL', details: payload }, 502)
+      return json({ error: 'Hubtel did not return a checkout URL', details: payload }, 400)
     }
 
     return json({ checkoutUrl, data: payload })

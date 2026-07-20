@@ -74,17 +74,12 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
   })
 
   if (error) {
-    let detailMsg = error.message
-    if (
-      'context' in error &&
-      error.context &&
-      typeof (error.context as Record<string, unknown>).json === 'function'
-    ) {
+    let detailMsg = ''
+    if ('context' in error && error.context) {
       try {
-        const body = (await (error.context as { json: () => Promise<unknown> }).json()) as Record<
-          string,
-          unknown
-        >
+        const ctx = error.context as Response
+        const res = typeof ctx.clone === 'function' ? ctx.clone() : ctx
+        const body = (await res.json()) as Record<string, unknown>
         if (body && typeof body === 'object' && typeof body.error === 'string') {
           detailMsg = body.error
           if (body.details && typeof body.details === 'object') {
@@ -96,10 +91,17 @@ export async function initiateHubtelCheckout(request: HubtelCheckoutRequest): Pr
           }
         }
       } catch {
-        // Fall back to original error message
+        try {
+          const ctx = error.context as Response
+          const res = typeof ctx.clone === 'function' ? ctx.clone() : ctx
+          const text = await res.text()
+          if (text && text.trim()) detailMsg = text.trim()
+        } catch {
+          // Fall back to error.message below
+        }
       }
     }
-    throw new Error(detailMsg || 'Hubtel payment initiation failed.')
+    throw new Error(detailMsg || error.message || 'Hubtel payment initiation failed.')
   }
 
   const checkoutUrl = getCheckoutUrl(data)

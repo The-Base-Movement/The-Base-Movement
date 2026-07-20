@@ -174,7 +174,7 @@ if (import.meta.main)
         throw new Error('Invalid callback payload')
       }
 
-      const reference = getString(payload, [
+      const rawReference = getString(payload, [
         'ClientReference',
         'clientReference',
         'client_reference',
@@ -182,10 +182,11 @@ if (import.meta.main)
         'reference',
       ])
 
-      if (!reference) throw new Error('Missing Hubtel client reference')
-
-      const callbackAuth = await verifyHubtelCallbackSignature(req.url, reference)
+      const callbackAuth = await verifyHubtelCallbackSignature(req.url, rawReference || '')
       if (!callbackAuth.ok) throw new Error(callbackAuth.reason)
+
+      const url = new URL(req.url)
+      const reference = url.searchParams.get('dbRef')?.trim() || callbackAuth.reference
 
       const transactionId = getString(payload, [
         'TransactionId',

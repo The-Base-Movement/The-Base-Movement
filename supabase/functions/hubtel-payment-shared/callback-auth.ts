@@ -59,10 +59,14 @@ export async function signHubtelCallbackReference(reference: string, secret?: st
 export async function buildSignedHubtelCallbackUrl(
   callbackUrl: string,
   reference: string,
-  secret?: string
+  secret?: string,
+  dbReference?: string
 ) {
   const normalizedReference = normalizeReference(reference)
   const url = new URL(callbackUrl)
+  if (dbReference?.trim()) {
+    url.searchParams.set('dbRef', dbReference.trim())
+  }
   url.searchParams.set('ref', normalizedReference)
   url.searchParams.set('sig', await signHubtelCallbackReference(normalizedReference, secret))
   return url.toString()
