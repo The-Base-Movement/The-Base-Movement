@@ -182,12 +182,10 @@ if (import.meta.main)
         'reference',
       ])
 
-      if (!rawReference) throw new Error('Missing Hubtel client reference')
-
-      const callbackAuth = await verifyHubtelCallbackSignature(req.url, rawReference)
+      const callbackAuth = await verifyHubtelCallbackSignature(req.url, rawReference || '')
       if (!callbackAuth.ok) throw new Error(callbackAuth.reason)
 
-      const reference = rawReference.split('_')[0]
+      const reference = callbackAuth.reference
 
       const transactionId = getString(payload, [
         'TransactionId',
