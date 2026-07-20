@@ -204,14 +204,15 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    const hubtelClientRef = `${reference}_${Date.now()}`
     const primaryCallback = await buildSignedHubtelCallbackUrl(
       `${supabaseUrl}/functions/v1/hubtel-payment-callback`,
-      reference
+      hubtelClientRef
     )
     // @ts-expect-error: Deno global
     const secondaryCallbackBase = Deno.env.get('HUBTEL_SECONDARY_CALLBACK_URL')
     const secondaryCallback = secondaryCallbackBase
-      ? await buildSignedHubtelCallbackUrl(secondaryCallbackBase, reference)
+      ? await buildSignedHubtelCallbackUrl(secondaryCallbackBase, hubtelClientRef)
       : undefined
     const fallbackUrl =
       body.returnUrl ??
@@ -243,7 +244,7 @@ Deno.serve(async (req: Request) => {
       returnUrl: body.returnUrl ?? fallbackUrl,
       cancellationUrl: body.cancellationUrl ?? fallbackUrl,
       merchantAccountNumber: accountNumber,
-      clientReference: reference,
+      clientReference: hubtelClientRef,
       customerName: name,
       customerPhoneNumber: normalizedPhone,
       customerEmail: body.email || 'donations@thebasemovement.org.gh',
@@ -303,7 +304,26 @@ Deno.serve(async (req: Request) => {
 
     if (!hubtelRes.ok) {
       console.error('[HUBTEL] Initiation failed', hubtelRes.status, payload)
-      return json({ error: 'Hubtel payment initiation failed', details: payload }, 400)
+      let errorDetail = ''
+      if (
+        Array.isArray(payload.data) &&
+        (payload.data as Record<string, unknown>[])[0]?.errorMessage
+      ) {
+        errorDetail = String((payload.data as Record<string, unknown>[])[0].errorMessage)
+      } else if (typeof payload.message === 'string') {
+        errorDetail = payload.message
+      } else if (typeof payload.Message === 'string') {
+        errorDetail = payload.Message
+      } else {
+        errorDetail = JSON.stringify(payload)
+      }
+      return json(
+        {
+          error: `Hubtel payment initiation failed (${hubtelRes.status}): ${errorDetail}`,
+          details: payload,
+        },
+        400
+      )
     }
 
     const checkoutUrl = getCheckoutUrl(payload)
