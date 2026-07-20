@@ -943,31 +943,55 @@ class ContentService {
   // --- Likes Operations ---
 
   async likePost(postId: string): Promise<void> {
-    const { error } = await supabase.from('blog_post_likes').insert({ post_id: postId })
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return
+    const { error } = await supabase
+      .from('blog_post_likes')
+      .insert({ post_id: postId, user_id: user.id })
     if (error && error.code !== '23505') {
       console.error('[DATABASE] Failed to like post:', error)
     }
   }
 
   async unlikePost(postId: string): Promise<void> {
-    const { error } = await supabase.from('blog_post_likes').delete().eq('post_id', postId)
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return
+    const { error } = await supabase
+      .from('blog_post_likes')
+      .delete()
+      .eq('post_id', postId)
+      .eq('user_id', user.id)
     if (error) console.error('[DATABASE] Failed to unlike post:', error)
   }
 
   async isPostLiked(postId: string): Promise<boolean> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return false
     const { data, error } = await supabase
       .from('blog_post_likes')
       .select('post_id')
       .eq('post_id', postId)
+      .eq('user_id', user.id)
       .maybeSingle()
     if (error) return false
     return !!data
   }
 
   async getLikedPosts(): Promise<BlogPost[]> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return []
     const { data, error } = await supabase
       .from('blog_post_likes')
       .select('post_id, created_at')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (error || !data || data.length === 0) return []
