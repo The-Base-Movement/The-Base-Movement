@@ -75,8 +75,15 @@ export default function VerifyOTP() {
       toast.error('Please enter a valid 6-digit verification code.')
       return
     }
-    if (newPassword.length < 6) {
-      toast.error('New password must be at least 6 characters.')
+    if (
+      newPassword.length < 8 ||
+      !/[a-z]/.test(newPassword) ||
+      !/[A-Z]/.test(newPassword) ||
+      !/\d/.test(newPassword)
+    ) {
+      toast.error(
+        'Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a number.'
+      )
       return
     }
     if (newPassword !== confirmPassword) {

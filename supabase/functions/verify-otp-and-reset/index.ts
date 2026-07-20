@@ -164,6 +164,18 @@ serve(async (req: Request) => {
     })
 
     if (authError) {
+      // A weak/invalid password is user-fixable — surface it as a clear 400
+      // instead of an opaque 500. Supabase returns HTTP 422 / code 'weak_password'.
+      const authCode = (authError as { code?: string }).code
+      if (authError.status === 422 || authCode === 'weak_password') {
+        return delayedJson(
+          {
+            error:
+              'Password is too weak. Use at least 8 characters including an uppercase letter, a lowercase letter, and a number.',
+          },
+          400
+        )
+      }
       if (authError.status !== 404) {
         throw new Error(`Auth layer reset failed: ${authError.message}`)
       }
