@@ -3,7 +3,7 @@ import type { AdminPermission, AdminRole } from '@/types/admin'
 export type DepartmentId =
   | 'board-governance'
   | 'ncc'
-  | 'movement-management'
+  | 'movement_management'
   | 'diaspora-affairs'
   | 'rcc'
   | 'ccc'
@@ -59,7 +59,7 @@ export const DEPARTMENT_SUB_COMMITTEES: DepartmentSubCommittee[] = [
 export const DEPARTMENT_REPORTING_CHAIN: DepartmentId[] = [
   'board-governance',
   'ncc',
-  'movement-management',
+  'movement_management',
   'diaspora-affairs',
   'rcc',
   'ccc',
@@ -258,7 +258,7 @@ export const DEPARTMENT_CATALOG: DepartmentCatalogEntry[] = [
     access: { allowedRoles: withElevated(nccRoles) },
   },
   {
-    id: 'movement-management',
+    id: 'movement_management',
     name: 'Movement Management',
     levelLabel: 'Movement oversight',
     icon: 'move_up',

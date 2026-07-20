@@ -921,10 +921,9 @@ class MessagingService {
     }
   }
 
-  // ponytail: hardcoded to the real helpdesk_departments row id, since the
-  // Movement Management catalog route (`movement-management`, hyphenated)
-  // doesn't match the seeded DB row id (`movement_management`, underscored).
-  // The assign/revoke RPCs hardcode the same row internally.
+  // Dedicated lookup of the Movement Management secretary from its
+  // helpdesk_departments row (id 'movement_management' — matches the catalog id
+  // and the assign/revoke RPCs).
   async getMovementSecretaryId(): Promise<string | null> {
     const { data } = await supabase
       .from('helpdesk_departments')

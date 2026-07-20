@@ -65,7 +65,7 @@ const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
       color: GOLD,
     },
   ],
-  'movement-management': [
+  movement_management: [
     { to: '/admin/donations', icon: 'volunteer_activism', label: 'Donations', color: GOLD },
     { to: '/admin/spending-ledger', icon: 'account_balance', label: 'Spending Ledger', color: INK },
   ],
@@ -163,7 +163,7 @@ export default function DepartmentDashboard() {
   const currentRole = adminService.getCurrentUser()?.role
   const isSuper = currentRole === 'SUPER_ADMIN' || currentRole === 'FOUNDER'
   const canManageSecretary =
-    catalogDept?.id === 'movement-management' && (currentRole === 'MOVEMENT_MANAGER' || isSuper)
+    catalogDept?.id === 'movement_management' && (currentRole === 'MOVEMENT_MANAGER' || isSuper)
 
   useEffect(() => {
     if (dept) setCurrentLabel(dept.name)
@@ -207,7 +207,7 @@ export default function DepartmentDashboard() {
   }
 
   useEffect(() => {
-    if (catalogDept?.id !== 'movement-management') return
+    if (catalogDept?.id !== 'movement_management') return
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadSecretary()
   }, [catalogDept])
