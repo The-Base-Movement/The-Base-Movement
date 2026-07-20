@@ -185,7 +185,8 @@ if (import.meta.main)
       const callbackAuth = await verifyHubtelCallbackSignature(req.url, rawReference || '')
       if (!callbackAuth.ok) throw new Error(callbackAuth.reason)
 
-      const reference = callbackAuth.reference
+      const url = new URL(req.url)
+      const reference = url.searchParams.get('dbRef')?.trim() || callbackAuth.reference
 
       const transactionId = getString(payload, [
         'TransactionId',

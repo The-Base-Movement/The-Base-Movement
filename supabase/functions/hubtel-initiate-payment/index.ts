@@ -208,12 +208,19 @@ Deno.serve(async (req: Request) => {
     const hubtelClientRef = `${shortRef}_${Date.now().toString(36)}`
     const primaryCallback = await buildSignedHubtelCallbackUrl(
       `${supabaseUrl}/functions/v1/hubtel-payment-callback`,
+      hubtelClientRef,
+      undefined,
       reference
     )
     // @ts-expect-error: Deno global
     const secondaryCallbackBase = Deno.env.get('HUBTEL_SECONDARY_CALLBACK_URL')
     const secondaryCallback = secondaryCallbackBase
-      ? await buildSignedHubtelCallbackUrl(secondaryCallbackBase, reference)
+      ? await buildSignedHubtelCallbackUrl(
+          secondaryCallbackBase,
+          hubtelClientRef,
+          undefined,
+          reference
+        )
       : undefined
     const fallbackUrl =
       body.returnUrl ??
