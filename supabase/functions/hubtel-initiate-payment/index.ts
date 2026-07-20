@@ -303,13 +303,13 @@ Deno.serve(async (req: Request) => {
 
     if (!hubtelRes.ok) {
       console.error('[HUBTEL] Initiation failed', hubtelRes.status, payload)
-      return json({ error: 'Hubtel payment initiation failed', details: payload }, 502)
+      return json({ error: 'Hubtel payment initiation failed', details: payload }, 400)
     }
 
     const checkoutUrl = getCheckoutUrl(payload)
     if (!checkoutUrl) {
       console.error('[HUBTEL] Missing checkout URL', payload)
-      return json({ error: 'Hubtel did not return a checkout URL', details: payload }, 502)
+      return json({ error: 'Hubtel did not return a checkout URL', details: payload }, 400)
     }
 
     return json({ checkoutUrl, data: payload })
