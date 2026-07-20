@@ -19,7 +19,6 @@ import { HeroStats } from './donate/components/HeroStats'
 import { StrategicPriorities } from './donate/components/StrategicPriorities'
 import { MobilizationProtocol } from './donate/components/MobilizationProtocol'
 import { VictoriesSection } from './donate/components/VictoriesSection'
-import { OperationalTransparency } from './donate/components/OperationalTransparency'
 import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
 import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
@@ -48,16 +47,13 @@ export default function PublicDonate() {
   const [paymentState, setPaymentState] = useState<
     'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
   >('idle')
-  const [historyTab, setHistoryTab] = useState<'contributions' | 'spending'>('contributions')
   const [donateMode, setDonateMode] = useState<'individual' | 'group'>('individual')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [contributionFilter, setContributionFilter] = useState<'all' | 'me'>('all')
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
 
   // Real data
   const [publicHistory, setPublicHistory] = useState<DonationDetail[]>([])
-  const [personalHistory, setPersonalHistory] = useState<DonationDetail[]>([])
-  const [spendingHistory, setSpendingHistory] = useState<MobilizationLedger[]>([])
+  const [, setPersonalHistory] = useState<DonationDetail[]>([])
+  const [, setSpendingHistory] = useState<MobilizationLedger[]>([])
 
   const [activeStep, setActiveStep] = useState(1)
   const [formData, setFormData] = useState({
@@ -431,31 +427,6 @@ export default function PublicDonate() {
                 <VictoriesSection pastCampaigns={pastCampaigns} />
               </>
             )}
-
-            <WingDivider />
-
-            <OperationalTransparency
-              globalStats={globalStats}
-              historyTab={historyTab}
-              setHistoryTab={setHistoryTab}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              contributionFilter={contributionFilter}
-              setContributionFilter={setContributionFilter}
-              loading={loading}
-              publicHistory={publicHistory}
-              personalHistory={personalHistory}
-              spendingHistory={spendingHistory.map((s) => ({
-                id: s.id,
-                chapter: s.chapter,
-                type: s.transaction_type,
-                amount: s.amount.toString(),
-                description: s.description,
-                category: s.category,
-                date: s.timestamp,
-              }))}
-              onOpenAudit={() => setIsHistoryModalOpen(true)}
-            />
           </section>
         )}
       </section>
