@@ -1839,18 +1839,20 @@ class AdminService {
     totalMembers: number
     totalDonors: number
   }> {
-    // Aggregates come from a SECURITY DEFINER RPC because donations RLS only
-    // lets members read their own rows — direct sums undercount for non-admins
-    const [statsRes, { count }] = await Promise.all([
-      supabase.rpc('get_public_donation_stats'),
-      supabase.from('users').select('id', { count: 'exact', head: true }),
-    ])
+    // Every aggregate comes from a SECURITY DEFINER RPC. Donations RLS only lets
+    // members read their own rows, and users RLS hides all rows from anon — so a
+    // direct users count reads 0 on the public (logged-out) Donate page.
+    const { data } = await supabase.rpc('get_public_donation_stats')
 
-    const stats = (statsRes.data ?? {}) as { total_raised?: number; donor_count?: number }
+    const stats = (data ?? {}) as {
+      total_raised?: number
+      donor_count?: number
+      member_count?: number
+    }
 
     return {
       totalRaised: Number(stats.total_raised ?? 0),
-      totalMembers: count || 0,
+      totalMembers: Number(stats.member_count ?? 0),
       totalDonors: Number(stats.donor_count ?? 0),
     }
   }
