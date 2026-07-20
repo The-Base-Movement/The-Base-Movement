@@ -5,9 +5,10 @@ interface PriorityCardProps {
   campaign: DonationCampaign
   onEdit: () => void
   onDelete: () => void
+  onSetDefault: () => void
 }
 
-export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) {
+export function PriorityCard({ campaign, onEdit, onDelete, onSetDefault }: PriorityCardProps) {
   const [imageError, setImageError] = useState(false)
   // Progress along the 0 → target scale, capped at 100% and safe when target is 0.
   const pct =
@@ -217,6 +218,43 @@ export function PriorityCard({ campaign, onEdit, onDelete }: PriorityCardProps) 
               </span>
               <span>Ends: {new Date(campaign.endDate).toLocaleDateString()}</span>
             </div>
+            {campaign.isDefault ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 11,
+                  color: 'hsl(var(--accent))',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  star
+                </span>
+                <span>Default priority — receives donations with no priority selected</span>
+              </div>
+            ) : (
+              <button
+                className="btn btn-ghost btn-sm"
+                style={{
+                  alignSelf: 'flex-start',
+                  height: 'auto',
+                  padding: 0,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+                onClick={onSetDefault}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 14, marginRight: 4 }}
+                >
+                  star
+                </span>
+                Set as default priority
+              </button>
+            )}
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="btn btn-outline btn-sm"
