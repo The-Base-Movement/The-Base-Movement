@@ -59,7 +59,8 @@ export default function SEO({
     '@context': 'https://schema.org',
     '@type': 'PoliticalParty',
     name: 'The Base Movement',
-    alternateName: 'TBM',
+    // Brand-query variants we want AI/search to resolve to this entity.
+    alternateName: ['The Base Movement Ghana', 'Base Movement', 'TBM'],
     url: siteUrl,
     logo: settings.logo_url.startsWith('http')
       ? settings.logo_url
@@ -69,7 +70,23 @@ export default function SEO({
     foundingLocation: { '@type': 'Place', name: 'Accra, Ghana' },
     areaServed: ['Ghana', 'Diaspora'],
     slogan: 'Ghana First, Jobs for the Youth!',
-    sameAs: ['https://www.instagram.com/thebasemovementgh'],
+    // Topical grounding — the non-brand subjects we want to be associated with.
+    knowsAbout: [
+      'Youth employment in Ghana',
+      'Government accountability',
+      'Grassroots development',
+      'Civic participation',
+    ],
+    // NOTE: confirm founder name/title with the named individual before merging (content rule #5).
+    founder: { '@type': 'Person', name: 'Dr. George Oti Bonsu' },
+    // Every verified official profile added here strengthens AI resolution to .org.gh.
+    // TODO: add official Facebook, LinkedIn, and YouTube URLs once available.
+    sameAs: [
+      'https://www.instagram.com/thebasemovementgh',
+      'https://x.com/TheBaseMovement',
+      'https://www.wikidata.org/wiki/Q140626496',
+      'https://www.crunchbase.com/organization/the-base-movement',
+    ],
   }
 
   return (
@@ -96,7 +113,7 @@ export default function SEO({
 
       {/* Twitter / X */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@thebasemovementgh" />
+      <meta name="twitter:site" content="@TheBaseMovement" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={metaDescription} />
       <meta name="twitter:image" content={image} />
