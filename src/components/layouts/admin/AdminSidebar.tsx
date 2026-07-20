@@ -76,8 +76,10 @@ export function AdminSidebar({
             const role = user?.role
             if (role !== 'EXECUTIVE' && role !== 'SUPER_ADMIN' && role !== 'FOUNDER') return false
           }
-          if (!item.permission) return true
-          return adminService.can(item.permission.action, item.permission.resource)
+          if (!item.permission && !item.additionalPermissions?.length) return true
+          if (item.permission && adminService.can(item.permission.action, item.permission.resource))
+            return true
+          return !!item.additionalPermissions?.some((p) => adminService.can(p.action, p.resource))
         }),
       }))
       .filter((group) => group.items.length > 0)

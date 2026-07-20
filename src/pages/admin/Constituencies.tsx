@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { adminService } from '@/services/adminService'
 import { constituencyService, type MemberAssignmentIssue } from '@/services/constituencyService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { SortToggle } from '@/components/ui/SortToggle'
@@ -32,6 +33,10 @@ const GHANA_REGIONS = [
 
 export default function AdminConstituencies() {
   const navigate = useNavigate()
+  // Route access requires MANAGE_CHAPTER/CHAPTERS for every existing role that can reach
+  // this page — Movement Manager gets in via the additive VIEW_CONSTITUENCY_OPS permission
+  // instead, so this check hides writes for them without affecting anyone else.
+  const canManage = adminService.can('MANAGE_CHAPTER', 'CHAPTERS')
   const [constituencies, setConstituencies] = useState<Constituency[]>([])
   const [assignmentIssues, setAssignmentIssues] = useState<MemberAssignmentIssue[]>([])
   const [loading, setLoading] = useState(true)
@@ -180,19 +185,21 @@ export default function AdminConstituencies() {
         title="Constituencies"
         description="Manage Ghana constituency hubs"
         actions={
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              setInputValue('')
-              setSelectedRegionId('')
-              setAddModalOpen(true)
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-              add
-            </span>
-            Define new constituency
-          </button>
+          canManage ? (
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                setInputValue('')
+                setSelectedRegionId('')
+                setAddModalOpen(true)
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                add
+              </span>
+              Define new constituency
+            </button>
+          ) : undefined
         }
       />
 
@@ -560,29 +567,41 @@ export default function AdminConstituencies() {
                       >
                         View Hub
                       </button>
-                      <button
-                        className="btn btn-outline btn-sm"
-                        onClick={() => handleEditClick(c)}
-                        title="Edit Constituency"
-                        style={{ padding: '4px 8px', display: 'inline-flex', alignItems: 'center' }}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                          edit
-                        </span>
-                      </button>
-                      <button
-                        className="btn btn-outline btn-sm btn-dest-text"
-                        onClick={() => setDeleteConstituency(c)}
-                        title="Delete Constituency"
-                        style={{ padding: '4px 8px', display: 'inline-flex', alignItems: 'center' }}
-                      >
-                        <span
-                          className="material-symbols-outlined"
-                          style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
-                        >
-                          delete
-                        </span>
-                      </button>
+                      {canManage && (
+                        <>
+                          <button
+                            className="btn btn-outline btn-sm"
+                            onClick={() => handleEditClick(c)}
+                            title="Edit Constituency"
+                            style={{
+                              padding: '4px 8px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                              edit
+                            </span>
+                          </button>
+                          <button
+                            className="btn btn-outline btn-sm btn-dest-text"
+                            onClick={() => setDeleteConstituency(c)}
+                            title="Delete Constituency"
+                            style={{
+                              padding: '4px 8px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span
+                              className="material-symbols-outlined"
+                              style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
+                            >
+                              delete
+                            </span>
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -665,29 +684,33 @@ export default function AdminConstituencies() {
                 >
                   View Hub
                 </button>
-                <button
-                  className="btn btn-outline btn-sm"
-                  style={{ padding: '0 12px', display: 'inline-flex', alignItems: 'center' }}
-                  onClick={() => handleEditClick(c)}
-                  title="Edit Constituency"
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    edit
-                  </span>
-                </button>
-                <button
-                  className="btn btn-outline btn-sm btn-dest-text"
-                  style={{ padding: '0 12px', display: 'inline-flex', alignItems: 'center' }}
-                  onClick={() => setDeleteConstituency(c)}
-                  title="Delete Constituency"
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
-                  >
-                    delete
-                  </span>
-                </button>
+                {canManage && (
+                  <>
+                    <button
+                      className="btn btn-outline btn-sm"
+                      style={{ padding: '0 12px', display: 'inline-flex', alignItems: 'center' }}
+                      onClick={() => handleEditClick(c)}
+                      title="Edit Constituency"
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                        edit
+                      </span>
+                    </button>
+                    <button
+                      className="btn btn-outline btn-sm btn-dest-text"
+                      style={{ padding: '0 12px', display: 'inline-flex', alignItems: 'center' }}
+                      onClick={() => setDeleteConstituency(c)}
+                      title="Delete Constituency"
+                    >
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}
+                      >
+                        delete
+                      </span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))

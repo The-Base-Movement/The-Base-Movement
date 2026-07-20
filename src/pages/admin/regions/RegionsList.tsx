@@ -9,6 +9,7 @@ interface RegionsListProps {
   constituencySearch: Record<number, string>
   setConstituencySearch: React.Dispatch<React.SetStateAction<Record<number, string>>>
   isLoading: boolean
+  canManage: boolean
   setInputValue: (v: string) => void
   setEditRegionModal: (m: { id: number; name: string } | null) => void
   setDeleteRegionModal: (m: { id: number; name: string } | null) => void
@@ -25,6 +26,7 @@ export function RegionsList({
   constituencySearch,
   setConstituencySearch,
   isLoading,
+  canManage,
   setInputValue,
   setEditRegionModal,
   setDeleteRegionModal,
@@ -143,48 +145,52 @@ export function RegionsList({
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <button
-                  className="btn btn-sm"
-                  style={{
-                    background: 'hsl(var(--accent))',
-                    color: 'hsl(var(--accent-foreground))',
-                    border: 'none',
-                    width: 32,
-                    height: 32,
-                    padding: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setInputValue(region.name)
-                    setEditRegionModal({ id: region.id, name: region.name })
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    edit
-                  </span>
-                </button>
-                <button
-                  className="btn btn-dest btn-sm"
-                  style={{
-                    width: 32,
-                    height: 32,
-                    padding: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setDeleteRegionModal({ id: region.id, name: region.name })
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    delete
-                  </span>
-                </button>
+                {canManage && (
+                  <>
+                    <button
+                      className="btn btn-sm"
+                      style={{
+                        background: 'hsl(var(--accent))',
+                        color: 'hsl(var(--accent-foreground))',
+                        border: 'none',
+                        width: 32,
+                        height: 32,
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setInputValue(region.name)
+                        setEditRegionModal({ id: region.id, name: region.name })
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                        edit
+                      </span>
+                    </button>
+                    <button
+                      className="btn btn-dest btn-sm"
+                      style={{
+                        width: 32,
+                        height: 32,
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setDeleteRegionModal({ id: region.id, name: region.name })
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                        delete
+                      </span>
+                    </button>
+                  </>
+                )}
                 <span
                   className="material-symbols-outlined"
                   style={{
@@ -239,18 +245,20 @@ export function RegionsList({
                       style={{ ...inputSt, paddingLeft: 30, height: 34, fontSize: 12 }}
                     />
                   </div>
-                  <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => {
-                      setInputValue('')
-                      setAddConModal({ regionId: region.id, regionName: region.name })
-                    }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                      add
-                    </span>
-                    Define constituency
-                  </button>
+                  {canManage && (
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => {
+                        setInputValue('')
+                        setAddConModal({ regionId: region.id, regionName: region.name })
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        add
+                      </span>
+                      Define constituency
+                    </button>
+                  )}
                 </div>
 
                 {/* Constituency grid */}
@@ -304,56 +312,58 @@ export function RegionsList({
                         >
                           {con.name}
                         </span>
-                        <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
-                          <button
-                            className="btn btn-sm"
-                            style={{
-                              background: 'hsl(var(--accent))',
-                              color: 'hsl(var(--accent-foreground))',
-                              border: 'none',
-                              width: 26,
-                              height: 26,
-                              padding: 0,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                            onClick={() => {
-                              setInputValue(con.name)
-                              setEditConModal({
-                                id: con.id,
-                                name: con.name,
-                                regionName: region.name,
-                              })
-                            }}
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                              edit
-                            </span>
-                          </button>
-                          <button
-                            className="btn btn-dest btn-sm"
-                            style={{
-                              width: 26,
-                              height: 26,
-                              padding: 0,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                            onClick={() =>
-                              setDeleteConModal({
-                                id: con.id,
-                                name: con.name,
-                                regionName: region.name,
-                              })
-                            }
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                              delete
-                            </span>
-                          </button>
-                        </div>
+                        {canManage && (
+                          <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                            <button
+                              className="btn btn-sm"
+                              style={{
+                                background: 'hsl(var(--accent))',
+                                color: 'hsl(var(--accent-foreground))',
+                                border: 'none',
+                                width: 26,
+                                height: 26,
+                                padding: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              onClick={() => {
+                                setInputValue(con.name)
+                                setEditConModal({
+                                  id: con.id,
+                                  name: con.name,
+                                  regionName: region.name,
+                                })
+                              }}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                                edit
+                              </span>
+                            </button>
+                            <button
+                              className="btn btn-dest btn-sm"
+                              style={{
+                                width: 26,
+                                height: 26,
+                                padding: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              onClick={() =>
+                                setDeleteConModal({
+                                  id: con.id,
+                                  name: con.name,
+                                  regionName: region.name,
+                                })
+                              }
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                                delete
+                              </span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
