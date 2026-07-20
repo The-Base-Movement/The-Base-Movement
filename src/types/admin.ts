@@ -198,6 +198,7 @@ export interface DonationCampaign {
   endDate: string
   status: 'Active' | 'Closed'
   imageUrl?: string
+  isDefault?: boolean
 }
 
 export interface DonationRecord {

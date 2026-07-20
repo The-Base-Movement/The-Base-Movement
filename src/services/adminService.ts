@@ -953,6 +953,7 @@ class AdminService {
       end_date: string
       status: 'Active' | 'Closed'
       image_url: string
+      is_default: boolean
     }
 
     return (data || []).map((c: DBCampaign) => ({
@@ -964,7 +965,18 @@ class AdminService {
       endDate: c.end_date,
       status: c.status,
       imageUrl: c.image_url,
+      isDefault: c.is_default,
     }))
+  }
+
+  async setDefaultDonationCampaign(id: string): Promise<boolean> {
+    const { error } = await supabase.rpc('set_default_priority', { p_id: id })
+    if (error) {
+      console.error('[DATABASE] Failed to set default campaign:', error)
+      return false
+    }
+    await this.logAction('CAMPAIGN_SET_DEFAULT', `CAMPAIGNS/${id}`, 'Success')
+    return true
   }
 
   async createDonationCampaign(
@@ -1744,6 +1756,7 @@ class AdminService {
       end_date: string
       status: 'Active' | 'Closed'
       image_url: string
+      is_default: boolean
     }
 
     return (data || []).map((c: DBCampaign) => ({
@@ -1755,6 +1768,7 @@ class AdminService {
       endDate: c.end_date,
       status: c.status,
       imageUrl: c.image_url,
+      isDefault: c.is_default,
     }))
   }
 

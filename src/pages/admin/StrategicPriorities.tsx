@@ -136,6 +136,16 @@ export default function StrategicPriorities() {
     }
   }
 
+  const handleSetDefault = async (campaign: DonationCampaign) => {
+    const ok = await adminService.setDefaultDonationCampaign(campaign.id)
+    if (ok) {
+      toast.success(`"${campaign.title}" is now the default priority.`)
+      fetchCampaigns()
+    } else {
+      toast.error('Failed to set default priority.')
+    }
+  }
+
   const handleDelete = (campaign: DonationCampaign) => {
     openDelete({
       itemName: campaign.title,
@@ -364,6 +374,7 @@ export default function StrategicPriorities() {
                     })
                   }}
                   onDelete={() => handleDelete(campaign)}
+                  onSetDefault={() => handleSetDefault(campaign)}
                 />
               ))
             )}
