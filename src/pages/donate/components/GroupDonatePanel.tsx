@@ -173,8 +173,10 @@ export function GroupDonatePanel({
       })
       setCheckoutUrl(url)
       setIsModalOpen(true)
-    } catch {
-      toast.error('Could not start secure checkout. Please try again.')
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : 'Could not start secure checkout. Please try again.'
+      toast.error(msg)
     } finally {
       setBusy(false)
     }
