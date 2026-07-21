@@ -11,6 +11,11 @@ import {
 
 const departmentById = new Map(DEPARTMENT_CATALOG.map((department) => [department.id, department]))
 
+// National ICT runs its own bespoke dashboard (/admin/it-department) rather than
+// a generic department page. It isn't a canonical helpdesk department, so surface
+// it here as an extra card that links straight to that dashboard.
+const NATIONAL_ICT_CARD = { id: 'it', name: 'National ICT', icon: 'computer', sort_order: 99 }
+
 export default function DepartmentsIndex() {
   const { setCurrentLabel } = usePageLabel()
   const [departments, setDepartments] = useState<
@@ -27,7 +32,10 @@ export default function DepartmentsIndex() {
     async function load() {
       const { departments: depts, openCounts: counts } =
         await messagingService.getDepartmentsWithOpenTickets()
-      setDepartments(depts.filter((dept) => CANONICAL_DEPARTMENT_IDS.has(dept.id)))
+      setDepartments([
+        ...depts.filter((dept) => CANONICAL_DEPARTMENT_IDS.has(dept.id)),
+        NATIONAL_ICT_CARD,
+      ])
       setOpenCounts(counts)
       setLoading(false)
     }
@@ -166,7 +174,7 @@ export default function DepartmentsIndex() {
         >
           {departments.map((d) => {
             const open = openCounts[d.id] ?? 0
-            const to = `/admin/departments/${d.id}`
+            const to = d.id === 'it' ? '/admin/it-department' : `/admin/departments/${d.id}`
             return (
               <Link
                 key={d.id}

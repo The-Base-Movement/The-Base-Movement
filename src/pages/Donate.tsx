@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { trackEvent } from '@/lib/analytics'
 import type {
@@ -29,6 +30,7 @@ import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
 
 export default function PublicDonate() {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [countriesLoading, setCountriesLoading] = useState(true)
   const [countries, setCountries] = useState<Country[]>([])
@@ -162,6 +164,14 @@ export default function PublicDonate() {
     const timer = window.setInterval(() => void checkStatus(), 3000)
     return () => window.clearInterval(timer)
   }, [activeDonationId, submitted])
+
+  // After a confirmed donation, send logged-in donors to their My Donations page.
+  // Anonymous donors have no dashboard, so they keep the public success panel.
+  useEffect(() => {
+    if (!submitted || !isLoggedIn) return
+    const timer = window.setTimeout(() => navigate('/dashboard/my-donations'), 1500)
+    return () => window.clearTimeout(timer)
+  }, [submitted, isLoggedIn, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
