@@ -1,9 +1,9 @@
 /**
  * StatTile
  * -------------------------------------------------------------
- * The brand-color left-bar KPI tile (CLAUDE.md "KPI Tile Pattern").
- * This exact block is hand-rolled inline across ~40 admin pages; this
- * component is the single reusable source for it. Drop it inside a
+ * The brand-color left-bar KPI tile — the project's standard KPI tile
+ * pattern. This exact block is hand-rolled inline across ~40 admin pages;
+ * this component is the single reusable source for it. Drop it inside a
  * `.kpis` grid. Wrap it in a <Link> at the call site to make it clickable.
  *
  * Bar colors: 'hsl(var(--on-surface))' (charcoal), 'hsl(var(--primary))'
