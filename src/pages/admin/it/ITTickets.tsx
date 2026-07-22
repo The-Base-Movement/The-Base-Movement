@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react'
+import { StatTile } from '@/components/admin/StatTile'
 import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
@@ -106,44 +107,12 @@ export default function ITTickets() {
     <div>
       <div className="kpis" style={{ marginBottom: 28 }}>
         {kpis.map((kpi) => (
-          <div
+          <StatTile
             key={kpi.label}
-            className="panel"
-            style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: 3,
-                background: kpi.bar,
-              }}
-            />
-            <p
-              style={{
-                fontSize: 10,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                color: 'hsl(var(--on-surface-muted))',
-                margin: '0 0 6px',
-              }}
-            >
-              {kpi.label}
-            </p>
-            <p
-              style={{
-                fontSize: 'var(--kpi-num-size)',
-                fontWeight: 'var(--font-weight-medium, 500)',
-                color: 'hsl(var(--on-surface))',
-                margin: 0,
-              }}
-            >
-              {loading ? '—' : kpi.value}
-            </p>
-          </div>
+            label={kpi.label}
+            value={loading ? '—' : kpi.value}
+            bar={kpi.bar}
+          />
         ))}
       </div>
 
