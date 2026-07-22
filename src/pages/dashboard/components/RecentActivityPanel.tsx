@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { PanelHeader } from './PanelHeader'
 import {
   userActivityService,
   type ActivityEntry,
@@ -54,107 +55,102 @@ export function RecentActivityPanel({ userId }: { userId: string }) {
     <div
       className="panel"
       style={{
-        padding: '20px 24px',
+        padding: 0,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
+      <PanelHeader
+        title="My recent activity"
+        action={
+          <Link
+            to="/dashboard/activity"
+            style={{
+              fontSize: 11,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: '#fff',
+              textDecoration: 'none',
+              letterSpacing: '0.02em',
+            }}
+          >
+            View all
+          </Link>
+        }
+      />
+
       <div
         style={{
+          padding: '18px 24px',
+          flex: 1,
+          minHeight: 0,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 16,
+          flexDirection: 'column',
         }}
       >
-        <h3
-          style={{
-            fontFamily: "'Public Sans', sans-serif",
-            fontSize: 14,
-            fontWeight: 'var(--font-weight-medium, 500)',
-            color: 'hsl(var(--on-surface))',
-            margin: 0,
-            letterSpacing: '-0.01em',
-          }}
-        >
-          My recent activity
-        </h3>
-        <Link
-          to="/dashboard/activity"
-          style={{
-            fontSize: 11,
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-medium, 500)',
-            color: 'hsl(var(--primary))',
-            textDecoration: 'none',
-            letterSpacing: '0.02em',
-          }}
-        >
-          View all
-        </Link>
+        {loading ? (
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              margin: 0,
+            }}
+          >
+            Loading…
+          </p>
+        ) : entries.length === 0 ? (
+          <p
+            style={{
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+              margin: 0,
+            }}
+          >
+            No activity in the last 7 days.
+          </p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
+            {entries.map((e) => (
+              <div
+                key={`${e.source ?? 'activity'}-${e.id}`}
+                style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 18, color: 'hsl(var(--primary))', flexShrink: 0 }}
+                >
+                  {ICON_MAP[e.action_type] ?? 'history'}
+                </span>
+                <span
+                  style={{
+                    flex: 1,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  {e.description}
+                </span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface-muted))',
+                    flexShrink: 0,
+                  }}
+                >
+                  {timeAgo(e.created_at)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {loading ? (
-        <p
-          style={{
-            fontSize: 12,
-            color: 'hsl(var(--on-surface-muted))',
-            fontFamily: "'Public Sans', sans-serif",
-            margin: 0,
-          }}
-        >
-          Loading…
-        </p>
-      ) : entries.length === 0 ? (
-        <p
-          style={{
-            fontSize: 12,
-            color: 'hsl(var(--on-surface-muted))',
-            fontFamily: "'Public Sans', sans-serif",
-            margin: 0,
-          }}
-        >
-          No activity in the last 7 days.
-        </p>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
-          {entries.map((e) => (
-            <div
-              key={`${e.source ?? 'activity'}-${e.id}`}
-              style={{ display: 'flex', alignItems: 'center', gap: 12 }}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 18, color: 'hsl(var(--primary))', flexShrink: 0 }}
-              >
-                {ICON_MAP[e.action_type] ?? 'history'}
-              </span>
-              <span
-                style={{
-                  flex: 1,
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontSize: 13,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface))',
-                }}
-              >
-                {e.description}
-              </span>
-              <span
-                style={{
-                  fontSize: 11,
-                  fontFamily: "'Public Sans', sans-serif",
-                  color: 'hsl(var(--on-surface-muted))',
-                  flexShrink: 0,
-                }}
-              >
-                {timeAgo(e.created_at)}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

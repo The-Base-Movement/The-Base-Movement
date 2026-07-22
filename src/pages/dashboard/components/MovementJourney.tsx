@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
 import { useAuth } from '@/context/AuthContext'
 import { diasporaName } from '@/lib/diaspora'
+import { PanelHeader } from './PanelHeader'
 
 interface Step {
   title: string
@@ -104,77 +105,79 @@ export function MovementJourney() {
 
   return (
     <div
-      className="card card-pad road border border-border rounded-[4px] p-4 sm:p-6"
-      style={{ background: 'hsl(var(--card))' }}
+      className="card card-pad road border border-border rounded-[4px]"
+      style={{ background: 'hsl(var(--card))', padding: 0, overflow: 'hidden' }}
     >
-      <h3 className="font-meta text-[14px] font-semibold tracking-tight text-on-surface mb-[14px]">
-        My movement journey
-      </h3>
-      {loading ? (
-        <div className="py-10 text-center">
-          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-[.06em] font-meta">
-            Analyzing Journey...
-          </p>
-        </div>
-      ) : (
-        <div className="steps-container pt-2">
-          {steps.map((step, i) => (
-            <div
-              key={i}
-              className="step animate-in fade-in slide-in-from-bottom-4 duration-500"
-              style={{
-                animationDelay: `${i * 100}ms`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 8,
-                padding: '10px 0',
-                borderBottom: i < steps.length - 1 ? '1px solid hsl(var(--border))' : 'none',
-              }}
-            >
-              <div>
-                <b className="font-meta font-semibold text-[13px] tracking-tight text-on-surface">
-                  {step.title}
-                </b>
-                <span className="text-[11px] text-on-surface-muted block mt-0.5">{step.date}</span>
-              </div>
-              <span
+      <PanelHeader title="My movement journey" />
+      <div style={{ padding: 20 }}>
+        {loading ? (
+          <div className="py-10 text-center">
+            <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-[.06em] font-meta">
+              Analyzing Journey...
+            </p>
+          </div>
+        ) : (
+          <div className="steps-container pt-2">
+            {steps.map((step, i) => (
+              <div
+                key={i}
+                className="step animate-in fade-in slide-in-from-bottom-4 duration-500"
                 style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-semibold, 600)',
-                  fontSize: 9,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  padding: '3px 8px',
-                  borderRadius: 4,
-                  border: '1px solid',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                  background:
-                    step.status === 'Complete' || step.status === 'Verified'
-                      ? 'rgba(0,107,63,0.08)'
-                      : step.status === 'In progress'
-                        ? 'rgba(var(--accent-rgb),0.08)'
-                        : 'rgba(0,0,0,0.04)',
-                  color:
-                    step.status === 'Complete' || step.status === 'Verified'
-                      ? 'hsl(var(--primary))'
-                      : step.status === 'In progress'
-                        ? 'hsl(var(--accent))'
-                        : 'hsl(var(--on-surface-muted))',
-                  borderColor:
-                    step.status === 'Complete' || step.status === 'Verified'
-                      ? 'rgba(0,107,63,0.15)'
-                      : 'rgba(0,0,0,0.08)',
+                  animationDelay: `${i * 100}ms`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 8,
+                  padding: '10px 0',
+                  borderBottom: i < steps.length - 1 ? '1px solid hsl(var(--border))' : 'none',
                 }}
               >
-                {step.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+                <div>
+                  <b className="font-meta font-semibold text-[13px] tracking-tight text-on-surface">
+                    {step.title}
+                  </b>
+                  <span className="text-[11px] text-on-surface-muted block mt-0.5">
+                    {step.date}
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    fontSize: 9,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    padding: '3px 8px',
+                    borderRadius: 4,
+                    border: '1px solid',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                    background:
+                      step.status === 'Complete' || step.status === 'Verified'
+                        ? 'rgba(0,107,63,0.08)'
+                        : step.status === 'In progress'
+                          ? 'rgba(var(--accent-rgb),0.08)'
+                          : 'rgba(0,0,0,0.04)',
+                    color:
+                      step.status === 'Complete' || step.status === 'Verified'
+                        ? 'hsl(var(--primary))'
+                        : step.status === 'In progress'
+                          ? 'hsl(var(--accent))'
+                          : 'hsl(var(--on-surface-muted))',
+                    borderColor:
+                      step.status === 'Complete' || step.status === 'Verified'
+                        ? 'rgba(0,107,63,0.15)'
+                        : 'rgba(0,0,0,0.08)',
+                  }}
+                >
+                  {step.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <style dangerouslySetInnerHTML={{ __html: `.steps-container { position: relative; }` }} />
     </div>
