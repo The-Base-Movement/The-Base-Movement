@@ -164,7 +164,7 @@ export default function Footer() {
                   title: 'Instagram',
                 },
                 {
-                  href: 'https://x.com/TheBaseGame',
+                  href: 'https://x.com/thebasemovement',
                   Icon: XIcon,
                   title: 'X',
                 },

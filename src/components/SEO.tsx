@@ -85,7 +85,7 @@ export default function SEO({
     // TODO: add official LinkedIn URL once available.
     sameAs: [
       'https://www.instagram.com/thebasemovementghana',
-      'https://x.com/TheBaseGame',
+      'https://x.com/thebasemovement',
       'https://www.youtube.com/@TheBaseMovementGhana',
       'https://www.tiktok.com/@thebasemovementghana',
       'https://www.facebook.com/profile.php?id=61579415816496',
@@ -118,7 +118,7 @@ export default function SEO({
 
       {/* Twitter / X */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@TheBaseGame" />
+      <meta name="twitter:site" content="@thebasemovement" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={metaDescription} />
       <meta name="twitter:image" content={image} />

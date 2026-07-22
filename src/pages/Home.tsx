@@ -125,7 +125,7 @@ export default function Home() {
     sameAs: [
       'https://www.facebook.com/profile.php?id=61579415816496',
       'https://www.instagram.com/thebasemovementghana',
-      'https://x.com/TheBaseGame',
+      'https://x.com/thebasemovement',
       'https://www.tiktok.com/@thebasemovementghana',
       'https://www.youtube.com/@TheBaseMovementGhana',
     ],
