@@ -22,18 +22,32 @@ export function ActivityFeed() {
 
   useEffect(() => {
     async function initFeed() {
-      const members = await memberService.getMembers().then((ms) => ms.slice(0, 12))
+      const [members, verified] = await Promise.all([
+        memberService.getMembers().then((ms) => ms.slice(0, 12)),
+        memberService.getRecentlyVerified(12),
+      ])
 
-      const initial: Activity[] = members.map((m) => ({
-        name: m.name,
-        action: 'joined the movement in',
-        target: m.chapter || m.region || m.country || 'The Base',
-        time: m.joined || 'Recently',
-        timestamp: m.joined ? new Date(m.joined) : new Date(),
-        loc: m.region || m.country || 'Ghana',
-        status: 'Verified',
-        img: m.avatarUrl || fallbackAvatar(m.name),
-      }))
+      const initial: Activity[] = [
+        ...members.map((m) => ({
+          name: m.name,
+          action: 'joined the movement in',
+          target: m.chapter || m.region || m.country || 'The Base',
+          time: m.joined || 'Recently',
+          timestamp: m.joined ? new Date(m.joined) : new Date(),
+          loc: m.region || m.country || 'Ghana',
+          img: m.avatarUrl || fallbackAvatar(m.name),
+        })),
+        ...verified.map((v) => ({
+          name: v.name,
+          action: 'was verified in',
+          target: v.chapter || v.region || v.country || 'The Base',
+          time: new Date(v.verifiedAt).toLocaleDateString(),
+          timestamp: new Date(v.verifiedAt),
+          loc: v.region || v.country || 'Ghana',
+          status: 'Verified',
+          img: v.avatarUrl || fallbackAvatar(v.name),
+        })),
+      ]
 
       setActivities(
         initial.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10)

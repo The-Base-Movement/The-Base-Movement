@@ -12,6 +12,15 @@ function stripMarkdownEmail(value: string | null | undefined): string {
   return match ? match[1] : value
 }
 
+export interface VerifiedMemberEvent {
+  name: string
+  region: string
+  country: string
+  chapter: string
+  avatarUrl?: string
+  verifiedAt: string
+}
+
 class MemberService {
   private static instance: MemberService
 
@@ -762,6 +771,35 @@ class MemberService {
         }
       )
       .subscribe()
+  }
+
+  /**
+   * Recently verified members (verification_status → 'Approved'), newest first.
+   * Backed by users.verified_at, stamped by a DB trigger. Returns [] if the
+   * column isn't present yet (migration pending) so the feed degrades to joins.
+   */
+  async getRecentlyVerified(limit = 10): Promise<VerifiedMemberEvent[]> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('full_name, region, country, chapter, avatar_url, verified_at')
+      .not('verified_at', 'is', null)
+      .is('deleted_at', null)
+      .order('verified_at', { ascending: false })
+      .limit(limit)
+
+    if (error) {
+      console.warn('[MEMBERS] getRecentlyVerified unavailable:', error.message)
+      return []
+    }
+
+    return (data || []).map((u) => ({
+      name: u.full_name,
+      region: u.region || '',
+      country: u.country || '',
+      chapter: u.chapter || '',
+      avatarUrl: u.avatar_url || undefined,
+      verifiedAt: u.verified_at,
+    }))
   }
 
   async getMembersPaginated(
