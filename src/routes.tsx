@@ -1,13 +1,21 @@
 import { lazy } from 'react'
 import { type RouteObject, Navigate } from 'react-router-dom'
-import WithChapters from './components/WithChapters'
-import WithStore from './components/WithStore'
 import PublicLayout from './components/PublicLayout'
 import LegacyDashboardUpdateArticleRedirect from './components/LegacyDashboardUpdateArticleRedirect'
-import DashboardLayout from './components/DashboardLayout'
 import ProtectedRoute from './components/ProtectedRoute'
-import ProtectedAdminRoute from './components/ProtectedAdminRoute'
 import VerifiedRoute from './components/VerifiedRoute'
+
+// Layout wrappers for the (lazy) /chapters and /store route trees. Kept lazy so
+// their ChaptersContext/StoreProvider — which statically import the 92 KB
+// adminService cluster — stay out of the eager entry chunk loaded on every page.
+const WithChapters = lazy(() => import('./components/WithChapters'))
+const WithStore = lazy(() => import('./components/WithStore'))
+// Authenticated dashboard shell — also statically imports adminService. Only the
+// (lazy) /dashboard tree uses it, so keep it lazy to stay out of the entry chunk.
+const DashboardLayout = lazy(() => import('./components/DashboardLayout'))
+// Admin route guard — pulls in AdminDeviceCapture → adminService cluster. Only
+// gates (lazy) /admin routes, so keep it lazy to stay out of the entry chunk.
+const ProtectedAdminRoute = lazy(() => import('./components/ProtectedAdminRoute'))
 
 const Login = lazy(() => import('./pages/Login'))
 const Home = lazy(() => import('./pages/Home'))

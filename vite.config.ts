@@ -128,6 +128,13 @@ export default defineConfig(({ mode }) => {
             if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-'))
               return 'vendor-charts'
             if (id.includes('@supabase')) return 'vendor-supabase'
+            // Heavy, self-contained (no React deps) libs used only on specific lazy
+            // routes — split out so they don't bloat the eager vendor chunk that
+            // loads on every page. mapbox-gl → map pages, tesseract.js → registration OCR.
+            if (id.includes('mapbox-gl')) return 'vendor-map'
+            if (id.includes('tesseract.js')) return 'vendor-ocr'
+            if (id.includes('pdfjs-dist')) return 'vendor-pdf'
+            if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-export'
             return 'vendor'
           },
         },
