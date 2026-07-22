@@ -157,11 +157,12 @@ export default function ITDepartmentLayout() {
           icon={header.icon}
           description={header.description}
           actions={header.actions}
-          style={isMobile ? { padding: '0 14px 16px' } : undefined}
+          style={{ padding: isMobile ? '0 14px 16px' : '0 28px 16px' }}
         />
 
-        {/* Page content */}
-        <div style={isMobile ? { padding: '0 14px 40px' } : undefined}>
+        {/* Page content — match the 28px side gutter standard admin pages get from .main
+            (IT pages render via <Outlet> and previously had no desktop padding at all) */}
+        <div style={{ padding: isMobile ? '0 14px 40px' : '0 28px 40px' }}>
           <Outlet />
         </div>
       </div>

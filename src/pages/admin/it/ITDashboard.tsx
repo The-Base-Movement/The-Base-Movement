@@ -4,6 +4,7 @@ import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 import { OrgChart } from './components/OrgChart'
+import { StatTile } from '@/components/admin/StatTile'
 
 interface ITStats {
   totalProjects: number
@@ -171,81 +172,21 @@ export default function ITDashboard() {
       {/* KPI tiles */}
       <div className="kpis" style={{ marginBottom: 28 }}>
         {kpis.map((kpi) => {
-          const content = (
-            <div
-              className="panel"
-              style={{
-                padding: '16px 18px 16px 22px',
-                position: 'relative',
-                overflow: 'hidden',
-                cursor: kpi.to ? 'pointer' : undefined,
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 3,
-                  background: kpi.bar,
-                }}
-              />
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: 'space-between',
-                  marginBottom: 10,
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: 'hsl(var(--on-surface-muted))',
-                    margin: 0,
-                  }}
-                >
-                  {kpi.label}
-                </p>
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 16, color: kpi.bar, opacity: 0.55 }}
-                >
-                  {kpi.icon}
-                </span>
-              </div>
-              <p
-                style={{
-                  fontSize: 'var(--kpi-num-size)',
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface))',
-                  margin: '0 0 4px',
-                }}
-              >
-                {loading ? '—' : (kpi.value ?? 0)}
-              </p>
-              <p
-                style={{
-                  fontSize: 10,
-                  color: 'hsl(var(--on-surface-muted))',
-                  margin: 0,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                }}
-              >
-                {kpi.sub}
-              </p>
-            </div>
+          const tile = (
+            <StatTile
+              label={kpi.label}
+              value={loading ? '—' : (kpi.value ?? 0)}
+              bar={kpi.bar}
+              sub={kpi.sub}
+              icon={kpi.icon}
+            />
           )
           return kpi.to ? (
             <Link key={kpi.label} to={kpi.to} style={{ textDecoration: 'none' }}>
-              {content}
+              {tile}
             </Link>
           ) : (
-            <div key={kpi.label}>{content}</div>
+            <div key={kpi.label}>{tile}</div>
           )
         })}
       </div>
