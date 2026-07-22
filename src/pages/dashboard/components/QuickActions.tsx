@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { sessionStore } from '@/lib/sessionStore'
 import { toast } from 'sonner'
+import { PanelHeader } from './PanelHeader'
 
 const linkActions = [
   { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Vote on poll', sub: 'Closes in 4 days' },
@@ -33,13 +34,11 @@ export function QuickActions() {
 
   return (
     <div
-      className="border border-border rounded-[4px] p-6 quick h-full"
-      style={{ background: 'hsl(var(--card))' }}
+      className="border border-border rounded-[4px] quick h-full"
+      style={{ background: 'hsl(var(--card))', padding: 0, overflow: 'hidden' }}
     >
-      <h3 className="font-meta text-[14px] font-semibold tracking-tight text-on-surface mb-[14px]">
-        Quick actions
-      </h3>
-      <div className="row">
+      <PanelHeader title="Quick actions" />
+      <div className="row" style={{ padding: 20 }}>
         {linkActions.map((a) => (
           <Link
             key={a.to}

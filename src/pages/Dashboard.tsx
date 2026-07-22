@@ -10,6 +10,7 @@ import { QuickActions } from './dashboard/components/QuickActions'
 import { ProfileCompletion } from './dashboard/components/ProfileCompletion'
 import { ActivityFeed } from './dashboard/components/ActivityFeed'
 import { MovementJourney } from './dashboard/components/MovementJourney'
+import { PanelHeader } from './dashboard/components/PanelHeader'
 import { donationService } from '@/services/donationService'
 import { gamificationService } from '@/services/gamificationService'
 import { PushPromptBanner } from '@/components/PushPromptBanner'
@@ -195,56 +196,47 @@ export default function Dashboard() {
         {/* Lower row: feed + journey/activity stack */}
         <div className="dash-lower">
           <div className="dash-card-feed panel feed" style={{ padding: 0, overflow: 'hidden' }}>
+            <PanelHeader
+              title="Movement live feed"
+              action={
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 10,
+                    fontWeight: 'var(--font-weight-semibold, 600)',
+                    color: 'hsl(var(--primary))',
+                    background: '#fff',
+                    padding: '4px 9px',
+                    borderRadius: 'var(--radius-pill)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '.06em',
+                  }}
+                >
+                  <i
+                    className="animate-pulse"
+                    style={{
+                      width: 6,
+                      height: 6,
+                      background: 'hsl(var(--primary))',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                    }}
+                  />
+                  Live
+                </span>
+              }
+            />
             <div
               style={{
+                padding: '18px 22px 22px',
+                flex: 1,
+                minHeight: 0,
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '13px 18px',
-                background: 'hsl(var(--primary))',
+                flexDirection: 'column',
               }}
             >
-              <h3
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 'var(--font-weight-semibold, 600)',
-                  letterSpacing: '-.01em',
-                  color: '#fff',
-                  margin: 0,
-                }}
-              >
-                Movement live feed
-              </h3>
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  fontSize: 10,
-                  fontWeight: 'var(--font-weight-semibold, 600)',
-                  color: 'hsl(var(--primary))',
-                  background: '#fff',
-                  padding: '4px 9px',
-                  borderRadius: 'var(--radius-pill)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '.06em',
-                }}
-              >
-                <i
-                  className="animate-pulse"
-                  style={{
-                    width: 6,
-                    height: 6,
-                    background: 'hsl(var(--primary))',
-                    borderRadius: '50%',
-                    display: 'inline-block',
-                  }}
-                />
-                Live
-              </span>
-            </div>
-            <div style={{ padding: '18px 22px 22px' }}>
               <ActivityFeed />
             </div>
           </div>
@@ -280,6 +272,7 @@ export default function Dashboard() {
           grid-template-columns: 1.4fr 1fr;
           gap: 20px;
         }
+        .dash-card-feed { display: flex; flex-direction: column; }
         .dash-side-stack {
           display: flex;
           flex-direction: column;

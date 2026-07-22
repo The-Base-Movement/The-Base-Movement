@@ -83,10 +83,10 @@ export function ActivityFeed() {
   }, [lowBandwidthMode])
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" style={{ flex: 1, minHeight: 0 }}>
       <div
         className="activities-container"
-        style={{ maxHeight: 380, overflowY: 'auto', paddingRight: 4 }}
+        style={{ flex: 1, minHeight: 0, overflowY: 'auto', paddingRight: 4 }}
       >
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '8px 0' }}>
@@ -151,6 +151,7 @@ export function ActivityFeed() {
         .activities-container { scrollbar-width: thin; scrollbar-color: hsl(var(--border)) transparent; }
         .activities-container::-webkit-scrollbar { width: 6px; }
         .activities-container::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 999px; }
+        @media (max-width: 768px) { .activities-container { flex: none !important; max-height: 60vh; } }
 
         .pill { padding: 4px 10px; font-size: 9px; border-radius: 4px; }
         .pill-ok { background: rgba(0, 107, 63, 0.1); color: var(--primary); border: 1px solid rgba(0, 107, 63, 0.1); }
