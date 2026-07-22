@@ -228,15 +228,7 @@ export default function Dashboard() {
                 </span>
               }
             />
-            <div
-              style={{
-                padding: '18px 22px 22px',
-                flex: 1,
-                minHeight: 0,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
+            <div style={{ padding: '18px 22px 22px' }}>
               <ActivityFeed />
             </div>
           </div>
@@ -272,7 +264,7 @@ export default function Dashboard() {
           grid-template-columns: 1.4fr 1fr;
           gap: 20px;
         }
-        .dash-card-feed { display: flex; flex-direction: column; }
+        .dash-card-feed { align-self: start; }
         .dash-side-stack {
           display: flex;
           flex-direction: column;
