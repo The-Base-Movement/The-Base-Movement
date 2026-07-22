@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
-import { FacebookIcon, InstagramIcon, TikTokIcon, YouTubeIcon } from './icons/SocialIcons'
+import { FacebookIcon, InstagramIcon, XIcon, TikTokIcon, YouTubeIcon } from './icons/SocialIcons'
 import { useBranding } from '@/hooks/useBranding'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
@@ -159,17 +159,22 @@ export default function Footer() {
                   title: 'Facebook',
                 },
                 {
-                  href: 'https://www.instagram.com/thebasemovementgh',
+                  href: 'https://www.instagram.com/thebasemovementghana',
                   Icon: InstagramIcon,
                   title: 'Instagram',
                 },
                 {
-                  href: 'https://www.tiktok.com/@thebasemovementgh',
+                  href: 'https://x.com/thebasemovement',
+                  Icon: XIcon,
+                  title: 'X',
+                },
+                {
+                  href: 'https://www.tiktok.com/@thebasemovementghana',
                   Icon: TikTokIcon,
                   title: 'TikTok',
                 },
                 {
-                  href: 'https://www.youtube.com/@thebasemovementgh',
+                  href: 'https://www.youtube.com/@TheBaseMovementGhana',
                   Icon: YouTubeIcon,
                   title: 'YouTube',
                 },
