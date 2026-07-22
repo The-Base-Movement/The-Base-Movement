@@ -194,29 +194,39 @@ export default function Dashboard() {
 
         {/* Lower row: feed + journey/activity stack */}
         <div className="dash-lower">
-          <div className="dash-card-feed panel feed" style={{ padding: 24 }}>
-            <h3
+          <div className="dash-card-feed panel feed" style={{ padding: 0, overflow: 'hidden' }}>
+            <div
               style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontSize: 14,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                letterSpacing: '-.01em',
-                color: 'hsl(var(--on-surface))',
-                marginBottom: 20,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                padding: '13px 18px',
+                background: 'hsl(var(--primary))',
               }}
             >
-              Movement live feed
+              <h3
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  letterSpacing: '-.01em',
+                  color: '#fff',
+                  margin: 0,
+                }}
+              >
+                Movement live feed
+              </h3>
               <span
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6,
                   fontSize: 10,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--destructive))',
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                  color: 'hsl(var(--primary))',
+                  background: '#fff',
+                  padding: '4px 9px',
+                  borderRadius: 'var(--radius-pill)',
                   textTransform: 'uppercase',
                   letterSpacing: '.06em',
                 }}
@@ -226,15 +236,17 @@ export default function Dashboard() {
                   style={{
                     width: 6,
                     height: 6,
-                    background: 'hsl(var(--destructive))',
+                    background: 'hsl(var(--primary))',
                     borderRadius: '50%',
                     display: 'inline-block',
                   }}
                 />
                 Live
               </span>
-            </h3>
-            <ActivityFeed />
+            </div>
+            <div style={{ padding: '18px 22px 22px' }}>
+              <ActivityFeed />
+            </div>
           </div>
           <div className="dash-side-stack">
             <div className="dash-card-journey">

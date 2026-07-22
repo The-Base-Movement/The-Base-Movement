@@ -15,6 +15,10 @@ interface Activity {
   status?: string
 }
 
+// How many events the feed holds. The list scrolls internally, so this can be
+// larger than what's visible at once.
+const FEED_LIMIT = 20
+
 export function ActivityFeed() {
   const { lowBandwidthMode } = usePerformance()
   const [activities, setActivities] = useState<Activity[]>([])
@@ -23,8 +27,8 @@ export function ActivityFeed() {
   useEffect(() => {
     async function initFeed() {
       const [members, verified] = await Promise.all([
-        memberService.getMembers().then((ms) => ms.slice(0, 12)),
-        memberService.getRecentlyVerified(12),
+        memberService.getMembers().then((ms) => ms.slice(0, FEED_LIMIT)),
+        memberService.getRecentlyVerified(FEED_LIMIT),
       ])
 
       const initial: Activity[] = [
@@ -50,7 +54,7 @@ export function ActivityFeed() {
       ]
 
       setActivities(
-        initial.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10)
+        initial.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, FEED_LIMIT)
       )
       setLoading(false)
     }
@@ -70,7 +74,7 @@ export function ActivityFeed() {
         status: 'Verified',
         img: m.avatarUrl || fallbackAvatar(m.name),
       }
-      setActivities((prev) => [newActivity, ...prev].slice(0, 10))
+      setActivities((prev) => [newActivity, ...prev].slice(0, FEED_LIMIT))
     })
 
     return () => {
@@ -80,7 +84,10 @@ export function ActivityFeed() {
 
   return (
     <div className="flex flex-col">
-      <div className="activities-container">
+      <div
+        className="activities-container"
+        style={{ maxHeight: 380, overflowY: 'auto', paddingRight: 4 }}
+      >
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '8px 0' }}>
             {[0, 1, 2, 3, 4].map((i) => (
@@ -140,6 +147,10 @@ export function ActivityFeed() {
         .feed-row .body p { margin: 0; font-size: 12px; color: var(--on-surface); line-height: 1.4; }
         .feed-row .body p b { font-family: 'Public Sans', sans-serif; font-weight: var(--font-weight-semibold, 600); }
         .feed-row .body .meta { font-size: 10.5px; color: var(--on-surface-muted); margin-top: 3px; font-family: 'Public Sans', sans-serif; font-weight: var(--font-weight-medium, 500); letter-spacing: .02em; }
+
+        .activities-container { scrollbar-width: thin; scrollbar-color: hsl(var(--border)) transparent; }
+        .activities-container::-webkit-scrollbar { width: 6px; }
+        .activities-container::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 999px; }
 
         .pill { padding: 4px 10px; font-size: 9px; border-radius: 4px; }
         .pill-ok { background: rgba(0, 107, 63, 0.1); color: var(--primary); border: 1px solid rgba(0, 107, 63, 0.1); }
