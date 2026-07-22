@@ -137,7 +137,7 @@ export default function MediaHubLayout() {
             alignItems: 'center',
             gap: 14,
             marginBottom: 4,
-            padding: isMobile ? '0 14px' : undefined,
+            padding: isMobile ? '0 14px' : '0 28px',
           }}
         >
           <img
@@ -155,8 +155,8 @@ export default function MediaHubLayout() {
           </div>
         </div>
 
-        {/* Page content */}
-        <div style={isMobile ? { padding: '0 14px 40px' } : undefined}>
+        {/* Page content — match the 28px side gutter standard admin pages get from .main */}
+        <div style={{ padding: isMobile ? '0 14px 40px' : '0 28px 40px' }}>
           <Outlet />
         </div>
       </div>
