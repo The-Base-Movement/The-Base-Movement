@@ -208,7 +208,7 @@ export default function Dashboard() {
                 justifyContent: 'space-between',
               }}
             >
-              Live contribution feed
+              Movement live feed
               <span
                 style={{
                   display: 'flex',
