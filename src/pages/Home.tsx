@@ -124,9 +124,10 @@ export default function Home() {
     areaServed: ['Ghana', 'Diaspora'],
     sameAs: [
       'https://www.facebook.com/profile.php?id=61579415816496',
-      'https://www.instagram.com/thebasemovementgh',
-      'https://www.tiktok.com/@thebasemovementgh',
-      'https://www.youtube.com/@thebasemovementgh',
+      'https://www.instagram.com/thebasemovementghana',
+      'https://x.com/TheBaseGame',
+      'https://www.tiktok.com/@thebasemovementghana',
+      'https://www.youtube.com/@TheBaseMovementGhana',
     ],
     contactPoint: {
       '@type': 'ContactPoint',
