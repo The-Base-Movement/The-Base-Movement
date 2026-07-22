@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { BlogPost, MediaAsset, Author, PressRelease, MediaKitAsset } from '@/types/admin'
 import { compressForUpload } from '@/lib/imageUtils'
+import { pingIndexNow } from '@/lib/indexNow'
 import mediaManifest from '@/data/media-manifest.json'
 
 interface DBAuthor {
@@ -271,6 +272,7 @@ class ContentService {
         post.authorName || 'Admin',
         post.slug
       )
+      pingIndexNow([`/blog/${post.slug}`, '/blog'])
     }
     await this.notifyMediaContentActivity(
       post.status === 'Published'
@@ -347,6 +349,7 @@ class ContentService {
         post.authorName || 'Admin',
         post.slug
       )
+      pingIndexNow([`/blog/${post.slug}`, '/blog'])
     }
     const snapshot = await this.getBlogPostSnapshot(id)
     if (snapshot) {
