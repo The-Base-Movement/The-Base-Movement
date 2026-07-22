@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
+import { StatTile } from '@/components/admin/StatTile'
 import { itService } from '@/services/itService'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
@@ -143,47 +144,15 @@ export default function ITTodos() {
           return (
             <div
               key={s}
-              className="panel"
-              style={{
-                padding: '14px 16px 14px 20px',
-                position: 'relative',
-                overflow: 'hidden',
-                cursor: 'pointer',
-              }}
+              style={{ cursor: 'pointer' }}
               onClick={() => setFilter(filter === s ? 'all' : s)}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 3,
-                  background: cfg.color,
-                }}
+              <StatTile
+                label={cfg.label}
+                value={loading ? '—' : counts[s]}
+                bar={cfg.color}
+                compact
               />
-              <p
-                style={{
-                  fontSize: 9,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  color: 'hsl(var(--on-surface-muted))',
-                  margin: '0 0 4px',
-                }}
-              >
-                {cfg.label}
-              </p>
-              <p
-                style={{
-                  fontSize: 'var(--kpi-num-size)',
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface))',
-                  margin: 0,
-                }}
-              >
-                {loading ? '—' : counts[s]}
-              </p>
             </div>
           )
         })}

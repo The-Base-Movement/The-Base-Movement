@@ -20,6 +20,8 @@ interface StatTileProps {
   sub?: string
   /** Optional Material Symbols icon shown top-right, tinted to the bar color */
   icon?: string
+  /** Tighter padding + smaller label — for dense status-count strips */
+  compact?: boolean
 }
 
 const labelStyle: CSSProperties = {
@@ -30,11 +32,16 @@ const labelStyle: CSSProperties = {
   color: 'hsl(var(--on-surface-muted))',
 }
 
-export function StatTile({ label, value, bar, sub, icon }: StatTileProps) {
+export function StatTile({ label, value, bar, sub, icon, compact }: StatTileProps) {
+  const label2: CSSProperties = compact ? { ...labelStyle, fontSize: 9 } : labelStyle
   return (
     <div
       className="panel"
-      style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}
+      style={{
+        padding: compact ? '14px 16px 14px 20px' : '16px 18px 16px 22px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
     >
       <div
         style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: bar }}
@@ -48,7 +55,7 @@ export function StatTile({ label, value, bar, sub, icon }: StatTileProps) {
             marginBottom: 10,
           }}
         >
-          <p style={{ ...labelStyle, margin: 0 }}>{label}</p>
+          <p style={{ ...label2, margin: 0 }}>{label}</p>
           <span
             className="material-symbols-outlined"
             style={{ fontSize: 16, color: bar, opacity: 0.55 }}
@@ -57,7 +64,7 @@ export function StatTile({ label, value, bar, sub, icon }: StatTileProps) {
           </span>
         </div>
       ) : (
-        <p style={{ ...labelStyle, margin: '0 0 6px' }}>{label}</p>
+        <p style={{ ...label2, margin: compact ? '0 0 4px' : '0 0 6px' }}>{label}</p>
       )}
       <p
         style={{
