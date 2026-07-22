@@ -307,7 +307,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           }}
         >
           <PageLabelProvider>
-            <div className="max-w-7xl mx-auto w-full">
+            <div className="max-w-[1760px] mx-auto w-full">
               <Breadcrumbs />
               {accessDecision.allowed ? (
                 <Suspense fallback={contentFallback}>{children || <Outlet />}</Suspense>
