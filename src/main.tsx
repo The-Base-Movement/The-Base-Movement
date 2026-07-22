@@ -6,8 +6,6 @@ import { initSentry } from './lib/sentry'
 import App from './App.tsx'
 import './index.css'
 
-initSentry()
-
 const PRELOAD_RELOAD_KEY = 'the_base_preload_error_reload_at'
 
 // Reload at most once per 30s so a genuinely-broken chunk can't loop forever.
@@ -72,3 +70,17 @@ const rootElement = (
 )
 
 createRoot(container).render(rootElement)
+
+// Defer Sentry off the critical hydration path. initSentry() dynamically imports
+// a heavy SDK (browser tracing + session-replay DOM instrumentation) whose fetch
+// and init otherwise compete with hydration and inflate TBT. Run it once the main
+// thread is idle; setTimeout fallback for browsers without requestIdleCallback.
+type IdleWindow = Window & {
+  requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void
+}
+const idle = (window as IdleWindow).requestIdleCallback
+if (idle) {
+  idle(() => initSentry(), { timeout: 4000 })
+} else {
+  window.setTimeout(() => initSentry(), 2500)
+}
