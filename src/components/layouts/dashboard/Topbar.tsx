@@ -156,6 +156,7 @@ export default function Topbar({
           <div className="hidden lg:block" style={{ position: 'relative' }}>
             <span
               className="material-symbols-outlined"
+              aria-hidden="true"
               style={{
                 position: 'absolute',
                 left: 10,
@@ -163,7 +164,6 @@ export default function Topbar({
                 transform: 'translateY(-50%)',
                 fontSize: 16,
                 color: 'hsl(var(--on-surface-muted))',
-                opacity: 0.4,
                 pointerEvents: 'none',
               }}
             >
