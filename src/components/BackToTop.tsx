@@ -56,7 +56,7 @@ export default function BackToTop() {
       }`}
       aria-label="Back to top"
     >
-      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+      <span className="material-symbols-outlined" style={{ fontSize: 20 }} aria-hidden="true">
         arrow_upward
       </span>
     </button>
