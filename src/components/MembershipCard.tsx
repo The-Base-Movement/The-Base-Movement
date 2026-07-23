@@ -136,7 +136,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
   const dtStyle: React.CSSProperties = {
     fontSize: '10px',
     fontWeight: 'var(--font-weight-medium, 500)',
-    color: '#6f7a71',
+    color: '#616b63',
     textTransform: 'uppercase',
     lineHeight: '16px',
     paddingBottom: '4px',
@@ -173,7 +173,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
     padding: '5px 14px',
     fontSize: '8px',
     fontWeight: 'var(--font-weight-medium, 500)',
-    color: '#6f7a71',
+    color: '#616b63',
     textAlign: 'center',
     flexShrink: 0,
   }
@@ -353,7 +353,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             style={{
               fontSize: 8,
               fontWeight: 'var(--font-weight-medium, 500)',
-              color: '#6f7a71',
+              color: '#616b63',
               textTransform: 'uppercase',
             }}
           >

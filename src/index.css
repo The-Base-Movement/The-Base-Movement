@@ -61,8 +61,8 @@
     /* --- Ink / text --- */
     --foreground: 132 9% 10%; /* #181d19 near-black green ink */
     --on-surface: 132 9% 10%; /* same */
-    --on-surface-muted: 131 5% 46%; /* #6f7a71 */
-    --muted-foreground: 131 5% 46%; /* #6f7a71 — aligns brand muted text */
+    --on-surface-muted: 131 5% 40%; /* #616b63 — darkened from 46% to pass WCAG AA (4.5:1) on white/tinted surfaces */
+    --muted-foreground: 131 5% 40%; /* #616b63 — aligns brand muted text; AA-compliant */
 
     /* --- Card / popover (pure white) --- */
     --card: 0 0% 100%;

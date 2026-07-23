@@ -136,7 +136,7 @@ export default function Topbar({
                 setIsSidebarCollapsed(!isSidebarCollapsed)
               }
             }}
-            className="p-2 -ml-2 rounded-sm hover:bg-muted/10 text-on-surface/60 transition-colors"
+            className="p-2 -ml-2 rounded-sm hover:bg-muted/10 text-on-surface/80 transition-colors"
             aria-label="Toggle dashboard sidebar"
           >
             <span className="material-symbols-outlined text-[28px]">menu</span>
