@@ -939,7 +939,7 @@ export default function FinanceDashboard() {
                         </td>
                         <td style={{ padding: '10px 14px' }}>
                           <span className={tx.kind === 'income' ? 'pill pill-ok' : 'pill pill-err'}>
-                            {tx.kind === 'income' ? 'Income' : 'Expense'}
+                            {tx.kind === 'income' ? 'Donation' : 'Expense'}
                           </span>
                         </td>
                         <td
