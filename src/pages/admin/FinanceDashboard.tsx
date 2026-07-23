@@ -269,7 +269,7 @@ export default function FinanceDashboard() {
               >
                 info
               </span>
-              Income figures show only donations explicitly assigned to{' '}
+              Figures show only donations explicitly assigned to{' '}
               <strong style={{ color: 'hsl(var(--on-surface))' }}>{chapter}</strong>. Historical
               donations without a chapter assignment are excluded.
             </div>
@@ -368,7 +368,7 @@ export default function FinanceDashboard() {
                   margin: '0 0 6px',
                 }}
               >
-                Total Income
+                Total Donations
               </p>
               <p
                 style={{
@@ -483,7 +483,7 @@ export default function FinanceDashboard() {
               <div className="ph" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
                 <div>
                   <h3 style={{ margin: 0 }}>
-                    {breakdownTab === 'expense' ? 'Expense Breakdown' : 'Income Breakdown'}
+                    {breakdownTab === 'expense' ? 'Expense Breakdown' : 'Donations Breakdown'}
                   </h3>
                   <p
                     style={{
@@ -631,9 +631,9 @@ export default function FinanceDashboard() {
                     }}
                   >
                     {cashflowTab === 'combined'
-                      ? 'Income vs Expenses'
+                      ? 'Donations vs Expenses'
                       : cashflowTab === 'income'
-                        ? 'Donations / Income trend'
+                        ? 'Donations trend'
                         : 'Expenditures / Expenses trend'}
                   </p>
                 </div>
@@ -661,7 +661,7 @@ export default function FinanceDashboard() {
                             display: 'inline-block',
                           }}
                         />
-                        Income
+                        Donations
                       </span>
                     )}
                     {(cashflowTab === 'combined' || cashflowTab === 'expense') && (
@@ -693,7 +693,7 @@ export default function FinanceDashboard() {
                       onClick={() => setCashflowTab('income')}
                       style={{ fontSize: 11, padding: '4px 8px' }}
                     >
-                      Income
+                      Donations
                     </button>
                     <button
                       className={`btn btn-sm ${cashflowTab === 'expense' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
@@ -743,7 +743,7 @@ export default function FinanceDashboard() {
                     {(cashflowTab === 'combined' || cashflowTab === 'income') && (
                       <Bar
                         dataKey="income"
-                        name="Income"
+                        name="Donations"
                         fill="hsl(var(--primary))"
                         radius={[3, 3, 0, 0]}
                       />
@@ -813,7 +813,7 @@ export default function FinanceDashboard() {
                   }}
                 >
                   <option value="all">All Types</option>
-                  <option value="income">Income</option>
+                  <option value="income">Donations</option>
                   <option value="expense">Expenses</option>
                 </select>
 
