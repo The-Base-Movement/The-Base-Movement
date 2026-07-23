@@ -256,9 +256,9 @@ export default function Sidebar({
         {groups.map((group) => (
           <div key={group.label} className="nav-sec mt-2">
             {!isSidebarCollapsed && (
-              <h6 className="text-[9px] font-medium text-white/70 tracking-[0.08em] uppercase mb-2 mt-2 px-6 font-meta">
+              <div className="text-[9px] font-medium text-white/70 tracking-[0.08em] uppercase mb-2 mt-2 px-6 font-meta">
                 {group.label}
-              </h6>
+              </div>
             )}
             <div className="space-y-0.5 px-4">
               {group.items.map((item) => (

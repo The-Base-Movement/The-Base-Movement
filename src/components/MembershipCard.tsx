@@ -184,7 +184,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
       <div style={headStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div>
-            <h4
+            <h3
               style={{
                 margin: 0,
                 color: '#fff',
@@ -194,7 +194,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
               }}
             >
               The Base Movement
-            </h4>
+            </h3>
             <p
               style={{
                 margin: 0,
