@@ -139,7 +139,9 @@ export default function Topbar({
             className="p-2 -ml-2 rounded-sm hover:bg-muted/10 text-on-surface/80 transition-colors"
             aria-label="Toggle dashboard sidebar"
           >
-            <span className="material-symbols-outlined text-[28px]">menu</span>
+            <span className="material-symbols-outlined text-[28px]" aria-hidden="true">
+              menu
+            </span>
           </button>
 
           <h1 className="hidden md:block text-[20px] md:text-[24px] font-medium tracking-tight text-on-surface m-0 font-meta">
@@ -193,7 +195,6 @@ export default function Topbar({
           <Link
             to="/dashboard/donate"
             className="hidden md:flex donate-button dashboard-header-donate"
-            aria-label="Donate"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -211,7 +212,7 @@ export default function Topbar({
               whiteSpace: 'nowrap',
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }} aria-hidden="true">
               volunteer_activism
             </span>
             <span className="dashboard-header-donate-label">Donate GHS</span>
@@ -238,7 +239,7 @@ export default function Topbar({
             onMouseEnter={(event) => handleThemeHover(event, true)}
             onMouseLeave={(event) => handleThemeHover(event, false)}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }} aria-hidden="true">
               {isDarkTheme ? 'light_mode' : 'dark_mode'}
             </span>
           </button>
@@ -266,7 +267,11 @@ export default function Topbar({
                 flexShrink: 0,
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 20 }}
+                aria-hidden="true"
+              >
                 notifications
               </span>
               <span className="sr-only">
