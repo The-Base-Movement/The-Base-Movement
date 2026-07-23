@@ -73,6 +73,7 @@
     /* --- Brand colors --- */
     --primary: 156 100% 21%; /* #006B3F */
     --primary-foreground: 0 0% 100%;
+    --panel-header: 156 100% 21%; /* fixed dark green for panel headers so white text stays AA in BOTH modes (dark-mode --primary is a lighter green that fails white text) */
 
     --secondary: 103 20% 96%; /* pale green tint */
     --secondary-foreground: 156 80% 15%;
@@ -209,6 +210,7 @@
 
     /* Brand Tuned Colors (Pop against dark backgrounds) */
     --primary: 156 80% 35%;
+    --panel-header: 156 100% 21%; /* stays dark (not the lighter dark-mode primary) so white header text keeps AA contrast */
     --secondary: 132 9% 15%;
     --secondary-foreground: 0 0% 95%;
     --muted: 132 9% 15%;

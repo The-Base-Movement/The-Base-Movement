@@ -264,7 +264,7 @@ export default function Sidebar({
               {group.items.map((item) => (
                 <div key={item.to}>
                   <Link
-                    className={`relative flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
+                    className={`relative flex items-center transition-all font-meta text-[12px] font-medium tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--panel-header))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                     to={item.to}
                     onClick={onClose}
                   >
@@ -429,7 +429,7 @@ export default function Sidebar({
               width: isSidebarCollapsed ? 44 : '100%',
               height: 44,
               borderRadius: isSidebarCollapsed ? '50%' : 4,
-              background: 'hsl(var(--primary))',
+              background: 'hsl(var(--panel-header))',
               color: '#fff',
               border: 'none',
               cursor: 'pointer',
