@@ -7,8 +7,8 @@
 //
 // The admin is always derived from the verified JWT. The RP ID is derived from
 // the request Origin and validated against an allowlist, so the same code works
-// on localhost, thebasemovement.creativeutil.com, and thebasemovement.com after
-// the migration (extra origins can be added via ALLOWED_RP_ORIGINS).
+// on localhost and the live thebasemovement.org.gh domains (extra origins can be
+// added via ALLOWED_RP_ORIGINS).
 
 // @ts-expect-error: Deno URL import
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
