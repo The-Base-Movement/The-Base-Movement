@@ -198,7 +198,7 @@ const MembershipCardInner: React.FC<MembershipCardProps> = ({
             <p
               style={{
                 margin: 0,
-                color: 'rgba(255,255,255,.8)',
+                color: '#fff',
                 fontSize: 8,
                 fontWeight: 500,
                 marginTop: 2,

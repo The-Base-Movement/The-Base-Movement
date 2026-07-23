@@ -206,7 +206,7 @@ export default function Dashboard() {
                     gap: 6,
                     fontSize: 10,
                     fontWeight: 'var(--font-weight-semibold, 600)',
-                    color: 'hsl(var(--primary))',
+                    color: 'hsl(var(--panel-header))',
                     background: '#fff',
                     padding: '4px 9px',
                     borderRadius: 'var(--radius-pill)',
@@ -219,7 +219,7 @@ export default function Dashboard() {
                     style={{
                       width: 6,
                       height: 6,
-                      background: 'hsl(var(--primary))',
+                      background: 'hsl(var(--panel-header))',
                       borderRadius: '50%',
                       display: 'inline-block',
                     }}

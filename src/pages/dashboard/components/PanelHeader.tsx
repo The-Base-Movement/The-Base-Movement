@@ -13,7 +13,7 @@ export function PanelHeader({ title, action }: { title: string; action?: ReactNo
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '13px 18px',
-        background: 'hsl(var(--primary))',
+        background: 'hsl(var(--panel-header))',
         flexShrink: 0,
       }}
     >
