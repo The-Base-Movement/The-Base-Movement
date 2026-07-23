@@ -6,6 +6,13 @@ import { initSentry } from './lib/sentry'
 import App from './App.tsx'
 import './index.css'
 
+// Apply the non-critical stylesheets (icons/flags, shipped as media="print" to stay off the
+// parse-time critical path). This runs after HTML parse, so flipping to "all" no longer blocks
+// first paint. Replaces the inline onload handlers in index.html so script-src can drop 'unsafe-inline'.
+for (const link of document.querySelectorAll<HTMLLinkElement>('link[data-async-style]')) {
+  link.media = 'all'
+}
+
 const PRELOAD_RELOAD_KEY = 'the_base_preload_error_reload_at'
 
 // Reload at most once per 30s so a genuinely-broken chunk can't loop forever.
