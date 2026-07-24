@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
+import { PanelHeaderBar } from '@/components/admin/finance/PanelHeaderBar'
 import { momoService, MOMO_EDITOR_ROLES, type MomoDetails } from '@/services/momoService'
 
 const labelSt: React.CSSProperties = {
@@ -79,28 +80,12 @@ export function MomoDetailsEditor() {
 
   return (
     <div className="panel">
-      <div className="ph">
-        <div>
-          <h3
-            style={{
-              margin: 0,
-              fontSize: 15,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            MTN MoMo merchant details
-          </h3>
-          <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-            Shown on the public donate page as an alternative payment method.
-          </p>
-        </div>
-        <img
-          src="/branding/mtn-momo-logo.png"
-          alt="MTN Mobile Money"
-          style={{ width: 32, height: 32, objectFit: 'contain', flex: '0 0 auto' }}
-        />
-      </div>
+      <PanelHeaderBar
+        flush
+        icon="account_balance_wallet"
+        title="MTN MoMo merchant details"
+        subtitle="Shown on the public donate page as an alternative payment method."
+      />
 
       <div style={{ padding: 20 }}>
         <div
