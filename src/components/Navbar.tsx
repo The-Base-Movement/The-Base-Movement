@@ -556,24 +556,47 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="mobile-only"
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'hsl(var(--on-surface-muted))',
-            padding: 6,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 28 }}>
-            {isOpen ? 'close' : 'menu'}
-          </span>
-        </button>
+        {/* Mobile actions */}
+        <div className="mobile-only" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Link
+            to={isLoggedIn ? '/dashboard/donate' : '/donate'}
+            aria-label="Donate"
+            title="Donate"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 'var(--radius-sm)',
+              background: 'hsl(var(--accent) / 14%)',
+              color: 'hsl(var(--accent))',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+              volunteer_activism
+            </span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'hsl(var(--on-surface-muted))',
+              padding: 6,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 28 }}>
+              {isOpen ? 'close' : 'menu'}
+            </span>
+          </button>
+        </div>
       </nav>
 
       {/* Mobile drawer */}
