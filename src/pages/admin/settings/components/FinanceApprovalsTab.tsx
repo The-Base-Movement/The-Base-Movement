@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
+import { PanelHeaderBar } from '@/components/admin/finance/PanelHeaderBar'
 import { toast } from 'sonner'
 
 const inputSt: React.CSSProperties = {
@@ -105,22 +106,13 @@ export function FinanceApprovalsTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header */}
-      <div>
-        <h2
-          style={{
-            margin: '0 0 4px',
-            fontFamily: "'Public Sans', sans-serif",
-            fontWeight: 'var(--font-weight-medium, 500)',
-            fontSize: 16,
-            color: 'hsl(var(--on-surface))',
-          }}
-        >
-          Finance Approval Chain
-        </h2>
-        <p style={{ margin: 0, fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-          Set the GHS amount ceilings that determine which tier handles each fund request. Changes
-          take effect immediately for all new decisions.
-        </p>
+      <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: 16 }}>
+        <PanelHeaderBar
+          flush
+          icon="approval"
+          title="Finance Approval Chain"
+          subtitle="Set the GHS amount ceilings that determine which tier handles each fund request. Changes take effect immediately for all new decisions."
+        />
       </div>
 
       {/* Tier cards */}

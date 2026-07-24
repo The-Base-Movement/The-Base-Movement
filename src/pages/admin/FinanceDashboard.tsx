@@ -20,6 +20,7 @@ import { MomoDetailsEditor } from '@/components/admin/MomoDetailsEditor'
 import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
 import MonthlyDuesPanel from '@/components/admin/finance/MonthlyDuesPanel'
 import { DonationControlsPanel } from '@/components/admin/finance/DonationControlsPanel'
+import { PanelHeaderBar } from '@/components/admin/finance/PanelHeaderBar'
 import type { DonationCampaign } from '@/types/admin'
 import { useIsMobile } from '@/hooks/use-mobile'
 import {
@@ -482,27 +483,18 @@ export default function FinanceDashboard() {
           {/* ── Charts row ── */}
           <div className="sidebar-main" style={{ marginBottom: 24 }}>
             {/* Expense breakdown donut — sidebar (left) */}
-            <div className="panel" style={{ padding: 20 }}>
+            <div className="panel" style={{ padding: 20, overflow: 'hidden' }}>
+              <PanelHeaderBar
+                title={breakdownTab === 'expense' ? 'Expense Breakdown' : 'Donations Breakdown'}
+                subtitle={
+                  breakdownTab === 'expense'
+                    ? 'By category'
+                    : breakdownTab === 'income_campaign'
+                      ? 'By campaign'
+                      : 'By country'
+                }
+              />
               <div className="ph" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
-                <div>
-                  <h3 style={{ margin: 0 }}>
-                    {breakdownTab === 'expense' ? 'Expense Breakdown' : 'Donations Breakdown'}
-                  </h3>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                    }}
-                  >
-                    {breakdownTab === 'expense'
-                      ? 'By category'
-                      : breakdownTab === 'income_campaign'
-                        ? 'By campaign'
-                        : 'By country'}
-                  </p>
-                </div>
                 <div style={{ display: 'flex', gap: 4 }}>
                   <button
                     className={`btn btn-sm ${breakdownTab === 'expense' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
@@ -621,26 +613,18 @@ export default function FinanceDashboard() {
             </div>
 
             {/* Cashflow bar chart — main (right) */}
-            <div className="panel" style={{ padding: 20 }}>
+            <div className="panel" style={{ padding: 20, overflow: 'hidden' }}>
+              <PanelHeaderBar
+                title="Cashflow"
+                subtitle={
+                  cashflowTab === 'combined'
+                    ? 'Donations vs Expenses'
+                    : cashflowTab === 'income'
+                      ? 'Donations trend'
+                      : 'Expenditures / Expenses trend'
+                }
+              />
               <div className="ph" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
-                <div>
-                  <h3 style={{ margin: 0 }}>Cashflow</h3>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                    }}
-                  >
-                    {cashflowTab === 'combined'
-                      ? 'Donations vs Expenses'
-                      : cashflowTab === 'income'
-                        ? 'Donations trend'
-                        : 'Expenditures / Expenses trend'}
-                  </p>
-                </div>
-
                 {/* Cashflow toggles & legends */}
                 <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
                   <div
@@ -766,7 +750,11 @@ export default function FinanceDashboard() {
           </div>
 
           {/* ── Recent Transactions ── */}
-          <div className="panel">
+          <div className="panel" style={{ padding: 20, overflow: 'hidden' }}>
+            <PanelHeaderBar
+              title="Recent Transactions"
+              subtitle="Last 20 entries — donations and expenses combined"
+            />
             <div
               className="ph"
               style={{
@@ -775,19 +763,6 @@ export default function FinanceDashboard() {
                 gap: isMobile ? 12 : undefined,
               }}
             >
-              <div>
-                <h3 style={{ margin: 0 }}>Recent Transactions</h3>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 12,
-                    color: 'hsl(var(--on-surface-muted))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  Last 20 entries — donations and expenses combined
-                </p>
-              </div>
               <div
                 style={{
                   display: 'flex',
@@ -1008,29 +983,12 @@ export default function FinanceDashboard() {
 
           {/* ── Campaign Fundraising Progress ─────────────────────── */}
           {campaigns.length > 0 && (
-            <div className="panel" style={{ marginTop: 24 }}>
+            <div className="panel" style={{ marginTop: 24, padding: 20, overflow: 'hidden' }}>
+              <PanelHeaderBar
+                title="Campaign fundraising"
+                subtitle="Progress of active and closed donation campaigns."
+              />
               <div className="ph">
-                <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: 15,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface))',
-                    }}
-                  >
-                    Campaign fundraising
-                  </h3>
-                  <p
-                    style={{
-                      margin: '2px 0 0',
-                      fontSize: 12,
-                      color: 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    Progress of active and closed donation campaigns.
-                  </p>
-                </div>
                 <span
                   className="material-symbols-outlined"
                   style={{ fontSize: 20, color: 'hsl(var(--accent))' }}

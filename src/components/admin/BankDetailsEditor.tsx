@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
+import { PanelHeaderBar } from '@/components/admin/finance/PanelHeaderBar'
 import {
   bankDetailsService,
   BANK_DETAILS_EDITOR_ROLES,
@@ -108,29 +109,12 @@ export function BankDetailsEditor() {
 
   return (
     <div className="panel">
-      <div className="ph">
-        <div>
-          <h3
-            style={{
-              margin: 0,
-              fontSize: 15,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            Bank transfer details
-          </h3>
-          <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-            Shown on the public donate page for offline contributions.
-          </p>
-        </div>
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
-        >
-          account_balance
-        </span>
-      </div>
+      <PanelHeaderBar
+        flush
+        icon="account_balance"
+        title="Bank transfer details"
+        subtitle="Shown on the public donate page for offline contributions."
+      />
 
       <div style={{ padding: 20 }}>
         <div
