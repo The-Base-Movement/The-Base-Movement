@@ -16,7 +16,6 @@ import { BrandLine } from '@/components/ui/BrandLine'
 import { WingDivider } from '@/components/ui/WingDivider'
 
 // Subcomponents
-import { HeroStats } from './donate/components/HeroStats'
 import { StrategicPriorities } from './donate/components/StrategicPriorities'
 import { MobilizationProtocol } from './donate/components/MobilizationProtocol'
 import { VictoriesSection } from './donate/components/VictoriesSection'
@@ -363,8 +362,6 @@ export default function PublicDonate() {
           </div>
         </div>
       </header>
-
-      <HeroStats totalRaised={globalStats.totalRaised} totalMembers={globalStats.totalMembers} />
 
       <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 clamp(16px, 4vw, 32px)' }}>
         {submitted ? (
