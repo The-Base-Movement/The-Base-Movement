@@ -17,6 +17,7 @@ import { WingDivider } from '@/components/ui/WingDivider'
 
 // Subcomponents
 import { StrategicPriorities } from './donate/components/StrategicPriorities'
+import { DonateNotice } from './donate/components/DonateNotice'
 import { MobilizationProtocol } from './donate/components/MobilizationProtocol'
 import { VictoriesSection } from './donate/components/VictoriesSection'
 import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
@@ -50,6 +51,21 @@ export default function PublicDonate() {
     'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
   >('idle')
   const [donateMode, setDonateMode] = useState<'individual' | 'group'>('individual')
+  // Public donate controls (site_settings; default ON when unset). Set by the Finance Dashboard.
+  const [donationFlags, setDonationFlags] = useState({
+    enabled: true,
+    guest: true,
+    individual: true,
+    group: true,
+  })
+
+  // Fall back to the other mode if the selected one is disabled (derived — no state write).
+  const effectiveMode: 'individual' | 'group' =
+    donateMode === 'group' && !donationFlags.group
+      ? 'individual'
+      : donateMode === 'individual' && !donationFlags.individual
+        ? 'group'
+        : donateMode
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
 
   // Real data
@@ -105,16 +121,35 @@ export default function PublicDonate() {
 
       try {
         const { adminService } = await import('@/services/adminService')
-        const [countryData, activeCampaigns, victories, stats, allHistory, personal, spending] =
-          await Promise.all([
-            adminService.getCountries(),
-            adminService.getStrategicPriorities(),
-            adminService.getVictories(),
-            adminService.getGlobalMobilizationStats(),
-            adminService.getPublicDonationHistory(),
-            user ? adminService.getPersonalDonationHistory(user.id) : Promise.resolve([]),
-            adminService.getMovementSpendingHistory(),
-          ])
+        const { publicSiteService } = await import('@/services/publicSiteService')
+        const [
+          countryData,
+          activeCampaigns,
+          victories,
+          stats,
+          allHistory,
+          personal,
+          spending,
+          settings,
+        ] = await Promise.all([
+          adminService.getCountries(),
+          adminService.getStrategicPriorities(),
+          adminService.getVictories(),
+          adminService.getGlobalMobilizationStats(),
+          adminService.getPublicDonationHistory(),
+          user ? adminService.getPersonalDonationHistory(user.id) : Promise.resolve([]),
+          adminService.getMovementSpendingHistory(),
+          publicSiteService.getSiteSettings(),
+        ])
+
+        const rb = (v: unknown) =>
+          v === undefined || v === null ? true : v === true || v === 'true'
+        setDonationFlags({
+          enabled: rb(settings.donations_enabled),
+          guest: rb(settings.donations_guest_enabled),
+          individual: rb(settings.donations_individual_enabled),
+          group: rb(settings.donations_group_enabled),
+        })
 
         setCountries(countryData)
         setCampaigns(activeCampaigns)
@@ -346,6 +381,25 @@ export default function PublicDonate() {
       <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 clamp(16px, 4vw, 32px)' }}>
         {submitted ? (
           <DonateSuccessPanel variant="public" onNewContribution={() => setSubmitted(false)} />
+        ) : !donationFlags.enabled ? (
+          <DonateNotice
+            icon="pause_circle"
+            title="Donations are paused"
+            message="We are not accepting contributions at the moment. Please check back soon — thank you for your support."
+          />
+        ) : !isLoggedIn && !donationFlags.guest ? (
+          <DonateNotice
+            icon="lock"
+            title="Please log in to donate"
+            message="Guest donations are currently turned off. Log in to your member account to contribute."
+            action={{ label: 'Log in', to: '/login' }}
+          />
+        ) : !donationFlags.individual && !donationFlags.group ? (
+          <DonateNotice
+            icon="pause_circle"
+            title="Donations are paused"
+            message="Contribution options are temporarily unavailable. Please check back soon."
+          />
         ) : (
           <section className="relative">
             <StrategicPriorities
@@ -358,27 +412,29 @@ export default function PublicDonate() {
                   ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
               }}
             />
-            <div
-              id="donate-mode-toggle"
-              style={{ display: 'flex', gap: 8, marginTop: 24, flexWrap: 'wrap' }}
-            >
-              <button
-                type="button"
-                className={`btn ${donateMode === 'individual' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
-                onClick={() => setDonateMode('individual')}
+            {donationFlags.individual && donationFlags.group && (
+              <div
+                id="donate-mode-toggle"
+                style={{ display: 'flex', gap: 8, marginTop: 24, flexWrap: 'wrap' }}
               >
-                Donate as individual
-              </button>
-              <button
-                type="button"
-                className={`btn ${donateMode === 'group' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
-                onClick={() => setDonateMode('group')}
-              >
-                Donate as a group
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className={`btn ${effectiveMode === 'individual' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                  onClick={() => setDonateMode('individual')}
+                >
+                  Donate as individual
+                </button>
+                <button
+                  type="button"
+                  className={`btn ${effectiveMode === 'group' ? 'btn-active-tab' : 'btn-inactive-tab'}`}
+                  onClick={() => setDonateMode('group')}
+                >
+                  Donate as a group
+                </button>
+              </div>
+            )}
 
-            {donateMode === 'group' && (
+            {effectiveMode === 'group' && donationFlags.group && (
               <GroupDonatePanel
                 campaignId={formData.campaignId || null}
                 countries={countries}
@@ -388,7 +444,7 @@ export default function PublicDonate() {
               />
             )}
 
-            {donateMode === 'individual' && (
+            {effectiveMode === 'individual' && donationFlags.individual && (
               <MobilizationProtocol
                 activeStep={activeStep}
                 setActiveStep={setActiveStep}
