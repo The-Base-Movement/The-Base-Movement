@@ -27,6 +27,7 @@ import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 import { GroupDonatePanel } from './donate/components/GroupDonatePanel'
 import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
+import { donationService } from '@/services/donationService'
 
 export default function PublicDonate() {
   const navigate = useNavigate()
@@ -61,6 +62,7 @@ export default function PublicDonate() {
     amount: '',
     fullName: '',
     phone: '',
+    email: '',
     country: 'Ghana',
     campaignId: '',
     membershipNumber: '',
@@ -135,15 +137,10 @@ export default function PublicDonate() {
     if (!activeDonationId || submitted) return
 
     const checkStatus = async () => {
-      const { data, error } = await supabase
-        .from('donations')
-        .select('status')
-        .eq('id', activeDonationId)
-        .maybeSingle()
+      const status = await donationService.getCheckoutStatus(activeDonationId).catch(() => null)
+      if (!status) return
 
-      if (error || !data) return
-
-      if (data.status === 'Verified') {
+      if (status === 'Verified') {
         setSubmitted(true)
         setPaymentState('idle')
         setCheckoutUrl(null)
@@ -152,7 +149,7 @@ export default function PublicDonate() {
         toast.success('Payment confirmed. Thank you for supporting the movement.')
       }
 
-      if (data.status === 'Rejected') {
+      if (status === 'Rejected') {
         setPaymentState('failed')
         setIsPaymentModalOpen(false)
         toast.error('The payment could not be confirmed. Please try again.')
@@ -196,7 +193,6 @@ export default function PublicDonate() {
 
     setPaymentState('starting')
 
-    let donationIdToCleanUp: string | null = null
     try {
       const amount = parseFloat(formData.amount)
       const ghsAmount = convertToGhs(amount, selectedCurrency)
@@ -207,34 +203,25 @@ export default function PublicDonate() {
 
       const campaignId = formData.campaignId || null
 
-      const { data, error } = await supabase
-        .from('donations')
-        .insert({
-          full_name: formData.fullName.trim(),
-          phone: normalizedPhone.e164,
-          amount: ghsAmount,
-          country: formData.country,
-          payment_method: 'Hubtel',
-          status: 'Pending',
-          show_on_dashboard: formData.showOnDashboard,
-          member_id: formData.memberId || null,
-          campaign_id: campaignId,
-        })
-        .select('id')
-        .single()
-
-      if (error) throw error
-
-      donationIdToCleanUp = data.id
-      setActiveDonationId(data.id)
+      const donationId = await donationService.createPublicDonation({
+        fullName: formData.fullName.trim(),
+        phone: normalizedPhone.e164,
+        amount: ghsAmount,
+        country: formData.country,
+        guestEmail: isLoggedIn ? undefined : formData.email,
+        campaignId,
+        showOnDashboard: formData.showOnDashboard,
+      })
+      setActiveDonationId(donationId)
       const url = await initiateHubtelCheckout({
-        reference: data.id,
+        reference: donationId,
         amount,
         currency: selectedCurrency.code,
         name: formData.fullName,
         phone: normalizedPhone.e164,
+        email: formData.email || undefined,
         metadata: {
-          donationId: data.id,
+          donationId,
           memberId: formData.memberId || undefined,
           membershipNumber: formData.membershipNumber || undefined,
           campaignId: campaignId ?? undefined,
@@ -256,13 +243,6 @@ export default function PublicDonate() {
         ghsAmount,
       })
     } catch (err: unknown) {
-      if (donationIdToCleanUp) {
-        await supabase
-          .from('donations')
-          .delete()
-          .eq('id', donationIdToCleanUp)
-          .eq('status', 'Pending')
-      }
       setActiveDonationId(null)
       setPaymentState('failed')
       const msg =

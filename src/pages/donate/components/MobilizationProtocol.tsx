@@ -9,6 +9,7 @@ import { TrustSignals, DONATION_TRUST } from '@/components/ui/TrustSignals'
 interface FormData {
   fullName: string
   phone: string
+  email: string
   amount: string
   country: string
   membershipNumber: string
@@ -492,6 +493,41 @@ export function MobilizationProtocol({
                 }}
               />
             </div>
+
+            {!isLoggedIn && (
+              <div>
+                <label htmlFor="guestEmail" style={fieldLabelStyle}>
+                  Email (optional)
+                </label>
+                <input
+                  aria-label="Guest email"
+                  name="donation-email"
+                  id="guestEmail"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value })
+                    setActiveStep(2)
+                  }}
+                  style={{
+                    ...inputStyle,
+                    padding: '0 12px',
+                  }}
+                />
+                <p
+                  style={{
+                    margin: '6px 0 0',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 11,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  Stored with the guest donation for authorized finance follow-up.
+                </p>
+              </div>
+            )}
 
             <div>
               <label htmlFor="membershipNumber" style={fieldLabelStyle}>

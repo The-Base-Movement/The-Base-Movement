@@ -6,4 +6,5 @@ Deno.test('receipt is sent when either delivery channel succeeds', () => {
   assertEquals(receiptOutcome(false, true), 'sent')
   assertEquals(receiptOutcome(true, true), 'sent')
   assertEquals(receiptOutcome(false, false), 'failed')
+  assertEquals(receiptOutcome(false, false, true), 'stored')
 })

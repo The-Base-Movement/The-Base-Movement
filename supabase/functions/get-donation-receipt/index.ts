@@ -1,6 +1,6 @@
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { canManageDonations, json } from '../_shared/admin-auth.ts'
+import { canManageDonations, canViewGuestDonationReceipts, json } from '../_shared/admin-auth.ts'
 
 declare const Deno: {
   env: {
@@ -108,6 +108,9 @@ Deno.serve(async (req: Request) => {
         .eq('id', user.id)
         .maybeSingle()
       isDonationAdmin = canManageDonations(adminRow)
+      if (!donation.member_id) {
+        isDonationAdmin = canViewGuestDonationReceipts(adminRow)
+      }
     }
 
     if (!isOwner && !isDonationAdmin) {

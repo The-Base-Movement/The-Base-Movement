@@ -24,6 +24,7 @@ interface DonationRow {
   full_name: string
   phone: string
   country: string
+  guest_email?: string | null
   receipt_url?: string | null
   campaign_id?: string | null
   member_id?: string | null
@@ -47,6 +48,18 @@ export interface GroupDonationResult {
   members?: { registration_number: string; full_name: string | null; amount_ghs: number }[]
 }
 
+export interface PublicDonationInput {
+  fullName: string
+  phone: string
+  amount: number
+  country: string
+  guestEmail?: string
+  campaignId?: string | null
+  showOnDashboard?: boolean
+  chapter?: string | null
+  constituency?: string | null
+}
+
 class DonationService {
   private static instance: DonationService
 
@@ -57,6 +70,31 @@ class DonationService {
       DonationService.instance = new DonationService()
     }
     return DonationService.instance
+  }
+
+  async createPublicDonation(input: PublicDonationInput): Promise<string> {
+    const { data, error } = await supabase.rpc('create_public_donation', {
+      p_full_name: input.fullName,
+      p_phone: input.phone,
+      p_amount: input.amount,
+      p_country: input.country,
+      p_guest_email: input.guestEmail || null,
+      p_campaign_id: input.campaignId || null,
+      p_show_on_dashboard: input.showOnDashboard ?? true,
+      p_chapter: input.chapter || null,
+      p_constituency: input.constituency || null,
+    })
+    if (error) throw error
+    if (typeof data !== 'string') throw new Error('Donation record was not created.')
+    return data
+  }
+
+  async getCheckoutStatus(donationId: string): Promise<string | null> {
+    const { data, error } = await supabase.rpc('get_donation_checkout_status', {
+      p_donation_id: donationId,
+    })
+    if (error) throw error
+    return typeof data === 'string' ? data : null
   }
 
   async getDonations(status?: string): Promise<DonationDetail[]> {
@@ -85,6 +123,7 @@ class DonationService {
       full_name: string
       phone: string
       country: string
+      guest_email: string | null
       receipt_url: string
       campaign_id: string
       member_id: string
@@ -103,6 +142,7 @@ class DonationService {
       fullName: d.full_name,
       phone: d.phone,
       country: d.country,
+      guestEmail: d.guest_email ?? undefined,
       receiptUrl: d.receipt_url,
       campaignId: d.campaign_id,
       memberId: d.member_id,
@@ -424,6 +464,7 @@ class DonationService {
       fullName: d.full_name,
       phone: d.phone,
       country: d.country,
+      guestEmail: d.guest_email ?? undefined,
       receiptUrl: d.receipt_url ?? undefined,
       campaignId: d.campaign_id ?? '',
       memberId: d.member_id ?? undefined,
