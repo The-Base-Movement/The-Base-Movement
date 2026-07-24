@@ -205,6 +205,12 @@ export const getNavGroups = (
         allowedRoles: ['FINANCE_OFFICER', 'SUPER_ADMIN'],
         permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
       },
+      {
+        to: '/admin/finance-settings',
+        icon: 'tune',
+        label: 'Finance settings',
+        permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+      },
     ],
   },
   {

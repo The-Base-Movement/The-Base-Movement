@@ -120,6 +120,7 @@ const AdminModeration = lazy(() => import('./pages/admin/Moderation'))
 const AdminFinanceRequests = lazy(() => import('./pages/admin/FinanceRequests'))
 const AdminFinanceReviewInbox = lazy(() => import('./pages/admin/FinanceReviewInbox'))
 const AdminFinanceDashboard = lazy(() => import('./pages/admin/FinanceDashboard'))
+const AdminFinanceSettings = lazy(() => import('./pages/admin/FinanceSettings'))
 const AdminRoyaltyPoints = lazy(() => import('./pages/admin/RoyaltyPoints'))
 const AdminDiasporaAffairsDashboard = lazy(() => import('./pages/admin/DiasporaAffairsDashboard'))
 const AdminExecutiveDashboard = lazy(() => import('./pages/admin/ExecutiveDashboard'))
@@ -321,6 +322,7 @@ export const routes: RouteObject[] = [
                 element: <AdminFinanceReviewInbox />,
               },
               { path: '/admin/finance-dashboard', element: <AdminFinanceDashboard /> },
+              { path: '/admin/finance-settings', element: <AdminFinanceSettings /> },
               { path: '/admin/finance/royalty-points', element: <AdminRoyaltyPoints /> },
               {
                 path: '/admin/diaspora-affairs',

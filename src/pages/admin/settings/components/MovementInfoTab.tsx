@@ -1,7 +1,5 @@
 import { adminService } from '@/services/adminService'
 import type { toast as ToastFn } from 'sonner'
-import { BankDetailsEditor } from '@/components/admin/BankDetailsEditor'
-import { MomoDetailsEditor } from '@/components/admin/MomoDetailsEditor'
 
 interface MovementInfoTabProps {
   siteSettings: Record<string, unknown>
@@ -460,11 +458,6 @@ export function MovementInfoTab({
             </button>
           </div>
         </div>
-      </div>
-
-      <BankDetailsEditor />
-      <div style={{ marginTop: 24 }}>
-        <MomoDetailsEditor />
       </div>
     </div>
   )

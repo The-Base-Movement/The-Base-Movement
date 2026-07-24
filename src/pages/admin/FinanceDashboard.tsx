@@ -15,11 +15,7 @@ import {
 } from 'recharts'
 import { adminService } from '@/services/adminService'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
-import { BankDetailsEditor } from '@/components/admin/BankDetailsEditor'
-import { MomoDetailsEditor } from '@/components/admin/MomoDetailsEditor'
-import { FinanceApprovalsTab } from './settings/components/FinanceApprovalsTab'
 import MonthlyDuesPanel from '@/components/admin/finance/MonthlyDuesPanel'
-import { DonationControlsPanel } from '@/components/admin/finance/DonationControlsPanel'
 import { PanelHeaderBar } from '@/components/admin/finance/PanelHeaderBar'
 import type { DonationCampaign } from '@/types/admin'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -197,8 +193,6 @@ export default function FinanceDashboard() {
           </button>
         ))}
       </div>
-
-      {pageTab === 'donations' && <DonationControlsPanel />}
 
       {pageTab === 'dues' && <MonthlyDuesPanel />}
 
@@ -1082,18 +1076,6 @@ export default function FinanceDashboard() {
               </div>
             </div>
           )}
-
-          <div style={{ marginTop: 24 }}>
-            <BankDetailsEditor />
-          </div>
-
-          <div style={{ marginTop: 24 }}>
-            <MomoDetailsEditor />
-          </div>
-
-          <div style={{ marginTop: 24 }}>
-            <FinanceApprovalsTab />
-          </div>
         </>
       )}
     </div>
