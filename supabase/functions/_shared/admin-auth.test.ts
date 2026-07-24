@@ -3,6 +3,7 @@ import {
   canManageDonations,
   canManageMembers,
   canManageNewsletters,
+  canViewGuestDonationReceipts,
   canManageStore,
   canViewAuditLogs,
   hasAdminPermission,
@@ -35,6 +36,16 @@ Deno.test('preserves privileged role access', () => {
   assertEquals(canManageDonations(founder), true)
   assertEquals(canManageStore(founder), true)
   assertEquals(canViewAuditLogs(founder), true)
+  assertEquals(canViewGuestDonationReceipts(founder), false)
+})
+
+Deno.test('limits guest receipts to finance officers and the movement manager', () => {
+  assertEquals(canViewGuestDonationReceipts(arrayAdmin), true)
+  assertEquals(
+    canViewGuestDonationReceipts({ id: 'manager', role: 'MOVEMENT_MANAGER', permissions: [] }),
+    true
+  )
+  assertEquals(canViewGuestDonationReceipts({ id: 'admin', role: 'ADMIN', permissions: [] }), false)
 })
 
 Deno.test('preserves legacy permission flags', () => {

@@ -14,8 +14,8 @@ import {
 
 const SITE_BASE = 'https://www.thebasemovement.org.gh'
 
-export const receiptOutcome = (emailSent: boolean, smsSent: boolean) =>
-  emailSent || smsSent ? 'sent' : 'failed'
+export const receiptOutcome = (emailSent: boolean, smsSent: boolean, stored = false) =>
+  stored ? 'stored' : emailSent || smsSent ? 'sent' : 'failed'
 
 function normalizePhone(raw: string): string {
   const cleaned = raw.trim()
@@ -214,7 +214,7 @@ if (import.meta.main)
         console.warn('[RECEIPT-SMS] No phone for member_id', row.member_id)
       }
 
-      const outcome = receiptOutcome(emailSent, smsSent)
+      const outcome = receiptOutcome(emailSent, smsSent, !row.member_id && Boolean(receiptUrl))
       await supabaseAdmin
         .from('donations')
         .update({
@@ -224,7 +224,7 @@ if (import.meta.main)
         })
         .eq('id', donationId)
 
-      return new Response(JSON.stringify({ success: outcome === 'sent', receiptUrl }), {
+      return new Response(JSON.stringify({ success: outcome !== 'failed', receiptUrl }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })

@@ -8,13 +8,13 @@
  */
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import HubtelButton from './HubtelButton'
 import { useAuth } from '@/context/AuthContext'
 import { openHubtelCheckout } from './hubtelCheckout'
 import { adminService, type Country } from '@/services/adminService'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
+import { donationService } from '@/services/donationService'
 
 interface DonateModalProps {
   isOpen: boolean
@@ -65,19 +65,13 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
     if (!pendingDonationId || succeeded) return
 
     const checkStatus = async () => {
-      const { data, error } = await supabase
-        .from('donations')
-        .select('status')
-        .eq('id', pendingDonationId)
-        .maybeSingle()
-
-      if (error || !data) return
-      if (data.status === 'Verified') {
+      const status = await donationService.getCheckoutStatus(pendingDonationId).catch(() => null)
+      if (status === 'Verified') {
         setSucceeded(true)
         setPaymentState('idle')
         toast.success('Donation confirmed.')
       }
-      if (data.status === 'Rejected') {
+      if (status === 'Rejected') {
         setPaymentState('failed')
         toast.error('The payment could not be confirmed.')
       }
@@ -137,26 +131,17 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
 
     setSubmitting(true)
     try {
-      const { data, error } = await supabase
-        .from('donations')
-        .insert({
-          full_name: form.fullName.trim(),
-          phone: normalizedPhone.e164,
-          amount: parseFloat(form.amount),
-          country: form.country,
-          payment_method: 'Hubtel',
-          status: 'Pending',
-          member_id: session?.user?.id || null,
-          chapter: context?.type === 'chapter' ? context.name : null,
-          constituency: context?.type === 'constituency' ? context.name : null,
-          show_on_dashboard: true,
-          campaign_id: null,
-        })
-        .select('id')
-        .single()
-      if (error) throw error
+      const donationId = await donationService.createPublicDonation({
+        fullName: form.fullName.trim(),
+        phone: normalizedPhone.e164,
+        amount: parseFloat(form.amount),
+        country: form.country,
+        guestEmail: session?.user ? undefined : form.email,
+        chapter: context?.type === 'chapter' ? context.name : null,
+        constituency: context?.type === 'constituency' ? context.name : null,
+      })
       setPaymentPhone(normalizedPhone.e164)
-      setPendingDonationId(data.id)
+      setPendingDonationId(donationId)
       setPaymentState('starting')
     } catch (err) {
       console.error('[DonateModal] insert failed:', err)
@@ -175,12 +160,9 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
   }
 
   /**
-   * Handles payment/checkout failure, deleting the local pending record.
+   * Resets local checkout state after payment initialization fails.
    */
-  const handleHubtelError = async () => {
-    if (pendingDonationId) {
-      await supabase.from('donations').delete().eq('id', pendingDonationId).eq('status', 'Pending')
-    }
+  const handleHubtelError = () => {
     setPendingDonationId(null)
     setCheckoutUrl(null)
     setPaymentState('failed')

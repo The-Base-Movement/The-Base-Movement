@@ -74,6 +74,12 @@ const manualChecks: Check[] = [
   { type: 'warn', label: 'AML watchlist', detail: 'No external API — verify with officer' },
 ]
 
+const GUEST_RECEIPT_ROLES = new Set([
+  'FINANCE_OFFICER',
+  'NATIONAL_FINANCE_OFFICER',
+  'MOVEMENT_MANAGER',
+])
+
 function CheckRow({ ck }: { ck: Check }) {
   return (
     <div
@@ -167,6 +173,10 @@ export function DonationDetailSidebar({
   // this page — Movement Manager / Secretary get in via the additive VIEW_DONATIONS
   // permission instead, so this check hides verify/reject/refund actions for them only.
   const canManageDonations = adminService.can('MANAGE_DONATIONS', 'DONATIONS')
+  const currentRole = adminService.getCurrentUser()?.role
+  const canViewReceipt = selectedDonation.memberId
+    ? canManageDonations
+    : !!currentRole && GUEST_RECEIPT_ROLES.has(currentRole)
 
   return (
     <aside
@@ -231,9 +241,11 @@ export function DonationDetailSidebar({
               }}
             >
               {selectedDonation.phone} ·{' '}
-              {selectedDonation.country !== 'Ghana'
-                ? `Diaspora · ${selectedDonation.country}`
-                : 'Local member'}
+              {!selectedDonation.memberId
+                ? 'Guest donor'
+                : selectedDonation.country !== 'Ghana'
+                  ? `Diaspora · ${selectedDonation.country}`
+                  : 'Local member'}
             </div>
           </div>
         </div>
@@ -332,6 +344,9 @@ export function DonationDetailSidebar({
         {[
           { dt: 'Earmark', dd: selectedDonation.campaignTitle || 'General fund' },
           { dt: 'Country', dd: selectedDonation.country },
+          ...(selectedDonation.guestEmail
+            ? [{ dt: 'Guest email', dd: selectedDonation.guestEmail }]
+            : []),
           { dt: 'Receipt issued', dd: selectedDonation.receiptUrl ? 'Yes' : 'No · pending' },
           { dt: 'Reference', dd: selectedDonation.reference.toUpperCase() },
         ].map(({ dt, dd }) => (
@@ -364,7 +379,7 @@ export function DonationDetailSidebar({
       </dl>
 
       {/* Receipt link */}
-      {selectedDonation.receiptUrl && (
+      {selectedDonation.receiptUrl && canViewReceipt && (
         <div style={{ padding: '12px 20px', borderBottom: '1px solid hsl(var(--border))' }}>
           <button
             onClick={() => onViewReceipt(selectedDonation.id, selectedDonation.reference)}

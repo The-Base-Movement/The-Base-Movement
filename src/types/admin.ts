@@ -215,6 +215,7 @@ export interface DonationDetail extends DonationRecord {
   fullName: string
   phone: string
   country: string
+  guestEmail?: string
   receiptUrl?: string
   campaignId: string
   memberId?: string

@@ -11,6 +11,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { donationService } from '@/services/donationService'
 
 interface HubtelPaymentModalProps {
   isOpen: boolean
@@ -114,16 +115,10 @@ export function HubtelPaymentModal({
             onClose()
           }
         } else if (type === 'donation') {
-          const { data, error } = await supabase
-            .from('donations')
-            .select('status')
-            .eq('id', referenceId)
-            .maybeSingle()
-
-          if (error || !data) return
-          if (data.status === 'Verified') {
+          const status = await donationService.getCheckoutStatus(referenceId).catch(() => null)
+          if (status === 'Verified') {
             onSuccess()
-          } else if (data.status === 'Rejected') {
+          } else if (status === 'Rejected') {
             toast.error('The payment was rejected or failed.')
             onClose()
           }

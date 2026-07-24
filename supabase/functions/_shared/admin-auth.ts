@@ -71,6 +71,16 @@ export const canManageMembers = (admin: AdminAuthRow | null | undefined) =>
 export const canManageDonations = (admin: AdminAuthRow | null | undefined) =>
   hasAdminPermission(admin, { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
 
+const GUEST_RECEIPT_ROLES = new Set([
+  'FINANCEOFFICER',
+  'FINANCE_OFFICER',
+  'NATIONAL_FINANCE_OFFICER',
+  'MOVEMENT_MANAGER',
+])
+
+export const canViewGuestDonationReceipts = (admin: AdminAuthRow | null | undefined) =>
+  !!admin?.role && GUEST_RECEIPT_ROLES.has(admin.role.toUpperCase())
+
 export const canManageStore = (admin: AdminAuthRow | null | undefined) =>
   hasAdminPermission(admin, { action: 'MANAGE_INVENTORY', resource: 'STORE' })
 
