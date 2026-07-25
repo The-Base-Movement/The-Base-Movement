@@ -111,7 +111,7 @@ export default function FinancialAudit() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('Pending')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [sortOrder, setSortOrder] = useState<'date_desc' | 'asc' | 'desc'>('date_desc')
   const [selectedDonation, setSelectedDonation] = useState<DonationDetail | null>(null)
   const [selectedReceipt, setSelectedReceipt] = useState<{
     donationId: string
@@ -259,6 +259,9 @@ export default function FinancialAudit() {
     })
 
     return list.sort((a, b) => {
+      if (sortOrder === 'date_desc') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime()
+      }
       const nameA = a.fullName || ''
       const nameB = b.fullName || ''
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
@@ -557,11 +560,14 @@ export default function FinancialAudit() {
         </div>
 
         <SortToggle
-          value={sortOrder}
-          onChange={(value) => {
+          value={sortOrder === 'date_desc' ? 'desc' : sortOrder}
+          onChange={() => {
             setCurrentPage(1)
-            setSortOrder(value)
+            if (sortOrder === 'date_desc') setSortOrder('asc')
+            else if (sortOrder === 'asc') setSortOrder('desc')
+            else setSortOrder('date_desc')
           }}
+          label={sortOrder === 'date_desc' ? 'Newest' : 'A–Z'}
         />
 
         {/* Filters button + dropdown */}
