@@ -919,13 +919,22 @@ export default function FinanceDashboard() {
                             padding: '10px 14px',
                             color: 'hsl(var(--on-surface-muted))',
                             fontFamily: "'Public Sans', sans-serif",
+                            whiteSpace: 'nowrap',
                           }}
                         >
-                          {new Date(tx.date).toLocaleDateString('en-GB', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
+                          <div style={{ color: 'hsl(var(--on-surface))' }}>
+                            {new Date(tx.date).toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </div>
+                          <div style={{ fontSize: 12, marginTop: 2 }}>
+                            {new Date(tx.date).toLocaleTimeString('en-GB', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </div>
                         </td>
                         <td
                           style={{
