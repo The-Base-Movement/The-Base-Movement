@@ -272,10 +272,18 @@ export function DonationsTable({
                           color: 'hsl(var(--on-surface-muted))',
                         }}
                       >
-                        {new Date(d.date).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: 'short',
-                        })}
+                        <div style={{ color: 'hsl(var(--on-surface))' }}>
+                          {new Date(d.date).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                          })}
+                        </div>
+                        <div style={{ marginTop: 2 }}>
+                          {new Date(d.date).toLocaleTimeString('en-GB', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
                       </td>
                       <td
                         style={{
