@@ -24,7 +24,7 @@ function donationStatusClass(status: string) {
 
 export function HubDonationsList({ donations, canSeePhone = false }: HubDonationsListProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [sortOrder, setSortOrder] = useState<'date_desc' | 'asc' | 'desc'>('date_desc')
 
   const sortedDonations = useMemo(() => {
     const list = donations.filter((d) => {
@@ -37,6 +37,9 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
       )
     })
     return list.sort((a, b) => {
+      if (sortOrder === 'date_desc') {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      }
       const nameA = a.full_name || ''
       const nameB = b.full_name || ''
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
@@ -92,7 +95,15 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
           }}
         />
       </div>
-      <SortToggle value={sortOrder} onChange={setSortOrder} />
+      <SortToggle
+        value={sortOrder === 'date_desc' ? 'desc' : sortOrder}
+        onChange={() => {
+          if (sortOrder === 'date_desc') setSortOrder('asc')
+          else if (sortOrder === 'asc') setSortOrder('desc')
+          else setSortOrder('date_desc')
+        }}
+        label={sortOrder === 'date_desc' ? 'Newest' : 'A–Z'}
+      />
     </div>
   )
 
