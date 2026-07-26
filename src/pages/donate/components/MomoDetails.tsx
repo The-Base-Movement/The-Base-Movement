@@ -8,6 +8,7 @@ import { momoService } from '@/services/momoService'
  */
 export function MomoDetails() {
   const [merchantNumber, setMerchantNumber] = useState<string>('')
+  const [shortCode, setShortCode] = useState<string>('')
   const [copiedMomo, setCopiedMomo] = useState(false)
 
   useEffect(() => {
@@ -15,11 +16,18 @@ export function MomoDetails() {
       .getMomoDetails()
       .then((d) => {
         if (d.isActive && d.merchantNumber) setMerchantNumber(d.merchantNumber)
+        if (d.isActive && d.shortCode) setShortCode(d.shortCode)
       })
-      .catch(() => setMerchantNumber(''))
+      .catch(() => {
+        setMerchantNumber('')
+        setShortCode('')
+      })
   }, [])
 
   if (!merchantNumber) return null
+
+  // USSD codes need the '#' percent-encoded for the tel: dialer to accept the string.
+  const dialHref = `tel:${shortCode.replace(/#/g, '%23')}`
 
   const copy = () => {
     void navigator.clipboard?.writeText(merchantNumber)
@@ -118,6 +126,82 @@ export function MomoDetails() {
           </button>
         </div>
       </div>
+
+      {/* Short code row — distinct section: tap-to-dial, works on ALL networks */}
+      {shortCode && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'stretch',
+            borderTop: '1px solid hsl(var(--border))',
+            background: 'hsl(var(--accent) / 0.06)',
+          }}
+        >
+          {/* Label cell */}
+          <div
+            className="bank-details-label-cell"
+            style={{
+              flex: '0 0 130px',
+              padding: '10px 14px',
+              borderRight: '1px solid hsl(var(--border))',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: 3,
+            }}
+          >
+            <span className="bank-details-label">Short Code</span>
+            <span
+              className="pill pill-ok"
+              style={{ fontSize: 9, alignSelf: 'flex-start', padding: '1px 6px' }}
+            >
+              All networks
+            </span>
+          </div>
+
+          {/* Value: tap-to-dial hyperlink + description */}
+          <div style={{ flex: 1, padding: '10px 14px', minWidth: 0 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+              }}
+            >
+              <a
+                href={dialHref}
+                className="bank-details-value"
+                style={{
+                  fontFamily: 'monospace',
+                  letterSpacing: '0.06em',
+                  color: 'hsl(var(--accent))',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 3,
+                  fontWeight: 'var(--font-weight-semibold, 600)',
+                }}
+              >
+                {shortCode}
+              </a>
+              <a
+                href={dialHref}
+                title="Dial this code on your phone"
+                aria-label={`Dial ${shortCode} on your phone`}
+                className="btn btn-ghost btn-sm"
+                style={{ flex: '0 0 auto', padding: '4px 8px', gap: 4 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  call
+                </span>
+              </a>
+            </div>
+            <p style={{ margin: '4px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+              Tap to dial on your phone and follow the prompts to donate — works on MTN, Telecel and
+              AirtelTigo.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
