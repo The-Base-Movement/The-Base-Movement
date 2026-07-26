@@ -40,6 +40,7 @@ const EMPTY: Omit<MomoDetails, 'updatedAt'> = {
   merchantNumber: '',
   merchantName: 'The Base Movement',
   network: 'MTN',
+  shortCode: '*713*3742#',
   isActive: true,
 }
 
@@ -139,6 +140,59 @@ export function MomoDetailsEditor() {
               <option value="AirtelTigo">AirtelTigo Money</option>
             </select>
           </div>
+        </div>
+
+        {/* ── USSD Short Code (all networks) — distinct from the merchant number above ── */}
+        <div
+          style={{
+            marginTop: 18,
+            padding: 16,
+            border: '1px dashed hsl(var(--accent))',
+            borderRadius: 'var(--radius-md)',
+            background: 'hsl(var(--accent) / 0.06)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 18, color: 'hsl(var(--accent))' }}
+            >
+              dialpad
+            </span>
+            <span
+              style={{
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-semibold, 600)',
+                fontSize: 12.5,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              USSD Short Code
+            </span>
+            <span className="pill pill-ok" style={{ fontSize: 10 }}>
+              All networks
+            </span>
+          </div>
+          <p style={{ margin: '0 0 10px', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+            Works on every Ghana network (MTN, Telecel, AirtelTigo). Shown on the donate page as a
+            tap-to-dial link — unlike the network-specific merchant number above.
+          </p>
+          <label htmlFor="momo-short-code" style={labelSt}>
+            Dial Code
+          </label>
+          <input
+            id="momo-short-code"
+            style={{
+              ...inputSt,
+              maxWidth: 260,
+              fontFamily: 'monospace',
+              letterSpacing: '0.08em',
+            }}
+            value={form.shortCode}
+            placeholder="e.g. *713*3742#"
+            disabled={loading || saving}
+            onChange={(e) => setForm((prev) => ({ ...prev, shortCode: e.target.value }))}
+          />
         </div>
 
         {/* Active toggle */}
