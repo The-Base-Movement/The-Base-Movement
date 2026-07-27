@@ -39,6 +39,7 @@ const Cart = lazy(() => import('./pages/Cart'))
 const Checkout = lazy(() => import('./pages/Checkout'))
 const OrderSummary = lazy(() => import('./pages/OrderSummary'))
 const Impact = lazy(() => import('./pages/Impact'))
+const CharitableWorks = lazy(() => import('./pages/impact/CharitableWorks'))
 const Chapters = lazy(() => import('./pages/Chapters'))
 const ChapterDetails = lazy(() => import('./pages/ChapterDetails'))
 const BlogPost = lazy(() => import('./pages/BlogPost'))
@@ -77,6 +78,7 @@ const AdminPlanManager = lazy(() => import('./pages/admin/PlanManager'))
 const AdminMemberVerification = lazy(() => import('./pages/admin/MemberVerification'))
 const AdminRegions = lazy(() => import('./pages/admin/Regions'))
 const AdminBlogs = lazy(() => import('./pages/admin/Blogs'))
+const AdminImpactProjects = lazy(() => import('./pages/admin/ImpactProjects'))
 const AdminAuthors = lazy(() => import('./pages/admin/authors'))
 const AdminMediaLibrary = lazy(() => import('./pages/admin/MediaLibrary'))
 const AdminLeadershipHub = lazy(() => import('./pages/admin/LeadershipHub'))
@@ -342,6 +344,7 @@ export const routes: RouteObject[] = [
               { path: '/admin/plan-manager', element: <AdminPlanManager /> },
               { path: '/admin/regions', element: <AdminRegions /> },
               { path: '/admin/blogs', element: <AdminBlogs /> },
+              { path: '/admin/impact-projects', element: <AdminImpactProjects /> },
               { path: '/admin/authors', element: <AdminAuthors /> },
               { path: '/admin/media', element: <AdminMediaLibrary /> },
               { path: '/admin/broadcasts', element: <AdminBroadcasts /> },
@@ -434,7 +437,7 @@ export const routes: RouteObject[] = [
           { path: '/store/summary', element: <OrderSummary /> },
         ],
       },
-      { path: '/impact', element: <Impact /> },
+      { path: '/impact', element: <CharitableWorks /> },
       { path: '/polls', element: <Polls /> },
       { path: '/jobs', element: <Jobs /> },
       { path: '/jobs/:id', element: <JobDetail /> },
