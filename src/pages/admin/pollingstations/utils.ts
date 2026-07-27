@@ -1,7 +1,7 @@
 export type Station = {
   code: string
   name: string
-  community: string
+  district: string
   constituency: string
   region: string
   member_count: number
