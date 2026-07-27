@@ -4,6 +4,7 @@ import type { Area } from 'react-easy-crop'
 import { sessionStore } from '@/lib/sessionStore'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
+import { memberService } from '@/services/memberService'
 import { authService } from '@/services/authService'
 import { userActivityService } from '@/services/userActivityService'
 import { dataURLtoBlob, getCroppedImg } from '@/lib/imageUtils'
@@ -29,6 +30,7 @@ import MonthlyDuesNotificationSettings from '@/components/settings/MonthlyDuesNo
 interface FormState {
   fullName: string
   nationalId: string
+  votersIdCard: string
   email: string
   phone: string
   countryCode: string
@@ -137,6 +139,7 @@ export default function ProfileSettings() {
   const [form, setForm] = useState<FormState>({
     fullName: '',
     nationalId: '',
+    votersIdCard: '',
     email: '',
     phone: '',
     countryCode: '+233',
@@ -206,6 +209,7 @@ export default function ProfileSettings() {
         setForm({
           fullName: profile.name,
           nationalId: profile.nationalId || '',
+          votersIdCard: profile.votersIdCard || '',
           email: profile.email || '',
           phone: phoneParts.phone,
           countryCode: phoneParts.countryCode,
@@ -231,6 +235,11 @@ export default function ProfileSettings() {
           setAvatarUrl(profile.avatarUrl)
           sessionStore.setItem('userAvatar', profile.avatarUrl)
         }
+
+        // national_id is encrypted + column-locked, so it isn't returned by the
+        // profile select — decrypt the member's own value via a self-scoped RPC.
+        const ownNid = await memberService.getOwnNationalId()
+        if (ownNid) setForm((f) => ({ ...f, nationalId: ownNid }))
 
         // Preload the saved job selection for editing.
         const { data: jobRow } = await supabase
@@ -373,6 +382,7 @@ export default function ProfileSettings() {
       await adminService.updateMemberProfile(regNo, {
         name: form.fullName,
         nationalId: form.nationalId.trim(),
+        votersIdCard: form.votersIdCard.trim(),
         email: form.email,
         phone: normalizedPhone,
         gender: form.gender,
