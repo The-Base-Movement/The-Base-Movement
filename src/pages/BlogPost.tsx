@@ -44,8 +44,10 @@ export default function BlogPost() {
             setIsLiked(liked)
           }
         }
-        const allPosts = await adminService.getBlogPosts()
-        setRelatedPosts(allPosts.filter((p) => p.slug !== slug).slice(0, 3))
+        // Related updates must be published posts only (contentService filters
+        // status = 'Published'; adminService.getBlogPosts returns drafts too).
+        const publishedPosts = await contentService.getBlogPosts()
+        setRelatedPosts(publishedPosts.filter((p) => p.slug !== slug).slice(0, 3))
       } finally {
         setLoading(false)
       }
