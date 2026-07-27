@@ -3049,7 +3049,7 @@ class AdminService {
     data: {
       code: string
       name: string
-      community: string
+      district: string
       constituency: string
       region: string
       member_count: number
@@ -3061,12 +3061,12 @@ class AdminService {
 
     let query = supabase
       .from('polling_stations')
-      .select('code, name, community, constituency, region', { count: 'exact' })
+      .select('code, name, district, constituency, region', { count: 'exact' })
 
     if (region) query = query.eq('region', region)
     if (constituency) query = query.eq('constituency', constituency)
     if (search?.trim()) {
-      query = query.or(`code.ilike.%${search}%,name.ilike.%${search}%,community.ilike.%${search}%`)
+      query = query.or(`code.ilike.%${search}%,name.ilike.%${search}%,district.ilike.%${search}%`)
     }
 
     if (sortOrder) {
@@ -3075,7 +3075,7 @@ class AdminService {
       query = query
         .order('region', { ascending: true })
         .order('constituency', { ascending: true })
-        .order('community', { ascending: true })
+        .order('district', { ascending: true })
     }
 
     const { data, count, error } = await query.range(from, to)
@@ -3104,7 +3104,7 @@ class AdminService {
       data: (data || []).map((s) => ({
         code: s.code as string,
         name: s.name as string,
-        community: s.community as string,
+        district: s.district as string,
         constituency: s.constituency as string,
         region: s.region as string,
         member_count: countMap[s.code as string] || 0,

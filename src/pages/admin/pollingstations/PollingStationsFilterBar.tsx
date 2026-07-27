@@ -159,8 +159,8 @@ export function PollingStationsFilterBar({
           id="ps-search"
           name="ps-search"
           type="text"
-          aria-label="Search polling stations by code, name or community"
-          placeholder="Search code, name, community…"
+          aria-label="Search polling stations by code, name or district"
+          placeholder="Search code, name, district…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleSearchKeyDown}

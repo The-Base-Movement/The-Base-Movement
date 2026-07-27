@@ -40,7 +40,7 @@ export function PollingStationsTable({
                   borderBottom: '1px solid hsl(var(--border))',
                 }}
               >
-                {['Code', 'Station name', 'Community', 'Constituency', 'Region', 'Members'].map(
+                {['Code', 'Station name', 'District', 'Constituency', 'Region', 'Members'].map(
                   (h) => (
                     <th
                       key={h}
@@ -125,7 +125,7 @@ export function PollingStationsTable({
                         color: 'hsl(var(--on-surface-muted))',
                       }}
                     >
-                      {s.community}
+                      {s.district}
                     </td>
                     <td
                       style={{
@@ -238,7 +238,7 @@ export function PollingStationsTable({
                   {s.code}
                 </span>
               </div>
-              {s.community && (
+              {s.district && (
                 <div
                   style={{
                     fontSize: 11,
@@ -247,7 +247,7 @@ export function PollingStationsTable({
                     marginTop: 3,
                   }}
                 >
-                  {s.community}
+                  {s.district}
                 </div>
               )}
               <div
