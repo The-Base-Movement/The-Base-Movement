@@ -888,6 +888,47 @@ class ContentService {
     return true
   }
 
+  async updatePressRelease(
+    id: string,
+    release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<boolean> {
+    const { error } = await supabase
+      .from('press_releases')
+      .update({
+        title: release.title,
+        slug: release.slug,
+        category: release.category,
+        excerpt: release.excerpt,
+        content: release.content,
+        published_at: release.publishedAt,
+        author_id: release.authorId,
+        image_url: release.imageUrl,
+        is_official: release.isOfficial,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Press release update failed:', error)
+      return false
+    }
+    return true
+  }
+
+  /** Soft delete — sets deleted_at so getPressReleases() filters it out. */
+  async deletePressRelease(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('press_releases')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Press release delete failed:', error)
+      return false
+    }
+    return true
+  }
+
   async getMediaFolders(): Promise<{ id: string; label: string }[]> {
     const { data, error } = await supabase
       .from('media_categories')

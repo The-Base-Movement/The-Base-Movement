@@ -44,18 +44,18 @@ export function ReleaseDetailModal({ release, onClose }: ReleaseDetailModalProps
         </div>
         <div className="p-8 max-h-[60vh] overflow-y-auto">
           <div className="prose prose-sm max-w-none text-slate-600 leading-relaxed space-y-4">
-            <p className="font-bold text-charcoal-dark">ACCRA, GHANA — Official Statement</p>
-            <p>{release.excerpt}</p>
-            <p>
-              "The Base Movement remains committed to the principle of collective progress. This
-              milestone/policy reflects our deep engagement with the grassroots and our vision for a
-              sovereign, prosperous nation. We invite all citizens and members of the Diaspora to
-              review the full implications of this development."
-            </p>
-            <p>
-              For further information or to schedule an interview with movement leadership, please
-              contact the communications desk at press@thebasemovement.org.
-            </p>
+            {release.isOfficial && (
+              <p className="font-bold text-charcoal-dark">ACCRA, GHANA — Official Statement</p>
+            )}
+            {release.excerpt && <p className="font-medium text-charcoal-dark">{release.excerpt}</p>}
+            {release.content
+              .split(/\n\s*\n/)
+              .filter((para) => para.trim())
+              .map((para, i) => (
+                <p key={i} style={{ whiteSpace: 'pre-wrap' }}>
+                  {para}
+                </p>
+              ))}
           </div>
         </div>
         <div className="p-6 bg-stone-50 border-t border-slate-100 text-center">

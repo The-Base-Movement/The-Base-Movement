@@ -1649,6 +1649,25 @@ class AdminService {
     return success
   }
 
+  async updatePressRelease(
+    id: string,
+    release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<boolean> {
+    const success = await contentService.updatePressRelease(id, release)
+    if (success) {
+      await this.logAction('PRESS_UPDATE', `PRESS/${release.slug}`, 'Success')
+    }
+    return success
+  }
+
+  async deletePressRelease(id: string): Promise<boolean> {
+    const success = await contentService.deletePressRelease(id)
+    if (success) {
+      await this.logAction('PRESS_DELETE', `PRESS/${id}`, 'Success')
+    }
+    return success
+  }
+
   async getMediaKitAssets(): Promise<MediaKitAsset[]> {
     return contentService.getMediaKitAssets()
   }

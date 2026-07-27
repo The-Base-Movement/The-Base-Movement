@@ -79,6 +79,7 @@ const AdminMemberVerification = lazy(() => import('./pages/admin/MemberVerificat
 const AdminRegions = lazy(() => import('./pages/admin/Regions'))
 const AdminBlogs = lazy(() => import('./pages/admin/Blogs'))
 const AdminImpactProjects = lazy(() => import('./pages/admin/ImpactProjects'))
+const AdminPressReleases = lazy(() => import('./pages/admin/PressReleases'))
 const AdminAuthors = lazy(() => import('./pages/admin/authors'))
 const AdminMediaLibrary = lazy(() => import('./pages/admin/MediaLibrary'))
 const AdminLeadershipHub = lazy(() => import('./pages/admin/LeadershipHub'))
@@ -345,6 +346,7 @@ export const routes: RouteObject[] = [
               { path: '/admin/regions', element: <AdminRegions /> },
               { path: '/admin/blogs', element: <AdminBlogs /> },
               { path: '/admin/impact-projects', element: <AdminImpactProjects /> },
+              { path: '/admin/press-releases', element: <AdminPressReleases /> },
               { path: '/admin/authors', element: <AdminAuthors /> },
               { path: '/admin/media', element: <AdminMediaLibrary /> },
               { path: '/admin/broadcasts', element: <AdminBroadcasts /> },
