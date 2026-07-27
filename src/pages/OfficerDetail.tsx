@@ -45,6 +45,17 @@ const TIER_COLOR: Record<number, string> = {
 
 const FONT = "'Public Sans', sans-serif"
 
+/** Biography paragraphs shown before the body switches to an inline scroll region. */
+const BIO_VISIBLE_PARAS = 4
+
+const bioParaStyle: React.CSSProperties = {
+  fontFamily: FONT,
+  fontWeight: 'var(--font-weight-normal, 400)',
+  fontSize: 16,
+  color: 'hsl(var(--on-surface))',
+  lineHeight: 1.8,
+}
+
 /** Up to two initials from a name, for the avatar fallback. */
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -794,26 +805,41 @@ export default function OfficerDetail() {
               bioIsHtml ? (
                 <div
                   className="officer-bio"
-                  style={{ maxWidth: '68ch' }}
+                  style={{
+                    maxWidth: '68ch',
+                    maxHeight: '34em',
+                    overflowY: 'auto',
+                    paddingRight: 12,
+                  }}
                   dangerouslySetInnerHTML={{ __html: bioHtml }}
                 />
               ) : (
                 <div style={{ maxWidth: '68ch' }}>
-                  {paragraphs.map((para, i) => (
-                    <p
-                      key={i}
-                      style={{
-                        fontFamily: FONT,
-                        fontWeight: 'var(--font-weight-normal, 400)',
-                        fontSize: 16,
-                        color: 'hsl(var(--on-surface))',
-                        lineHeight: 1.8,
-                        margin: i === 0 ? 0 : '18px 0 0',
-                      }}
-                    >
+                  {paragraphs.slice(0, BIO_VISIBLE_PARAS).map((para, i) => (
+                    <p key={i} style={{ ...bioParaStyle, margin: i === 0 ? 0 : '18px 0 0' }}>
                       {para}
                     </p>
                   ))}
+                  {/* Long bios: keep 4 paragraphs visible, scroll the rest inline so the
+                      page doesn't grow endlessly. */}
+                  {paragraphs.length > BIO_VISIBLE_PARAS && (
+                    <div
+                      style={{
+                        maxHeight: 320,
+                        overflowY: 'auto',
+                        marginTop: 18,
+                        paddingTop: 18,
+                        paddingRight: 12,
+                        borderTop: '1px solid hsl(var(--border))',
+                      }}
+                    >
+                      {paragraphs.slice(BIO_VISIBLE_PARAS).map((para, i) => (
+                        <p key={i} style={{ ...bioParaStyle, margin: i === 0 ? 0 : '18px 0 0' }}>
+                          {para}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )
             ) : (
