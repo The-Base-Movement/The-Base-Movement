@@ -338,6 +338,12 @@ export const getNavGroups = (
         permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
+        to: '/admin/press-releases',
+        icon: 'campaign',
+        label: 'Press releases',
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+      },
+      {
         to: '/admin/polls',
         icon: 'how_to_vote',
         label: 'Polls',
