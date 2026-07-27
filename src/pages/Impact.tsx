@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import SEO from '@/components/SEO'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { chapterService } from '@/services/chapterService'
@@ -9,7 +8,6 @@ import { ImpactActivityModal } from './impact/ImpactActivityModal'
 import { DashboardKpiTiles } from './impact/DashboardKpiTiles'
 import { DashboardMainColumn } from './impact/DashboardMainColumn'
 import { DashboardActivityFeed } from './impact/DashboardActivityFeed'
-import { PublicImpactView } from './impact/PublicImpactView'
 import { publicSiteService } from '@/services/publicSiteService'
 
 export default function Impact() {
@@ -255,30 +253,7 @@ export default function Impact() {
     )
   }
 
-  return (
-    <>
-      {!isDashboard && (
-        <SEO
-          title="Our Impact"
-          description="See how The Base Movement is driving real change — from donations raised to chapters active across Ghana and the diaspora."
-          canonical="/impact"
-        />
-      )}
-      <PublicImpactView
-        stats={stats}
-        isLoading={isLoading}
-        regions={regions}
-        activeFilter={activeFilter}
-        filteredActivity={filteredActivity}
-        allActivity={allActivity}
-        showFullActivity={showFullActivity}
-        onFilterChange={(t) => {
-          setActiveFilter(t)
-          setShowDatePicker(false)
-        }}
-        onViewFullLog={() => setShowFullActivity(true)}
-        onCloseFullLog={() => setShowFullActivity(false)}
-      />
-    </>
-  )
+  // /impact is now the public CharitableWorks page; this component only serves
+  // the authenticated /dashboard/impact view (handled above).
+  return null
 }

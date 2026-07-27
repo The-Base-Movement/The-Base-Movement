@@ -332,6 +332,12 @@ export const getNavGroups = (
         permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
+        to: '/admin/impact-projects',
+        icon: 'volunteer_activism',
+        label: 'Charitable works',
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+      },
+      {
         to: '/admin/polls',
         icon: 'how_to_vote',
         label: 'Polls',
