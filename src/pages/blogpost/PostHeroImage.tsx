@@ -8,13 +8,13 @@ interface PostHeroImageProps {
 export function PostHeroImage({ imageUrl, title }: PostHeroImageProps) {
   return (
     <div
-      className="relative aspect-[21/9] overflow-hidden"
+      className="relative w-full overflow-hidden"
       style={{ border: '1px solid hsl(var(--border))' }}
     >
       <img
         src={getBlogImageUrl(imageUrl)}
         alt={title}
-        className="w-full h-full object-cover"
+        className="w-full h-auto block"
         decoding="async"
         loading="lazy"
       />
