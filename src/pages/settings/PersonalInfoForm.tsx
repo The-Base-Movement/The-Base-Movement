@@ -9,6 +9,7 @@ import { diasporaName } from '@/lib/diaspora'
 interface FormState {
   fullName: string
   nationalId: string
+  votersIdCard: string
   email: string
   phone: string
   countryCode: string
@@ -120,6 +121,23 @@ export function PersonalInfoForm({
               style={inputStyle}
             />
           </div>
+
+          {/* Voter's ID — Ghana Network only */}
+          {userPlatform === 'GHANA' && (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label htmlFor="input-voters-id-profile" style={labelStyle}>
+                Voter&apos;s ID Card Number
+              </label>
+              <input
+                name="name-voters-id-profile"
+                id="input-voters-id-profile"
+                value={form.votersIdCard}
+                onChange={(e) => onChange('votersIdCard', e.target.value)}
+                placeholder="10-digit Voter ID Number"
+                style={inputStyle}
+              />
+            </div>
+          )}
 
           {/* Email */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>

@@ -350,6 +350,20 @@ class MemberService {
     }
   }
 
+  /**
+   * Decrypt the CURRENT user's own Ghana Card number.
+   * national_id is encrypted + column-locked, so it can't be read via a normal
+   * select; this calls a self-scoped SECURITY DEFINER RPC (auth.uid() only).
+   */
+  async getOwnNationalId(): Promise<string | null> {
+    const { data, error } = await supabase.rpc('get_own_national_id')
+    if (error) {
+      console.warn('[memberService] getOwnNationalId failed:', error)
+      return null
+    }
+    return (data as string | null) ?? null
+  }
+
   async updateMemberProfile(
     regNo: string,
     profile: Partial<Member> & { job?: JobSelection }
@@ -385,6 +399,8 @@ class MemberService {
     if (profile.country) updateData.country = profile.country
     if (profile.profession) updateData.profession = profile.profession
     if (profile.nationalId) updateData.national_id = profile.nationalId
+    // Voter ID is plaintext; use `!== undefined` so it can also be cleared.
+    if (profile.votersIdCard !== undefined) updateData.voters_id_card = profile.votersIdCard || null
     if (profile.city) updateData.city = profile.city
     // Optional field: use `!== undefined` (not truthy) so a member can also
     // CLEAR their residential address later, not just set/change it.
