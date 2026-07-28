@@ -11,7 +11,7 @@
 
 // @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
+import { json } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -75,18 +75,19 @@ serve(async (req: Request) => {
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
     // @ts-expect-error: Deno global
     const webhookUrl = Deno.env.get('DISCORD_ACTIVITY_WEBHOOK_URL')
+    // @ts-expect-error: Deno global
+    const cronToken = Deno.env.get('DISCORD_ACTIVITY_CRON_TOKEN')
 
     if (!webhookUrl) {
       console.error('[ACTIVITY-FEED] DISCORD_ACTIVITY_WEBHOOK_URL is not set.')
       return json({ error: 'DISCORD_ACTIVITY_WEBHOOK_URL secret missing.' }, 500, corsHeaders)
     }
 
-    const authz = requireServiceRoleCall(req, serviceKey)
-    if (!authz.ok) {
-      return new Response(await authz.response.text(), {
-        status: authz.response.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+    // Dedicated cron token (decoupled from the ambiguous injected service-role
+    // key, whose format differs once a project migrates to sb_secret_* keys).
+    const bearer = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '').trim()
+    if (!cronToken || bearer !== cronToken) {
+      return json({ error: 'Not authorized.' }, 401, corsHeaders)
     }
 
     const restHeaders = {
