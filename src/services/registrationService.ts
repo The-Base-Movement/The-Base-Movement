@@ -137,6 +137,7 @@ export const registrationService = {
       referred_by: refParam || null,
       registered_by: config.registeredBy || null,
       voters_id_card: formData.votersIdCard || null,
+      district: formData.district || null,
       polling_station_code: formData.pollingStationCode || null,
     }
 

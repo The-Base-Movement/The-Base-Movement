@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { ageRanges } from './RegistrationForm.constants'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
+import {
+  getDistricts,
+  getConstituencies,
+  searchPollingStations,
+  type PollingStationOption,
+} from '@/lib/pollingCascade'
 
 interface RegistrationStepDemographicsProps {
   formData: RegistrationFormData
@@ -13,13 +18,13 @@ interface RegistrationStepDemographicsProps {
 }
 
 export function RegistrationStepDemographics(props: RegistrationStepDemographicsProps) {
-  const { formData, platform, isMobile, dbRegions, currentConstituencies, handleChange } = props
+  const { formData, platform, isMobile, dbRegions, handleChange } = props
 
   const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
   const [psFocused, setPsFocused] = useState(false)
-  const [psResults, setPsResults] = useState<
-    { code: string; name: string; constituency: string }[]
-  >([])
+  const [psResults, setPsResults] = useState<PollingStationOption[]>([])
+  const [districts, setDistricts] = useState<string[]>([])
+  const [constituencies, setConstituencies] = useState<string[]>([])
 
   useEffect(() => {
     if (!formData.pollingStationCode) {
@@ -27,6 +32,19 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
       setPsSearch('')
     }
   }, [formData.pollingStationCode])
+
+  // Cascade options, all from polling_stations: Region → District → Constituency.
+  useEffect(() => {
+    getDistricts(formData.region || '')
+      .then(setDistricts)
+      .catch(() => setDistricts([]))
+  }, [formData.region])
+
+  useEffect(() => {
+    getConstituencies(formData.region || '', formData.district || '')
+      .then(setConstituencies)
+      .catch(() => setConstituencies([]))
+  }, [formData.region, formData.district])
 
   useEffect(() => {
     if (!psSearch.trim()) {
@@ -36,26 +54,25 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
     }
     if (psSearch === formData.pollingStationCode) return
 
-    const delayDebounce = setTimeout(async () => {
-      try {
-        const { data, error } = await supabase
-          .from('polling_stations')
-          .select('code, name, constituency')
-          .ilike('region', formData.region || '')
-          .ilike('constituency', formData.constituency || '')
-          .or(`code.ilike.%${psSearch}%,name.ilike.%${psSearch}%`)
-          .limit(10)
-
-        if (!error && data) {
-          setPsResults(data)
-        }
-      } catch (err) {
-        console.error('Failed to search polling stations:', err)
-      }
+    const delayDebounce = setTimeout(() => {
+      searchPollingStations(
+        formData.region || '',
+        formData.district || '',
+        formData.constituency || '',
+        psSearch
+      )
+        .then(setPsResults)
+        .catch(() => setPsResults([]))
     }, 300)
 
     return () => clearTimeout(delayDebounce)
-  }, [psSearch, formData.region, formData.constituency, formData.pollingStationCode])
+  }, [
+    psSearch,
+    formData.region,
+    formData.district,
+    formData.constituency,
+    formData.pollingStationCode,
+  ])
 
   return (
     <div className="space-y-8">
@@ -289,6 +306,46 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
             </div>
             <div className="space-y-2">
               <label
+                htmlFor="select-district-admin"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                District <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+              </label>
+              <select
+                name="name-district-admin"
+                id="select-district-admin"
+                required
+                disabled={!formData.region}
+                value={formData.district || ''}
+                onChange={(e) => handleChange('district', e.target.value)}
+                className="reg"
+                style={{
+                  width: '100%',
+                  padding: '14px 18px',
+                  fontSize: '14px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  color: 'hsl(var(--on-surface))',
+                  opacity: !formData.region ? 0.5 : 1,
+                }}
+              >
+                <option value="">Select District</option>
+                {districts.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2" style={{ gridColumn: isMobile ? undefined : 'span 2' }}>
+              <label
                 htmlFor="select-3ce1cd"
                 style={{
                   fontSize: '10px',
@@ -304,7 +361,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                 name="name-3ce1cd"
                 id="select-3ce1cd"
                 required
-                disabled={!formData.region}
+                disabled={!formData.district}
                 value={formData.constituency}
                 onChange={(e) => handleChange('constituency', e.target.value)}
                 className="reg"
@@ -316,16 +373,15 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-sm)',
                   color: 'hsl(var(--on-surface))',
-                  opacity: !formData.region ? 0.5 : 1,
+                  opacity: !formData.district ? 0.5 : 1,
                 }}
               >
                 <option value="">Select Constituency</option>
-                {formData.region &&
-                  currentConstituencies.map((con) => (
-                    <option key={con} value={con}>
-                      {con}
-                    </option>
-                  ))}
+                {constituencies.map((con) => (
+                  <option key={con} value={con}>
+                    {con}
+                  </option>
+                ))}
               </select>
             </div>
 

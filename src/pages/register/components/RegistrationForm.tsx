@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 import type { Area } from 'react-easy-crop'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
+import {
+  getDistricts,
+  getConstituencies,
+  searchPollingStations,
+  type PollingStationOption,
+} from '@/lib/pollingCascade'
 import { PhotoCropStep } from './PhotoCropStep'
 import { JobSelector } from '@/components/JobSelector'
 import { emptyJobSelection } from '@/services/jobTaxonomyService'
@@ -50,7 +55,6 @@ export function RegistrationForm(props: RegistrationFormProps) {
     agreed,
     dbCountries,
     dbRegions,
-    dbConstituencies,
     dbChapters,
     photoUrl,
     onPhotoChange,
@@ -67,9 +71,9 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
   const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
   const [psFocused, setPsFocused] = useState(false)
-  const [psResults, setPsResults] = useState<
-    { code: string; name: string; constituency: string }[]
-  >([])
+  const [psResults, setPsResults] = useState<PollingStationOption[]>([])
+  const [districts, setDistricts] = useState<string[]>([])
+  const [constituencies, setConstituencies] = useState<string[]>([])
 
   useEffect(() => {
     if (!formData.pollingStationCode) {
@@ -77,6 +81,19 @@ export function RegistrationForm(props: RegistrationFormProps) {
       setPsSearch('')
     }
   }, [formData.pollingStationCode])
+
+  // Cascade options, all from polling_stations: Region → District → Constituency.
+  useEffect(() => {
+    getDistricts(formData.region || '')
+      .then(setDistricts)
+      .catch(() => setDistricts([]))
+  }, [formData.region])
+
+  useEffect(() => {
+    getConstituencies(formData.region || '', formData.district || '')
+      .then(setConstituencies)
+      .catch(() => setConstituencies([]))
+  }, [formData.region, formData.district])
 
   useEffect(() => {
     if (!psSearch.trim()) {
@@ -86,26 +103,25 @@ export function RegistrationForm(props: RegistrationFormProps) {
     }
     if (psSearch === formData.pollingStationCode) return
 
-    const delayDebounce = setTimeout(async () => {
-      try {
-        const { data, error } = await supabase
-          .from('polling_stations')
-          .select('code, name, constituency')
-          .ilike('region', formData.region || '')
-          .ilike('constituency', formData.constituency || '')
-          .or(`code.ilike.%${psSearch}%,name.ilike.%${psSearch}%`)
-          .limit(10)
-
-        if (!error && data) {
-          setPsResults(data)
-        }
-      } catch (err) {
-        console.error('Failed to search polling stations:', err)
-      }
+    const delayDebounce = setTimeout(() => {
+      searchPollingStations(
+        formData.region || '',
+        formData.district || '',
+        formData.constituency || '',
+        psSearch
+      )
+        .then(setPsResults)
+        .catch(() => setPsResults([]))
     }, 300)
 
     return () => clearTimeout(delayDebounce)
-  }, [psSearch, formData.region, formData.constituency, formData.pollingStationCode])
+  }, [
+    psSearch,
+    formData.region,
+    formData.district,
+    formData.constituency,
+    formData.pollingStationCode,
+  ])
 
   return (
     <div className="auth-frame">
@@ -368,35 +384,53 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </div>
                       <div className="space-y-1.5">
                         <label
-                          htmlFor="select-c9e1d3"
+                          htmlFor="select-district"
                           className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                         >
-                          Constituency
+                          District
                         </label>
                         <select
-                          name="name-c9e1d3"
-                          id="select-c9e1d3"
+                          name="name-district"
+                          id="select-district"
                           required
-                          value={formData.constituency}
-                          onChange={(e) => onInputChange('constituency', e.target.value)}
+                          value={formData.district || ''}
+                          onChange={(e) => onInputChange('district', e.target.value)}
                           className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
                           disabled={!formData.region}
                         >
-                          <option value="">Select Constituency</option>
-                          {formData.region &&
-                            dbConstituencies
-                              .filter(
-                                (c) =>
-                                  c.region_id ===
-                                  dbRegions.find((r) => r.name === formData.region)?.id
-                              )
-                              .map((c) => (
-                                <option key={c.name} value={c.name}>
-                                  {c.name}
-                                </option>
-                              ))}
+                          <option value="">Select District</option>
+                          {districts.map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
                         </select>
                       </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label
+                        htmlFor="select-c9e1d3"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                      >
+                        Constituency
+                      </label>
+                      <select
+                        name="name-c9e1d3"
+                        id="select-c9e1d3"
+                        required
+                        value={formData.constituency}
+                        onChange={(e) => onInputChange('constituency', e.target.value)}
+                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                        disabled={!formData.district}
+                      >
+                        <option value="">Select Constituency</option>
+                        {constituencies.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     {formData.constituency && (
