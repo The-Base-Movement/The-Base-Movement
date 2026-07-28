@@ -162,6 +162,11 @@ export default function Register() {
         updates.countryCode = dbCountryCodes[value]
       }
       if (field === 'region') {
+        updates.district = ''
+        updates.constituency = ''
+        updates.pollingStationCode = ''
+      }
+      if (field === 'district') {
         updates.constituency = ''
         updates.pollingStationCode = ''
       }

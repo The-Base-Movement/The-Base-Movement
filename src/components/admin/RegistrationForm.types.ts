@@ -11,6 +11,7 @@ export interface RegistrationFormData {
   email: string
   residentialAddress: string
   region: string
+  district?: string
   constituency: string
   chapter: string
   profession: string
