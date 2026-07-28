@@ -94,7 +94,14 @@ export function requireServiceRoleCall(
   const authHeader = req.headers.get('Authorization') ?? ''
   const jwt = authHeader.replace(/^Bearer\s+/i, '').trim()
 
-  if (!serviceRoleKey) {
+  // Shared cron credential. Since this project migrated to sb_secret_* API keys,
+  // the injected SUPABASE_SERVICE_ROLE_KEY no longer equals the legacy service_role
+  // JWT that a pg_cron job can pass, so cron→function calls are authenticated with
+  // a dedicated CRON_TOKEN secret instead. Both credentials are trusted equally.
+  // @ts-expect-error: Deno supports Deno.env
+  const cronToken = Deno.env.get('CRON_TOKEN') ?? ''
+
+  if (!serviceRoleKey && !cronToken) {
     return { ok: false, response: json({ error: 'Service role key is not configured.' }, 500) }
   }
 
@@ -102,7 +109,7 @@ export function requireServiceRoleCall(
     return { ok: false, response: json({ error: 'Not authenticated.' }, 401) }
   }
 
-  if (jwt !== serviceRoleKey) {
+  if (jwt !== serviceRoleKey && !(cronToken && jwt === cronToken)) {
     return { ok: false, response: json({ error: 'Not authorized.' }, 403) }
   }
 
