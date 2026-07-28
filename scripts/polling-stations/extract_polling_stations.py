@@ -44,10 +44,14 @@ BOUNDS = [
     (672, 9999, "region"),
 ]
 
-REGIONS = {
-    "WESTERN", "WESTERN NORTH", "CENTRAL", "GREATER ACCRA", "VOLTA", "OTI",
-    "EASTERN", "ASHANTI", "AHAFO", "BONO", "BONO EAST", "NORTHERN",
-    "SAVANNAH", "NORTH EAST", "UPPER EAST", "UPPER WEST",
+# The EC codes every station's region in the leading letter of its code. This
+# is authoritative and immune to column drift, unlike the region text column —
+# see extract() for why that matters.
+REGION_BY_CODE = {
+    "A": "WESTERN", "B": "CENTRAL", "C": "GREATER ACCRA", "D": "VOLTA",
+    "E": "EASTERN", "F": "ASHANTI", "G": "WESTERN NORTH", "H": "AHAFO",
+    "J": "BONO", "K": "BONO EAST", "L": "OTI", "M": "NORTHERN",
+    "N": "SAVANNAH", "P": "UPPER WEST", "Q": "NORTH EAST", "R": "UPPER EAST",
 }
 
 CODE_RE = re.compile(r"^[A-Z]\d{6}[A-Z]?$")
@@ -85,14 +89,28 @@ def extract(pdf_path: str):
                     if c:
                         cols[c].append(w["text"])
                 code = " ".join(cols.get("code", [])).strip()
-                region = " ".join(cols.get("region", [])).strip()
-                if region not in REGIONS or not CODE_RE.match(code):
+                if not CODE_RE.match(code):
                     continue  # skips page headers/footers and stray lines
+                # Region from the code's leading letter, NOT the region column.
+                # Constituencies with long names (e.g. "Komenda Edina Eguafo
+                # Abrem", "Asante Akim South") overflow the constituency column,
+                # shove the region text into the district cell, and leave the
+                # region column empty — which the old `region in REGIONS` guard
+                # silently dropped (~370 stations across those constituencies).
+                region = REGION_BY_CODE.get(code[0])
+                if region is None:
+                    continue
+                region_col = " ".join(cols.get("region", [])).strip()
+                district = " ".join(cols.get("district", [])).strip()
+                # Overflow recovery: when the region column came out empty, the
+                # region name usually glued onto the tail of the district cell.
+                if not region_col and district.upper().endswith(region):
+                    district = district[: len(district) - len(region)].strip()
                 seen[code] = [
                     code,
                     " ".join(cols.get("name", [])).strip(),
                     " ".join(cols.get("constituency", [])).strip(),
-                    " ".join(cols.get("district", [])).strip(),
+                    district,
                     region,
                 ]
     return list(seen.values())
