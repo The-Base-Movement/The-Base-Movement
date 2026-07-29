@@ -290,7 +290,13 @@ Deno.serve(async (req) => {
       const name = member.full_name || 'Compatriot'
       let reached = false
 
-      if (member.phone_number && smsSent < smsAllowance) {
+      // Diaspora members are reached by email: international SMS is expensive
+      // and delivers unreliably. SMS stays available to them only as a last
+      // resort when we hold no email address at all.
+      const isDiaspora = member.platform === 'DIASPORA'
+      const smsAllowedForMember = !isDiaspora || !member.email
+
+      if (member.phone_number && smsAllowedForMember && smsSent < smsAllowance) {
         const msg = buildSmsMessage(name, missing)
         let result = await sendSms([member.phone_number], msg)
         // Fall back to the secondary number when the primary is rejected —
