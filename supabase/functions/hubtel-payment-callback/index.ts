@@ -375,12 +375,27 @@ if (import.meta.main)
           if (paid) {
             const { data: duesPayment } = await supabaseAdmin
               .from('monthly_dues_payments')
-              .select('dues_month, amount_ghs, payment_mode')
+              .select('dues_month, amount_ghs, payment_mode, member_id')
               .eq('id', reference)
               .maybeSingle()
+            // Name the payer: a truncated reference alone does not tell finance
+            // staff who paid. Best-effort — a lookup failure must not block the
+            // alert, which is why this is a separate query.
+            let payer: { full_name: string | null; registration_number: string | null } | null =
+              null
+            if (duesPayment?.member_id) {
+              const { data } = await supabaseAdmin
+                .from('users')
+                .select('full_name, registration_number')
+                .eq('id', duesPayment.member_id)
+                .maybeSingle()
+              payer = data ?? null
+            }
             await sendMonthlyDuesDiscordAlert({
               type: 'payment_success',
               reference,
+              memberName: payer?.full_name ?? undefined,
+              registrationNumber: payer?.registration_number ?? undefined,
               month: duesPayment?.dues_month ?? undefined,
               amountGhs: duesPayment ? Number(duesPayment.amount_ghs) : undefined,
               currency: 'GHS',

@@ -12,6 +12,16 @@ export type MonthlyDuesDiscordEvent =
   | {
       type: 'payment_success'
       reference: string
+      /**
+       * Paying member's name and registration number. Finance staff could not
+       * tell who had paid from a truncated reference alone, and the donation
+       * alerts on the same channel already name the payer, so this is
+       * consistent with existing practice rather than a new exposure. It stays
+       * an explicit field on the whitelist: nothing else about the member is
+       * ever read.
+       */
+      memberName?: string
+      registrationNumber?: string
       month?: string
       amountGhs?: number
       currency?: string
@@ -65,6 +75,16 @@ export function buildMonthlyDuesDiscordMessage(
 
   switch (event.type) {
     case 'payment_success':
+      // Who paid, first — the operational question this alert has to answer.
+      if (event.memberName) {
+        fields.push({
+          name: 'Member',
+          value: event.registrationNumber
+            ? `${event.memberName} · ${event.registrationNumber}`
+            : event.memberName,
+          inline: true,
+        })
+      }
       fields.push({ name: 'Reference', value: shortRef(event.reference), inline: true })
       if (event.month) fields.push({ name: 'Month', value: event.month, inline: true })
       if (typeof event.amountGhs === 'number') {

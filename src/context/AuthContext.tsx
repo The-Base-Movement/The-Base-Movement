@@ -44,7 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!hydrated.current) return
 
       if (event === 'SIGNED_IN' && session?.user) {
-        userActivityService.logActivity(session.user.id, 'login', 'Signed in to account')
+        // SIGNED_IN re-fires on tab focus and revalidation, so dedupe on the
+        // auth server's last_sign_in_at rather than trusting the event.
+        void userActivityService.logLoginOnce(session.user.id, session.user.last_sign_in_at)
       }
       if (event === 'USER_UPDATED' && session?.user) {
         userActivityService.logActivity(session.user.id, 'password_change', 'Password updated')
@@ -64,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         console.warn('[auth-context] failed to log admin device logout:', err)
       }
-      await userActivityService.logActivity(user.id, 'logout', 'Signed out of account')
+      await userActivityService.logLogoutOnce(user.id)
     }
 
     sessionStorage.removeItem('admin_device_captured')
