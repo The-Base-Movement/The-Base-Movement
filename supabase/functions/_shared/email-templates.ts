@@ -1,7 +1,10 @@
 // HTML email templates — The Base Movement
 // Matches the email design kit at docs/design-system-handoff/.../ui_kits/emails/index.html
 // Each function returns a complete HTML string safe to pass to an email provider (Resend, etc.)
-// Max width 600px, inline styles only, Work Sans + Public Sans via Google Fonts
+// Max width 600px, inline styles only. Web fonts are declared for clients that
+// support them, but every stack falls back to Arial — most email clients strip
+// the font link. Layout avoids CSS gradients, flexbox and rgba(): Outlook
+// renders through Word and supports none of them.
 
 const SHELL_OPEN = `<!doctype html>
 <html lang="en">
@@ -46,13 +49,46 @@ function emailHeader(tag: string) {
   </table>`
 }
 
-const TOP_BAR = `<div style="height:5px;background:linear-gradient(to right,#CE1126,#DAA520,#006B3F)"></div>`
+/**
+ * Hero band. Uses a table cell with bgcolor rather than a gradient div with
+ * flexbox: Outlook supports neither, so the original rendered as a blank strip
+ * with the wordmark missing. The faint wordmark colour is a solid hex for the
+ * same reason — Outlook does not honour rgba().
+ */
+function heroBlock(text: string, bg = '#181d19') {
+  return `
+  <table class="email-hero" width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse">
+    <tr>
+      <td bgcolor="${bg}" height="140" align="center" valign="middle" style="height:140px;background:${bg};text-align:center">
+        <span class="email-hero-text" style="font-family:'Public Sans',Arial,sans-serif;font-weight:800;font-size:48px;color:#2a2f2b;letter-spacing:-.04em">${text}</span>
+      </td>
+    </tr>
+  </table>`
+}
+
+// The national colour bar is the first thing a member sees, so it cannot rely
+// on a CSS gradient: Outlook renders through Word, which does not support
+// linear-gradient and simply drops it, leaving a blank strip. Three table cells
+// with bgcolor render identically everywhere.
+const TOP_BAR = `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse">
+  <tr>
+    <td width="33.33%" bgcolor="#CE1126" height="5" style="height:5px;line-height:5px;font-size:0;background:#CE1126">&nbsp;</td>
+    <td width="33.33%" bgcolor="#DAA520" height="5" style="height:5px;line-height:5px;font-size:0;background:#DAA520">&nbsp;</td>
+    <td width="33.34%" bgcolor="#006B3F" height="5" style="height:5px;line-height:5px;font-size:0;background:#006B3F">&nbsp;</td>
+  </tr>
+</table>`
 
 function emailFooter(lines: string) {
   return `
   <div class="email-footer" style="background:#f9f9f9;padding:16px 28px;font-size:11px;color:#aaa;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;line-height:1.7">
     ${lines}
-    <div style="width:80px;height:3px;background:linear-gradient(to right,#CE1126,#DAA520,#006B3F);border-radius:99px;margin-top:10px"></div>
+    <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin-top:10px">
+      <tr>
+        <td width="27" bgcolor="#CE1126" height="3" style="height:3px;line-height:3px;font-size:0;background:#CE1126">&nbsp;</td>
+        <td width="27" bgcolor="#DAA520" height="3" style="height:3px;line-height:3px;font-size:0;background:#DAA520">&nbsp;</td>
+        <td width="26" bgcolor="#006B3F" height="3" style="height:3px;line-height:3px;font-size:0;background:#006B3F">&nbsp;</td>
+      </tr>
+    </table>
   </div>`
 }
 
@@ -101,9 +137,7 @@ export function welcomeEmail(d: WelcomeEmailData): string {
   <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Member portal')}
-    <div class="email-hero" style="background:linear-gradient(135deg,#181d19,#0f1310);height:140px;display:flex;align-items:center;justify-content:center">
-      <span class="email-hero-text" style="font-family:'Public Sans',Arial;font-weight:800;font-size:48px;color:rgba(255,255,255,.12);letter-spacing:-.04em">Ghana First</span>
-    </div>
+    ${heroBlock('Ghana First')}
     <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Akwaaba, ${d.name} 🇬🇭</div>
       <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">You are now a verified member of The Base.</h1>
@@ -142,9 +176,7 @@ export function newsletterSubscriberWelcomeEmail(d: NewsletterSubscriberWelcomeE
   <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
     ${emailHeader('Newsletter subscription')}
-    <div class="email-hero" style="background:linear-gradient(135deg,#181d19,#0f1310);height:140px;display:flex;align-items:center;justify-content:center">
-      <span class="email-hero-text" style="font-family:'Public Sans',Arial;font-weight:800;font-size:44px;color:rgba(255,255,255,.16);letter-spacing:-.04em">The Base</span>
-    </div>
+    ${heroBlock('The Base')}
     <div class="email-body" style="padding:28px 28px 24px">
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Compatriot —</div>
       <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Your newsletter subscription is active.</h1>
@@ -244,7 +276,7 @@ export interface BroadcastEmailData {
   body: string // HTML allowed (e.g. "<p>...</p><p>...</p>")
   region?: string // pill label e.g. "Greater Accra"
   heroText?: string // large ghost text in hero e.g. "1,247"
-  heroColor?: string // hero bg e.g. "linear-gradient(135deg,#006B3F,#004d2d)"
+  heroColor?: string // solid hero bg hex, e.g. "#006B3F" (gradients break in Outlook)
   stats?: Array<{ value: string; label: string; color?: string }>
   ctaLabel: string
   ctaUrl: string
@@ -255,7 +287,7 @@ export interface BroadcastEmailData {
 
 export function broadcastEmail(d: BroadcastEmailData): string {
   const greeting = d.greeting ?? 'Compatriots —'
-  const heroBg = d.heroColor ?? 'linear-gradient(135deg,#181d19,#0f1310)'
+  const heroBg = d.heroColor ?? '#181d19'
   const heroText = d.heroText ?? 'The Base'
 
   const regionPill = d.region
@@ -346,7 +378,11 @@ export function pollClosingEmail(d: PollClosingEmailData): string {
       <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:16px;letter-spacing:-.01em;color:#181d19;margin:22px 0 8px">${d.pollTitle}</h2>
       ${pollOptions}
       <div style="background:#eee;border-radius:99px;height:8px;overflow:hidden;margin:10px 0">
-        <div style="display:block;height:100%;background:linear-gradient(to right,#CE1126,#DAA520,#006B3F);border-radius:99px;width:${progressPct}%"></div>
+        <!-- Solid fill, not a gradient: Outlook drops gradients, which would
+             leave the progress bar looking permanently empty. -->
+        <table cellpadding="0" cellspacing="0" border="0" role="presentation" width="${progressPct}%" style="border-collapse:collapse;height:8px">
+          <tr><td bgcolor="#006B3F" height="8" style="height:8px;line-height:8px;font-size:0;background:#006B3F;border-radius:99px">&nbsp;</td></tr>
+        </table>
       </div>
       <p style="font-size:11px;color:#888;font-family:'Public Sans',Arial;font-weight:700;margin-bottom:16px">${voteCountFmt} of ${d.voteTarget.toLocaleString()} target votes received · ${hrs} remaining</p>
       ${ctaButton('Cast my vote now →', d.voteUrl, '#DAA520')}
