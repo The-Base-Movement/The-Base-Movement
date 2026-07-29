@@ -601,7 +601,15 @@ export interface AuditLogEntry {
   adminId: string
   adminName: string
   action: string
+  /** Raw `TYPE/ID` reference as written to the log. */
   resource: string
+  /**
+   * The referenced record's actual name, resolved at read time. Undefined when
+   * the type is unresolvable or the record has since been deleted — deleted
+   * records are precisely what an audit trail must still show, so callers fall
+   * back to `resource`.
+   */
+  resourceName?: string
   status: 'Success' | 'Failure' | 'Warning'
   ipAddress?: string
   details?: Record<string, unknown>

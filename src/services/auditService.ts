@@ -35,11 +35,9 @@ class AuditService {
   }
 
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
-    const { data, error } = await supabase
-      .from('system_audit_logs_view')
-      .select('*')
-      .order('timestamp', { ascending: false })
-      .limit(100)
+    // RPC rather than the raw view: it resolves resource IDs to the record's
+    // actual name, so a reviewer sees "Obed Agyemang" instead of a bare UUID.
+    const { data, error } = await supabase.rpc('get_system_audit_logs_named', { p_limit: 500 })
 
     if (error || !Array.isArray(data)) {
       console.warn('[DATABASE] Audit logs fetch failed:', error)
@@ -52,6 +50,7 @@ class AuditService {
       admin_id: string | null
       action: string
       resource: string
+      resource_name: string | null
       status: 'Success' | 'Failure' | 'Warning'
       metadata: Record<string, unknown>
       admin_name: string | null
@@ -66,6 +65,7 @@ class AuditService {
       adminName: log.admin_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
       action: log.action,
       resource: log.resource,
+      resourceName: log.resource_name || undefined,
       status: log.status,
       details: log.metadata,
       ipAddress: log.ip_address || 'N/A',

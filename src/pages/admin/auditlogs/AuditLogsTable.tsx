@@ -153,7 +153,30 @@ export function AuditLogsTable({
                     <span style={{ fontSize: 12 }}>{log.action}</span>
                   </td>
                   <td style={tdStyle}>
-                    <span style={{ fontSize: 12 }}>{log.resource}</span>
+                    {log.resourceName ? (
+                      <>
+                        {/* Name first — a bare UUID is untraceable. The raw
+                            reference stays beneath it so the record is still
+                            identifiable when names collide or change. */}
+                        <span style={{ fontSize: 12, display: 'block' }}>{log.resourceName}</span>
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: 'hsl(var(--on-surface-muted))',
+                            display: 'block',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: 260,
+                          }}
+                          title={log.resource}
+                        >
+                          {log.resource}
+                        </span>
+                      </>
+                    ) : (
+                      <span style={{ fontSize: 12 }}>{log.resource}</span>
+                    )}
                   </td>
                   <td style={tdStyle}>
                     <span

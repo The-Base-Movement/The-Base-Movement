@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { adminService, type CronHttpFailure, type CronJobStatus } from '@/services/adminService'
+import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './it/ITLayoutContext'
 
 function formatDate(iso: string | null): string {
   if (!iso) return 'Never'
@@ -71,6 +72,15 @@ function getStatusIcon(job: CronJobStatus): React.ReactNode {
 }
 
 export default function CronMonitor() {
+  const { setCurrentLabel } = usePageLabel()
+
+  useEffect(() => {
+    setCurrentLabel('Cron Monitor')
+  }, [setCurrentLabel])
+
+  // The IT layout renders the page header; rendering our own produced two titles.
+  useITLayout('Cron Monitor', 'schedule', 'Scheduled jobs and their execution history.')
+
   const [jobs, setJobs] = useState<CronJobStatus[]>([])
   const [failures, setFailures] = useState<CronHttpFailure[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -104,12 +114,6 @@ export default function CronMonitor() {
 
   return (
     <div className="main" style={{ padding: '20px' }}>
-      <AdminPageHeader
-        title="Cron Monitor"
-        description="View scheduled jobs and their execution history"
-        icon="schedule"
-      />
-
       {error && (
         <div
           style={{
