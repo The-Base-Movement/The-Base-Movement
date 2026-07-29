@@ -116,6 +116,7 @@ const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPrior
 const AdminRolesManager = lazy(() => import('./pages/admin/RolesManager'))
 const AdminNotifications = lazy(() => import('./pages/admin/Notifications'))
 const AdminCronMonitor = lazy(() => import('./pages/admin/CronMonitor'))
+const AdminAuditLogs = lazy(() => import('./pages/admin/AuditLogs'))
 const Jobs = lazy(() => import('./pages/Jobs'))
 const JobDetail = lazy(() => import('./pages/JobDetail'))
 const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
@@ -365,13 +366,7 @@ export const routes: RouteObject[] = [
               { path: '/admin/trash', element: <AdminTrash /> },
               { path: '/admin/roles', element: <AdminRolesManager /> },
               { path: '/admin/notifications', element: <AdminNotifications /> },
-              { path: '/admin/cron-monitor', element: <AdminCronMonitor /> },
               { path: '/admin/password-resets', element: <AdminPasswordResets /> },
-              {
-                path: '/admin/audit-logs',
-                lazy: () =>
-                  import('./pages/admin/AuditLogs').then((m) => ({ Component: m.default })),
-              },
               { path: '/admin/import-sync', element: <AdminImportSync /> },
               { path: '/admin/departments', element: <DepartmentsIndex /> },
               { path: '/admin/departments/:deptId', element: <DepartmentDashboard /> },
@@ -390,6 +385,8 @@ export const routes: RouteObject[] = [
                     element: <ITSecurity />,
                   },
                   { path: '/admin/it-department/system', element: <ITSystem /> },
+                  { path: '/admin/it-department/cron-monitor', element: <AdminCronMonitor /> },
+                  { path: '/admin/it-department/audit-logs', element: <AdminAuditLogs /> },
                   { path: '/admin/it-department/licenses', element: <ITLicenses /> },
                   { path: '/admin/it-department/assets', element: <ITAssets /> },
                   { path: '/admin/it-department/hierarchy', element: <ITHierarchy /> },
