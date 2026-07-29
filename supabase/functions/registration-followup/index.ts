@@ -8,7 +8,7 @@
 // Required secrets: RESEND_API_KEY, MNOTIFY_API_KEY
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { sendSms } from '../_shared/sms.ts'
+import { getSmsBalance, sendSms } from '../_shared/sms.ts'
 import { incompleteRegistrationEmail } from '../_shared/email-templates.ts'
 import { canManageMembers, getSenderEmail, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 import { sendEmail } from '../_shared/email.ts'
@@ -25,9 +25,17 @@ const PROFILE_URL = 'https://www.thebasemovement.org.gh/settings'
 // with no end date, mostly for a missing profile photo.
 const MAX_FOLLOWUPS = 3 // lifetime nudges per member
 const FOLLOWUP_INTERVAL_DAYS = 7 // minimum gap between nudges
-// SMS costs money per message. Reserve it for gaps that actually block the
-// member's record; a missing photo is an email-worthy ask, not an SMS-worthy one.
-const SMS_WORTHY_STEPS = ['Set your constituency']
+
+// Per-run throughput ceilings. Both channels are used for every member who has
+// the contact detail: 1,043 of the eligible members have no email address at
+// all, so SMS is the only way to reach them, and email is the only way to reach
+// the handful with no phone.
+const SMS_PER_RUN = 200
+const EMAIL_PER_RUN = 100
+
+// Never start a bulk send below this much SMS credit. Running dry mid-batch
+// drops messages silently, and for the email-less members there is no fallback.
+const SMS_BALANCE_FLOOR = 20
 
 async function sendDiscordEmbed(channel: string, embed: Record<string, unknown>): Promise<void> {
   const channelSecrets: Record<string, string> = {
@@ -65,6 +73,7 @@ interface UserRow {
   joined_at: string
   followup_sent_at: string | null
   followup_count: number
+  secondary_phone: string | null
 }
 
 function getMissingSteps(u: UserRow): string[] {
@@ -225,47 +234,99 @@ Deno.serve(async (req) => {
     const { data: incomplete, error: fetchErr } = await supabase
       .from('users')
       .select(
-        'id,full_name,email,phone_number,platform,region,constituency,chapter,avatar_url,registration_number,status,verification_status,joined_at,followup_sent_at,followup_count'
+        'id,full_name,email,phone_number,platform,region,constituency,chapter,avatar_url,registration_number,status,verification_status,joined_at,followup_sent_at,followup_count,secondary_phone'
       )
       .in('verification_status', ['In Review', 'Processing'])
       .lt('followup_count', MAX_FOLLOWUPS)
       .or(`followup_sent_at.is.null,followup_sent_at.lt.${cutoff}`)
       .order('joined_at', { ascending: true })
-      .limit(50)
+      .limit(SMS_PER_RUN + EMAIL_PER_RUN)
 
     if (fetchErr) throw fetchErr
 
+    // Check credit BEFORE sending anything. Starting a batch blind means
+    // running dry partway through and silently dropping the rest.
+    const balance = await getSmsBalance()
+    const smsAllowance = !balance.ok
+      ? 0
+      : Math.max(0, Math.min(SMS_PER_RUN, (balance.balance ?? 0) - SMS_BALANCE_FLOOR))
+
+    if (!balance.ok) {
+      console.error(`[REGISTRATION-FOLLOWUP] SMS balance unavailable: ${balance.detail}`)
+      await sendDiscordEmbed('alerts', {
+        title: '⚠️ SMS balance unavailable — SMS skipped this run',
+        color: 0xdaa520,
+        fields: [{ name: 'Detail', value: balance.detail.slice(0, 300) }],
+        timestamp: new Date().toISOString(),
+      })
+    } else if (smsAllowance === 0) {
+      await sendDiscordEmbed('alerts', {
+        title: '🔴 SMS credit exhausted — top up',
+        color: 0xce1126,
+        fields: [
+          { name: 'Balance', value: String(balance.balance ?? 0), inline: true },
+          { name: 'Floor', value: String(SMS_BALANCE_FLOOR), inline: true },
+          {
+            name: 'Impact',
+            value: 'Members with no email address cannot be reached until this is topped up.',
+          },
+        ],
+        timestamp: new Date().toISOString(),
+      })
+    }
+
     let emailsSent = 0
     let smsSent = 0
+    let smsFailed = 0
+    let secondaryRetries = 0
 
     for (const member of incomplete ?? []) {
       const missing = getMissingSteps(member as UserRow)
       if (missing.length === 0) continue
+      // Stop once both channels are spent, rather than burning the lifetime
+      // nudge allowance on members we cannot actually contact this run.
+      if (smsSent >= smsAllowance && emailsSent >= EMAIL_PER_RUN) break
 
       const name = member.full_name || 'Compatriot'
+      let reached = false
 
-      // Send email if available
-      if (member.email && senderEmail) {
+      if (member.phone_number && smsSent < smsAllowance) {
+        const msg = buildSmsMessage(name, missing)
+        let result = await sendSms([member.phone_number], msg)
+        // Fall back to the secondary number when the primary is rejected —
+        // a wrong or dead primary is otherwise a dead end for email-less members.
+        if (!result.ok && member.secondary_phone) {
+          secondaryRetries++
+          result = await sendSms([member.secondary_phone], msg)
+        }
+        if (result.ok) {
+          smsSent++
+          reached = true
+        } else {
+          smsFailed++
+          console.warn(`[REGISTRATION-FOLLOWUP] SMS failed for ${member.registration_number}`)
+        }
+      }
+
+      if (member.email && senderEmail && emailsSent < EMAIL_PER_RUN) {
         const sent = await sendFollowupEmail(senderEmail, member.email, name, missing)
-        if (sent) emailsSent++
+        if (sent) {
+          emailsSent++
+          reached = true
+        }
       }
 
-      // Send SMS only for gaps that warrant the per-message cost.
-      const smsWorthy = missing.filter((s) => SMS_WORTHY_STEPS.includes(s))
-      if (member.phone_number && smsWorthy.length > 0) {
-        const msg = buildSmsMessage(name, smsWorthy)
-        const result = await sendSms([member.phone_number], msg)
-        if (result.ok) smsSent++
+      // Only spend a nudge when the member was actually contacted, so a run
+      // that hits a cap or an outage does not burn their allowance.
+      if (reached) {
+        await supabase
+          .from('users')
+          .update({
+            followup_sent_at: new Date().toISOString(),
+            followup_count: (member.followup_count ?? 0) + 1,
+          })
+          .eq('id', member.id)
       }
-
-      // Mark followup sent and count it against the lifetime cap.
-      await supabase
-        .from('users')
-        .update({
-          followup_sent_at: new Date().toISOString(),
-          followup_count: (member.followup_count ?? 0) + 1,
-        })
-        .eq('id', member.id)
     }
 
     // 2. Run security scan on recently auto-approved members
@@ -275,6 +336,9 @@ Deno.serve(async (req) => {
       incomplete_checked: incomplete?.length ?? 0,
       emails_sent: emailsSent,
       sms_sent: smsSent,
+      sms_failed: smsFailed,
+      secondary_retries: secondaryRetries,
+      sms_balance_before: balance.balance,
       security_flagged: flaggedCount,
     }
 
@@ -294,6 +358,21 @@ Deno.serve(async (req) => {
           value: `${incomplete?.length ?? 0}`,
           inline: true,
         })
+        fields.push({
+          name: 'SMS Credit',
+          value:
+            balance.balance === null
+              ? 'unavailable'
+              : `${balance.balance} before · ~${Math.max(0, (balance.balance ?? 0) - smsSent)} after`,
+          inline: true,
+        })
+        if (smsFailed > 0) {
+          fields.push({
+            name: 'SMS Failed',
+            value: `${smsFailed}${secondaryRetries > 0 ? ` · ${secondaryRetries} retried on secondary number` : ''}`,
+            inline: true,
+          })
+        }
       }
       if (flaggedCount > 0) {
         fields.push({

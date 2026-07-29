@@ -25,6 +25,47 @@ export interface SmsResult {
   detail: string
 }
 
+export interface SmsBalance {
+  ok: boolean
+  /** Remaining SMS units, or null when the provider did not report a figure. */
+  balance: number | null
+  detail: string
+}
+
+/**
+ * Remaining SMS credit from MNotify.
+ *
+ * Bulk sends must never be started blind: running out mid-batch silently drops
+ * messages, and for members with no email address SMS is the only channel we
+ * have. Callers gate on this and alert when it runs low.
+ */
+export async function getSmsBalance(): Promise<SmsBalance> {
+  // @ts-expect-error: Deno global
+  const apiKey: string | undefined = Deno.env.get('MNOTIFY_API_KEY')
+  if (!apiKey) return { ok: false, balance: null, detail: 'MNOTIFY_API_KEY not set' }
+
+  try {
+    const res = await fetch(
+      `https://api.mnotify.com/api/balance/sms?key=${encodeURIComponent(apiKey)}`
+    )
+    const text = await res.text()
+    if (!res.ok) return { ok: false, balance: null, detail: `HTTP ${res.status}: ${text}` }
+
+    const parsed = JSON.parse(text)
+    // MNotify has shipped this figure under several keys over time; accept any
+    // of them rather than silently reading undefined and treating it as zero.
+    const raw = parsed?.balance ?? parsed?.sms_balance ?? parsed?.data?.balance
+    const balance = raw === undefined || raw === null ? null : Number(raw)
+    if (balance === null || Number.isNaN(balance)) {
+      return { ok: false, balance: null, detail: `no balance field in response: ${text}` }
+    }
+    return { ok: true, balance, detail: 'ok' }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err)
+    return { ok: false, balance: null, detail: msg }
+  }
+}
+
 /**
  * MNotify (BMS) success responses are JSON of the form
  * { "status": "success", "code": "2000", ... }. Parse it rather than
