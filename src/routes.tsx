@@ -115,6 +115,7 @@ const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
 const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPriorities'))
 const AdminRolesManager = lazy(() => import('./pages/admin/RolesManager'))
 const AdminNotifications = lazy(() => import('./pages/admin/Notifications'))
+const AdminCronMonitor = lazy(() => import('./pages/admin/CronMonitor'))
 const Jobs = lazy(() => import('./pages/Jobs'))
 const JobDetail = lazy(() => import('./pages/JobDetail'))
 const AdminJobs = lazy(() => import('./pages/admin/Jobs'))
@@ -364,7 +365,13 @@ export const routes: RouteObject[] = [
               { path: '/admin/trash', element: <AdminTrash /> },
               { path: '/admin/roles', element: <AdminRolesManager /> },
               { path: '/admin/notifications', element: <AdminNotifications /> },
+              { path: '/admin/cron-monitor', element: <AdminCronMonitor /> },
               { path: '/admin/password-resets', element: <AdminPasswordResets /> },
+              {
+                path: '/admin/audit-logs',
+                lazy: () =>
+                  import('./pages/admin/AuditLogs').then((m) => ({ Component: m.default })),
+              },
               { path: '/admin/import-sync', element: <AdminImportSync /> },
               { path: '/admin/departments', element: <DepartmentsIndex /> },
               { path: '/admin/departments/:deptId', element: <DepartmentDashboard /> },
