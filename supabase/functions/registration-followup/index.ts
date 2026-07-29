@@ -20,6 +20,15 @@ const corsHeaders = {
 
 const PROFILE_URL = 'https://www.thebasemovement.org.gh/settings'
 
+// Send-frequency guardrails. Without these the job re-nudges every member every
+// 24h forever: at the observed 2,847 eligible members that is ~2,840 SMS per day
+// with no end date, mostly for a missing profile photo.
+const MAX_FOLLOWUPS = 3 // lifetime nudges per member
+const FOLLOWUP_INTERVAL_DAYS = 7 // minimum gap between nudges
+// SMS costs money per message. Reserve it for gaps that actually block the
+// member's record; a missing photo is an email-worthy ask, not an SMS-worthy one.
+const SMS_WORTHY_STEPS = ['Set your constituency']
+
 async function sendDiscordEmbed(channel: string, embed: Record<string, unknown>): Promise<void> {
   const channelSecrets: Record<string, string> = {
     alerts: 'DISCORD_ALERTS_WEBHOOK_URL',
@@ -55,6 +64,7 @@ interface UserRow {
   verification_status: string
   joined_at: string
   followup_sent_at: string | null
+  followup_count: number
 }
 
 function getMissingSteps(u: UserRow): string[] {
@@ -209,16 +219,17 @@ Deno.serve(async (req) => {
 
     const senderEmail = await getSenderEmail(supabase)
 
-    // 1. Find incomplete members who haven't been nudged in the last 24h
-    const cutoff24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+    // 1. Find incomplete members who are due a nudge and are under the lifetime cap.
+    const cutoff = new Date(Date.now() - FOLLOWUP_INTERVAL_DAYS * 24 * 60 * 60 * 1000).toISOString()
 
     const { data: incomplete, error: fetchErr } = await supabase
       .from('users')
       .select(
-        'id,full_name,email,phone_number,platform,region,constituency,chapter,avatar_url,registration_number,status,verification_status,joined_at,followup_sent_at'
+        'id,full_name,email,phone_number,platform,region,constituency,chapter,avatar_url,registration_number,status,verification_status,joined_at,followup_sent_at,followup_count'
       )
       .in('verification_status', ['In Review', 'Processing'])
-      .or(`followup_sent_at.is.null,followup_sent_at.lt.${cutoff24h}`)
+      .lt('followup_count', MAX_FOLLOWUPS)
+      .or(`followup_sent_at.is.null,followup_sent_at.lt.${cutoff}`)
       .order('joined_at', { ascending: true })
       .limit(50)
 
@@ -239,17 +250,21 @@ Deno.serve(async (req) => {
         if (sent) emailsSent++
       }
 
-      // Send SMS if phone available
-      if (member.phone_number) {
-        const msg = buildSmsMessage(name, missing)
+      // Send SMS only for gaps that warrant the per-message cost.
+      const smsWorthy = missing.filter((s) => SMS_WORTHY_STEPS.includes(s))
+      if (member.phone_number && smsWorthy.length > 0) {
+        const msg = buildSmsMessage(name, smsWorthy)
         const result = await sendSms([member.phone_number], msg)
         if (result.ok) smsSent++
       }
 
-      // Mark followup sent
+      // Mark followup sent and count it against the lifetime cap.
       await supabase
         .from('users')
-        .update({ followup_sent_at: new Date().toISOString() })
+        .update({
+          followup_sent_at: new Date().toISOString(),
+          followup_count: (member.followup_count ?? 0) + 1,
+        })
         .eq('id', member.id)
     }
 
@@ -291,7 +306,9 @@ Deno.serve(async (req) => {
         title: '📋 Registration Followup Report',
         color: flaggedCount > 0 ? 0xdaa520 : 0x006b3f,
         fields,
-        footer: { text: 'Automated · runs every 30 min' },
+        footer: {
+          text: `Automated · max ${MAX_FOLLOWUPS} nudges per member, ${FOLLOWUP_INTERVAL_DAYS}d apart`,
+        },
         timestamp: new Date().toISOString(),
       })
     }
