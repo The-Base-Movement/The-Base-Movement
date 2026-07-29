@@ -419,6 +419,8 @@ export const getNavGroups = (
             label: 'Security Protocols',
           },
           { to: '/admin/it-department/system', icon: 'shield', label: 'System' },
+          { to: '/admin/it-department/cron-monitor', icon: 'schedule', label: 'Cron Monitor' },
+          { to: '/admin/it-department/audit-logs', icon: 'history', label: 'Audit Logs' },
           { to: '/admin/password-resets', icon: 'lock_reset', label: 'Password Resets' },
           { to: '/admin/import-sync', icon: 'sync', label: 'Import Sync' },
           { to: '/admin/it-department/licenses', icon: 'license', label: 'Licenses' },
