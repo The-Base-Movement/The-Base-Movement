@@ -26,6 +26,22 @@ Deno.test('messages carry only allowed operational fields', () => {
   assertStringIncludes(serialized, 'https://admin.example/finance')
 })
 
+Deno.test('payment alerts name the payer when supplied', () => {
+  const serialized = JSON.stringify(
+    buildMonthlyDuesDiscordMessage(
+      { ...paymentEvent, memberName: 'Ama Serwaa', registrationNumber: 'TBM-GH-000123' },
+      null
+    )
+  )
+  assertStringIncludes(serialized, 'Ama Serwaa')
+  assertStringIncludes(serialized, 'TBM-GH-000123')
+})
+
+Deno.test('payment alerts omit the member field when no name is supplied', () => {
+  const serialized = JSON.stringify(buildMonthlyDuesDiscordMessage(paymentEvent, null))
+  assertEquals(serialized.includes('Member'), false)
+})
+
 Deno.test('unexpected event properties are never serialized', () => {
   const dirty = {
     ...paymentEvent,

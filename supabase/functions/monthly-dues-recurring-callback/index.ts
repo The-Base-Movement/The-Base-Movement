@@ -215,9 +215,18 @@ if (import.meta.main) {
       }
 
       if (charge.success && decision?.handled) {
+        // Name the payer — a truncated reference does not tell finance staff
+        // who paid. Best-effort: a lookup failure must not block the alert.
+        const { data: payer } = await supabaseAdmin
+          .from('users')
+          .select('full_name, registration_number')
+          .eq('id', enrollment.member_id)
+          .maybeSingle()
         await sendMonthlyDuesDiscordAlert({
           type: 'payment_success',
           reference,
+          memberName: payer?.full_name ?? undefined,
+          registrationNumber: payer?.registration_number ?? undefined,
           month,
           amountGhs: charge.amountGhs ?? undefined,
           currency: 'GHS',

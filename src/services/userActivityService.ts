@@ -1,5 +1,37 @@
 import { supabase } from '@/lib/supabase'
 
+/**
+ * Marks which sign-in has already been recorded, so a re-emitted SIGNED_IN
+ * event does not log a duplicate. localStorage (not sessionStorage) so it also
+ * holds across reloads and sibling tabs. Storage can throw in private-mode
+ * browsers, and a logging concern must never break auth — hence the guards.
+ */
+const SESSION_MARKER_KEY = 'tbm_session_activity_marker'
+
+function readSessionMarker(): string | null {
+  try {
+    return typeof window === 'undefined' ? null : window.localStorage.getItem(SESSION_MARKER_KEY)
+  } catch {
+    return null
+  }
+}
+
+function writeSessionMarker(value: string): void {
+  try {
+    if (typeof window !== 'undefined') window.localStorage.setItem(SESSION_MARKER_KEY, value)
+  } catch {
+    /* storage unavailable — fall back to logging on every event */
+  }
+}
+
+function clearSessionMarker(): void {
+  try {
+    if (typeof window !== 'undefined') window.localStorage.removeItem(SESSION_MARKER_KEY)
+  } catch {
+    /* storage unavailable */
+  }
+}
+
 export type ActivityType =
   | 'login'
   | 'logout'
@@ -81,6 +113,36 @@ class UserActivityService {
       metadata: metadata ?? null,
     })
     if (error) console.warn('[ACTIVITY] Failed to log activity:', error)
+  }
+
+  /**
+   * Records a sign-in exactly once per real authentication.
+   *
+   * Supabase re-emits SIGNED_IN whenever the tab regains focus, the provider
+   * remounts, or the session is revalidated — so the auth event on its own is
+   * not evidence that anyone signed in. Logging it directly produced a fresh
+   * "Signed in" row (and Discord alert) every time a member switched back to
+   * the tab while already logged in.
+   *
+   * `last_sign_in_at` is set by the auth server and changes only on a genuine
+   * authentication, so it is the correct discriminator. The marker lives in
+   * localStorage so it also holds across reloads and other tabs.
+   */
+  async logLoginOnce(userId: string, lastSignInAt?: string | null): Promise<void> {
+    const marker = `${userId}:${lastSignInAt ?? ''}`
+    if (readSessionMarker() === marker) return
+    writeSessionMarker(marker)
+    await this.logActivity(userId, 'login', 'Signed in to account')
+  }
+
+  /**
+   * Records a sign-out once. Two independent paths call this (AuthContext and
+   * authService), so without the marker a single sign-out could log twice.
+   */
+  async logLogoutOnce(userId: string): Promise<void> {
+    if (!readSessionMarker()) return
+    clearSessionMarker()
+    await this.logActivity(userId, 'logout', 'Signed out of account')
   }
 
   async getUserActivity(userId: string, limit = 20): Promise<ActivityEntry[]> {

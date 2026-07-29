@@ -189,7 +189,7 @@ class AuthService {
         console.warn('[auth] failed to log admin device logout:', err)
       }
       try {
-        await userActivityService.logActivity(uid, 'logout', 'Signed out of account')
+        await userActivityService.logLogoutOnce(uid)
       } catch (err) {
         console.warn('[auth] failed to log user activity logout:', err)
       }
