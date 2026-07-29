@@ -8,7 +8,11 @@ export interface RegistrationFormData {
   children_count: number
   contactNumber: string
   ageRange: string
+  birthYear?: string
+  religion?: string
   gender: string
+  secondaryCountryCode?: string
+  secondaryPhone?: string
   password?: string
   email?: string
   residentialAddress: string

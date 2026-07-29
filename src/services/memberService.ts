@@ -128,7 +128,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district'
       )
       .eq('registration_number', regNo)
       .maybeSingle()
@@ -168,6 +168,10 @@ class MemberService {
       emergencyPhone: data.emergency_phone || undefined,
       votersIdCard: data.voters_id_card || undefined,
       pollingStationCode: data.polling_station_code || undefined,
+      birthYear: data.birth_year ?? undefined,
+      religion: data.religion || undefined,
+      secondaryPhone: data.secondary_phone || undefined,
+      district: data.district || undefined,
     }
   }
 
@@ -181,7 +185,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district'
       )
       .eq('id', authId)
       .maybeSingle()
@@ -213,6 +217,10 @@ class MemberService {
       emergencyPhone: data.emergency_phone || undefined,
       votersIdCard: data.voters_id_card || undefined,
       pollingStationCode: data.polling_station_code || undefined,
+      birthYear: data.birth_year ?? undefined,
+      religion: data.religion || undefined,
+      secondaryPhone: data.secondary_phone || undefined,
+      district: data.district || undefined,
     }
   }
 
@@ -401,6 +409,14 @@ class MemberService {
     if (profile.nationalId) updateData.national_id = profile.nationalId
     // Voter ID is plaintext; use `!== undefined` so it can also be cleared.
     if (profile.votersIdCard !== undefined) updateData.voters_id_card = profile.votersIdCard || null
+    // age_range is auto-derived from birth_year by a DB trigger; we just send the year.
+    if (profile.birthYear !== undefined) updateData.birth_year = profile.birthYear || null
+    if (profile.religion !== undefined) updateData.religion = profile.religion || null
+    if (profile.secondaryPhone !== undefined)
+      updateData.secondary_phone = profile.secondaryPhone || null
+    if (profile.district !== undefined) updateData.district = profile.district || null
+    if (profile.pollingStationCode !== undefined)
+      updateData.polling_station_code = profile.pollingStationCode || null
     if (profile.city) updateData.city = profile.city
     // Optional field: use `!== undefined` (not truthy) so a member can also
     // CLEAR their residential address later, not just set/change it.
@@ -454,7 +470,7 @@ class MemberService {
       const { data, error } = await supabase
         .from('users')
         .select(
-          'id,registration_number,full_name,region,constituency,platform,country,phone_number,gender,age_range,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status,voters_id_card,polling_station_code'
+          'id,registration_number,full_name,region,constituency,district,platform,country,phone_number,email,gender,age_range,religion,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status,voters_id_card,polling_station_code'
         )
         .in('verification_status', statuses)
         .order('joined_at', { ascending: false })
@@ -476,11 +492,14 @@ class MemberService {
       name: u.full_name,
       region: u.region,
       constituency: u.constituency,
+      district: u.district || undefined,
       platform: u.platform,
       country: u.country,
       phone: u.phone_number,
+      email: stripMarkdownEmail(u.email) || undefined,
       gender: u.gender,
       ageRange: u.age_range,
+      religion: u.religion || undefined,
       profession: u.profession,
       educationLevel: u.education_level,
       emergencyName: u.emergency_name,
@@ -823,10 +842,12 @@ class MemberService {
     pageSize: number,
     searchTerm?: string,
     registrationSource?: string,
-    searchType: 'default' | 'constituency' | 'polling_station' = 'default',
+    searchType: 'default' | 'constituency' | 'district' | 'region' | 'polling_station' = 'default',
     sortOrder?: 'asc' | 'desc',
     gender?: string,
-    ageRange?: string
+    ageRange?: string,
+    religion?: string,
+    platform?: string
   ): Promise<{ data: Member[]; totalCount: number }> {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
@@ -834,7 +855,7 @@ class MemberService {
     let query = supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source,age_range',
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source,age_range,district,religion,polling_station_code',
         { count: 'exact' }
       )
       .is('deleted_at', null)
@@ -842,24 +863,23 @@ class MemberService {
 
     if (gender) query = query.eq('gender', gender)
     if (ageRange) query = query.eq('age_range', ageRange)
+    if (religion) query = query.eq('religion', religion)
+    if (platform) query = query.eq('platform', platform)
 
     if (searchTerm) {
       if (searchType === 'constituency') {
         query = query.ilike('constituency', `%${searchTerm}%`)
+      } else if (searchType === 'district') {
+        query = query.ilike('district', `%${searchTerm}%`)
+      } else if (searchType === 'region') {
+        query = query.ilike('region', `%${searchTerm}%`)
       } else if (searchType === 'polling_station') {
-        const { data: agentRows } = await supabase
-          .from('polling_station_agents')
-          .select('member_id')
-          .ilike('polling_station_id', `%${searchTerm}%`)
-        const memberIds = (agentRows ?? []).map((r: { member_id: string }) => r.member_id)
-        if (memberIds.length === 0) {
-          return { data: [], totalCount: 0 }
-        }
-        query = query.in('id', memberIds)
+        // Filter by the member's registered polling station code (matches the label).
+        query = query.ilike('polling_station_code', `%${searchTerm}%`)
       } else {
         const term = sanitizeOrTerm(searchTerm)
         query = query.or(
-          `full_name.ilike.%${term}%,phone_number.ilike.%${term}%,registration_number.ilike.%${term}%`
+          `full_name.ilike.%${term}%,phone_number.ilike.%${term}%,registration_number.ilike.%${term}%,email.ilike.%${term}%`
         )
       }
     }
@@ -901,6 +921,10 @@ class MemberService {
       city: u.city || undefined,
       residentialAddress: u.residential_address || undefined,
       registrationSource: u.registration_source || 'digital',
+      ageRange: u.age_range || undefined,
+      district: u.district || undefined,
+      religion: u.religion || undefined,
+      pollingStationCode: u.polling_station_code || undefined,
     }))
 
     return { data: members, totalCount: count || 0 }

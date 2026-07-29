@@ -82,11 +82,16 @@ export default function RegistrationForm({
     country: 'Ghana',
     contactNumber: '',
     ageRange: '',
+    birthYear: '',
+    religion: '',
     gender: 'Male',
+    secondaryCountryCode: '+233',
+    secondaryPhone: '',
     password: '',
     email: '',
     residentialAddress: '',
     region: '',
+    district: '',
     constituency: '',
     chapter: '',
     profession: '',
@@ -133,27 +138,36 @@ export default function RegistrationForm({
       if (field === 'contactNumber') {
         val = cleanPhoneInput(val, prev.countryCode)
       }
+      if (field === 'secondaryPhone') {
+        val = cleanPhoneInput(val, prev.secondaryCountryCode || '+233')
+      }
       const newData = { ...prev, [field]: val }
 
       if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
         newData.countryCode = dbCountryCodes[value]
       }
 
+      // Cascade order: Region → Constituency → District (auto-filled) → Polling Station.
       if (field === 'region') {
+        newData.constituency = ''
         newData.district = ''
-        newData.constituency = ''
-        newData.pollingStationCode = ''
-      }
-      if (field === 'district') {
-        newData.constituency = ''
         newData.pollingStationCode = ''
       }
       if (field === 'constituency') {
+        newData.district = ''
+        newData.pollingStationCode = ''
+      }
+      if (field === 'district') {
         newData.pollingStationCode = ''
       }
       return newData
     })
   }
+
+  /** Sets several form fields at once (constituency→district auto-fill, code reverse-lookup). */
+  const setFields = useCallback((partial: Partial<RegistrationFormData>) => {
+    setFormData((prev) => ({ ...prev, ...partial }))
+  }, [])
 
   /**
    * Navigates form steps or triggers onSubmitData callback to finalize registration.
@@ -296,6 +310,7 @@ export default function RegistrationForm({
                   dbRegions={dbRegions}
                   currentConstituencies={currentConstituencies}
                   handleChange={handleChange}
+                  setFields={setFields}
                 />
               )}
 

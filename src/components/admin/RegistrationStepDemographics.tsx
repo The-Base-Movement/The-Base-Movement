@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { ageRanges } from './RegistrationForm.constants'
+import { ageRanges, religions } from './RegistrationForm.constants'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
 import {
-  getDistricts,
-  getConstituencies,
+  getConstituenciesByRegion,
+  getDistrictForConstituency,
+  lookupPollingStationByCode,
   searchPollingStations,
   type PollingStationOption,
 } from '@/lib/pollingCascade'
@@ -15,16 +16,33 @@ interface RegistrationStepDemographicsProps {
   dbRegions: Array<{ id: number; name: string }>
   currentConstituencies: string[]
   handleChange: RegistrationChangeHandler
+  setFields: (partial: Partial<RegistrationFormData>) => void
+}
+
+/** Age bucket derived from birth year — display hint only; DB derives the stored value on save. */
+function ageBucketForBirthYear(birthYear?: string): string {
+  const y = parseInt(birthYear || '', 10)
+  if (!y) return ''
+  const age = new Date().getFullYear() - y
+  if (age <= 25) return '18-25'
+  if (age <= 35) return '26-35'
+  if (age <= 45) return '36-45'
+  if (age <= 60) return '46-60'
+  return '60+'
 }
 
 export function RegistrationStepDemographics(props: RegistrationStepDemographicsProps) {
-  const { formData, platform, isMobile, dbRegions, handleChange } = props
+  const { formData, platform, isMobile, dbRegions, handleChange, setFields } = props
 
   const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
   const [psFocused, setPsFocused] = useState(false)
   const [psResults, setPsResults] = useState<PollingStationOption[]>([])
-  const [districts, setDistricts] = useState<string[]>([])
   const [constituencies, setConstituencies] = useState<string[]>([])
+  const [psCode, setPsCode] = useState('')
+  const [psCodeName, setPsCodeName] = useState<string | null>(null)
+  const [psCodeError, setPsCodeError] = useState(false)
+
+  const derivedAgeBucket = ageBucketForBirthYear(formData.birthYear)
 
   useEffect(() => {
     if (!formData.pollingStationCode) {
@@ -33,18 +51,22 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
     }
   }, [formData.pollingStationCode])
 
-  // Cascade options, all from polling_stations: Region → District → Constituency.
+  // Cascade order: Region → Constituency (region-scoped) → District (auto-filled).
   useEffect(() => {
-    getDistricts(formData.region || '')
-      .then(setDistricts)
-      .catch(() => setDistricts([]))
-  }, [formData.region])
-
-  useEffect(() => {
-    getConstituencies(formData.region || '', formData.district || '')
+    getConstituenciesByRegion(formData.region || '')
       .then(setConstituencies)
       .catch(() => setConstituencies([]))
-  }, [formData.region, formData.district])
+  }, [formData.region])
+
+  // Auto-fill the (editable, optional) district from the chosen constituency.
+  useEffect(() => {
+    if (!formData.constituency) return
+    getDistrictForConstituency(formData.region || '', formData.constituency)
+      .then((d) => {
+        if (d) setFields({ district: d })
+      })
+      .catch(() => {})
+  }, [formData.region, formData.constituency, setFields])
 
   useEffect(() => {
     if (!psSearch.trim()) {
@@ -112,6 +134,47 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
       >
         <div className="space-y-3">
           <label
+            htmlFor="input-birth-year-admin"
+            style={{
+              fontSize: '10px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface-muted))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              display: 'block',
+              marginBottom: '12px',
+            }}
+          >
+            Birth year{' '}
+            <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+              (optional)
+            </span>
+          </label>
+          <input
+            aria-label="Birth year"
+            name="name-birth-year-admin"
+            id="input-birth-year-admin"
+            type="number"
+            inputMode="numeric"
+            placeholder="e.g. 1990"
+            min={1900}
+            max={new Date().getFullYear()}
+            value={formData.birthYear || ''}
+            onChange={(e) => handleChange('birthYear', e.target.value)}
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              padding: '14px 18px',
+              fontSize: '14px',
+              background: 'hsl(var(--container-low))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              outline: 'none',
+              color: 'hsl(var(--on-surface))',
+            }}
+          />
+
+          <label
             style={{
               fontSize: '10px',
               fontWeight: 'var(--font-weight-medium, 500)',
@@ -124,44 +187,74 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
           >
             Age range <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
           </label>
-          <div className="grid grid-cols-2 gap-2">
-            {ageRanges.map((range) => (
-              <label
-                key={range}
+          {formData.birthYear && derivedAgeBucket ? (
+            <div
+              style={{
+                border: '1px solid hsl(var(--border))',
+                background: 'hsl(var(--container-low))',
+                padding: '12px 14px',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
+              <div
                 style={{
-                  cursor: 'pointer',
-                  border: '1px solid hsl(var(--border))',
-                  padding: '12px',
-                  textAlign: 'center',
-                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '14px',
                   fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: '10px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  background:
-                    formData.ageRange === range ? 'hsla(var(--primary), 0.05)' : 'transparent',
-                  borderColor:
-                    formData.ageRange === range ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-                  color:
-                    formData.ageRange === range
-                      ? 'hsl(var(--primary))'
-                      : 'hsl(var(--on-surface-muted))',
-                  transition: 'all 0.15s ease',
+                  color: 'hsl(var(--on-surface))',
                 }}
               >
-                <input
-                  id="input-d93ff7"
-                  type="radio"
-                  name="ageRange"
-                  value={range}
-                  checked={formData.ageRange === range}
-                  onChange={() => handleChange('ageRange', range)}
-                  style={{ display: 'none' }}
-                />
-                {range}
-              </label>
-            ))}
-          </div>
+                {derivedAgeBucket}
+              </div>
+              <div
+                style={{
+                  fontSize: '11px',
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginTop: '2px',
+                }}
+              >
+                Derived from birth year.
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {ageRanges.map((range) => (
+                <label
+                  key={range}
+                  style={{
+                    cursor: 'pointer',
+                    border: '1px solid hsl(var(--border))',
+                    padding: '12px',
+                    textAlign: 'center',
+                    borderRadius: 'var(--radius-sm)',
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: '10px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    background:
+                      formData.ageRange === range ? 'hsla(var(--primary), 0.05)' : 'transparent',
+                    borderColor:
+                      formData.ageRange === range ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                    color:
+                      formData.ageRange === range
+                        ? 'hsl(var(--primary))'
+                        : 'hsl(var(--on-surface-muted))',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <input
+                    id="input-d93ff7"
+                    type="radio"
+                    name="ageRange"
+                    value={range}
+                    checked={formData.ageRange === range}
+                    onChange={() => handleChange('ageRange', range)}
+                    style={{ display: 'none' }}
+                  />
+                  {range}
+                </label>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-3">
@@ -213,6 +306,47 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label
+          htmlFor="select-religion-admin"
+          style={{
+            fontSize: '10px',
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: 'hsl(var(--on-surface-muted))',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          Religion{' '}
+          <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+            (optional)
+          </span>
+        </label>
+        <select
+          name="name-religion-admin"
+          id="select-religion-admin"
+          value={formData.religion || ''}
+          onChange={(e) => handleChange('religion', e.target.value)}
+          className="reg"
+          style={{
+            width: '100%',
+            padding: '14px 18px',
+            fontSize: '14px',
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          <option value="">Select Religion</option>
+          {religions.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="space-y-2">
@@ -306,46 +440,6 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
             </div>
             <div className="space-y-2">
               <label
-                htmlFor="select-district-admin"
-                style={{
-                  fontSize: '10px',
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface-muted))',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                District <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-              </label>
-              <select
-                name="name-district-admin"
-                id="select-district-admin"
-                required
-                disabled={!formData.region}
-                value={formData.district || ''}
-                onChange={(e) => handleChange('district', e.target.value)}
-                className="reg"
-                style={{
-                  width: '100%',
-                  padding: '14px 18px',
-                  fontSize: '14px',
-                  background: 'hsl(var(--container-low))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'var(--radius-sm)',
-                  color: 'hsl(var(--on-surface))',
-                  opacity: !formData.region ? 0.5 : 1,
-                }}
-              >
-                <option value="">Select District</option>
-                {districts.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2" style={{ gridColumn: isMobile ? undefined : 'span 2' }}>
-              <label
                 htmlFor="select-3ce1cd"
                 style={{
                   fontSize: '10px',
@@ -361,7 +455,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                 name="name-3ce1cd"
                 id="select-3ce1cd"
                 required
-                disabled={!formData.district}
+                disabled={!formData.region}
                 value={formData.constituency}
                 onChange={(e) => handleChange('constituency', e.target.value)}
                 className="reg"
@@ -373,7 +467,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 'var(--radius-sm)',
                   color: 'hsl(var(--on-surface))',
-                  opacity: !formData.district ? 0.5 : 1,
+                  opacity: !formData.region ? 0.5 : 1,
                 }}
               >
                 <option value="">Select Constituency</option>
@@ -383,6 +477,44 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="input-district-admin"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                District{' '}
+                <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                  (auto-filled)
+                </span>
+              </label>
+              {/* Read-only: district is resolved from the constituency, never entered by the registrar. */}
+              <input
+                aria-label="District (auto-filled)"
+                id="input-district-admin"
+                readOnly
+                tabIndex={-1}
+                value={formData.district || ''}
+                placeholder="Resolved from constituency"
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  padding: '14px 18px',
+                  fontSize: '14px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  outline: 'none',
+                  color: 'hsl(var(--on-surface-muted))',
+                  cursor: 'not-allowed',
+                }}
+              />
             </div>
 
             {formData.constituency && (
@@ -495,6 +627,85 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                 )}
               </div>
             )}
+
+            <div className="space-y-2" style={{ gridColumn: isMobile ? undefined : 'span 2' }}>
+              <label
+                htmlFor="input-ps-code-admin"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface-muted))',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Polling Station Code{' '}
+                <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                  (optional — auto-fills location)
+                </span>
+              </label>
+              <input
+                aria-label="Polling Station Code"
+                name="name-ps-code-admin"
+                id="input-ps-code-admin"
+                placeholder="Enter a known polling-station code"
+                value={psCode}
+                onChange={(e) => {
+                  setPsCode(e.target.value)
+                  setPsCodeError(false)
+                  setPsCodeName(null)
+                }}
+                onBlur={() => {
+                  const code = psCode.trim()
+                  if (!code) return
+                  lookupPollingStationByCode(code)
+                    .then((found) => {
+                      if (found) {
+                        setFields({
+                          region: found.region,
+                          district: found.district,
+                          constituency: found.constituency,
+                          pollingStationCode: found.code,
+                        })
+                        setPsCodeName(found.name)
+                        setPsCodeError(false)
+                      } else {
+                        setPsCodeName(null)
+                        setPsCodeError(true)
+                      }
+                    })
+                    .catch(() => setPsCodeError(true))
+                }}
+                autoComplete="off"
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  padding: '14px 18px',
+                  fontSize: '14px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  outline: 'none',
+                  color: 'hsl(var(--on-surface))',
+                }}
+              />
+              {psCodeName && (
+                <p style={{ fontSize: '11px', color: 'hsl(var(--primary))', marginTop: '4px' }}>
+                  Matched: {psCodeName}
+                </p>
+              )}
+              {psCodeError && (
+                <p
+                  style={{
+                    fontSize: '11px',
+                    color: 'hsl(var(--destructive))',
+                    marginTop: '4px',
+                  }}
+                >
+                  No polling station found for that code.
+                </p>
+              )}
+            </div>
           </>
         ) : (
           <div className="space-y-2">

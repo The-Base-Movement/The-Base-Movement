@@ -7,6 +7,9 @@
 
 export const ageRanges = ['18-25', '26-35', '36-45', '46-60', '60+']
 
+// Optional dropdown; free-form intentionally avoided to keep the data clean.
+export const religions = ['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']
+
 export const educationLevels = [
   'None',
   'Primary',

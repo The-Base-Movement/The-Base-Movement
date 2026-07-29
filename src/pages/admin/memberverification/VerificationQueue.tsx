@@ -4,6 +4,9 @@ import type { PendingVerification } from '@/services/adminService'
 import { Skeleton } from '@/components/states'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { Pagination } from '@/components/Pagination'
+import { religions } from '@/components/admin/RegistrationForm.constants'
+
+const AGE_RANGES = ['18-25', '26-35', '36-45', '46-60', '60+']
 
 interface VerificationQueueProps {
   loading: boolean
@@ -17,6 +20,10 @@ interface VerificationQueueProps {
   countryFilter: string
   setCountryFilter: (val: string) => void
   countries: string[]
+  religionFilter: string
+  setReligionFilter: (val: string) => void
+  ageRangeFilter: string
+  setAgeRangeFilter: (val: string) => void
   filtered: PendingVerification[]
   paginated: PendingVerification[]
   selectedMember: PendingVerification | null
@@ -41,6 +48,10 @@ export function VerificationQueue({
   countryFilter,
   setCountryFilter,
   countries,
+  religionFilter,
+  setReligionFilter,
+  ageRangeFilter,
+  setAgeRangeFilter,
   filtered,
   paginated,
   selectedMember,
@@ -76,7 +87,7 @@ export function VerificationQueue({
             type="text"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder="Search by name, ID, phone, region…"
+            placeholder="Search by name, ID, phone, email, region, district, polling station…"
             style={{
               width: '100%',
               height: 36,
@@ -225,6 +236,98 @@ export function VerificationQueue({
             {countries.map((c) => (
               <option key={c} value={c}>
                 {c}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 9,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            church
+          </span>
+          <select
+            name="religionFilter"
+            value={religionFilter}
+            onChange={(e) => {
+              setReligionFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            style={{
+              height: 36,
+              paddingLeft: 30,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 4,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 12,
+              background: 'hsl(var(--card))',
+              color: 'hsl(var(--on-surface))',
+              outline: 'none',
+              cursor: 'pointer',
+            }}
+            aria-label="Filter by religion"
+          >
+            <option value="">All religions</option>
+            {religions.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 9,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            cake
+          </span>
+          <select
+            name="ageRangeFilter"
+            value={ageRangeFilter}
+            onChange={(e) => {
+              setAgeRangeFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            style={{
+              height: 36,
+              paddingLeft: 30,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 4,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 12,
+              background: 'hsl(var(--card))',
+              color: 'hsl(var(--on-surface))',
+              outline: 'none',
+              cursor: 'pointer',
+            }}
+            aria-label="Filter by age range"
+          >
+            <option value="">All ages</option>
+            {AGE_RANGES.map((r) => (
+              <option key={r} value={r}>
+                {r}
               </option>
             ))}
           </select>

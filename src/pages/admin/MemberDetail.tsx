@@ -142,8 +142,15 @@ export default function AdminMemberDetail() {
       email: member.email,
       phone: member.phone,
       gender: member.gender,
+      ageRange: member.ageRange,
+      birthYear: member.birthYear,
+      religion: member.religion,
+      secondaryPhone: member.secondaryPhone,
       region: member.region,
       constituency: member.constituency,
+      district: member.district,
+      pollingStationCode: member.pollingStationCode,
+      votersIdCard: member.votersIdCard,
       country: member.country,
       chapter: member.chapter,
       profession: member.profession,
@@ -166,9 +173,21 @@ export default function AdminMemberDetail() {
     if (!member) return
     setIsSavingEdit(true)
     try {
+      // age_range is DB-derived from birth_year. Only when birth year is blank do
+      // we persist a manual age range, folded into gender the way ProfileSettings
+      // does (the service splits "Gender / Age Range" back apart on save).
+      const genderForSave = editForm.birthYear
+        ? editForm.gender
+        : editForm.gender && editForm.ageRange
+          ? `${editForm.gender} / ${editForm.ageRange}`
+          : editForm.gender
+      const base: Partial<Member> = { ...editForm, gender: genderForSave }
+      // onChange feeds birthYear in as a string; coerce so the int column and the
+      // clear-to-null path (0 → null in the service) both behave.
+      if (editForm.birthYear !== undefined) base.birthYear = Number(editForm.birthYear)
       // Only send `job` when the admin actually changed it, so an untouched edit
       // never wipes an existing selection.
-      const payload = jobDirty ? { ...editForm, job: jobSelection } : editForm
+      const payload = jobDirty ? { ...base, job: jobSelection } : base
       await adminService.updateMemberProfile(member.id, payload)
       toast.success('Member profile updated.')
       setIsEditOpen(false)

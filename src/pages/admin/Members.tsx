@@ -49,6 +49,8 @@ export default function MembersList() {
     sourceFilter,
     genderFilter,
     ageRangeFilter,
+    religionFilter,
+    platformFilter,
     sortOrder,
     setSortOrder,
     stats,
@@ -58,6 +60,8 @@ export default function MembersList() {
     handleSourceFilterChange,
     handleGenderFilterChange,
     handleAgeRangeFilterChange,
+    handleReligionFilterChange,
+    handlePlatformFilterChange,
     handleClearSearch,
     handleNextPage,
     handlePrevPage,
@@ -167,12 +171,16 @@ export default function MembersList() {
         sourceFilter={sourceFilter}
         genderFilter={genderFilter}
         ageRangeFilter={ageRangeFilter}
+        religionFilter={religionFilter}
+        platformFilter={platformFilter}
         sortOrder={sortOrder}
         onSearchChange={handleSearchChange}
         onSearchTypeChange={handleSearchTypeChange}
         onSourceFilterChange={handleSourceFilterChange}
         onGenderFilterChange={handleGenderFilterChange}
         onAgeRangeFilterChange={handleAgeRangeFilterChange}
+        onReligionFilterChange={handleReligionFilterChange}
+        onPlatformFilterChange={handlePlatformFilterChange}
         onSortChange={setSortOrder}
         onClearSearch={handleClearSearch}
       />

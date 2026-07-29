@@ -320,120 +320,152 @@ export default function AdminConstituencyLeadHub() {
 
       {/* Members tab */}
       {activeTab === 'members' && (
-        <div className="panel" style={{ overflowX: 'auto' }}>
-          {members.length === 0 ? (
-            <p style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>
-              No members in this constituency.
-            </p>
-          ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 480 }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-                  {['Member', 'Profession', 'Reg No', 'Status'].map((h) => (
-                    <th
-                      key={h}
-                      style={{
-                        padding: '12px 16px',
-                        textAlign: 'left',
-                        fontSize: 11,
-                        fontWeight: 'var(--font-weight-medium, 500)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
+        <>
+          {/* ponytail: Add routes to the shared /admin/members directory flow (same
+            entry point the diaspora hub uses) rather than auto-scoping to this
+            constituency — the diaspora Add form isn't pre-scoped either, so this
+            keeps parity and avoids re-wiring the protected RegistrationOverlay. */}
+          <div style={{ marginBottom: 16 }}>
+            <button className="btn btn-primary btn-sm" onClick={() => navigate('/admin/members')}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                person_add
+              </span>
+              Add member
+            </button>
+          </div>
+          <div className="panel" style={{ overflowX: 'auto' }}>
+            {members.length === 0 ? (
+              <p style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', fontSize: 14 }}>
+                No members in this constituency.
+              </p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 480 }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                    {['Member', 'Profession', 'Reg No', 'Status', ''].map((h) => (
+                      <th
+                        key={h}
+                        style={{
+                          padding: '12px 16px',
+                          textAlign: 'left',
+                          fontSize: 11,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {members.map((m) => (
+                    <tr
+                      key={m.id}
+                      style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                      }
+                      onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                     >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {members.map((m) => (
-                  <tr
-                    key={m.id}
-                    style={{ borderBottom: '1px solid hsl(var(--border))' }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = 'hsl(var(--container-low))')
-                    }
-                    onMouseLeave={(e) => (e.currentTarget.style.background = '')}
-                  >
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        {m.avatar_url ? (
-                          <img
-                            src={m.avatar_url}
-                            alt=""
+                      <td style={{ padding: '12px 16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          {m.avatar_url ? (
+                            <img
+                              src={m.avatar_url}
+                              alt=""
+                              style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: 'var(--radius-pill)',
+                                objectFit: 'cover',
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: 'var(--radius-pill)',
+                                background: 'hsl(var(--container-low))',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <span
+                                className="material-symbols-outlined"
+                                style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
+                              >
+                                person
+                              </span>
+                            </div>
+                          )}
+                          <span
                             style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 'var(--radius-pill)',
-                              objectFit: 'cover',
-                            }}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 'var(--radius-pill)',
-                              background: 'hsl(var(--container-low))',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                              fontSize: 14,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              color: 'hsl(var(--on-surface))',
                             }}
                           >
-                            <span
-                              className="material-symbols-outlined"
-                              style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
-                            >
-                              person
-                            </span>
-                          </div>
-                        )}
-                        <span
-                          style={{
-                            fontSize: 14,
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            color: 'hsl(var(--on-surface))',
-                          }}
-                        >
-                          {m.full_name.split(' ')[0]}
-                        </span>
-                      </div>
-                    </td>
-                    <td
-                      style={{
-                        padding: '12px 16px',
-                        fontSize: 13,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      {m.profession ?? '—'}
-                    </td>
-                    <td
-                      style={{
-                        padding: '12px 16px',
-                        fontSize: 13,
-                        color: 'hsl(var(--on-surface-muted))',
-                      }}
-                    >
-                      {m.registration_number ?? '—'}
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span
-                        className={`pill ${
-                          m.status === 'Active' || m.status === 'Approved' ? 'pill-ok' : 'pill-warn'
-                        }`}
+                            {m.full_name.split(' ')[0]}
+                          </span>
+                        </div>
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
                       >
-                        {m.status ?? 'Pending'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+                        {m.profession ?? '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {m.registration_number ?? '—'}
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span
+                          className={`pill ${
+                            m.status === 'Active' || m.status === 'Approved'
+                              ? 'pill-ok'
+                              : 'pill-warn'
+                          }`}
+                        >
+                          {m.status ?? 'Pending'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right' }}>
+                        {m.registration_number ? (
+                          <button
+                            className="btn btn-outline btn-sm"
+                            onClick={() => navigate(`/admin/members/${m.registration_number}`)}
+                            title="View / edit member"
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                              edit
+                            </span>
+                            Edit
+                          </button>
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
       )}
 
       {/* Activities tab */}

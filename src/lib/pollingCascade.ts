@@ -31,6 +31,59 @@ export async function getConstituencies(region: string, district: string): Promi
   return [...new Set(data.map((r) => r.constituency as string).filter(Boolean))]
 }
 
+/** Distinct constituencies within a region, alphabetical (no district needed). */
+export async function getConstituenciesByRegion(region: string): Promise<string[]> {
+  if (!region) return []
+  const { data, error } = await supabase
+    .from('polling_stations')
+    .select('constituency')
+    .ilike('region', region)
+    .order('constituency', { ascending: true })
+  if (error || !data) return []
+  return [...new Set(data.map((r) => r.constituency as string).filter(Boolean))]
+}
+
+/**
+ * District a constituency belongs to. Constituency → district is 1:1 in the EC
+ * data, so the first match is authoritative (used to auto-fill the District field).
+ */
+export async function getDistrictForConstituency(
+  region: string,
+  constituency: string
+): Promise<string | null> {
+  if (!constituency) return null
+  let q = supabase.from('polling_stations').select('district').ilike('constituency', constituency)
+  if (region) q = q.ilike('region', region)
+  const { data, error } = await q.limit(1)
+  if (error || !data?.length) return null
+  return (data[0].district as string) || null
+}
+
+export interface PollingStationFull {
+  code: string
+  name: string
+  district: string
+  constituency: string
+  region: string
+}
+
+/**
+ * Reverse lookup by unique polling-station code → full location, so entering a
+ * code auto-fills region / district / constituency / station name.
+ */
+export async function lookupPollingStationByCode(code: string): Promise<PollingStationFull | null> {
+  const c = code.trim()
+  if (!c) return null
+  const { data, error } = await supabase
+    .from('polling_stations')
+    .select('code, name, district, constituency, region')
+    .ilike('code', c)
+    .limit(1)
+    .maybeSingle()
+  if (error || !data) return null
+  return data as PollingStationFull
+}
+
 export interface PollingStationOption {
   code: string
   name: string

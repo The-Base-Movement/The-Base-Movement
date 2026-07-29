@@ -6,7 +6,11 @@ export interface RegistrationFormData {
   country: string
   contactNumber: string
   ageRange: string
+  birthYear?: string
+  religion?: string
   gender: string
+  secondaryCountryCode?: string
+  secondaryPhone?: string
   password: string
   email: string
   residentialAddress: string
