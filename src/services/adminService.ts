@@ -121,16 +121,41 @@ export interface ImportAuditRecord {
   report: ImportAuditReport | null
 }
 
-/** One pg_cron job plus the outcome of its most recent run. */
+/** One pg_cron job plus how its most recent run was dispatched. */
 export interface CronJobStatus {
   jobname: string
   schedule: string
   active: boolean
+  /** Edge function this job posts to. Null for jobs that call SQL directly. */
+  target_fn: string | null
+  /**
+   * Whether the cron command sends an Authorization header. Null when the job
+   * does not call an edge function. A job posting to a gated function without
+   * one returns 401 on every run while still reporting dispatch success.
+   */
+  sends_auth: boolean | null
   last_run_start: string | null
   last_run_end: string | null
-  /** pg_cron run status, e.g. 'succeeded' | 'failed'. Null when never run. */
-  last_status: string | null
+  /**
+   * pg_cron's own status, e.g. 'succeeded'. This reports only that the command
+   * was dispatched — NOT what the edge function returned. A job that 401s every
+   * run still reads 'succeeded' here; see getCronHttpFailures().
+   */
+  dispatch_status: string | null
   last_message: string | null
+}
+
+/**
+ * A recent non-2xx or timed-out HTTP response from pg_net. pg_net drops the URL
+ * once a request leaves the queue, so these cannot be attributed to a specific
+ * job — treat them as a fleet-wide failure signal.
+ */
+export interface CronHttpFailure {
+  status_code: number | null
+  timed_out: boolean
+  detail: string
+  occurrences: number
+  most_recent: string
 }
 
 // Re-export all types so consumers can import from either location
@@ -3521,6 +3546,13 @@ class AdminService {
     const { data, error } = await supabase.rpc('get_cron_job_status')
     if (error) throw error
     return (data ?? []) as CronJobStatus[]
+  }
+
+  /** Recent failed/timed-out cron HTTP calls (last 24h). Gated on is_admin(). */
+  async getCronHttpFailures(): Promise<CronHttpFailure[]> {
+    const { data, error } = await supabase.rpc('get_cron_http_failures')
+    if (error) throw error
+    return (data ?? []) as CronHttpFailure[]
   }
 }
 

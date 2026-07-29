@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
-import { adminService, type CronJobStatus } from '@/services/adminService'
+import { adminService, type CronHttpFailure, type CronJobStatus } from '@/services/adminService'
 
 function formatDate(iso: string | null): string {
   if (!iso) return 'Never'
@@ -15,9 +15,17 @@ function formatDate(iso: string | null): string {
   })
 }
 
-/** pg_cron records the outcome of each run in job_run_details.status. */
+/**
+ * pg_cron only records whether the command was dispatched, so this says nothing
+ * about what the edge function returned. Misconfigured auth is the failure this
+ * page can actually prove, so it is surfaced as its own column.
+ */
 function hasFailed(job: CronJobStatus): boolean {
-  return !!job.last_status && job.last_status !== 'succeeded' && job.last_status !== 'running'
+  return (
+    !!job.dispatch_status &&
+    job.dispatch_status !== 'succeeded' &&
+    job.dispatch_status !== 'running'
+  )
 }
 
 function getStatusBadge(job: CronJobStatus) {
@@ -64,6 +72,7 @@ function getStatusIcon(job: CronJobStatus): React.ReactNode {
 
 export default function CronMonitor() {
   const [jobs, setJobs] = useState<CronJobStatus[]>([])
+  const [failures, setFailures] = useState<CronHttpFailure[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -72,8 +81,12 @@ export default function CronMonitor() {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await adminService.getCronJobStatus()
+      const [data, httpFailures] = await Promise.all([
+        adminService.getCronJobStatus(),
+        adminService.getCronHttpFailures(),
+      ])
       setJobs(data)
+      setFailures(httpFailures)
       setLastUpdated(new Date())
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
@@ -110,6 +123,80 @@ export default function CronMonitor() {
           }}
         >
           {error}
+        </div>
+      )}
+
+      <p
+        style={{
+          fontSize: '12px',
+          color: 'hsl(var(--on-surface-muted))',
+          margin: '0 0 12px',
+          maxWidth: '70ch',
+        }}
+      >
+        <strong style={{ fontWeight: 'var(--font-weight-medium, 500)' }}>Dispatch</strong> reports
+        only that pg_cron fired the request — not what the function returned. A job can read Success
+        here and still fail on every run. Check the Auth column and the failures below.
+      </p>
+
+      {failures.length > 0 && (
+        <div
+          className="panel"
+          style={{
+            padding: '12px 16px',
+            marginBottom: '16px',
+            borderLeft: `3px solid hsl(var(--destructive))`,
+          }}
+        >
+          <p
+            style={{
+              margin: '0 0 8px',
+              fontSize: '13px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface))',
+            }}
+          >
+            Failed HTTP calls in the last 24h
+          </p>
+          <p
+            style={{ margin: '0 0 10px', fontSize: '11px', color: 'hsl(var(--on-surface-muted))' }}
+          >
+            pg_net does not retain the URL after a request completes, so these cannot be tied to a
+            specific job.
+          </p>
+          {failures.map((f, i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                gap: '10px',
+                alignItems: 'baseline',
+                fontSize: '12px',
+                padding: '4px 0',
+                borderTop: i === 0 ? 'none' : `1px solid hsl(var(--border))`,
+              }}
+            >
+              <span className={`pill ${f.timed_out ? 'pill-warn' : 'pill-err'}`}>
+                {f.timed_out ? 'Timeout' : (f.status_code ?? 'error')}
+              </span>
+              <span style={{ color: 'hsl(var(--on-surface-muted))' }}>×{f.occurrences}</span>
+              <span
+                style={{
+                  color: 'hsl(var(--on-surface-muted))',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  flex: 1,
+                }}
+                title={f.detail}
+              >
+                {f.detail}
+              </span>
+              <span style={{ color: 'hsl(var(--on-surface-muted))', whiteSpace: 'nowrap' }}>
+                {formatDate(f.most_recent)}
+              </span>
+            </div>
+          ))}
         </div>
       )}
 
@@ -227,7 +314,17 @@ export default function CronMonitor() {
                     color: 'hsl(var(--on-surface))',
                   }}
                 >
-                  Status
+                  Dispatch
+                </th>
+                <th
+                  style={{
+                    padding: '12px 16px',
+                    textAlign: 'left',
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  Auth
                 </th>
                 <th
                   style={{
@@ -288,6 +385,20 @@ export default function CronMonitor() {
                   >
                     {getStatusIcon(job)}
                     {getStatusBadge(job)}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    {job.sends_auth === null ? (
+                      <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
+                    ) : job.sends_auth ? (
+                      <span className="pill pill-ok">Token</span>
+                    ) : (
+                      <span
+                        className="pill pill-err"
+                        title="This job posts no Authorization header. If the target function is gated, every run returns 401 while Dispatch still reads Success."
+                      >
+                        No header
+                      </span>
+                    )}
                   </td>
                   <td
                     style={{
