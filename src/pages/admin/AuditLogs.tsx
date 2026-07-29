@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminService, type AuditLogEntry } from '@/services/adminService'
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { usePageLabel } from '@/contexts/PageLabelContext'
+import { useITLayout } from './it/ITLayoutContext'
 import { AuditLogsTable } from './auditlogs/AuditLogsTable'
 import { AuditLogsFilterBar } from './auditlogs/AuditLogsFilterBar'
 import { AuditLogDetailModal } from './auditlogs/AuditLogDetailModal'
@@ -15,6 +16,15 @@ interface FilterState {
 const ITEMS_PER_PAGE = 50
 
 export default function AuditLogs() {
+  const { setCurrentLabel } = usePageLabel()
+
+  useEffect(() => {
+    setCurrentLabel('System Audit Logs')
+  }, [setCurrentLabel])
+
+  // The IT layout renders the page header; rendering our own produced two titles.
+  useITLayout('System Audit Logs', 'history', 'Administrative actions and system events.')
+
   const [logs, setLogs] = useState<AuditLogEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -81,11 +91,6 @@ export default function AuditLogs() {
 
   return (
     <div className="main">
-      <AdminPageHeader
-        title="System Audit Logs"
-        description="View administrative actions and system events"
-      />
-
       <AuditLogsFilterBar
         filters={filters}
         actions={uniqueActions}
