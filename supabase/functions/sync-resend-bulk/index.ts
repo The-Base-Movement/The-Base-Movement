@@ -1,12 +1,12 @@
 // @ts-nocheck
 // THE BASE: RESEND BULK CONTACT SYNC
 // Fetches all members (+ active newsletter subscribers) from the database and
-// upserts them into the Resend global contacts list.
+// upserts them into Resend via the bulk CSV import endpoint.
 //
 // Required secrets: RESEND_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 //
-// Invocation: POST (no body required; admin-auth enforced via service role)
-// Returns: { total, success, failed }
+// Invocation: POST (no body required)
+// Returns: { total, import_id }
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageNewsletters, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
@@ -31,89 +31,49 @@ function splitName(full: string | null): { first_name: string; last_name: string
   }
 }
 
-async function syncResendContactsInBulk(contacts: Record<string, unknown>[], resendApiKey: string) {
-  // Resend rate-limits to ~2 requests/second. The previous 8 concurrent workers
-  // with no throttle and no retry meant most calls came back 429 and were
-  // counted as permanent failures — 651 of 1,007 on the last run.
-  const CONCURRENCY_LIMIT = 2
-  const MAX_RETRIES = 4
-  let index = 0
-  const results = { success: 0, failed: 0, rate_limited: 0 }
-  const failureReasons: Record<string, number> = {}
+const CSV_HEADERS = [
+  'email',
+  'first_name',
+  'last_name',
+  'reg_no',
+  'region',
+  'constituency',
+  'platform',
+  'membership_status',
+  'engagement_status',
+  'source',
+] as const
 
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
-  /** Single request with backoff on 429, so throttling delays rather than drops. */
-  async function send(url: string, method: string, body: unknown): Promise<Response | null> {
-    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendApiKey}` },
-        body: JSON.stringify(body),
-      })
-      if (res.status !== 429) return res
-      results.rate_limited++
-      // Exponential backoff, honouring Retry-After when Resend supplies it.
-      const retryAfter = Number(res.headers.get('retry-after') ?? 0)
-      await sleep(retryAfter > 0 ? retryAfter * 1000 : 2 ** attempt * 500)
-    }
-    return null
-  }
-
-  async function worker() {
-    while (index < contacts.length) {
-      const currentIdx = index++
-      const contact = contacts[currentIdx]
-      if (!contact) break
-
-      try {
-        const createRes = await send('https://api.resend.com/contacts', 'POST', contact)
-        if (createRes?.ok) {
-          results.success++
-          await sleep(500) // stay under ~2 req/s per worker
-          continue
-        }
-
-        // Already exists → update instead.
-        const updateRes = await send(
-          `https://api.resend.com/contacts/${encodeURIComponent(contact.email as string)}`,
-          'PATCH',
-          {
-            first_name: contact.first_name,
-            last_name: contact.last_name,
-            properties: contact.properties,
-          }
-        )
-
-        if (updateRes?.ok) {
-          results.success++
-        } else {
-          results.failed++
-          // Record why, rather than swallowing it: a silent failure count is
-          // indistinguishable from a healthy run at a glance.
-          const key = updateRes ? `HTTP ${updateRes.status}` : 'rate limit exhausted'
-          failureReasons[key] = (failureReasons[key] ?? 0) + 1
-        }
-        await sleep(500)
-      } catch (err: unknown) {
-        results.failed++
-        const key = err instanceof Error ? err.message.slice(0, 60) : 'unknown'
-        failureReasons[key] = (failureReasons[key] ?? 0) + 1
-      }
-    }
-  }
-
-  const workers = Array.from({ length: Math.min(CONCURRENCY_LIMIT, contacts.length) }, () =>
-    worker()
-  )
-  await Promise.all(workers)
-
-  if (Object.keys(failureReasons).length > 0) {
-    console.error('[SYNC-RESEND-BULK] failures by reason:', JSON.stringify(failureReasons))
-  }
-
-  return { ...results, failure_reasons: failureReasons }
+/** Quote every field: names and constituencies legitimately contain commas. */
+function csvRow(values: string[]): string {
+  return values.map((v) => `"${(v ?? '').replace(/"/g, '""')}"`).join(',')
 }
+
+// Maps our CSV headers onto Resend's contact fields. Anything not named here
+// (reg_no, region, …) is declared as a custom property so it lands on the
+// contact record and stays available for segment filters.
+const COLUMN_MAP = {
+  email: 'email',
+  first_name: 'first_name',
+  last_name: 'last_name',
+  properties: Object.fromEntries(
+    [
+      'reg_no',
+      'region',
+      'constituency',
+      'platform',
+      'membership_status',
+      'engagement_status',
+      'source',
+    ].map((k) => [k, { column: k, type: 'string' }])
+  ),
+}
+
+// Broadcasts can only target a segment — a contact that belongs to none is
+// unreachable — so every imported contact joins the account-wide "General"
+// segment. Narrower audiences (e.g. never-signed-in) are filtered in the Resend
+// dashboard on the engagement_status property, which this import keeps current.
+const GENERAL_SEGMENT_ID = 'fac06974-9216-4466-a43a-6a73a6f04552'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -161,56 +121,13 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Ensure contact properties exist in Resend
-    const props = [
-      { key: 'reg_no', type: 'string' },
-      { key: 'region', type: 'string' },
-      { key: 'constituency', type: 'string' },
-      { key: 'platform', type: 'string' },
-      { key: 'membership_status', type: 'string' },
-      { key: 'source', type: 'string' },
-      // Lets Resend segment on who has never signed in — the audience the
-      // activation campaign targets. Computed nightly by categorize-engagement-daily.
-      { key: 'engagement_status', type: 'string' },
-    ]
-    for (const prop of props) {
-      try {
-        await fetch('https://api.resend.com/contact-properties', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${resendApiKey}`,
-          },
-          body: JSON.stringify(prop),
-        })
-      } catch {
-        // Safe to ignore if already exists or schema setup fails
-      }
-    }
-
-    // Fetch members with an email, resuming from where the last run stopped.
-    //
-    // Two constraints force a cursor. PostgREST caps a response at 1,000 rows,
-    // so the previous unpaginated query silently synced only the first ~1,000 of
-    // 9,422 members and reported that as the total. And Resend's ~2 req/s limit
-    // means a full pass takes far longer than one function invocation, so a run
-    // that always restarts at the beginning would never reach the tail.
-    //
-    // Each run therefore processes a bounded slice ordered by id and stores the
-    // last id reached; the nightly cron converges over successive nights and
-    // wraps to the start once the end is passed.
-    const PER_RUN = 600
-    const CURSOR_KEY = 'resend_sync_cursor'
-
-    const { data: cursorRow } = await supabase
-      .from('site_settings')
-      .select('value')
-      .eq('key', CURSOR_KEY)
-      .maybeSingle()
-    const cursor = cursorRow?.value ?? ''
-
-    async function fetchFrom(afterId: string) {
-      let q = supabase
+    // Fetch every member with an email. PostgREST caps a response at 1,000 rows,
+    // so page explicitly — an unpaginated select silently returns only the first
+    // page and reports it as the whole roll.
+    const PAGE = 1000
+    const members: MemberRow[] = []
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await supabase
         .from('users')
         .select(
           'id, email, full_name, registration_number, region, constituency, platform, status, engagement_status'
@@ -218,56 +135,37 @@ Deno.serve(async (req: Request) => {
         .not('email', 'is', null)
         .neq('email', '')
         .order('id', { ascending: true })
-        .limit(PER_RUN)
-      if (afterId) q = q.gt('id', afterId)
-      const { data: rows, error } = await q
+        .range(from, from + PAGE - 1)
       if (error) throw error
-      return (rows ?? []) as MemberRow[]
+      const rows = (data ?? []) as MemberRow[]
+      members.push(...rows)
+      if (rows.length < PAGE) break
     }
 
-    let data = await fetchFrom(cursor)
-    // Reached the end of the roll — wrap around so the next pass refreshes
-    // everyone rather than stalling permanently on an exhausted cursor.
-    if (data.length === 0 && cursor) {
-      data = await fetchFrom('')
-    }
-
-    const nextCursor = data.length > 0 ? data[data.length - 1].id : ''
-    if (nextCursor) {
-      await supabase
-        .from('site_settings')
-        .upsert({ key: CURSOR_KEY, value: nextCursor }, { onConflict: 'key' })
-    }
-
-    // Keep only rows with a syntactically valid email.
+    // Keep only rows with a syntactically valid email, keyed by lowercased
+    // address so a duplicate address becomes one contact.
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const members: MemberRow[] = (data ?? [])
-      .map((m: MemberRow) => ({ ...m, email: (m.email ?? '').trim() }))
-      .filter((m: MemberRow) => EMAIL_RE.test(m.email))
-
-    // Build member contact objects, keyed by lowercased email for dedup.
-    const byEmail = new Map<string, Record<string, unknown>>()
+    const byEmail = new Map<string, string[]>()
     for (const m of members) {
+      const email = (m.email ?? '').trim()
+      if (!EMAIL_RE.test(email)) continue
       const { first_name, last_name } = splitName(m.full_name)
-      byEmail.set(m.email.toLowerCase(), {
-        email: m.email,
+      byEmail.set(email.toLowerCase(), [
+        email,
         first_name,
         last_name,
-        unsubscribed: false,
-        properties: {
-          reg_no: m.registration_number ?? '',
-          region: m.region ?? '',
-          constituency: m.constituency ?? '',
-          platform: m.platform ?? '',
-          membership_status: m.status ?? '',
-          engagement_status: m.engagement_status ?? 'Never',
-          source: 'member',
-        },
-      })
+        m.registration_number ?? '',
+        m.region ?? '',
+        m.constituency ?? '',
+        m.platform ?? '',
+        m.status ?? '',
+        m.engagement_status ?? 'Never',
+        'member',
+      ])
     }
 
-    // Also back-fill active newsletter subscribers (source=newsletter). A
-    // subscriber who is already a member keeps the richer member record.
+    // Also back-fill active newsletter subscribers. A subscriber who is already
+    // a member keeps the richer member record.
     const { data: subsData } = await supabase
       .from('newsletter_subscribers')
       .select('email')
@@ -276,50 +174,58 @@ Deno.serve(async (req: Request) => {
     for (const s of subsData ?? []) {
       const email = (s.email ?? '').trim()
       if (!EMAIL_RE.test(email) || byEmail.has(email.toLowerCase())) continue
-      byEmail.set(email.toLowerCase(), {
+      byEmail.set(email.toLowerCase(), [
         email,
-        first_name: '',
-        last_name: '',
-        unsubscribed: false,
-        properties: {
-          reg_no: '',
-          region: '',
-          constituency: '',
-          platform: '',
-          membership_status: 'Subscriber',
-          source: 'newsletter',
-        },
-      })
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        'Subscriber',
+        '',
+        'newsletter',
+      ])
     }
 
-    const contacts = Array.from(byEmail.values())
-    const total = contacts.length
-
+    const total = byEmail.size
     if (total === 0) {
-      return new Response(JSON.stringify({ total: 0, success: 0, failed: 0 }), {
+      return new Response(JSON.stringify({ total: 0, import_id: null }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
 
-    // Sync in bulk using concurrency queue
-    const syncResult = await syncResendContactsInBulk(contacts, resendApiKey)
+    const csv = [csvRow([...CSV_HEADERS]), ...Array.from(byEmail.values(), csvRow)].join('\n')
 
-    return new Response(
-      // Surface why a run underperformed. A bare success/failed pair reads as a
-      // healthy run at a glance even when two thirds of it was rate-limited.
-      JSON.stringify({
-        total,
-        success: syncResult.success,
-        failed: syncResult.failed,
-        rate_limited_retries: syncResult.rate_limited,
-        failure_reasons: syncResult.failure_reasons,
-      }),
-      {
+    // One bulk import beats one request per contact: Resend rate-limits to
+    // ~2 req/s, so 9k+ contacts as individual calls cannot finish inside a
+    // single invocation. The import is processed asynchronously on their side.
+    const form = new FormData()
+    form.append('file', new Blob([csv], { type: 'text/csv' }), 'contacts.csv')
+    form.append('column_map', JSON.stringify(COLUMN_MAP))
+    form.append('on_conflict', 'upsert')
+    form.append('segments', JSON.stringify([{ id: GENERAL_SEGMENT_ID }]))
+
+    const res = await fetch('https://api.resend.com/contacts/imports', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${resendApiKey}` },
+      body: form,
+    })
+    const body = await res.text()
+    if (!res.ok) {
+      console.error('[SYNC-RESEND-BULK] import rejected:', res.status, body)
+      return new Response(JSON.stringify({ total, error: `HTTP ${res.status}`, detail: body }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      }
-    )
+        status: 502,
+      })
+    }
+
+    const parsed = JSON.parse(body)
+    return new Response(JSON.stringify({ total, import_id: parsed?.id ?? null }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
   } catch (err: unknown) {
     const message =
       err instanceof Error
