@@ -32,9 +32,33 @@ function splitName(full: string | null): { first_name: string; last_name: string
 }
 
 async function syncResendContactsInBulk(contacts: Record<string, unknown>[], resendApiKey: string) {
-  const CONCURRENCY_LIMIT = 8
+  // Resend rate-limits to ~2 requests/second. The previous 8 concurrent workers
+  // with no throttle and no retry meant most calls came back 429 and were
+  // counted as permanent failures — 651 of 1,007 on the last run.
+  const CONCURRENCY_LIMIT = 2
+  const MAX_RETRIES = 4
   let index = 0
-  const results = { success: 0, failed: 0 }
+  const results = { success: 0, failed: 0, rate_limited: 0 }
+  const failureReasons: Record<string, number> = {}
+
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+  /** Single request with backoff on 429, so throttling delays rather than drops. */
+  async function send(url: string, method: string, body: unknown): Promise<Response | null> {
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendApiKey}` },
+        body: JSON.stringify(body),
+      })
+      if (res.status !== 429) return res
+      results.rate_limited++
+      // Exponential backoff, honouring Retry-After when Resend supplies it.
+      const retryAfter = Number(res.headers.get('retry-after') ?? 0)
+      await sleep(retryAfter > 0 ? retryAfter * 1000 : 2 ** attempt * 500)
+    }
+    return null
+  }
 
   async function worker() {
     while (index < contacts.length) {
@@ -43,55 +67,52 @@ async function syncResendContactsInBulk(contacts: Record<string, unknown>[], res
       if (!contact) break
 
       try {
-        const createRes = await fetch('https://api.resend.com/contacts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${resendApiKey}`,
-          },
-          body: JSON.stringify(contact),
-        })
-
-        if (createRes.ok) {
+        const createRes = await send('https://api.resend.com/contacts', 'POST', contact)
+        if (createRes?.ok) {
           results.success++
+          await sleep(500) // stay under ~2 req/s per worker
           continue
         }
 
-        // If it failed (e.g. contact already exists), update via PATCH
-        const updateRes = await fetch(
-          `https://api.resend.com/contacts/${encodeURIComponent(contact.email)}`,
+        // Already exists → update instead.
+        const updateRes = await send(
+          `https://api.resend.com/contacts/${encodeURIComponent(contact.email as string)}`,
+          'PATCH',
           {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${resendApiKey}`,
-            },
-            body: JSON.stringify({
-              first_name: contact.first_name,
-              last_name: contact.last_name,
-              properties: contact.properties,
-            }),
+            first_name: contact.first_name,
+            last_name: contact.last_name,
+            properties: contact.properties,
           }
         )
 
-        if (updateRes.ok) {
+        if (updateRes?.ok) {
           results.success++
         } else {
           results.failed++
+          // Record why, rather than swallowing it: a silent failure count is
+          // indistinguishable from a healthy run at a glance.
+          const key = updateRes ? `HTTP ${updateRes.status}` : 'rate limit exhausted'
+          failureReasons[key] = (failureReasons[key] ?? 0) + 1
         }
-      } catch {
+        await sleep(500)
+      } catch (err: unknown) {
         results.failed++
+        const key = err instanceof Error ? err.message.slice(0, 60) : 'unknown'
+        failureReasons[key] = (failureReasons[key] ?? 0) + 1
       }
     }
   }
 
-  // Spawn workers
   const workers = Array.from({ length: Math.min(CONCURRENCY_LIMIT, contacts.length) }, () =>
     worker()
   )
   await Promise.all(workers)
 
-  return results
+  if (Object.keys(failureReasons).length > 0) {
+    console.error('[SYNC-RESEND-BULK] failures by reason:', JSON.stringify(failureReasons))
+  }
+
+  return { ...results, failure_reasons: failureReasons }
 }
 
 const corsHeaders = {
@@ -167,16 +188,56 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Fetch all members with an email
-    const { data, error } = await supabase
-      .from('users')
-      .select(
-        'id, email, full_name, registration_number, region, constituency, platform, status, engagement_status'
-      )
-      .not('email', 'is', null)
-      .neq('email', '')
+    // Fetch members with an email, resuming from where the last run stopped.
+    //
+    // Two constraints force a cursor. PostgREST caps a response at 1,000 rows,
+    // so the previous unpaginated query silently synced only the first ~1,000 of
+    // 9,422 members and reported that as the total. And Resend's ~2 req/s limit
+    // means a full pass takes far longer than one function invocation, so a run
+    // that always restarts at the beginning would never reach the tail.
+    //
+    // Each run therefore processes a bounded slice ordered by id and stores the
+    // last id reached; the nightly cron converges over successive nights and
+    // wraps to the start once the end is passed.
+    const PER_RUN = 600
+    const CURSOR_KEY = 'resend_sync_cursor'
 
-    if (error) throw error
+    const { data: cursorRow } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', CURSOR_KEY)
+      .maybeSingle()
+    const cursor = cursorRow?.value ?? ''
+
+    async function fetchFrom(afterId: string) {
+      let q = supabase
+        .from('users')
+        .select(
+          'id, email, full_name, registration_number, region, constituency, platform, status, engagement_status'
+        )
+        .not('email', 'is', null)
+        .neq('email', '')
+        .order('id', { ascending: true })
+        .limit(PER_RUN)
+      if (afterId) q = q.gt('id', afterId)
+      const { data: rows, error } = await q
+      if (error) throw error
+      return (rows ?? []) as MemberRow[]
+    }
+
+    let data = await fetchFrom(cursor)
+    // Reached the end of the roll — wrap around so the next pass refreshes
+    // everyone rather than stalling permanently on an exhausted cursor.
+    if (data.length === 0 && cursor) {
+      data = await fetchFrom('')
+    }
+
+    const nextCursor = data.length > 0 ? data[data.length - 1].id : ''
+    if (nextCursor) {
+      await supabase
+        .from('site_settings')
+        .upsert({ key: CURSOR_KEY, value: nextCursor }, { onConflict: 'key' })
+    }
 
     // Keep only rows with a syntactically valid email.
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -245,10 +306,14 @@ Deno.serve(async (req: Request) => {
     const syncResult = await syncResendContactsInBulk(contacts, resendApiKey)
 
     return new Response(
+      // Surface why a run underperformed. A bare success/failed pair reads as a
+      // healthy run at a glance even when two thirds of it was rate-limited.
       JSON.stringify({
         total,
         success: syncResult.success,
         failed: syncResult.failed,
+        rate_limited_retries: syncResult.rate_limited,
+        failure_reasons: syncResult.failure_reasons,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
