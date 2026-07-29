@@ -20,6 +20,7 @@ interface MemberRow {
   constituency: string | null
   platform: string | null
   status: string | null
+  engagement_status: string | null
 }
 
 function splitName(full: string | null): { first_name: string; last_name: string } {
@@ -147,6 +148,9 @@ Deno.serve(async (req: Request) => {
       { key: 'platform', type: 'string' },
       { key: 'membership_status', type: 'string' },
       { key: 'source', type: 'string' },
+      // Lets Resend segment on who has never signed in — the audience the
+      // activation campaign targets. Computed nightly by categorize-engagement-daily.
+      { key: 'engagement_status', type: 'string' },
     ]
     for (const prop of props) {
       try {
@@ -166,7 +170,9 @@ Deno.serve(async (req: Request) => {
     // Fetch all members with an email
     const { data, error } = await supabase
       .from('users')
-      .select('id, email, full_name, registration_number, region, constituency, platform, status')
+      .select(
+        'id, email, full_name, registration_number, region, constituency, platform, status, engagement_status'
+      )
       .not('email', 'is', null)
       .neq('email', '')
 
@@ -193,6 +199,7 @@ Deno.serve(async (req: Request) => {
           constituency: m.constituency ?? '',
           platform: m.platform ?? '',
           membership_status: m.status ?? '',
+          engagement_status: m.engagement_status ?? 'Never',
           source: 'member',
         },
       })
