@@ -1,11 +1,39 @@
 import { supabase } from '@/lib/supabase'
 import { createSignedStorageUrl, extractStorageObjectPath } from '@/lib/storageObject'
 
+export interface MessagingBalance {
+  /** Remaining MNotify SMS credits. Null when the provider did not report one. */
+  sms_balance: number | null
+  sms_ok: boolean
+  sms_detail: string
+  /** Emails sent this calendar month — usage, not an allowance. */
+  emails_sent_this_month: number | null
+  email_ok: boolean
+  /** Always false: Resend has no quota endpoint, so "remaining" cannot be shown. */
+  email_quota_available: boolean
+}
+
 export const itService = {
   // ── System ──
   async getDbStats() {
     const { data } = await supabase.rpc('get_db_stats')
     return data
+  },
+
+  /**
+   * SMS credit and email volume for the System Monitor.
+   *
+   * Resend exposes no quota endpoint — an email plan is a monthly allowance,
+   * not a credit pool — so `emails_sent_this_month` is a usage figure, never a
+   * remaining one. Only the SMS balance is a true balance.
+   */
+  async getMessagingBalance(): Promise<MessagingBalance | null> {
+    const { data, error } = await supabase.functions.invoke('get-messaging-balance')
+    if (error) {
+      console.warn('[IT] messaging balance fetch failed:', error)
+      return null
+    }
+    return data as MessagingBalance
   },
 
   async getAuditLogs(dateFrom: string, dateTo: string, sortDir: 'asc' | 'desc') {
