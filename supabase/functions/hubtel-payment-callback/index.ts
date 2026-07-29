@@ -112,6 +112,19 @@ function isSuccessful(payload: Record<string, unknown>) {
   )
 }
 
+/**
+ * Provider's own wording for why a payment did not go through, for the failure
+ * alerts. Hubtel is inconsistent about casing and field name, so read the same
+ * candidates isSuccessful() does.
+ */
+function statusMessage(payload: Record<string, unknown>): string {
+  return (
+    getString(payload, ['Message', 'message', 'Description', 'description']) ??
+    getString(payload, ['Status', 'status', 'TransactionStatus', 'transactionStatus']) ??
+    'Unknown'
+  )
+}
+
 export function donationCallbackResponse(result: { matched: boolean; already_final: boolean }) {
   if (!result.matched) return null
   return { success: true, already: result.already_final }
@@ -280,6 +293,36 @@ if (import.meta.main)
         )
       }
 
+      // Failed single donation. Only successes were ever announced, so a member
+      // whose payment failed left no trace on the payments channel and nobody
+      // could follow up.
+      if (donationDecision && !paid) {
+        const { data: failed } = await supabaseAdmin
+          .from('donations')
+          .select('full_name, amount, payment_method, country')
+          .eq('id', reference)
+          .maybeSingle()
+        await sendPaymentNotification(
+          'Donation Failed ❌',
+          'A donation attempt did not complete.',
+          0xce1126,
+          [
+            { name: 'From', value: failed?.full_name || 'Anonymous Compatriot', inline: true },
+            {
+              name: 'Amount',
+              value: failed
+                ? `₵ ${Number(failed.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : '—',
+              inline: true,
+            },
+            { name: 'Method', value: failed?.payment_method || 'Hubtel', inline: true },
+            { name: 'Country', value: failed?.country || 'Ghana', inline: true },
+            { name: 'Reference', value: reference.substring(0, 8).toUpperCase(), inline: true },
+            { name: 'Reason', value: statusMessage(payload), inline: true },
+          ]
+        )
+      }
+
       if (donationError) throw donationError
 
       // Group donations: the reference is a shared group_id settling every
@@ -329,6 +372,38 @@ if (import.meta.main)
                   value: reference.substring(0, 8).toUpperCase(),
                   inline: true,
                 },
+              ]
+            )
+          } else {
+            // Failed group donation — one organiser covering several people, so
+            // a silent failure strands the whole group.
+            await sendPaymentNotification(
+              'Group Donation Failed ❌',
+              'A group donation attempt did not complete.',
+              0xce1126,
+              [
+                {
+                  name: 'Group',
+                  value: (groupResult.group_name as string) || 'Unnamed group',
+                  inline: true,
+                },
+                {
+                  name: 'Paid by',
+                  value: (groupResult.paid_by_name as string) || 'Anonymous Compatriot',
+                  inline: true,
+                },
+                { name: 'Members', value: String(groupResult.member_count ?? '—'), inline: true },
+                {
+                  name: 'Amount',
+                  value: `₵ ${Number(groupResult.total_amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                  inline: true,
+                },
+                {
+                  name: 'Reference',
+                  value: reference.substring(0, 8).toUpperCase(),
+                  inline: true,
+                },
+                { name: 'Reason', value: statusMessage(payload), inline: true },
               ]
             )
           }
@@ -401,6 +476,48 @@ if (import.meta.main)
               currency: 'GHS',
               mode: duesPayment?.payment_mode === 'recurring_hubtel' ? 'recurring' : 'manual',
             })
+          } else {
+            // Failed dues payment. Dues are recurring obligations, so a silent
+            // failure quietly puts the member into arrears.
+            const { data: duesPayment } = await supabaseAdmin
+              .from('monthly_dues_payments')
+              .select('dues_month, amount_ghs, member_id')
+              .eq('id', reference)
+              .maybeSingle()
+            let payer: { full_name: string | null; registration_number: string | null } | null =
+              null
+            if (duesPayment?.member_id) {
+              const { data } = await supabaseAdmin
+                .from('users')
+                .select('full_name, registration_number')
+                .eq('id', duesPayment.member_id)
+                .maybeSingle()
+              payer = data ?? null
+            }
+            await sendPaymentNotification(
+              'Monthly Dues Failed ❌',
+              'A monthly dues payment did not complete.',
+              0xce1126,
+              [
+                {
+                  name: 'Member',
+                  value: payer?.full_name
+                    ? payer.registration_number
+                      ? `${payer.full_name} · ${payer.registration_number}`
+                      : payer.full_name
+                    : 'Unknown member',
+                  inline: true,
+                },
+                { name: 'Month', value: duesPayment?.dues_month ?? '—', inline: true },
+                {
+                  name: 'Amount',
+                  value: duesPayment ? `GHS ${Number(duesPayment.amount_ghs).toFixed(2)}` : '—',
+                  inline: true,
+                },
+                { name: 'Reference', value: reference.substring(0, 8).toUpperCase(), inline: true },
+                { name: 'Reason', value: statusMessage(payload), inline: true },
+              ]
+            )
           }
           return json({ success: true, paid, reference })
         }
