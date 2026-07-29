@@ -124,7 +124,16 @@ export const registrationService = {
       job_custom_title: formData.job?.isOther ? formData.job.customTitle.trim() || null : null,
       status: autoApproved ? 'Active' : 'Pending',
       verification_status: autoApproved ? 'Approved' : 'In Review',
+      // age_range is derived from birth_year by a DB trigger when a year is given;
+      // the manual value is only used as a fallback when birth_year is null.
       age_range: formData.ageRange,
+      birth_year: formData.birthYear ? Number(formData.birthYear) : null,
+      religion: formData.religion || null,
+      secondary_phone:
+        normalizeRegistrationPhone(
+          formData.secondaryCountryCode || formData.countryCode,
+          formData.secondaryPhone || ''
+        ) || null,
       avatar_url: null,
       education_level: formData.educationLevel,
       emergency_name: formData.emergencyContactName,

@@ -98,6 +98,10 @@ export default function Register() {
       children_count: 0,
       contactNumber: '',
       ageRange: '',
+      birthYear: '',
+      religion: '',
+      secondaryCountryCode: platform === 'DIASPORA' ? '' : '+233',
+      secondaryPhone: '',
       gender: 'Male',
       password: '',
       email: '',
@@ -161,16 +165,14 @@ export default function Register() {
       if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
         updates.countryCode = dbCountryCodes[value]
       }
+      // Cascade order is Region → Constituency → District(auto-filled, read-only).
       if (field === 'region') {
         updates.district = ''
         updates.constituency = ''
         updates.pollingStationCode = ''
       }
-      if (field === 'district') {
-        updates.constituency = ''
-        updates.pollingStationCode = ''
-      }
       if (field === 'constituency') {
+        updates.district = ''
         updates.pollingStationCode = ''
       }
       return updates
@@ -253,7 +255,9 @@ export default function Register() {
       const phoneErr = validatePhone(formData.contactNumber, formData.countryCode)
       if (phoneErr) return phoneErr
       if (!formData.gender) return 'Please select your gender.'
-      if (!formData.ageRange) return 'Please select your age range.'
+      // Birth year drives the age range (DB-derived); require age range only as fallback.
+      if (!formData.ageRange && !formData.birthYear)
+        return 'Please select your age range or enter your birth year.'
       if (!formData.password || formData.password.length < 8)
         return 'Password must be at least 8 characters.'
     }
@@ -344,6 +348,10 @@ export default function Register() {
       children_count: 0,
       contactNumber: '',
       ageRange: '',
+      birthYear: '',
+      religion: '',
+      secondaryCountryCode: '+233',
+      secondaryPhone: '',
       gender: 'Male',
       password: '',
       email: '',

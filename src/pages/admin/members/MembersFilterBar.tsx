@@ -1,6 +1,7 @@
 import { SortToggle } from '@/components/ui/SortToggle'
+import { religions } from '@/components/admin/RegistrationForm.constants'
 
-type SearchType = 'default' | 'constituency' | 'polling_station'
+type SearchType = 'default' | 'constituency' | 'district' | 'region' | 'polling_station'
 
 interface MembersFilterBarProps {
   searchTerm: string
@@ -8,12 +9,16 @@ interface MembersFilterBarProps {
   sourceFilter: 'all' | 'digital' | 'scan' | 'admin'
   genderFilter: 'all' | 'Male' | 'Female'
   ageRangeFilter: string
+  religionFilter: string
+  platformFilter: 'all' | 'GHANA' | 'DIASPORA'
   sortOrder: 'asc' | 'desc'
   onSearchChange: (val: string) => void
   onSearchTypeChange: (val: SearchType) => void
   onSourceFilterChange: (val: 'all' | 'digital' | 'scan' | 'admin') => void
   onGenderFilterChange: (val: 'all' | 'Male' | 'Female') => void
   onAgeRangeFilterChange: (val: string) => void
+  onReligionFilterChange: (val: string) => void
+  onPlatformFilterChange: (val: 'all' | 'GHANA' | 'DIASPORA') => void
   onSortChange: (next: 'asc' | 'desc') => void
   onClearSearch: () => void
 }
@@ -28,15 +33,27 @@ const SEARCH_TYPE_OPTIONS: {
 }[] = [
   {
     value: 'default',
-    label: 'Name / ID / Phone',
-    placeholder: 'Search by name, ID or phone…',
+    label: 'Name / ID / Phone / Email',
+    placeholder: 'Search by name, ID, phone or email…',
     icon: 'person_search',
+  },
+  {
+    value: 'region',
+    label: 'Region',
+    placeholder: 'Search by region…',
+    icon: 'map',
   },
   {
     value: 'constituency',
     label: 'Constituency',
     placeholder: 'Search by constituency…',
     icon: 'location_city',
+  },
+  {
+    value: 'district',
+    label: 'District',
+    placeholder: 'Search by district…',
+    icon: 'account_balance',
   },
   {
     value: 'polling_station',
@@ -71,12 +88,16 @@ export function MembersFilterBar({
   sourceFilter,
   genderFilter,
   ageRangeFilter,
+  religionFilter,
+  platformFilter,
   sortOrder,
   onSearchChange,
   onSearchTypeChange,
   onSourceFilterChange,
   onGenderFilterChange,
   onAgeRangeFilterChange,
+  onReligionFilterChange,
+  onPlatformFilterChange,
   onSortChange,
   onClearSearch,
 }: MembersFilterBarProps) {
@@ -239,6 +260,27 @@ export function MembersFilterBar({
                 {r === 'all' ? 'All ages' : r}
               </option>
             ))}
+          </select>
+          <select
+            value={religionFilter}
+            onChange={(e) => onReligionFilterChange(e.target.value)}
+            style={selectSt}
+          >
+            <option value="all">All religions</option>
+            {religions.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+          <select
+            value={platformFilter}
+            onChange={(e) => onPlatformFilterChange(e.target.value as 'all' | 'GHANA' | 'DIASPORA')}
+            style={selectSt}
+          >
+            <option value="all">Ghana + Diaspora</option>
+            <option value="GHANA">Ghana Network</option>
+            <option value="DIASPORA">Diaspora Network</option>
           </select>
           <SortToggle value={sortOrder} onChange={onSortChange} />
         </div>

@@ -13,6 +13,10 @@ export interface Member {
   avatarUrl?: string
   gender?: string
   ageRange?: string
+  birthYear?: number
+  religion?: string
+  secondaryPhone?: string
+  district?: string
   chapter?: string
   country?: string
   profession?: string
@@ -530,11 +534,14 @@ export interface PendingVerification {
   name: string
   region: string
   constituency: string
+  district?: string
   platform: string
   country: string
   phone: string
+  email?: string
   gender: string
   ageRange: string
+  religion?: string
   profession: string
   educationLevel: string
   emergencyName: string

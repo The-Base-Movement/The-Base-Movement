@@ -46,6 +46,8 @@ export default function MemberVerification() {
   } | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [countryFilter, setCountryFilter] = useState('')
+  const [religionFilter, setReligionFilter] = useState('')
+  const [ageRangeFilter, setAgeRangeFilter] = useState('')
 
   // Region / constituency / country lookups for the filters + inline edit form.
   const { dbRegions, dbConstituencies, dbCountries } = useRegistrationData()
@@ -214,9 +216,14 @@ export default function MemberVerification() {
       (statusFilter === 'All' || m.status === statusFilter) &&
       (constituencyFilter === '' || m.constituency === constituencyFilter) &&
       (countryFilter === '' || m.country === countryFilter) &&
+      (religionFilter === '' || m.religion === religionFilter) &&
+      (ageRangeFilter === '' || m.ageRange === ageRangeFilter) &&
       ((m.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
         (m.id?.toLowerCase() || '').includes(search.toLowerCase()) ||
         (m.region?.toLowerCase() || '').includes(search.toLowerCase()) ||
+        (m.district?.toLowerCase() || '').includes(search.toLowerCase()) ||
+        (m.pollingStationCode?.toLowerCase() || '').includes(search.toLowerCase()) ||
+        (m.email?.toLowerCase() || '').includes(search.toLowerCase()) ||
         (m.phone?.toLowerCase() || '').includes(search.toLowerCase()))
   )
 
@@ -340,6 +347,10 @@ export default function MemberVerification() {
           countryFilter={countryFilter}
           setCountryFilter={setCountryFilter}
           countries={countries}
+          religionFilter={religionFilter}
+          setReligionFilter={setReligionFilter}
+          ageRangeFilter={ageRangeFilter}
+          setAgeRangeFilter={setAgeRangeFilter}
           filtered={filtered}
           paginated={paginated}
           selectedMember={selectedMember}

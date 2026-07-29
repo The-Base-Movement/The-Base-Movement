@@ -16,9 +16,11 @@ export function useMembersData() {
   const [sourceFilter, setSourceFilter] = useState<'all' | 'digital' | 'scan' | 'admin'>('all')
   const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>('all')
   const [ageRangeFilter, setAgeRangeFilter] = useState<string>('all')
-  const [searchType, setSearchType] = useState<'default' | 'constituency' | 'polling_station'>(
-    'default'
-  )
+  const [religionFilter, setReligionFilter] = useState<string>('all')
+  const [platformFilter, setPlatformFilter] = useState<'all' | 'GHANA' | 'DIASPORA'>('all')
+  const [searchType, setSearchType] = useState<
+    'default' | 'constituency' | 'district' | 'region' | 'polling_station'
+  >('default')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const itemsPerPage = 8
 
@@ -33,14 +35,26 @@ export function useMembersData() {
         searchType,
         sortOrder,
         genderFilter !== 'all' ? genderFilter : undefined,
-        ageRangeFilter !== 'all' ? ageRangeFilter : undefined
+        ageRangeFilter !== 'all' ? ageRangeFilter : undefined,
+        religionFilter !== 'all' ? religionFilter : undefined,
+        platformFilter !== 'all' ? platformFilter : undefined
       )
       .then(({ data, totalCount: total }) => {
         setMembers(data)
         setTotalMembers(total)
         setIsLoading(false)
       })
-  }, [currentPage, searchTerm, sourceFilter, searchType, sortOrder, genderFilter, ageRangeFilter])
+  }, [
+    currentPage,
+    searchTerm,
+    sourceFilter,
+    searchType,
+    sortOrder,
+    genderFilter,
+    ageRangeFilter,
+    religionFilter,
+    platformFilter,
+  ])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -63,11 +77,21 @@ export function useMembersData() {
     setAgeRangeFilter(val)
     setCurrentPage(1)
   }
+  const handleReligionFilterChange = (val: string) => {
+    setReligionFilter(val)
+    setCurrentPage(1)
+  }
+  const handlePlatformFilterChange = (val: 'all' | 'GHANA' | 'DIASPORA') => {
+    setPlatformFilter(val)
+    setCurrentPage(1)
+  }
   const handleClearSearch = () => {
     setSearchTerm('')
     setCurrentPage(1)
   }
-  const handleSearchTypeChange = (val: 'default' | 'constituency' | 'polling_station') => {
+  const handleSearchTypeChange = (
+    val: 'default' | 'constituency' | 'district' | 'region' | 'polling_station'
+  ) => {
     setSearchType(val)
     setSearchTerm('')
     setCurrentPage(1)
@@ -100,6 +124,8 @@ export function useMembersData() {
     sourceFilter,
     genderFilter,
     ageRangeFilter,
+    religionFilter,
+    platformFilter,
     sortOrder,
     setSortOrder,
     stats,
@@ -109,6 +135,8 @@ export function useMembersData() {
     handleSourceFilterChange,
     handleGenderFilterChange,
     handleAgeRangeFilterChange,
+    handleReligionFilterChange,
+    handlePlatformFilterChange,
     handleClearSearch,
     handleNextPage,
     handlePrevPage,

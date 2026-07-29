@@ -3,8 +3,9 @@ import { cn } from '@/lib/utils'
 import type { Area } from 'react-easy-crop'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
 import {
-  getDistricts,
-  getConstituencies,
+  getConstituenciesByRegion,
+  getDistrictForConstituency,
+  lookupPollingStationByCode,
   searchPollingStations,
   type PollingStationOption,
 } from '@/lib/pollingCascade'
@@ -14,6 +15,7 @@ import { emptyJobSelection } from '@/services/jobTaxonomyService'
 import {
   emergencyRelationships,
   educationLevels,
+  religions,
 } from '@/components/admin/RegistrationForm.constants'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
@@ -44,6 +46,18 @@ interface RegistrationFormProps {
   onSubmit: (e: React.FormEvent) => void
 }
 
+// Display-only bucket; the DB derives the stored age_range from birth_year.
+function ageBucket(birthYear: string): string {
+  const y = parseInt(birthYear, 10)
+  if (!y) return ''
+  const age = new Date().getFullYear() - y
+  if (age <= 25) return '18-25'
+  if (age <= 35) return '26-35'
+  if (age <= 45) return '36-45'
+  if (age <= 60) return '46-60'
+  return '60+'
+}
+
 export function RegistrationForm(props: RegistrationFormProps) {
   const {
     platform,
@@ -72,8 +86,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
   const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
   const [psFocused, setPsFocused] = useState(false)
   const [psResults, setPsResults] = useState<PollingStationOption[]>([])
-  const [districts, setDistricts] = useState<string[]>([])
   const [constituencies, setConstituencies] = useState<string[]>([])
+  const [psCode, setPsCode] = useState(() => formData.pollingStationCode || '')
+  const [codeStation, setCodeStation] = useState<string | null>(null)
+  const [codeError, setCodeError] = useState(false)
+
+  const derivedBucket = formData.birthYear ? ageBucket(formData.birthYear) : ''
 
   useEffect(() => {
     if (!formData.pollingStationCode) {
@@ -82,18 +100,46 @@ export function RegistrationForm(props: RegistrationFormProps) {
     }
   }, [formData.pollingStationCode])
 
-  // Cascade options, all from polling_stations: Region → District → Constituency.
+  // Cascade (all from polling_stations): Region → Constituency → District(auto).
   useEffect(() => {
-    getDistricts(formData.region || '')
-      .then(setDistricts)
-      .catch(() => setDistricts([]))
-  }, [formData.region])
-
-  useEffect(() => {
-    getConstituencies(formData.region || '', formData.district || '')
+    getConstituenciesByRegion(formData.region || '')
       .then(setConstituencies)
       .catch(() => setConstituencies([]))
-  }, [formData.region, formData.district])
+  }, [formData.region])
+
+  // Constituency → district is 1:1; auto-fill the editable, optional District.
+  useEffect(() => {
+    if (!formData.constituency) return
+    getDistrictForConstituency(formData.region || '', formData.constituency)
+      .then((d) => {
+        if (d) onInputChange('district', d)
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.region, formData.constituency])
+
+  // Polling-station CODE → reverse-fill region / district / constituency + name.
+  async function handlePollingCodeLookup() {
+    const c = psCode.trim()
+    if (!c) {
+      setCodeStation(null)
+      setCodeError(false)
+      return
+    }
+    const found = await lookupPollingStationByCode(c)
+    if (found) {
+      onInputChange('region', found.region)
+      onInputChange('constituency', found.constituency)
+      onInputChange('district', found.district)
+      onInputChange('pollingStationCode', found.code)
+      setPsSearch(`${found.code} — ${found.name}`)
+      setCodeStation(found.name)
+      setCodeError(false)
+    } else {
+      setCodeStation(null)
+      setCodeError(true)
+    }
+  }
 
   useEffect(() => {
     if (!psSearch.trim()) {
@@ -384,24 +430,24 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </div>
                       <div className="space-y-1.5">
                         <label
-                          htmlFor="select-district"
+                          htmlFor="select-c9e1d3"
                           className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                         >
-                          District
+                          Constituency
                         </label>
                         <select
-                          name="name-district"
-                          id="select-district"
+                          name="name-c9e1d3"
+                          id="select-c9e1d3"
                           required
-                          value={formData.district || ''}
-                          onChange={(e) => onInputChange('district', e.target.value)}
+                          value={formData.constituency}
+                          onChange={(e) => onInputChange('constituency', e.target.value)}
                           className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
                           disabled={!formData.region}
                         >
-                          <option value="">Select District</option>
-                          {districts.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
+                          <option value="">Select Constituency</option>
+                          {constituencies.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
                             </option>
                           ))}
                         </select>
@@ -410,27 +456,21 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
                     <div className="space-y-1.5">
                       <label
-                        htmlFor="select-c9e1d3"
+                        htmlFor="input-district"
                         className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                       >
-                        Constituency
+                        District{' '}
+                        <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                          (Auto-filled)
+                        </span>
                       </label>
-                      <select
-                        name="name-c9e1d3"
-                        id="select-c9e1d3"
-                        required
-                        value={formData.constituency}
-                        onChange={(e) => onInputChange('constituency', e.target.value)}
-                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
-                        disabled={!formData.district}
-                      >
-                        <option value="">Select Constituency</option>
-                        {constituencies.map((c) => (
-                          <option key={c} value={c}>
-                            {c}
-                          </option>
-                        ))}
-                      </select>
+                      <input
+                        id="input-district"
+                        readOnly
+                        value={formData.district || ''}
+                        className="w-full h-[46px] bg-container-low border border-border px-4 text-sm font-medium outline-none text-on-surface-muted cursor-not-allowed"
+                        placeholder="Set automatically from your constituency"
+                      />
                     </div>
 
                     {formData.constituency && (
@@ -494,6 +534,45 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         )}
                       </div>
                     )}
+
+                    <div className="space-y-1.5">
+                      <label
+                        htmlFor="input-polling-code"
+                        className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
+                      >
+                        Polling Station Code{' '}
+                        <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                          (Optional)
+                        </span>
+                      </label>
+                      <input
+                        name="name-polling-code"
+                        id="input-polling-code"
+                        value={psCode}
+                        onChange={(e) => {
+                          setPsCode(e.target.value)
+                          setCodeError(false)
+                        }}
+                        onBlur={handlePollingCodeLookup}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            handlePollingCodeLookup()
+                          }
+                        }}
+                        className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
+                        placeholder="Know your code? Enter it to auto-fill location"
+                        autoComplete="off"
+                      />
+                      {codeStation && (
+                        <p className="text-[10px] text-primary mt-0.5">Matched: {codeStation}</p>
+                      )}
+                      {codeError && (
+                        <p className="text-[10px] text-destructive mt-0.5">
+                          No polling station found for that code.
+                        </p>
+                      )}
+                    </div>
                   </>
                 ) : (
                   <div className="grid grid-cols-2 gap-3">
@@ -568,6 +647,38 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   </div>
                 </div>
 
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="input-secondary-phone"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                  >
+                    Secondary phone number{' '}
+                    <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                      (Optional)
+                    </span>
+                  </label>
+                  <div className="flex">
+                    <input
+                      name="name-secondary-code"
+                      aria-label="Secondary phone country code"
+                      value={formData.secondaryCountryCode || ''}
+                      onChange={(e) => onInputChange('secondaryCountryCode', e.target.value)}
+                      className="h-[46px] px-3 bg-muted/10 border border-border border-r-0 text-sm font-medium text-on-surface-muted min-w-[60px] w-[60px] text-center outline-none focus:border-primary"
+                      placeholder="+233"
+                      autoComplete="off"
+                    />
+                    <input
+                      name="name-secondary-phone"
+                      id="input-secondary-phone"
+                      value={formData.secondaryPhone || ''}
+                      onChange={(e) => onInputChange('secondaryPhone', e.target.value)}
+                      className="flex-1 h-[46px] bg-transparent border border-border px-3 text-sm font-medium focus:border-primary transition-colors outline-none"
+                      placeholder="Alternate number"
+                      autoComplete="tel"
+                    />
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <label
@@ -591,6 +702,31 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   </div>
                   <div className="space-y-1.5">
                     <label
+                      htmlFor="input-birth-year"
+                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                    >
+                      Birth Year{' '}
+                      <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                        (Optional)
+                      </span>
+                    </label>
+                    <input
+                      name="name-birth-year"
+                      id="input-birth-year"
+                      type="number"
+                      min={1900}
+                      max={new Date().getFullYear() - 18}
+                      value={formData.birthYear || ''}
+                      onChange={(e) => onInputChange('birthYear', e.target.value)}
+                      className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                      placeholder="e.g. 1990"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label
                       htmlFor="select-33e7c0"
                       className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                     >
@@ -599,10 +735,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     <select
                       name="name-33e7c0"
                       id="select-33e7c0"
-                      required
-                      value={formData.ageRange}
+                      required={!formData.birthYear}
+                      disabled={!!formData.birthYear}
+                      value={formData.birthYear ? derivedBucket : formData.ageRange}
                       onChange={(e) => onInputChange('ageRange', e.target.value)}
-                      className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                      className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface disabled:bg-container-low disabled:cursor-not-allowed"
                     >
                       <option value="">Select</option>
                       <option value="18-25">18 – 25</option>
@@ -610,6 +747,36 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       <option value="36-45">36 – 45</option>
                       <option value="46-60">46 – 60</option>
                       <option value="60+">60+</option>
+                    </select>
+                    {formData.birthYear && (
+                      <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
+                        Set automatically from your birth year.
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="select-religion"
+                      className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                    >
+                      Religion{' '}
+                      <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                        (Optional)
+                      </span>
+                    </label>
+                    <select
+                      name="name-religion"
+                      id="select-religion"
+                      value={formData.religion || ''}
+                      onChange={(e) => onInputChange('religion', e.target.value)}
+                      className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                    >
+                      <option value="">Select</option>
+                      {religions.map((r) => (
+                        <option key={r} value={r}>
+                          {r}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>

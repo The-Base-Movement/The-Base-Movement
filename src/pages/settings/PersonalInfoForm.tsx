@@ -2,9 +2,22 @@ import { labelStyle, inputStyle, selectStyle } from './shared'
 import { SelIcon } from './SelIcon'
 import { JobSelector } from '@/components/JobSelector'
 import type { JobSelection } from '@/services/jobTaxonomyService'
-import { emergencyRelationships } from '@/components/admin/RegistrationForm.constants'
+import { emergencyRelationships, religions } from '@/components/admin/RegistrationForm.constants'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { diasporaName } from '@/lib/diaspora'
+
+// Age range is auto-derived from birth_year by a DB trigger; this mirrors those
+// buckets for a read-only display only — never sent on save.
+function deriveAgeRange(birthYear: string): string {
+  const y = Number(birthYear)
+  if (!y) return ''
+  const age = new Date().getFullYear() - y
+  if (age <= 25) return '18-25'
+  if (age <= 35) return '26-35'
+  if (age <= 45) return '36-45'
+  if (age <= 60) return '46-60'
+  return '60+'
+}
 
 interface FormState {
   fullName: string
@@ -15,9 +28,14 @@ interface FormState {
   countryCode: string
   region: string
   constituency: string
+  district: string
   profession: string
   bio: string
   gender: string
+  birthYear: string
+  religion: string
+  secondaryPhone: string
+  secondaryCountryCode: string
   joinedDate: string
   status: string
   chapter: string
@@ -122,7 +140,7 @@ export function PersonalInfoForm({
             />
           </div>
 
-          {/* Voter's ID — Ghana Network only */}
+          {/* Voter's ID — Ghana Network only. Editable: members update their own record. */}
           {userPlatform === 'GHANA' && (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <label htmlFor="input-voters-id-profile" style={labelStyle}>
@@ -191,6 +209,42 @@ export function PersonalInfoForm({
             </div>
           </div>
 
+          {/* Secondary phone — optional, mirrors primary phone */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label htmlFor="input-secondary-phone" style={labelStyle}>
+              Secondary phone{' '}
+              <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                (optional)
+              </span>
+            </label>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ position: 'relative', width: 110, flexShrink: 0 }}>
+                <select
+                  id="select-secondary-code"
+                  value={form.secondaryCountryCode}
+                  onChange={(e) => onChange('secondaryCountryCode', e.target.value)}
+                  style={{ ...selectStyle, width: '100%' }}
+                >
+                  <option value="+233">+233 (GH)</option>
+                  {dbCountries.map((c) => (
+                    <option key={c.name} value={c.dialing_code}>
+                      {c.dialing_code} ({c.name.slice(0, 2).toUpperCase()})
+                    </option>
+                  ))}
+                </select>
+                <SelIcon />
+              </div>
+              <input
+                id="input-secondary-phone"
+                type="tel"
+                value={form.secondaryPhone}
+                onChange={(e) => onChange('secondaryPhone', e.target.value)}
+                placeholder="24 123 4567"
+                style={{ ...inputStyle, flex: 1 }}
+              />
+            </div>
+          </div>
+
           {/* Gender */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <label htmlFor="select-2e1d40" style={labelStyle}>
@@ -214,6 +268,58 @@ export function PersonalInfoForm({
                 <option value="Female / 36-45">Female / 36-45</option>
                 <option value="Female / 46-60">Female / 46-60</option>
                 <option value="Female / 60+">Female / 60+</option>
+              </select>
+              <SelIcon />
+            </div>
+          </div>
+
+          {/* Birth year — optional; drives the read-only derived age range */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label htmlFor="input-birth-year" style={labelStyle}>
+              Birth year{' '}
+              <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                (optional)
+              </span>
+            </label>
+            <input
+              id="input-birth-year"
+              type="number"
+              inputMode="numeric"
+              min={1900}
+              max={new Date().getFullYear()}
+              value={form.birthYear}
+              onChange={(e) => onChange('birthYear', e.target.value)}
+              placeholder="e.g. 1990"
+              style={inputStyle}
+            />
+            {form.birthYear && deriveAgeRange(form.birthYear) && (
+              <span style={{ ...labelStyle, marginTop: 6, marginBottom: 0, textTransform: 'none' }}>
+                Age group: {deriveAgeRange(form.birthYear)} (derived)
+              </span>
+            )}
+          </div>
+
+          {/* Religion — optional */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label htmlFor="select-religion" style={labelStyle}>
+              Religion{' '}
+              <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                (optional)
+              </span>
+            </label>
+            <div style={{ position: 'relative' }}>
+              <select
+                id="select-religion"
+                value={form.religion}
+                onChange={(e) => onChange('religion', e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">Select</option>
+                {religions.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
               </select>
               <SelIcon />
             </div>
@@ -443,6 +549,41 @@ export function PersonalInfoForm({
                 </>
               )}
             </>
+          )}
+
+          {/* District — read-only, DB-derived (member.district / constituency lookup) */}
+          {(userPlatform === 'GHANA' || form.country === 'Ghana') && (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={labelStyle}>
+                District{' '}
+                <span
+                  style={{
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    letterSpacing: 0,
+                    textTransform: 'none',
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  (Locked)
+                </span>
+              </span>
+              <div
+                style={{
+                  ...inputStyle,
+                  background: 'hsl(var(--container-low))',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  cursor: 'not-allowed',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  lock
+                </span>
+                {form.district || 'Not set'}
+              </div>
+            </div>
           )}
 
           {/* Residential address — full width */}

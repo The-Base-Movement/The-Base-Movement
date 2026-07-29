@@ -258,10 +258,12 @@ class AdminService {
     pageSize: number,
     searchTerm?: string,
     registrationSource?: string,
-    searchType: 'default' | 'constituency' | 'polling_station' = 'default',
+    searchType: 'default' | 'constituency' | 'district' | 'region' | 'polling_station' = 'default',
     sortOrder?: 'asc' | 'desc',
     gender?: string,
-    ageRange?: string
+    ageRange?: string,
+    religion?: string,
+    platform?: string
   ): Promise<{ data: Member[]; totalCount: number }> {
     return memberService.getMembersPaginated(
       page,
@@ -271,7 +273,9 @@ class AdminService {
       searchType,
       sortOrder,
       gender,
-      ageRange
+      ageRange,
+      religion,
+      platform
     )
   }
 

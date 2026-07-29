@@ -257,6 +257,73 @@ export function RegistrationStepPrimary(props: RegistrationStepPrimaryProps) {
             />
           </div>
         </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="input-secondary-phone-admin"
+            style={{
+              fontSize: '10px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface-muted))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
+          >
+            Secondary phone{' '}
+            <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+              (optional)
+            </span>
+          </label>
+          <div style={{ display: 'flex', gap: '8px', overflow: 'hidden' }}>
+            <select
+              name="name-secondary-code-admin"
+              id="select-secondary-code-admin"
+              value={formData.secondaryCountryCode || '+233'}
+              onChange={(e) => handleChange('secondaryCountryCode', e.target.value)}
+              className="reg"
+              style={{
+                width: '80px',
+                flexShrink: 0,
+                padding: '14px 8px',
+                fontSize: '12px',
+                fontWeight: 'var(--font-weight-medium, 500)',
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              {Array.from(new Set(Object.values(dbCountryCodes)))
+                .sort()
+                .map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+            </select>
+            <input
+              aria-label="Secondary phone number"
+              name="name-secondary-phone-admin"
+              id="input-secondary-phone-admin"
+              type="tel"
+              placeholder="Secondary number (optional)"
+              value={formData.secondaryPhone || ''}
+              onChange={(e) => handleChange('secondaryPhone', e.target.value)}
+              style={{
+                flex: 1,
+                minWidth: 0,
+                boxSizing: 'border-box',
+                padding: '14px 18px',
+                fontSize: '14px',
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                outline: 'none',
+                color: 'hsl(var(--on-surface))',
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="space-y-2">

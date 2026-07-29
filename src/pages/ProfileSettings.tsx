@@ -10,6 +10,7 @@ import { userActivityService } from '@/services/userActivityService'
 import { dataURLtoBlob, getCroppedImg } from '@/lib/imageUtils'
 import { toast } from 'sonner'
 import { cleanPhoneInput } from '@/lib/phoneValidation'
+import { getDistrictForConstituency } from '@/lib/pollingCascade'
 import { usePerformance } from '@/context/PerformanceContext'
 import { MembershipCardPanel } from './settings/MembershipCardPanel'
 import { VerificationStatusPanel } from './settings/VerificationStatusPanel'
@@ -36,9 +37,14 @@ interface FormState {
   countryCode: string
   region: string
   constituency: string
+  district: string
   profession: string
   bio: string
   gender: string
+  birthYear: string
+  religion: string
+  secondaryPhone: string
+  secondaryCountryCode: string
   joinedDate: string
   status: string
   chapter: string
@@ -145,9 +151,14 @@ export default function ProfileSettings() {
     countryCode: '+233',
     region: '',
     constituency: '',
+    district: '',
     profession: '',
     bio: '',
     gender: 'Male / 26-35',
+    birthYear: '',
+    religion: '',
+    secondaryPhone: '',
+    secondaryCountryCode: '+233',
     joinedDate: new Date().toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'short',
@@ -206,6 +217,17 @@ export default function ProfileSettings() {
         setAccountName(profile.name)
         const profileCountry = profile.country || (userPlatform === 'GHANA' ? 'Ghana' : '')
         const phoneParts = splitProfilePhone(profile.phone || '', profileCountry, uniqueCountries)
+        const secondaryParts = splitProfilePhone(
+          profile.secondaryPhone || '',
+          profileCountry,
+          uniqueCountries
+        )
+        // District is read-only/DB-derived: prefer the stored value, else resolve
+        // it from the (locked) region + constituency. May stay blank if unresolved.
+        let district = profile.district || ''
+        if (!district && profile.region && profile.constituency) {
+          district = (await getDistrictForConstituency(profile.region, profile.constituency)) || ''
+        }
         setForm({
           fullName: profile.name,
           nationalId: profile.nationalId || '',
@@ -215,12 +237,17 @@ export default function ProfileSettings() {
           countryCode: phoneParts.countryCode,
           region: profile.region || '',
           constituency: profile.constituency || '',
+          district,
           profession: profile.profession || 'Member',
           bio: '',
           gender:
             profile.gender && profile.ageRange
               ? `${profile.gender} / ${profile.ageRange}`
               : 'Male / 26-35',
+          birthYear: profile.birthYear ? String(profile.birthYear) : '',
+          religion: profile.religion || '',
+          secondaryPhone: secondaryParts.phone,
+          secondaryCountryCode: secondaryParts.countryCode,
           joinedDate: profile.joined,
           status: profile.status === 'Active' ? 'Active Member' : profile.status,
           chapter: profile.chapter || '',
@@ -325,6 +352,8 @@ export default function ProfileSettings() {
     let val = value
     if (field === 'phone') {
       val = cleanPhoneInput(val, form.countryCode)
+    } else if (field === 'secondaryPhone') {
+      val = cleanPhoneInput(val, form.secondaryCountryCode)
     }
     setForm((prev) => ({ ...prev, [field]: val }))
   }
@@ -347,6 +376,9 @@ export default function ProfileSettings() {
     setLoading(true)
     let finalAvatarUrl = avatarUrl
     const normalizedPhone = normalizeProfilePhone(form.countryCode, form.phone)
+    const normalizedSecondary = form.secondaryPhone.trim()
+      ? normalizeProfilePhone(form.secondaryCountryCode, form.secondaryPhone)
+      : ''
 
     if (avatarUrl && avatarUrl.startsWith('data:')) {
       try {
@@ -385,7 +417,13 @@ export default function ProfileSettings() {
         votersIdCard: form.votersIdCard.trim(),
         email: form.email,
         phone: normalizedPhone,
-        gender: form.gender,
+        // When a birth year is set, age_range is DB-derived — send gender only so
+        // memberService doesn't overwrite the trigger-computed age_range.
+        gender: form.birthYear ? form.gender.split(' / ')[0] : form.gender,
+        birthYear: form.birthYear ? Number(form.birthYear) : undefined,
+        religion: form.religion,
+        secondaryPhone: normalizedSecondary,
+        district: form.district,
         // Chapter is Diaspora-only; Ghana Network members are organised by constituency
         ...(userPlatform !== 'GHANA' && { chapter: form.chapter }),
         avatarUrl: finalAvatarUrl || undefined,
