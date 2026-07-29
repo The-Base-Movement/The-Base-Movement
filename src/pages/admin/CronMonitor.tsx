@@ -1,16 +1,6 @@
 import { useState, useEffect } from 'react'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
-import { authService } from '@/services/authService'
-
-interface CronJob {
-  jobname: string
-  schedule: string
-  timezone: string
-  active: boolean
-  last_run_start: string | null
-  last_run_end: string | null
-  last_message: string | null
-}
+import { adminService, type CronJobStatus } from '@/services/adminService'
 
 function formatDate(iso: string | null): string {
   if (!iso) return 'Never'
@@ -25,20 +15,25 @@ function formatDate(iso: string | null): string {
   })
 }
 
-function getStatusBadge(job: CronJob) {
+/** pg_cron records the outcome of each run in job_run_details.status. */
+function hasFailed(job: CronJobStatus): boolean {
+  return !!job.last_status && job.last_status !== 'succeeded' && job.last_status !== 'running'
+}
+
+function getStatusBadge(job: CronJobStatus) {
   if (!job.active) {
     return <span className="pill pill-mute">Inactive</span>
   }
-  if (!job.last_run_end) {
+  if (!job.last_run_start) {
     return <span className="pill pill-warn">Never Run</span>
   }
-  if (job.last_message && job.last_message.toLowerCase().includes('error')) {
+  if (hasFailed(job)) {
     return <span className="pill pill-err">Failed</span>
   }
   return <span className="pill pill-ok">Success</span>
 }
 
-function getStatusIcon(job: CronJob): React.ReactNode {
+function getStatusIcon(job: CronJobStatus): React.ReactNode {
   if (!job.active) {
     return (
       <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#6f7a71' }}>
@@ -46,14 +41,14 @@ function getStatusIcon(job: CronJob): React.ReactNode {
       </span>
     )
   }
-  if (!job.last_run_end) {
+  if (!job.last_run_start) {
     return (
       <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#e8b923' }}>
         schedule
       </span>
     )
   }
-  if (job.last_message && job.last_message.toLowerCase().includes('error')) {
+  if (hasFailed(job)) {
     return (
       <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#ce1126' }}>
         error
@@ -68,7 +63,7 @@ function getStatusIcon(job: CronJob): React.ReactNode {
 }
 
 export default function CronMonitor() {
-  const [jobs, setJobs] = useState<CronJob[]>([])
+  const [jobs, setJobs] = useState<CronJobStatus[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -77,28 +72,8 @@ export default function CronMonitor() {
     setIsLoading(true)
     setError(null)
     try {
-      const token = authService.getToken()
-      if (!token) {
-        setError('Not authenticated')
-        return
-      }
-
-      const response = await fetch('/functions/v1/get-cron-jobs', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        setError(errorData.error || 'Failed to fetch cron jobs')
-        return
-      }
-
-      const data = await response.json()
-      setJobs(Array.isArray(data) ? data : [])
+      const data = await adminService.getCronJobStatus()
+      setJobs(data)
       setLastUpdated(new Date())
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
@@ -301,7 +276,7 @@ export default function CronMonitor() {
                       fontSize: '12px',
                     }}
                   >
-                    {formatDate(job.last_run_end)}
+                    {formatDate(job.last_run_start)}
                   </td>
                   <td
                     style={{

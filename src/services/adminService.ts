@@ -121,6 +121,18 @@ export interface ImportAuditRecord {
   report: ImportAuditReport | null
 }
 
+/** One pg_cron job plus the outcome of its most recent run. */
+export interface CronJobStatus {
+  jobname: string
+  schedule: string
+  active: boolean
+  last_run_start: string | null
+  last_run_end: string | null
+  /** pg_cron run status, e.g. 'succeeded' | 'failed'. Null when never run. */
+  last_status: string | null
+  last_message: string | null
+}
+
 // Re-export all types so consumers can import from either location
 export type {
   Member,
@@ -3502,6 +3514,13 @@ class AdminService {
       .limit(200)
     if (error) throw error
     return (data ?? []) as ImportAuditRecord[]
+  }
+
+  /** pg_cron job status for the admin Cron Monitor. RPC is gated on is_admin(). */
+  async getCronJobStatus(): Promise<CronJobStatus[]> {
+    const { data, error } = await supabase.rpc('get_cron_job_status')
+    if (error) throw error
+    return (data ?? []) as CronJobStatus[]
   }
 }
 
