@@ -972,10 +972,12 @@ class MemberService {
   }
 
   // Bulk-sync members + active newsletter subscribers to Resend marketing contacts.
-  async syncResendBulk(): Promise<{ total: number; success: number; failed: number }> {
+  // Resend processes the upload asynchronously, so this returns how many contacts
+  // were handed over — not how many landed. Progress is tracked in Resend.
+  async syncResendBulk(): Promise<{ total: number; import_id: string | null }> {
     const { data, error } = await supabase.functions.invoke('sync-resend-bulk')
     if (error) throw error
-    return data as { total: number; success: number; failed: number }
+    return data as { total: number; import_id: string | null }
   }
 }
 
