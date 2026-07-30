@@ -12,7 +12,7 @@ type PollingStationRow = Record<string, string | null>
 
 async function fetchAllPollingStationRows(
   select: string,
-  applyFilters?: (query: ReturnType<typeof supabase.from>) => ReturnType<typeof supabase.from>
+  applyFilters?: (query: any) => any
 ): Promise<PollingStationRow[]> {
   const rows: PollingStationRow[] = []
 
@@ -22,7 +22,7 @@ async function fetchAllPollingStationRows(
     const { data, error } = await query.range(from, from + PAGE_SIZE - 1)
     if (error) return []
     if (!data?.length) return rows
-    rows.push(...(data as PollingStationRow[]))
+    rows.push(...((data as unknown) as PollingStationRow[]))
     if (data.length < PAGE_SIZE) return rows
   }
 }
@@ -124,11 +124,12 @@ export async function searchPollingStations(
   })
 
   return rows
-    .filter(
-      (row): row is PollingStationOption =>
-        typeof row.code === 'string' &&
-        typeof row.name === 'string' &&
-        typeof row.constituency === 'string'
+    .flatMap((row) =>
+      typeof row.code === 'string' &&
+      typeof row.name === 'string' &&
+      typeof row.constituency === 'string'
+        ? [{ code: row.code, name: row.name, constituency: row.constituency }]
+        : []
     )
     .sort((a, b) => a.name.localeCompare(b.name) || a.code.localeCompare(b.code))
 }
