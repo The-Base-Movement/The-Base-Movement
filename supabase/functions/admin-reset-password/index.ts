@@ -129,36 +129,60 @@ Deno.serve(async (req: Request) => {
       }
 
       const { data: newAuth, error: createError } = await admin.auth.admin.createUser(createParams)
+
       if (createError || !newAuth?.user) {
-        return json(
-          { error: `Could not provision auth login: ${createError?.message ?? 'Unknown'}` },
-          400
+        // The identity already exists in auth: this member already HAS a login,
+        // their directory row just isn't linked to it (common for imported
+        // members whose public.users.id differs from their auth id). Reset the
+        // existing account rather than failing.
+        //   - email account -> fall through to the recovery-link flow below.
+        //   - phone-only    -> we can't resolve the auth id here, so guide the admin.
+        const dup = /already (been )?registered|duplicate key|already exists/i.test(
+          createError?.message ?? ''
         )
+        if (dup && profile.email) {
+          targetEmail = profile.email
+          targetName = profile.full_name
+        } else if (dup && normalizedPhone) {
+          return json(
+            {
+              error:
+                'This member already has a login on this phone number. Ask them to use "Forgot password" on the login page.',
+            },
+            409
+          )
+        } else {
+          console.error('[admin-reset-password] provision failed:', createError?.message)
+          return json(
+            { error: `Could not provision auth login: ${createError?.message ?? 'Unknown'}` },
+            400
+          )
+        }
+      } else {
+        // New auth user created — link the existing directory row to its ID.
+        const { error: updateProfileErr } = await admin
+          .from('users')
+          .update({
+            id: newAuth.user.id,
+            must_change_password: true,
+            temp_password_sent_at: new Date().toISOString(),
+          })
+          .eq('registration_number', profile.registration_number)
+
+        if (updateProfileErr) {
+          // Clean up created auth user to avoid orphan auths
+          await admin.auth.admin.deleteUser(newAuth.user.id)
+          return json(
+            { error: `Failed to link member directory profile: ${updateProfileErr.message}` },
+            400
+          )
+        }
+
+        targetEmail = profile.email || ''
+        targetPhone = normalizedPhone || ''
+        targetName = profile.full_name
+        isProvisionedNow = true
       }
-
-      // Link public.users record to new auth user ID
-      const { error: updateProfileErr } = await admin
-        .from('users')
-        .update({
-          id: newAuth.user.id,
-          must_change_password: true,
-          temp_password_sent_at: new Date().toISOString(),
-        })
-        .eq('registration_number', profile.registration_number)
-
-      if (updateProfileErr) {
-        // Clean up created auth user to avoid orphan auths
-        await admin.auth.admin.deleteUser(newAuth.user.id)
-        return json(
-          { error: `Failed to link member directory profile: ${updateProfileErr.message}` },
-          400
-        )
-      }
-
-      targetEmail = profile.email || ''
-      targetPhone = normalizedPhone || ''
-      targetName = profile.full_name
-      isProvisionedNow = true
     } else {
       targetEmail = targetAuth.user.email ?? ''
       targetPhone = targetAuth.user.phone ?? ''
