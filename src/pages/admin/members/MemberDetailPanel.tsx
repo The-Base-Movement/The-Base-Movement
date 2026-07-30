@@ -73,6 +73,7 @@ export function MemberDetailPanel({
     emailed: boolean
     email: string | null
     actionLink: string | null
+    tempPassword: string | null
   } | null>(null)
 
   async function handleResetPassword() {
@@ -85,6 +86,7 @@ export function MemberDetailPanel({
           emailed: !!res.emailed,
           email: res.email ?? null,
           actionLink: res.actionLink ?? null,
+          tempPassword: res.tempPassword ?? null,
         })
       } else {
         toast.error(
@@ -845,13 +847,43 @@ export function MemberDetailPanel({
                 color: 'hsl(var(--on-surface))',
               }}
             >
-              {resetResult.emailed ? 'Reset link sent' : 'Reset link generated'}
+              {resetResult.tempPassword
+                ? 'Temporary password set'
+                : resetResult.emailed
+                  ? 'Reset link sent'
+                  : 'Reset link generated'}
             </h3>
             <p style={{ margin: '0 0 16px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-              {resetResult.emailed
-                ? `A password-reset link was emailed to ${resetResult.email}. It opens the reset form and is valid for 1 hour.`
-                : 'Email could not be sent — copy this link and share it securely. It opens the reset form and is valid for 1 hour.'}
+              {resetResult.tempPassword
+                ? `This account can't use an email reset link, so a temporary password was set${resetResult.email ? ` for ${resetResult.email}` : ''}. Share it securely — the member is asked to change it on first login.`
+                : resetResult.emailed
+                  ? `A password-reset link was emailed to ${resetResult.email}. It opens the reset form and is valid for 1 hour.`
+                  : 'Email could not be sent — copy this link and share it securely. It opens the reset form and is valid for 1 hour.'}
             </p>
+            {resetResult.tempPassword && (
+              <code
+                onClick={() => {
+                  void navigator.clipboard?.writeText(resetResult.tempPassword ?? '')
+                  toast.success('Password copied')
+                }}
+                title="Click to copy"
+                style={{
+                  display: 'block',
+                  padding: '12px 14px',
+                  background: 'hsl(var(--container-low))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: 'monospace',
+                  fontSize: 16,
+                  letterSpacing: '0.08em',
+                  color: 'hsl(var(--on-surface))',
+                  cursor: 'copy',
+                  textAlign: 'center',
+                }}
+              >
+                {resetResult.tempPassword}
+              </code>
+            )}
             {resetResult.actionLink && (
               <code
                 onClick={() => {
@@ -876,6 +908,17 @@ export function MemberDetailPanel({
               </code>
             )}
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 18 }}>
+              {resetResult.tempPassword && (
+                <button
+                  className="btn btn-sm btn-outline"
+                  onClick={() => {
+                    void navigator.clipboard?.writeText(resetResult.tempPassword ?? '')
+                    toast.success('Password copied')
+                  }}
+                >
+                  Copy password
+                </button>
+              )}
               {resetResult.actionLink && (
                 <button
                   className="btn btn-sm btn-outline"

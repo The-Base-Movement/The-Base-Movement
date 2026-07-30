@@ -517,6 +517,7 @@ class AdminService {
     emailed?: boolean
     email?: string | null
     actionLink?: string
+    tempPassword?: string
     error?: string
   }> {
     const { data, error } = await supabase.functions.invoke('admin-reset-password', {
@@ -542,6 +543,7 @@ class AdminService {
       emailed?: boolean
       email?: string | null
       actionLink?: string
+      tempPassword?: string
     }
   }
 

@@ -2,11 +2,13 @@
 // admin-reset-password
 //
 // Lets a privileged admin trigger a password reset for any member from inside
-// the app. Generates a Supabase recovery link (server-side, no reliance on
-// Supabase Auth's own email delivery) and emails it to the member via SendGrid.
-// The member clicks the link and lands on /reset-password to choose a new
-// password themselves. The action link is also returned so the admin can copy
-// and share it if email delivery fails (e.g. spam, phone-only members).
+// the app. Resolves the member's auth account (by id, then by email/phone for
+// imported members whose directory id != auth id, else provisions one), then:
+//   1. Preferred: emails a Supabase recovery link so the member sets their own
+//      password. This needs a usable email identity on the account.
+//   2. Fallback: when no email link can be generated (phone-only accounts, or
+//      accounts whose email has no auth identity), sets a temporary password
+//      directly and returns it for the admin to share.
 //
 // Caller must be SUPER_ADMIN / FOUNDER / IT_MANAGER.
 // Body: { user_id: string }
@@ -79,27 +81,30 @@ Deno.serve(async (req: Request) => {
       return `+233${digits}`
     }
 
-    const { data: targetAuth, error: targetError } = await admin.auth.admin.getUserById(user_id)
-
+    const tempPassword = generateTempPassword()
+    let authUserId: string | null = null
     let targetEmail = ''
-    let targetPhone = ''
     let targetName = 'Compatriot'
     let isProvisionedNow = false
-    const tempPassword = generateTempPassword()
 
-    if (targetError || !targetAuth?.user) {
-      // User not found in auth.users — check if they exist in public.users (imported member)
-      const { data: profile, error: profileErr } = await admin
+    // 1. Resolve the member's auth account.
+    const { data: targetAuth } = await admin.auth.admin.getUserById(user_id)
+    if (targetAuth?.user) {
+      authUserId = targetAuth.user.id
+      targetEmail = targetAuth.user.email ?? ''
+      targetName = targetAuth.user.user_metadata?.name || 'Compatriot'
+    } else {
+      // Not found by id — common for imported members whose directory id differs
+      // from their auth id. Look up the directory row, then resolve/provision.
+      const { data: profile } = await admin
         .from('users')
         .select('registration_number, full_name, email, phone_number')
         .eq('id', user_id)
         .maybeSingle()
-
-      if (profileErr || !profile) {
+      if (!profile) {
         return json({ error: 'Target user not found in directory or auth systems.' }, 404)
       }
 
-      // Provision auth credentials on the fly
       const normalizedPhone = normalizePhoneNumber(profile.phone_number)
       if (!profile.email && !normalizedPhone) {
         return json(
@@ -110,57 +115,48 @@ Deno.serve(async (req: Request) => {
           400
         )
       }
+      targetName = profile.full_name || 'Compatriot'
 
-      const createParams: Record<string, unknown> = {
-        password: tempPassword,
-        user_metadata: {
-          reg_no: profile.registration_number,
-          name: profile.full_name,
-          must_change_password: true,
-        },
-      }
-      if (profile.email) {
-        createParams.email = profile.email
-        createParams.email_confirm = true
-      }
-      if (normalizedPhone) {
-        createParams.phone = normalizedPhone
-        createParams.phone_confirm = true
-      }
-
-      const { data: newAuth, error: createError } = await admin.auth.admin.createUser(createParams)
-
-      if (createError || !newAuth?.user) {
-        // The identity already exists in auth: this member already HAS a login,
-        // their directory row just isn't linked to it (common for imported
-        // members whose public.users.id differs from their auth id). Reset the
-        // existing account rather than failing.
-        //   - email account -> fall through to the recovery-link flow below.
-        //   - phone-only    -> we can't resolve the auth id here, so guide the admin.
-        const dup = /already (been )?registered|duplicate key|already exists/i.test(
-          createError?.message ?? ''
-        )
-        if (dup && profile.email) {
-          targetEmail = profile.email
-          targetName = profile.full_name
-        } else if (dup && normalizedPhone) {
-          return json(
-            {
-              error:
-                'This member already has a login on this phone number. Ask them to use "Forgot password" on the login page.',
-            },
-            409
-          )
-        } else {
+      // Does an auth account already exist under a different id (email/phone match)?
+      const { data: existingRows } = await admin.rpc('admin_lookup_auth_user', {
+        p_email: profile.email ?? '',
+        p_phone: normalizedPhone ?? '',
+      })
+      const existing = Array.isArray(existingRows) ? existingRows[0] : existingRows
+      if (existing?.id) {
+        authUserId = existing.id
+        targetEmail = existing.email ?? profile.email ?? ''
+      } else {
+        // No account anywhere — provision one and link the directory row to it.
+        const createParams: Record<string, unknown> = {
+          password: tempPassword,
+          user_metadata: {
+            reg_no: profile.registration_number,
+            name: profile.full_name,
+            must_change_password: true,
+          },
+        }
+        if (profile.email) {
+          createParams.email = profile.email
+          createParams.email_confirm = true
+        }
+        if (normalizedPhone) {
+          createParams.phone = normalizedPhone
+          createParams.phone_confirm = true
+        }
+        const { data: newAuth, error: createError } =
+          await admin.auth.admin.createUser(createParams)
+        if (createError || !newAuth?.user) {
           console.error('[admin-reset-password] provision failed:', createError?.message)
           return json(
             { error: `Could not provision auth login: ${createError?.message ?? 'Unknown'}` },
             400
           )
         }
-      } else {
-        // New auth user created — link the existing directory row to its ID.
-        const { error: updateProfileErr } = await admin
+        authUserId = newAuth.user.id
+        targetEmail = profile.email || ''
+        isProvisionedNow = true
+        const { error: linkErr } = await admin
           .from('users')
           .update({
             id: newAuth.user.id,
@@ -168,98 +164,81 @@ Deno.serve(async (req: Request) => {
             temp_password_sent_at: new Date().toISOString(),
           })
           .eq('registration_number', profile.registration_number)
-
-        if (updateProfileErr) {
-          // Clean up created auth user to avoid orphan auths
+        if (linkErr) {
           await admin.auth.admin.deleteUser(newAuth.user.id)
-          return json(
-            { error: `Failed to link member directory profile: ${updateProfileErr.message}` },
-            400
-          )
+          return json({ error: `Failed to link member directory profile: ${linkErr.message}` }, 400)
         }
-
-        targetEmail = profile.email || ''
-        targetPhone = normalizedPhone || ''
-        targetName = profile.full_name
-        isProvisionedNow = true
       }
-    } else {
-      targetEmail = targetAuth.user.email ?? ''
-      targetPhone = targetAuth.user.phone ?? ''
-      targetName = targetAuth.user.user_metadata?.name || 'Compatriot'
     }
 
-    // For phone-only accounts, recovery links cannot be used.
-    // Instead, we assign a temporary password directly.
-    if (!targetEmail) {
-      const updateParams: Record<string, unknown> = { password: tempPassword }
-      const { error: updateErr } = await admin.auth.admin.updateUserById(user_id, updateParams)
-      if (updateErr) {
-        return json({ error: `Failed to update password: ${updateErr.message}` }, 400)
-      }
+    if (!authUserId) return json({ error: 'Could not resolve the member account.' }, 400)
 
-      await admin
-        .from('users')
-        .update({
-          must_change_password: true,
-          temp_password_sent_at: new Date().toISOString(),
-        })
-        .eq('id', user_id)
-
-      return json({
-        success: true,
-        emailed: false,
-        tempPassword,
-        message: 'Password updated. Share this temporary password with the member.',
-      })
-    }
-
-    // Generate the recovery link server-side for email accounts.
-    const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
-      type: 'recovery',
-      email: targetEmail,
-      options: { redirectTo: `${siteUrl}/reset-password` },
-    })
-    if (linkErr || !linkData?.properties?.action_link) {
-      return json({ error: `Could not generate reset link: ${linkErr?.message ?? 'unknown'}` }, 400)
-    }
-    const properties = linkData.properties as Record<string, unknown>
-    const emailOtp = properties.email_otp as string
-    const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(targetEmail)}&token=${emailOtp}`
-
-    // Email the link via Resend (best-effort).
-    let emailed = false
+    // 2. Preferred: email a recovery link so the member sets their own password.
+    //    Only works when the account has a usable email identity.
     if (targetEmail) {
-      try {
-        const senderEmail = await getSenderEmail(admin)
-        const html = passwordResetEmail({
-          name: targetName,
-          resetLink: customLink,
-          expiryHours: 24,
+      const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+        type: 'recovery',
+        email: targetEmail,
+        options: { redirectTo: `${siteUrl}/reset-password` },
+      })
+      if (!linkErr && linkData?.properties?.action_link) {
+        const properties = linkData.properties as Record<string, unknown>
+        const emailOtp = properties.email_otp as string
+        const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(targetEmail)}&token=${emailOtp}`
+        let emailed = false
+        try {
+          const senderEmail = await getSenderEmail(admin)
+          const html = passwordResetEmail({
+            name: targetName,
+            resetLink: customLink,
+            expiryHours: 24,
+          })
+          const r = await sendEmail({
+            to: targetEmail,
+            from: `The Base Movement <${senderEmail}>`,
+            subject: 'Reset your Base Movement password',
+            html,
+            text:
+              `An administrator started a password reset for your account.\n\n` +
+              `Open this link to choose a new password (valid for 24 hours):\n${customLink}\n\n` +
+              `If you did not request this password reset, please ignore this email safely. Your account remains secure.`,
+          })
+          emailed = r.ok
+        } catch (e) {
+          console.error('[admin-reset-password] email failed:', e)
+        }
+        return json({
+          success: true,
+          emailed,
+          email: targetEmail,
+          actionLink: customLink,
+          tempPassword: isProvisionedNow ? tempPassword : undefined,
         })
-        const r = await sendEmail({
-          to: targetEmail,
-          from: `The Base Movement <${senderEmail}>`,
-          subject: 'Reset your Base Movement password',
-          html,
-          text:
-            `An administrator started a password reset for your account.\n\n` +
-            `Open this link to choose a new password (valid for 24 hours):\n${customLink}\n\n` +
-            `If you did not request this password reset, please ignore this email safely. Your account remains secure.`,
-        })
-        emailed = r.ok
-      } catch (e) {
-        console.error('[admin-reset-password] email failed:', e)
       }
+      console.error(
+        '[admin-reset-password] recovery link unavailable, using temp password:',
+        linkErr?.message
+      )
     }
 
-    // If we just provisioned an email account, return the temp password as fallback
+    // 3. Fallback: set a temporary password directly. Works for phone-only
+    //    accounts and accounts whose email has no auth identity (recovery links
+    //    can't be generated for those). The admin shares it with the member.
+    const { error: updateErr } = await admin.auth.admin.updateUserById(authUserId, {
+      password: tempPassword,
+    })
+    if (updateErr) return json({ error: `Failed to reset password: ${updateErr.message}` }, 400)
+    await admin
+      .from('users')
+      .update({ must_change_password: true, temp_password_sent_at: new Date().toISOString() })
+      .eq('id', authUserId)
     return json({
       success: true,
-      emailed,
-      email: targetEmail,
-      actionLink: customLink,
-      tempPassword: isProvisionedNow ? tempPassword : undefined,
+      emailed: false,
+      email: targetEmail || null,
+      tempPassword,
+      message:
+        'Password reset. Share this temporary password with the member; they will be asked to change it on first login.',
     })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
