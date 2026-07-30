@@ -124,6 +124,49 @@ serve(async (req: Request) => {
       )
     }
 
+    const networkType = sanitizeStr(userRow.network_type, 50) || 'Ghana Network'
+    if (!ALLOWED_NETWORKS.includes(networkType)) {
+      return json({ success: false, error: 'Invalid network_type specified.' }, 400)
+    }
+
+    const region = sanitizeStr(userRow.region, 50)
+    const constituency = sanitizeStr(userRow.constituency, 100)
+    const country =
+      sanitizeStr(userRow.country, 50) || (networkType === 'Ghana Network' ? 'Ghana' : '')
+    const diasporaCountry = sanitizeStr(userRow.diaspora_country, 50)
+
+    if (networkType === 'Ghana Network') {
+      if (region && !ALLOWED_REGIONS.includes(region)) {
+        return json({ success: false, error: `Invalid region: ${region}` }, 400)
+      }
+      if (region && constituency) {
+        const { data: matchedConstituency } = await supabase
+          .from('ghana_constituencies')
+          .select('id')
+          .ilike('region', region)
+          .ilike('name', constituency)
+          .limit(1)
+
+        if (!matchedConstituency || matchedConstituency.length === 0) {
+          return json(
+            {
+              success: false,
+              error: `Constituency '${constituency}' does not belong to region '${region}'.`,
+            },
+            400
+          )
+        }
+      }
+    } else if (networkType === 'Diaspora Network') {
+      const activeCountry = diasporaCountry || country
+      if (!activeCountry || activeCountry.toLowerCase() === 'ghana') {
+        return json(
+          { success: false, error: 'Diaspora Network requires a valid overseas country.' },
+          400
+        )
+      }
+    }
+
     // Pre-check for duplicate without revealing specific account state
     const [phoneRes, emailRes] = await Promise.all([
       phone
@@ -170,11 +213,12 @@ serve(async (req: Request) => {
       full_name: fullName,
       email: authEmail || null,
       phone_number: phone || null,
-      region: sanitizeStr(userRow.region, 50),
-      constituency: sanitizeStr(userRow.constituency, 100),
-      country: sanitizeStr(userRow.country, 50) || 'Ghana',
-      network_type: sanitizeStr(userRow.network_type, 50) || 'Ghana Network',
-      diaspora_country: sanitizeStr(userRow.diaspora_country, 50),
+      // Enum-validated above — use the already-validated values directly
+      region: region,
+      constituency: constituency,
+      country: country,
+      network_type: networkType,
+      diaspora_country: diasporaCountry,
       city: sanitizeStr(userRow.city, 100),
       voters_id: sanitizeStr(userRow.voters_id, 30),
       polling_station: sanitizeStr(userRow.polling_station, 150),

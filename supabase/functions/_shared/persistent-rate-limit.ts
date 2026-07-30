@@ -6,6 +6,10 @@ export interface RateLimitResult {
   retry_after_sec: number
 }
 
+/**
+ * Invokes the atomic check_rate_limit PostgreSQL RPC.
+ * FAILS CLOSED on RPC failure or database error to protect security endpoints.
+ */
 export async function checkPersistentRateLimit(
   supabaseAdmin: ReturnType<typeof createClient>,
   key: string,
@@ -20,13 +24,13 @@ export async function checkPersistentRateLimit(
     })
 
     if (error || !data) {
-      console.warn('[RATE-LIMIT] RPC call error:', error)
-      return { allowed: true, remaining: 1, retry_after_sec: 0 }
+      console.error('[RATE-LIMIT] Database RPC error, failing closed:', error)
+      return { allowed: false, remaining: 0, retry_after_sec: 60 }
     }
 
     return data as RateLimitResult
   } catch (e) {
-    console.error('[RATE-LIMIT] unexpected error:', e)
-    return { allowed: true, remaining: 1, retry_after_sec: 0 }
+    console.error('[RATE-LIMIT] Unexpected execution error, failing closed:', e)
+    return { allowed: false, remaining: 0, retry_after_sec: 60 }
   }
 }

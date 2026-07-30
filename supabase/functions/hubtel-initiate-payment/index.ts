@@ -2,15 +2,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { convertToHubtelGhs, parseGhsExchangeRates } from './currency.ts'
 import { normalizeHubtelPhone, isGhanaPhone } from './phone.ts'
-import {
-  ipKey,
-  isIpRateLimited,
-  referenceKey,
-  registerIpAttempt,
-  registerReferenceAttempt,
-  remainingCooldown,
-  type RateLimitEntry,
-} from './rate-limit.ts'
 import { buildSignedHubtelCallbackUrl } from '../hubtel-payment-shared/callback-auth.ts'
 
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
@@ -214,6 +205,9 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('HUBTEL_CHECKOUT_URL') ?? 'https://payproxyapi.hubtel.com/items/initiate'
     // @ts-expect-error: Deno global
     const exchangeRates = parseGhsExchangeRates(Deno.env.get('HUBTEL_GHS_EXCHANGE_RATES'))
+    // Calculate settlement from trusted DB values — never from client-supplied amount
+    const settlement = convertToHubtelGhs(trustedAmount, trustedCurrency, exchangeRates)
+
     const shortRef = reference.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)
     const hubtelClientRef = `${shortRef}_${Date.now().toString(36)}`
     const primaryCallback = await buildSignedHubtelCallbackUrl(
@@ -237,6 +231,7 @@ Deno.serve(async (req: Request) => {
     if (!normalizedPhone) throw new Error('Enter a valid international phone number')
     const ghanaPhone = isGhanaPhone(normalizedPhone)
 
+    // Only server-trusted fields are forwarded — no arbitrary body.metadata spread
     const hubtelPayload = {
       totalAmount: Number(settlement.ghsAmount.toFixed(2)),
       currency: 'GHS',
@@ -252,7 +247,6 @@ Deno.serve(async (req: Request) => {
       customerEmail: body.email || 'donations@thebasemovement.org.gh',
       channels: ghanaPhone ? ['mobilemoney', 'card'] : ['card'],
       metadata: {
-        ...(body.metadata ?? {}),
         sourceAmount: settlement.sourceAmount,
         sourceCurrency: settlement.sourceCurrency,
         exchangeRateToGhs: settlement.exchangeRateToGhs,
