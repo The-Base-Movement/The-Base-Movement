@@ -13,22 +13,19 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 // server-side; the client never sees it. The avatar upload stays on the client
 // (it needs the signed-in session + client-side crop) as an optional post-step.
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  })
-}
+import { getCorsHeaders } from '../_shared/cors.ts'
 
 const isDuplicateMsg = (m: string) => /already.*(registered|exists|been registered)/i.test(m || '')
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const cors = getCorsHeaders(req)
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    })
 
   try {
     const { authEmail, phone, password, fullName, userRow, refParam } = await req.json()

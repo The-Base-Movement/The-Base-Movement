@@ -9,10 +9,7 @@ import {
 } from '../_shared/password-reset-rate-limit.ts'
 import { sendSms } from '../_shared/sms.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getCorsHeaders } from '../_shared/cors.ts'
 
 const OTP_WINDOW_MS = 10 * 60 * 1000
 const OTP_COOLDOWN_MS = 60 * 1000
@@ -31,13 +28,6 @@ function clientIp(req: Request) {
   )
 }
 
-function json(body: unknown, status: number) {
-  return new Response(JSON.stringify(body), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    status,
-  })
-}
-
 function normalizePhoneNumber(raw: string): string {
   const cleaned = raw.trim()
   if (cleaned.startsWith('+')) {
@@ -50,9 +40,18 @@ function normalizePhoneNumber(raw: string): string {
 }
 
 serve(async (req: Request) => {
+  const cors = getCorsHeaders(req)
+
+  function json(body: unknown, status: number) {
+    return new Response(JSON.stringify(body), {
+      headers: { ...cors, 'Content-Type': 'application/json' },
+      status,
+    })
+  }
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: cors })
   }
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)
@@ -106,14 +105,11 @@ serve(async (req: Request) => {
     if (latestCreatedAt) {
       const retryAfterMs = OTP_COOLDOWN_MS - (Date.now() - new Date(latestCreatedAt).getTime())
       if (retryAfterMs > 0) {
-        return new Response(
-          JSON.stringify({
-            error: `Please wait ${Math.ceil(retryAfterMs / 1000)} seconds before requesting another code.`,
-          }),
+        return json(
           {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 429,
-          }
+            error: `Please wait ${Math.ceil(retryAfterMs / 1000)} seconds before requesting another code.`,
+          },
+          429
         )
       }
     }
