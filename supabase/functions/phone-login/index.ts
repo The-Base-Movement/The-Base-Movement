@@ -16,14 +16,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import {
-  getRetryAfterMs,
-  getThrottleKey,
-  registerFailure,
-  type RateLimitEntry,
-} from './rate-limit.ts'
-
-import { getCorsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
+import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 
 function phoneCandidates(raw: string): { exact: string[]; suffix: string | null } {
   const cleaned = raw.trim()
@@ -48,7 +42,6 @@ function phoneCandidates(raw: string): { exact: string[]; suffix: string | null 
 
 const GENERIC_FAIL = 'Invalid login credentials'
 const FAILURE_DELAY_MS = 900
-const throttleStore = new Map<string, RateLimitEntry>()
 
 async function delay(ms: number) {
   await new Promise((resolve) => setTimeout(resolve, ms))
@@ -122,9 +115,7 @@ serve(async (req: Request) => {
       status,
     })
 
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: cors })
-  }
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req)
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)
   }
@@ -142,20 +133,17 @@ serve(async (req: Request) => {
     if (!loginIdentifier || !password) {
       return json({ error: 'Identifier and password are required.' }, 400)
     }
-    const now = Date.now()
-    const throttleKey = getThrottleKey(loginIdentifier, clientIp(req))
-    const currentThrottle = throttleStore.get(throttleKey)
-    const retryAfterMs = getRetryAfterMs(now, currentThrottle)
-    if (retryAfterMs > 0) {
+    const throttleKey = `phone-login::${clientIp(req)}::${loginIdentifier.slice(-8)}`
+    const admin = createClient(supabaseUrl, serviceKey)
+    const rateCheck = await checkPersistentRateLimit(admin, throttleKey, 10, 600)
+    if (!rateCheck.allowed) {
       return json(
         {
-          error: `Too many login attempts. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+          error: `Too many login attempts. Please wait ${rateCheck.retry_after_sec} seconds.`,
         },
         429
       )
     }
-
-    const admin = createClient(supabaseUrl, serviceKey)
 
     // Resolve the member's auth account by phone number or registration number.
     // Local diaspora numbers can share a leading 0 with Ghana numbers, so after
@@ -163,16 +151,14 @@ serve(async (req: Request) => {
     const profile = await resolveProfile(admin, loginIdentifier)
 
     if (!profile) {
-      const next = registerFailure(now, currentThrottle)
-      throttleStore.set(throttleKey, next.entry)
+      await checkPersistentRateLimit(admin, throttleKey, 10, 600)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)
     }
 
     const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(profile.id)
     if (authUserError || (!authUser?.user?.email && !authUser?.user?.phone)) {
-      const next = registerFailure(now, currentThrottle)
-      throttleStore.set(throttleKey, next.entry)
+      await checkPersistentRateLimit(admin, throttleKey, 10, 600)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)
     }
@@ -190,13 +176,10 @@ serve(async (req: Request) => {
     const { data, error } = await anon.auth.signInWithPassword(signInParams as any)
 
     if (error || !data.session) {
-      const next = registerFailure(now, currentThrottle)
-      throttleStore.set(throttleKey, next.entry)
+      await checkPersistentRateLimit(admin, throttleKey, 10, 600)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)
     }
-
-    throttleStore.delete(throttleKey)
 
     return json({
       access_token: data.session.access_token,
