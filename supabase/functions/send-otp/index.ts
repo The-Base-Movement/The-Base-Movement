@@ -60,9 +60,9 @@ serve(async (req: Request) => {
       return json({ error: 'Phone number is required.' }, 400)
     }
 
-    const otpSecret = Deno.env.get('OTP_HMAC_SECRET') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const otpSecret = Deno.env.get('OTP_HMAC_SECRET')
     if (!otpSecret) {
-      throw new Error('OTP_HMAC_SECRET is missing. Failing closed.')
+      throw new Error('OTP_HMAC_SECRET environment variable is missing. Failing closed.')
     }
 
     const ip = clientIp(req)
@@ -117,10 +117,6 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (userError || !user) {
-      ipThrottleStore.set(
-        ip,
-        registerAttempt(now, currentIpThrottle, IP_WINDOW_MS, IP_MAX_ATTEMPTS, IP_LOCKOUT_MS)
-      )
       return json(
         {
           success: true,
@@ -148,11 +144,6 @@ serve(async (req: Request) => {
     if (otpError) {
       throw new Error(`Failed to store OTP: ${otpError.message}`)
     }
-
-    ipThrottleStore.set(
-      ip,
-      registerAttempt(now, currentIpThrottle, IP_WINDOW_MS, IP_MAX_ATTEMPTS, IP_LOCKOUT_MS)
-    )
 
     // 4. Send SMS via MNotify with raw OTP (never stored)
     const sms = await sendSms(

@@ -75,8 +75,9 @@ serve(async (req: Request) => {
     }
 
     // 1. Compute HMAC hash of incoming raw OTP using dedicated OTP_HMAC_SECRET (fail closed)
-    const otpSecret = Deno.env.get('OTP_HMAC_SECRET') || supabaseServiceKey
-    if (!otpSecret) throw new Error('OTP_HMAC_SECRET is missing. Failing closed.')
+    const otpSecret = Deno.env.get('OTP_HMAC_SECRET')
+    if (!otpSecret)
+      throw new Error('OTP_HMAC_SECRET environment variable is missing. Failing closed.')
     const hashedOtp = await hashOtp(String(otp).trim(), otpSecret)
 
     // Atomically mark the OTP used in a single conditional UPDATE...RETURNING
@@ -108,10 +109,7 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'No associated member profile found.' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 404,
-      })
+      return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
     // 4. Update an existing account, or activate a legacy/imported profile on first reset.
