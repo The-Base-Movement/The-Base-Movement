@@ -20,7 +20,10 @@ const COMMON_ALLOW_METHODS = 'POST, GET, OPTIONS, PUT, DELETE'
  * Returns dynamic CORS headers for allowed origins only.
  * Disallowed or missing origins receive no Access-Control-Allow-Origin header.
  */
-export function getCorsHeaders(req: Request, options?: { allowAny?: boolean }) {
+export function getCorsHeaders(
+  req: Request,
+  options?: { allowAny?: boolean }
+): Record<string, string> {
   if (options?.allowAny) {
     return {
       'Access-Control-Allow-Origin': '*',

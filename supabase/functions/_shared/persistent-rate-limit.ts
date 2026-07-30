@@ -10,8 +10,9 @@ export interface RateLimitResult {
  * Invokes the atomic check_rate_limit PostgreSQL RPC.
  * FAILS CLOSED on RPC failure or database error to protect security endpoints.
  */
+// deno-lint-ignore no-explicit-any
 export async function checkPersistentRateLimit(
-  supabaseAdmin: ReturnType<typeof createClient>,
+  supabaseAdmin: any,
   key: string,
   maxAttempts: number,
   windowSeconds: number

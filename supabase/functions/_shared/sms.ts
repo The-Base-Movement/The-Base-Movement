@@ -1,7 +1,7 @@
 // Shared SMS dispatch via MNotify (https://developer.mnotify.com)
 // Secrets: MNOTIFY_API_KEY (required), MNOTIFY_SENDER_ID (defaults to "THEBASE" — max 11 chars).
 
-// @ts-expect-error: Deno supports URL imports
+// @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 /**
@@ -40,7 +40,7 @@ export interface SmsBalance {
  * have. Callers gate on this and alert when it runs low.
  */
 export async function getSmsBalance(): Promise<SmsBalance> {
-  // @ts-expect-error: Deno global
+  // @ts-ignore: Deno global
   const apiKey: string | undefined = Deno.env.get('MNOTIFY_API_KEY')
   if (!apiKey) return { ok: false, balance: null, detail: 'MNOTIFY_API_KEY not set' }
 
@@ -82,7 +82,7 @@ function isAccepted(responseText: string): boolean {
 }
 
 function getCallbackSecret(): string | null {
-  // @ts-expect-error: Deno global
+  // @ts-ignore: Deno global
   return Deno.env.get('MNOTIFY_CALLBACK_SECRET') ?? Deno.env.get('MNOTIFY_API_KEY') ?? null
 }
 
@@ -91,9 +91,9 @@ function getCallbackSecret(): string | null {
  * Includes rate-limiting (TPS) throttling, opt-out filtering, and compliance footers.
  */
 export async function sendSms(recipients: string[], message: string): Promise<SmsResult> {
-  // @ts-expect-error: Deno global
+  // @ts-ignore: Deno global
   const apiKey: string | undefined = Deno.env.get('MNOTIFY_API_KEY')
-  // @ts-expect-error: Deno global
+  // @ts-ignore: Deno global
   const sender: string = Deno.env.get('MNOTIFY_SENDER_ID') ?? 'THEBASE'
 
   if (!apiKey) {
@@ -108,9 +108,9 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
   }
 
   // 2. Fetch Opt-Out records from DB to filter recipients
-  // @ts-expect-error: Deno global
+  // @ts-ignore: Deno global
   const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
-  // @ts-expect-error: Deno global
+  // @ts-ignore: Deno global
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
   const optOutSet = new Set<string>()
 
@@ -166,7 +166,7 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
       const batch = activeRecipients.slice(i, i + BATCH_SIZE)
 
       // Determine callback URL for delivery status receipt tracking
-      // @ts-expect-error: Deno global
+      // @ts-ignore: Deno global
       const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
       const callbackSecret = getCallbackSecret()
       const callbackUrl = (() => {

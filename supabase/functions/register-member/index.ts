@@ -249,9 +249,11 @@ serve(async (req: Request) => {
     const registrationNumber = savedUser.registration_number
 
     if (refParam) {
-      await supabase
-        .rpc('award_referral_points', { p_new_member_id: userId })
-        .catch((e: unknown) => console.warn('[register-member] referral RPC failed:', e))
+      try {
+        await supabase.rpc('award_referral_points', { p_new_member_id: userId })
+      } catch (e: unknown) {
+        console.warn('[register-member] referral RPC failed:', e)
+      }
     }
 
     const contactEmail = authEmail || sanitizedUserRow.email

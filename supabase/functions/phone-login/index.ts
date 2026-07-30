@@ -12,9 +12,9 @@
 // Body: { identifier?: string, phone?: string, password: string }
 // Returns: { access_token, refresh_token } or a generic 401.
 
-// @ts-expect-error: Deno supports URL imports
+// @ts-ignore: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-// @ts-expect-error: Deno supports URL imports
+// @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
@@ -56,7 +56,8 @@ function clientIp(req: Request) {
   )
 }
 
-async function resolveProfile(admin: ReturnType<typeof createClient>, identifier: string) {
+// deno-lint-ignore no-explicit-any
+async function resolveProfile(admin: any, identifier: string) {
   const trimmed = identifier.trim()
   const digits = trimmed.replace(/\D/g, '')
   const looksLikePhone = digits.length >= 7 && /^[+\d\s().-]+$/.test(trimmed)
@@ -121,21 +122,42 @@ serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    // @ts-ignore: Deno global
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 
-    const { identifier, phone, password } = await req.json()
-    const loginIdentifier = String(identifier || phone || '').trim()
+    const admin = createClient(supabaseUrl, supabaseServiceKey)
+
+    const body = await req.json().catch(() => ({}))
+    const loginIdentifier =
+      typeof body.identifier === 'string'
+        ? body.identifier
+        : typeof body.phone === 'string'
+          ? body.phone
+          : ''
+    const password = typeof body.password === 'string' ? body.password : ''
+
     if (!loginIdentifier || !password) {
-      return json({ error: 'Identifier and password are required.' }, 400)
+      return json({ error: GENERIC_FAIL }, 401)
     }
-    const throttleKey = `phone-login::${clientIp(req)}::${loginIdentifier.slice(-8)}`
-    const admin = createClient(supabaseUrl, serviceKey)
-    const rateCheck = await checkPersistentRateLimit(admin, throttleKey, 10, 600)
+
+    const ip = clientIp(req)
+
+    const ipRateCheck = await checkPersistentRateLimit(admin, `phone-login::${ip}`, 20, 300)
+    if (!ipRateCheck.allowed) {
+      return json(
+        {
+          error: `Too many login attempts. Please try again in ${ipRateCheck.retry_after_sec} seconds.`,
+        },
+        429
+      )
+    }
+
+    const throttleKey = `phone-login::${loginIdentifier.toLowerCase()}`
+    const rateCheck = await checkPersistentRateLimit(admin, throttleKey, 10, 300)
     if (!rateCheck.allowed) {
       return json(
         {
@@ -156,7 +178,9 @@ serve(async (req: Request) => {
       return json({ error: GENERIC_FAIL }, 401)
     }
 
-    const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(profile.id)
+    const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(
+      (profile as any).id
+    )
     if (authUserError || (!authUser?.user?.email && !authUser?.user?.phone)) {
       await checkPersistentRateLimit(admin, throttleKey, 10, 600)
       await delay(FAILURE_DELAY_MS)

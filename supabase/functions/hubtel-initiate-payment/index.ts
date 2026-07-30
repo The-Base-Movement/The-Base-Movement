@@ -1,4 +1,4 @@
-// @ts-expect-error: Deno supports URL imports
+// @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { convertToHubtelGhs, parseGhsExchangeRates } from './currency.ts'
 import { normalizeHubtelPhone, isGhanaPhone } from './phone.ts'
@@ -53,7 +53,7 @@ function clientIp(req: Request) {
 }
 
 function getRequiredEnv(name: string) {
-  // @ts-expect-error: Deno global
+  // @ts-ignore: Deno global
   const value = Deno.env.get(name)
   if (!value) throw new Error(`${name} is not configured`)
   return value
@@ -81,7 +81,7 @@ function getCheckoutUrl(payload: Record<string, unknown>) {
   return typeof url === 'string' ? url : null
 }
 
-// @ts-expect-error: Deno global
+// @ts-ignore: Deno global
 Deno.serve(async (req: Request) => {
   const cors = getCorsHeaders(req)
   if (req.method === 'OPTIONS') return handleCorsPreflight(req)
@@ -141,18 +141,18 @@ Deno.serve(async (req: Request) => {
     if (type === 'donation') {
       const { data: donation, error } = await supabaseAdmin
         .from('donations')
-        .select('id, amount, currency, status')
+        .select('id, amount, status')
         .eq('id', reference)
         .single()
 
       if (error || !donation) throw new Error('Donation record was not found')
       trustedAmount = Number(donation.amount)
-      trustedCurrency = (donation.currency || 'GHS').toUpperCase()
+      trustedCurrency = 'GHS'
       trustedDescription = 'The Base Movement donation'
     } else if (type === 'group_donation') {
       const { data: rows, error } = await supabaseAdmin
         .from('donations')
-        .select('amount, currency, status')
+        .select('amount, status')
         .eq('group_id', reference)
 
       if (error || !rows?.length) throw new Error('Group donation was not found')
@@ -163,7 +163,7 @@ Deno.serve(async (req: Request) => {
         (sum: number, r: { amount: number | string }) => sum + Number(r.amount),
         0
       )
-      trustedCurrency = (rows[0]?.currency || 'GHS').toUpperCase()
+      trustedCurrency = 'GHS'
       trustedDescription = 'The Base Movement group donation'
     } else if (type === 'order') {
       const { data: order, error } = await supabaseAdmin
@@ -200,10 +200,10 @@ Deno.serve(async (req: Request) => {
     const clientId = getRequiredEnv('HUBTEL_API_ID')
     const clientSecret = getRequiredEnv('HUBTEL_API_KEY')
     const accountNumber = getRequiredEnv('HUBTEL_ACCOUNT_NUMBER')
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const baseUrl =
       Deno.env.get('HUBTEL_CHECKOUT_URL') ?? 'https://payproxyapi.hubtel.com/items/initiate'
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const exchangeRates = parseGhsExchangeRates(Deno.env.get('HUBTEL_GHS_EXCHANGE_RATES'))
     // Calculate settlement from trusted DB values — never from client-supplied amount
     const settlement = convertToHubtelGhs(trustedAmount, trustedCurrency, exchangeRates)
@@ -216,7 +216,7 @@ Deno.serve(async (req: Request) => {
       undefined,
       reference
     )
-    // @ts-expect-error: Deno global
+    // @ts-ignore: Deno global
     const secondaryCallbackBase = Deno.env.get('HUBTEL_SECONDARY_CALLBACK_URL')
     const secondaryCallback = secondaryCallbackBase
       ? await buildSignedHubtelCallbackUrl(

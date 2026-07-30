@@ -1,5 +1,5 @@
-// @ts-expect-error: Deno npm import
-import { parsePhoneNumberFromString } from 'npm:libphonenumber-js@1.11.20/max'
+// @ts-ignore: Deno supports URL imports
+import { parsePhoneNumberFromString } from 'https://esm.sh/libphonenumber-js@1.11.20/max'
 
 export function normalizeHubtelPhone(phone: string) {
   const trimmed = phone.trim()

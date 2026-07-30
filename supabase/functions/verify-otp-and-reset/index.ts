@@ -1,6 +1,6 @@
-// @ts-expect-error: Deno supports URL imports
+// @ts-ignore: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-// @ts-expect-error: Deno supports URL imports
+// @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { hashOtp } from '../_shared/otp.ts'
@@ -148,7 +148,7 @@ serve(async (req: Request) => {
           reg_no: user.registration_number,
           must_change_password: false,
         },
-      })
+      } as any)
       if (createError || !created.user) {
         throw new Error(
           `Auth account activation failed: ${createError?.message || 'No user returned'}`

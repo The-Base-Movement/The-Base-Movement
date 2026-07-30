@@ -33,6 +33,19 @@ jobs:
       - name: Run typecheck
         run: npm run typecheck
 
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v1.x
+
+      - name: Deno check sensitive edge functions
+        run: |
+          deno check supabase/functions/send-otp/index.ts
+          deno check supabase/functions/verify-otp-and-reset/index.ts
+          deno check supabase/functions/hubtel-initiate-payment/index.ts
+          deno check supabase/functions/phone-login/index.ts
+          deno check supabase/functions/register-member/index.ts
+
       - name: Create stub .env for tests
         run: |
           echo "SUPABASE_URL=https://placeholder.supabase.co" >> .env
