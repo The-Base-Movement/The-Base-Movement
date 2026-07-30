@@ -19,8 +19,15 @@ import { useState } from 'react'
 const CONSENT_KEY = 'analytics_consent'
 
 export function AnalyticsConsentBanner() {
-  // Lazy initialiser — reads localStorage once on mount, no useEffect needed
-  const [visible, setVisible] = useState(() => !localStorage.getItem(CONSENT_KEY))
+  // Lazy initialiser — safe for SSR (prerender in Node.js) and browser hydration
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      return !localStorage.getItem(CONSENT_KEY)
+    } catch {
+      return false
+    }
+  })
 
   if (!visible) return null
 
