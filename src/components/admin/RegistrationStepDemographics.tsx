@@ -38,6 +38,8 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
   const [psFocused, setPsFocused] = useState(false)
   const [psResults, setPsResults] = useState<PollingStationOption[]>([])
   const [constituencies, setConstituencies] = useState<string[]>([])
+  const [regionFocused, setRegionFocused] = useState(false)
+  const [constituencyFocused, setConstituencyFocused] = useState(false)
   const [psCode, setPsCode] = useState('')
   const [psCodeName, setPsCodeName] = useState<string | null>(null)
   const [psCodeError, setPsCodeError] = useState(false)
@@ -67,6 +69,15 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
       })
       .catch(() => {})
   }, [formData.region, formData.constituency, setFields])
+
+  const filteredRegions = dbRegions
+    .map((region) => region.name)
+    .filter((name) => !formData.region.trim() || name.toLowerCase().includes(formData.region.trim().toLowerCase()))
+    .slice(0, 12)
+
+  const filteredConstituencies = constituencies
+    .filter((name) => !formData.constituency.trim() || name.toLowerCase().includes(formData.constituency.trim().toLowerCase()))
+    .slice(0, 12)
 
   useEffect(() => {
     if (!psSearch.trim()) {
@@ -394,7 +405,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
       >
         {platform === 'GHANA' ? (
           <>
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <label
                 htmlFor="select-0e9706"
                 style={{
@@ -411,9 +422,12 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                 name="name-0e9706"
                 id="select-0e9706"
                 required
-                list="admin-registration-region-options"
                 value={formData.region}
                 onChange={(e) => handleChange('region', e.target.value)}
+                onFocus={() => setRegionFocused(true)}
+                onBlur={() => {
+                  setTimeout(() => setRegionFocused(false), 200)
+                }}
                 className="reg"
                 placeholder="Search region"
                 autoComplete="off"
@@ -427,15 +441,49 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   color: 'hsl(var(--on-surface))',
                 }}
               />
-              <datalist id="admin-registration-region-options">
-                {dbRegions.length > 0 ? (
-                  dbRegions.map((region) => <option key={region.id} value={region.name} />)
-                ) : (
-                  <option value="Loading regions…" />
-                )}
-              </datalist>
+              {regionFocused && filteredRegions.length > 0 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    marginTop: 4,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--card))',
+                    maxHeight: 180,
+                    overflowY: 'auto',
+                    zIndex: 20,
+                  }}
+                >
+                  {filteredRegions.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => {
+                        handleChange('region', name)
+                        setRegionFocused(false)
+                      }}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '10px 14px',
+                        border: 'none',
+                        borderBottom: '1px solid hsl(var(--border))',
+                        background: 'transparent',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <label
                 htmlFor="select-3ce1cd"
                 style={{
@@ -453,9 +501,14 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                 id="select-3ce1cd"
                 required
                 disabled={!formData.region}
-                list="admin-registration-constituency-options"
                 value={formData.constituency}
                 onChange={(e) => handleChange('constituency', e.target.value)}
+                onFocus={() => {
+                  if (formData.region) setConstituencyFocused(true)
+                }}
+                onBlur={() => {
+                  setTimeout(() => setConstituencyFocused(false), 200)
+                }}
                 className="reg"
                 placeholder={formData.region ? 'Search constituency' : 'Select region first'}
                 autoComplete="off"
@@ -470,11 +523,47 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   opacity: !formData.region ? 0.5 : 1,
                 }}
               />
-              <datalist id="admin-registration-constituency-options">
-                {constituencies.map((con) => (
-                  <option key={con} value={con} />
-                ))}
-              </datalist>
+              {constituencyFocused && filteredConstituencies.length > 0 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    marginTop: 4,
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--card))',
+                    maxHeight: 180,
+                    overflowY: 'auto',
+                    zIndex: 20,
+                  }}
+                >
+                  {filteredConstituencies.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => {
+                        handleChange('constituency', name)
+                        setConstituencyFocused(false)
+                      }}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '10px 14px',
+                        border: 'none',
+                        borderBottom: '1px solid hsl(var(--border))',
+                        background: 'transparent',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <label

@@ -87,6 +87,8 @@ export function RegistrationForm(props: RegistrationFormProps) {
   const [psFocused, setPsFocused] = useState(false)
   const [psResults, setPsResults] = useState<PollingStationOption[]>([])
   const [constituencies, setConstituencies] = useState<string[]>([])
+  const [regionFocused, setRegionFocused] = useState(false)
+  const [constituencyFocused, setConstituencyFocused] = useState(false)
   const [psCode, setPsCode] = useState(() => formData.pollingStationCode || '')
   const [codeStation, setCodeStation] = useState<string | null>(null)
   const [codeError, setCodeError] = useState(false)
@@ -106,6 +108,15 @@ export function RegistrationForm(props: RegistrationFormProps) {
       .then(setConstituencies)
       .catch(() => setConstituencies([]))
   }, [formData.region])
+
+  const filteredRegions = dbRegions
+    .map((region) => region.name)
+    .filter((name) => !formData.region.trim() || name.toLowerCase().includes(formData.region.trim().toLowerCase()))
+    .slice(0, 12)
+
+  const filteredConstituencies = constituencies
+    .filter((name) => !formData.constituency.trim() || name.toLowerCase().includes(formData.constituency.trim().toLowerCase()))
+    .slice(0, 12)
 
   // Constituency → district is 1:1; auto-fill the editable, optional District.
   useEffect(() => {
@@ -405,7 +416,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 {platform === 'GHANA' ? (
                   <>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
+                      <div className="space-y-1.5 relative">
                         <label
                           htmlFor="input-region-search"
                           className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
@@ -416,20 +427,39 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           name="name-region-search"
                           id="input-region-search"
                           required
-                          list="registration-region-options"
                           value={formData.region}
                           onChange={(e) => onInputChange('region', e.target.value)}
+                          onFocus={() => setRegionFocused(true)}
+                          onBlur={() => {
+                            setTimeout(() => setRegionFocused(false), 200)
+                          }}
                           className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface"
                           placeholder="Search region"
                           autoComplete="off"
                         />
-                        <datalist id="registration-region-options">
-                          {dbRegions.map((r) => (
-                            <option key={r.id} value={r.name} />
-                          ))}
-                        </datalist>
+                        {regionFocused && filteredRegions.length > 0 && (
+                          <div
+                            className="absolute left-0 right-0 mt-1 border border-border rounded-sm shadow-lg max-h-[180px] overflow-y-auto z-50"
+                            style={{ background: 'hsl(var(--card))' }}
+                          >
+                            {filteredRegions.map((name) => (
+                              <button
+                                key={name}
+                                type="button"
+                                onClick={() => {
+                                  onInputChange('region', name)
+                                  setRegionFocused(false)
+                                }}
+                                className="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-border/50 transition-colors block text-xs"
+                                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                              >
+                                {name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1.5 relative">
                         <label
                           htmlFor="input-constituency-search"
                           className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
@@ -440,19 +470,40 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           name="name-constituency-search"
                           id="input-constituency-search"
                           required
-                          list="registration-constituency-options"
                           value={formData.constituency}
                           onChange={(e) => onInputChange('constituency', e.target.value)}
+                          onFocus={() => {
+                            if (formData.region) setConstituencyFocused(true)
+                          }}
+                          onBlur={() => {
+                            setTimeout(() => setConstituencyFocused(false), 200)
+                          }}
                           className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface disabled:bg-container-low disabled:cursor-not-allowed"
                           disabled={!formData.region}
                           placeholder={formData.region ? 'Search constituency' : 'Select region first'}
                           autoComplete="off"
                         />
-                        <datalist id="registration-constituency-options">
-                          {constituencies.map((c) => (
-                            <option key={c} value={c} />
-                          ))}
-                        </datalist>
+                        {constituencyFocused && filteredConstituencies.length > 0 && (
+                          <div
+                            className="absolute left-0 right-0 mt-1 border border-border rounded-sm shadow-lg max-h-[180px] overflow-y-auto z-50"
+                            style={{ background: 'hsl(var(--card))' }}
+                          >
+                            {filteredConstituencies.map((name) => (
+                              <button
+                                key={name}
+                                type="button"
+                                onClick={() => {
+                                  onInputChange('constituency', name)
+                                  setConstituencyFocused(false)
+                                }}
+                                className="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-border/50 transition-colors block text-xs"
+                                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                              >
+                                {name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 

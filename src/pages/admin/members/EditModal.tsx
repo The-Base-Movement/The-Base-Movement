@@ -97,6 +97,8 @@ export function EditModal({
   onJobLabelChange,
 }: EditModalProps) {
   const [constituencyOptions, setConstituencyOptions] = useState<string[]>([])
+  const [regionFocused, setRegionFocused] = useState(false)
+  const [constituencyFocused, setConstituencyFocused] = useState(false)
   const [pollingSearch, setPollingSearch] = useState('')
   const [pollingResults, setPollingResults] = useState<PollingStationOption[]>([])
   const [stationName, setStationName] = useState<string | null>(null)
@@ -199,6 +201,15 @@ export function EditModal({
     form.constituency && !constituencyOptions.includes(form.constituency)
       ? [form.constituency, ...constituencyOptions]
       : constituencyOptions
+
+  const filteredRegions = (regions ?? [])
+    .map((region) => region.name)
+    .filter((name) => !(form.region ?? '').trim() || name.toLowerCase().includes((form.region ?? '').trim().toLowerCase()))
+    .slice(0, 12)
+
+  const filteredConstituencies = constituencyList
+    .filter((name) => !(form.constituency ?? '').trim() || name.toLowerCase().includes((form.constituency ?? '').trim().toLowerCase()))
+    .slice(0, 12)
 
   return createPortal(
     <div
@@ -471,47 +482,129 @@ export function EditModal({
             >
               <p style={sectionHeadingStyle}>Location</p>
 
-              <div>
+              <div style={{ position: 'relative' }}>
                 <label htmlFor="input-edit-region" style={labelStyle}>
                   Region
                 </label>
                 <input
                   id="input-edit-region"
                   name="region"
-                  list="member-edit-region-options"
                   value={form.region ?? ''}
                   onChange={(e) => handleRegionChange(e.target.value)}
+                  onFocus={() => setRegionFocused(true)}
+                  onBlur={() => {
+                    setTimeout(() => setRegionFocused(false), 200)
+                  }}
                   placeholder="Search region"
                   autoComplete="off"
                   style={controlStyle}
                 />
-                <datalist id="member-edit-region-options">
-                  {(regions ?? []).map((r) => (
-                    <option key={r.id} value={r.name} />
-                  ))}
-                </datalist>
+                {regionFocused && filteredRegions.length > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      marginTop: 4,
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 4,
+                      maxHeight: 168,
+                      overflowY: 'auto',
+                      background: 'hsl(var(--card))',
+                      zIndex: 10,
+                    }}
+                  >
+                    {filteredRegions.map((name) => (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => {
+                          handleRegionChange(name)
+                          setRegionFocused(false)
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '9px 12px',
+                          border: 'none',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontSize: 12.5,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div>
+              <div style={{ position: 'relative' }}>
                 <label htmlFor="input-edit-constituency" style={labelStyle}>
                   Constituency
                 </label>
                 <input
                   id="input-edit-constituency"
                   name="constituency"
-                  list="member-edit-constituency-options"
                   value={form.constituency ?? ''}
                   disabled={!form.region}
                   onChange={(e) => handleConstituencyChange(e.target.value)}
+                  onFocus={() => {
+                    if (form.region) setConstituencyFocused(true)
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => setConstituencyFocused(false), 200)
+                  }}
                   placeholder={form.region ? 'Search constituency' : 'Select region first'}
                   autoComplete="off"
                   style={{ ...controlStyle, opacity: !form.region ? 0.5 : 1 }}
                 />
-                <datalist id="member-edit-constituency-options">
-                  {constituencyList.map((c) => (
-                    <option key={c} value={c} />
-                  ))}
-                </datalist>
+                {constituencyFocused && filteredConstituencies.length > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      marginTop: 4,
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 4,
+                      maxHeight: 168,
+                      overflowY: 'auto',
+                      background: 'hsl(var(--card))',
+                      zIndex: 10,
+                    }}
+                  >
+                    {filteredConstituencies.map((name) => (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => {
+                          void handleConstituencyChange(name)
+                          setConstituencyFocused(false)
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '9px 12px',
+                          border: 'none',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontSize: 12.5,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
