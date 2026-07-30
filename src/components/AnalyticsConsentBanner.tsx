@@ -14,7 +14,7 @@
  * The Analytics component reads the same key before loading.
  */
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const CONSENT_KEY = 'analytics_consent'
 
