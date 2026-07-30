@@ -8,10 +8,8 @@ import {
   type RateLimitEntry,
 } from '../_shared/password-reset-rate-limit.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getCorsHeaders } from '../_shared/cors.ts'
+import { hashOtp } from '../_shared/otp.ts'
 
 const FAILURE_DELAY_MS = 800
 const VERIFY_WINDOW_MS = 10 * 60 * 1000
@@ -48,40 +46,39 @@ function clientIp(req: Request) {
 }
 
 serve(async (req: Request) => {
+  const cors = getCorsHeaders(req)
+
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      headers: { ...cors, 'Content-Type': 'application/json' },
+      status,
+    })
+
+  const delayedJson = async (body: unknown, status: number) => {
+    await new Promise((resolve) => setTimeout(resolve, FAILURE_DELAY_MS))
+    return json(body, status)
+  }
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: cors })
   }
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 405,
-    })
+    return json({ error: 'Method not allowed' }, 405)
   }
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
     const { phone, otp, newPassword } = await req.json()
     if (!phone || !otp || !newPassword) {
-      return new Response(JSON.stringify({ error: 'Phone, OTP, and new password are required.' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      })
+      return json({ error: 'Phone, OTP, and new password are required.' }, 400)
     }
     if (String(newPassword).length < 8) {
-      return new Response(
-        JSON.stringify({ error: 'Password must be at least 8 characters long.' }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400,
-        }
-      )
+      return json({ error: 'Password must be at least 8 characters long.' }, 400)
     }
 
     const normalizedPhone = normalizePhoneNumber(phone)
@@ -90,23 +87,23 @@ serve(async (req: Request) => {
     const currentThrottle = verifyThrottleStore.get(throttleKey)
     const retryAfterMs = getRetryAfterMs(now, currentThrottle)
     if (retryAfterMs > 0) {
-      return new Response(
-        JSON.stringify({
-          error: `Too many verification attempts. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
-        }),
+      return json(
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 429,
-        }
+          error: `Too many verification attempts. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+        },
+        429
       )
     }
 
-    // 1. Fetch and validate OTP code
+    // 1. Compute HMAC hash of incoming raw OTP code and verify against database
+    const otpSecret = supabaseServiceKey || 'fallback-otp-secret'
+    const hashedOtp = await hashOtp(String(otp).trim(), otpSecret)
+
     const { data: otpRecord, error: otpError } = await supabaseAdmin
       .from('password_reset_otps')
       .select('id, expires_at')
       .eq('phone', normalizedPhone)
-      .eq('otp', otp.trim())
+      .eq('otp', hashedOtp)
       .eq('used', false)
       .order('created_at', { ascending: false })
       .limit(1)
@@ -218,16 +215,10 @@ serve(async (req: Request) => {
     }
     verifyThrottleStore.delete(throttleKey)
 
-    return new Response(
-      JSON.stringify({ success: true, message: 'Your password has been successfully reset.' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-    )
+    return json({ success: true, message: 'Your password has been successfully reset.' }, 200)
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error(`[VERIFY-OTP-ERROR] ${errorMessage}`)
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    })
+    return json({ error: errorMessage }, 500)
   }
 })
