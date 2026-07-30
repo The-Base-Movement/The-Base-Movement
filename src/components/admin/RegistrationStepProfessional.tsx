@@ -1,14 +1,17 @@
-import { educationLevels } from './RegistrationForm.constants'
+import { educationLevels, emergencyRelationships } from './RegistrationForm.constants'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
+import { JobSelector } from '@/components/JobSelector'
+import { emptyJobSelection } from '@/services/jobTaxonomyService'
 
 interface RegistrationStepProfessionalProps {
   formData: RegistrationFormData
   isMobile: boolean
   handleChange: RegistrationChangeHandler
+  setFields: (partial: Partial<RegistrationFormData>) => void
 }
 
 export function RegistrationStepProfessional(props: RegistrationStepProfessionalProps) {
-  const { formData, isMobile, handleChange } = props
+  const { formData, isMobile, handleChange, setFields } = props
 
   return (
     <div className="space-y-8">
@@ -93,14 +96,14 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
           >
             Relationship <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
           </label>
-          <input
-            aria-label="E.g. Spouse, Parent, Brother"
+          <select
+            aria-label="Relationship"
             name="name-6df3eb"
             id="input-6df3eb"
-            placeholder="E.g. Spouse, Parent, Brother"
             required
             value={formData.emergencyRelationship}
             onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
+            className="reg"
             style={{
               width: '100%',
               padding: '14px 18px',
@@ -111,7 +114,14 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
               outline: 'none',
               color: 'hsl(var(--on-surface))',
             }}
-          />
+          >
+            <option value="">Select</option>
+            {emergencyRelationships.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="space-y-2">
           <label
@@ -149,6 +159,27 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
         </div>
       </div>
 
+      <div className="space-y-2">
+        <label
+          style={{
+            fontSize: '10px',
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: 'hsl(var(--on-surface-muted))',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            display: 'block',
+            marginBottom: '12px',
+          }}
+        >
+          Profession / occupation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+        </label>
+        <JobSelector
+          value={formData.job ?? emptyJobSelection}
+          onChange={(j) => setFields({ job: j })}
+          onLabelChange={(label) => setFields({ profession: label })}
+        />
+      </div>
+
       <div
         style={{
           display: 'grid',
@@ -156,39 +187,6 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
           gap: '32px',
         }}
       >
-        <div className="space-y-2">
-          <label
-            htmlFor="input-fcf881"
-            style={{
-              fontSize: '10px',
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface-muted))',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            Profession / occupation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-          </label>
-          <input
-            aria-label="E.g. Teacher, Nurse, Student"
-            name="name-fcf881"
-            id="input-fcf881"
-            placeholder="E.g. Teacher, Nurse, Student"
-            required
-            value={formData.profession}
-            onChange={(e) => handleChange('profession', e.target.value)}
-            style={{
-              width: '100%',
-              padding: '14px 18px',
-              fontSize: '14px',
-              background: 'hsl(var(--container-low))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              outline: 'none',
-              color: 'hsl(var(--on-surface))',
-            }}
-          />
-        </div>
         <div className="space-y-2">
           <label
             htmlFor="select-b50420"
@@ -226,6 +224,45 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
               </option>
             ))}
           </select>
+        </div>
+        <div className="space-y-2">
+          <label
+            htmlFor="input-children-admin"
+            style={{
+              fontSize: '10px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface-muted))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
+          >
+            No. of children{' '}
+            <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+              (optional)
+            </span>
+          </label>
+          <input
+            aria-label="Number of children"
+            name="name-children-admin"
+            id="input-children-admin"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            placeholder="0"
+            value={formData.children_count === 0 ? '' : formData.children_count}
+            onChange={(e) => setFields({ children_count: Number(e.target.value || 0) })}
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              padding: '14px 18px',
+              fontSize: '14px',
+              background: 'hsl(var(--container-low))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              outline: 'none',
+              color: 'hsl(var(--on-surface))',
+            }}
+          />
         </div>
       </div>
     </div>

@@ -50,6 +50,7 @@ export interface User {
   residential_address: string
   region: string
   constituency: string
+  district?: string | null
   chapter: string
   profession: string
   education_level: string
@@ -58,6 +59,10 @@ export interface User {
   emergency_phone: string
   national_id?: string
   children_count?: number
+  job_industry_id?: number | null
+  job_sub_category_id?: number | null
+  job_role_id?: number | null
+  job_custom_title?: string | null
   referred_by?: string
   joined_at: string
   status: string
