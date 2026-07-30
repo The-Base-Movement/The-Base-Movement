@@ -23,17 +23,7 @@ import {
   type RateLimitEntry,
 } from './rate-limit.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    status,
-  })
-}
+import { getCorsHeaders } from '../_shared/cors.ts'
 
 function phoneCandidates(raw: string): { exact: string[]; suffix: string | null } {
   const cleaned = raw.trim()
@@ -124,8 +114,16 @@ async function resolveProfile(admin: ReturnType<typeof createClient>, identifier
 }
 
 serve(async (req: Request) => {
+  const cors = getCorsHeaders(req)
+
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      headers: { ...cors, 'Content-Type': 'application/json' },
+      status,
+    })
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: cors })
   }
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)

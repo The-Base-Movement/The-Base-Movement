@@ -15,7 +15,28 @@ import { buildSignedHubtelCallbackUrl } from '../hubtel-payment-shared/callback-
 
 import { getCorsHeaders } from '../_shared/cors.ts'
 
-type PaymentType = 'donation' | 'group_donation' | 'order' | 'monthly_dues' | 'payment'
+type PaymentType = 'donation' | 'group_donation' | 'order' | 'monthly_dues'
+
+const ALLOWED_REDIRECT_ORIGINS = [
+  'https://www.thebasemovement.org.gh',
+  'https://thebasemovement.org.gh',
+  'http://localhost:3000',
+  'http://localhost:5173',
+]
+
+function validateRedirectUrl(urlStr?: string): string {
+  const fallback = 'https://www.thebasemovement.org.gh/donate'
+  if (!urlStr) return fallback
+  try {
+    const parsed = new URL(urlStr)
+    if (ALLOWED_REDIRECT_ORIGINS.includes(parsed.origin)) {
+      return parsed.toString()
+    }
+    return fallback
+  } catch {
+    return fallback
+  }
+}
 
 interface InitiatePaymentBody {
   type?: PaymentType
@@ -86,7 +107,12 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = (await req.json()) as InitiatePaymentBody
-    const type = body.type ?? 'payment'
+    const type = body.type as PaymentType
+    if (!['donation', 'group_donation', 'order', 'monthly_dues'].includes(type)) {
+      throw new Error(
+        'Invalid payment type. Must be donation, group_donation, order, or monthly_dues'
+      )
+    }
     const reference = body.reference?.trim()
     const amount = Number(body.amount)
     const currency =
@@ -245,8 +271,8 @@ Deno.serve(async (req: Request) => {
                 : 'The Base Movement payment',
       callbackUrl: primaryCallback,
       ...(secondaryCallback ? { secondaryCallbackUrl: secondaryCallback } : {}),
-      returnUrl: body.returnUrl ?? fallbackUrl,
-      cancellationUrl: body.cancellationUrl ?? fallbackUrl,
+      returnUrl: validateRedirectUrl(body.returnUrl),
+      cancellationUrl: validateRedirectUrl(body.cancellationUrl),
       merchantAccountNumber: accountNumber,
       clientReference: hubtelClientRef,
       customerName: name,

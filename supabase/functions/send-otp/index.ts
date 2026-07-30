@@ -7,6 +7,7 @@ import {
   registerAttempt,
   type RateLimitEntry,
 } from '../_shared/password-reset-rate-limit.ts'
+import { hashOtp } from '../_shared/otp.ts'
 import { sendSms } from '../_shared/sms.ts'
 
 import { getCorsHeaders } from '../_shared/cors.ts'
@@ -140,16 +141,18 @@ serve(async (req: Request) => {
       )
     }
 
-    // 2. Generate a secure 6-digit OTP code
+    // 2. Generate a secure 6-digit OTP code & HMAC hash it for storage
     const buf = crypto.getRandomValues(new Uint32Array(1))
-    const otp = String((buf[0] % 900000) + 100000)
+    const rawOtp = String((buf[0] % 900000) + 100000)
+    const otpSecret = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? 'fallback-otp-secret'
+    const hashedOtp = await hashOtp(rawOtp, otpSecret)
 
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes from now
 
-    // 3. Store the OTP securely
+    // 3. Store the HMAC-hashed OTP securely (raw OTP is NEVER saved)
     const { error: otpError } = await supabaseAdmin.from('password_reset_otps').insert({
       phone: normalizedPhone,
-      otp,
+      otp: hashedOtp,
       expires_at: expiresAt,
     })
 
@@ -162,10 +165,10 @@ serve(async (req: Request) => {
       registerAttempt(now, currentIpThrottle, IP_WINDOW_MS, IP_MAX_ATTEMPTS, IP_LOCKOUT_MS)
     )
 
-    // 4. Send SMS via MNotify
+    // 4. Send SMS via MNotify with raw OTP (never stored)
     const sms = await sendSms(
       [normalizedPhone],
-      `Your The Base Movement verification OTP code is: ${otp}. Valid for 10 minutes.`
+      `Your The Base Movement verification OTP code is: ${rawOtp}. Valid for 10 minutes.`
     )
     if (!sms.ok) {
       console.warn(
