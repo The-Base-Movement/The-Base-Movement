@@ -13,7 +13,8 @@ import {
 } from './rate-limit.ts'
 import { buildSignedHubtelCallbackUrl } from '../hubtel-payment-shared/callback-auth.ts'
 
-import { getCorsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
+import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 
 type PaymentType = 'donation' | 'group_donation' | 'order' | 'monthly_dues'
 
@@ -50,9 +51,6 @@ interface InitiatePaymentBody {
   cancellationUrl?: string
   metadata?: Record<string, unknown>
 }
-
-const ipAttemptStore = new Map<string, RateLimitEntry>()
-const referenceAttemptStore = new Map<string, RateLimitEntry>()
 
 function clientIp(req: Request) {
   return (
@@ -95,7 +93,7 @@ function getCheckoutUrl(payload: Record<string, unknown>) {
 // @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   const cors = getCorsHeaders(req)
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req)
 
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
@@ -114,41 +112,100 @@ Deno.serve(async (req: Request) => {
       )
     }
     const reference = body.reference?.trim()
-    const amount = Number(body.amount)
-    const currency =
-      body.currency?.trim().toUpperCase() ||
-      (typeof body.metadata?.currency === 'string'
-        ? body.metadata.currency.trim().toUpperCase()
-        : 'GHS')
     const name = body.name?.trim()
     const phone = body.phone?.trim()
 
     if (!reference) throw new Error('reference is required')
-    if (!Number.isFinite(amount) || amount <= 0) throw new Error('amount must be greater than 0')
     if (!name) throw new Error('name is required')
     if (!phone) throw new Error('phone is required')
 
-    const now = Date.now()
     const ip = clientIp(req)
-    const currentIpEntry = ipAttemptStore.get(ipKey(ip))
-    if (isIpRateLimited(now, currentIpEntry)) {
+    const supabaseUrl = getRequiredEnv('SUPABASE_URL')
+    const supabaseServiceKey = getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY')
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+
+    const ipRateCheck = await checkPersistentRateLimit(supabaseAdmin, `hubtel-ip::${ip}`, 20, 600)
+    if (!ipRateCheck.allowed) {
       return json({ error: 'Too many payment initiation attempts. Please try again later.' }, 429)
     }
-    const currentReferenceEntry = referenceAttemptStore.get(referenceKey(ip, reference))
-    const replayCooldownMs = remainingCooldown(now, currentReferenceEntry)
-    if (replayCooldownMs > 0) {
+    const refRateCheck = await checkPersistentRateLimit(
+      supabaseAdmin,
+      `hubtel-ref::${ip}::${reference}`,
+      3,
+      30
+    )
+    if (!refRateCheck.allowed) {
       return json(
         {
-          error: `This payment request was just started. Please wait ${Math.ceil(replayCooldownMs / 1000)} seconds and try again if needed.`,
+          error: `This payment request was just started. Please wait ${refRateCheck.retry_after_sec} seconds and try again if needed.`,
         },
         429
       )
     }
-    ipAttemptStore.set(ipKey(ip), registerIpAttempt(now, currentIpEntry))
-    referenceAttemptStore.set(referenceKey(ip, reference), registerReferenceAttempt(now))
 
-    const supabaseUrl = getRequiredEnv('SUPABASE_URL')
-    const supabaseServiceKey = getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY')
+    let trustedAmount = 0
+    let trustedCurrency = 'GHS'
+    let trustedDescription = 'The Base Movement payment'
+
+    if (type === 'donation') {
+      const { data: donation, error } = await supabaseAdmin
+        .from('donations')
+        .select('id, amount, currency, status')
+        .eq('id', reference)
+        .single()
+
+      if (error || !donation) throw new Error('Donation record was not found')
+      trustedAmount = Number(donation.amount)
+      trustedCurrency = (donation.currency || 'GHS').toUpperCase()
+      trustedDescription = 'The Base Movement donation'
+    } else if (type === 'group_donation') {
+      const { data: rows, error } = await supabaseAdmin
+        .from('donations')
+        .select('amount, currency, status')
+        .eq('group_id', reference)
+
+      if (error || !rows?.length) throw new Error('Group donation was not found')
+      if (rows.some((r: { status: string }) => r.status !== 'Pending')) {
+        throw new Error('Group donation has already been processed')
+      }
+      trustedAmount = rows.reduce(
+        (sum: number, r: { amount: number | string }) => sum + Number(r.amount),
+        0
+      )
+      trustedCurrency = (rows[0]?.currency || 'GHS').toUpperCase()
+      trustedDescription = 'The Base Movement group donation'
+    } else if (type === 'order') {
+      const { data: order, error } = await supabaseAdmin
+        .from('store_orders')
+        .select('id, total_amount, currency, payment_status')
+        .eq('id', reference)
+        .single()
+
+      if (error || !order) throw new Error('Order record was not found')
+      if (order.payment_status === 'Paid') throw new Error('Order has already been paid')
+      trustedAmount = Number(order.total_amount)
+      trustedCurrency = (order.currency || 'GHS').toUpperCase()
+      trustedDescription = 'The Base Movement store order'
+    } else if (type === 'monthly_dues') {
+      const { data: dues, error } = await supabaseAdmin
+        .from('monthly_dues_payments')
+        .select('id, amount_ghs, status')
+        .eq('id', reference)
+        .single()
+
+      if (error || !dues) throw new Error('Monthly dues obligation was not found')
+      if (['paid', 'waived', 'cancelled'].includes(dues.status)) {
+        throw new Error('This month has already been settled')
+      }
+      trustedAmount = Number(dues.amount_ghs)
+      trustedCurrency = 'GHS'
+      trustedDescription = 'The Base Movement monthly dues'
+    }
+
+    if (!Number.isFinite(trustedAmount) || trustedAmount <= 0) {
+      throw new Error('Obligation amount must be greater than 0')
+    }
+
     const clientId = getRequiredEnv('HUBTEL_API_ID')
     const clientSecret = getRequiredEnv('HUBTEL_API_KEY')
     const accountNumber = getRequiredEnv('HUBTEL_ACCOUNT_NUMBER')
@@ -157,75 +214,6 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('HUBTEL_CHECKOUT_URL') ?? 'https://payproxyapi.hubtel.com/items/initiate'
     // @ts-expect-error: Deno global
     const exchangeRates = parseGhsExchangeRates(Deno.env.get('HUBTEL_GHS_EXCHANGE_RATES'))
-    const settlement = convertToHubtelGhs(amount, currency, exchangeRates)
-
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
-
-    if (type === 'donation') {
-      const { data: donation, error } = await supabaseAdmin
-        .from('donations')
-        .select('id, amount, status')
-        .eq('id', reference)
-        .single()
-
-      if (error || !donation) throw new Error('Donation record was not found')
-      if (Math.abs(Number(donation.amount) - settlement.ghsAmount) > 0.01) {
-        throw new Error('Donation amount does not match the payment request')
-      }
-    }
-
-    if (type === 'group_donation') {
-      // reference is the shared group_id; the charge must equal the sum of
-      // every member's Pending portion.
-      const { data: rows, error } = await supabaseAdmin
-        .from('donations')
-        .select('amount, status')
-        .eq('group_id', reference)
-
-      if (error || !rows?.length) throw new Error('Group donation was not found')
-      if (rows.some((r: { status: string }) => r.status !== 'Pending')) {
-        throw new Error('Group donation has already been processed')
-      }
-      const total = rows.reduce(
-        (sum: number, r: { amount: number | string }) => sum + Number(r.amount),
-        0
-      )
-      if (Math.abs(total - settlement.ghsAmount) > 0.01) {
-        throw new Error('Group donation total does not match the payment request')
-      }
-    }
-
-    if (type === 'order') {
-      const { data: order, error } = await supabaseAdmin
-        .from('store_orders')
-        .select('id, total_amount, payment_status')
-        .eq('id', reference)
-        .single()
-
-      if (error || !order) throw new Error('Order record was not found')
-      if (order.payment_status === 'Paid') throw new Error('Order has already been paid')
-      if (Math.abs(Number(order.total_amount) - settlement.ghsAmount) > 0.01) {
-        throw new Error('Order amount does not match the payment request')
-      }
-    }
-
-    if (type === 'monthly_dues') {
-      // The obligation snapshot, not the browser, decides amount/member/status.
-      const { data: dues, error } = await supabaseAdmin
-        .from('monthly_dues_payments')
-        .select('id, amount_ghs, status, member_id')
-        .eq('id', reference)
-        .single()
-
-      if (error || !dues) throw new Error('Monthly dues obligation was not found')
-      if (['paid', 'waived', 'cancelled'].includes(dues.status)) {
-        throw new Error('This month has already been settled')
-      }
-      if (Math.abs(Number(dues.amount_ghs) - settlement.ghsAmount) > 0.01) {
-        throw new Error('Dues amount does not match the payment request')
-      }
-    }
-
     const shortRef = reference.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)
     const hubtelClientRef = `${shortRef}_${Date.now().toString(36)}`
     const primaryCallback = await buildSignedHubtelCallbackUrl(
@@ -244,13 +232,6 @@ Deno.serve(async (req: Request) => {
           reference
         )
       : undefined
-    const fallbackUrl =
-      body.returnUrl ??
-      // @ts-expect-error: Deno global
-      Deno.env.get('PUBLIC_SITE_URL') ??
-      // @ts-expect-error: Deno global
-      Deno.env.get('SITE_URL') ??
-      'https://www.thebasemovement.org.gh'
 
     const normalizedPhone = normalizeHubtelPhone(phone)
     if (!normalizedPhone) throw new Error('Enter a valid international phone number')
@@ -259,16 +240,7 @@ Deno.serve(async (req: Request) => {
     const hubtelPayload = {
       totalAmount: Number(settlement.ghsAmount.toFixed(2)),
       currency: 'GHS',
-      description:
-        type === 'donation'
-          ? 'The Base Movement donation'
-          : type === 'group_donation'
-            ? 'The Base Movement group donation'
-            : type === 'order'
-              ? 'The Base Movement store order'
-              : type === 'monthly_dues'
-                ? 'The Base Movement monthly dues'
-                : 'The Base Movement payment',
+      description: trustedDescription,
       callbackUrl: primaryCallback,
       ...(secondaryCallback ? { secondaryCallbackUrl: secondaryCallback } : {}),
       returnUrl: validateRedirectUrl(body.returnUrl),

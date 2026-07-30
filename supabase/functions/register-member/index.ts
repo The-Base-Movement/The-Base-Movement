@@ -1,8 +1,40 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { getCorsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
+import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 
 const MAX_BODY_BYTES = 50 * 1024 // 50 KB max payload
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE_REGEX = /^\+?[1-9]\d{1,14}$/
+const PASSWORD_POLICY_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,128}$/
+
+const ALLOWED_NETWORKS = ['Ghana Network', 'Diaspora Network']
+const ALLOWED_REGIONS = [
+  'Ahafo',
+  'Ashanti',
+  'Bono',
+  'Bono East',
+  'Central',
+  'Eastern',
+  'Greater Accra',
+  'North East',
+  'Northern',
+  'Oti',
+  'Savannah',
+  'Upper East',
+  'Upper West',
+  'Volta',
+  'Western',
+  'Western North',
+  'Diaspora',
+]
+
+const clientIp = (req: Request) =>
+  req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+  req.headers.get('x-real-ip') ||
+  req.headers.get('cf-connecting-ip') ||
+  'unknown'
 
 const sanitizeStr = (val: unknown, maxLen = 100): string => {
   if (typeof val !== 'string') return ''
@@ -11,7 +43,7 @@ const sanitizeStr = (val: unknown, maxLen = 100): string => {
 
 serve(async (req: Request) => {
   const cors = getCorsHeaders(req)
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req)
 
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
@@ -22,6 +54,21 @@ serve(async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabase = createClient(supabaseUrl, serviceKey)
+
+    const ip = clientIp(req)
+    const rateCheck = await checkPersistentRateLimit(supabase, `register-member::${ip}`, 5, 600)
+    if (!rateCheck.allowed) {
+      return json(
+        {
+          error: `Too many registration attempts. Please wait ${rateCheck.retry_after_sec} seconds.`,
+        },
+        429
+      )
+    }
+
     const contentLength = Number(req.headers.get('content-length') ?? '0')
     if (contentLength > MAX_BODY_BYTES) {
       return json({ error: 'Payload size exceeds limit.' }, 413)
@@ -49,16 +96,33 @@ serve(async (req: Request) => {
         ? (payload.userRow as Record<string, unknown>)
         : {}
 
-    if (!password || password.length < 8 || (!authEmail && !phone) || !fullName) {
+    // Strict Runtime Schema Validations
+    if (!fullName || fullName.length < 2) {
+      return json({ success: false, error: 'Full name must be at least 2 characters.' }, 400)
+    }
+
+    if (authEmail && !EMAIL_REGEX.test(authEmail)) {
+      return json({ success: false, error: 'Invalid email address format.' }, 400)
+    }
+
+    if (phone && !PHONE_REGEX.test(phone.replace(/\s+/g, ''))) {
+      return json({ success: false, error: 'Invalid phone number format (E.164 expected).' }, 400)
+    }
+
+    if (!authEmail && !phone) {
+      return json({ success: false, error: 'Either email or phone number is required.' }, 400)
+    }
+
+    if (!PASSWORD_POLICY_REGEX.test(password)) {
       return json(
-        { success: false, error: 'Missing or invalid required registration details.' },
+        {
+          success: false,
+          error:
+            'Password must be at least 8 characters long and contain uppercase, lowercase, and a number.',
+        },
         400
       )
     }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, serviceKey)
 
     // Pre-check for duplicate without revealing specific account state
     const [phoneRes, emailRes] = await Promise.all([

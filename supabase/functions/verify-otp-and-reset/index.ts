@@ -2,28 +2,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import {
-  getRetryAfterMs,
-  registerAttempt,
-  type RateLimitEntry,
-} from '../_shared/password-reset-rate-limit.ts'
-
-import { getCorsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { hashOtp } from '../_shared/otp.ts'
+import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 
 const FAILURE_DELAY_MS = 800
-const VERIFY_WINDOW_MS = 10 * 60 * 1000
-const VERIFY_MAX_ATTEMPTS = 8
-const VERIFY_LOCKOUT_MS = 15 * 60 * 1000
-const verifyThrottleStore = new Map<string, RateLimitEntry>()
-
-async function delayedJson(body: unknown, status: number) {
-  await new Promise((resolve) => setTimeout(resolve, FAILURE_DELAY_MS))
-  return new Response(JSON.stringify(body), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    status,
-  })
-}
 
 function normalizePhoneNumber(raw: string): string {
   const cleaned = raw.trim()
@@ -60,9 +43,7 @@ serve(async (req: Request) => {
   }
 
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: cors })
-  }
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req)
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)
   }
@@ -82,62 +63,42 @@ serve(async (req: Request) => {
     }
 
     const normalizedPhone = normalizePhoneNumber(phone)
-    const now = Date.now()
-    const throttleKey = `${clientIp(req)}::${normalizedPhone}`
-    const currentThrottle = verifyThrottleStore.get(throttleKey)
-    const retryAfterMs = getRetryAfterMs(now, currentThrottle)
-    if (retryAfterMs > 0) {
+    const throttleKey = `verify-otp::${clientIp(req)}::${normalizedPhone}`
+    const rateCheck = await checkPersistentRateLimit(supabaseAdmin, throttleKey, 8, 900)
+    if (!rateCheck.allowed) {
       return json(
         {
-          error: `Too many verification attempts. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
+          error: `Too many verification attempts. Please wait ${rateCheck.retry_after_sec} seconds.`,
         },
         429
       )
     }
 
-    // 1. Compute HMAC hash of incoming raw OTP code and verify against database
-    const otpSecret = supabaseServiceKey || 'fallback-otp-secret'
+    // 1. Compute HMAC hash of incoming raw OTP using dedicated OTP_HMAC_SECRET (fail closed)
+    const otpSecret = Deno.env.get('OTP_HMAC_SECRET') || supabaseServiceKey
+    if (!otpSecret) throw new Error('OTP_HMAC_SECRET is missing. Failing closed.')
     const hashedOtp = await hashOtp(String(otp).trim(), otpSecret)
 
-    const { data: otpRecord, error: otpError } = await supabaseAdmin
+    // Atomically mark the OTP used in a single conditional UPDATE...RETURNING
+    // This prevents double-use under concurrent requests
+    const now = new Date().toISOString()
+    const { data: consumedRecord, error: consumeError } = await supabaseAdmin
       .from('password_reset_otps')
-      .select('id, expires_at')
+      .update({ used: true })
       .eq('phone', normalizedPhone)
       .eq('otp', hashedOtp)
       .eq('used', false)
-      .order('created_at', { ascending: false })
-      .limit(1)
+      .gt('expires_at', now)
+      .select('id, expires_at')
       .maybeSingle()
 
-    if (otpError || !otpRecord) {
-      verifyThrottleStore.set(
-        throttleKey,
-        registerAttempt(
-          now,
-          currentThrottle,
-          VERIFY_WINDOW_MS,
-          VERIFY_MAX_ATTEMPTS,
-          VERIFY_LOCKOUT_MS
-        )
-      )
+    if (consumeError || !consumedRecord) {
+      // Log failure to persistent rate limiter
+      await checkPersistentRateLimit(supabaseAdmin, throttleKey, 8, 900)
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
-    // 2. Check if code has expired
-    const isExpired = new Date(otpRecord.expires_at) < new Date()
-    if (isExpired) {
-      verifyThrottleStore.set(
-        throttleKey,
-        registerAttempt(
-          now,
-          currentThrottle,
-          VERIFY_WINDOW_MS,
-          VERIFY_MAX_ATTEMPTS,
-          VERIFY_LOCKOUT_MS
-        )
-      )
-      return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
-    }
+    const otpRecord = consumedRecord
 
     // 3. Resolve the member profile mapped by phone number
     const { data: user, error: userError } = await supabaseAdmin
@@ -206,15 +167,7 @@ serve(async (req: Request) => {
       .eq('id', authUserId)
     if (profileError) throw new Error(`Profile update failed: ${profileError.message}`)
 
-    const { error: updateOtpError } = await supabaseAdmin
-      .from('password_reset_otps')
-      .update({ used: true })
-      .eq('phone', normalizedPhone)
-    if (updateOtpError) {
-      throw new Error(`Failed to invalidate verification code: ${updateOtpError.message}`)
-    }
-    verifyThrottleStore.delete(throttleKey)
-
+    // OTP was atomically consumed in the UPDATE...RETURNING above; no second update needed.
     return json({ success: true, message: 'Your password has been successfully reset.' }, 200)
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)

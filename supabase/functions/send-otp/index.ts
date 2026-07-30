@@ -2,23 +2,14 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import {
-  getRetryAfterMs,
-  registerAttempt,
-  type RateLimitEntry,
-} from '../_shared/password-reset-rate-limit.ts'
 import { hashOtp } from '../_shared/otp.ts'
 import { sendSms } from '../_shared/sms.ts'
-
-import { getCorsHeaders } from '../_shared/cors.ts'
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
+import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 
 const OTP_WINDOW_MS = 10 * 60 * 1000
 const OTP_COOLDOWN_MS = 60 * 1000
 const OTP_MAX_PER_WINDOW = 3
-const IP_WINDOW_MS = 10 * 60 * 1000
-const IP_MAX_ATTEMPTS = 6
-const IP_LOCKOUT_MS = 15 * 60 * 1000
-const ipThrottleStore = new Map<string, RateLimitEntry>()
 
 function clientIp(req: Request) {
   return (
@@ -51,9 +42,7 @@ serve(async (req: Request) => {
   }
 
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: cors })
-  }
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req)
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)
   }
@@ -71,15 +60,16 @@ serve(async (req: Request) => {
       return json({ error: 'Phone number is required.' }, 400)
     }
 
-    const now = Date.now()
+    const otpSecret = Deno.env.get('OTP_HMAC_SECRET') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!otpSecret) {
+      throw new Error('OTP_HMAC_SECRET is missing. Failing closed.')
+    }
+
     const ip = clientIp(req)
-    const currentIpThrottle = ipThrottleStore.get(ip)
-    const retryAfterMs = getRetryAfterMs(now, currentIpThrottle)
-    if (retryAfterMs > 0) {
+    const rateCheck = await checkPersistentRateLimit(supabaseAdmin, `send-otp::${ip}`, 5, 600)
+    if (!rateCheck.allowed) {
       return json(
-        {
-          error: `Too many reset requests. Please wait ${Math.ceil(retryAfterMs / 1000)} seconds.`,
-        },
+        { error: `Too many reset requests. Please wait ${rateCheck.retry_after_sec} seconds.` },
         429
       )
     }
@@ -144,7 +134,6 @@ serve(async (req: Request) => {
     // 2. Generate a secure 6-digit OTP code & HMAC hash it for storage
     const buf = crypto.getRandomValues(new Uint32Array(1))
     const rawOtp = String((buf[0] % 900000) + 100000)
-    const otpSecret = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? 'fallback-otp-secret'
     const hashedOtp = await hashOtp(rawOtp, otpSecret)
 
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes from now
