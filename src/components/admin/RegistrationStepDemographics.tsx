@@ -407,13 +407,16 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
               >
                 Region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
-              <select
+              <input
                 name="name-0e9706"
                 id="select-0e9706"
                 required
+                list="admin-registration-region-options"
                 value={formData.region}
                 onChange={(e) => handleChange('region', e.target.value)}
                 className="reg"
+                placeholder="Search region"
+                autoComplete="off"
                 style={{
                   width: '100%',
                   padding: '14px 18px',
@@ -423,20 +426,14 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   borderRadius: 'var(--radius-sm)',
                   color: 'hsl(var(--on-surface))',
                 }}
-              >
-                <option value="">Select Region</option>
+              />
+              <datalist id="admin-registration-region-options">
                 {dbRegions.length > 0 ? (
-                  dbRegions.map((region) => (
-                    <option key={region.id} value={region.name}>
-                      {region.name}
-                    </option>
-                  ))
+                  dbRegions.map((region) => <option key={region.id} value={region.name} />)
                 ) : (
-                  <option value="" disabled>
-                    Loading regions…
-                  </option>
+                  <option value="Loading regions…" />
                 )}
-              </select>
+              </datalist>
             </div>
             <div className="space-y-2">
               <label
@@ -451,14 +448,17 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
               >
                 Constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
-              <select
+              <input
                 name="name-3ce1cd"
                 id="select-3ce1cd"
                 required
                 disabled={!formData.region}
+                list="admin-registration-constituency-options"
                 value={formData.constituency}
                 onChange={(e) => handleChange('constituency', e.target.value)}
                 className="reg"
+                placeholder={formData.region ? 'Search constituency' : 'Select region first'}
+                autoComplete="off"
                 style={{
                   width: '100%',
                   padding: '14px 18px',
@@ -469,14 +469,12 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                   color: 'hsl(var(--on-surface))',
                   opacity: !formData.region ? 0.5 : 1,
                 }}
-              >
-                <option value="">Select Constituency</option>
+              />
+              <datalist id="admin-registration-constituency-options">
                 {constituencies.map((con) => (
-                  <option key={con} value={con}>
-                    {con}
-                  </option>
+                  <option key={con} value={con} />
                 ))}
-              </select>
+              </datalist>
             </div>
             <div className="space-y-2">
               <label

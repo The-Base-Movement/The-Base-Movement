@@ -407,50 +407,52 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
                         <label
-                          htmlFor="select-64ff20"
+                          htmlFor="input-region-search"
                           className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                         >
                           Region
                         </label>
-                        <select
-                          name="name-64ff20"
-                          id="select-64ff20"
+                        <input
+                          name="name-region-search"
+                          id="input-region-search"
                           required
+                          list="registration-region-options"
                           value={formData.region}
                           onChange={(e) => onInputChange('region', e.target.value)}
-                          className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
-                        >
-                          <option value="">Select Region</option>
+                          className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                          placeholder="Search region"
+                          autoComplete="off"
+                        />
+                        <datalist id="registration-region-options">
                           {dbRegions.map((r) => (
-                            <option key={r.id} value={r.name}>
-                              {r.name}
-                            </option>
+                            <option key={r.id} value={r.name} />
                           ))}
-                        </select>
+                        </datalist>
                       </div>
                       <div className="space-y-1.5">
                         <label
-                          htmlFor="select-c9e1d3"
+                          htmlFor="input-constituency-search"
                           className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                         >
                           Constituency
                         </label>
-                        <select
-                          name="name-c9e1d3"
-                          id="select-c9e1d3"
+                        <input
+                          name="name-constituency-search"
+                          id="input-constituency-search"
                           required
+                          list="registration-constituency-options"
                           value={formData.constituency}
                           onChange={(e) => onInputChange('constituency', e.target.value)}
-                          className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                          className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface disabled:bg-container-low disabled:cursor-not-allowed"
                           disabled={!formData.region}
-                        >
-                          <option value="">Select Constituency</option>
+                          placeholder={formData.region ? 'Search constituency' : 'Select region first'}
+                          autoComplete="off"
+                        />
+                        <datalist id="registration-constituency-options">
                           {constituencies.map((c) => (
-                            <option key={c} value={c}>
-                              {c}
-                            </option>
+                            <option key={c} value={c} />
                           ))}
-                        </select>
+                        </datalist>
                       </div>
                     </div>
 

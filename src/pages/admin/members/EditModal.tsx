@@ -475,41 +475,43 @@ export function EditModal({
                 <label htmlFor="input-edit-region" style={labelStyle}>
                   Region
                 </label>
-                <select
+                <input
                   id="input-edit-region"
                   name="region"
+                  list="member-edit-region-options"
                   value={form.region ?? ''}
                   onChange={(e) => handleRegionChange(e.target.value)}
+                  placeholder="Search region"
+                  autoComplete="off"
                   style={controlStyle}
-                >
-                  <option value="">— select region —</option>
+                />
+                <datalist id="member-edit-region-options">
                   {(regions ?? []).map((r) => (
-                    <option key={r.id} value={r.name}>
-                      {r.name}
-                    </option>
+                    <option key={r.id} value={r.name} />
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>
                 <label htmlFor="input-edit-constituency" style={labelStyle}>
                   Constituency
                 </label>
-                <select
+                <input
                   id="input-edit-constituency"
                   name="constituency"
+                  list="member-edit-constituency-options"
                   value={form.constituency ?? ''}
                   disabled={!form.region}
                   onChange={(e) => handleConstituencyChange(e.target.value)}
+                  placeholder={form.region ? 'Search constituency' : 'Select region first'}
+                  autoComplete="off"
                   style={{ ...controlStyle, opacity: !form.region ? 0.5 : 1 }}
-                >
-                  <option value="">— select constituency —</option>
+                />
+                <datalist id="member-edit-constituency-options">
                   {constituencyList.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
+                    <option key={c} value={c} />
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>
