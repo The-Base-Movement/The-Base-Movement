@@ -368,6 +368,12 @@ export const getNavGroups = (
         permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
       },
       {
+        to: '/admin/seo',
+        icon: 'find_in_page',
+        label: 'SEO Manager',
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+      },
+      {
         to: '/admin/media-hub',
         icon: 'newsmode',
         label: 'Media Hub',
