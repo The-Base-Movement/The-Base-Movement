@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
+import { EmailSuggestion } from '@/components/EmailSuggestion'
 
 interface RegistrationStepPrimaryProps {
   formData: RegistrationFormData
@@ -75,6 +76,8 @@ export function RegistrationStepPrimary(props: RegistrationStepPrimaryProps) {
           id="input-efc762"
           placeholder="As it appears on official ID"
           required
+          pattern=".*\s+.*"
+          title="Please enter both first and last name."
           value={formData.fullName}
           onChange={(e) => handleChange('fullName', e.target.value)}
           style={{
@@ -88,6 +91,49 @@ export function RegistrationStepPrimary(props: RegistrationStepPrimaryProps) {
             color: 'hsl(var(--on-surface))',
           }}
         />
+      </div>
+
+      <div className="space-y-2">
+        <label
+          htmlFor="input-email-admin"
+          style={{
+            fontSize: '10px',
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: 'hsl(var(--on-surface-muted))',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          Email address{' '}
+          <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+            (optional)
+          </span>
+        </label>
+        <input
+          aria-label="Email address"
+          name="name-email-admin"
+          id="input-email-admin"
+          type="email"
+          placeholder="compatriot@thebase.gh"
+          value={formData.email || ''}
+          onChange={(e) => handleChange('email', e.target.value)}
+          autoComplete="off"
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: '14px 18px',
+            fontSize: '14px',
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            outline: 'none',
+            color: 'hsl(var(--on-surface))',
+          }}
+        />
+        <EmailSuggestion email={formData.email || ''} onAccept={(v) => handleChange('email', v)} />
+        <p style={{ fontSize: '11px', color: 'hsl(var(--on-surface-muted))', marginTop: '4px' }}>
+          Optional, but needed for email login and password resets.
+        </p>
       </div>
 
       <div className="space-y-3">
@@ -341,13 +387,13 @@ export function RegistrationStepPrimary(props: RegistrationStepPrimaryProps) {
         </label>
         <div style={{ position: 'relative' }}>
           <input
-            aria-label="Minimum 6 characters"
+            aria-label="Minimum 8 characters"
             name="name-ec50d2"
             id="input-ec50d2"
             type={showPassword ? 'text' : 'password'}
-            placeholder="Minimum 6 characters"
+            placeholder="Minimum 8 characters"
             required
-            minLength={6}
+            minLength={8}
             value={formData.password}
             onChange={(e) => handleChange('password', e.target.value)}
             style={{
@@ -394,14 +440,16 @@ export function RegistrationStepPrimary(props: RegistrationStepPrimaryProps) {
               letterSpacing: '0.05em',
             }}
           >
-            Ghana Card Number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+            Ghana Card Number{' '}
+            <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+              (optional)
+            </span>
           </label>
           <input
             aria-label="Ghana Card Number"
             name="name-ghana-card-admin"
             id="input-ghana-card-admin"
             placeholder="GHA-XXXXXXXXX-X"
-            required
             value={formData.ghanaCardNumber}
             onChange={(e) => handleChange('ghanaCardNumber', e.target.value)}
             style={{
@@ -422,7 +470,8 @@ export function RegistrationStepPrimary(props: RegistrationStepPrimaryProps) {
               marginTop: '4px',
             }}
           >
-            Enter the number exactly as it appears on the Ghana Card.
+            Optional now — required later to complete verification. Enter it exactly as it appears
+            on the Ghana Card.
           </p>
         </div>
       )}

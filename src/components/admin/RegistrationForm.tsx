@@ -19,6 +19,7 @@ import { RegistrationStepProfessional } from './RegistrationStepProfessional'
 import { RegistrationStepVerification } from './RegistrationStepVerification'
 import type { RegistrationFormData, RegistrationSubmission } from './RegistrationForm.types'
 import { useRegistrationData } from '@/pages/register/useRegistrationData'
+import { emptyJobSelection } from '@/services/jobTaxonomyService'
 import { toast } from 'sonner'
 import { cleanPhoneInput } from '@/lib/phoneValidation'
 
@@ -100,6 +101,8 @@ export default function RegistrationForm({
     emergencyRelationship: '',
     emergencyNumber: '',
     ghanaCardNumber: '',
+    job: emptyJobSelection,
+    children_count: 0,
   })
 
   const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies } = useRegistrationData()
@@ -319,6 +322,7 @@ export default function RegistrationForm({
                   formData={formData}
                   isMobile={isMobile}
                   handleChange={handleChange}
+                  setFields={setFields}
                 />
               )}
 

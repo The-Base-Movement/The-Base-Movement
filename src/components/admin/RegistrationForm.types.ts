@@ -1,4 +1,5 @@
 import type { Area } from 'react-easy-crop'
+import type { JobSelection } from '@/services/jobTaxonomyService'
 
 export interface RegistrationFormData {
   fullName: string
@@ -19,6 +20,9 @@ export interface RegistrationFormData {
   constituency: string
   chapter: string
   profession: string
+  /** Structured job selection from the approved taxonomy (drives `profession`). */
+  job?: JobSelection
+  children_count: number
   educationLevel: string
   emergencyContactName: string
   emergencyRelationship: string
