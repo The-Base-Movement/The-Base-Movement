@@ -1079,7 +1079,7 @@ export default function SEOManager() {
                         background: '#f0f2f5',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyCenter: 'center',
+                        justifyContent: 'center',
                         overflow: 'hidden',
                         position: 'relative',
                       }}
@@ -1400,7 +1400,7 @@ export default function SEOManager() {
             zIndex: 100,
             display: 'flex',
             alignItems: 'center',
-            justifyCenter: 'center',
+            justifyContent: 'center',
             padding: 16,
           }}
         >
