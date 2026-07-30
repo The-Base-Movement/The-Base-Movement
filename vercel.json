@@ -88,9 +88,15 @@
   ],
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/",
       "has": [{ "type": "host", "value": "thebasemovement.org.gh" }],
-      "destination": "https://www.thebasemovement.org.gh/:path*",
+      "destination": "https://www.thebasemovement.org.gh/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [{ "type": "host", "value": "thebasemovement.org.gh" }],
+      "destination": "https://www.thebasemovement.org.gh/:path+",
       "permanent": true
     },
     {
