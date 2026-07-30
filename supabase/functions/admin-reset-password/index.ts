@@ -79,10 +79,6 @@ Deno.serve(async (req: Request) => {
       return `+233${digits}`
     }
 
-    let targetEmail = ''
-    let targetName = 'Compatriot'
-    let isProvisionedNow = false
-
     const { data: targetAuth, error: targetError } = await admin.auth.admin.getUserById(user_id)
 
     let targetEmail = ''
