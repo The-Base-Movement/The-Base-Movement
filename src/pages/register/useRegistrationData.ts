@@ -2,12 +2,18 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Region, Constituency } from '@/types/registration'
 
+export interface RegistrationChapterOption {
+  name: string
+  country: string
+}
+
 export function useRegistrationData() {
   const [dbCountries, setDbCountries] = useState<string[]>([])
   const [dbCountryCodes, setDbCountryCodes] = useState<Record<string, string>>({})
   const [dbRegions, setDbRegions] = useState<Region[]>([])
   const [dbConstituencies, setDbConstituencies] = useState<Constituency[]>([])
   const [dbChapters, setDbChapters] = useState<string[]>([])
+  const [dbChapterOptions, setDbChapterOptions] = useState<RegistrationChapterOption[]>([])
 
   useEffect(() => {
     async function fetchData() {
@@ -41,9 +47,13 @@ export function useRegistrationData() {
 
         const { data: chaptersData } = await supabase
           .from('chapters')
-          .select('name')
+          .select('name, country')
           .order('name', { ascending: true })
-        setDbChapters((chaptersData || []).map((c) => c.name))
+        const chapterOptions = (chaptersData || [])
+          .filter((chapter) => typeof chapter.name === 'string' && typeof chapter.country === 'string')
+          .map((chapter) => ({ name: chapter.name, country: chapter.country }))
+        setDbChapterOptions(chapterOptions)
+        setDbChapters(chapterOptions.map((chapter) => chapter.name))
       } catch (error) {
         console.error('Failed to fetch registration data:', error)
       }
@@ -51,5 +61,12 @@ export function useRegistrationData() {
     fetchData()
   }, [])
 
-  return { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapters }
+  return {
+    dbCountries,
+    dbCountryCodes,
+    dbRegions,
+    dbConstituencies,
+    dbChapters,
+    dbChapterOptions,
+  }
 }

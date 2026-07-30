@@ -66,7 +66,7 @@ export default function Register() {
 
   const { isOnline } = useOfflineSync()
 
-  const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapters } =
+  const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapters, dbChapterOptions } =
     useRegistrationData()
   const { isLoading, regNumber, submitted, setSubmitted, submitRegistration, cooldown } =
     useRegistrationSubmit()
@@ -149,6 +149,13 @@ export default function Register() {
     saveDraft()
   }, [saveDraft])
 
+  const getDiasporaChapter = useCallback(
+    (country: string) =>
+      dbChapterOptions.find((chapter) => chapter.country.trim().toLowerCase() === country.trim().toLowerCase())
+        ?.name || '',
+    [dbChapterOptions]
+  )
+
   const handleChange = <K extends keyof RegistrationFormData>(
     field: K,
     value: RegistrationFormData[K]
@@ -162,8 +169,9 @@ export default function Register() {
         val = capToCountryDigits(val, prev.countryCode) as RegistrationFormData[K]
       }
       const updates = { ...prev, [field]: val }
-      if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
-        updates.countryCode = dbCountryCodes[value]
+      if (field === 'country' && typeof value === 'string') {
+        if (dbCountryCodes[value]) updates.countryCode = dbCountryCodes[value]
+        if (platform === 'DIASPORA') updates.chapter = getDiasporaChapter(value)
       }
       // Cascade order is Region → Constituency → District(auto-filled, read-only).
       if (field === 'region') {
@@ -182,13 +190,17 @@ export default function Register() {
   const handlePlatformChange = (newPlatform: string) => {
     setPlatform(newPlatform)
     if (newPlatform === 'GHANA') {
-      setFormData((prev) => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
+      setFormData((prev) => ({ ...prev, country: 'Ghana', countryCode: '+233', chapter: '' }))
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        country: prev.country === 'Ghana' ? '' : prev.country,
-        countryCode: prev.country === 'Ghana' ? '' : prev.countryCode,
-      }))
+      setFormData((prev) => {
+        const nextCountry = prev.country === 'Ghana' ? '' : prev.country
+        return {
+          ...prev,
+          country: nextCountry,
+          countryCode: prev.country === 'Ghana' ? '' : prev.countryCode,
+          chapter: getDiasporaChapter(nextCountry),
+        }
+      })
     }
   }
 

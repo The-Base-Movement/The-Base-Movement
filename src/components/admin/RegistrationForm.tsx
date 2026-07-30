@@ -105,7 +105,14 @@ export default function RegistrationForm({
     children_count: 0,
   })
 
-  const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies } = useRegistrationData()
+  const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapterOptions } = useRegistrationData()
+
+  const getDiasporaChapter = useCallback(
+    (country: string) =>
+      dbChapterOptions.find((chapter) => chapter.country.trim().toLowerCase() === country.trim().toLowerCase())
+        ?.name || '',
+    [dbChapterOptions]
+  )
 
   const selectedRegion = dbRegions.find((region) => region.name === formData.region)
   const currentConstituencies = selectedRegion
@@ -124,9 +131,11 @@ export default function RegistrationForm({
       if (newPlatform === 'GHANA') {
         newData.country = 'Ghana'
         newData.countryCode = '+233'
+        newData.chapter = ''
       } else {
         newData.country = dbCountries[0] ?? ''
         newData.countryCode = dbCountryCodes[dbCountries[0]] || '+1'
+        newData.chapter = getDiasporaChapter(newData.country)
       }
       return newData
     })
@@ -146,8 +155,9 @@ export default function RegistrationForm({
       }
       const newData = { ...prev, [field]: val }
 
-      if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
-        newData.countryCode = dbCountryCodes[value]
+      if (field === 'country' && typeof value === 'string') {
+        if (dbCountryCodes[value]) newData.countryCode = dbCountryCodes[value]
+        if (platform === 'DIASPORA') newData.chapter = getDiasporaChapter(value)
       }
 
       // Cascade order: Region → Constituency → District (auto-filled) → Polling Station.
