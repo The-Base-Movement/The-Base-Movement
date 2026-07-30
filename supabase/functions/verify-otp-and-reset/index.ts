@@ -4,7 +4,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { hashOtp } from '../_shared/otp.ts'
-import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
+import { peekRateLimit, recordFailedAttempt } from '../_shared/persistent-rate-limit.ts'
 
 const FAILURE_DELAY_MS = 800
 
@@ -64,7 +64,7 @@ serve(async (req: Request) => {
 
     const normalizedPhone = normalizePhoneNumber(phone)
     const throttleKey = `verify-otp::${clientIp(req)}::${normalizedPhone}`
-    const rateCheck = await checkPersistentRateLimit(supabaseAdmin, throttleKey, 8, 900)
+    const rateCheck = await peekRateLimit(supabaseAdmin, throttleKey, 8, 900)
     if (!rateCheck.allowed) {
       return json(
         {
@@ -94,8 +94,8 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (consumeError || !consumedRecord) {
-      // Log failure to persistent rate limiter
-      await checkPersistentRateLimit(supabaseAdmin, throttleKey, 8, 900)
+      // Record exactly one failed attempt
+      await recordFailedAttempt(supabaseAdmin, throttleKey, 900)
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 

@@ -17,7 +17,11 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
-import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
+import {
+  checkPersistentRateLimit,
+  peekRateLimit,
+  recordFailedAttempt,
+} from '../_shared/persistent-rate-limit.ts'
 
 function phoneCandidates(raw: string): { exact: string[]; suffix: string | null } {
   const cleaned = raw.trim()
@@ -157,7 +161,7 @@ serve(async (req: Request) => {
     }
 
     const throttleKey = `phone-login::${loginIdentifier.toLowerCase()}`
-    const rateCheck = await checkPersistentRateLimit(admin, throttleKey, 10, 300)
+    const rateCheck = await peekRateLimit(admin, throttleKey, 10, 300)
     if (!rateCheck.allowed) {
       return json(
         {
@@ -173,7 +177,7 @@ serve(async (req: Request) => {
     const profile = await resolveProfile(admin, loginIdentifier)
 
     if (!profile) {
-      await checkPersistentRateLimit(admin, throttleKey, 10, 600)
+      await recordFailedAttempt(admin, throttleKey, 300)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)
     }
@@ -182,7 +186,7 @@ serve(async (req: Request) => {
       (profile as any).id
     )
     if (authUserError || (!authUser?.user?.email && !authUser?.user?.phone)) {
-      await checkPersistentRateLimit(admin, throttleKey, 10, 600)
+      await recordFailedAttempt(admin, throttleKey, 300)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)
     }
@@ -200,7 +204,7 @@ serve(async (req: Request) => {
     const { data, error } = await anon.auth.signInWithPassword(signInParams as any)
 
     if (error || !data.session) {
-      await checkPersistentRateLimit(admin, throttleKey, 10, 600)
+      await recordFailedAttempt(admin, throttleKey, 300)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)
     }
