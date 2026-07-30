@@ -1,12 +1,10 @@
 User-agent: *
-Disallow: /admin
-Disallow: /admin/
-Disallow: /admin-login
-Disallow: /command
-Disallow: /command/
-Disallow: /dashboard
-Disallow: /dashboard/
-Disallow: /login
 Allow: /
+
+# Private/authenticated areas (admin, command, dashboard, login) are intentionally
+# NOT listed here — robots.txt is public, so enumerating them just advertises the
+# internal surface. They sit behind authentication and are served with an
+# `X-Robots-Tag: noindex` header (see vercel.json), which keeps them out of search
+# without publishing a map of internal routes.
 
 Sitemap: https://www.thebasemovement.org.gh/sitemap.xml
