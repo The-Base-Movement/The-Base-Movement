@@ -44,8 +44,10 @@ export default defineConfig(({ mode }) => {
       emitVersionJson(),
       mode === 'production' &&
         ViteImageOptimizer({
+          logStats: false,
           exclude: [
             '**/flags/**',
+            '**/flag-icons/**',
             '**/branding/**',
             '**/priorities/**',
             '**/avatars/**',
