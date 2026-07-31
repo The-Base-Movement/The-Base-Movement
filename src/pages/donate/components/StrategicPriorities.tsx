@@ -190,16 +190,18 @@ export function StrategicPriorities({
                         >
                           strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%
                         </span>
-                        <span
-                          style={{
-                            fontSize: 14,
-                            fontWeight: 'var(--font-weight-semibold, 600)',
-                            color: 'hsl(var(--on-surface))',
-                            fontFamily: "'Public Sans', sans-serif",
-                          }}
-                        >
-                          ₵ {c.raisedAmount.toLocaleString()}
-                        </span>
+                        {!c.isDefault && (
+                          <span
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 'var(--font-weight-semibold, 600)',
+                              color: 'hsl(var(--on-surface))',
+                              fontFamily: "'Public Sans', sans-serif",
+                            }}
+                          >
+                            ₵ {c.raisedAmount.toLocaleString()}
+                          </span>
+                        )}
                       </div>
                       <div
                         style={{

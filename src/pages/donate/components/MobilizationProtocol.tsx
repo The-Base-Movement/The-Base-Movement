@@ -40,7 +40,6 @@ interface MobilizationProtocolProps {
   checkoutUrl: string | null
   onSubmit: (e: FormEvent) => void
   onReopenCheckout: () => void
-  onOpenAudit: () => void
 }
 
 const fieldLabelStyle = {
@@ -134,7 +133,6 @@ export function MobilizationProtocol({
   checkoutUrl,
   onSubmit,
   onReopenCheckout,
-  onOpenAudit,
 }: MobilizationProtocolProps) {
   const status = statusCopy(paymentState)
   const quickAmounts = ['50', '100', '250', '500']
@@ -204,18 +202,6 @@ export function MobilizationProtocol({
             checkout window. No copied payment instructions are required.
           </p>
         </div>
-
-        <button
-          type="button"
-          className="btn btn-outline btn-sm"
-          onClick={onOpenAudit}
-          style={{ flexShrink: 0 }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            receipt_long
-          </span>
-          View ledger
-        </button>
       </div>
 
       <div className="donate-steps" style={{ display: 'grid', gap: 8, marginBottom: 18 }}>

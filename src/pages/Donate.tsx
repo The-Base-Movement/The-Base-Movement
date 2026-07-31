@@ -21,7 +21,6 @@ import { DonateNotice } from './donate/components/DonateNotice'
 import { MobilizationProtocol } from './donate/components/MobilizationProtocol'
 import { VictoriesSection } from './donate/components/VictoriesSection'
 import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
-import { AuditModal } from './donate/components/AuditModal'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
@@ -37,11 +36,6 @@ export default function PublicDonate() {
   const [countries, setCountries] = useState<Country[]>([])
   const [campaigns, setCampaigns] = useState<DonationCampaign[]>([])
   const [pastCampaigns, setPastCampaigns] = useState<DonationCampaign[]>([])
-  const [globalStats, setGlobalStats] = useState({
-    totalRaised: 0,
-    totalMembers: 0,
-    totalDonors: 0,
-  })
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
@@ -66,10 +60,8 @@ export default function PublicDonate() {
       : donateMode === 'individual' && !donationFlags.individual
         ? 'group'
         : donateMode
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
 
   // Real data
-  const [publicHistory, setPublicHistory] = useState<DonationDetail[]>([])
   const [, setPersonalHistory] = useState<DonationDetail[]>([])
   const [, setSpendingHistory] = useState<MobilizationLedger[]>([])
 
@@ -122,25 +114,15 @@ export default function PublicDonate() {
       try {
         const { adminService } = await import('@/services/adminService')
         const { publicSiteService } = await import('@/services/publicSiteService')
-        const [
-          countryData,
-          activeCampaigns,
-          victories,
-          stats,
-          allHistory,
-          personal,
-          spending,
-          settings,
-        ] = await Promise.all([
-          adminService.getCountries(),
-          adminService.getStrategicPriorities(),
-          adminService.getVictories(),
-          adminService.getGlobalMobilizationStats(),
-          adminService.getPublicDonationHistory(),
-          user ? adminService.getPersonalDonationHistory(user.id) : Promise.resolve([]),
-          adminService.getMovementSpendingHistory(),
-          publicSiteService.getSiteSettings(),
-        ])
+        const [countryData, activeCampaigns, victories, personal, spending, settings] =
+          await Promise.all([
+            adminService.getCountries(),
+            adminService.getStrategicPriorities(),
+            adminService.getVictories(),
+            user ? adminService.getPersonalDonationHistory(user.id) : Promise.resolve([]),
+            adminService.getMovementSpendingHistory(),
+            publicSiteService.getSiteSettings(),
+          ])
 
         const rb = (v: unknown) =>
           v === undefined || v === null ? true : v === true || v === 'true'
@@ -154,8 +136,6 @@ export default function PublicDonate() {
         setCountries(countryData)
         setCampaigns(activeCampaigns)
         setPastCampaigns(victories)
-        setGlobalStats(stats)
-        setPublicHistory(allHistory)
         setPersonalHistory(personal)
         setSpendingHistory(spending)
       } catch (err) {
@@ -460,7 +440,6 @@ export default function PublicDonate() {
                 campaigns={campaigns}
                 onSubmit={handleSubmit}
                 onReopenCheckout={() => setIsPaymentModalOpen(true)}
-                onOpenAudit={() => setIsHistoryModalOpen(true)}
               />
             )}
 
@@ -473,19 +452,6 @@ export default function PublicDonate() {
           </section>
         )}
       </section>
-
-      <AuditModal
-        isOpen={isHistoryModalOpen}
-        onClose={() => setIsHistoryModalOpen(false)}
-        publicHistory={publicHistory}
-        contributionsCount={globalStats.totalDonors}
-        onContribute={() => {
-          setIsHistoryModalOpen(false)
-          document
-            .getElementById('payment-section')
-            ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }}
-      />
 
       <HubtelPaymentModal
         isOpen={isPaymentModalOpen}

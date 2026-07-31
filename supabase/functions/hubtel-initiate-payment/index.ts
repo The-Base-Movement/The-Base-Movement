@@ -299,7 +299,15 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!hubtelRes.ok) {
-      console.error('[HUBTEL] Initiation failed', hubtelRes.status, payload)
+      const diagnostics = {
+        hubtelStatus: hubtelRes.status,
+        wwwAuthenticate: hubtelRes.headers.get('www-authenticate'),
+        baseUrl,
+        hasApiId: Boolean(clientId),
+        hasApiKey: Boolean(clientSecret),
+        merchantAccountSuffix: accountNumber.slice(-4),
+      }
+      console.error('[HUBTEL] Initiation failed', diagnostics, payload)
       let errorDetail = ''
       if (
         Array.isArray(payload.data) &&
@@ -310,15 +318,23 @@ Deno.serve(async (req: Request) => {
         errorDetail = payload.message
       } else if (typeof payload.Message === 'string') {
         errorDetail = payload.Message
+      } else if (hubtelRes.status === 401) {
+        errorDetail =
+          'Hubtel authorization failed. Secure checkout is temporarily unavailable while payment gateway access is being verified.'
+      } else if (typeof payload.raw === 'string' && payload.raw.trim() === '') {
+        errorDetail = 'Hubtel returned an empty error response.'
       } else {
         errorDetail = JSON.stringify(payload)
       }
       return json(
         {
-          error: `Hubtel payment initiation failed (${hubtelRes.status}): ${errorDetail}`,
-          details: payload,
+          error:
+            hubtelRes.status === 401
+              ? errorDetail
+              : `Hubtel payment initiation failed (${hubtelRes.status}): ${errorDetail}`,
+          details: diagnostics,
         },
-        400
+        hubtelRes.status === 401 ? 502 : 400
       )
     }
 
