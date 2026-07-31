@@ -145,6 +145,7 @@ const ITProjects = lazy(() => import('./pages/admin/it/ITProjects'))
 const ITTodos = lazy(() => import('./pages/admin/it/ITTodos'))
 const ITSecurity = lazy(() => import('./pages/admin/it/ITSecurity'))
 const ITSystem = lazy(() => import('./pages/admin/it/ITSystem'))
+const ITSlaCalculator = lazy(() => import('./pages/admin/it/ITSlaCalculator'))
 const ITTickets = lazy(() => import('./pages/admin/it/ITTickets'))
 const ITLicenses = lazy(() => import('./pages/admin/it/ITLicenses'))
 const ITAssets = lazy(() => import('./pages/admin/it/ITAssets'))
@@ -387,6 +388,7 @@ export const routes: RouteObject[] = [
                     element: <ITSecurity />,
                   },
                   { path: '/admin/it-department/system', element: <ITSystem /> },
+                  { path: '/admin/it-department/sla-calculator', element: <ITSlaCalculator /> },
                   { path: '/admin/it-department/cron-monitor', element: <AdminCronMonitor /> },
                   { path: '/admin/it-department/audit-logs', element: <AdminAuditLogs /> },
                   { path: '/admin/it-department/licenses', element: <ITLicenses /> },
