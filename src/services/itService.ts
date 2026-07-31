@@ -63,10 +63,17 @@ export const itService = {
   },
 
   async getSiteUptimeSummary(): Promise<SiteUptimeSummary> {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
     const response = await fetch('/api/uptime-summary', {
       method: 'GET',
       cache: 'no-store',
-      headers: { accept: 'application/json' },
+      headers: {
+        accept: 'application/json',
+        ...(session?.access_token ? { authorization: `Bearer ${session.access_token}` } : {}),
+      },
     })
 
     const body = (await response.json().catch(() => null)) as
