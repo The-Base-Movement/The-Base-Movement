@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
+import { adminService } from '@/services/adminService'
 import { constituencyService, constituencySlug } from '@/services/constituencyService'
 import type { Constituency, ConstituencyLeader } from '@/types/admin'
 import { useAuth } from '@/context/AuthContext'
@@ -199,12 +200,8 @@ export default function ConstituencyHub() {
       // Check if user is constituency lead, committee member or admin
       const isLeader = c.leaderId === userId
       const isCommitteeMember = committeeData.some((m) => m.memberId === userId)
-      const { data: adminRow } = await supabase
-        .from('admins')
-        .select('role')
-        .eq('id', userId)
-        .maybeSingle()
-      const isAuthorizedOfficial = isLeader || isCommitteeMember || !!adminRow
+      const adminData = await adminService.getAdminData(userId)
+      const isAuthorizedOfficial = isLeader || isCommitteeMember || !!adminData
       setIsAuthorized(isAuthorizedOfficial)
 
       // Load member donations
