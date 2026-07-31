@@ -1,8 +1,21 @@
 const TWILIO_VERIFY_BASE_URL = 'https://verify.twilio.com/v2'
 
-function getTwilioConfig() {
+export function isTwilioVerifyConfigured(): boolean {
+  // @ts-expect-error: Deno global
   const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')?.trim() ?? ''
+  // @ts-expect-error: Deno global
   const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')?.trim() ?? ''
+  // @ts-expect-error: Deno global
+  const serviceSid = Deno.env.get('TWILIO_VERIFY_SERVICE_SID')?.trim() ?? ''
+  return !!(accountSid && authToken && serviceSid)
+}
+
+function getTwilioConfig() {
+  // @ts-expect-error: Deno global
+  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')?.trim() ?? ''
+  // @ts-expect-error: Deno global
+  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')?.trim() ?? ''
+  // @ts-expect-error: Deno global
   const serviceSid = Deno.env.get('TWILIO_VERIFY_SERVICE_SID')?.trim() ?? ''
 
   if (!accountSid || !authToken || !serviceSid) {
