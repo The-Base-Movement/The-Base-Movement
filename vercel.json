@@ -205,7 +205,7 @@
   "crons": [
     {
       "path": "/api/uptime-check",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }

@@ -34,7 +34,7 @@ export const config = { runtime: 'nodejs' }
 export default async function handler() {
   try {
     const intervalSeconds = Number.parseInt(
-      readServerEnv('UPTIME_MONITOR_INTERVAL_SECONDS') || '300',
+      readServerEnv('UPTIME_MONITOR_INTERVAL_SECONDS') || '86400',
       10
     )
     const supabase = getSupabaseAdminClient()
