@@ -54,6 +54,12 @@ const QUICK_LINKS = [
     label: 'Team Hierarchy',
     color: 'hsl(var(--primary))',
   },
+  {
+    to: '/admin/it-department/sla-calculator',
+    icon: 'monitoring',
+    label: 'SLA Calculator',
+    color: 'hsl(var(--accent))',
+  },
 ]
 
 export default function ITDashboard() {
