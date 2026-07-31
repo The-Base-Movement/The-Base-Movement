@@ -62,8 +62,8 @@ function relativeTime(date: Date): string {
 
 async function notifyAdmins(title: string, message: string, type: 'Info' | 'Alert' = 'Info') {
   try {
-    const { data: admins } = await supabase.from('admins').select('id')
-    if (!admins || admins.length === 0) return
+    const { data: admins, error } = await supabase.from('admins').select('id')
+    if (error || !admins || admins.length === 0) return
     const rows = admins.map((a: { id: string }) => ({ user_id: a.id, title, message, type }))
     await supabase.from('notifications').insert(rows)
   } catch {
