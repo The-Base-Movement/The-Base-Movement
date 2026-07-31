@@ -55,6 +55,12 @@ export default function ForgotPassword() {
       toast.error('Please enter your registered phone number.')
       return
     }
+    if (!phone.trim().startsWith('+')) {
+      toast.error(
+        'Please enter your number in international format starting with + (e.g. +32467814742 or +233541234567).'
+      )
+      return
+    }
     setIsLoading(true)
     try {
       const { data, error } = await supabase.functions.invoke('send-otp', {
@@ -206,9 +212,21 @@ export default function ForgotPassword() {
                     style={inputStyle}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="e.g. 054XXXXXXX or +233..."
+                    placeholder="+32467814742 or +233541234567"
                     required
                   />
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Enter your number in international format including the country code (e.g.
+                    Belgium: <strong>+32</strong>, Ghana: <strong>+233</strong>, UK:{' '}
+                    <strong>+44</strong>, US: <strong>+1</strong>).
+                  </p>
                 </div>
                 <button
                   type="submit"
