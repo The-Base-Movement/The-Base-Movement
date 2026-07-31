@@ -111,31 +111,6 @@ export default function Home() {
   )
   const { lowBandwidthMode } = usePerformance()
 
-  const organizationSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'PoliticalParty',
-    name: 'The Base Movement',
-    // Brand variants people actually search (from GSC) so Google maps these
-    // navigational queries to this entity. Only names that are ours to claim.
-    alternateName: ['The Base Movement Ghana', 'Base Movement Ghana', 'TBM'],
-    url: 'https://www.thebasemovement.org.gh',
-    logo: settings.logo_url,
-    slogan: 'Ghana First, Jobs for the Youth!',
-    areaServed: ['Ghana', 'Diaspora'],
-    sameAs: [
-      'https://www.facebook.com/profile.php?id=61579415816496',
-      'https://www.instagram.com/thebasemovementghana',
-      'https://x.com/thebasemovement',
-      'https://www.tiktok.com/@thebasemovementghana',
-      'https://www.youtube.com/@TheBaseMovementGhana',
-    ],
-    contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: 'general info',
-      url: 'https://www.thebasemovement.org.gh/contact',
-    },
-  }
-
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
@@ -161,7 +136,6 @@ export default function Home() {
       <SEO
         title="The Base Movement Ghana | Ghana First, Jobs for the Youth"
         canonical="/"
-        jsonLd={organizationSchema}
       />
 
       <HeroSection

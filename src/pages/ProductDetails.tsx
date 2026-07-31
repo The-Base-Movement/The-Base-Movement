@@ -147,27 +147,6 @@ export default function ProductDetails() {
   const isComingSoon = product.status === 'Coming Soon'
   const isWishlisted = product ? isInWishlist(product.id) : false
 
-  const productSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    image: product.image,
-    description: product.description,
-    brand: {
-      '@type': 'Brand',
-      name: 'The Base Movement',
-    },
-    offers: {
-      '@type': 'Offer',
-      url: `https://www.thebasemovement.org.gh/store/product/${product.slug}`,
-      priceCurrency: 'GHS',
-      price: product.price.replace(/[^0-9.]/g, ''),
-      availability:
-        product.status === 'In Stock'
-          ? 'https://schema.org/InStock'
-          : 'https://schema.org/OutOfStock',
-    },
-  }
 
   return (
     <div className="bg-off-white min-h-screen">
@@ -176,7 +155,6 @@ export default function ProductDetails() {
         description={product.description}
         ogImage={product.image || undefined}
         canonical={`/store/product/${product.slug}`}
-        jsonLd={productSchema}
       />
       <div className="page-container py-12">
         <Breadcrumbs currentLabel={product.name} />
