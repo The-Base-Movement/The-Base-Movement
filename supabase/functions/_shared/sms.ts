@@ -87,14 +87,85 @@ function getCallbackSecret(): string | null {
 }
 
 /**
- * Send one message to one or more recipients through MNotify's quick-SMS API.
+ * Send SMS via Twilio API.
+ */
+export async function sendTwilioSms(recipients: string[], message: string): Promise<SmsResult> {
+  // @ts-ignore: Deno global
+  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')
+  // @ts-ignore: Deno global
+  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')
+  // @ts-ignore: Deno global
+  const fromPhone = Deno.env.get('TWILIO_PHONE_NUMBER')
+  // @ts-ignore: Deno global
+  const messagingServiceSid = Deno.env.get('TWILIO_MESSAGING_SERVICE_SID')
+
+  if (!accountSid || !authToken || (!fromPhone && !messagingServiceSid)) {
+    return { ok: false, detail: 'Twilio credentials or sender ID missing' }
+  }
+
+  const authHeader = 'Basic ' + btoa(`${accountSid}:${authToken}`)
+  let successCount = 0
+  let lastErr = ''
+
+  for (const recipient of recipients) {
+    const phone = recipient.startsWith('+') ? recipient : `+${recipient}`
+    const params = new URLSearchParams()
+    params.append('To', phone)
+    params.append('Body', message)
+    if (messagingServiceSid) {
+      params.append('MessagingServiceSid', messagingServiceSid)
+    } else if (fromPhone) {
+      params.append('From', fromPhone)
+    }
+
+    try {
+      const res = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: authHeader,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: params.toString(),
+        }
+      )
+      const resText = await res.text()
+      if (res.ok) {
+        successCount++
+      } else {
+        lastErr = resText
+        console.error(`[TWILIO-SMS] Dispatch failed for ${phone}:`, resText)
+      }
+    } catch (err) {
+      lastErr = err instanceof Error ? err.message : String(err)
+      console.error(`[TWILIO-SMS] Error for ${phone}:`, lastErr)
+    }
+  }
+
+  if (successCount > 0) {
+    return { ok: true, detail: `Dispatched ${successCount}/${recipients.length} via Twilio` }
+  }
+  return { ok: false, detail: `Twilio dispatch failed: ${lastErr}` }
+}
+
+/**
+ * Send one message to one or more recipients through Twilio or MNotify API.
  * Includes rate-limiting (TPS) throttling, opt-out filtering, and compliance footers.
  */
 export async function sendSms(recipients: string[], message: string): Promise<SmsResult> {
   // @ts-ignore: Deno global
+  const twilioSid = Deno.env.get('TWILIO_ACCOUNT_SID')
+  // @ts-ignore: Deno global
   const apiKey: string | undefined = Deno.env.get('MNOTIFY_API_KEY')
   // @ts-ignore: Deno global
   const sender: string = Deno.env.get('MNOTIFY_SENDER_ID') ?? 'THEBASE'
+
+  if (twilioSid) {
+    const twilioResult = await sendTwilioSms(recipients, message)
+    if (twilioResult.ok) return twilioResult
+    console.warn('[SMS] Twilio send failed, falling back to MNotify:', twilioResult.detail)
+  }
 
   if (!apiKey) {
     console.warn('[SMS] MNOTIFY_API_KEY not set — skipping send to', recipients.length, 'numbers')
