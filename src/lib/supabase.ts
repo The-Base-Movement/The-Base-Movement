@@ -7,18 +7,16 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
+const isBrowser = typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined'
+const missingSupabaseEnvMessage =
+  '[SUPABASE] Missing Supabase env vars. Expected VITE_SUPABASE_* or SUPABASE_* in your env file.'
+
 const supabaseUrl =
   import.meta.env?.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
 const supabaseAnonKey =
   import.meta.env?.VITE_SUPABASE_ANON_KEY ||
   process.env.VITE_SUPABASE_ANON_KEY ||
   process.env.SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    '[SUPABASE] Missing Supabase env vars. Expected VITE_SUPABASE_* or SUPABASE_* in your env file.'
-  )
-}
 
 // Prevent Vite HMR from creating multiple GoTrueClient instances.
 // Each re-evaluation of this module during development would otherwise
@@ -33,8 +31,6 @@ declare global {
 // and is automatically cleared when the browser session ends.
 // Trade-off: users must re-login after closing the tab. If persistent login is
 // required, revert to the default (localStorage) storage.
-const isBrowser = typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined'
-
 const sessionStorageAdapter = {
   getItem: (key: string) => (isBrowser ? sessionStorage.getItem(key) : null),
   setItem: (key: string, value: string) =>
@@ -42,13 +38,24 @@ const sessionStorageAdapter = {
   removeItem: (key: string) => (isBrowser ? sessionStorage.removeItem(key) : undefined),
 }
 
-/**
- * Singleton client instance for interacting with Supabase Backend services.
- */
-export const supabase = (globalThis.__supabase_singleton__ ??= createClient(
-  supabaseUrl,
-  supabaseAnonKey,
-  {
+function createMissingSupabaseClient(): SupabaseClient {
+  return new Proxy(
+    {},
+    {
+      get() {
+        throw new Error(missingSupabaseEnvMessage)
+      },
+    }
+  ) as SupabaseClient
+}
+
+function createSupabaseSingleton(): SupabaseClient {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (isBrowser) throw new Error(missingSupabaseEnvMessage)
+    return createMissingSupabaseClient()
+  }
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       storage: sessionStorageAdapter,
       // Some browsers (Brave, Firefox private mode) return null from
@@ -68,5 +75,10 @@ export const supabase = (globalThis.__supabase_singleton__ ??= createClient(
         return fn()
       },
     },
-  }
-))
+  })
+}
+
+/**
+ * Singleton client instance for interacting with Supabase Backend services.
+ */
+export const supabase = (globalThis.__supabase_singleton__ ??= createSupabaseSingleton())
