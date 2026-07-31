@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 
-describe('graphify static HTML', () => {
-  it('loads vis-network locally instead of unpkg', () => {
-    const file = path.resolve(process.cwd(), 'public/graphify/graph.html')
-    const html = fs.readFileSync(file, 'utf8')
+describe('graphify static export location', () => {
+  it('keeps graphify out of the public production tree', () => {
+    const publicFile = path.resolve(process.cwd(), 'public/graphify/graph.html')
+    const docsFile = path.resolve(process.cwd(), 'docs/graphify-site/graph.html')
 
-    expect(html).not.toContain('https://unpkg.com/vis-network')
-    expect(html).toContain('./vis-network.min.js')
+    expect(fs.existsSync(publicFile)).toBe(false)
+    expect(fs.existsSync(docsFile)).toBe(true)
   })
 })

@@ -24,6 +24,11 @@ jobs:
           node-version: 22
           cache: 'npm'
 
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v1.x
+
       - name: Install dependencies
         run: npm ci
 
@@ -33,18 +38,9 @@ jobs:
       - name: Run typecheck
         run: npm run typecheck
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v1.x
-
-      - name: Deno check sensitive edge functions
+      - name: Deno check all edge functions
         run: |
-          deno check supabase/functions/send-otp/index.ts
-          deno check supabase/functions/verify-otp-and-reset/index.ts
-          deno check supabase/functions/hubtel-initiate-payment/index.ts
-          deno check supabase/functions/phone-login/index.ts
-          deno check supabase/functions/register-member/index.ts
+          find supabase/functions -name index.ts -print0 | xargs -0 -n1 deno check
 
       - name: Create stub .env for tests
         run: |
@@ -60,6 +56,9 @@ jobs:
       - name: Run unit tests
         run: npm run test:run
 
+      - name: Build app
+        run: npm run build
+
   supply-chain-audit:
     name: Supply Chain Audit
     runs-on: ubuntu-latest
@@ -67,8 +66,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Audit NPM dependencies
-        run: npm audit --audit-level=critical
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit production NPM dependencies
+        run: npm audit --omit=dev --audit-level=high
 
   secret-scanning:
     name: Secrets & Credentials Scan

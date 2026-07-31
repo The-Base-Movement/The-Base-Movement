@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { useITLayout } from './ITLayoutContext'
 
-const GRAPHIFY_URL = '/graphify/graph.html'
+const GRAPHIFY_DOCS_PATH = '/docs/graphify-site/graph.html'
 
 export default function ITBrain() {
   const { setCurrentLabel } = usePageLabel()
@@ -79,47 +79,27 @@ export default function ITBrain() {
       </div>
 
       <div className="panel" style={{ overflow: 'hidden' }}>
-        <div
-          className="ph"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}
-        >
-          <div>
-            <p style={{ margin: 0, fontSize: 13, fontWeight: 'var(--font-weight-medium, 500)' }}>
-              Project Brain
-            </p>
-            <p style={{ margin: '4px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-              Built from Graphify on 2026-07-09.
-            </p>
-          </div>
+        <div className="ph" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 'var(--font-weight-medium, 500)' }}>
+            Project Brain
+          </p>
+          <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+            Graphify was moved out of the main production site. Open the static export from docs or
+            publish it on a dedicated subdomain before linking it here again.
+          </p>
           <a
             className="btn btn-outline btn-sm"
-            href={GRAPHIFY_URL}
+            href={GRAPHIFY_DOCS_PATH}
             target="_blank"
             rel="noreferrer"
+            style={{ width: 'fit-content', marginTop: 6 }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               open_in_new
             </span>
-            Open
+            Open Docs Copy
           </a>
         </div>
-        <iframe
-          title="Graphify project brain"
-          src={GRAPHIFY_URL}
-          style={{
-            display: 'block',
-            width: '100%',
-            height: 'min(760px, calc(100vh - 280px))',
-            minHeight: 520,
-            border: 0,
-            background: '#fff',
-          }}
-        />
       </div>
     </div>
   )
