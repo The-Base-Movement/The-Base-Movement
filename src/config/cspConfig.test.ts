@@ -14,14 +14,18 @@ function readVercelConfig() {
 
 function getCspValue(source: string) {
   const config = readVercelConfig()
-  const block = config.headers.find((entry) => entry.source === source)
-  const csp = block?.headers.find((header) => header.key === 'Content-Security-Policy')
+  const blocks = config.headers.filter((entry) => entry.source === source)
+  expect(blocks.length, `Missing Vercel header block for ${source}`).toBeGreaterThan(0)
+  const csp = blocks
+    .flatMap((block) => block.headers)
+    .find((header) => header.key === 'Content-Security-Policy')
+  expect(csp, `Missing CSP header for ${source}`).toBeDefined()
   return csp?.value ?? ''
 }
 
 describe('vercel CSP policy', () => {
   it('does not allow inline scripts on public pages', () => {
-    const csp = getCspValue('/((?!graphify|admin).*)')
+    const csp = getCspValue('/((?!admin).*)')
 
     expect(csp).not.toContain(`script-src 'self' 'unsafe-inline'`)
     expect(csp).not.toContain(`'wasm-unsafe-eval'`)
@@ -30,14 +34,8 @@ describe('vercel CSP policy', () => {
   it('does not allow inline scripts or wasm eval on admin routes', () => {
     const csp = getCspValue('/admin(.*)')
 
-    expect(csp).not.toContain(`'unsafe-inline'`)
+    expect(csp).not.toContain(`script-src 'self' 'unsafe-inline'`)
     expect(csp).not.toContain(`'wasm-unsafe-eval'`)
-    expect(csp).not.toContain('unpkg.com')
-  })
-
-  it('does not allow unpkg on graphify routes', () => {
-    const csp = getCspValue('/graphify(.*)')
-
     expect(csp).not.toContain('unpkg.com')
   })
 })

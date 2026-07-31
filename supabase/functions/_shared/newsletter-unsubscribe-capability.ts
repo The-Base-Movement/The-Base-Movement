@@ -1,8 +1,7 @@
 const TOKEN_VERSION = 1
 const TOKEN_AUDIENCE = 'newsletter-unsubscribe'
 const DEFAULT_TTL_SECONDS = 60 * 60 * 24 * 365
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 let signingKeyCache: { secret: string; key: Promise<CryptoKey> } | null = null
 
 interface UnsubscribeCapabilityPayload {
@@ -31,8 +30,7 @@ function base64UrlDecode(input: string): Uint8Array {
 }
 
 function getCapabilitySecret(): string {
-  const secret =
-    Deno.env.get('NEWSLETTER_UNSUBSCRIBE_SECRET') ?? Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  const secret = Deno.env.get('NEWSLETTER_UNSUBSCRIBE_SECRET') ?? ''
 
   if (!secret) throw new Error('newsletter unsubscribe capability secret is not configured')
   return secret
