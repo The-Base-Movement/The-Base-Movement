@@ -51,10 +51,11 @@ tsconfig.*.tsbuildinfo
 # Supabase config
 supabase/config.toml
 supabase/.temp/
-supabase/**/*.sql
 
 # Docs — never commit (all subdirectories included)
-docs/
+docs/*
+!docs/graphify-site/
+!docs/graphify-site/**
 
 # Test files — kept locally only
 src/test/
@@ -82,4 +83,5 @@ __pycache__/
 
 # ML service tests (kept locally)
 ml-service/tests/
+
 
