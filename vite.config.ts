@@ -146,7 +146,6 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID),
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.SUPABASE_URL),
       'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.SUPABASE_ANON_KEY),
-      'import.meta.env.VITE_TINYMCE_API_KEY': JSON.stringify(env.TINYMCE_API_KEY),
       'import.meta.env.VITE_SENTRY_DSN': JSON.stringify(env.SENTRY_DSN),
       'import.meta.env.VITE_MAPBOX_TOKEN': JSON.stringify(env.MAPBOX_TOKEN),
       'import.meta.env.VITE_UMAMI_WEBSITE_ID': JSON.stringify(env.UMAMI_WEBSITE_ID),

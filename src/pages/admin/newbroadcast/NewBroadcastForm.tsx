@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Editor } from '@tinymce/tinymce-react'
+import { TINYMCE_LICENSE_KEY, TINYMCE_SCRIPT_SRC } from '@/lib/tinymce'
 import { toast } from 'sonner'
 import { fieldStyle, labelStyle, priorityBorderColor } from './utils'
 import type { Broadcast, Region } from '@/services/adminService'
@@ -269,7 +270,8 @@ export function NewBroadcastForm({
             <Editor
               key={isDark ? 'dark' : 'light'}
               aria-labelledby="label-broadcast-message"
-              apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+              tinymceScriptSrc={TINYMCE_SCRIPT_SRC}
+              licenseKey={TINYMCE_LICENSE_KEY}
               onInit={(_, editor) => (editorRef.current = editor)}
               initialValue={newBroadcast.content}
               init={{

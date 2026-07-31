@@ -39,6 +39,7 @@ dist-ssr
 
 # Build analysis
 stats.html
+public/tinymce/
 
 .worktrees/
 # Build artifacts
