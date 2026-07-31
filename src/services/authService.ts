@@ -307,4 +307,29 @@ class AuthService {
   }
 }
 
-export const authService = AuthService.getInstance()
+function createServerAuthService(): AuthService {
+  const unsupported = async () => {
+    throw new Error('Auth service is unavailable during server-side rendering.')
+  }
+
+  return {
+    login: unsupported,
+    signInWithGoogle: unsupported,
+    signUp: unsupported,
+    logout: async () => {},
+    getToken: () => null,
+    isAuthenticated: () => false,
+    getUser: () => null,
+    updatePassword: unsupported,
+    updateProfile: unsupported,
+    listMfaFactors: async () => [],
+    challengeAndVerifyMfa: unsupported,
+    listAllMfaFactors: async () => [],
+    enrollMfa: unsupported,
+    unenrollMfa: unsupported,
+    deactivateAccount: unsupported,
+  } as unknown as AuthService
+}
+
+export const authService =
+  typeof window === 'undefined' ? createServerAuthService() : AuthService.getInstance()
