@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { constituencyService } from '@/services/constituencyService'
+import { adminService } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import type { Constituency, ConstituencyActivity, Member, ConstituencyLeader } from '@/types/admin'
 import SEO from '@/components/SEO'
@@ -49,8 +50,8 @@ export default function ConstituencyDetails() {
   useEffect(() => {
     const checkAdmin = async () => {
       if (!authUserId) return
-      const { data } = await supabase.from('admins').select('id').eq('id', authUserId).maybeSingle()
-      if (data) setIsAdmin(true)
+      const adminData = await adminService.getAdminData(authUserId)
+      if (adminData) setIsAdmin(true)
     }
     checkAdmin()
   }, [authUserId])

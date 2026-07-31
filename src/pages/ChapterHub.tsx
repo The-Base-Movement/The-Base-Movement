@@ -219,11 +219,7 @@ export default function ChapterHub() {
       const isOfficialByName = !!ledRow
 
       // Admin check
-      const { data: adminData } = await supabase
-        .from('admins')
-        .select('id')
-        .eq('id', userId)
-        .maybeSingle()
+      const adminData = await adminService.getAdminData(userId)
       const isAdmin = !!adminData
 
       const isAuthorizedOfficial = isLeader || isLeaderByName || isOfficialByName || isAdmin
