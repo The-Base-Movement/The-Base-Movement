@@ -164,6 +164,10 @@ const SECTIONS = [
               'Sentry (sentry.io)',
               'Error monitoring. Stack traces and browser metadata may be captured. No deliberate PII is sent.',
             ],
+            [
+              'Mapbox Inc.',
+              'Interactive maps, map tiles and geolocation visualisation. Requests may disclose IP address, device information and approximate location to Mapbox.',
+            ],
             ['Resend / Mail provider', 'Transactional and newsletter email delivery.'],
           ].map(([name, desc]) => (
             <li key={name}>
