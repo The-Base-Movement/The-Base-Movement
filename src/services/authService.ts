@@ -5,7 +5,6 @@
 
 import { supabase } from '@/lib/supabase'
 import type { Session, User, AuthResponse } from '@supabase/supabase-js'
-import { deviceTrackingService } from './deviceTrackingService'
 import { userActivityService } from './userActivityService'
 import { sessionStore } from '@/lib/sessionStore'
 
@@ -184,6 +183,7 @@ class AuthService {
     const uid = this.currentSession?.user?.id
     if (uid) {
       try {
+        const { deviceTrackingService } = await import('./deviceTrackingService')
         await deviceTrackingService.logoutDevice()
       } catch (err) {
         console.warn('[auth] failed to log admin device logout:', err)
