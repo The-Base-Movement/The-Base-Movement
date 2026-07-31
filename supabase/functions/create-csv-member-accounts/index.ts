@@ -5,12 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { csvImportWelcomeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
 import { sendEmail } from '../_shared/email.ts'
-import {
-  canManageMembers,
-  json,
-  requireAuthorizedAdmin,
-  getSenderEmail,
-} from '../_shared/admin-auth.ts'
+import { canManageMembers, requireAuthorizedAdmin, getSenderEmail } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,7 +21,7 @@ function generateTempPassword(length = 10): string {
 
 function normalizePhoneNumber(raw: string): string {
   const cleaned = (raw ?? '').trim()
-  if (!cleaned) return '' // email-only accounts (e.g. admin/recovery) have no phone
+  if (!cleaned) return ''
   if (cleaned.startsWith('+')) {
     return cleaned
   }
@@ -38,20 +33,23 @@ function normalizePhoneNumber(raw: string): string {
 }
 
 serve(async (req: Request) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed.' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405,
+    })
+  }
+
   try {
-    // @ts-ignore: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-ignore: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Verify admin has can_manage_members permission
     const authz = await requireAuthorizedAdmin(req, supabaseAdmin, canManageMembers)
     if (!authz.ok) {
       return new Response(await authz.response.text(), {
@@ -78,7 +76,6 @@ serve(async (req: Request) => {
       const tempPassword = generateTempPassword()
 
       try {
-        // 1. A member must have an email or a phone number.
         if (!member.email && !normalizedPhone) {
           failedUsers.push({ reg_no: member.reg_no, reason: 'No email or phone provided.' })
           continue
@@ -119,7 +116,6 @@ serve(async (req: Request) => {
           throw new Error('User creation returned empty ID.')
         }
 
-        // 2. Update the public.users table to map primary key id to auth user ID
         const { error: dbError } = await supabaseAdmin
           .from('users')
           .update({
@@ -134,7 +130,6 @@ serve(async (req: Request) => {
             `[CSV-IMPORT] Failed to update public.users record for ${member.reg_no}:`,
             dbError
           )
-          // Attempt to roll back auth user if profile linking fails to prevent orphaned accounts
           await supabaseAdmin.auth.admin.deleteUser(newUserId)
           failedUsers.push({
             reg_no: member.reg_no,
@@ -143,7 +138,6 @@ serve(async (req: Request) => {
           continue
         }
 
-        // 3. Deliver credentials — email if the member has one, else SMS.
         if (member.email) {
           try {
             const html = csvImportWelcomeEmail({
@@ -171,9 +165,7 @@ serve(async (req: Request) => {
             `Welcome to The Base Movement, ${member.name}!\n\nYour login credentials:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}\n\nLogin at www.thebasemovement.org.gh/login and change your password.\n- The Base`
           )
           if (!sms.ok) {
-            console.warn(
-              `[CSV-IMPORT] SMS failed for ${member.reg_no} (${sms.detail}). Generated credentials for ${member.name}:\nPhone: ${normalizedPhone}\nTemp Password: ${tempPassword}`
-            )
+            console.warn(`[CSV-IMPORT] SMS failed for ${member.reg_no} (${sms.detail}).`)
           }
         } else {
           console.warn(
@@ -181,7 +173,7 @@ serve(async (req: Request) => {
           )
         }
 
-        createdUsers.push({ reg_no: member.reg_no, phone: normalizedPhone, tempPassword })
+        createdUsers.push({ reg_no: member.reg_no, phone: normalizedPhone })
       } catch (err: unknown) {
         const errMsg = err instanceof Error ? err.message : String(err)
         console.error(`[CSV-IMPORT-ROW-ERROR] Failed for ${member.reg_no}:`, errMsg)
@@ -198,7 +190,6 @@ serve(async (req: Request) => {
         createdUsers: createdUsers.map((u) => ({
           reg_no: u.reg_no,
           phone: u.phone,
-          tempPassword: u.tempPassword,
         })),
         skippedUsers,
         failedUsers,
