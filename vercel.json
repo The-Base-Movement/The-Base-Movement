@@ -201,5 +201,11 @@
       "source": "/((?!assets|graphify|\\.).*)",
       "destination": "/index.html"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/uptime-check",
+      "schedule": "*/5 * * * *"
+    }
   ]
 }
