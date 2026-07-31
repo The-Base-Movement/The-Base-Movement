@@ -7,7 +7,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
-import type { PasswordResetRecord } from '@/services/adminService'
+import type { PasswordRecoveryRequest, PasswordResetRecord } from '@/services/adminService'
+import { toast } from 'sonner'
 
 // Helper function to format ISO timestamps into British standard format
 function formatDateTime(iso: string) {
@@ -41,19 +42,47 @@ export default function PasswordResets() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<StatusFilter>('all')
   const [search, setSearch] = useState('')
+  const [recoveryRequests, setRecoveryRequests] = useState<PasswordRecoveryRequest[]>([])
+  const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({})
+  const [reviewingId, setReviewingId] = useState<string | null>(null)
 
   // Load OTP recovery records from administrative services
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await adminService.getPasswordResets()
+      const [data, requests] = await Promise.all([
+        adminService.getPasswordResets(),
+        adminService.getPasswordRecoveryRequests(),
+      ])
       setRecords(data)
+      setRecoveryRequests(requests)
     } catch {
       // RLS may block non-admin users; fail silently
     } finally {
       setLoading(false)
     }
   }, [])
+
+  const reviewRecoveryRequest = async (
+    request: PasswordRecoveryRequest,
+    decision: 'approve' | 'reject'
+  ) => {
+    setReviewingId(request.id)
+    try {
+      const notes = reviewNotes[request.id] ?? ''
+      if (decision === 'approve') {
+        await adminService.approvePasswordRecoveryRequest(request.id, notes)
+      } else {
+        await adminService.rejectPasswordRecoveryRequest(request.id, notes)
+      }
+      toast.success(`Recovery request ${decision === 'approve' ? 'approved' : 'rejected'}.`)
+      await load()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to review recovery request.')
+    } finally {
+      setReviewingId(null)
+    }
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -362,6 +391,188 @@ export default function PasswordResets() {
             }}
           >
             Showing {filtered.length} of {total} requests · Phone numbers are masked for privacy
+          </div>
+        )}
+      </div>
+      <div className="panel" style={{ padding: 0, overflow: 'hidden', marginTop: 24 }}>
+        <div
+          style={{
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            flexWrap: 'wrap',
+            borderBottom: '1px solid hsl(var(--border))',
+          }}
+        >
+          <div>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 15,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Manual Recovery Queue
+            </h2>
+            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+              Review fallback requests from members who could not use SMS recovery.
+            </p>
+          </div>
+          <span className="pill pill-warn">
+            {recoveryRequests.filter((r) => r.status === 'pending').length} pending
+          </span>
+        </div>
+        {loading ? (
+          <div
+            style={{
+              padding: '32px 20px',
+              textAlign: 'center',
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 14,
+            }}
+          >
+            Loading recovery requests…
+          </div>
+        ) : recoveryRequests.length === 0 ? (
+          <div
+            style={{
+              padding: '32px 20px',
+              textAlign: 'center',
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 14,
+            }}
+          >
+            No manual recovery requests found
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: 'hsl(var(--container-low))' }}>
+                  {['Full Name', 'Old Number', 'Submitted', 'Status', 'Review'].map((h) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '10px 16px',
+                        textAlign: 'left',
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: 'hsl(var(--on-surface-muted))',
+                        borderBottom: '1px solid hsl(var(--border))',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {recoveryRequests.map((request, i) => {
+                  const pendingRequest = request.status === 'pending'
+                  const busy = reviewingId === request.id
+                  return (
+                    <tr
+                      key={request.id}
+                      style={{
+                        borderBottom:
+                          i < recoveryRequests.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {request.full_name}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          color: 'hsl(var(--on-surface-muted))',
+                          minWidth: 180,
+                        }}
+                      >
+                        {maskPhone(request.old_phone)}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          color: 'hsl(var(--on-surface-muted))',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {formatDateTime(request.submitted_at)}
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span
+                          className={`pill ${request.status === 'approved' ? 'pill-ok' : request.status === 'rejected' ? 'pill-err' : 'pill-warn'}`}
+                        >
+                          {request.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: '10px 16px', minWidth: 250 }}>
+                        {pendingRequest ? (
+                          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                            <textarea
+                              aria-label={`Review notes for ${request.full_name}`}
+                              placeholder="Optional notes"
+                              value={reviewNotes[request.id] ?? ''}
+                              onChange={(e) =>
+                                setReviewNotes((current) => ({
+                                  ...current,
+                                  [request.id]: e.target.value,
+                                }))
+                              }
+                              rows={2}
+                              disabled={busy}
+                              style={{
+                                width: 150,
+                                resize: 'vertical',
+                                padding: '6px 8px',
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: 'var(--radius-sm)',
+                                fontSize: 12,
+                                color: 'hsl(var(--on-surface))',
+                                background: 'hsl(var(--background))',
+                                fontFamily: "'Public Sans', sans-serif",
+                              }}
+                            />
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => reviewRecoveryRequest(request, 'approve')}
+                                disabled={busy}
+                              >
+                                {busy ? '…' : 'Approve'}
+                              </button>
+                              <button
+                                className="btn btn-outline btn-sm"
+                                onClick={() => reviewRecoveryRequest(request, 'reject')}
+                                disabled={busy}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <span style={{ color: 'hsl(var(--on-surface-muted))' }}>
+                            {request.review_notes || 'Reviewed'}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

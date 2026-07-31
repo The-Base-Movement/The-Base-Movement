@@ -3,9 +3,10 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { hashOtp } from '../_shared/otp.ts'
-import { sendSms } from '../_shared/sms.ts'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
+import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
+import { startTwilioVerify } from '../_shared/twilio-verify.ts'
 
 const OTP_WINDOW_MS = 10 * 60 * 1000
 const OTP_COOLDOWN_MS = 60 * 1000
@@ -20,17 +21,6 @@ function clientIp(req: Request) {
   )
 }
 
-function normalizePhoneNumber(raw: string): string {
-  const cleaned = raw.trim()
-  if (cleaned.startsWith('+')) {
-    return cleaned
-  }
-  const digits = cleaned.replace(/\D/g, '')
-  if (digits.startsWith('233')) return `+${digits}`
-  if (digits.startsWith('0')) return `+233${digits.slice(1)}`
-  return `+233${digits}`
-}
-
 serve(async (req: Request) => {
   const cors = getCorsHeaders(req)
 
@@ -41,28 +31,23 @@ serve(async (req: Request) => {
     })
   }
 
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') return handleCorsPreflight(req)
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)
   }
 
   try {
-    // @ts-ignore: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-ignore: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
-
-    const { phone } = await req.json()
-    if (!phone) {
-      return json({ error: 'Phone number is required.' }, 400)
-    }
-
     const otpSecret = Deno.env.get('OTP_HMAC_SECRET')
     if (!otpSecret) {
       throw new Error('OTP_HMAC_SECRET environment variable is missing. Failing closed.')
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+    const { phone } = await req.json()
+    if (!phone) {
+      return json({ error: 'Phone number is required.' }, 400)
     }
 
     const ip = clientIp(req)
@@ -74,8 +59,7 @@ serve(async (req: Request) => {
       )
     }
 
-    const normalizedPhone = normalizePhoneNumber(phone)
-
+    const normalizedPhone = normalizeRecoveryPhone(phone)
     const recentCutoff = new Date(Date.now() - OTP_WINDOW_MS).toISOString()
     const {
       data: recentOtps,
@@ -109,7 +93,6 @@ serve(async (req: Request) => {
       return json({ error: 'Too many reset requests. Please try again later.' }, 429)
     }
 
-    // 1. Verify user profile exists in database
     const { data: user, error: userError } = await supabaseAdmin
       .from('users')
       .select('id, full_name')
@@ -127,33 +110,17 @@ serve(async (req: Request) => {
       )
     }
 
-    // 2. Generate a secure 6-digit OTP code & HMAC hash it for storage
-    const buf = crypto.getRandomValues(new Uint32Array(1))
-    const rawOtp = String((buf[0] % 900000) + 100000)
-    const hashedOtp = await hashOtp(rawOtp, otpSecret)
+    await startTwilioVerify(normalizedPhone)
 
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes from now
-
-    // 3. Store the HMAC-hashed OTP securely (raw OTP is NEVER saved)
+    const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
     const { error: otpError } = await supabaseAdmin.from('password_reset_otps').insert({
       phone: normalizedPhone,
-      otp: hashedOtp,
+      otp: hashedAuditToken,
       expires_at: expiresAt,
     })
-
     if (otpError) {
-      throw new Error(`Failed to store OTP: ${otpError.message}`)
-    }
-
-    // 4. Send SMS via MNotify with raw OTP (never stored)
-    const sms = await sendSms(
-      [normalizedPhone],
-      `Your The Base Movement verification OTP code is: ${rawOtp}. Valid for 10 minutes.`
-    )
-    if (!sms.ok) {
-      console.warn(
-        `[OTP-DEBUG] SMS dispatch failed (${sms.detail}) for ${user.full_name} (${normalizedPhone})`
-      )
+      console.warn(`[SEND-OTP] Failed to write audit row: ${otpError.message}`)
     }
 
     return json(

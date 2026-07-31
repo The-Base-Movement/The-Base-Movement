@@ -3,21 +3,11 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
-import { hashOtp } from '../_shared/otp.ts'
 import { peekRateLimit, recordFailedAttempt } from '../_shared/persistent-rate-limit.ts'
+import { checkTwilioVerify } from '../_shared/twilio-verify.ts'
+import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 
 const FAILURE_DELAY_MS = 800
-
-function normalizePhoneNumber(raw: string): string {
-  const cleaned = raw.trim()
-  if (cleaned.startsWith('+')) {
-    return cleaned
-  }
-  const digits = cleaned.replace(/\D/g, '')
-  if (digits.startsWith('233')) return `+${digits}`
-  if (digits.startsWith('0')) return `+233${digits.slice(1)}`
-  return `+233${digits}`
-}
 
 function clientIp(req: Request) {
   return (
@@ -42,7 +32,6 @@ serve(async (req: Request) => {
     return json(body, status)
   }
 
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') return handleCorsPreflight(req)
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)
@@ -51,7 +40,6 @@ serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
     const { phone, otp, newPassword } = await req.json()
@@ -62,7 +50,7 @@ serve(async (req: Request) => {
       return json({ error: 'Password must be at least 8 characters long.' }, 400)
     }
 
-    const normalizedPhone = normalizePhoneNumber(phone)
+    const normalizedPhone = normalizeRecoveryPhone(phone)
     const throttleKey = `verify-otp::${clientIp(req)}::${normalizedPhone}`
     const rateCheck = await peekRateLimit(supabaseAdmin, throttleKey, 8, 900)
     if (!rateCheck.allowed) {
@@ -74,34 +62,12 @@ serve(async (req: Request) => {
       )
     }
 
-    // 1. Compute HMAC hash of incoming raw OTP using dedicated OTP_HMAC_SECRET (fail closed)
-    const otpSecret = Deno.env.get('OTP_HMAC_SECRET')
-    if (!otpSecret)
-      throw new Error('OTP_HMAC_SECRET environment variable is missing. Failing closed.')
-    const hashedOtp = await hashOtp(String(otp).trim(), otpSecret)
-
-    // Atomically mark the OTP used in a single conditional UPDATE...RETURNING
-    // This prevents double-use under concurrent requests
-    const now = new Date().toISOString()
-    const { data: consumedRecord, error: consumeError } = await supabaseAdmin
-      .from('password_reset_otps')
-      .update({ used: true })
-      .eq('phone', normalizedPhone)
-      .eq('otp', hashedOtp)
-      .eq('used', false)
-      .gt('expires_at', now)
-      .select('id, expires_at')
-      .maybeSingle()
-
-    if (consumeError || !consumedRecord) {
-      // Record exactly one failed attempt
+    const approved = await checkTwilioVerify(normalizedPhone, String(otp).trim())
+    if (!approved) {
       await recordFailedAttempt(supabaseAdmin, throttleKey, 900)
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
-    const otpRecord = consumedRecord
-
-    // 3. Resolve the member profile mapped by phone number
     const { data: user, error: userError } = await supabaseAdmin
       .from('users')
       .select('id, email, full_name, registration_number')
@@ -112,7 +78,6 @@ serve(async (req: Request) => {
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
-    // 4. Update an existing account, or activate a legacy/imported profile on first reset.
     let authUserId = user.id
     const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(authUserId, {
       password: newPassword,
@@ -120,8 +85,6 @@ serve(async (req: Request) => {
     })
 
     if (authError) {
-      // A weak/invalid password is user-fixable — surface it as a clear 400
-      // instead of an opaque 500. Supabase returns HTTP 422 / code 'weak_password'.
       const authCode = (authError as { code?: string }).code
       if (authError.status === 422 || authCode === 'weak_password') {
         return delayedJson(
@@ -148,7 +111,7 @@ serve(async (req: Request) => {
           reg_no: user.registration_number,
           must_change_password: false,
         },
-      } as any)
+      } as never)
       if (createError || !created.user) {
         throw new Error(
           `Auth account activation failed: ${createError?.message || 'No user returned'}`
@@ -158,14 +121,31 @@ serve(async (req: Request) => {
       authUserId = created.user.id
     }
 
-    // 5. Consume the OTP only after the password reset has succeeded.
     const { error: profileError } = await supabaseAdmin
       .from('users')
       .update({ must_change_password: false })
       .eq('id', authUserId)
     if (profileError) throw new Error(`Profile update failed: ${profileError.message}`)
 
-    // OTP was atomically consumed in the UPDATE...RETURNING above; no second update needed.
+    const { data: latestAudit } = await supabaseAdmin
+      .from('password_reset_otps')
+      .select('id')
+      .eq('phone', normalizedPhone)
+      .eq('used', false)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (latestAudit?.id) {
+      const { error: auditError } = await supabaseAdmin
+        .from('password_reset_otps')
+        .update({ used: true })
+        .eq('id', latestAudit.id)
+      if (auditError) {
+        console.warn(`[VERIFY-OTP] Failed to update audit row: ${auditError.message}`)
+      }
+    }
+
+    // Supabase terminates refreshable sessions when a user changes their password.
     return json({ success: true, message: 'Your password has been successfully reset.' }, 200)
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
