@@ -4,8 +4,9 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { peekRateLimit, recordFailedAttempt } from '../_shared/persistent-rate-limit.ts'
-import { checkTwilioVerify } from '../_shared/twilio-verify.ts'
+import { isTwilioVerifyConfigured, checkTwilioVerify } from '../_shared/twilio-verify.ts'
 import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
+import { hashOtp } from '../_shared/otp.ts'
 
 const FAILURE_DELAY_MS = 800
 
@@ -40,6 +41,7 @@ serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const otpSecret = Deno.env.get('OTP_HMAC_SECRET') || 'thebase-otp-secret-key-2026'
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
     const { phone, otp, newPassword } = await req.json()
@@ -62,7 +64,35 @@ serve(async (req: Request) => {
       )
     }
 
-    const approved = await checkTwilioVerify(normalizedPhone, String(otp).trim())
+    let approved = false
+
+    if (isTwilioVerifyConfigured()) {
+      try {
+        approved = await checkTwilioVerify(normalizedPhone, String(otp).trim())
+      } catch (tErr: unknown) {
+        console.warn(`[VERIFY-OTP] Twilio check failed:`, tErr)
+      }
+    }
+
+    if (!approved) {
+      // Fallback check against local password_reset_otps table
+      const hashedInputOtp = await hashOtp(String(otp).trim(), otpSecret)
+      const now = new Date().toISOString()
+
+      const { data: validOtp } = await supabaseAdmin
+        .from('password_reset_otps')
+        .select('id')
+        .eq('phone', normalizedPhone)
+        .eq('otp', hashedInputOtp)
+        .eq('used', false)
+        .gte('expires_at', now)
+        .maybeSingle()
+
+      if (validOtp) {
+        approved = true
+      }
+    }
+
     if (!approved) {
       await recordFailedAttempt(supabaseAdmin, throttleKey, 900)
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
@@ -145,7 +175,6 @@ serve(async (req: Request) => {
       }
     }
 
-    // Supabase terminates refreshable sessions when a user changes their password.
     return json({ success: true, message: 'Your password has been successfully reset.' }, 200)
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
