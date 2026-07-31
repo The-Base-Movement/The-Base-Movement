@@ -3,7 +3,6 @@
 //
 // Generates a recovery link using the Supabase Auth Admin API and sends it
 // via Resend using the user-provided API key.
-// Bypasses the broken built-in Supabase Auth email system.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { passwordResetEmail } from '../_shared/email-templates.ts'
@@ -30,53 +29,49 @@ Deno.serve(async (req: Request) => {
     const resendApiKey = Deno.env.get('RESEND_API_KEY') ?? ''
     const siteUrl = Deno.env.get('SITE_URL') ?? 'https://www.thebasemovement.org.gh'
 
-    if (!resendApiKey) {
-      return json({ error: 'RESEND_API_KEY secret is not set in Supabase.' }, 500)
-    }
-
     const { email } = await req.json()
-    if (!email) return json({ error: 'Email is required.' }, 400)
+    if (!email || !String(email).trim()) {
+      return json({ error: 'Email address is required.' }, 400)
+    }
 
     const admin = createClient(supabaseUrl, serviceKey)
+    const cleanEmail = String(email).trim()
 
     // Lookup user in public.users to get their name
-    const { data: profile, error: profileErr } = await admin
+    const { data: profile } = await admin
       .from('users')
       .select('full_name')
-      .ilike('email', email.trim())
+      .ilike('email', cleanEmail)
       .maybeSingle()
-
-    if (profileErr) {
-      console.error('[send-recovery-email] profile fetch error:', profileErr)
-    }
 
     const targetName = profile?.full_name || 'Compatriot'
 
     // Generate the recovery link server-side.
-    // If the user does not exist in auth.users, this will return an error.
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
       type: 'recovery',
-      email: email.trim(),
+      email: cleanEmail,
       options: { redirectTo: `${siteUrl}/reset-password` },
     })
 
     if (linkErr) {
       console.warn('[send-recovery-email] generateLink error:', linkErr.message)
-      // Return success to avoid email enumeration even if the user isn't registered
-      return json({ success: true, message: 'If the email exists, a reset link will be sent.' })
+      // Return success to prevent email enumeration
+      return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
     }
 
     if (!linkData?.properties) {
-      return json({ error: 'Failed to generate action properties.' }, 500)
+      return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
     }
 
     const properties = linkData.properties as Record<string, unknown>
     const emailOtp = properties.email_otp as string
+    const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(cleanEmail)}&token=${emailOtp}`
 
-    // Build the custom query link that handles pre-fetching scanner protection
-    const customLink = `${siteUrl}/reset-password?email=${encodeURIComponent(email.trim())}&token=${emailOtp}`
+    if (!resendApiKey) {
+      console.warn('[send-recovery-email] RESEND_API_KEY secret is not set in Supabase.')
+      return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
+    }
 
-    // Call Resend to send the password reset email
     const html = passwordResetEmail({
       name: targetName,
       resetLink: customLink,
@@ -91,7 +86,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         from: 'The Base Movement <noreply@thebasemovement.org.gh>',
-        to: [email.trim()],
+        to: [cleanEmail],
         subject: 'Reset your Base Movement password',
         html,
       }),
@@ -100,13 +95,12 @@ Deno.serve(async (req: Request) => {
     if (!res.ok) {
       const errText = await res.text()
       console.error('[send-recovery-email] Resend error:', res.status, errText)
-      return json({ error: `Failed to send email via Resend: ${errText}` }, 500)
     }
 
-    return json({ success: true, message: 'Recovery email sent successfully.' })
+    return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[send-recovery-email] ${msg}`)
-    return json({ error: msg }, 500)
+    return json({ error: msg }, 400)
   }
 })
