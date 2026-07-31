@@ -19,11 +19,11 @@ interface DonationRow {
   id: string
   created_at: string
   amount: number | string
-  payment_method: string
+  payment_method: string | null
   status: 'Pending' | 'Verified' | 'Rejected'
-  full_name: string
-  phone: string
-  country: string
+  full_name: string | null
+  phone: string | null
+  country: string | null
   guest_email?: string | null
   receipt_url?: string | null
   campaign_id?: string | null
@@ -31,6 +31,26 @@ interface DonationRow {
   reference?: string | null
   donation_campaigns?: DonationCampaignJoin | null
   users?: DonationUserJoin | null
+}
+
+export function mapDonationRow(d: DonationRow): DonationDetail {
+  return {
+    id: d.id,
+    date: d.created_at,
+    amount: String(d.amount),
+    method: d.payment_method?.trim() || 'Unknown',
+    status: d.status,
+    reference: d.reference?.trim() || d.id.substring(0, 8).toUpperCase(),
+    campaignTitle: d.donation_campaigns?.title ?? undefined,
+    fullName: d.full_name?.trim() || 'Anonymous donor',
+    phone: d.phone?.trim() || '',
+    country: d.country?.trim() || 'Unknown',
+    guestEmail: d.guest_email ?? undefined,
+    receiptUrl: d.receipt_url ?? undefined,
+    campaignId: d.campaign_id ?? '',
+    memberId: d.member_id ?? undefined,
+    avatarUrl: d.users?.avatar_url ?? undefined,
+  }
 }
 
 export interface GroupDonationPortion {
@@ -114,39 +134,7 @@ class DonationService {
       return []
     }
 
-    interface DBDonation {
-      id: string
-      created_at: string
-      amount: number
-      payment_method: string
-      status: 'Pending' | 'Verified' | 'Rejected'
-      full_name: string
-      phone: string
-      country: string
-      guest_email: string | null
-      receipt_url: string
-      campaign_id: string
-      member_id: string
-      reference: string | null
-      donation_campaigns: { title: string }
-    }
-
-    return (data || []).map((d: DBDonation) => ({
-      id: d.id,
-      date: d.created_at,
-      amount: d.amount.toString(),
-      method: d.payment_method,
-      status: d.status,
-      reference: d.reference ?? d.id.substring(0, 8).toUpperCase(),
-      campaignTitle: d.donation_campaigns?.title,
-      fullName: d.full_name,
-      phone: d.phone,
-      country: d.country,
-      guestEmail: d.guest_email ?? undefined,
-      receiptUrl: d.receipt_url,
-      campaignId: d.campaign_id,
-      memberId: d.member_id,
-    }))
+    return (data || []).map((d) => mapDonationRow(d as DonationRow))
   }
 
   async getMobilizationLedger(limit: number = 20): Promise<
@@ -434,7 +422,7 @@ class DonationService {
       return []
     }
 
-    return (data || []).map((d) => this._mapDonation(d))
+    return (data || []).map((d) => mapDonationRow(d as DonationRow))
   }
 
   async getMemberDonationsById(userId: string): Promise<DonationDetail[]> {
@@ -449,27 +437,7 @@ class DonationService {
       return []
     }
 
-    return (data || []).map((d) => this._mapDonation(d))
-  }
-
-  private _mapDonation(d: DonationRow): DonationDetail {
-    return {
-      id: d.id,
-      date: d.created_at,
-      amount: String(d.amount),
-      method: d.payment_method,
-      status: d.status,
-      reference: d.reference ?? d.id.substring(0, 8).toUpperCase(),
-      campaignTitle: d.donation_campaigns?.title ?? undefined,
-      fullName: d.full_name,
-      phone: d.phone,
-      country: d.country,
-      guestEmail: d.guest_email ?? undefined,
-      receiptUrl: d.receipt_url ?? undefined,
-      campaignId: d.campaign_id ?? '',
-      memberId: d.member_id ?? undefined,
-      avatarUrl: d.users?.avatar_url ?? undefined,
-    }
+    return (data || []).map((d) => mapDonationRow(d as DonationRow))
   }
 
   subscribeToPublicDonations(callback: (donation: DonationDetail) => void): {
