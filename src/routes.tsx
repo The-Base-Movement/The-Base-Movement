@@ -73,6 +73,7 @@ const AdminChapters = lazy(() => import('./pages/admin/Chapters'))
 const AdminPolls = lazy(() => import('./pages/admin/Polls'))
 const AdminStore = lazy(() => import('./pages/admin/Store'))
 const AdminSettings = lazy(() => import('./pages/admin/Settings'))
+const AdminSEOManager = lazy(() => import('./pages/admin/SEOManager'))
 const AdminRedirects = lazy(() => import('./pages/admin/Redirects'))
 const AdminPlanManager = lazy(() => import('./pages/admin/PlanManager'))
 const AdminMemberVerification = lazy(() => import('./pages/admin/MemberVerification'))
@@ -343,6 +344,7 @@ export const routes: RouteObject[] = [
               { path: '/admin/polls', element: <AdminPolls /> },
               { path: '/admin/store', element: <AdminStore /> },
               { path: '/admin/settings', element: <AdminSettings /> },
+              { path: '/admin/seo', element: <AdminSEOManager /> },
               { path: '/admin/redirects', element: <AdminRedirects /> },
               { path: '/admin/plan-manager', element: <AdminPlanManager /> },
               { path: '/admin/regions', element: <AdminRegions /> },

@@ -151,8 +151,9 @@ export default function Register() {
 
   const getDiasporaChapter = useCallback(
     (country: string) =>
-      dbChapterOptions.find((chapter) => chapter.country.trim().toLowerCase() === country.trim().toLowerCase())
-        ?.name || '',
+      dbChapterOptions.find(
+        (chapter) => chapter.country.trim().toLowerCase() === country.trim().toLowerCase()
+      )?.name || '',
     [dbChapterOptions]
   )
 
