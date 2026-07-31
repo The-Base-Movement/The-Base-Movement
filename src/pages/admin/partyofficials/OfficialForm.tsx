@@ -12,6 +12,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Editor } from '@tinymce/tinymce-react'
+import { TINYMCE_LICENSE_KEY, TINYMCE_SCRIPT_SRC } from '@/lib/tinymce'
 import { toast } from 'sonner'
 import { contentService } from '@/services/contentService'
 import { partyOfficialsService } from '@/services/partyOfficialsService'
@@ -263,7 +264,8 @@ export default function OfficialForm() {
               <label style={labelSt}>Biography</label>
               <Editor
                 key={`${id ?? 'new'}-${isDark ? 'dark' : 'light'}`}
-                apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+                tinymceScriptSrc={TINYMCE_SCRIPT_SRC}
+                licenseKey={TINYMCE_LICENSE_KEY}
                 value={formData.bio ?? ''}
                 onEditorChange={(content) => set({ bio: content })}
                 init={{

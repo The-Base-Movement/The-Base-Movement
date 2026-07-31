@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
+import { TINYMCE_LICENSE_KEY, TINYMCE_SCRIPT_SRC } from '@/lib/tinymce'
 import type { AudienceFilter, AudienceType } from '@/services/newsletterService'
 import { newsletterService, formatRecipientCount } from '@/services/newsletterService'
 import { useIsDarkTheme } from '@/hooks/useIsDarkTheme'
@@ -439,7 +440,8 @@ export function ComposePanel({ isSending, onSend, onSchedule }: ComposePanelProp
             id="newsletter-compose-body"
             textareaName="newsletter-compose-body"
             key={isDark ? 'dark' : 'light'}
-            apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+            tinymceScriptSrc={TINYMCE_SCRIPT_SRC}
+            licenseKey={TINYMCE_LICENSE_KEY}
             onInit={(_, editor) => {
               editorRef.current = editor
             }}

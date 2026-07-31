@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
+import { TINYMCE_LICENSE_KEY, TINYMCE_SCRIPT_SRC } from '@/lib/tinymce'
 import type { BlogPost, Author } from '@/types/admin'
 import { MediaLibrary } from './MediaLibrary'
 import { IntelPanel } from './IntelPanel'
@@ -520,7 +521,8 @@ export function BlogEditorView({
                 <div style={{ minHeight: 500 }}>
                   <Editor
                     key={`${editingPost?.id ?? 'new'}-${isDark ? 'dark' : 'light'}`}
-                    apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+                    tinymceScriptSrc={TINYMCE_SCRIPT_SRC}
+                    licenseKey={TINYMCE_LICENSE_KEY}
                     onInit={(_, editor) => (editorRef.current = editor)}
                     initialValue={formData.content ?? ''}
                     init={{

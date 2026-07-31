@@ -22,6 +22,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "preinstall": "node scripts/check-npm-registry.mjs",
+    "postinstall": "node scripts/copy-tinymce-assets.mjs",
     "prepare": "husky",
     "security:registry": "node scripts/check-npm-registry.mjs",
     "typecheck": "tsc -b --noEmit",
@@ -107,6 +108,7 @@
     "swiper": "^12.1.4",
     "tailwind-merge": "^3.5.0",
     "tesseract.js": "^7.0.0",
+    "tinymce": "^8.8.2",
     "vaul": "^1.1.2",
     "zod": "^4.3.5"
   },
