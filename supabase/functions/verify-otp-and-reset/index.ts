@@ -52,7 +52,8 @@ serve(async (req: Request) => {
       return json({ error: 'Password must be at least 8 characters long.' }, 400)
     }
 
-    const normalizedPhone = normalizeRecoveryPhone(phone)
+    const normalizedPhone = normalizeRecoveryPhone(String(phone).trim())
+
     const throttleKey = `verify-otp::${clientIp(req)}::${normalizedPhone}`
     const rateCheck = await peekRateLimit(supabaseAdmin, throttleKey, 8, 900)
     if (!rateCheck.allowed) {

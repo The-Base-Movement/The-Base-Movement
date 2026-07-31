@@ -1,23 +1,16 @@
+/**
+ * Normalise a phone number for recovery lookups.
+ * Only E.164 international format (+CountryCode...) is accepted.
+ * Numbers starting with '+' are returned exactly as typed.
+ * Numbers without a leading '+' are rejected — callers should validate
+ * on the UI side before reaching this function, but we strip nothing here
+ * so the DB lookup simply finds no record and the ghost-success path fires.
+ */
 export function normalizeRecoveryPhone(raw: string): string {
   const cleaned = raw.trim()
   if (cleaned.startsWith('+')) return cleaned
-
-  const digits = cleaned.replace(/\D/g, '')
-
-  // Local Ghana 10-digit format starting with 0 (e.g., 054XXXXXXX)
-  if (digits.startsWith('0') && (digits.length === 10 || digits.length === 9)) {
-    return `+233${digits.slice(1)}`
-  }
-
-  // Local Ghana 9-digit format without leading 0 (e.g., 54XXXXXXX)
-  if (digits.length === 9 && !digits.startsWith('0')) {
-    return `+233${digits}`
-  }
-
-  // Full international number provided without '+' (e.g., 14155552671, 447911123456, 23354XXXXXXX)
-  if (digits.length >= 10) {
-    return `+${digits}`
-  }
-
-  return `+233${digits}`
+  // No country-code prefix supplied — return as-is; the DB lookup will miss
+  // and the function returns a ghost success, prompting the user to re-enter
+  // with the full international format.
+  return cleaned
 }

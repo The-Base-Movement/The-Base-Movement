@@ -33,9 +33,7 @@ serve(async (req: Request) => {
   }
 
   if (req.method === 'OPTIONS') return handleCorsPreflight(req)
-  if (req.method !== 'POST') {
-    return json({ error: 'Method not allowed' }, 405)
-  }
+  if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
@@ -44,11 +42,24 @@ serve(async (req: Request) => {
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
     const { phone } = await req.json()
-    if (!phone) {
-      return json({ error: 'Phone number is required.' }, 400)
+    if (!phone) return json({ error: 'Phone number is required.' }, 400)
+
+    const rawPhone = String(phone).trim()
+
+    // Enforce international format — must start with '+'
+    if (!rawPhone.startsWith('+')) {
+      return json(
+        {
+          error:
+            'Please enter your phone number in international format, e.g. +32467814742 or +233541234567.',
+        },
+        400
+      )
     }
 
+    const normalizedPhone = normalizeRecoveryPhone(rawPhone)
     const ip = clientIp(req)
+
     const rateCheck = await checkPersistentRateLimit(supabaseAdmin, `send-otp::${ip}`, 5, 600)
     if (!rateCheck.allowed) {
       return json(
@@ -57,7 +68,7 @@ serve(async (req: Request) => {
       )
     }
 
-    const normalizedPhone = normalizeRecoveryPhone(phone)
+    // OTP window / cooldown check
     const recentCutoff = new Date(Date.now() - OTP_WINDOW_MS).toISOString()
     const {
       data: recentOtps,
@@ -91,6 +102,7 @@ serve(async (req: Request) => {
       return json({ error: 'Too many reset requests. Please try again later.' }, 429)
     }
 
+    // Exact-match lookup — phone must be stored in E.164 format in the DB
     const { data: user, error: userError } = await supabaseAdmin
       .from('users')
       .select('id, full_name')
@@ -98,6 +110,7 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (userError || !user) {
+      // Ghost success — don't reveal whether the number exists
       return json(
         {
           success: true,
@@ -108,9 +121,13 @@ serve(async (req: Request) => {
       )
     }
 
+    // --- Dispatch OTP ---
+    let twilioSuccess = false
+
     if (isTwilioVerifyConfigured()) {
       try {
         await startTwilioVerify(normalizedPhone)
+        // Write audit row (OTP token managed by Twilio)
         const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
         await supabaseAdmin.from('password_reset_otps').insert({
@@ -118,13 +135,15 @@ serve(async (req: Request) => {
           otp: hashedAuditToken,
           expires_at: expiresAt,
         })
+        twilioSuccess = true
       } catch (tErr: unknown) {
         const msg = tErr instanceof Error ? tErr.message : String(tErr)
-        console.error(`[SEND-OTP] Twilio Verify failed: ${msg}`)
-        return json({ error: `Verification code dispatch failed: ${msg}` }, 400)
+        console.warn(`[SEND-OTP] Twilio Verify failed (falling back to SMS): ${msg}`)
       }
-    } else {
-      // Fallback: Generate local 6-digit OTP code & send via sendSms
+    }
+
+    if (!twilioSuccess) {
+      // Fallback: generate a local 6-digit OTP and send via SMS
       const buf = crypto.getRandomValues(new Uint32Array(1))
       const rawOtp = String((buf[0] % 900000) + 100000)
       const hashedOtp = await hashOtp(rawOtp, otpSecret)
@@ -145,7 +164,13 @@ serve(async (req: Request) => {
       )
       if (!smsResult.ok) {
         console.error(`[SEND-OTP] SMS dispatch failed: ${smsResult.detail}`)
-        return json({ error: `SMS delivery failed: ${smsResult.detail}` }, 400)
+        return json(
+          {
+            error:
+              'Failed to send verification code. Please try again or use email recovery.',
+          },
+          400
+        )
       }
     }
 
