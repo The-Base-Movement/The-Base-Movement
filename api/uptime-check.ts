@@ -37,7 +37,7 @@ function getMonitorTarget() {
 
 function isAuthorized(request: Request) {
   const cronSecret = readServerEnv('CRON_SECRET')
-  if (!cronSecret) return true
+  if (!cronSecret) return false
 
   const authorization = request.headers.get('authorization')
   return authorization === `Bearer ${cronSecret}`
@@ -46,6 +46,10 @@ function isAuthorized(request: Request) {
 export const config = { runtime: 'nodejs' }
 
 export default async function handler(request: Request) {
+  if (request.method !== 'GET') {
+    return json({ error: 'Method not allowed' }, { status: 405 })
+  }
+
   if (!isAuthorized(request)) {
     return json({ error: 'Unauthorized' }, { status: 401 })
   }

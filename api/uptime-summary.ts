@@ -20,37 +20,29 @@ export function resolveSupabaseSummaryCredentials(
   readEnv: (name: string) => string | undefined = readServerEnv
 ) {
   const url = readEnv('SUPABASE_URL') || readEnv('VITE_SUPABASE_URL')
-  const serviceKey = readEnv('SUPABASE_SERVICE_ROLE_KEY') || readEnv('SUPABASE_SERVICE_KEY')
   const anonKey = readEnv('SUPABASE_ANON_KEY') || readEnv('VITE_SUPABASE_ANON_KEY')
 
   if (!url) {
     throw new Error('Supabase URL is missing.')
   }
 
-  if (serviceKey) {
-    return { url, key: serviceKey, mode: 'service' as const }
+  if (!anonKey) {
+    throw new Error('Supabase anon credentials are missing.')
   }
 
-  if (anonKey) {
-    return { url, key: anonKey, mode: 'anon' as const }
-  }
-
-  throw new Error('Supabase summary credentials are missing.')
+  return { url, key: anonKey }
 }
 
 function getSupabaseSummaryClient(authorization: string | null) {
-  const credentials = resolveSupabaseSummaryCredentials()
-
-  if (credentials.mode === 'anon' && !authorization) {
+  if (!authorization) {
     throw new Error('Admin session token missing for uptime summary.')
   }
 
+  const credentials = resolveSupabaseSummaryCredentials()
+
   return createClient(credentials.url, credentials.key, {
     auth: { persistSession: false, autoRefreshToken: false },
-    global:
-      credentials.mode === 'anon' && authorization
-        ? { headers: { Authorization: authorization } }
-        : undefined,
+    global: { headers: { Authorization: authorization } },
   })
 }
 
@@ -58,6 +50,10 @@ export const config = { runtime: 'nodejs' }
 
 export default async function handler(request: Request) {
   try {
+    if (request.method !== 'GET') {
+      return json({ error: 'Method not allowed' }, { status: 405 })
+    }
+
     const intervalSeconds = Number.parseInt(
       readServerEnv('UPTIME_MONITOR_INTERVAL_SECONDS') || '86400',
       10
@@ -67,11 +63,11 @@ export default async function handler(request: Request) {
     const { data, error } = await supabase
       .from('site_uptime_checks')
       .select('checked_at, ok, status_code, latency_ms, error_message, target_url')
-      .order('checked_at', { ascending: true })
+      .order('checked_at', { ascending: false })
       .limit(20000)
 
     if (error) {
-      return json({ error: error.message }, { status: 500 })
+      return json({ error: 'Failed to load uptime summary.' }, { status: 500 })
     }
 
     const checks = (data ?? []).map((row) => ({
@@ -83,16 +79,20 @@ export default async function handler(request: Request) {
     }))
 
     const summary = summarizeUptimeChecks(checks, { intervalSeconds })
-    const targetUrl = data?.[data.length - 1]?.target_url ?? null
+    const targetUrl = data?.[0]?.target_url ?? null
 
     return json({
       ...summary,
       targetUrl,
     })
   } catch (error) {
-    return json(
-      { error: error instanceof Error ? error.message : 'Failed to load uptime summary.' },
-      { status: 500 }
-    )
+    if (
+      error instanceof Error &&
+      error.message === 'Admin session token missing for uptime summary.'
+    ) {
+      return json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    return json({ error: 'Failed to load uptime summary.' }, { status: 500 })
   }
 }

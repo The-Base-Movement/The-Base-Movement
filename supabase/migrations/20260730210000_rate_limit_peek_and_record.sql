@@ -3,7 +3,7 @@
 -- Fixes double-counting: gate check incremented, then failure incremented again.
 -- ============================================================================
 
--- 1. Read-only rate-limit check — does NOT increment the counter.
+-- 1. Read-only rate-limit check -- does NOT increment the counter.
 --    Returns the same shape as check_rate_limit so callers can gate on it.
 CREATE OR REPLACE FUNCTION public.peek_rate_limit(
   p_key text,
@@ -20,21 +20,30 @@ DECLARE
   v_rec public.rate_limits%ROWTYPE;
   v_retry_after integer := 0;
 BEGIN
+  IF char_length(coalesce(p_key, '')) = 0 OR char_length(p_key) > 255 THEN
+    RAISE EXCEPTION 'Invalid rate-limit key length';
+  END IF;
+
+  IF p_max_attempts < 1 OR p_max_attempts > 1000 THEN
+    RAISE EXCEPTION 'Invalid max attempts';
+  END IF;
+
+  IF p_window_seconds < 1 OR p_window_seconds > 86400 THEN
+    RAISE EXCEPTION 'Invalid rate-limit window';
+  END IF;
+
   SELECT * INTO v_rec
   FROM public.rate_limits
   WHERE key = p_key;
 
-  -- No row yet → definitely allowed
   IF NOT FOUND THEN
     RETURN jsonb_build_object('allowed', true, 'remaining', p_max_attempts, 'retry_after_sec', 0);
   END IF;
 
-  -- Window expired → effectively reset, allowed
   IF v_rec.expires_at <= v_now THEN
     RETURN jsonb_build_object('allowed', true, 'remaining', p_max_attempts, 'retry_after_sec', 0);
   END IF;
 
-  -- Window still active — check count
   IF v_rec.attempts >= p_max_attempts THEN
     v_retry_after := GREATEST(1, EXTRACT(EPOCH FROM (v_rec.expires_at - v_now))::integer);
     RETURN jsonb_build_object('allowed', false, 'remaining', 0, 'retry_after_sec', v_retry_after);
@@ -48,10 +57,10 @@ BEGIN
 END;
 $function$;
 
+REVOKE ALL ON FUNCTION public.peek_rate_limit(text, integer, integer) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.peek_rate_limit(text, integer, integer) TO service_role;
 
-
--- 2. Increment-only — records exactly one failed attempt.
+-- 2. Increment-only -- records exactly one failed attempt.
 --    Uses the same atomic UPSERT as check_rate_limit but is called
 --    only on confirmed failure, never as a gate check.
 CREATE OR REPLACE FUNCTION public.record_failed_attempt(
@@ -67,6 +76,14 @@ DECLARE
   v_now timestamp with time zone := now();
   v_expires_at timestamp with time zone := v_now + (p_window_seconds || ' seconds')::interval;
 BEGIN
+  IF char_length(coalesce(p_key, '')) = 0 OR char_length(p_key) > 255 THEN
+    RAISE EXCEPTION 'Invalid rate-limit key length';
+  END IF;
+
+  IF p_window_seconds < 1 OR p_window_seconds > 86400 THEN
+    RAISE EXCEPTION 'Invalid rate-limit window';
+  END IF;
+
   INSERT INTO public.rate_limits (key, attempts, window_start, expires_at)
   VALUES (p_key, 1, v_now, v_expires_at)
   ON CONFLICT (key) DO UPDATE
@@ -86,4 +103,5 @@ BEGIN
 END;
 $function$;
 
+REVOKE ALL ON FUNCTION public.record_failed_attempt(text, integer) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.record_failed_attempt(text, integer) TO service_role;
