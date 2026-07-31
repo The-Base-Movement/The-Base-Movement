@@ -13,6 +13,32 @@ export interface MessagingBalance {
   email_quota_available: boolean
 }
 
+export interface SiteUptimeCheckSample {
+  checkedAt: string
+  ok: boolean
+  statusCode: number | null
+  latencyMs: number | null
+  errorMessage?: string | null
+}
+
+export interface SiteUptimeSummary {
+  currentStatus: 'up' | 'down' | 'unknown'
+  currentStatusDurationSeconds: number
+  observedUptimePercentage: number | null
+  estimatedDowntimeSeconds: number
+  uptimeSeconds: number
+  totalObservedSeconds: number
+  totalChecks: number
+  successfulChecks: number
+  failedChecks: number
+  monitoringStartedAt: string | null
+  lastCheckedAt: string | null
+  lastStatusCode: number | null
+  intervalSeconds: number
+  recentChecks: SiteUptimeCheckSample[]
+  targetUrl: string | null
+}
+
 export const itService = {
   // ── System ──
   async getDbStats() {
@@ -34,6 +60,27 @@ export const itService = {
       return null
     }
     return data as MessagingBalance
+  },
+
+  async getSiteUptimeSummary(): Promise<SiteUptimeSummary> {
+    const response = await fetch('/api/uptime-summary', {
+      method: 'GET',
+      cache: 'no-store',
+      headers: { accept: 'application/json' },
+    })
+
+    const body = (await response.json().catch(() => null)) as
+      | SiteUptimeSummary
+      | { error?: string }
+      | null
+
+    if (!response.ok) {
+      throw new Error(
+        body && 'error' in body && body.error ? body.error : 'Failed to load uptime summary.'
+      )
+    }
+
+    return body as SiteUptimeSummary
   },
 
   async getAuditLogs(dateFrom: string, dateTo: string, sortDir: 'asc' | 'desc') {

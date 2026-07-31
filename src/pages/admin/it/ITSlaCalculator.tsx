@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 
 import { StatTile } from '@/components/admin/StatTile'
 import { usePageLabel } from '@/contexts/PageLabelContext'
+import { itService, type SiteUptimeSummary } from '@/services/itService'
 
 import { calculateDowntimeAllowances, formatDowntime, validateSlaPercentage } from './slaCalculator'
 import { useITLayout } from './ITLayoutContext'
@@ -33,9 +34,16 @@ const labelStyle: CSSProperties = {
   color: 'hsl(var(--on-surface-muted))',
 }
 
+function formatTimestamp(value: string | null) {
+  return value ? new Date(value).toLocaleString() : '—'
+}
+
 export default function ITSlaCalculator() {
   const { setCurrentLabel } = usePageLabel()
   const [slaInput, setSlaInput] = useState('99.9')
+  const [uptimeSummary, setUptimeSummary] = useState<SiteUptimeSummary | null>(null)
+  const [uptimeLoading, setUptimeLoading] = useState(true)
+  const [uptimeError, setUptimeError] = useState<string | null>(null)
 
   useEffect(() => {
     setCurrentLabel('SLA Uptime Calculator')
@@ -46,6 +54,29 @@ export default function ITSlaCalculator() {
     'monitoring',
     'Convert an uptime target into the downtime budget for common operating periods.'
   )
+
+  useEffect(() => {
+    let active = true
+
+    itService
+      .getSiteUptimeSummary()
+      .then((summary) => {
+        if (!active) return
+        setUptimeSummary(summary)
+        setUptimeError(null)
+      })
+      .catch((error: unknown) => {
+        if (!active) return
+        setUptimeError(error instanceof Error ? error.message : 'Failed to load uptime summary.')
+      })
+      .finally(() => {
+        if (active) setUptimeLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
 
   const parsedValue = Number.parseFloat(slaInput)
   const validationMessage = validateSlaPercentage(parsedValue)
@@ -83,6 +114,66 @@ export default function ITSlaCalculator() {
       icon: 'event',
       bar: 'hsl(var(--destructive))',
       seconds: allowances?.year ?? 0,
+    },
+  ] as const
+
+  const actualTiles = [
+    {
+      key: 'status',
+      label: 'Current Status',
+      icon: uptimeSummary?.currentStatus === 'down' ? 'cloud_off' : 'cloud_done',
+      bar:
+        uptimeSummary?.currentStatus === 'down' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))',
+      value: uptimeLoading
+        ? '—'
+        : uptimeSummary?.currentStatus === 'unknown'
+          ? 'Waiting for checks'
+          : uptimeSummary?.currentStatus === 'down'
+            ? 'Down'
+            : 'Up',
+      sub:
+        uptimeLoading || !uptimeSummary
+          ? 'Heartbeat pending'
+          : `${formatDowntime(uptimeSummary.currentStatusDurationSeconds)} in current state`,
+    },
+    {
+      key: 'observed',
+      label: 'Observed Uptime',
+      icon: 'monitoring',
+      bar: 'hsl(var(--accent))',
+      value:
+        uptimeLoading || !uptimeSummary || uptimeSummary.observedUptimePercentage === null
+          ? '—'
+          : `${uptimeSummary.observedUptimePercentage.toFixed(2)}%`,
+      sub: uptimeSummary
+        ? `Across ${uptimeSummary.totalChecks.toLocaleString()} recorded checks`
+        : 'No checks yet',
+    },
+    {
+      key: 'downtime',
+      label: 'Estimated Downtime',
+      icon: 'schedule',
+      bar: 'hsl(var(--on-surface))',
+      value:
+        uptimeLoading || !uptimeSummary
+          ? '—'
+          : formatDowntime(uptimeSummary.estimatedDowntimeSeconds),
+      sub: uptimeSummary
+        ? `Approximate from ${Math.round(uptimeSummary.intervalSeconds / 60)}-minute heartbeats`
+        : 'No checks yet',
+    },
+    {
+      key: 'window',
+      label: 'Monitoring Since',
+      icon: 'history',
+      bar: 'hsl(var(--primary))',
+      value:
+        uptimeLoading || !uptimeSummary?.monitoringStartedAt
+          ? '—'
+          : formatTimestamp(uptimeSummary.monitoringStartedAt),
+      sub: uptimeSummary?.lastCheckedAt
+        ? `Last check ${formatTimestamp(uptimeSummary.lastCheckedAt)}`
+        : 'No checks yet',
     },
   ] as const
 
@@ -177,6 +268,78 @@ export default function ITSlaCalculator() {
             }
           />
         ))}
+      </div>
+
+      <div className="panel" style={{ marginBottom: 24 }}>
+        <div className="ph">
+          <div>
+            <h3>Actual Uptime</h3>
+            <p className="meta" style={{ marginTop: 4 }}>
+              Measured by a Vercel heartbeat against the public deployment and stored in Supabase.
+            </p>
+          </div>
+        </div>
+
+        <div style={{ padding: '20px 24px 24px' }}>
+          <div className="kpis" style={{ marginBottom: 20 }}>
+            {actualTiles.map((tile) => (
+              <StatTile
+                key={tile.key}
+                label={tile.label}
+                value={tile.value}
+                bar={tile.bar}
+                icon={tile.icon}
+                sub={tile.sub}
+              />
+            ))}
+          </div>
+
+          <p
+            style={{
+              margin: 0,
+              fontSize: 12,
+              color: uptimeError ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
+              lineHeight: 1.55,
+            }}
+          >
+            {uptimeError
+              ? uptimeError
+              : uptimeSummary
+                ? `Target: ${uptimeSummary.targetUrl ?? '—'} · Successful checks: ${uptimeSummary.successfulChecks.toLocaleString()} · Failed checks: ${uptimeSummary.failedChecks.toLocaleString()} · Last HTTP status: ${uptimeSummary.lastStatusCode ?? '—'}`
+                : 'The first uptime tiles will populate after the Vercel cron starts recording checks.'}
+          </p>
+
+          {uptimeSummary?.recentChecks?.length ? (
+            <div style={{ overflowX: 'auto', marginTop: 18 }}>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Checked</th>
+                    <th>Status</th>
+                    <th>HTTP</th>
+                    <th>Latency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {uptimeSummary.recentChecks.map((check) => (
+                    <tr key={check.checkedAt}>
+                      <td>{formatTimestamp(check.checkedAt)}</td>
+                      <td
+                        style={{
+                          color: check.ok ? 'hsl(var(--primary))' : 'hsl(var(--destructive))',
+                        }}
+                      >
+                        {check.ok ? 'Up' : 'Down'}
+                      </td>
+                      <td>{check.statusCode ?? '—'}</td>
+                      <td>{check.latencyMs === null ? '—' : `${check.latencyMs} ms`}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   )
