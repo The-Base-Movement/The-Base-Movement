@@ -101,6 +101,18 @@ export interface PasswordResetRecord {
   used: boolean
   created_at: string
 }
+export interface PasswordRecoveryRequest {
+  id: string
+  full_name: string
+  old_phone: string
+  normalized_old_phone: string
+  status: 'pending' | 'approved' | 'rejected' | 'resolved'
+  submitted_at: string
+  reviewed_at: string | null
+  reviewed_by: string | null
+  review_notes: string | null
+  discord_notified_at: string | null
+}
 
 export interface ImportAuditReport {
   unlinked_total?: number
@@ -3531,6 +3543,45 @@ class AdminService {
       .limit(500)
     if (error) throw error
     return (data ?? []) as PasswordResetRecord[]
+  }
+
+  async getPasswordRecoveryRequests(): Promise<PasswordRecoveryRequest[]> {
+    const { data, error } = await supabase
+      .from('password_recovery_requests')
+      .select(
+        'id, full_name, old_phone, normalized_old_phone, status, submitted_at, reviewed_at, reviewed_by, review_notes, discord_notified_at'
+      )
+      .order('submitted_at', { ascending: false })
+      .limit(500)
+    if (error) throw error
+    return (data ?? []) as PasswordRecoveryRequest[]
+  }
+
+  async approvePasswordRecoveryRequest(id: string, reviewNotes = ''): Promise<void> {
+    await this.reviewPasswordRecoveryRequest('approve-password-recovery-request', id, reviewNotes)
+  }
+
+  async rejectPasswordRecoveryRequest(id: string, reviewNotes = ''): Promise<void> {
+    await this.reviewPasswordRecoveryRequest('reject-password-recovery-request', id, reviewNotes)
+  }
+
+  private async reviewPasswordRecoveryRequest(
+    functionName: 'approve-password-recovery-request' | 'reject-password-recovery-request',
+    id: string,
+    reviewNotes: string
+  ): Promise<void> {
+    const { data, error } = await supabase.functions.invoke(functionName, {
+      body: { id, review_notes: reviewNotes.trim() },
+    })
+    if (error || data?.error) throw new Error(data?.error || error?.message || 'Review failed')
+    await this.logAction(
+      functionName === 'approve-password-recovery-request'
+        ? 'PASSWORD_RECOVERY_APPROVE'
+        : 'PASSWORD_RECOVERY_REJECT',
+      `PASSWORD_RECOVERY_REQUESTS/${id}`,
+      'Success',
+      { review_notes: reviewNotes.trim() }
+    )
   }
 
   async getImportAudits(): Promise<ImportAuditRecord[]> {

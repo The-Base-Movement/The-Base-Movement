@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
 
-type RecoveryMethod = 'phone' | 'email'
+type RecoveryMethod = 'phone' | 'email' | 'member'
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -43,6 +43,9 @@ export default function ForgotPassword() {
   // Email tab state
   const [email, setEmail] = useState('')
   const [emailSent, setEmailSent] = useState(false)
+  const [fullName, setFullName] = useState('')
+  const [oldPhone, setOldPhone] = useState('')
+  const [requestSent, setRequestSent] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -96,6 +99,26 @@ export default function ForgotPassword() {
     }
   }
 
+  const handleRecoveryRequest = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!fullName.trim() || !oldPhone.trim()) {
+      toast.error('Please enter your full name and old phone number.')
+      return
+    }
+    setIsLoading(true)
+    try {
+      const { error } = await supabase.functions.invoke('submit-password-recovery-request', {
+        body: { full_name: fullName.trim(), old_phone: oldPhone.trim() },
+      })
+      if (error) throw error
+      setRequestSent(true)
+    } catch (err: unknown) {
+      console.error('[RECOVERY REQUEST ERROR]', err)
+      toast.error('Unable to submit your request right now. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
   return (
     <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
       <SEO
@@ -126,14 +149,14 @@ export default function ForgotPassword() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
+                gridTemplateColumns: 'repeat(3, 1fr)',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: 'var(--radius-sm)',
                 overflow: 'hidden',
                 marginBottom: 24,
               }}
             >
-              {(['phone', 'email'] as RecoveryMethod[]).map((m) => (
+              {(['phone', 'email', 'member'] as RecoveryMethod[]).map((m) => (
                 <button
                   key={m}
                   type="button"
@@ -160,9 +183,9 @@ export default function ForgotPassword() {
                   }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    {m === 'phone' ? 'sms' : 'mail'}
+                    {m === 'phone' ? 'sms' : m === 'email' ? 'mail' : 'support_agent'}
                   </span>
-                  {m === 'phone' ? 'SMS Code' : 'Email Link'}
+                  {m === 'phone' ? 'SMS Code' : m === 'email' ? 'Email Link' : 'Member Request'}
                 </button>
               ))}
             </div>
@@ -358,6 +381,109 @@ export default function ForgotPassword() {
                 >
                   Try a different email
                 </button>
+                <div className="auth-footer">
+                  Remembered your password? <Link to="/login">Sign in →</Link>
+                </div>
+              </div>
+            )}
+            {method === 'member' && !requestSent && (
+              <form
+                onSubmit={handleRecoveryRequest}
+                style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+              >
+                <div>
+                  <label htmlFor="full-name" style={labelStyle}>
+                    Full Name on Account
+                  </label>
+                  <input
+                    id="full-name"
+                    type="text"
+                    style={inputStyle}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    autoComplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="old-phone" style={labelStyle}>
+                    Old Phone Number
+                  </label>
+                  <input
+                    id="old-phone"
+                    type="tel"
+                    style={inputStyle}
+                    value={oldPhone}
+                    onChange={(e) => setOldPhone(e.target.value)}
+                    autoComplete="tel"
+                    required
+                  />
+                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Use this form if you no longer control the phone number on your account.
+                </p>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn btn-primary"
+                  style={{
+                    height: 50,
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 13,
+                    marginTop: 4,
+                  }}
+                >
+                  {isLoading ? 'Submitting…' : 'Submit Recovery Request'}
+                </button>
+                <div className="auth-footer">
+                  Remembered your password? <Link to="/login">Sign in →</Link>
+                </div>
+              </form>
+            )}
+
+            {method === 'member' && requestSent && (
+              <div
+                role="status"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 14,
+                  padding: '8px 0 16px',
+                  textAlign: 'center',
+                }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 36, color: 'hsl(var(--primary))' }}
+                >
+                  check_circle
+                </span>
+                <p
+                  style={{ margin: 0, fontSize: 15, fontWeight: 'var(--font-weight-medium, 500)' }}
+                >
+                  Request submitted
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 13,
+                    color: 'hsl(var(--on-surface-muted))',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  We received your request and will review it shortly.
+                </p>
                 <div className="auth-footer">
                   Remembered your password? <Link to="/login">Sign in →</Link>
                 </div>
