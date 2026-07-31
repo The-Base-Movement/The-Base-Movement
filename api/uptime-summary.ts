@@ -16,28 +16,54 @@ function readServerEnv(name: string): string | undefined {
   return process.env[name] || undefined
 }
 
-function getSupabaseAdminClient() {
-  const url = readServerEnv('SUPABASE_URL') || readServerEnv('VITE_SUPABASE_URL')
-  const key = readServerEnv('SUPABASE_SERVICE_ROLE_KEY') || readServerEnv('SUPABASE_SERVICE_KEY')
+export function resolveSupabaseSummaryCredentials(
+  readEnv: (name: string) => string | undefined = readServerEnv
+) {
+  const url = readEnv('SUPABASE_URL') || readEnv('VITE_SUPABASE_URL')
+  const serviceKey = readEnv('SUPABASE_SERVICE_ROLE_KEY') || readEnv('SUPABASE_SERVICE_KEY')
+  const anonKey = readEnv('SUPABASE_ANON_KEY') || readEnv('VITE_SUPABASE_ANON_KEY')
 
-  if (!url || !key) {
-    throw new Error('Supabase server credentials are missing.')
+  if (!url) {
+    throw new Error('Supabase URL is missing.')
   }
 
-  return createClient(url, key, {
+  if (serviceKey) {
+    return { url, key: serviceKey, mode: 'service' as const }
+  }
+
+  if (anonKey) {
+    return { url, key: anonKey, mode: 'anon' as const }
+  }
+
+  throw new Error('Supabase summary credentials are missing.')
+}
+
+function getSupabaseSummaryClient(authorization: string | null) {
+  const credentials = resolveSupabaseSummaryCredentials()
+
+  if (credentials.mode === 'anon' && !authorization) {
+    throw new Error('Admin session token missing for uptime summary.')
+  }
+
+  return createClient(credentials.url, credentials.key, {
     auth: { persistSession: false, autoRefreshToken: false },
+    global:
+      credentials.mode === 'anon' && authorization
+        ? { headers: { Authorization: authorization } }
+        : undefined,
   })
 }
 
 export const config = { runtime: 'nodejs' }
 
-export default async function handler() {
+export default async function handler(request: Request) {
   try {
     const intervalSeconds = Number.parseInt(
       readServerEnv('UPTIME_MONITOR_INTERVAL_SECONDS') || '86400',
       10
     )
-    const supabase = getSupabaseAdminClient()
+    const authorization = request.headers.get('authorization')
+    const supabase = getSupabaseSummaryClient(authorization)
     const { data, error } = await supabase
       .from('site_uptime_checks')
       .select('checked_at, ok, status_code, latency_ms, error_message, target_url')
