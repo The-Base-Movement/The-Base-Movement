@@ -8,7 +8,6 @@ import { CommentSection } from '@/components/CommentSection'
 import DOMPurify from 'dompurify'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import SEO from '@/components/SEO'
-import { useBranding } from '@/hooks/useBranding'
 import { PostToolbar } from './blogpost/PostToolbar'
 import { PostHeader } from './blogpost/PostHeader'
 import { PostHeroImage } from './blogpost/PostHeroImage'
@@ -18,7 +17,6 @@ import { contentService } from '@/services/contentService'
 import { getBlogImageUrl } from '@/lib/blogImages'
 
 export default function BlogPost() {
-  const { settings } = useBranding()
   const { id: slug } = useParams<{ id: string }>()
   const location = useLocation()
   const navigate = useNavigate()
@@ -179,24 +177,6 @@ export default function BlogPost() {
   const pageTitle = post.seoTitle || post.title
   const pageDescription =
     post.metaDescription || post.excerpt || `Read "${post.title}" on The Base Movement.`
-  const canonicalUrl = `${window.location.origin}/blog/${post.slug}`
-
-  const articleSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.title,
-    description: pageDescription,
-    image: post.imageUrl,
-    datePublished: post.publishedAt,
-    author: { '@type': 'Person', name: post.authorName || 'The Base Editorial' },
-    publisher: {
-      '@type': 'Organization',
-      name: 'The Base Movement',
-      logo: { '@type': 'ImageObject', url: settings.logo_url },
-    },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
-  }
-
   return (
     <div className="min-h-screen pb-20" style={{ background: 'hsl(var(--background))' }}>
       <SEO
@@ -205,7 +185,6 @@ export default function BlogPost() {
         ogImage={post.imageUrl || undefined}
         canonical={`/blog/${post.slug}`}
         ogType="article"
-        jsonLd={articleSchema}
       />
       <main className="page-container pt-12">
         <PostToolbar
