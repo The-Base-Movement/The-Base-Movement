@@ -27,5 +27,6 @@ export interface ReferralLeaderboardEntry {
   registrationNumber: string
   avatarUrl?: string | null
   referralCount: number
+  points: number
   isCurrentUser: boolean
 }

@@ -125,6 +125,7 @@ export const referralService = {
         registration_number: string
         avatar_url: string | null
         referral_count: number
+        points?: number
       }[]
     ).map((row) => ({
       referrerId: row.referrer_id,
@@ -132,6 +133,7 @@ export const referralService = {
       registrationNumber: row.registration_number,
       avatarUrl: row.avatar_url,
       referralCount: Number(row.referral_count),
+      points: Number(row.points ?? 0),
       isCurrentUser: row.registration_number === currentUserRegNo,
     }))
   },
