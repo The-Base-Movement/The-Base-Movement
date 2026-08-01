@@ -46,18 +46,6 @@ serve(async (req: Request) => {
     if (!phone) return json({ error: 'Phone number is required.' }, 400)
 
     const rawPhone = String(phone).trim()
-
-    // Enforce international format — must start with '+'
-    if (!rawPhone.startsWith('+')) {
-      return json(
-        {
-          error:
-            'Please enter your phone number in international format, e.g. +32467814742 or +233541234567.',
-        },
-        400
-      )
-    }
-
     const normalizedPhone = normalizeRecoveryPhone(rawPhone)
     const digitsOnly = rawPhone.replace(/\D/g, '')
     const ip = clientIp(req)
@@ -74,7 +62,7 @@ serve(async (req: Request) => {
     // Flexible multi-format user lookup
     let user: { id: string; full_name: string; email?: string; phone_number?: string } | null = null
 
-    // 1. Exact match on normalized phone (+233541234567)
+    // 1. Exact match on normalized phone (+32467814742 or +233541234567)
     const { data: exactMatch } = await supabaseAdmin
       .from('users')
       .select('id, full_name, email, phone_number')
@@ -83,7 +71,7 @@ serve(async (req: Request) => {
 
     user = exactMatch ?? null
 
-    // 2. Candidate match without '+' (e.g. 233541234567)
+    // 2. Candidate match without '+' (e.g. 32467814742 or 233541234567)
     if (!user && digitsOnly) {
       const { data: noPlusMatch } = await supabaseAdmin
         .from('users')
@@ -93,7 +81,7 @@ serve(async (req: Request) => {
       user = noPlusMatch ?? null
     }
 
-    // 3. Suffix match on last 9 digits (handles 0541234567 vs +233541234567)
+    // 3. Suffix match on last 9 digits (handles 0541234567 vs +233541234567 or 0467814742 vs +32467814742)
     if (!user && digitsOnly.length >= 7) {
       const suffix = digitsOnly.slice(-9)
       const { data: suffixMatches } = await supabaseAdmin
@@ -154,8 +142,6 @@ serve(async (req: Request) => {
     }
 
     // --- Smart Gateway Routing ---
-    // 1. Ghana numbers (+233) route to mNotify gateway for real, instant local SMS.
-    // 2. International numbers (+32, +44, +1) route to Infobip (if configured) or Twilio.
     const isGhana = sendToPhone.startsWith('+233') || sendToPhone.startsWith('233')
     const infobipApiKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
 
@@ -170,44 +156,41 @@ serve(async (req: Request) => {
 
     const messageText = `Your The Base Movement verification code is: ${rawOtp}. Valid for 10 minutes.`
 
+    // 1. Try Infobip for International numbers
     if (infobipApiKey && !isGhana) {
-      // 1. Primary International Gateway: Infobip
-      await supabaseAdmin.from('password_reset_otps').insert({
-        phone: sendToPhone,
-        otp: hashedOtp,
-        expires_at: expiresAt,
-      })
-
       const ibResult = await sendInfobipSms([sendToPhone], messageText)
       if (ibResult.ok) {
+        await supabaseAdmin.from('password_reset_otps').insert({
+          phone: sendToPhone,
+          otp: hashedOtp,
+          expires_at: expiresAt,
+        })
         dispatchSuccess = true
         dispatchDetail = 'Dispatched via Infobip'
       } else {
-        console.warn('[SEND-OTP] Infobip dispatch failed, falling back to Twilio:', ibResult.detail)
-        dispatchDetail = ibResult.detail
+        console.warn('[SEND-OTP] Infobip dispatch failed, falling back to Twilio/mNotify:', ibResult.detail)
       }
     }
 
+    // 2. Try mNotify for Ghana numbers
     if (!dispatchSuccess && isGhana) {
-      // 2. Ghana Gateway: mNotify
-      await supabaseAdmin.from('password_reset_otps').insert({
-        phone: sendToPhone,
-        otp: hashedOtp,
-        expires_at: expiresAt,
-      })
-
       const smsResult = await sendSms([sendToPhone], messageText)
-
       if (smsResult.ok) {
+        await supabaseAdmin.from('password_reset_otps').insert({
+          phone: sendToPhone,
+          otp: hashedOtp,
+          expires_at: expiresAt,
+        })
         dispatchSuccess = true
         dispatchDetail = 'Dispatched via mNotify'
       } else {
+        console.warn('[SEND-OTP] mNotify dispatch failed:', smsResult.detail)
         dispatchDetail = smsResult.detail
       }
     }
 
+    // 3. Fallback Gateway: Twilio Verify
     if (!dispatchSuccess && isTwilioVerifyConfigured()) {
-      // 3. Fallback International Gateway: Twilio Verify
       try {
         await startTwilioVerify(sendToPhone)
         const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
@@ -221,7 +204,7 @@ serve(async (req: Request) => {
       } catch (tErr: unknown) {
         const msg = tErr instanceof Error ? tErr.message : String(tErr)
         console.warn(`[SEND-OTP] Twilio Verify failed: ${msg}`)
-        if (!dispatchDetail) dispatchDetail = msg
+        dispatchDetail = msg
       }
     }
 
