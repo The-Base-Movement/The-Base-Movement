@@ -91,13 +91,21 @@ function getCallbackSecret(): string | null {
  */
 export async function sendTwilioSms(recipients: string[], message: string): Promise<SmsResult> {
   // @ts-ignore: Deno global
-  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')
+  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID')
   // @ts-ignore: Deno global
-  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')
+  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN') || Deno.env.get('TWILIO_TOKEN') || Deno.env.get('TWILIO_SECRET')
   // @ts-ignore: Deno global
-  const fromPhone = Deno.env.get('TWILIO_PHONE_NUMBER')
+  const fromPhone =
+    Deno.env.get('TWILIO_PHONE_NUMBER') ||
+    Deno.env.get('TWILIO_FROM_NUMBER') ||
+    Deno.env.get('TWILIO_PHONE') ||
+    Deno.env.get('TWILIO_NUMBER') ||
+    Deno.env.get('TWILIO_SENDER_NUMBER')
   // @ts-ignore: Deno global
-  const messagingServiceSid = Deno.env.get('TWILIO_MESSAGING_SERVICE_SID')
+  const messagingServiceSid =
+    Deno.env.get('TWILIO_MESSAGING_SERVICE_SID') ||
+    Deno.env.get('TWILIO_SERVICE_SID') ||
+    Deno.env.get('TWILIO_MESSAGING_SID')
 
   if (!accountSid || !authToken || (!fromPhone && !messagingServiceSid)) {
     return { ok: false, detail: 'Twilio credentials or sender ID missing' }

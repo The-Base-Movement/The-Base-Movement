@@ -1,22 +1,28 @@
 const TWILIO_VERIFY_BASE_URL = 'https://verify.twilio.com/v2'
 
+function resolveTwilioVerifyVars() {
+  // @ts-expect-error: Deno global
+  const accountSid = (Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID'))?.trim() ?? ''
+  // @ts-expect-error: Deno global
+  const authToken = (Deno.env.get('TWILIO_AUTH_TOKEN') || Deno.env.get('TWILIO_TOKEN') || Deno.env.get('TWILIO_SECRET'))?.trim() ?? ''
+  // @ts-expect-error: Deno global
+  const serviceSid = (
+    Deno.env.get('TWILIO_VERIFY_SERVICE_SID') ||
+    Deno.env.get('TWILIO_VERIFY_SID') ||
+    Deno.env.get('TWILIO_VERIFY_SERVICE_ID') ||
+    Deno.env.get('TWILIO_VERIFY_ID')
+  )?.trim() ?? ''
+
+  return { accountSid, authToken, serviceSid }
+}
+
 export function isTwilioVerifyConfigured(): boolean {
-  // @ts-expect-error: Deno global
-  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')?.trim() ?? ''
-  // @ts-expect-error: Deno global
-  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')?.trim() ?? ''
-  // @ts-expect-error: Deno global
-  const serviceSid = Deno.env.get('TWILIO_VERIFY_SERVICE_SID')?.trim() ?? ''
+  const { accountSid, authToken, serviceSid } = resolveTwilioVerifyVars()
   return !!(accountSid && authToken && serviceSid)
 }
 
 function getTwilioConfig() {
-  // @ts-expect-error: Deno global
-  const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')?.trim() ?? ''
-  // @ts-expect-error: Deno global
-  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')?.trim() ?? ''
-  // @ts-expect-error: Deno global
-  const serviceSid = Deno.env.get('TWILIO_VERIFY_SERVICE_SID')?.trim() ?? ''
+  const { accountSid, authToken, serviceSid } = resolveTwilioVerifyVars()
 
   if (!accountSid || !authToken || !serviceSid) {
     throw new Error(
