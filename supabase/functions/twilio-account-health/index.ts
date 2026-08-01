@@ -1,10 +1,20 @@
 // Twilio Account Health & Balance Monitor Edge Function
-// Validates Twilio credentials and returns account status and SMS balance.
-// Deploy with: supabase functions deploy twilio-account-health --project-ref vhlyekyxutwbxlvktnzd --use-api --no-verify-jwt
+// Validates Twilio credentials and returns account status, SMS balance, and secret key aliases.
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+function getEnv(keys: string[]): { foundKey: string | null; value: string | null } {
+  for (const k of keys) {
+    // @ts-expect-error: Deno global
+    const val = Deno.env.get(k)
+    if (val && val.trim()) {
+      return { foundKey: k, value: val.trim() }
+    }
+  }
+  return { foundKey: null, value: null }
 }
 
 // @ts-expect-error: Deno global
@@ -14,20 +24,41 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
-    const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID')
-    // @ts-expect-error: Deno global
-    const authToken = Deno.env.get('TWILIO_AUTH_TOKEN')
-    // @ts-expect-error: Deno global
-    const fromPhone = Deno.env.get('TWILIO_PHONE_NUMBER')
-    // @ts-expect-error: Deno global
-    const messagingServiceSid = Deno.env.get('TWILIO_MESSAGING_SERVICE_SID')
+    const accountSidInfo = getEnv(['TWILIO_ACCOUNT_SID', 'TWILIO_SID'])
+    const authTokenInfo = getEnv(['TWILIO_AUTH_TOKEN', 'TWILIO_TOKEN', 'TWILIO_SECRET'])
+    const phoneInfo = getEnv([
+      'TWILIO_PHONE_NUMBER',
+      'TWILIO_FROM_NUMBER',
+      'TWILIO_PHONE',
+      'TWILIO_NUMBER',
+      'TWILIO_SENDER_NUMBER',
+    ])
+    const messagingServiceInfo = getEnv([
+      'TWILIO_MESSAGING_SERVICE_SID',
+      'TWILIO_SERVICE_SID',
+      'TWILIO_MESSAGING_SID',
+    ])
+    const verifyServiceInfo = getEnv([
+      'TWILIO_VERIFY_SERVICE_SID',
+      'TWILIO_VERIFY_SID',
+      'TWILIO_VERIFY_SERVICE_ID',
+    ])
+
+    const accountSid = accountSidInfo.value
+    const authToken = authTokenInfo.value
 
     if (!accountSid || !authToken) {
       return new Response(
         JSON.stringify({
           ok: false,
-          error: 'TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN environment variable is missing.',
+          error: 'TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN secret is missing in Supabase.',
+          configured_keys: {
+            account_sid_key: accountSidInfo.foundKey,
+            auth_token_key: authTokenInfo.foundKey,
+            phone_key: phoneInfo.foundKey,
+            messaging_service_key: messagingServiceInfo.foundKey,
+            verify_service_key: verifyServiceInfo.foundKey,
+          },
         }),
         {
           status: 400,
@@ -39,7 +70,7 @@ Deno.serve(async (req: Request) => {
     const credentials = btoa(`${accountSid}:${authToken}`)
     const authHeader = `Basic ${credentials}`
 
-    // 1. Fetch Account Details
+    // Fetch Account Details
     const accountRes = await fetch(
       `https://api.twilio.com/2010-04-01/Accounts/${accountSid}.json`,
       {
@@ -64,7 +95,7 @@ Deno.serve(async (req: Request) => {
 
     const accountData = await accountRes.json()
 
-    // 2. Fetch Account Balance
+    // Fetch Account Balance
     let balance: number | null = null
     let currency = 'USD'
     try {
@@ -95,8 +126,16 @@ Deno.serve(async (req: Request) => {
         account_type: accountData.type,
         balance,
         currency,
-        from_phone_configured: !!fromPhone,
-        messaging_service_configured: !!messagingServiceSid,
+        configured_keys: {
+          account_sid_key: accountSidInfo.foundKey,
+          auth_token_key: authTokenInfo.foundKey,
+          phone_number_key: phoneInfo.foundKey,
+          messaging_service_key: messagingServiceInfo.foundKey,
+          verify_service_key: verifyServiceInfo.foundKey,
+        },
+        has_phone_number: !!phoneInfo.value,
+        has_messaging_service: !!messagingServiceInfo.value,
+        has_verify_service: !!verifyServiceInfo.value,
         timestamp: new Date().toISOString(),
       }),
       {
