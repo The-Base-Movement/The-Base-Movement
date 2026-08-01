@@ -1,5 +1,8 @@
 -- Migration: Fix referral points automation & add points display to referral leaderboard
 
+-- Performance Index for fast referral counting
+CREATE INDEX IF NOT EXISTS idx_users_referred_by ON public.users (referred_by) WHERE referred_by IS NOT NULL;
+
 -- 1. Robust award_referral_points function
 CREATE OR REPLACE FUNCTION public.award_referral_points(p_new_member_id uuid)
 RETURNS void
@@ -29,8 +32,6 @@ BEGIN
   BEGIN
     INSERT INTO referral_awards (referrer_id, referred_member_id, award_type, points)
     VALUES (v_referrer_id, p_new_member_id, 'registration', v_points);
-
-    UPDATE users SET points = COALESCE(points, 0) + v_points WHERE id = v_referrer_id;
 
     PERFORM public.award_royalty_points(v_referrer_id, 'referral_registration', p_new_member_id, null);
   EXCEPTION WHEN unique_violation THEN
@@ -69,8 +70,6 @@ BEGIN
     INSERT INTO referral_awards (referrer_id, referred_member_id, award_type, points)
     VALUES (v_referrer_id, p_member_id, 'verification', v_points);
 
-    UPDATE users SET points = COALESCE(points, 0) + v_points WHERE id = v_referrer_id;
-
     PERFORM public.award_royalty_points(v_referrer_id, 'referral_verification', p_member_id, null);
   EXCEPTION WHEN unique_violation THEN
     NULL;
@@ -107,7 +106,7 @@ CREATE TRIGGER trg_award_referral_on_user_upsert
   AFTER INSERT OR UPDATE ON public.users
   FOR EACH ROW EXECUTE FUNCTION public.trg_award_referral_on_user_upsert();
 
--- 4. Updated get_referral_leaderboard RPC returning points
+-- 4. High-performance CTE get_referral_leaderboard RPC returning points from canonical member_points ledger
 DROP FUNCTION IF EXISTS public.get_referral_leaderboard();
 
 CREATE OR REPLACE FUNCTION public.get_referral_leaderboard()
@@ -123,29 +122,36 @@ LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+  WITH top_counts AS (
+    SELECT
+      r.referred_by AS reg_no,
+      COUNT(r.id)::bigint AS referral_count
+    FROM public.users r
+    WHERE r.referred_by IS NOT NULL
+      AND r.referred_by <> ''
+      AND r.deleted_at IS NULL
+    GROUP BY r.referred_by
+    ORDER BY referral_count DESC
+    LIMIT 20
+  )
   SELECT
     u.id                       AS referrer_id,
     u.full_name::text,
     u.registration_number::text,
     u.avatar_url::text,
-    COUNT(r.id)::bigint        AS referral_count,
+    tc.referral_count,
     COALESCE(
       (SELECT SUM(mp.points) FROM public.member_points mp WHERE mp.user_id = u.id),
-      u.points,
       0
     )::bigint                  AS points
-  FROM users u
-  JOIN users r
+  FROM top_counts tc
+  JOIN public.users u
     ON (
-      upper(trim(r.referred_by)) = upper(trim(u.registration_number))
-      OR r.referred_by = u.id::text
-      OR r.referred_by = u.phone_number
+      u.registration_number = tc.reg_no
+      OR u.id::text = tc.reg_no
     )
-   AND r.deleted_at IS NULL
   WHERE u.deleted_at IS NULL
-  GROUP BY u.id, u.full_name, u.registration_number, u.avatar_url, u.points
-  ORDER BY referral_count DESC, points DESC
-  LIMIT 20;
+  ORDER BY tc.referral_count DESC;
 $$;
 
 REVOKE EXECUTE ON FUNCTION public.get_referral_leaderboard() FROM PUBLIC;
