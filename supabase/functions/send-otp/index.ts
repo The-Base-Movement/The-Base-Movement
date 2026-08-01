@@ -169,17 +169,13 @@ serve(async (req: Request) => {
         twilioSuccess = true
       } catch (tErr: unknown) {
         const msg = tErr instanceof Error ? tErr.message : String(tErr)
-        console.warn(`[SEND-OTP] Twilio Verify failed: ${msg}`)
-
-        // If Twilio failed due to Trial restrictions or Geo-Permissions, fail fast with explicit message
-        if (msg.includes('Twilio Trial Account Restriction') || msg.includes('Twilio Geo-Permission')) {
-          return json({ error: msg }, 400)
-        }
+        console.warn(`[SEND-OTP] Twilio Verify failed (falling back to local SMS): ${msg}`)
+        // Fall back to local SMS dispatch (mNotify/Twilio REST)
       }
     }
 
     if (!twilioSuccess) {
-      // Fallback: generate a local 6-digit OTP and send via SMS
+      // Fallback: generate a local 6-digit OTP and send via SMS (mNotify / Twilio REST)
       const buf = crypto.getRandomValues(new Uint32Array(1))
       const rawOtp = String((buf[0] % 900000) + 100000)
       const hashedOtp = await hashOtp(rawOtp, otpSecret)
