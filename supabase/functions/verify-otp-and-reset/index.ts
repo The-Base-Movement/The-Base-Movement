@@ -2,13 +2,14 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
-import { peekRateLimit, recordFailedAttempt } from '../_shared/persistent-rate-limit.ts'
-import { isTwilioVerifyConfigured, checkTwilioVerify } from '../_shared/twilio-verify.ts'
-import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 import { hashOtp } from '../_shared/otp.ts'
-
-const FAILURE_DELAY_MS = 800
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
+import {
+  peekRateLimit,
+  recordFailedAttempt,
+} from '../_shared/persistent-rate-limit.ts'
+import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
+import { isTwilioVerifyConfigured, checkTwilioVerify } from '../_shared/twilio-verify.ts'
 
 function clientIp(req: Request) {
   return (
@@ -19,24 +20,31 @@ function clientIp(req: Request) {
   )
 }
 
+function delayedJson(body: unknown, status: number) {
+  return new Promise<Response>((resolve) => {
+    setTimeout(() => {
+      resolve(
+        new Response(JSON.stringify(body), {
+          headers: { ...getCorsHeaders(new Request('http://localhost')), 'Content-Type': 'application/json' },
+          status,
+        })
+      )
+    }, 900)
+  })
+}
+
 serve(async (req: Request) => {
   const cors = getCorsHeaders(req)
 
-  const json = (body: unknown, status = 200) =>
-    new Response(JSON.stringify(body), {
+  function json(body: unknown, status: number) {
+    return new Response(JSON.stringify(body), {
       headers: { ...cors, 'Content-Type': 'application/json' },
       status,
     })
-
-  const delayedJson = async (body: unknown, status: number) => {
-    await new Promise((resolve) => setTimeout(resolve, FAILURE_DELAY_MS))
-    return json(body, status)
   }
 
   if (req.method === 'OPTIONS') return handleCorsPreflight(req)
-  if (req.method !== 'POST') {
-    return json({ error: 'Method not allowed' }, 405)
-  }
+  if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
@@ -52,7 +60,9 @@ serve(async (req: Request) => {
       return json({ error: 'Password must be at least 8 characters long.' }, 400)
     }
 
-    const normalizedPhone = normalizeRecoveryPhone(String(phone).trim())
+    const rawPhone = String(phone).trim()
+    const normalizedPhone = normalizeRecoveryPhone(rawPhone)
+    const digitsOnly = rawPhone.replace(/\D/g, '')
 
     const throttleKey = `verify-otp::${clientIp(req)}::${normalizedPhone}`
     const rateCheck = await peekRateLimit(supabaseAdmin, throttleKey, 8, 900)
@@ -99,13 +109,39 @@ serve(async (req: Request) => {
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
-    const { data: user, error: userError } = await supabaseAdmin
+    // Flexible multi-format user lookup
+    let user: { id: string; email: string | null; full_name: string; registration_number: string } | null = null
+
+    const { data: exactUser } = await supabaseAdmin
       .from('users')
       .select('id, email, full_name, registration_number')
       .eq('phone_number', normalizedPhone)
       .maybeSingle()
 
-    if (userError || !user) {
+    user = exactUser ?? null
+
+    if (!user && digitsOnly) {
+      const { data: noPlusUser } = await supabaseAdmin
+        .from('users')
+        .select('id, email, full_name, registration_number')
+        .eq('phone_number', digitsOnly)
+        .maybeSingle()
+      user = noPlusUser ?? null
+    }
+
+    if (!user && digitsOnly.length >= 7) {
+      const suffix = digitsOnly.slice(-9)
+      const { data: suffixUsers } = await supabaseAdmin
+        .from('users')
+        .select('id, email, full_name, registration_number')
+        .ilike('phone_number', `%${suffix}`)
+        .limit(2)
+      if (suffixUsers && suffixUsers.length === 1) {
+        user = suffixUsers[0]
+      }
+    }
+
+    if (!user) {
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
