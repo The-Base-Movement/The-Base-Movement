@@ -153,20 +153,38 @@ export const referralService = {
     }[]
     monthlyTrend: { month: string; count: number }[]
   }> {
-    const [refRes, awardsRes, leaderboardRes] = await Promise.all([
+    const [refRes, memberPointsRes, awardsRes, leaderboardRes] = await Promise.all([
       supabase.from('users').select('id, referred_by, joined_at').not('referred_by', 'is', null),
+      supabase
+        .from('member_points')
+        .select('user_id, points')
+        .in('source_type', ['referral_registration', 'referral_verification']),
       supabase.from('referral_awards').select('referrer_id, points'),
       supabase.rpc('get_referral_leaderboard'),
     ])
 
     const referrals = refRes.data ?? []
+    const memberPoints = memberPointsRes.data ?? []
     const awards = awardsRes.data ?? []
     const totalReferrals = referrals.length
-    const totalPointsAwarded = awards.reduce((s, a) => s + (a.points ?? 0), 0)
 
     const pointsMap: Record<string, number> = {}
-    for (const a of awards) {
-      pointsMap[a.referrer_id] = (pointsMap[a.referrer_id] ?? 0) + (a.points ?? 0)
+    let totalPointsAwarded = 0
+
+    if (memberPoints.length > 0) {
+      totalPointsAwarded = memberPoints.reduce((s, a) => s + (a.points ?? 0), 0)
+      for (const m of memberPoints) {
+        if (m.user_id) {
+          pointsMap[m.user_id] = (pointsMap[m.user_id] ?? 0) + (m.points ?? 0)
+        }
+      }
+    } else {
+      totalPointsAwarded = awards.reduce((s, a) => s + (a.points ?? 0), 0)
+      for (const a of awards) {
+        if (a.referrer_id) {
+          pointsMap[a.referrer_id] = (pointsMap[a.referrer_id] ?? 0) + (a.points ?? 0)
+        }
+      }
     }
 
     const topReferrers = (
@@ -176,6 +194,7 @@ export const referralService = {
         registration_number: string
         avatar_url: string | null
         referral_count: number
+        points?: number
       }[]
     )
       .slice(0, 20)
@@ -185,7 +204,7 @@ export const referralService = {
         avatarUrl: r.avatar_url,
         regNo: r.registration_number,
         count: Number(r.referral_count),
-        points: pointsMap[r.referrer_id] ?? 0,
+        points: Number(r.points ?? pointsMap[r.referrer_id] ?? 0),
       }))
 
     const now = new Date()
