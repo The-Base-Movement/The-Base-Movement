@@ -51,12 +51,25 @@ async function twilioVerifyRequest(
 
   const payload = (await response.json().catch(() => ({}))) as Record<string, unknown>
   if (!response.ok) {
-    const code = typeof payload.code === 'number' ? `[${payload.code}] ` : ''
+    const code = typeof payload.code === 'number' ? payload.code : 0
     const message =
       typeof payload.message === 'string'
         ? payload.message
         : `Twilio Verify error ${response.status}`
-    throw new Error(`${code}${message}`)
+
+    if (code === 21608) {
+      throw new Error(
+        `Twilio Trial Account Restriction: Recipient ${body.To || ''} is unverified. Upgrade Twilio account to Full status or add the number at twilio.com/console/phone-numbers/verified.`
+      )
+    }
+
+    if (code === 21408) {
+      throw new Error(
+        `Twilio Geo-Permission Disabled: SMS destination ${body.To || ''} is not enabled in Twilio Messaging Geo-Permissions. Enable it at twilio.com/console/sms/settings/geo-permissions.`
+      )
+    }
+
+    throw new Error(`[${code}] ${message}`)
   }
 
   return payload

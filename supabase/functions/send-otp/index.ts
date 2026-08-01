@@ -170,7 +170,12 @@ serve(async (req: Request) => {
         twilioSuccess = true
       } catch (tErr: unknown) {
         const msg = tErr instanceof Error ? tErr.message : String(tErr)
-        console.warn(`[SEND-OTP] Twilio Verify failed (falling back to SMS): ${msg}`)
+        console.warn(`[SEND-OTP] Twilio Verify failed: ${msg}`)
+
+        // If Twilio failed due to Trial restrictions or Geo-Permissions, fail fast with explicit message
+        if (msg.includes('Twilio Trial Account Restriction') || msg.includes('Twilio Geo-Permission')) {
+          return json({ error: msg }, 400)
+        }
       }
     }
 
