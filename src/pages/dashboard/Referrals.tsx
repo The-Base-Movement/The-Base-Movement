@@ -585,17 +585,29 @@ export default function Referrals() {
                 >
                   {entry.isCurrentUser ? 'You' : entry.name}
                 </span>
-                {/* Count */}
-                <span
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    color: 'hsl(var(--on-surface))',
-                    fontFamily: "'Public Sans', sans-serif",
-                  }}
-                >
-                  {entry.referralCount}
-                </span>
+                {/* Count & Points */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span
+                    className="pill pill-ok"
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    {entry.points} pts
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    ({entry.referralCount} ref{entry.referralCount !== 1 ? 's' : ''})
+                  </span>
+                </div>
               </div>
             ))}
           </div>
