@@ -66,7 +66,19 @@ export default function ForgotPassword() {
       const { data, error } = await supabase.functions.invoke('send-otp', {
         body: { phone: phone.trim() },
       })
-      if (error) throw error
+      if (error) {
+        let msg = error.message
+        try {
+          const ctx = (error as { context?: Response }).context
+          if (ctx && typeof ctx.json === 'function') {
+            const body = await ctx.json()
+            if (body?.error) msg = body.error
+          }
+        } catch {
+          // ignore
+        }
+        throw new Error(msg)
+      }
       toast.success(data?.message || 'Verification code sent successfully!')
       navigate('/verify-otp', { state: { phone: phone.trim() } })
     } catch (err: unknown) {

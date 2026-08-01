@@ -29,8 +29,21 @@ const otpInputStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
-function sanitiseAuthError(err: unknown, fallback: string): string {
-  const msg = err instanceof Error ? err.message : ''
+async function extractInvokeErrorMessage(err: unknown, fallback: string): Promise<string> {
+  let msg = ''
+  try {
+    const ctx = (err as { context?: Response }).context
+    if (ctx && typeof ctx.json === 'function') {
+      const body = await ctx.json()
+      if (body?.error) msg = body.error
+      if (body?.message) msg = body.message
+    }
+  } catch {
+    // ignore
+  }
+  if (!msg && err instanceof Error && err.message && !err.message.includes('non-2xx')) {
+    msg = err.message
+  }
   if (
     msg.toLowerCase().includes('password should contain') ||
     msg.toLowerCase().includes('password must contain') ||
@@ -104,9 +117,11 @@ export default function VerifyOTP() {
       navigate('/login', { replace: true })
     } catch (err: unknown) {
       console.error('[OTP VERIFY ERROR]', err)
-      toast.error(
-        sanitiseAuthError(err, 'Invalid or expired verification code. Please check and try again.')
+      const errMsg = await extractInvokeErrorMessage(
+        err,
+        'Invalid or expired verification code. Please check and try again.'
       )
+      toast.error(errMsg)
     } finally {
       setIsLoading(false)
     }
@@ -128,7 +143,11 @@ export default function VerifyOTP() {
       toast.success(resData?.message || 'New verification code sent!')
     } catch (err: unknown) {
       console.error('[OTP RESEND ERROR]', err)
-      toast.error('Failed to dispatch code. Please request recovery again.')
+      const errMsg = await extractInvokeErrorMessage(
+        err,
+        'Failed to dispatch code. Please request recovery again.'
+      )
+      toast.error(errMsg)
       setResendTimer(0)
     }
   }
