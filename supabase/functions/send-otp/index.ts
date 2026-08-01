@@ -106,6 +106,16 @@ serve(async (req: Request) => {
       }
     }
 
+    if (!user) {
+      return json(
+        {
+          error:
+            `No registered member account was found with phone number ${normalizedPhone}. Please verify your registered number or use the Email recovery tab.`,
+        },
+        404
+      )
+    }
+
     // Use normalized +E.164 for SMS dispatch
     const sendToPhone = normalizedPhone
 
@@ -141,18 +151,6 @@ serve(async (req: Request) => {
 
     if ((recentOtpCount ?? 0) >= OTP_MAX_PER_WINDOW) {
       return json({ error: 'Too many reset requests for this phone number. Please wait a few minutes.' }, 429)
-    }
-
-    if (!user) {
-      // Ghost success — don't reveal whether the number exists
-      return json(
-        {
-          success: true,
-          message:
-            'If the details match a member record, a security verification code will be sent shortly.',
-        },
-        200
-      )
     }
 
     // --- Dispatch OTP ---
@@ -215,7 +213,7 @@ serve(async (req: Request) => {
     return json(
       {
         success: true,
-        message: 'A security verification code has been dispatched to your mobile number.',
+        message: `A security verification code has been dispatched to ${sendToPhone}.`,
       },
       200
     )
