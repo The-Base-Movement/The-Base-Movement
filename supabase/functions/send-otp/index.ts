@@ -58,6 +58,7 @@ serve(async (req: Request) => {
     }
 
     const normalizedPhone = normalizeRecoveryPhone(rawPhone)
+    const digitsOnly = rawPhone.replace(/\D/g, '')
     const ip = clientIp(req)
 
     const rateCheck = await checkPersistentRateLimit(supabaseAdmin, `send-otp::${ip}`, 5, 600)
@@ -68,6 +69,45 @@ serve(async (req: Request) => {
       )
     }
 
+    // Flexible multi-format user lookup to catch numbers stored with +, without +, or with leading 0 during registration
+    let user: { id: string; full_name: string; phone_number?: string } | null = null
+
+    // 1. Exact match on normalized phone (+32467814742)
+    const { data: exactMatch } = await supabaseAdmin
+      .from('users')
+      .select('id, full_name, phone_number')
+      .eq('phone_number', normalizedPhone)
+      .maybeSingle()
+
+    user = exactMatch ?? null
+
+    // 2. Candidate match without '+' (e.g. 32467814742)
+    if (!user && digitsOnly) {
+      const { data: noPlusMatch } = await supabaseAdmin
+        .from('users')
+        .select('id, full_name, phone_number')
+        .eq('phone_number', digitsOnly)
+        .maybeSingle()
+      user = noPlusMatch ?? null
+    }
+
+    // 3. Suffix match on last 9 digits (handles 0467814742 vs +32467814742)
+    if (!user && digitsOnly.length >= 7) {
+      const suffix = digitsOnly.slice(-9)
+      const { data: suffixMatches } = await supabaseAdmin
+        .from('users')
+        .select('id, full_name, phone_number')
+        .ilike('phone_number', `%${suffix}`)
+        .limit(2)
+
+      if (suffixMatches && suffixMatches.length === 1) {
+        user = suffixMatches[0]
+      }
+    }
+
+    // Use normalized +E.164 for SMS dispatch
+    const sendToPhone = normalizedPhone
+
     // OTP window / cooldown check
     const recentCutoff = new Date(Date.now() - OTP_WINDOW_MS).toISOString()
     const {
@@ -77,7 +117,7 @@ serve(async (req: Request) => {
     } = await supabaseAdmin
       .from('password_reset_otps')
       .select('id, created_at', { count: 'exact' })
-      .eq('phone', normalizedPhone)
+      .eq('phone', sendToPhone)
       .gte('created_at', recentCutoff)
       .order('created_at', { ascending: false })
 
@@ -102,14 +142,7 @@ serve(async (req: Request) => {
       return json({ error: 'Too many reset requests. Please try again later.' }, 429)
     }
 
-    // Exact-match lookup — phone must be stored in E.164 format in the DB
-    const { data: user, error: userError } = await supabaseAdmin
-      .from('users')
-      .select('id, full_name')
-      .eq('phone_number', normalizedPhone)
-      .maybeSingle()
-
-    if (userError || !user) {
+    if (!user) {
       // Ghost success — don't reveal whether the number exists
       return json(
         {
@@ -126,12 +159,11 @@ serve(async (req: Request) => {
 
     if (isTwilioVerifyConfigured()) {
       try {
-        await startTwilioVerify(normalizedPhone)
-        // Write audit row (OTP token managed by Twilio)
+        await startTwilioVerify(sendToPhone)
         const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
         await supabaseAdmin.from('password_reset_otps').insert({
-          phone: normalizedPhone,
+          phone: sendToPhone,
           otp: hashedAuditToken,
           expires_at: expiresAt,
         })
@@ -150,7 +182,7 @@ serve(async (req: Request) => {
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
 
       const { error: otpWriteErr } = await supabaseAdmin.from('password_reset_otps').insert({
-        phone: normalizedPhone,
+        phone: sendToPhone,
         otp: hashedOtp,
         expires_at: expiresAt,
       })
@@ -159,7 +191,7 @@ serve(async (req: Request) => {
       }
 
       const smsResult = await sendSms(
-        [normalizedPhone],
+        [sendToPhone],
         `Your The Base Movement verification code is: ${rawOtp}. Valid for 10 minutes.`
       )
       if (!smsResult.ok) {
@@ -167,7 +199,7 @@ serve(async (req: Request) => {
         return json(
           {
             error:
-              'Failed to send verification code. Please try again or use email recovery.',
+              `SMS delivery failed (${smsResult.detail}). If you are overseas, please use the Email recovery tab or contact support.`,
           },
           400
         )
