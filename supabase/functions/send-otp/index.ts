@@ -9,9 +9,9 @@ import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 import { isTwilioVerifyConfigured, startTwilioVerify } from '../_shared/twilio-verify.ts'
 import { sendSms } from '../_shared/sms.ts'
 
-const OTP_WINDOW_MS = 10 * 60 * 1000
-const OTP_COOLDOWN_MS = 60 * 1000
-const OTP_MAX_PER_WINDOW = 3
+const OTP_WINDOW_MS = 5 * 60 * 1000 // 5-minute window
+const OTP_COOLDOWN_MS = 15 * 1000    // 15-second cooldown between resends
+const OTP_MAX_PER_WINDOW = 10         // Max 10 OTP requests per 5 minutes
 
 function clientIp(req: Request) {
   return (
@@ -61,7 +61,8 @@ serve(async (req: Request) => {
     const digitsOnly = rawPhone.replace(/\D/g, '')
     const ip = clientIp(req)
 
-    const rateCheck = await checkPersistentRateLimit(supabaseAdmin, `send-otp::${ip}`, 5, 600)
+    // Rate limiting: 30 requests per 10 minutes per IP
+    const rateCheck = await checkPersistentRateLimit(supabaseAdmin, `send-otp::${ip}`, 30, 600)
     if (!rateCheck.allowed) {
       return json(
         { error: `Too many reset requests. Please wait ${rateCheck.retry_after_sec} seconds.` },
@@ -72,7 +73,7 @@ serve(async (req: Request) => {
     // Flexible multi-format user lookup to catch numbers stored with +, without +, or with leading 0 during registration
     let user: { id: string; full_name: string; phone_number?: string } | null = null
 
-    // 1. Exact match on normalized phone (+32467814742)
+    // 1. Exact match on normalized phone (+233541234567)
     const { data: exactMatch } = await supabaseAdmin
       .from('users')
       .select('id, full_name, phone_number')
@@ -81,7 +82,7 @@ serve(async (req: Request) => {
 
     user = exactMatch ?? null
 
-    // 2. Candidate match without '+' (e.g. 32467814742)
+    // 2. Candidate match without '+' (e.g. 233541234567)
     if (!user && digitsOnly) {
       const { data: noPlusMatch } = await supabaseAdmin
         .from('users')
@@ -91,7 +92,7 @@ serve(async (req: Request) => {
       user = noPlusMatch ?? null
     }
 
-    // 3. Suffix match on last 9 digits (handles 0467814742 vs +32467814742)
+    // 3. Suffix match on last 9 digits (handles 0541234567 vs +233541234567)
     if (!user && digitsOnly.length >= 7) {
       const suffix = digitsOnly.slice(-9)
       const { data: suffixMatches } = await supabaseAdmin
@@ -139,7 +140,7 @@ serve(async (req: Request) => {
     }
 
     if ((recentOtpCount ?? 0) >= OTP_MAX_PER_WINDOW) {
-      return json({ error: 'Too many reset requests. Please try again later.' }, 429)
+      return json({ error: 'Too many reset requests for this phone number. Please wait a few minutes.' }, 429)
     }
 
     if (!user) {
