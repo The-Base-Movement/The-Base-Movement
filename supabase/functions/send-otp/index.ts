@@ -7,7 +7,7 @@ import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 import { isTwilioVerifyConfigured, startTwilioVerify } from '../_shared/twilio-verify.ts'
-import { sendSms } from '../_shared/sms.ts'
+import { sendSms, sendInfobipSms } from '../_shared/sms.ts'
 import { sendEmail } from '../_shared/email.ts'
 
 const OTP_WINDOW_MS = 5 * 60 * 1000 // 5-minute window
@@ -154,65 +154,80 @@ serve(async (req: Request) => {
     }
 
     // --- Smart Gateway Routing ---
-    // Ghana numbers (+233) route to mNotify gateway for real, instant SMS without trial headers.
-    // International numbers (+32, +44, +1) route to Twilio Verify.
+    // 1. Ghana numbers (+233) route to mNotify gateway for real, instant local SMS.
+    // 2. International numbers (+32, +44, +1) route to Infobip (if configured) or Twilio.
     const isGhana = sendToPhone.startsWith('+233') || sendToPhone.startsWith('233')
+    const infobipApiKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
 
     let dispatchSuccess = false
     let dispatchDetail = ''
 
-    if (isGhana) {
-      // Ghana number: Generate local 6-digit OTP and send via mNotify SMS gateway
-      const buf = crypto.getRandomValues(new Uint32Array(1))
-      const rawOtp = String((buf[0] % 900000) + 100000)
-      const hashedOtp = await hashOtp(rawOtp, otpSecret)
-      const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+    // Generate local 6-digit OTP code
+    const buf = crypto.getRandomValues(new Uint32Array(1))
+    const rawOtp = String((buf[0] % 900000) + 100000)
+    const hashedOtp = await hashOtp(rawOtp, otpSecret)
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
 
+    const messageText = `Your The Base Movement verification code is: ${rawOtp}. Valid for 10 minutes.`
+
+    if (infobipApiKey && !isGhana) {
+      // 1. Primary International Gateway: Infobip
       await supabaseAdmin.from('password_reset_otps').insert({
         phone: sendToPhone,
         otp: hashedOtp,
         expires_at: expiresAt,
       })
 
-      const smsResult = await sendSms(
-        [sendToPhone],
-        `Your The Base Movement verification code is: ${rawOtp}. Valid for 10 minutes.`
-      )
+      const ibResult = await sendInfobipSms([sendToPhone], messageText)
+      if (ibResult.ok) {
+        dispatchSuccess = true
+        dispatchDetail = 'Dispatched via Infobip'
+      } else {
+        console.warn('[SEND-OTP] Infobip dispatch failed, falling back to Twilio:', ibResult.detail)
+        dispatchDetail = ibResult.detail
+      }
+    }
+
+    if (!dispatchSuccess && isGhana) {
+      // 2. Ghana Gateway: mNotify
+      await supabaseAdmin.from('password_reset_otps').insert({
+        phone: sendToPhone,
+        otp: hashedOtp,
+        expires_at: expiresAt,
+      })
+
+      const smsResult = await sendSms([sendToPhone], messageText)
 
       if (smsResult.ok) {
         dispatchSuccess = true
-        dispatchDetail = 'Dispatched via SMS'
+        dispatchDetail = 'Dispatched via mNotify'
       } else {
         dispatchDetail = smsResult.detail
       }
-    } else {
-      // International number: Route to Twilio Verify
-      if (isTwilioVerifyConfigured()) {
-        try {
-          await startTwilioVerify(sendToPhone)
-          const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
-          const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
-          await supabaseAdmin.from('password_reset_otps').insert({
-            phone: sendToPhone,
-            otp: hashedAuditToken,
-            expires_at: expiresAt,
-          })
-          dispatchSuccess = true
-          dispatchDetail = 'Dispatched via Twilio Verify'
-        } catch (tErr: unknown) {
-          const msg = tErr instanceof Error ? tErr.message : String(tErr)
-          console.warn(`[SEND-OTP] Twilio Verify failed for international number: ${msg}`)
-          dispatchDetail = msg
-        }
+    }
+
+    if (!dispatchSuccess && isTwilioVerifyConfigured()) {
+      // 3. Fallback International Gateway: Twilio Verify
+      try {
+        await startTwilioVerify(sendToPhone)
+        const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
+        await supabaseAdmin.from('password_reset_otps').insert({
+          phone: sendToPhone,
+          otp: hashedAuditToken,
+          expires_at: expiresAt,
+        })
+        dispatchSuccess = true
+        dispatchDetail = 'Dispatched via Twilio Verify'
+      } catch (tErr: unknown) {
+        const msg = tErr instanceof Error ? tErr.message : String(tErr)
+        console.warn(`[SEND-OTP] Twilio Verify failed: ${msg}`)
+        if (!dispatchDetail) dispatchDetail = msg
       }
     }
 
     // Dual-dispatch: If member also has an email on file, send a backup email copy
     if (user.email && user.email.trim()) {
       try {
-        const buf = crypto.getRandomValues(new Uint32Array(1))
-        const rawOtp = String((buf[0] % 900000) + 100000)
-        // Ensure email OTP is also recorded if local fallback was used
         await sendEmail({
           to: user.email.trim(),
           subject: 'Your Security Verification Code - The Base Movement',
@@ -221,7 +236,10 @@ serve(async (req: Request) => {
               <h2 style="color: #004D25; margin-top: 0;">Password Reset Verification Code</h2>
               <p>Hello <strong>${user.full_name || 'Compatriot'}</strong>,</p>
               <p>You requested a security verification code for your account associated with <strong>${sendToPhone}</strong>.</p>
-              <p style="color: #666; font-size: 14px;">This security code was sent to your registered mobile phone and email address.</p>
+              <div style="background: #f4f6f8; text-align: center; padding: 15px; border-radius: 6px; font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #004D25; margin: 20px 0;">
+                ${rawOtp}
+              </div>
+              <p style="color: #666; font-size: 14px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
               <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
               <p style="font-size: 12px; color: #999; text-align: center;">The Base Movement LBG — Official Member Platform</p>
             </div>
@@ -233,15 +251,6 @@ serve(async (req: Request) => {
     }
 
     if (!dispatchSuccess) {
-      if (dispatchDetail.includes('Twilio Trial Account Restriction') || dispatchDetail.includes('unverified')) {
-        return json(
-          {
-            error:
-              `Twilio Trial Restriction: International number ${sendToPhone} cannot receive SMS until Twilio removes the trial flag on your account. If you registered with email, please use the Email recovery tab.`,
-          },
-          400
-        )
-      }
       return json(
         {
           error:

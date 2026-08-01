@@ -1,5 +1,8 @@
-// Shared SMS dispatch via MNotify (https://developer.mnotify.com)
-// Secrets: MNOTIFY_API_KEY (required), MNOTIFY_SENDER_ID (defaults to "THEBASE" — max 11 chars).
+// Shared SMS dispatch via MNotify, Infobip, and Twilio APIs
+// Secrets:
+// - MNOTIFY_API_KEY (required for Ghana), MNOTIFY_SENDER_ID (defaults to "THEBASE").
+// - INFOBIP_API_KEY, INFOBIP_BASE_URL (required for International Infobip dispatch).
+// - TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER.
 
 // @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -34,10 +37,6 @@ export interface SmsBalance {
 
 /**
  * Remaining SMS credit from MNotify.
- *
- * Bulk sends must never be started blind: running out mid-batch silently drops
- * messages, and for members with no email address SMS is the only channel we
- * have. Callers gate on this and alert when it runs low.
  */
 export async function getSmsBalance(): Promise<SmsBalance> {
   // @ts-ignore: Deno global
@@ -52,8 +51,6 @@ export async function getSmsBalance(): Promise<SmsBalance> {
     if (!res.ok) return { ok: false, balance: null, detail: `HTTP ${res.status}: ${text}` }
 
     const parsed = JSON.parse(text)
-    // MNotify has shipped this figure under several keys over time; accept any
-    // of them rather than silently reading undefined and treating it as zero.
     const raw = parsed?.balance ?? parsed?.sms_balance ?? parsed?.data?.balance
     const balance = raw === undefined || raw === null ? null : Number(raw)
     if (balance === null || Number.isNaN(balance)) {
@@ -66,12 +63,6 @@ export async function getSmsBalance(): Promise<SmsBalance> {
   }
 }
 
-/**
- * MNotify (BMS) success responses are JSON of the form
- * { "status": "success", "code": "2000", ... }. Parse it rather than
- * substring-matching so an incidental "success" in an error body — or a
- * non-JSON gateway error — can't be mistaken for a delivered blast.
- */
 function isAccepted(responseText: string): boolean {
   try {
     const parsed = JSON.parse(responseText)
@@ -84,6 +75,65 @@ function isAccepted(responseText: string): boolean {
 function getCallbackSecret(): string | null {
   // @ts-ignore: Deno global
   return Deno.env.get('MNOTIFY_CALLBACK_SECRET') ?? Deno.env.get('MNOTIFY_API_KEY') ?? null
+}
+
+/**
+ * Send SMS via Infobip API.
+ * Secrets: INFOBIP_API_KEY, INFOBIP_BASE_URL (e.g. "https://xxxxxx.api.infobip.com").
+ */
+export async function sendInfobipSms(recipients: string[], message: string): Promise<SmsResult> {
+  // @ts-ignore: Deno global
+  const apiKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
+  // @ts-ignore: Deno global
+  let baseUrl = Deno.env.get('INFOBIP_BASE_URL')?.trim() || Deno.env.get('INFOBIP_URL')?.trim()
+
+  if (!apiKey || !baseUrl) {
+    return { ok: false, detail: 'INFOBIP_API_KEY or INFOBIP_BASE_URL missing' }
+  }
+
+  if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+    baseUrl = `https://${baseUrl}`
+  }
+  baseUrl = baseUrl.replace(/\/+$/, '')
+
+  const destinations = recipients.map((r) => {
+    let phone = r.trim()
+    if (!phone.startsWith('+')) phone = `+${phone}`
+    return { to: phone }
+  })
+
+  try {
+    const res = await fetch(`${baseUrl}/sms/2/text/advanced`, {
+      method: 'POST',
+      headers: {
+        Authorization: `App ${apiKey}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [
+          {
+            from: 'THE BASE',
+            destinations,
+            text: message,
+          },
+        ],
+      }),
+    })
+
+    const text = await res.text()
+    if (!res.ok) {
+      console.error('[INFOBIP-SMS] Dispatch failed:', res.status, text)
+      return { ok: false, detail: `HTTP ${res.status}: ${text}` }
+    }
+
+    console.log('[INFOBIP-SMS] Dispatch success:', text)
+    return { ok: true, detail: `Dispatched ${destinations.length} recipients via Infobip` }
+  } catch (err: unknown) {
+    const detail = err instanceof Error ? err.message : String(err)
+    console.error('[INFOBIP-SMS] Exception:', detail)
+    return { ok: false, detail }
+  }
 }
 
 /**
@@ -158,10 +208,11 @@ export async function sendTwilioSms(recipients: string[], message: string): Prom
 }
 
 /**
- * Send one message to one or more recipients through Twilio or MNotify API.
- * Includes rate-limiting (TPS) throttling, opt-out filtering, and compliance footers.
+ * Send one message to one or more recipients through Infobip, MNotify, or Twilio API.
  */
 export async function sendSms(recipients: string[], message: string): Promise<SmsResult> {
+  // @ts-ignore: Deno global
+  const infobipKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
   // @ts-ignore: Deno global
   const twilioSid = Deno.env.get('TWILIO_ACCOUNT_SID')
   // @ts-ignore: Deno global
@@ -169,24 +220,32 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
   // @ts-ignore: Deno global
   const sender: string = Deno.env.get('MNOTIFY_SENDER_ID') ?? 'THEBASE'
 
+  // 1. If Infobip API key is configured, use Infobip for International SMS dispatches
+  if (infobipKey) {
+    const infobipResult = await sendInfobipSms(recipients, message)
+    if (infobipResult.ok) return infobipResult
+    console.warn('[SMS] Infobip send failed, falling back:', infobipResult.detail)
+  }
+
+  // 2. If Twilio is configured, try Twilio
   if (twilioSid) {
     const twilioResult = await sendTwilioSms(recipients, message)
     if (twilioResult.ok) return twilioResult
     console.warn('[SMS] Twilio send failed, falling back to MNotify:', twilioResult.detail)
   }
 
+  // 3. Fall back to MNotify for Ghana SMS
   if (!apiKey) {
     console.warn('[SMS] MNOTIFY_API_KEY not set — skipping send to', recipients.length, 'numbers')
     return { ok: false, detail: 'MNOTIFY_API_KEY not set' }
   }
 
-  // 1. Normalize and clean the recipient list
   const normalizedRecipients = recipients.map(normalizeGhanaPhone).filter((n) => n.length >= 11)
   if (normalizedRecipients.length === 0) {
     return { ok: false, detail: 'no valid recipients' }
   }
 
-  // 2. Fetch Opt-Out records from DB to filter recipients
+  // Fetch Opt-Out records
   // @ts-ignore: Deno global
   const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
   // @ts-ignore: Deno global
@@ -213,24 +272,20 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
     }
   }
 
-  // Filter out any phone numbers present in the opt-out list
   const activeRecipients = normalizedRecipients.filter((phone) => {
     const rawDigits = phone.replace('+', '')
     return !optOutSet.has(rawDigits)
   })
 
   if (activeRecipients.length === 0) {
-    console.log('[SMS] All recipients opted out of SMS dispatches.')
     return { ok: true, detail: 'all recipients opted out' }
   }
 
-  // 3. Compliance check: Append opt-out footer to non-transactional messages
   const isTransactional = /otp|verification|temp password|login credentials/i.test(message)
   const finalMessage = isTransactional
     ? message
     : `${message}\n\nTo opt out: www.thebasemovement.org.gh/sms-optout`
 
-  // 4. Batch dispatches to respect gateway TPS (Transactions Per Second) rate-limiting
   const BATCH_SIZE = 50
   let totalDispatched = 0
   let lastResponseText = ''
@@ -238,13 +293,10 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
   try {
     for (let i = 0; i < activeRecipients.length; i += BATCH_SIZE) {
       if (i > 0) {
-        // Sleep 1 second between batches to respect rate limits
         await new Promise((resolve) => setTimeout(resolve, 1000))
       }
 
       const batch = activeRecipients.slice(i, i + BATCH_SIZE)
-
-      // Determine callback URL for delivery status receipt tracking
       // @ts-ignore: Deno global
       const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
       const callbackSecret = getCallbackSecret()
@@ -290,7 +342,7 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
 
     return {
       ok: accepted,
-      detail: `Successfully dispatched ${totalDispatched} out of ${recipients.length} recipients (Filtered opt-outs: ${recipients.length - activeRecipients.length}). Detail: ${lastResponseText}`,
+      detail: `Successfully dispatched ${totalDispatched} out of ${recipients.length} recipients. Detail: ${lastResponseText}`,
     }
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err)
