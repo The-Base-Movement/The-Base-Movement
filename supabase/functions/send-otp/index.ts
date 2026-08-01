@@ -8,6 +8,7 @@ import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 import { isTwilioVerifyConfigured, startTwilioVerify } from '../_shared/twilio-verify.ts'
 import { sendSms } from '../_shared/sms.ts'
+import { sendEmail } from '../_shared/email.ts'
 
 const OTP_WINDOW_MS = 5 * 60 * 1000 // 5-minute window
 const OTP_COOLDOWN_MS = 15 * 1000    // 15-second cooldown between resends
@@ -70,13 +71,13 @@ serve(async (req: Request) => {
       )
     }
 
-    // Flexible multi-format user lookup to catch numbers stored with +, without +, or with leading 0 during registration
-    let user: { id: string; full_name: string; phone_number?: string } | null = null
+    // Flexible multi-format user lookup
+    let user: { id: string; full_name: string; email?: string; phone_number?: string } | null = null
 
     // 1. Exact match on normalized phone (+233541234567)
     const { data: exactMatch } = await supabaseAdmin
       .from('users')
-      .select('id, full_name, phone_number')
+      .select('id, full_name, email, phone_number')
       .eq('phone_number', normalizedPhone)
       .maybeSingle()
 
@@ -86,7 +87,7 @@ serve(async (req: Request) => {
     if (!user && digitsOnly) {
       const { data: noPlusMatch } = await supabaseAdmin
         .from('users')
-        .select('id, full_name, phone_number')
+        .select('id, full_name, email, phone_number')
         .eq('phone_number', digitsOnly)
         .maybeSingle()
       user = noPlusMatch ?? null
@@ -97,7 +98,7 @@ serve(async (req: Request) => {
       const suffix = digitsOnly.slice(-9)
       const { data: suffixMatches } = await supabaseAdmin
         .from('users')
-        .select('id, full_name, phone_number')
+        .select('id, full_name, email, phone_number')
         .ilike('phone_number', `%${suffix}`)
         .limit(2)
 
@@ -116,7 +117,6 @@ serve(async (req: Request) => {
       )
     }
 
-    // Use normalized +E.164 for SMS dispatch
     const sendToPhone = normalizedPhone
 
     // OTP window / cooldown check
@@ -169,13 +169,12 @@ serve(async (req: Request) => {
         twilioSuccess = true
       } catch (tErr: unknown) {
         const msg = tErr instanceof Error ? tErr.message : String(tErr)
-        console.warn(`[SEND-OTP] Twilio Verify failed (falling back to local SMS): ${msg}`)
-        // Fall back to local SMS dispatch (mNotify/Twilio REST)
+        console.warn(`[SEND-OTP] Twilio Verify failed (falling back to local SMS/Email dispatch): ${msg}`)
       }
     }
 
     if (!twilioSuccess) {
-      // Fallback: generate a local 6-digit OTP and send via SMS (mNotify / Twilio REST)
+      // Generate local 6-digit OTP
       const buf = crypto.getRandomValues(new Uint32Array(1))
       const rawOtp = String((buf[0] % 900000) + 100000)
       const hashedOtp = await hashOtp(rawOtp, otpSecret)
@@ -190,16 +189,42 @@ serve(async (req: Request) => {
         console.error(`[SEND-OTP] Failed to write OTP row: ${otpWriteErr.message}`)
       }
 
+      // 1. Send SMS via mNotify / Twilio
       const smsResult = await sendSms(
         [sendToPhone],
         `Your The Base Movement verification code is: ${rawOtp}. Valid for 10 minutes.`
       )
-      if (!smsResult.ok) {
-        console.error(`[SEND-OTP] SMS dispatch failed: ${smsResult.detail}`)
+
+      // 2. Dual Dispatch: If member has an email address registered, ALSO send OTP code to their email!
+      if (user.email && user.email.trim()) {
+        try {
+          await sendEmail({
+            to: user.email.trim(),
+            subject: 'Your Security Verification Code - The Base Movement',
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <h2 style="color: #004D25; margin-top: 0;">Password Reset Verification Code</h2>
+                <p>Hello <strong>${user.full_name || 'Compatriot'}</strong>,</p>
+                <p>You requested a security verification code to reset your password.</p>
+                <div style="background: #f4f6f8; text-align: center; padding: 15px; border-radius: 6px; font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #004D25; margin: 20px 0;">
+                  ${rawOtp}
+                </div>
+                <p style="color: #666; font-size: 14px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+                <p style="font-size: 12px; color: #999; text-align: center;">The Base Movement LBG — Official Member Platform</p>
+              </div>
+            `,
+          })
+        } catch (eErr) {
+          console.warn('[SEND-OTP] Email dual-dispatch failed:', eErr)
+        }
+      }
+
+      if (!smsResult.ok && (!user.email || !user.email.trim())) {
         return json(
           {
             error:
-              `SMS delivery failed (${smsResult.detail}). If you are overseas, please use the Email recovery tab or contact support.`,
+              `SMS delivery failed (${smsResult.detail}). Please try the Email recovery tab or contact support.`,
           },
           400
         )
@@ -209,7 +234,7 @@ serve(async (req: Request) => {
     return json(
       {
         success: true,
-        message: `A security verification code has been dispatched to ${sendToPhone}.`,
+        message: `A security verification code has been dispatched to ${sendToPhone}${user.email ? ' and your registered email address' : ''}.`,
       },
       200
     )
