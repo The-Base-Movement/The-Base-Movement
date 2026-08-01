@@ -83,13 +83,16 @@ function getCallbackSecret(): string | null {
  */
 export async function sendInfobipSms(recipients: string[], message: string): Promise<SmsResult> {
   // @ts-ignore: Deno global
-  const apiKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
+  const rawApiKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
   // @ts-ignore: Deno global
   let baseUrl = Deno.env.get('INFOBIP_BASE_URL')?.trim() || Deno.env.get('INFOBIP_URL')?.trim()
 
-  if (!apiKey || !baseUrl) {
+  if (!rawApiKey || !baseUrl) {
     return { ok: false, detail: 'INFOBIP_API_KEY or INFOBIP_BASE_URL missing' }
   }
+
+  // Handle case where user pasted "App <key>" or just "<key>"
+  const apiKey = rawApiKey.replace(/^app\s+/i, '').trim()
 
   if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
     baseUrl = `https://${baseUrl}`
