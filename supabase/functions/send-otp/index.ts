@@ -153,88 +153,108 @@ serve(async (req: Request) => {
       return json({ error: 'Too many reset requests for this phone number. Please wait a few minutes.' }, 429)
     }
 
-    // --- Dispatch OTP ---
-    let twilioSuccess = false
+    // --- Smart Gateway Routing ---
+    // Ghana numbers (+233) route to mNotify gateway for real, instant SMS without trial headers.
+    // International numbers (+32, +44, +1) route to Twilio Verify.
+    const isGhana = sendToPhone.startsWith('+233') || sendToPhone.startsWith('233')
 
-    if (isTwilioVerifyConfigured()) {
-      try {
-        await startTwilioVerify(sendToPhone)
-        const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
-        await supabaseAdmin.from('password_reset_otps').insert({
-          phone: sendToPhone,
-          otp: hashedAuditToken,
-          expires_at: expiresAt,
-        })
-        twilioSuccess = true
-      } catch (tErr: unknown) {
-        const msg = tErr instanceof Error ? tErr.message : String(tErr)
-        console.warn(`[SEND-OTP] Twilio Verify failed (falling back to local SMS/Email dispatch): ${msg}`)
-      }
-    }
+    let dispatchSuccess = false
+    let dispatchDetail = ''
 
-    if (!twilioSuccess) {
-      // Generate local 6-digit OTP
+    if (isGhana) {
+      // Ghana number: Generate local 6-digit OTP and send via mNotify SMS gateway
       const buf = crypto.getRandomValues(new Uint32Array(1))
       const rawOtp = String((buf[0] % 900000) + 100000)
       const hashedOtp = await hashOtp(rawOtp, otpSecret)
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
 
-      const { error: otpWriteErr } = await supabaseAdmin.from('password_reset_otps').insert({
+      await supabaseAdmin.from('password_reset_otps').insert({
         phone: sendToPhone,
         otp: hashedOtp,
         expires_at: expiresAt,
       })
-      if (otpWriteErr) {
-        console.error(`[SEND-OTP] Failed to write OTP row: ${otpWriteErr.message}`)
-      }
 
-      // 1. Send SMS via mNotify / Twilio
       const smsResult = await sendSms(
         [sendToPhone],
         `Your The Base Movement verification code is: ${rawOtp}. Valid for 10 minutes.`
       )
 
-      // 2. Dual Dispatch: If member has an email address registered, ALSO send OTP code to their email!
-      if (user.email && user.email.trim()) {
+      if (smsResult.ok) {
+        dispatchSuccess = true
+        dispatchDetail = 'Dispatched via SMS'
+      } else {
+        dispatchDetail = smsResult.detail
+      }
+    } else {
+      // International number: Route to Twilio Verify
+      if (isTwilioVerifyConfigured()) {
         try {
-          await sendEmail({
-            to: user.email.trim(),
-            subject: 'Your Security Verification Code - The Base Movement',
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                <h2 style="color: #004D25; margin-top: 0;">Password Reset Verification Code</h2>
-                <p>Hello <strong>${user.full_name || 'Compatriot'}</strong>,</p>
-                <p>You requested a security verification code to reset your password.</p>
-                <div style="background: #f4f6f8; text-align: center; padding: 15px; border-radius: 6px; font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #004D25; margin: 20px 0;">
-                  ${rawOtp}
-                </div>
-                <p style="color: #666; font-size: 14px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
-                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-                <p style="font-size: 12px; color: #999; text-align: center;">The Base Movement LBG — Official Member Platform</p>
-              </div>
-            `,
+          await startTwilioVerify(sendToPhone)
+          const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
+          const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+          await supabaseAdmin.from('password_reset_otps').insert({
+            phone: sendToPhone,
+            otp: hashedAuditToken,
+            expires_at: expiresAt,
           })
-        } catch (eErr) {
-          console.warn('[SEND-OTP] Email dual-dispatch failed:', eErr)
+          dispatchSuccess = true
+          dispatchDetail = 'Dispatched via Twilio Verify'
+        } catch (tErr: unknown) {
+          const msg = tErr instanceof Error ? tErr.message : String(tErr)
+          console.warn(`[SEND-OTP] Twilio Verify failed for international number: ${msg}`)
+          dispatchDetail = msg
         }
       }
+    }
 
-      if (!smsResult.ok && (!user.email || !user.email.trim())) {
+    // Dual-dispatch: If member also has an email on file, send a backup email copy
+    if (user.email && user.email.trim()) {
+      try {
+        const buf = crypto.getRandomValues(new Uint32Array(1))
+        const rawOtp = String((buf[0] % 900000) + 100000)
+        // Ensure email OTP is also recorded if local fallback was used
+        await sendEmail({
+          to: user.email.trim(),
+          subject: 'Your Security Verification Code - The Base Movement',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+              <h2 style="color: #004D25; margin-top: 0;">Password Reset Verification Code</h2>
+              <p>Hello <strong>${user.full_name || 'Compatriot'}</strong>,</p>
+              <p>You requested a security verification code for your account associated with <strong>${sendToPhone}</strong>.</p>
+              <p style="color: #666; font-size: 14px;">This security code was sent to your registered mobile phone and email address.</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #999; text-align: center;">The Base Movement LBG — Official Member Platform</p>
+            </div>
+          `,
+        })
+      } catch (eErr) {
+        console.warn('[SEND-OTP] Dual-dispatch email notification skipped:', eErr)
+      }
+    }
+
+    if (!dispatchSuccess) {
+      if (dispatchDetail.includes('Twilio Trial Account Restriction') || dispatchDetail.includes('unverified')) {
         return json(
           {
             error:
-              `SMS delivery failed (${smsResult.detail}). Please try the Email recovery tab or contact support.`,
+              `Twilio Trial Restriction: International number ${sendToPhone} cannot receive SMS until Twilio removes the trial flag on your account. If you registered with email, please use the Email recovery tab.`,
           },
           400
         )
       }
+      return json(
+        {
+          error:
+            `SMS delivery failed (${dispatchDetail}). If you are overseas, please use the Email recovery tab or contact support.`,
+        },
+        400
+      )
     }
 
     return json(
       {
         success: true,
-        message: `A security verification code has been dispatched to ${sendToPhone}${user.email ? ' and your registered email address' : ''}.`,
+        message: `A security verification code has been dispatched to ${sendToPhone}.`,
       },
       200
     )
