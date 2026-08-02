@@ -128,6 +128,8 @@ serve(async (req: Request) => {
     if (!ALLOWED_NETWORKS.includes(networkType)) {
       return json({ success: false, error: 'Invalid network_type specified.' }, 400)
     }
+    // Derive the platform value expected by the DB trigger
+    const platform = networkType === 'Diaspora Network' ? 'DIASPORA' : 'GHANA'
 
     const region = sanitizeStr(userRow.region, 50)
     const constituency = sanitizeStr(userRow.constituency, 100)
@@ -140,14 +142,26 @@ serve(async (req: Request) => {
         return json({ success: false, error: `Invalid region: ${region}` }, 400)
       }
       if (region && constituency) {
-        const { data: matchedConstituency } = await supabase
-          .from('ghana_constituencies')
+        // ghana_constituencies links to ghana_regions via region_id (no direct region text column)
+        const { data: regionRow } = await supabase
+          .from('ghana_regions')
           .select('id')
-          .ilike('region', region)
-          .ilike('name', constituency)
+          .ilike('name', region)
           .limit(1)
+          .single()
 
-        if (!matchedConstituency || matchedConstituency.length === 0) {
+        const { data: regionConstituencies } = regionRow
+          ? await supabase
+              .from('ghana_constituencies')
+              .select('name')
+              .eq('region_id', regionRow.id)
+          : { data: null }
+
+        const norm = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+        const inputNorm = norm(constituency)
+        const matchedConstituency = regionConstituencies?.find((c: any) => norm(c.name) === inputNorm)
+
+        if (!matchedConstituency) {
           return json(
             {
               success: false,
@@ -157,6 +171,7 @@ serve(async (req: Request) => {
           )
         }
       }
+
     } else if (networkType === 'Diaspora Network') {
       const activeCountry = diasporaCountry || country
       if (!activeCountry || activeCountry.toLowerCase() === 'ghana') {
@@ -207,28 +222,38 @@ serve(async (req: Request) => {
 
     const userId = created.user.id
 
-    // Explicit Schema Allowlist with Server-Generated Administrative State
+    // Explicit Schema Allowlist matching public.users table columns exactly
     const sanitizedUserRow = {
       id: userId,
       full_name: fullName,
       email: authEmail || null,
       phone_number: phone || null,
-      // Enum-validated above — use the already-validated values directly
-      region: region,
-      constituency: constituency,
-      country: country,
-      network_type: networkType,
-      diaspora_country: diasporaCountry,
-      city: sanitizeStr(userRow.city, 100),
-      voters_id: sanitizeStr(userRow.voters_id, 30),
-      polling_station: sanitizeStr(userRow.polling_station, 150),
-      // Server-Enforced Administrative & Security Fields (Client values strictly overridden)
-      role: 'member',
+      platform,
+      region: region || null,
+      constituency: constituency || null,
+      country: country || null,
+      chapter: sanitizeStr(userRow.chapter, 100) || null,
+      city: sanitizeStr(userRow.city, 100) || null,
+      district: sanitizeStr(userRow.district, 100) || null,
+      voters_id_card: sanitizeStr(userRow.voters_id_card || userRow.voters_id, 30) || null,
+      polling_station_code:
+        sanitizeStr(userRow.polling_station_code || userRow.polling_station, 150) || null,
+      education_level: sanitizeStr(userRow.education_level, 50) || null,
+      emergency_name: sanitizeStr(userRow.emergency_name, 100) || null,
+      emergency_relationship: sanitizeStr(userRow.emergency_relationship, 50) || null,
+      emergency_phone: sanitizeStr(userRow.emergency_phone, 20) || null,
+      children_count: typeof userRow.children_count === 'number' ? userRow.children_count : null,
+      residential_address: sanitizeStr(userRow.residential_address, 200) || null,
+      birth_year: typeof userRow.birth_year === 'number' ? userRow.birth_year : null,
+      religion: sanitizeStr(userRow.religion, 50) || null,
+      secondary_phone: sanitizeStr(userRow.secondary_phone, 20) || null,
+      referred_by:
+        refParam ||
+        (typeof userRow.referred_by === 'string' ? sanitizeStr(userRow.referred_by, 50) : null),
       status: 'Active',
       verification_status: 'Pending',
-      registration_source: 'web',
+      registration_source: sanitizeStr(userRow.registration_source, 20) || 'web',
       registered_by: userId,
-      approval_status: 'approved',
     }
 
     // Insert into public.users. On failure, delete auth user.
