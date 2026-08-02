@@ -275,11 +275,12 @@ export default function Register() {
         return 'Password must be at least 8 characters.'
     }
     if (step === 4) {
-      if (!formData.emergencyContactName.trim()) return 'Emergency contact name is required.'
-      if (!/^[\p{L}\s.'’-]+$/u.test(formData.emergencyContactName.trim())) {
+      if (
+        formData.emergencyContactName.trim() &&
+        !/^[\p{L}\s.'’-]+$/u.test(formData.emergencyContactName.trim())
+      ) {
         return 'Emergency contact name can only contain letters, spaces, periods, hyphens, and apostrophes.'
       }
-      if (!formData.emergencyNumber.trim()) return 'Emergency contact number is required.'
     }
     return null
   }

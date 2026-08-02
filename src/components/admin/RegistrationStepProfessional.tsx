@@ -53,14 +53,16 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
             letterSpacing: '0.05em',
           }}
         >
-          Emergency contact name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+          Emergency contact name{' '}
+          <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+            (optional)
+          </span>
         </label>
         <input
           aria-label="Full Name"
           name="name-6a8f94"
           id="input-6a8f94"
           placeholder="Full Name"
-          required
           value={formData.emergencyContactName}
           onChange={(e) => handleChange('emergencyContactName', e.target.value)}
           style={{
@@ -94,13 +96,15 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
               letterSpacing: '0.05em',
             }}
           >
-            Relationship <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+            Relationship{' '}
+            <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+              (optional)
+            </span>
           </label>
           <select
             aria-label="Relationship"
             name="name-6df3eb"
             id="input-6df3eb"
-            required
             value={formData.emergencyRelationship}
             onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
             className="reg"
@@ -134,7 +138,10 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
               letterSpacing: '0.05em',
             }}
           >
-            Emergency contact number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+            Emergency contact number{' '}
+            <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+              (optional)
+            </span>
           </label>
           <input
             aria-label="Phone number"
@@ -142,7 +149,6 @@ export function RegistrationStepProfessional(props: RegistrationStepProfessional
             id="input-434c82"
             type="tel"
             placeholder="Phone number"
-            required
             value={formData.emergencyNumber}
             onChange={(e) => handleChange('emergencyNumber', e.target.value)}
             style={{
