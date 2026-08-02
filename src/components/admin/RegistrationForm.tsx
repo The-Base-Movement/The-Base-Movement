@@ -190,11 +190,7 @@ export default function RegistrationForm({
     if (formStep < 4) {
       if (formStep === 3) {
         const nameClean = formData.emergencyContactName.trim()
-        if (!nameClean) {
-          toast.error('Emergency contact name is required.')
-          return
-        }
-        if (!/^[\p{L}\s'-]+$/u.test(nameClean)) {
+        if (nameClean && !/^[\p{L}\s'-]+$/u.test(nameClean)) {
           toast.error(
             'Emergency contact name can only contain letters, spaces, hyphens, and apostrophes.'
           )
