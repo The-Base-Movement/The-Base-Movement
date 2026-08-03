@@ -111,11 +111,18 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
   const filteredRegions = dbRegions
     .map((region) => region.name)
-    .filter((name) => !formData.region.trim() || name.toLowerCase().includes(formData.region.trim().toLowerCase()))
+    .filter(
+      (name) =>
+        !formData.region.trim() || name.toLowerCase().includes(formData.region.trim().toLowerCase())
+    )
     .slice(0, 12)
 
   const filteredConstituencies = constituencies
-    .filter((name) => !formData.constituency.trim() || name.toLowerCase().includes(formData.constituency.trim().toLowerCase()))
+    .filter(
+      (name) =>
+        !formData.constituency.trim() ||
+        name.toLowerCase().includes(formData.constituency.trim().toLowerCase())
+    )
     .slice(0, 12)
 
   // Constituency → district is 1:1; auto-fill the editable, optional District.
@@ -451,7 +458,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
                                   setRegionFocused(false)
                                 }}
                                 className="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-border/50 transition-colors block text-xs"
-                                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                }}
                               >
                                 {name}
                               </button>
@@ -480,7 +491,9 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           }}
                           className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface disabled:bg-container-low disabled:cursor-not-allowed"
                           disabled={!formData.region}
-                          placeholder={formData.region ? 'Search constituency' : 'Select region first'}
+                          placeholder={
+                            formData.region ? 'Search constituency' : 'Select region first'
+                          }
                           autoComplete="off"
                         />
                         {constituencyFocused && filteredConstituencies.length > 0 && (
@@ -497,7 +510,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
                                   setConstituencyFocused(false)
                                 }}
                                 className="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-border/50 transition-colors block text-xs"
-                                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                }}
                               >
                                 {name}
                               </button>
@@ -1001,17 +1018,17 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         htmlFor="input-36e963"
                         className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                       >
-                        Residential Address <span className="opacity-50 lowercase">(Optional)</span>
+                        Digital Address <span className="opacity-50 lowercase">(Optional)</span>
                       </label>
                       <input
                         name="name-36e963"
                         id="input-36e963"
-                        value={formData.residentialAddress}
-                        onChange={(e) => onInputChange('residentialAddress', e.target.value)}
+                        value={formData.digitalAddress}
+                        onChange={(e) => onInputChange('digitalAddress', e.target.value)}
                         className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                         placeholder={
                           platform === 'GHANA'
-                            ? 'House no., street, area (optional)'
+                            ? 'e.g. GA-183-9020 (optional)'
                             : 'City address (optional)'
                         }
                         autoComplete="street-address"

@@ -233,6 +233,10 @@ class AuthService {
     if (error) {
       throw new Error(error.message || 'Failed to update password')
     }
+    const uid = this.currentSession?.user?.id
+    if (uid) {
+      void userActivityService.logActivity(uid, 'password_change', 'Password updated')
+    }
   }
 
   async updateProfile(updates: {
@@ -246,6 +250,10 @@ class AuthService {
 
     if (error) {
       throw new Error(error.message || 'Failed to update profile')
+    }
+    const uid = this.currentSession?.user?.id
+    if (uid) {
+      void userActivityService.logActivity(uid, 'profile_update', 'Profile information updated')
     }
   }
 

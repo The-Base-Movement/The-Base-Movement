@@ -247,8 +247,12 @@ async function doScan(
     email: extractEmail(text) ?? undefined,
     contactNumber: extractPhone(text) ?? undefined,
 
-    residentialAddress:
-      after(text, /residential\s*address[:\s]*/i) ?? after(text, /address[:\s]*/i) ?? undefined,
+    digitalAddress:
+      after(text, /digital\s*address[:\s]*/i) ??
+      after(text, /gps\s*address[:\s]*/i) ??
+      after(text, /residential\s*address[:\s]*/i) ??
+      after(text, /address[:\s]*/i) ??
+      undefined,
 
     region: platform === 'GHANA' ? (extractRegion(text) ?? undefined) : undefined,
 

@@ -22,7 +22,7 @@ export interface Member {
   profession?: string
   nationalId?: string
   city?: string
-  residentialAddress?: string
+  digitalAddress?: string
   jobIndustryId?: number | null
   jobSubCategoryId?: number | null
   jobRoleId?: number | null
@@ -47,10 +47,14 @@ export interface User {
   gender: string
   avatar_url: string | null
   age_range: string
-  residential_address: string
+  residential_address?: string
   region: string
   constituency: string
   district?: string | null
+  birth_year?: number | null
+  religion?: string
+  secondary_phone?: string
+  digital_address?: string
   chapter: string
   profession: string
   education_level: string

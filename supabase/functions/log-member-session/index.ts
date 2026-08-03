@@ -69,7 +69,7 @@ function deviceName(ua: string | null, secChUa: string | null): string {
 async function geoLocate(ip: string | null): Promise<string | null> {
   if (!ip) return null
   try {
-    const res = await fetch(`https://ipwho.is/${ip}`)
+    const res = await fetch(`https://ipwho.is/${ip}`, { signal: AbortSignal.timeout(600) })
     if (res.ok) {
       const g = await res.json()
       if (g && g.success !== false) {
@@ -81,7 +81,9 @@ async function geoLocate(ip: string | null): Promise<string | null> {
     // fall through
   }
   try {
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`)
+    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`, {
+      signal: AbortSignal.timeout(600),
+    })
     if (res.ok) {
       const g = await res.json()
       if (g && g.status === 'success') {

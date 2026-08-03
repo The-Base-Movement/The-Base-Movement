@@ -207,6 +207,27 @@ Deno.serve(async (req: Request) => {
       return json({ error: 'Failed to deliver password reset email.' }, 502)
     }
 
+    // Trigger instant password reset webhook alert (non-fatal)
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/password-reset-webhook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+        },
+        body: JSON.stringify({
+          action: 'instant_alert',
+          event_type: 'admin_reset_triggered',
+          user_id: authUserId,
+          full_name: targetName,
+          email: targetEmail,
+          triggered_by: `admin:${caller.id}`,
+        }),
+      })
+    } catch (whErr) {
+      console.warn('[admin-reset-password] Webhook dispatch warning:', whErr)
+    }
+
     return json({
       success: true,
       emailed: true,

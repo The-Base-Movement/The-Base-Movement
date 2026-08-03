@@ -50,7 +50,7 @@ interface FormState {
   chapter: string
   country: string
   city: string
-  residentialAddress: string
+  digitalAddress: string
   emergencyName: string
   emergencyRelationship: string
   emergencyPhone: string
@@ -168,7 +168,7 @@ export default function ProfileSettings() {
     chapter: '',
     country: userPlatform === 'GHANA' ? 'Ghana' : '',
     city: '',
-    residentialAddress: '',
+    digitalAddress: '',
     emergencyName: '',
     emergencyRelationship: '',
     emergencyPhone: '',
@@ -253,7 +253,7 @@ export default function ProfileSettings() {
           chapter: profile.chapter || '',
           country: profileCountry,
           city: profile.city || '',
-          residentialAddress: profile.residentialAddress || '',
+          digitalAddress: profile.digitalAddress || '',
           emergencyName: profile.emergencyName || '',
           emergencyRelationship: profile.emergencyRelationship || '',
           emergencyPhone: profile.emergencyPhone || '',
@@ -430,7 +430,7 @@ export default function ProfileSettings() {
         profession: form.profession,
         country: form.country,
         city: form.city,
-        residentialAddress: form.residentialAddress,
+        digitalAddress: form.digitalAddress,
         emergencyName: form.emergencyName,
         emergencyRelationship: form.emergencyRelationship,
         emergencyPhone: form.emergencyPhone,

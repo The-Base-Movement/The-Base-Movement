@@ -49,7 +49,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         void userActivityService.logLoginOnce(session.user.id, session.user.last_sign_in_at)
       }
       if (event === 'USER_UPDATED' && session?.user) {
-        userActivityService.logActivity(session.user.id, 'password_change', 'Password updated')
+        userActivityService.logActivity(
+          session.user.id,
+          'profile_update',
+          'Profile information updated'
+        )
       }
     })
 

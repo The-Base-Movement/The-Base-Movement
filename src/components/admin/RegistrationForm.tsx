@@ -90,7 +90,7 @@ export default function RegistrationForm({
     secondaryPhone: '',
     password: '',
     email: '',
-    residentialAddress: '',
+    digitalAddress: '',
     region: '',
     district: '',
     constituency: '',
@@ -105,12 +105,14 @@ export default function RegistrationForm({
     children_count: 0,
   })
 
-  const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapterOptions } = useRegistrationData()
+  const { dbCountries, dbCountryCodes, dbRegions, dbConstituencies, dbChapterOptions } =
+    useRegistrationData()
 
   const getDiasporaChapter = useCallback(
     (country: string) =>
-      dbChapterOptions.find((chapter) => chapter.country.trim().toLowerCase() === country.trim().toLowerCase())
-        ?.name || '',
+      dbChapterOptions.find(
+        (chapter) => chapter.country.trim().toLowerCase() === country.trim().toLowerCase()
+      )?.name || '',
     [dbChapterOptions]
   )
 

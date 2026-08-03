@@ -38,7 +38,7 @@ class MemberService {
       supabase
         .from('users')
         .select(
-          'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,voters_id_card,polling_station_code'
+          'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,voters_id_card,polling_station_code'
         )
         .is('deleted_at', null)
         .order('joined_at', { ascending: false }),
@@ -73,7 +73,7 @@ class MemberService {
         country: u.country || 'Ghana',
         profession: u.profession || 'Compatriot',
         city: u.city || undefined,
-        residentialAddress: u.residential_address || undefined,
+        digitalAddress: u.digital_address || undefined,
         votersIdCard: u.voters_id_card || undefined,
         pollingStationCode: u.polling_station_code || undefined,
       }))
@@ -128,7 +128,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district'
       )
       .eq('registration_number', regNo)
       .maybeSingle()
@@ -157,7 +157,7 @@ class MemberService {
       country: data.country || 'Ghana',
       profession: data.profession || 'Compatriot',
       city: data.city || undefined,
-      residentialAddress: data.residential_address || undefined,
+      digitalAddress: data.digital_address || undefined,
       ageRange: data.age_range || undefined,
       jobIndustryId: data.job_industry_id ?? null,
       jobSubCategoryId: data.job_sub_category_id ?? null,
@@ -420,8 +420,8 @@ class MemberService {
     if (profile.city) updateData.city = profile.city
     // Optional field: use `!== undefined` (not truthy) so a member can also
     // CLEAR their residential address later, not just set/change it.
-    if (profile.residentialAddress !== undefined)
-      updateData.residential_address = profile.residentialAddress || null
+    if (profile.digitalAddress !== undefined)
+      updateData.digital_address = profile.digitalAddress || null
     if (profile.emergencyName !== undefined)
       updateData.emergency_name = profile.emergencyName || null
     if (profile.emergencyRelationship !== undefined)
@@ -729,7 +729,7 @@ class MemberService {
     let supabaseQuery = supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,city,residential_address'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,city,digital_address'
       )
       .is('deleted_at', null)
 
@@ -766,7 +766,7 @@ class MemberService {
       country: u.country || 'Ghana',
       profession: u.profession || 'Compatriot',
       city: u.city || undefined,
-      residentialAddress: u.residential_address || undefined,
+      digitalAddress: u.digital_address || undefined,
     }))
   }
 
@@ -801,7 +801,7 @@ class MemberService {
             country: u.country || 'Ghana',
             profession: u.profession || 'Compatriot',
             city: u.city || undefined,
-            residentialAddress: u.residential_address || undefined,
+            digitalAddress: u.digital_address || undefined,
           })
         }
       )
@@ -855,7 +855,7 @@ class MemberService {
     let query = supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source,age_range,district,religion,polling_station_code',
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,registration_source,age_range,district,religion,polling_station_code',
         { count: 'exact' }
       )
       .is('deleted_at', null)
@@ -919,7 +919,7 @@ class MemberService {
       country: u.country || 'Ghana',
       profession: u.profession || 'Compatriot',
       city: u.city || undefined,
-      residentialAddress: u.residential_address || undefined,
+      digitalAddress: u.digital_address || undefined,
       registrationSource: u.registration_source || 'digital',
       ageRange: u.age_range || undefined,
       district: u.district || undefined,

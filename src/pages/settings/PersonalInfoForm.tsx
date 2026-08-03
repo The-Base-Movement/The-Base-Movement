@@ -41,7 +41,7 @@ interface FormState {
   chapter: string
   country: string
   city: string
-  residentialAddress: string
+  digitalAddress: string
   emergencyName: string
   emergencyRelationship: string
   emergencyPhone: string
@@ -586,10 +586,10 @@ export function PersonalInfoForm({
             </div>
           )}
 
-          {/* Residential address — full width */}
+          {/* Digital address — full width */}
           <div className="profile-form-full" style={{ display: 'flex', flexDirection: 'column' }}>
             <label htmlFor="input-048091" style={labelStyle}>
-              Residential Address{' '}
+              Digital Address{' '}
               <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
                 (optional)
               </span>
@@ -597,9 +597,9 @@ export function PersonalInfoForm({
             <input
               name="name-048091"
               id="input-048091"
-              value={form.residentialAddress}
-              onChange={(e) => onChange('residentialAddress', e.target.value)}
-              placeholder="Physical address for mobilization and logistics"
+              value={form.digitalAddress}
+              onChange={(e) => onChange('digitalAddress', e.target.value)}
+              placeholder="e.g. GA-183-9020 (Ghana Post GPS)"
               style={inputStyle}
             />
           </div>

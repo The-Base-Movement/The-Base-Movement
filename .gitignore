@@ -85,3 +85,9 @@ __pycache__/
 ml-service/tests/
 
 
+
+# Local-only git history-rewrite tooling (not shared with the team)
+.git-rewrite/
+scripts/fast_export_filter.py
+scripts/filter_msg.py
+scripts/filter_repo_callback.py

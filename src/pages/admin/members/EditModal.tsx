@@ -204,11 +204,19 @@ export function EditModal({
 
   const filteredRegions = (regions ?? [])
     .map((region) => region.name)
-    .filter((name) => !(form.region ?? '').trim() || name.toLowerCase().includes((form.region ?? '').trim().toLowerCase()))
+    .filter(
+      (name) =>
+        !(form.region ?? '').trim() ||
+        name.toLowerCase().includes((form.region ?? '').trim().toLowerCase())
+    )
     .slice(0, 12)
 
   const filteredConstituencies = constituencyList
-    .filter((name) => !(form.constituency ?? '').trim() || name.toLowerCase().includes((form.constituency ?? '').trim().toLowerCase()))
+    .filter(
+      (name) =>
+        !(form.constituency ?? '').trim() ||
+        name.toLowerCase().includes((form.constituency ?? '').trim().toLowerCase())
+    )
     .slice(0, 12)
 
   return createPortal(
@@ -310,7 +318,7 @@ export function EditModal({
               { key: 'country', label: 'Country', type: 'text' },
               { key: 'chapter', label: 'Base Diaspora', type: 'text' },
               { key: 'city', label: 'City / Town', type: 'text' },
-              { key: 'residentialAddress', label: 'Residential address', type: 'text' },
+              { key: 'digitalAddress', label: 'Digital address', type: 'text' },
             ] as const
           ).map((field) => (
             <div key={field.key}>
