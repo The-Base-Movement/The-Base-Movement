@@ -97,8 +97,8 @@ const SECTIONS = [
                 [
                   'Usage data',
                   'Pages visited (anonymised)',
-                  'Site improvement via Umami analytics',
-                  'Consent (opt-in)',
+                  'Site improvement via Vercel Analytics',
+                  'Legitimate interest',
                 ],
                 [
                   'Error logs',
@@ -157,8 +157,8 @@ const SECTIONS = [
               'Payment processing for donations and dues. Hubtel handles card/mobile-money data under their own PCI-DSS compliance.',
             ],
             [
-              'Umami (cloud.umami.is)',
-              'Privacy-first, cookie-free analytics. Only anonymised page-view data is sent. No personal data is shared.',
+              'Vercel Analytics',
+              'Privacy-first, cookie-free web analytics. Only anonymised page-view data is captured.',
             ],
             [
               'Sentry (sentry.io)',
@@ -199,8 +199,8 @@ const SECTIONS = [
             <strong>Error logs (Sentry)</strong> — auto-deleted after 90 days.
           </li>
           <li>
-            <strong>Analytics data (Umami)</strong> — anonymised, retained indefinitely in
-            aggregate.
+            <strong>Analytics data (Vercel Analytics)</strong> — anonymised, retained indefinitely
+            in aggregate.
           </li>
           <li>
             <strong>Deactivated accounts</strong> — soft-deleted; a 90-day retention window applies
@@ -302,20 +302,6 @@ const SECTIONS = [
                   'Strictly necessary',
                   'Session',
                 ],
-                [
-                  'analytics_consent',
-                  'The Base (us)',
-                  'Records your analytics preference',
-                  'Preference',
-                  'Persistent',
-                ],
-                [
-                  'umami.is/*',
-                  'Umami',
-                  'Anonymous page-view tracking (only if consented)',
-                  'Analytics (opt-in)',
-                  '1 year',
-                ],
               ].map((row) => (
                 <tr key={row[0]} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   {row.map((cell, i) => (
@@ -339,22 +325,13 @@ const SECTIONS = [
   {
     icon: 'analytics',
     iconColor: 'var(--primary)',
-    title: '7. Analytics and your consent',
+    title: '7. Analytics',
     content: (
       <>
         <p>
-          We use <strong>Umami</strong>, a privacy-first analytics platform, to understand how
-          visitors use this site. Umami does not use cookies for tracking and does not collect any
-          personally identifiable information. All data is aggregated and anonymous.
-        </p>
-        <p>
-          We only load the Umami script after you have granted consent via the banner shown on your
-          first visit. You can change your preference at any time by clearing your browser's local
-          storage or contacting us.
-        </p>
-        <p>
-          We also use <strong>Vercel Analytics</strong> for performance monitoring. This is
-          privacy-preserving and does not use cookies or collect personal data.
+          We use <strong>Vercel Analytics</strong> to understand how visitors use this site and
+          monitor performance. It does not use cookies and does not collect personally identifiable
+          information — all data is aggregated and anonymous.
         </p>
       </>
     ),

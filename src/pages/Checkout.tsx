@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { trackEvent } from '@/lib/analytics'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
@@ -180,7 +179,6 @@ export default function Checkout() {
         'Hubtel secure checkout',
         isDiaspora ? formData.stateProvince : formData.region
       )
-      trackEvent('store_payment_started', { total, items: cart.length, provider: 'Hubtel' })
       toast.success('Secure checkout initiated. Complete payment to confirm your order.')
       clearCart()
       navigate(summaryPath, {

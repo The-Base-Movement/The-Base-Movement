@@ -49,8 +49,6 @@ jobs:
           echo "SENTRY_DSN=" >> .env
           echo "MAPBOX_TOKEN=" >> .env
           echo "TINYMCE_API_KEY=" >> .env
-          echo "UMAMI_WEBSITE_ID=" >> .env
-          echo "UMAMI_SHARE_URL=" >> .env
           echo "VAPID_PUBLIC_KEY=" >> .env
 
       - name: Run unit tests

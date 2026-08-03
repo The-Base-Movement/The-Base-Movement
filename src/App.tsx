@@ -11,8 +11,6 @@ import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/buttons/ui/toaster'
 import { useIsClient } from '@/hooks/useIsClient'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { Analytics } from './components/Analytics'
-import { AnalyticsConsentBanner } from './components/AnalyticsConsentBanner'
 import { VersionChecker } from './components/VersionChecker'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
@@ -25,8 +23,6 @@ export default function App() {
       <PerformanceProvider>
         <BrandingProvider>
           <AuthProvider>
-            <Analytics />
-            <AnalyticsConsentBanner />
             <VercelAnalytics />
             <ScrollToTop />
             <ReadingProgressBar />

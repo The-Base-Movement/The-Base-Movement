@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
-import { trackEvent } from '@/lib/analytics'
 import type {
   Country,
   DonationCampaign,
@@ -160,7 +159,6 @@ export default function PublicDonate() {
         setPaymentState('idle')
         setCheckoutUrl(null)
         setIsPaymentModalOpen(false)
-        trackEvent('donation_verified', { donationId: activeDonationId })
         toast.success('Payment confirmed. Thank you for supporting the movement.')
       }
 
@@ -252,11 +250,6 @@ export default function PublicDonate() {
       setCheckoutUrl(url)
       setPaymentState('checkout')
       setIsPaymentModalOpen(true)
-      trackEvent('donation_payment_started', {
-        amount,
-        currency: selectedCurrency.code,
-        ghsAmount,
-      })
     } catch (err: unknown) {
       setActiveDonationId(null)
       setPaymentState('failed')
@@ -464,9 +457,6 @@ export default function PublicDonate() {
           setPaymentState('idle')
           setCheckoutUrl(null)
           setIsPaymentModalOpen(false)
-          if (activeDonationId) {
-            trackEvent('donation_verified', { donationId: activeDonationId })
-          }
           toast.success('Payment confirmed. Thank you for supporting the movement.')
         }}
       />

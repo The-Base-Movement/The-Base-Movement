@@ -89,7 +89,6 @@ export const getNavGroups = (
       },
       ...DEPARTMENT_NAV_ITEMS,
       { to: '/admin/war-room', icon: 'radio', label: 'War Room', pill: 'LIVE' },
-      { to: '/admin/analytics', icon: 'bar_chart', label: 'Analytics' },
       { to: '/admin/logistics-intelligence', icon: 'inventory_2', label: 'Logistics' },
       { to: '/admin/mobilization-metrics', icon: 'my_location', label: 'Deployment metrics' },
       { to: '/admin/sentiment-intelligence', icon: 'psychology', label: 'Sentiment AI' },
