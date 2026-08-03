@@ -54,6 +54,7 @@ export default function MembersList() {
     sortOrder,
     setSortOrder,
     stats,
+    statsLoading,
     fetchMembers,
     handleSearchChange,
     handleSearchTypeChange,
@@ -158,8 +159,9 @@ export default function MembersList() {
       )}
 
       <MembersKPIs
-        isLoading={isLoading}
+        isLoading={statsLoading}
         total={stats.total}
+        recentJoins={stats.recentJoins}
         active={stats.active}
         pending={stats.pending}
         regions={stats.regions}

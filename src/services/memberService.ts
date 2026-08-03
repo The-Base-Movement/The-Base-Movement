@@ -837,6 +837,53 @@ class MemberService {
     }))
   }
 
+  /**
+   * Whole-table KPI counts for the members directory.
+   *
+   * These deliberately ignore the page's search/filter state: they are
+   * directory-wide totals, and the filtered count is already shown by the
+   * pagination footer. Previously active/pending/regions were derived from
+   * the loaded page (8 rows), so they reported a fraction of the real values.
+   *
+   * recentJoins counts every status, not just Active — a member awaiting
+   * verification has still joined, and filtering here would undercount signups.
+   */
+  async getDirectoryStats(recentHours = 24): Promise<{
+    total: number
+    active: number
+    pending: number
+    regions: number
+    recentJoins: number
+  }> {
+    const since = new Date(Date.now() - recentHours * 60 * 60 * 1000).toISOString()
+
+    // head: true fetches the count only, no rows.
+    const baseUserCountQuery = () =>
+      supabase.from('users').select('id', { count: 'exact', head: true }).is('deleted_at', null)
+
+    const [totalRes, activeRes, pendingRes, recentRes, regionsRes] = await Promise.all([
+      baseUserCountQuery(),
+      baseUserCountQuery().eq('status', 'Active'),
+      baseUserCountQuery().eq('status', 'Pending'),
+      baseUserCountQuery().gte('joined_at', since),
+      supabase.rpc('get_regional_member_counts'),
+    ])
+
+    const firstError =
+      totalRes.error || activeRes.error || pendingRes.error || recentRes.error || regionsRes.error
+    if (firstError) {
+      console.warn('[DATABASE] Failed to load directory stats:', firstError)
+    }
+
+    return {
+      total: totalRes.count ?? 0,
+      active: activeRes.count ?? 0,
+      pending: pendingRes.count ?? 0,
+      recentJoins: recentRes.count ?? 0,
+      regions: Array.isArray(regionsRes.data) ? regionsRes.data.length : 0,
+    }
+  }
+
   async getMembersPaginated(
     page: number,
     pageSize: number,

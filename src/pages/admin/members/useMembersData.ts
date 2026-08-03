@@ -13,6 +13,14 @@ export function useMembersData() {
     }
     return ''
   })
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0,
+    pending: 0,
+    regions: 0,
+    recentJoins: 0,
+  })
+  const [statsLoading, setStatsLoading] = useState(true)
   const [sourceFilter, setSourceFilter] = useState<'all' | 'digital' | 'scan' | 'admin'>('all')
   const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>('all')
   const [ageRangeFilter, setAgeRangeFilter] = useState<string>('all')
@@ -61,6 +69,19 @@ export function useMembersData() {
     fetchMembers()
   }, [fetchMembers])
 
+  // Directory-wide totals — independent of the current page and filters.
+  useEffect(() => {
+    let cancelled = false
+    adminService.getDirectoryStats(24).then((s) => {
+      if (cancelled) return
+      setStats(s)
+      setStatsLoading(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const handleSearchChange = (val: string) => {
     setSearchTerm(val)
     setCurrentPage(1)
@@ -105,13 +126,6 @@ export function useMembersData() {
     if (currentPage > 1) setCurrentPage((p) => p - 1)
   }
 
-  const stats = {
-    total: totalMembers,
-    active: members.filter((m) => m.status === 'Active').length,
-    pending: members.filter((m) => m.status === 'Pending').length,
-    regions: new Set(members.filter((m) => m.region).map((m) => m.region)).size,
-  }
-
   return {
     members,
     isLoading,
@@ -129,6 +143,7 @@ export function useMembersData() {
     sortOrder,
     setSortOrder,
     stats,
+    statsLoading,
     fetchMembers,
     handleSearchChange,
     handleSearchTypeChange,
