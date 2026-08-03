@@ -213,13 +213,24 @@ async function prerender() {
   }
 
   // Import the built SSR bundle
-  const { render } = await import(`file://${serverEntryPath}`)
+  const { render, renderStatic } = await import(`file://${serverEntryPath}`)
 
   try {
+    // Warm-up pass (output discarded). React.lazy() suspends the first time a
+    // given lazy component is reached in this process, so the streaming
+    // renderer emits an inline "$RC" hydration-swap script + hidden template
+    // divs. Our CSP allows no inline scripts, so that script is blocked for
+    // real visitors and the fallback markup never gets swapped out. Resolving
+    // every lazy component here lets renderStatic() below render each route
+    // synchronously, with no suspense and therefore no inline script at all.
+    for (const url of routesToPrerender) {
+      await render(url)
+    }
+
     for (const url of routesToPrerender) {
       console.log(`[PRERENDER] Rendering route: ${url}`)
 
-      let { appHtml, head } = await render(url)
+      let { appHtml, head } = renderStatic(url)
 
       // Regex to extract SEO tags from appHtml if they ended up there (common in React 18 streaming)
       // Matches <title>...</title>, <meta...>, <link...>, and <script type="application/ld+json">...</script>
