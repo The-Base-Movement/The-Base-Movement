@@ -3,12 +3,20 @@ import { TacticalKPI } from '@/components/admin/TacticalKPI'
 interface MembersKPIsProps {
   isLoading: boolean
   total: number
+  recentJoins: number
   active: number
   pending: number
   regions: number
 }
 
-export function MembersKPIs({ isLoading, total, active, pending, regions }: MembersKPIsProps) {
+export function MembersKPIs({
+  isLoading,
+  total,
+  recentJoins,
+  active,
+  pending,
+  regions,
+}: MembersKPIsProps) {
   return (
     <div className="kpis">
       <TacticalKPI
@@ -16,6 +24,13 @@ export function MembersKPIs({ isLoading, total, active, pending, regions }: Memb
         value={isLoading ? '—' : total.toLocaleString()}
         variant="black"
         description="Verified citizens registered nationwide in the movement database"
+        trend={{
+          direction: recentJoins > 0 ? 'up' : 'neutral',
+          value:
+            recentJoins > 0
+              ? `${recentJoins.toLocaleString()} joined in last 24h`
+              : 'No new members in last 24h',
+        }}
       />
       <TacticalKPI
         label="Members"

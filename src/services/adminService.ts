@@ -328,6 +328,10 @@ class AdminService {
     )
   }
 
+  async getDirectoryStats(recentHours = 24) {
+    return memberService.getDirectoryStats(recentHours)
+  }
+
   async searchMembers(
     query: string,
     searchType: 'name' | 'id' | 'phone' = 'name'
