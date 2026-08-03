@@ -72,11 +72,18 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
 
   const filteredRegions = dbRegions
     .map((region) => region.name)
-    .filter((name) => !formData.region.trim() || name.toLowerCase().includes(formData.region.trim().toLowerCase()))
+    .filter(
+      (name) =>
+        !formData.region.trim() || name.toLowerCase().includes(formData.region.trim().toLowerCase())
+    )
     .slice(0, 12)
 
   const filteredConstituencies = constituencies
-    .filter((name) => !formData.constituency.trim() || name.toLowerCase().includes(formData.constituency.trim().toLowerCase()))
+    .filter(
+      (name) =>
+        !formData.constituency.trim() ||
+        name.toLowerCase().includes(formData.constituency.trim().toLowerCase())
+    )
     .slice(0, 12)
 
   useEffect(() => {
@@ -371,18 +378,18 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
             letterSpacing: '0.05em',
           }}
         >
-          Residential address{' '}
+          Digital address{' '}
           <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
             (optional)
           </span>
         </label>
         <input
-          aria-label="Street, House Number, City"
+          aria-label="Digital address (e.g. GA-183-9020)"
           name="name-f8cc39"
           id="input-f8cc39"
-          placeholder="Street, House Number, City (optional)"
-          value={formData.residentialAddress}
-          onChange={(e) => handleChange('residentialAddress', e.target.value)}
+          placeholder="e.g. GA-183-9020 (optional)"
+          value={formData.digitalAddress}
+          onChange={(e) => handleChange('digitalAddress', e.target.value)}
           style={{
             width: '100%',
             padding: '14px 18px',

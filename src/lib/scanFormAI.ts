@@ -90,7 +90,7 @@ export async function scanFormAI(
     'countryCode',
     'country',
     'contactNumber',
-    'residentialAddress',
+    'digitalAddress',
     'region',
     'constituency',
     'profession',

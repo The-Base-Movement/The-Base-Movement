@@ -48,7 +48,7 @@ INSERT INTO ghana_constituencies (region_id, name) VALUES
 ( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Old Tafo' ),
 ( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Sekyere Afram Plains' ),
 ( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Nsuta/Kwamang/Beposo' ),
-( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Afigya Seyere East' ),
+( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Afigya Sekyere East' ),
 ( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Kumawu' ),
 ( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Effiduase/Asokore' ),
 ( (SELECT id FROM ghana_regions WHERE name = 'Ashanti'), 'Suame' ),

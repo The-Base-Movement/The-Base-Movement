@@ -36,7 +36,6 @@ DO $$ BEGIN
   UPDATE public.ghana_constituencies SET name = 'Sefwi Wiawso' WHERE lower(trim(name)) = lower('Sefwi-Wiawso');
   UPDATE public.ghana_constituencies SET name = 'New Edubiase' WHERE lower(trim(name)) = lower('New Edubease');
   UPDATE public.ghana_constituencies SET name = 'Manso Adubia' WHERE lower(trim(name)) = lower('Manso Edubia');
-  UPDATE public.ghana_constituencies SET name = 'Afigya Seyere East' WHERE lower(trim(name)) = lower('Afigya Sekyere East');
   UPDATE public.ghana_constituencies SET name = 'Banda' WHERE lower(trim(name)) = lower('Banda Ahenkro');
   UPDATE public.ghana_constituencies SET name = 'Ajumako Enyan Esiam' WHERE lower(trim(name)) = lower('Ajumako-Enyan-Essiam');
   UPDATE public.ghana_constituencies SET name = 'Komenda Edina Eguafo Abrem' WHERE lower(trim(name)) = lower('Komenda-Edina-Eguafo-Abirem');
@@ -88,7 +87,6 @@ DO $$ BEGIN
   UPDATE public.users SET constituency = 'Sefwi Wiawso' WHERE lower(trim(constituency)) = lower('Sefwi-Wiawso');
   UPDATE public.users SET constituency = 'New Edubiase' WHERE lower(trim(constituency)) = lower('New Edubease');
   UPDATE public.users SET constituency = 'Manso Adubia' WHERE lower(trim(constituency)) = lower('Manso Edubia');
-  UPDATE public.users SET constituency = 'Afigya Seyere East' WHERE lower(trim(constituency)) = lower('Afigya Sekyere East');
   UPDATE public.users SET constituency = 'Banda' WHERE lower(trim(constituency)) = lower('Banda Ahenkro');
   UPDATE public.users SET constituency = 'Ajumako Enyan Esiam' WHERE lower(trim(constituency)) = lower('Ajumako-Enyan-Essiam');
   UPDATE public.users SET constituency = 'Komenda Edina Eguafo Abrem' WHERE lower(trim(constituency)) = lower('Komenda-Edina-Eguafo-Abirem');

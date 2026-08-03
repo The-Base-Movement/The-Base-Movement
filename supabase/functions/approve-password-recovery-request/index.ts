@@ -50,6 +50,25 @@ Deno.serve(async (req: Request) => {
     if (error) throw new Error(error.message)
     if (!data) return json({ error: 'Recovery request not found or already reviewed.' }, 404)
 
+    // Trigger instant password reset webhook alert (non-fatal)
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/password-reset-webhook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+        },
+        body: JSON.stringify({
+          action: 'instant_alert',
+          event_type: 'recovery_approved',
+          triggered_by: `admin:${caller.id}`,
+          metadata: { request_id: id },
+        }),
+      })
+    } catch (whErr) {
+      console.warn('[APPROVE-RECOVERY] Webhook dispatch warning:', whErr)
+    }
+
     return json({ success: true })
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)

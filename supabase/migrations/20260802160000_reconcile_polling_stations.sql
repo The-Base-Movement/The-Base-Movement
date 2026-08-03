@@ -34,7 +34,6 @@ DO $$ BEGIN
   UPDATE public.polling_stations SET constituency = 'Sefwi Wiawso' WHERE lower(trim(constituency)) = lower('Sefwi-Wiawso');
   UPDATE public.polling_stations SET constituency = 'New Edubiase' WHERE lower(trim(constituency)) = lower('New Edubease');
   UPDATE public.polling_stations SET constituency = 'Manso Adubia' WHERE lower(trim(constituency)) = lower('Manso Edubia');
-  UPDATE public.polling_stations SET constituency = 'Afigya Seyere East' WHERE lower(trim(constituency)) = lower('Afigya Sekyere East');
   UPDATE public.polling_stations SET constituency = 'Banda' WHERE lower(trim(constituency)) = lower('Banda Ahenkro');
   UPDATE public.polling_stations SET constituency = 'Ajumako Enyan Esiam' WHERE lower(trim(constituency)) = lower('Ajumako-Enyan-Essiam');
   UPDATE public.polling_stations SET constituency = 'Komenda Edina Eguafo Abrem' WHERE lower(trim(constituency)) = lower('Komenda-Edina-Eguafo-Abirem');

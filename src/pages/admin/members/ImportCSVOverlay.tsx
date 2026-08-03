@@ -67,6 +67,9 @@ const HEADER_MAP: Record<string, keyof User> = {
   address: 'residential_address',
   residential_address: 'residential_address',
   city: 'city',
+  digitaladdress: 'digital_address',
+  digital_address: 'digital_address',
+  ghanapostgps: 'digital_address',
   // National ID
   nationalid: 'national_id',
   national_id: 'national_id',
@@ -79,7 +82,34 @@ const HEADER_MAP: Record<string, keyof User> = {
   referredby: 'referred_by',
   referred_by: 'referred_by',
   referral: 'referred_by',
+  // Demographics
+  birthyear: 'birth_year',
+  birth_year: 'birth_year',
+  religion: 'religion',
+  secondaryphone: 'secondary_phone',
+  secondary_phone: 'secondary_phone',
+  district: 'district',
+  // Polling station
+  pollingstationcode: 'polling_station_code',
+  polling_station_code: 'polling_station_code',
+  // Job classification (numeric taxonomy IDs)
+  jobindustryid: 'job_industry_id',
+  job_industry_id: 'job_industry_id',
+  jobsubcategoryid: 'job_sub_category_id',
+  job_sub_category_id: 'job_sub_category_id',
+  jobroleid: 'job_role_id',
+  job_role_id: 'job_role_id',
+  jobcustomtitle: 'job_custom_title',
+  job_custom_title: 'job_custom_title',
 }
+
+const NUMERIC_FIELDS: (keyof User)[] = [
+  'children_count',
+  'birth_year',
+  'job_industry_id',
+  'job_sub_category_id',
+  'job_role_id',
+]
 
 const CSV_TEMPLATE_HEADERS = [
   'Full Name',
@@ -96,7 +126,7 @@ const CSV_TEMPLATE_HEADERS = [
   'Emergency Relationship',
   'Emergency Phone',
   'National ID',
-  'Residential Address',
+  'Digital Address',
   'City',
   'Children Count',
   'Referred By',
@@ -186,7 +216,8 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
     const reader = new FileReader()
     reader.onload = (event) => {
       try {
-        const text = event.target?.result as string
+        // Excel/Sheets exports are UTF-8 with BOM; it would corrupt the first header name.
+        const text = (event.target?.result as string).replace(/^\uFEFF/, '')
         const rows = parseCSV(text)
 
         if (rows.length < 2) {
@@ -209,9 +240,9 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
             const val = row[colIndex]?.trim()
             if (!val) return
 
-            if (field === 'children_count') {
+            if (NUMERIC_FIELDS.includes(field)) {
               const n = parseInt(val, 10)
-              recordData.children_count = isNaN(n) ? 0 : n
+              if (!isNaN(n)) recordData[field] = n as never
             } else {
               recordData[field] = val as never
             }
@@ -289,9 +320,19 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           emergency_phone: record.data.emergency_phone || '',
           national_id: record.data.national_id || '',
           residential_address: record.data.residential_address || '',
+          digital_address: record.data.digital_address || '',
           city: record.data.city || '',
           children_count: record.data.children_count ?? 0,
           referred_by: record.data.referred_by || '',
+          birth_year: record.data.birth_year,
+          religion: record.data.religion || '',
+          secondary_phone: record.data.secondary_phone || '',
+          district: record.data.district || '',
+          polling_station_code: record.data.polling_station_code || '',
+          job_industry_id: record.data.job_industry_id ?? null,
+          job_sub_category_id: record.data.job_sub_category_id ?? null,
+          job_role_id: record.data.job_role_id ?? null,
+          job_custom_title: record.data.job_custom_title || '',
           avatar_url: null,
           joined_at: new Date().toISOString(),
           status: 'Pending',

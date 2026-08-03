@@ -14,7 +14,7 @@ const GHANA_SCHEMA = {
   email: null,
   countryCode: '+233',
   contactNumber: null,
-  residentialAddress: null,
+  digitalAddress: null,
   region: null,
   constituency: null,
   profession: null,
@@ -33,7 +33,7 @@ const DIASPORA_SCHEMA = {
   country: null,
   countryCode: null,
   contactNumber: null,
-  residentialAddress: null,
+  digitalAddress: null,
   profession: null,
   educationLevel: null,
   emergencyContactName: null,
@@ -112,9 +112,10 @@ Deno.serve(async (req: Request) => {
     }
 
     // Build content block — PDFs use 'document', images use 'image'
-    const fileBlock = mediaType === 'application/pdf'
-      ? { type: 'document', source: { type: 'base64', media_type: mediaType, data: fileBase64 } }
-      : { type: 'image', source: { type: 'base64', media_type: mediaType, data: fileBase64 } }
+    const fileBlock =
+      mediaType === 'application/pdf'
+        ? { type: 'document', source: { type: 'base64', media_type: mediaType, data: fileBase64 } }
+        : { type: 'image', source: { type: 'base64', media_type: mediaType, data: fileBase64 } }
 
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -126,20 +127,22 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1024,
-        messages: [{
-          role: 'user',
-          content: [fileBlock, { type: 'text', text: PROMPT }],
-        }],
+        messages: [
+          {
+            role: 'user',
+            content: [fileBlock, { type: 'text', text: PROMPT }],
+          },
+        ],
       }),
     })
 
     if (!anthropicRes.ok) {
       const err = await anthropicRes.text()
       console.error('Anthropic API error:', err)
-      return new Response(
-        JSON.stringify({ success: false, error: 'Claude API request failed.' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 502 }
-      )
+      return new Response(JSON.stringify({ success: false, error: 'Claude API request failed.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 502,
+      })
     }
 
     const anthropicData = await anthropicRes.json()
@@ -153,15 +156,14 @@ Deno.serve(async (req: Request) => {
 
     const extracted = JSON.parse(raw)
 
-    return new Response(
-      JSON.stringify({ success: true, data: extracted }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    return new Response(JSON.stringify({ success: true, data: extracted }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   } catch (err) {
     console.error('scan-form error:', err)
-    return new Response(
-      JSON.stringify({ success: false, error: 'Failed to process form.' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    )
+    return new Response(JSON.stringify({ success: false, error: 'Failed to process form.' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    })
   }
 })

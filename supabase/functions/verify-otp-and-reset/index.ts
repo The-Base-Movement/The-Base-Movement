@@ -4,10 +4,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { hashOtp } from '../_shared/otp.ts'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
-import {
-  peekRateLimit,
-  recordFailedAttempt,
-} from '../_shared/persistent-rate-limit.ts'
+import { peekRateLimit, recordFailedAttempt } from '../_shared/persistent-rate-limit.ts'
 import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 import { isTwilioVerifyConfigured, checkTwilioVerify } from '../_shared/twilio-verify.ts'
 
@@ -25,7 +22,10 @@ function delayedJson(body: unknown, status: number) {
     setTimeout(() => {
       resolve(
         new Response(JSON.stringify(body), {
-          headers: { ...getCorsHeaders(new Request('http://localhost')), 'Content-Type': 'application/json' },
+          headers: {
+            ...getCorsHeaders(new Request('http://localhost')),
+            'Content-Type': 'application/json',
+          },
           status,
         })
       )
@@ -67,6 +67,24 @@ serve(async (req: Request) => {
     const throttleKey = `verify-otp::${clientIp(req)}::${normalizedPhone}`
     const rateCheck = await peekRateLimit(supabaseAdmin, throttleKey, 8, 900)
     if (!rateCheck.allowed) {
+      try {
+        await fetch(`${supabaseUrl}/functions/v1/password-reset-webhook`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            action: 'instant_alert',
+            event_type: 'rate_limit_exceeded',
+            phone: normalizedPhone,
+            triggered_by: 'otp_rate_limiter',
+            ip_address: clientIp(req),
+          }),
+        })
+      } catch (whErr) {
+        console.warn('[VERIFY-OTP] Webhook dispatch warning:', whErr)
+      }
       return json(
         {
           error: `Too many verification attempts. Please wait ${rateCheck.retry_after_sec} seconds.`,
@@ -106,11 +124,34 @@ serve(async (req: Request) => {
 
     if (!approved) {
       await recordFailedAttempt(supabaseAdmin, throttleKey, 900)
+      try {
+        await fetch(`${supabaseUrl}/functions/v1/password-reset-webhook`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            action: 'instant_alert',
+            event_type: 'reset_failed',
+            phone: normalizedPhone,
+            triggered_by: 'invalid_otp_code',
+            ip_address: clientIp(req),
+          }),
+        })
+      } catch (whErr) {
+        console.warn('[VERIFY-OTP] Webhook dispatch warning:', whErr)
+      }
       return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
     }
 
     // Flexible multi-format user lookup
-    let user: { id: string; email: string | null; full_name: string; registration_number: string } | null = null
+    let user: {
+      id: string
+      email: string | null
+      full_name: string
+      registration_number: string
+    } | null = null
 
     const { data: exactUser } = await supabaseAdmin
       .from('users')
@@ -210,6 +251,29 @@ serve(async (req: Request) => {
       if (auditError) {
         console.warn(`[VERIFY-OTP] Failed to update audit row: ${auditError.message}`)
       }
+    }
+
+    // Trigger instant password reset webhook alert (non-fatal)
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/password-reset-webhook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({
+          action: 'instant_alert',
+          event_type: 'password_updated',
+          user_id: authUserId,
+          full_name: user.full_name,
+          phone: normalizedPhone,
+          email: user.email,
+          triggered_by: 'otp_verification',
+          ip_address: clientIp(req),
+        }),
+      })
+    } catch (whErr) {
+      console.warn('[VERIFY-OTP] Webhook dispatch warning:', whErr)
     }
 
     return json({ success: true, message: 'Your password has been successfully reset.' }, 200)

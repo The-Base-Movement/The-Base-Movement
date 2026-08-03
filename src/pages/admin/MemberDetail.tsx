@@ -155,7 +155,7 @@ export default function AdminMemberDetail() {
       chapter: member.chapter,
       profession: member.profession,
       city: member.city,
-      residentialAddress: member.residentialAddress,
+      digitalAddress: member.digitalAddress,
     })
     setJobSelection(
       jobTaxonomyService.toSelection({

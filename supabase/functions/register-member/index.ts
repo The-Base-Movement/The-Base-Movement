@@ -151,15 +151,14 @@ serve(async (req: Request) => {
           .single()
 
         const { data: regionConstituencies } = regionRow
-          ? await supabase
-              .from('ghana_constituencies')
-              .select('name')
-              .eq('region_id', regionRow.id)
+          ? await supabase.from('ghana_constituencies').select('name').eq('region_id', regionRow.id)
           : { data: null }
 
         const norm = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
         const inputNorm = norm(constituency)
-        const matchedConstituency = regionConstituencies?.find((c: any) => norm(c.name) === inputNorm)
+        const matchedConstituency = regionConstituencies?.find(
+          (c: any) => norm(c.name) === inputNorm
+        )
 
         if (!matchedConstituency) {
           return json(
@@ -171,7 +170,6 @@ serve(async (req: Request) => {
           )
         }
       }
-
     } else if (networkType === 'Diaspora Network') {
       const activeCountry = diasporaCountry || country
       if (!activeCountry || activeCountry.toLowerCase() === 'ghana') {
@@ -243,7 +241,7 @@ serve(async (req: Request) => {
       emergency_relationship: sanitizeStr(userRow.emergency_relationship, 50) || null,
       emergency_phone: sanitizeStr(userRow.emergency_phone, 20) || null,
       children_count: typeof userRow.children_count === 'number' ? userRow.children_count : null,
-      residential_address: sanitizeStr(userRow.residential_address, 200) || null,
+      digital_address: sanitizeStr(userRow.digital_address, 200) || null,
       birth_year: typeof userRow.birth_year === 'number' ? userRow.birth_year : null,
       religion: sanitizeStr(userRow.religion, 50) || null,
       secondary_phone: sanitizeStr(userRow.secondary_phone, 20) || null,

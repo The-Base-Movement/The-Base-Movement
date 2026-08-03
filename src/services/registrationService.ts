@@ -140,7 +140,7 @@ export const registrationService = {
       emergency_relationship: formData.emergencyRelationship,
       emergency_phone: formData.emergencyNumber,
       children_count: formData.children_count,
-      residential_address: formData.residentialAddress,
+      digital_address: formData.digitalAddress,
       city: formData.city,
       registration_source: usedScan ? 'scan' : 'digital',
       referred_by: refParam || null,

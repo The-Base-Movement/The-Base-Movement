@@ -15,7 +15,7 @@ export interface RegistrationFormData {
   secondaryPhone?: string
   password?: string
   email?: string
-  residentialAddress: string
+  digitalAddress: string
   region: string
   district?: string
   constituency: string

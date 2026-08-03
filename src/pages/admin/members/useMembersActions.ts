@@ -123,7 +123,7 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
         gender: data.gender,
         avatar_url: null,
         age_range: data.ageRange,
-        residential_address: data.residentialAddress,
+        digital_address: data.digitalAddress,
         region: data.region,
         constituency: data.constituency,
         district: data.district || null,
