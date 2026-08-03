@@ -96,7 +96,6 @@ const AdminChapterHub = lazy(() => import('./pages/admin/ChapterLeadHub'))
 const AdminFieldDirectives = lazy(() => import('./pages/admin/FieldDirectives'))
 const AdminMobilizationMetrics = lazy(() => import('./pages/admin/MobilizationMetrics'))
 const AdminLogisticsIntelligence = lazy(() => import('./pages/admin/LogisticsIntelligence'))
-const AdminAnalytics = lazy(() => import('./pages/admin/AdminAnalytics'))
 const ReferralAnalytics = lazy(() => import('./pages/admin/ReferralAnalytics'))
 const AdminJobsAnalytics = lazy(() => import('./pages/admin/JobsAnalytics'))
 const AdminJobTaxonomy = lazy(() => import('./pages/admin/JobTaxonomy'))
@@ -303,7 +302,6 @@ export const routes: RouteObject[] = [
                 path: '/admin/logistics-intelligence',
                 element: <AdminLogisticsIntelligence />,
               },
-              { path: '/admin/analytics', element: <AdminAnalytics /> },
               { path: '/admin/referral-analytics', element: <ReferralAnalytics /> },
               { path: '/admin/jobs-analytics', element: <AdminJobsAnalytics /> },
               { path: '/admin/job-taxonomy', element: <AdminJobTaxonomy /> },

@@ -42,7 +42,6 @@ const INK = 'hsl(var(--on-surface))'
 const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
   'board-governance': [
     { to: '/admin/executive', icon: 'corporate_fare', label: 'Executive Dashboard', color: GREEN },
-    { to: '/admin/analytics', icon: 'bar_chart', label: 'Movement Analytics', color: GREEN },
     { to: '/admin/roadmap', icon: 'route', label: 'Mission Roadmap', color: GOLD },
     { to: '/admin/party-officials', icon: 'badge', label: 'Party Officials', color: INK },
     { to: '/admin/administrators', icon: 'shield', label: 'Accountability & Access', color: GREEN },
@@ -97,7 +96,6 @@ const QUICK_LINKS: Record<DepartmentId, QuickLink[]> = {
       label: 'Finance & Fundraising',
       color: INK,
     },
-    { to: '/admin/analytics', icon: 'query_stats', label: 'Research & Policy', color: RED },
     {
       to: '/admin/leadership',
       icon: 'groups_2',

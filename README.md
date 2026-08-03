@@ -29,7 +29,7 @@
 | OCR           | Tesseract.js + PDF.js (in-browser scan-to-fill registration) |
 | Charts / Maps | Recharts, Mapbox GL (GIS visualisation)                      |
 | Animations    | GSAP + Framer Motion                                         |
-| Monitoring    | Sentry (errors), Umami (analytics)                           |
+| Monitoring    | Sentry (errors), Vercel Analytics                            |
 | Hosting       | Vercel (auto-deploys from `main`)                            |
 
 ### Three Application Surfaces

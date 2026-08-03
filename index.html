@@ -16,11 +16,6 @@
     <meta name="theme-color" content="#1a6b3c">
     <!-- Material Symbols are self-hosted; preload the variable font for faster icon rendering -->
     <link rel="preload" href="/fonts/MaterialSymbolsOutlined.woff2" as="font" type="font/woff2" crossorigin>
-    <!--
-      Umami analytics is injected client-side by <Analytics /> (src/components/Analytics.tsx)
-      after mount. It used to ALSO be hardcoded here, which loaded the script twice and
-      double-counted every visit. Load it once, from the component, off the boot path.
-    -->
     <!--app-head-->
   </head>
   <body>

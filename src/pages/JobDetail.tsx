@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { trackEvent } from '@/lib/analytics'
 import { jobService } from '@/services/jobService'
 import { userActivityService } from '@/services/userActivityService'
 import { supabase } from '@/lib/supabase'
@@ -373,7 +372,6 @@ export default function JobDetail() {
     }
     const result = await jobService.applyToJob(job.id, { coverLetter, resumeUrl })
     if (result.ok) {
-      trackEvent('job_application', { job_title: job.title })
       const {
         data: { session },
       } = await supabase.auth.getSession()
