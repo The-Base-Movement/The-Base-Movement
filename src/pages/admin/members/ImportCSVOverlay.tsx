@@ -16,7 +16,7 @@ interface ParsedRecord {
   isValid: boolean
 }
 
-const REQUIRED_FIELDS: (keyof User)[] = ['full_name', 'phone_number', 'gender', 'age_range']
+const REQUIRED_FIELDS: (keyof User)[] = ['full_name', 'gender', 'age_range']
 
 const HEADER_MAP: Record<string, keyof User> = {
   // Name
@@ -38,6 +38,11 @@ const HEADER_MAP: Record<string, keyof User> = {
   // Region / Constituency (Ghana)
   region: 'region',
   constituency: 'constituency',
+  // Platform / country
+  platform: 'platform',
+  network: 'platform',
+  networktype: 'platform',
+  country: 'country',
   // Chapter
   chapter: 'chapter',
   // Profession
@@ -155,6 +160,38 @@ const CSV_SAMPLE_ROW = [
 
 const normalizeHeader = (h: string) => h.toLowerCase().replace(/[\s_-]/g, '')
 
+/**
+ * Platform is decided by the phone's country code: +233 (or a local 0XXXXXXXXX
+ * number) is Ghana, any other international dialling code is Diaspora.
+ *
+ * A Ghana constituency outranks a non-Ghana dialling code, because scanned
+ * records frequently carry mangled numbers (`+02447647030`, `+5598212245`) that
+ * would otherwise flip a Ghanaian member to Diaspora. An explicit non-Ghana
+ * country still wins, since that is a deliberate Diaspora signal.
+ */
+function detectPlatform(
+  phone?: string,
+  declared?: string,
+  region?: string,
+  constituency?: string,
+  country?: string
+): 'GHANA' | 'DIASPORA' {
+  const raw = (phone || '').replace(/[\s()-]/g, '')
+  const digits = raw.replace(/\D/g, '')
+  const countryName = (country || '').trim().toLowerCase()
+
+  if (digits.startsWith('233')) return 'GHANA'
+  if (digits.length === 10 && digits.startsWith('0')) return 'GHANA'
+  if (countryName && countryName !== 'ghana') return 'DIASPORA'
+  if ((constituency || '').trim()) return 'GHANA'
+  if (raw.startsWith('+') && !raw.startsWith('+0')) return 'DIASPORA'
+
+  const d = (declared || '').trim().toUpperCase()
+  if (d.includes('DIASPORA')) return 'DIASPORA'
+  if (d.includes('GHANA')) return 'GHANA'
+  return region ? 'GHANA' : 'DIASPORA'
+}
+
 function parseCSV(text: string): string[][] {
   const lines: string[][] = []
   let row: string[] = ['']
@@ -248,6 +285,27 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
             }
           })
 
+          // A member needs one reachable contact, not specifically a phone —
+          // email-only members are complete and were being rejected outright.
+          if (!recordData.phone_number && !recordData.email) {
+            errors.push('Missing: phone number or email')
+          }
+
+          recordData.platform = detectPlatform(
+            recordData.phone_number,
+            recordData.platform,
+            recordData.region,
+            recordData.constituency,
+            recordData.country
+          )
+
+          if (recordData.platform === 'GHANA' && !recordData.constituency) {
+            errors.push('Ghana members require a constituency')
+          }
+          if (recordData.platform === 'DIASPORA' && !recordData.country) {
+            errors.push('Diaspora members require a country')
+          }
+
           REQUIRED_FIELDS.forEach((field) => {
             if (!recordData[field]) {
               errors.push(`Missing: ${String(field).replace(/_/g, ' ')}`)
@@ -296,14 +354,16 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
     try {
       const yearStr = new Date().getFullYear().toString().slice(-2)
       const usersToInsert: User[] = validRecords.map((record) => {
-        const platform = record.data.region ? 'GHANA' : 'DIASPORA'
+        // Already resolved during parsing (phone country code, with the Ghana
+        // constituency override) so validation and insert cannot disagree.
+        const platform = record.data.platform === 'DIASPORA' ? 'DIASPORA' : 'GHANA'
         const suffix = BigInt('0x' + crypto.randomUUID().replace(/-/g, '')).toString()
         const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${suffix}`
 
         return {
           id: crypto.randomUUID(),
           full_name: record.data.full_name!,
-          phone_number: record.data.phone_number!,
+          phone_number: record.data.phone_number || '',
           gender: record.data.gender!,
           age_range: record.data.age_range!,
           registration_number: regNo,

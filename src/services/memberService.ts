@@ -273,7 +273,7 @@ class MemberService {
       const regNos = batch.map((u) => u.registration_number).filter(Boolean)
 
       const [phoneRes, emailRes, regNoRes] = await Promise.all([
-        supabase.from('users').select('phone_number').in('phone_number', phones),
+        supabase.from('users').select('phone_number, full_name').in('phone_number', phones),
         emails.length > 0
           ? supabase.from('users').select('email').in('email', emails)
           : Promise.resolve({ data: [] }),
@@ -282,24 +282,35 @@ class MemberService {
           : Promise.resolve({ data: [] }),
       ])
 
-      const existingPhones = new Set(phoneRes.data?.map((u) => u.phone_number) ?? [])
+      // Households routinely share one phone, so the phone alone does not identify
+      // a person — deduping on it silently dropped real members (e.g. a parent and
+      // child on the same line). Key on phone + name instead: a genuine re-import
+      // still matches on both, while family members on one number both come through.
+      const personKey = (phone: string | null, name: string | null) =>
+        `${(phone ?? '').trim()}::${(name ?? '').trim().toLowerCase().replace(/\s+/g, ' ')}`
+
+      const existingPeople = new Set(
+        phoneRes.data?.map((u) => personKey(u.phone_number, u.full_name)) ?? []
+      )
       const existingEmails = new Set(emailRes.data?.map((u) => u.email) ?? [])
       const existingRegNos = new Set(regNoRes.data?.map((u) => u.registration_number) ?? [])
 
-      const seenPhones = new Set<string>()
+      const seenPeople = new Set<string>()
       const seenEmails = new Set<string>()
       const seenRegNos = new Set<string>()
 
       const newRecords = batch
         .filter((u) => {
-          if (existingPhones.has(u.phone_number) || seenPhones.has(u.phone_number)) return false
+          const key = personKey(u.phone_number, u.full_name)
+          if (existingPeople.has(key) || seenPeople.has(key)) return false
+          // Email stays a strict unique key — it is the auth login identifier.
           if (u.email && (existingEmails.has(u.email) || seenEmails.has(u.email))) return false
           if (
             u.registration_number &&
             (existingRegNos.has(u.registration_number) || seenRegNos.has(u.registration_number))
           )
             return false
-          seenPhones.add(u.phone_number)
+          seenPeople.add(key)
           if (u.email) seenEmails.add(u.email)
           if (u.registration_number) seenRegNos.add(u.registration_number)
           return true
