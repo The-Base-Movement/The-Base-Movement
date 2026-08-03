@@ -350,7 +350,7 @@ export function AdminSidebar({
                             className={cn(
                               'overflow-hidden transition-all duration-300 relative space-y-0.5',
                               isExpanded && isSidebarOpen
-                                ? 'max-h-[500px] opacity-100 mt-0.5'
+                                ? 'max-h-[900px] opacity-100 mt-0.5'
                                 : 'max-h-0 opacity-0'
                             )}
                           >
