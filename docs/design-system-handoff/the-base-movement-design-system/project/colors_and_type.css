@@ -1,0 +1,427 @@
+/* =========================================================================
+   THE BASE MOVEMENT — colors & type tokens
+   "Ghana First, Jobs for the Youth!"
+   Source of truth: tailwind.config.js + src/index.css from
+   github.com/Styphler17/The-Base-Movement
+
+   Revised 2026-08-04. Changes in this pass:
+     - --on-surface-muted darkened #6f7a71 -> #616b63 (WCAG AA 4.5:1)
+     - added --panel-header (fixed dark green; does NOT follow --primary)
+     - added --radius-pill and the --font-weight-* scale
+     - added the dark-mode and density blocks
+     - default family corrected: Public Sans first, Work Sans opt-in
+   NOTE: this file is a flattened, hex-valued mirror for prototyping.
+   src/index.css remains authoritative and stores colors as HSL triplets
+   consumed via hsl(var(--token)).
+   ========================================================================= */
+
+/* --- FONTS ---------------------------------------------------------------- */
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/PublicSans-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/PublicSans-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('fonts/PublicSans-Black.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/WorkSans-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/WorkSans-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('fonts/WorkSans-Black.woff2') format('woff2');
+}
+
+:root {
+  /* --- BRAND COLORS (Ghana flag) --- */
+  --brand-red: #ce1126; /* Call to action, urgency */
+  --brand-gold: #daa520; /* Values: patriotism, honesty, discipline */
+  --brand-green: #006b3f; /* Long-term vision, growth */
+  --brand-black: #000000; /* Black Star — strength, unity */
+
+  /* HSL forms used by shadcn-style tokens */
+  --primary: 156 100% 21%; /* brand-green */
+  --accent: 45 80% 45%; /* brand-gold  */
+  --destructive: 0 85% 44%; /* brand-red   */
+
+  /* --- SURFACES & FOREGROUNDS --- */
+  --background: #f6fbf4; /* slightly warm green-tinted off-white */
+  --surface: #f6fbf4;
+  --surface-warm: #f7f5f2; /* footer / soft sections */
+  --surface-container: #ebefe9;
+  --surface-container-low: #f1f5ee;
+  --surface-container-hi: #e5e9e3;
+  --surface-dim: #d7dbd5;
+  --off-white: #fdfcfb;
+  --card: #ffffff;
+
+  --on-surface: #181d19; /* near-black ink */
+  --on-surface-muted: #616b63; /* darkened for WCAG AA (was #6f7a71) */
+  --muted-foreground: #616b63;
+  --panel-header: #006b3f; /* fixed: stays dark in BOTH themes so
+                                       white header text keeps AA contrast */
+  --muted-gray: #666666;
+  --charcoal-dark: #1a1a1a; /* CTA / newsletter dark block */
+
+  --border: #dfe4dd;
+  --outline: #6f7a71;
+  --outline-variant: #bec9bf;
+  --divider-gold: rgba(218, 165, 32, 0.3);
+
+  --error-deep: #8b0000;
+  --success-muted: #4c7f63;
+  --info-soft: #4682b4;
+
+  /* --- TYPE: families --- */
+  /* Public Sans is the DEFAULT family (tailwind `font-sans`). Work Sans is
+     opt-in for long-form body only (`font-body-md`). */
+  --font-display: 'Public Sans', 'Work Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Public Sans', 'Work Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-meta: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-longform: 'Work Sans', 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-icon: 'Material Symbols Outlined';
+
+  /* --- TYPE: scale (px tokens from src/index.css) --- */
+  --fs-micro: 12px;
+  --fs-tiny: 13px;
+  --fs-xs: 14px;
+  --fs-sm: 16px;
+  --fs-base: 18px;
+  --fs-lg: 22px;
+  --fs-xl: 28px;
+  --fs-2xl: 36px;
+  --fs-3xl: 48px;
+  --fs-4xl: 64px;
+
+  /* responsive heading scale (clamp) */
+  --font-scale: 1;
+  --font-heading-scale: 1;
+  --h1-size: clamp(2.25rem, 5vw, 4.5rem);
+  --h2-size: clamp(1.75rem, 4vw, 3.5rem);
+  --h3-size: clamp(1.5rem, 3vw, 2.75rem);
+  --h4-size: clamp(1.25rem, 2.5vw, 2rem);
+  --h5-size: clamp(1.1rem, 2vw, 1.5rem);
+  --h6-size: clamp(1rem, 1.5vw, 1.25rem);
+  --p-size: clamp(1rem, calc(0.6vw + 0.85rem), 1.25rem);
+
+  /* --- SPACING / RADII / SHADOWS --- */
+  --gutter: 24px;
+  --stack-sm: 8px;
+  --stack-md: 16px;
+  --stack-lg: 32px;
+  --section-padding-mobile: 40px;
+  --section-padding-desktop: 96px;
+  --container-max: 1280px;
+
+  /* Closed set — never hardcode a px radius. */
+  --radius-xs: 2px; /* inputs, checkboxes            */
+  --radius-sm: 4px; /* buttons, small controls, cards*/
+  --radius-md: 8px; /* compact panels, dropdowns     */
+  --radius-lg: 12px; /* main cards, modals, CTA strips*/
+  --radius-pill: 999px; /* status badges, pills, tags    */
+
+  /* --- FONT WEIGHTS (themeable; do not use 700+ outside logos) --- */
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500; /* <- the default for UI text */
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* --- KPI numerals --- */
+  --kpi-num-size: 22px;
+
+  /* --- DENSITY (overridden by :root[data-density='...']) --- */
+  --panel-padding: 24px;
+  --panel-gap: 24px;
+  --table-cell-padding: 14px 16px;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-card: 0 4px 20px -2px rgb(0 0 0 / 0.05); /* .civic-card-shadow */
+  --shadow-lift: 0 10px 30px -8px rgb(0 0 0 / 0.15);
+  --shadow-cta: 0 48px 96px -16px rgb(0 0 0 / 0.5); /* hero CTA card */
+}
+
+/* --- ELEMENT DEFAULTS / SEMANTIC ----------------------------------------- */
+html,
+body {
+  background: var(--background);
+  color: var(--on-surface);
+}
+body {
+  font-family: var(--font-body);
+  font-size: var(--p-size);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Weights are 500 (medium) across the board — the no-bold rule. 700+ is
+   reserved for the logo/wordmark. */
+h1,
+.h1 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--h1-size);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+h2,
+.h2 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--h2-size);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+h3,
+.h3 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--h3-size);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+h4,
+.h4 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--h4-size);
+  line-height: 1.4;
+}
+h5,
+.h5 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--h5-size);
+  line-height: 1.5;
+}
+h6,
+.h6 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--h6-size);
+  line-height: 1.6;
+}
+
+p {
+  font-family: var(--font-body);
+  font-size: var(--p-size);
+  line-height: 1.6;
+}
+
+.text-meta {
+  font-family: var(--font-meta);
+  font-weight: var(--font-weight-medium, 500);
+  letter-spacing: 0.05em;
+  font-size: var(--fs-sm);
+  text-transform: none;
+}
+.text-micro {
+  font-size: var(--fs-micro);
+  font-weight: var(--font-weight-medium, 500);
+}
+.text-tiny {
+  font-size: var(--fs-tiny);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+/* Tabular numerals — use on every aligned number column. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The two sanctioned uppercase exceptions. */
+.field-label {
+  font-family: var(--font-meta);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--on-surface-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+.eye {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--brand-green);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.eye-gold {
+  color: var(--brand-gold);
+}
+.eye-red {
+  color: var(--brand-red);
+}
+.eye-mute {
+  color: var(--on-surface-muted);
+}
+
+/* --- THE BRAND LINE — 3-stripe motif from BrandLine.tsx ------------------ */
+.brand-line {
+  display: flex;
+  height: 6px;
+  width: 128px;
+  margin-bottom: 24px;
+}
+.brand-line > * {
+  flex: 1;
+}
+.brand-line .red {
+  background: var(--brand-red);
+}
+.brand-line .gold {
+  background: var(--brand-gold);
+}
+.brand-line .green {
+  background: var(--brand-green);
+}
+
+/* --- GRADIENT SCROLLBAR / DIVIDER ---------------------------------------- */
+.gradient-bar {
+  background: linear-gradient(to right, var(--brand-red), var(--brand-gold), var(--brand-green));
+}
+
+/* --- STATUS PILLS -------------------------------------------------------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: -0.005em;
+  border: 1px solid transparent;
+  line-height: 1.3;
+}
+.pill-ok {
+  background: rgba(0, 107, 63, 0.08);
+  color: var(--brand-green);
+  border-color: rgba(0, 107, 63, 0.18);
+}
+.pill-warn {
+  background: rgba(218, 165, 32, 0.1);
+  color: #a87d10;
+  border-color: rgba(218, 165, 32, 0.2);
+}
+.pill-err {
+  background: rgba(206, 17, 38, 0.08);
+  color: var(--brand-red);
+  border-color: rgba(206, 17, 38, 0.18);
+}
+.pill-mute {
+  background: #eef1ec;
+  color: var(--on-surface-muted);
+  border-color: var(--border);
+}
+
+/* =========================================================================
+   DARK MODE — :root[data-theme='dark']
+   A full token override, not a filter. Brand colors LIGHTEN so they stay
+   legible on near-black; --panel-header deliberately does not.
+   ========================================================================= */
+:root[data-theme='dark'] {
+  --background: #0e100f;
+  --surface: #0e100f;
+  --surface-warm: #131614;
+  --card: #171a18;
+  --surface-bright: #21251f;
+  --surface-dim: #0c0e0d;
+  --surface-variant: #1b1f1c;
+  --surface-container: #141615;
+  --surface-container-low: #0f1110;
+  --surface-container-hi: #1a1d1b;
+
+  --on-surface: #f2f2f2;
+  --on-surface-muted: #9aa69d;
+  --muted-foreground: #9aa69d;
+
+  --brand-green: #12a167; /* hsl(156 80% 35%) — lighter than #006B3F */
+  --brand-gold: #f4c025; /* hsl( 45 90% 55%) — lighter than #DAA520 */
+  --brand-red: #ee2b2b; /* hsl(  0 85% 55%) — lighter than #CE1126 */
+  --panel-header: #006b3f; /* UNCHANGED — keeps AA under white text */
+
+  --border: #2e332f;
+  --outline-variant: #454d47;
+  --charcoal-dark: #ffffff; /* inverts */
+  --charcoal: #f5f5f5;
+}
+
+/* =========================================================================
+   DENSITY — :root[data-density='...']
+   Panels and tables MUST consume these vars or they ignore the user setting.
+   ========================================================================= */
+:root[data-density='comfortable'] {
+  --panel-padding: 24px;
+  --panel-gap: 24px;
+  --table-cell-padding: 14px 16px;
+}
+:root[data-density='compact'] {
+  --panel-padding: 16px;
+  --panel-gap: 16px;
+  --table-cell-padding: 10px 12px;
+}
+:root[data-density='high-density'] {
+  --panel-padding: 12px;
+  --panel-gap: 12px;
+  --table-cell-padding: 6px 10px;
+  --fs-base: 14px;
+}
+
+/* Type scaling kicks in on wide screens (BrandingContext can override). */
+@media (min-width: 1280px) {
+  :root {
+    --font-scale: 1.1;
+    --font-heading-scale: 1.15;
+  }
+}
+
+/* =========================================================================
+   LOW BANDWIDTH — .low-bandwidth
+   Strips motion cost; force-shows reveal targets so content is never gated
+   behind an animation.
+   ========================================================================= */
+.low-bandwidth * {
+  transition: none !important;
+  animation: none !important;
+}
+.low-bandwidth [data-fade],
+.low-bandwidth [data-fade-stagger] > * {
+  opacity: 1 !important;
+  transform: none !important;
+}

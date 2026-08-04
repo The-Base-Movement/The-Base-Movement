@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Donations verification — The Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:var(--container-low); }
+  .app { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+  .side { background:#0f1310; color:#fff; padding:20px 0; }
+  .brand { padding:0 18px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:12px; }
+  .brand .lg { width:30px; height:30px; background:var(--destructive); color:#fff; font-family:'Public Sans'; font-weight:800; font-size:14px; border-radius:6px; display:flex; align-items:center; justify-content:center; }
+  .brand h1 { font-family:'Public Sans'; font-size:14px; font-weight:800; }
+  .brand span { display:block; font-size:9px; color:var(--destructive); font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-family:'Public Sans'; }
+  .nav { padding:0 12px; }
+  .nav h6 { font-size:9px; font-weight:800; color:rgba(255,255,255,.35); letter-spacing:.08em; text-transform:uppercase; padding:10px 8px 6px; font-family:'Public Sans'; }
+  .nav a { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:3px;
+    font-family:'Public Sans'; font-weight:700; font-size:11.5px; color:rgba(255,255,255,.7); }
+  .nav a:hover { background:rgba(255,255,255,.05); color:#fff; }
+  .nav a.on { background:var(--destructive); color:#fff; }
+  .nav a .material-symbols-outlined { font-size:16px; }
+  .nav a .badge { margin-left:auto; padding:1px 7px; background:var(--accent); color:#000; border-radius:99px; font-size:9px; font-weight:800; }
+  .nav a.on .badge { background:rgba(0,0,0,.3); color:#fff; }
+
+  .main { padding:24px 28px 60px; min-width:0; }
+  .top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:18px; gap:18px; flex-wrap:wrap; }
+  .crumbs { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .top h2 { font-family:'Public Sans'; font-weight:800; font-size:24px; letter-spacing:-.015em; margin-top:4px; }
+  .top .sub { color:var(--on-surface-muted); font-size:12.5px; margin-top:2px; }
+  .top .actions { display:flex; gap:8px; }
+
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+  .kpi { background:#fff; border:1px solid var(--border); border-radius:6px; padding:14px 16px; position:relative; }
+  .kpi::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--ac); }
+  .kpi.r { --ac:var(--destructive); } .kpi.g { --ac:var(--accent); } .kpi.gr { --ac:var(--primary); } .kpi.k { --ac:var(--charcoal); }
+  .kpi .l { font-size:9.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .kpi .v { font-family:'Public Sans'; font-weight:800; font-size:22px; letter-spacing:-.02em; line-height:1; margin:8px 0 4px; font-variant-numeric:tabular-nums; }
+  .kpi .d { font-size:10.5px; font-family:'Public Sans'; font-weight:800; color:var(--on-surface-muted); }
+  .kpi .d.up { color:var(--primary); } .kpi .d.dn { color:var(--destructive); }
+
+  /* Filter bar */
+  .filters { background:#fff; border:1px solid var(--border); border-radius:6px; padding:12px 14px; display:flex; gap:8px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+  .filters .search { flex:1; min-width:220px; position:relative; }
+  .filters .search input { width:100%; height:34px; border:1px solid var(--border); padding:0 12px 0 32px; font-size:12.5px; border-radius:4px; font-family:inherit; }
+  .filters .search .material-symbols-outlined { position:absolute; left:9px; top:8px; font-size:16px; color:var(--on-surface-muted); }
+  .filters .seg { display:flex; gap:0; border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+  .filters .seg button { padding:0 12px; height:34px; background:#fff; border:0; border-right:1px solid var(--border); font-family:'Public Sans'; font-weight:800; font-size:11px; color:var(--on-surface-muted); }
+  .filters .seg button:last-child { border-right:0; }
+  .filters .seg button.on { background:#181d19; color:#fff; }
+  .filters .seg button .count { color:var(--accent); margin-left:5px; }
+  .filters .seg button.on .count { color:var(--accent); }
+
+  /* Split view: queue + detail */
+  .split { display:grid; grid-template-columns:1fr 460px; gap:14px; }
+
+  /* Queue table */
+  .panel { background:#fff; border:1px solid var(--border); border-radius:6px; }
+  .table { width:100%; border-collapse:collapse; }
+  .table th { text-align:left; padding:10px 14px; font-size:9.5px; font-weight:800; color:var(--on-surface-muted); letter-spacing:.06em; text-transform:uppercase; font-family:'Public Sans'; background:var(--container-low); border-bottom:1px solid var(--border); }
+  .table td { padding:12px 14px; font-size:12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .table tr:last-child td { border-bottom:0; }
+  .table tr { cursor:pointer; }
+  .table tr:hover td { background:var(--container-low); }
+  .table tr.active td { background:rgba(0,107,63,.04); box-shadow:inset 3px 0 0 var(--primary); }
+  .table .who { display:flex; align-items:center; gap:10px; }
+  .table .who img { width:30px; height:30px; border-radius:50%; }
+  .table .who b { font-family:'Public Sans'; font-weight:800; font-size:12px; display:block; }
+  .table .who span { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; font-variant-numeric:tabular-nums; }
+  .table .amt { font-family:'Public Sans'; font-weight:800; font-variant-numeric:tabular-nums; font-size:13.5px; }
+  .table .meth { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:3px; font-family:'Public Sans'; font-weight:800; font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; }
+  .table .meth.momo { background:rgba(218,165,32,.12); color:#a87d10; }
+  .table .meth.card { background:rgba(0,107,63,.08); color:var(--primary); }
+  .table .meth.cash { background:rgba(206,17,38,.08); color:var(--destructive); }
+
+  /* Detail pane */
+  .detail { background:#fff; border:1px solid var(--border); border-radius:6px; padding:0; align-self:start; position:sticky; top:24px; }
+  .detail .dh { padding:18px 20px 14px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .detail .dh .who { display:flex; gap:12px; align-items:center; }
+  .detail .dh img { width:44px; height:44px; border-radius:50%; border:2px solid var(--accent); }
+  .detail .dh h3 { font-family:'Public Sans'; font-weight:800; font-size:15px; }
+  .detail .dh span { font-size:11px; color:var(--on-surface-muted); font-variant-numeric:tabular-nums; font-family:'Public Sans'; font-weight:700; }
+  .detail .amt { padding:18px 20px; background:linear-gradient(180deg,rgba(0,107,63,.04),transparent); border-bottom:1px solid var(--border); }
+  .detail .amt .big { font-family:'Public Sans'; font-weight:800; font-size:38px; letter-spacing:-.025em; font-variant-numeric:tabular-nums; line-height:1; }
+  .detail .amt .big .cur { font-size:18px; color:var(--on-surface-muted); margin-right:4px; }
+  .detail .amt .note { font-size:11px; color:var(--on-surface-muted); margin-top:6px; }
+  .detail .checks { padding:16px 20px; border-bottom:1px solid var(--border); }
+  .detail .checks h6 { font-size:9.5px; font-weight:800; color:var(--on-surface-muted); letter-spacing:.06em; text-transform:uppercase; margin-bottom:10px; font-family:'Public Sans'; }
+  .detail .ck { display:flex; align-items:center; gap:8px; padding:6px 0; font-size:12px; font-family:'Public Sans'; font-weight:700; }
+  .detail .ck .ic { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .detail .ck.ok .ic { background:rgba(0,107,63,.12); color:var(--primary); }
+  .detail .ck.warn .ic { background:rgba(218,165,32,.14); color:#a87d10; }
+  .detail .ck.bad .ic { background:rgba(206,17,38,.1); color:var(--destructive); }
+  .detail .ck .ic .material-symbols-outlined { font-size:14px; }
+  .detail .ck small { margin-left:auto; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; font-size:10.5px; }
+  .detail .meta { padding:14px 20px; border-bottom:1px solid var(--border); display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; }
+  .detail .meta dt { font-size:9.5px; font-weight:800; color:var(--on-surface-muted); letter-spacing:.06em; text-transform:uppercase; font-family:'Public Sans'; }
+  .detail .meta dd { margin:1px 0 6px; font-family:'Public Sans'; font-weight:700; font-size:12px; font-variant-numeric:tabular-nums; }
+  .detail .actions { padding:14px 20px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .detail .actions .btn-primary { grid-column:1/3; }
+  .detail .note-row { padding:0 20px 18px; }
+  .detail .note-row textarea { width:100%; min-height:60px; padding:8px 10px; font-size:11.5px; font-family:inherit; border:1px solid var(--border); border-radius:4px; resize:vertical; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="lg">B</div>
+      <div>
+        <h1>The Base</h1>
+        <span>Admin · v3.2</span>
+      </div>
+    </div>
+    <div class="nav">
+      <h6>Command</h6>
+      <a><span class="material-symbols-outlined">dashboard</span>Overview</a>
+      <a><span class="material-symbols-outlined">radar</span>War room</a>
+      <a><span class="material-symbols-outlined">map</span>Ground game</a>
+      <h6>Members</h6>
+      <a><span class="material-symbols-outlined">groups</span>Members</a>
+      <a><span class="material-symbols-outlined">verified</span>KYC queue<span class="badge">38</span></a>
+      <a><span class="material-symbols-outlined">badge</span>Canvassers</a>
+      <h6>Money</h6>
+      <a class="on"><span class="material-symbols-outlined">volunteer_activism</span>Donations<span class="badge">14</span></a>
+      <a><span class="material-symbols-outlined">storefront</span>Supplies</a>
+      <h6>Content</h6>
+      <a><span class="material-symbols-outlined">how_to_vote</span>Polls</a>
+      <a><span class="material-symbols-outlined">edit_note</span>Updates</a>
+      <a><span class="material-symbols-outlined">campaign</span>Broadcasts</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <div>
+        <div class="crumbs">Money → Donations → Verification queue</div>
+        <h2>Donations · verification queue</h2>
+        <p class="sub">Match MoMo transactions, confirm card receipts, and clear pending donations against the chapter ledger.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:14px">download</span>Export CSV</button>
+        <button class="btn btn-primary btn-sm"><span class="material-symbols-outlined" style="font-size:14px">sync</span>Reconcile MoMo</button>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi r">
+        <div class="l">Pending review</div>
+        <div class="v">14</div>
+        <div class="d">₵28,440 unverified</div>
+      </div>
+      <div class="kpi g">
+        <div class="l">Cleared today</div>
+        <div class="v">182</div>
+        <div class="d up">₵148,210 · MTD ₵2.4M</div>
+      </div>
+      <div class="kpi gr">
+        <div class="l">Auto-matched (MoMo)</div>
+        <div class="v">94%</div>
+        <div class="d up">▲ 6 pts this week</div>
+      </div>
+      <div class="kpi k">
+        <div class="l">Flagged · review</div>
+        <div class="v">3</div>
+        <div class="d dn">2 KYC mismatch · 1 chargeback</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="search">
+        <span class="material-symbols-outlined">search</span>
+        <input placeholder="Search by name, reg. no., reference, phone, or amount…">
+      </div>
+      <div class="seg">
+        <button class="on">Pending<span class="count">14</span></button>
+        <button>Flagged<span class="count">3</span></button>
+        <button>Cleared<span class="count">182</span></button>
+        <button>Refunded<span class="count">2</span></button>
+      </div>
+      <button class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:14px">tune</span>Filters</button>
+    </div>
+
+    <div class="split">
+      <div class="panel">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:32px"><input type="checkbox"></th>
+              <th>Donor</th>
+              <th>Method</th>
+              <th>Reference</th>
+              <th>Time</th>
+              <th style="text-align:right">Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="active">
+              <td><input type="checkbox" checked></td>
+              <td><div class="who"><img src="https://i.pravatar.cc/56?u=ama"><div><b>Ama Darko</b><span>GH-001847 · 0244 128 890</span></div></div></td>
+              <td><span class="meth momo">● MoMo · MTN</span></td>
+              <td style="font-family:'Public Sans';font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px">REF-4A8K2P9</td>
+              <td><span style="font-variant-numeric:tabular-nums">16:42</span></td>
+              <td class="amt" style="text-align:right">₵250.00</td>
+              <td><span class="pill pill-warn">Match found</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="who"><img src="https://i.pravatar.cc/56?u=kofi"><div><b>Kofi Mensah</b><span>GH-008214 · 0202 094 113</span></div></div></td>
+              <td><span class="meth card">● Card · Visa</span></td>
+              <td style="font-family:'Public Sans';font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px">CH-9182KQ</td>
+              <td><span style="font-variant-numeric:tabular-nums">16:18</span></td>
+              <td class="amt" style="text-align:right">₵1,200.00</td>
+              <td><span class="pill pill-warn">3DS pending</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="who"><img src="https://i.pravatar.cc/56?u=akua"><div><b>Akua Sarpong</b><span>GH-002418 · diaspora · UK</span></div></div></td>
+              <td><span class="meth card">● Card · Mastercard</span></td>
+              <td style="font-family:'Public Sans';font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px">CH-9182M2</td>
+              <td><span style="font-variant-numeric:tabular-nums">15:51</span></td>
+              <td class="amt" style="text-align:right">£75.00</td>
+              <td><span class="pill pill-ok">Auto-cleared</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="who"><img src="https://i.pravatar.cc/56?u=yaw"><div><b>Yaw Asare</b><span>GH-004112 · 0594 220 887</span></div></div></td>
+              <td><span class="meth momo">● MoMo · Vodafone</span></td>
+              <td style="font-family:'Public Sans';font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px">REF-VOD-2210</td>
+              <td><span style="font-variant-numeric:tabular-nums">15:34</span></td>
+              <td class="amt" style="text-align:right">₵80.00</td>
+              <td><span class="pill pill-err">KYC mismatch</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="who"><img src="https://i.pravatar.cc/56?u=esi"><div><b>Esi Mensah</b><span>GH-006714 · 0277 311 408</span></div></div></td>
+              <td><span class="meth momo">● MoMo · AirtelTigo</span></td>
+              <td style="font-family:'Public Sans';font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px">REF-AT-9831</td>
+              <td><span style="font-variant-numeric:tabular-nums">15:02</span></td>
+              <td class="amt" style="text-align:right">₵50.00</td>
+              <td><span class="pill pill-warn">Awaiting OTP</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="who"><img src="https://i.pravatar.cc/56?u=naa"><div><b>Naa Adoley</b><span>GH-001102 · 0244 882 401</span></div></div></td>
+              <td><span class="meth cash">● Cash · branch</span></td>
+              <td style="font-family:'Public Sans';font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px">CASH-LP04-218</td>
+              <td><span style="font-variant-numeric:tabular-nums">14:40</span></td>
+              <td class="amt" style="text-align:right">₵2,000.00</td>
+              <td><span class="pill pill-warn">Treasurer sign-off</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="who"><img src="https://i.pravatar.cc/56?u=kweku"><div><b>Kweku Owusu</b><span>diaspora · CA</span></div></div></td>
+              <td><span class="meth card">● PayPal</span></td>
+              <td style="font-family:'Public Sans';font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px">PP-71240</td>
+              <td><span style="font-variant-numeric:tabular-nums">14:11</span></td>
+              <td class="amt" style="text-align:right">$100.00</td>
+              <td><span class="pill pill-ok">Cleared</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <aside class="detail">
+        <div class="dh">
+          <div class="who">
+            <img src="https://i.pravatar.cc/96?u=ama">
+            <div>
+              <h3>Ama Darko</h3>
+              <span>GH-001847 · Verified patriot · Lapaz 04</span>
+            </div>
+          </div>
+          <span class="pill pill-warn">Pending</span>
+        </div>
+        <div class="amt">
+          <div class="big"><span class="cur">₵</span>250<span style="font-size:24px;color:var(--on-surface-muted)">.00</span></div>
+          <div class="note">MoMo transfer · MTN · received 16:42 GMT today</div>
+        </div>
+        <div class="checks">
+          <h6>Automated checks</h6>
+          <div class="ck ok"><div class="ic"><span class="material-symbols-outlined">check</span></div>Phone number matches member record<small>0244 128 890</small></div>
+          <div class="ck ok"><div class="ic"><span class="material-symbols-outlined">check</span></div>Name matches MoMo wallet holder<small>fuzzy 98%</small></div>
+          <div class="ck ok"><div class="ic"><span class="material-symbols-outlined">check</span></div>Reference code valid<small>REF-4A8K2P9</small></div>
+          <div class="ck warn"><div class="ic"><span class="material-symbols-outlined">warning</span></div>First donation from this number<small>review</small></div>
+          <div class="ck ok"><div class="ic"><span class="material-symbols-outlined">check</span></div>Not flagged by AML watchlist</div>
+        </div>
+        <dl class="meta">
+          <div><dt>Earmark</dt><dd>Eastern jobs fund</dd></div>
+          <div><dt>Chapter</dt><dd>Lapaz 04</dd></div>
+          <div><dt>Receipt issued</dt><dd>No · pending</dd></div>
+          <div><dt>Donor history</dt><dd>₵180 lifetime</dd></div>
+        </dl>
+        <div class="note-row">
+          <span class="lbl">Internal note (optional)</span>
+          <textarea placeholder="Add a note for the treasurer…"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:14px">flag</span>Flag</button>
+          <button class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:14px">close</span>Refund</button>
+          <button class="btn btn-primary"><span class="material-symbols-outlined" style="font-size:14px">verified</span>Approve & receipt</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+</body>
+</html>

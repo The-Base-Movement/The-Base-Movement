@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Impact — The Base Movement</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:#fff; }
+
+  /* progress bar */
+  .pbar { position:fixed; top:0; left:0; right:0; height:4px; z-index:100; background:var(--border); }
+  .pbar i { display:block; height:100%; width:52%; background:linear-gradient(to right,var(--brand-red),var(--brand-gold),var(--brand-green)); }
+
+  /* Hero */
+  .hero { background:#181d19; color:#fff; padding:80px 48px 64px; position:relative; overflow:hidden; border-bottom:5px solid; border-image:linear-gradient(to right,var(--brand-red),var(--brand-gold),var(--brand-green)) 1; }
+  .hero::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 70% 100% at 90% 50%,rgba(0,107,63,.2),transparent 60%); pointer-events:none; }
+  .hero .inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; }
+  .hero .eye { font-family:'Public Sans'; font-weight:800; font-size:10px; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:14px; }
+  .hero h1 { font-family:'Public Sans'; font-weight:800; font-size:60px; letter-spacing:-.03em; line-height:1; margin-bottom:18px; }
+  .hero h1 span { color:var(--accent); }
+  .hero p { font-family:'Lora',serif; font-size:17px; color:rgba(255,255,255,.8); line-height:1.65; margin-bottom:28px; }
+  .hero .bl { display:flex; height:4px; width:80px; margin-bottom:20px; }
+  .hero .bl .a { flex:1; background:var(--brand-red); }
+  .hero .bl .b { flex:1; background:var(--brand-gold); }
+  .hero .bl .c { flex:1; background:var(--brand-green); }
+  .hero-stats { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .hs { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:18px; }
+  .hs .v { font-family:'Public Sans'; font-weight:800; font-size:40px; letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; }
+  .hs .l { font-size:11px; color:rgba(255,255,255,.55); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; margin-top:5px; }
+  .hs.r .v { color:var(--brand-red); }
+  .hs.g .v { color:var(--brand-gold); }
+  .hs.gr .v { color:var(--brand-green); }
+  .hs.w .v { color:#fff; }
+
+  /* Wrap */
+  .wrap { max-width:1100px; margin:0 auto; padding:0 48px; }
+
+  /* Section heading */
+  .sec-h { padding:64px 0 32px; }
+  .sec-h .eye { font-family:'Public Sans'; font-weight:800; font-size:10px; color:var(--primary); letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:10px; }
+  .sec-h h2 { font-family:'Public Sans'; font-weight:800; font-size:38px; letter-spacing:-.025em; margin-bottom:8px; }
+  .sec-h p { color:var(--on-surface-muted); font-size:15px; max-width:520px; }
+
+  /* Regional grid */
+  .region-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:48px; }
+  .rc { background:#fff; border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:all .18s; cursor:pointer; }
+  .rc:hover { transform:translateY(-2px); box-shadow:0 12px 28px -8px rgba(0,0,0,.1); border-color:var(--primary); }
+  .rc .rh { padding:12px 14px 10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; }
+  .rc .rh h4 { font-family:'Public Sans'; font-weight:800; font-size:13px; letter-spacing:-.005em; }
+  .rc .rh .status { padding:2px 7px; border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.04em; text-transform:uppercase; }
+  .rc .rh .status.hi { background:rgba(0,107,63,.1); color:var(--primary); }
+  .rc .rh .status.mid { background:rgba(218,165,32,.1); color:#7d5d12; }
+  .rc .rh .status.lo { background:rgba(206,17,38,.08); color:var(--destructive); }
+  .rc .rb { padding:12px 14px; display:flex; flex-direction:column; gap:8px; }
+  .rc .rb .row { display:flex; justify-content:space-between; align-items:baseline; }
+  .rc .rb .key { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .rc .rb .val { font-family:'Public Sans'; font-weight:800; font-size:14px; font-variant-numeric:tabular-nums; }
+  .rc .bar-wrap { margin-top:6px; }
+  .rc .bar-bg { height:5px; background:var(--container-low); border-radius:99px; overflow:hidden; }
+  .rc .bar-fill { height:100%; border-radius:99px; }
+
+  /* Timeline */
+  .timeline { padding:0 0 64px; }
+  .tl { position:relative; padding-left:48px; }
+  .tl::before { content:""; position:absolute; left:11px; top:8px; bottom:8px; width:2px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:32px; }
+  .tl-item:last-child { margin-bottom:0; }
+  .tl-item .dot { position:absolute; left:-48px; top:4px; width:24px; height:24px; border-radius:50%; border:3px solid; display:flex; align-items:center; justify-content:center; background:#fff; z-index:1; }
+  .tl-item .dot svg { width:12px; height:12px; }
+  .tl-item.done .dot { border-color:var(--primary); color:var(--primary); }
+  .tl-item.cur .dot { border-color:var(--accent); color:var(--accent); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(218,165,32,.4)} 50%{box-shadow:0 0 0 8px rgba(218,165,32,0)} }
+  .tl-item.upcoming .dot { border-color:var(--border); color:var(--on-surface-muted); }
+  .tl-item .content { background:#fff; border:1px solid var(--border); border-radius:6px; padding:18px 20px; }
+  .tl-item.cur .content { border-color:var(--accent); }
+  .tl-item .content .date { font-family:'Public Sans'; font-weight:800; font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--on-surface-muted); margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+  .tl-item.cur .content .date { color:var(--accent); }
+  .tl-item .content h3 { font-family:'Public Sans'; font-weight:800; font-size:17px; letter-spacing:-.01em; margin-bottom:6px; }
+  .tl-item .content p { font-size:13px; color:var(--on-surface-muted); line-height:1.55; margin-bottom:10px; }
+  .tl-item .content .chips { display:flex; gap:5px; flex-wrap:wrap; }
+  .tl-item .content .chip { padding:3px 8px; background:var(--container-low); border-radius:3px; font-family:'Public Sans'; font-weight:800; font-size:10px; }
+
+  /* Sector breakdown */
+  .sectors { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:64px; }
+  .sc { border-radius:8px; overflow:hidden; border:1px solid var(--border); }
+  .sc .sh { padding:18px 20px; display:flex; justify-content:space-between; align-items:center; }
+  .sc .sh h3 { font-family:'Public Sans'; font-weight:800; font-size:16px; letter-spacing:-.01em; }
+  .sc .sh .pct { font-family:'Public Sans'; font-weight:800; font-size:32px; letter-spacing:-.025em; font-variant-numeric:tabular-nums; }
+  .sc .sb { padding:14px 20px; background:#fff; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:10px; }
+  .sc .sb .row { display:flex; justify-content:space-between; align-items:center; }
+  .sc .sb .row .lbl { font-size:12px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .sc .sb .row .num { font-family:'Public Sans'; font-weight:800; font-size:13px; font-variant-numeric:tabular-nums; }
+  .sc .sb .bbar { height:6px; background:var(--container-low); border-radius:99px; overflow:hidden; margin-top:4px; }
+  .sc .sb .bbar i { display:block; height:100%; border-radius:99px; }
+  .sc.red { --cl:var(--brand-red); } .sc.red .sh { background:#fff5f6; } .sc.red .sh .pct { color:var(--brand-red); }
+  .sc.gold { --cl:var(--brand-gold); } .sc.gold .sh { background:#fffbf0; } .sc.gold .sh .pct { color:var(--brand-gold); }
+  .sc.green { --cl:var(--brand-green); } .sc.green .sh { background:#f4fbf7; } .sc.green .sh .pct { color:var(--brand-green); }
+  .sc.ink { --cl:var(--charcoal); } .sc.ink .sh { background:var(--container-low); } .sc.ink .sh .pct { color:var(--charcoal); }
+
+  /* Donor leaderboard */
+  .lb { background:#fff; border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:64px; }
+  .lb .lbh { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .lb .lbh h3 { font-family:'Public Sans'; font-weight:800; font-size:14px; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; padding:10px 20px; font-size:10px; font-weight:800; color:var(--on-surface-muted); letter-spacing:.07em; text-transform:uppercase; font-family:'Public Sans'; background:var(--container-low); border-bottom:1px solid var(--border); }
+  td { padding:12px 20px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  tr:last-child td { border-bottom:0; }
+  tr:hover td { background:var(--container-low); }
+  .rank { font-family:'Public Sans'; font-weight:800; font-size:11px; color:var(--on-surface-muted); width:32px; }
+  .rank.gold { color:var(--brand-gold); }
+  .rank.silver { color:#888; }
+  .rank.bronze { color:#cd7f32; }
+  .who { display:flex; align-items:center; gap:10px; }
+  .who img { width:30px; height:30px; border-radius:50%; }
+  .who b { font-family:'Public Sans'; font-weight:800; font-size:13px; display:block; }
+  .who span { font-size:10.5px; color:var(--on-surface-muted); }
+  .amt-cell { font-family:'Public Sans'; font-weight:800; font-variant-numeric:tabular-nums; }
+  .amt-cell.top { color:var(--primary); }
+
+  /* CTA */
+  .cta { background:#181d19; color:#fff; padding:64px 48px; text-align:center; }
+  .cta h2 { font-family:'Public Sans'; font-weight:800; font-size:36px; letter-spacing:-.025em; margin-bottom:8px; }
+  .cta p { color:rgba(255,255,255,.7); font-size:15px; margin-bottom:28px; }
+  .cta .btns { display:flex; gap:10px; justify-content:center; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="m5 12 4 4 10-8"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3 4 14h8l-1 7 9-11h-8l1-7Z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 7v5l3 3"/></symbol>
+  </defs>
+</svg>
+
+<div class="pbar"><i></i></div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="inner">
+    <div>
+      <div class="bl"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+      <span class="eye">Movement impact · Q2 2026</span>
+      <h1>Numbers<br>that <span>matter.</span></h1>
+      <p>Every membership, donation, and branch meeting counted. This is what the movement has achieved so far — and what comes next.</p>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-gold">Download full report →</button>
+        <button class="btn btn-ghost" style="color:rgba(255,255,255,.7)">Subscribe to updates</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hs r"><div class="v">355,212</div><div class="l">Members registered</div></div>
+      <div class="hs g"><div class="v">₵1.2M</div><div class="l">Donations raised YTD</div></div>
+      <div class="hs gr"><div class="v">1,247</div><div class="l">Active branches</div></div>
+      <div class="hs w"><div class="v">16/16</div><div class="l">Regions reached</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Regional breakdown -->
+<div class="wrap">
+  <div class="sec-h">
+    <span class="eye">Regional breakdown</span>
+    <h2>Every region. Every district.</h2>
+    <p>Branch activity, member growth, and fundraising performance across all 16 administrative regions of Ghana.</p>
+  </div>
+  <div class="region-grid">
+    <div class="rc">
+      <div class="rh"><h4>Greater Accra</h4><span class="status hi">High activity</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">88,412</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">214</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵284K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:88%;background:var(--brand-green)"></div></div></div>
+      </div>
+    </div>
+    <div class="rc">
+      <div class="rh"><h4>Ashanti</h4><span class="status hi">High activity</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">72,108</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">186</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵241K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:72%;background:var(--brand-green)"></div></div></div>
+      </div>
+    </div>
+    <div class="rc">
+      <div class="rh"><h4>Eastern</h4><span class="status hi">High activity</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">41,204</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">124</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵118K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:62%;background:var(--brand-gold)"></div></div></div>
+      </div>
+    </div>
+    <div class="rc">
+      <div class="rh"><h4>Western</h4><span class="status mid">Growing</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">28,880</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">98</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵84K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:48%;background:var(--brand-gold)"></div></div></div>
+      </div>
+    </div>
+    <div class="rc">
+      <div class="rh"><h4>Central</h4><span class="status mid">Growing</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">24,612</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">84</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵62K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:40%;background:var(--brand-gold)"></div></div></div>
+      </div>
+    </div>
+    <div class="rc">
+      <div class="rh"><h4>Volta</h4><span class="status mid">Growing</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">19,448</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">72</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵48K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:34%;background:var(--brand-gold)"></div></div></div>
+      </div>
+    </div>
+    <div class="rc">
+      <div class="rh"><h4>Northern</h4><span class="status lo">Building</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">14,210</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">52</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵28K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:22%;background:var(--brand-red)"></div></div></div>
+      </div>
+    </div>
+    <div class="rc">
+      <div class="rh"><h4>Upper East</h4><span class="status lo">Building</span></div>
+      <div class="rb">
+        <div class="row"><span class="key">Members</span><span class="val tnum">8,940</span></div>
+        <div class="row"><span class="key">Branches</span><span class="val tnum">38</span></div>
+        <div class="row"><span class="key">Raised</span><span class="val tnum">₵16K</span></div>
+        <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:16%;background:var(--brand-red)"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sector breakdown -->
+  <div class="sec-h" style="padding-top:0">
+    <span class="eye">Youth employment · sector breakdown</span>
+    <h2>Where the jobs are going.</h2>
+    <p>Placement of the first 50,000 youth in paid apprenticeships, broken down by sector and region cohort.</p>
+  </div>
+  <div class="sectors">
+    <div class="sc red">
+      <div class="sh"><div><h3>Agriculture &amp; agro-processing</h3><span style="font-size:11px;color:var(--on-surface-muted);font-family:'Public Sans';font-weight:700">Sector 01 · First cohort</span></div><div class="pct">38%</div></div>
+      <div class="sb">
+        <div class="row"><span class="lbl">Placements confirmed</span><span class="num tnum">19,200</span></div>
+        <div class="bbar"><i style="width:76%;background:var(--brand-red)"></i></div>
+        <div class="row"><span class="lbl">Target by Q4 2026</span><span class="num tnum">25,000</span></div>
+        <div class="row"><span class="lbl">Avg. stipend</span><span class="num tnum">₵840/mo</span></div>
+      </div>
+    </div>
+    <div class="sc gold">
+      <div class="sh"><div><h3>Construction &amp; infrastructure</h3><span style="font-size:11px;color:var(--on-surface-muted);font-family:'Public Sans';font-weight:700">Sector 02 · Industrial parks</span></div><div class="pct">27%</div></div>
+      <div class="sb">
+        <div class="row"><span class="lbl">Placements confirmed</span><span class="num tnum">13,600</span></div>
+        <div class="bbar"><i style="width:54%;background:var(--brand-gold)"></i></div>
+        <div class="row"><span class="lbl">Target by Q4 2026</span><span class="num tnum">20,000</span></div>
+        <div class="row"><span class="lbl">Avg. stipend</span><span class="num tnum">₵960/mo</span></div>
+      </div>
+    </div>
+    <div class="sc green">
+      <div class="sh"><div><h3>Tech &amp; digital services</h3><span style="font-size:11px;color:var(--on-surface-muted);font-family:'Public Sans';font-weight:700">Sector 03 · STEM fast-track</span></div><div class="pct">22%</div></div>
+      <div class="sb">
+        <div class="row"><span class="lbl">Placements confirmed</span><span class="num tnum">11,000</span></div>
+        <div class="bbar"><i style="width:44%;background:var(--brand-green)"></i></div>
+        <div class="row"><span class="lbl">Target by Q4 2026</span><span class="num tnum">15,000</span></div>
+        <div class="row"><span class="lbl">Avg. stipend</span><span class="num tnum">₵1,100/mo</span></div>
+      </div>
+    </div>
+    <div class="sc ink">
+      <div class="sh"><div><h3>Creative &amp; tourism</h3><span style="font-size:11px;color:var(--on-surface-muted);font-family:'Public Sans';font-weight:700">Sector 04 · Cultural economy</span></div><div class="pct">13%</div></div>
+      <div class="sb">
+        <div class="row"><span class="lbl">Placements confirmed</span><span class="num tnum">6,200</span></div>
+        <div class="bbar"><i style="width:31%;background:var(--charcoal)"></i></div>
+        <div class="row"><span class="lbl">Target by Q4 2026</span><span class="num tnum">10,000</span></div>
+        <div class="row"><span class="lbl">Avg. stipend</span><span class="num tnum">₵720/mo</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="sec-h" style="padding-top:0">
+    <span class="eye">Movement milestones</span>
+    <h2>From launch to now.</h2>
+  </div>
+  <div class="timeline">
+    <div class="tl">
+      <div class="tl-item done">
+        <div class="dot"><svg><use href="#i-check"/></svg></div>
+        <div class="content">
+          <div class="date"><span>March 2024</span></div>
+          <h3>Movement formally launched</h3>
+          <p>The Base goes public with 50 founding branches across Greater Accra and Ashanti. Registration opens online and at 12 field desks.</p>
+          <div class="chips"><span class="chip">50 branches</span><span class="chip">2 regions</span><span class="chip">Online launch</span></div>
+        </div>
+      </div>
+      <div class="tl-item done">
+        <div class="dot"><svg><use href="#i-check"/></svg></div>
+        <div class="content">
+          <div class="date"><span>September 2024</span></div>
+          <h3>100,000 verified members</h3>
+          <p>Ghana Card verification reaches saturation point. The platform handles 14,000 new registrations in a single weekend.</p>
+          <div class="chips"><span class="chip">100K milestone</span><span class="chip">16-region coverage</span></div>
+        </div>
+      </div>
+      <div class="tl-item done">
+        <div class="dot"><svg><use href="#i-check"/></svg></div>
+        <div class="content">
+          <div class="date"><span>January 2025</span></div>
+          <h3>₵500K raised — Youth Employment Fund opened</h3>
+          <p>The ring-fenced fund reaches critical mass. First apprenticeship cohort of 2,000 youth begins in Eastern region.</p>
+          <div class="chips"><span class="chip">₵500K raised</span><span class="chip">First 2,000 jobs</span><span class="chip">Eastern region</span></div>
+        </div>
+      </div>
+      <div class="tl-item cur">
+        <div class="dot"><svg><use href="#i-bolt"/></svg></div>
+        <div class="content">
+          <div class="date"><span>Now · Q2 2026</span></div>
+          <h3>355,000 members · 50,000 jobs in progress</h3>
+          <p>All 16 regions active. The platform serves members in 21 countries. Fundraising goal for 2026: ₵1.5M.</p>
+          <div class="chips"><span class="chip" style="background:rgba(218,165,32,.15);color:#7d5d12">355K members</span><span class="chip" style="background:rgba(218,165,32,.15);color:#7d5d12">50K placements</span><span class="chip" style="background:rgba(218,165,32,.15);color:#7d5d12">21 countries</span></div>
+        </div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="dot"><svg><use href="#i-clock"/></svg></div>
+        <div class="content">
+          <div class="date"><span>2028</span></div>
+          <h3>National election — hold every leader accountable</h3>
+          <p>Field the promises. Verify every claim. Publish the results. The movement's purpose is put to its ultimate test.</p>
+          <div class="chips"><span class="chip">1M jobs target</span><span class="chip">Public ledger live</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top contributors -->
+  <div class="sec-h" style="padding-top:0">
+    <span class="eye">Top contributors · Q2 2026</span>
+    <h2>Patriots who go furthest.</h2>
+  </div>
+  <div class="lb">
+    <div class="lbh"><h3>Monthly leaderboard</h3><span class="pill pill-ok" style="font-family:'Public Sans';font-weight:800;font-size:10px;padding:3px 10px;border-radius:99px;background:rgba(0,107,63,.08);color:var(--primary);border:1px solid rgba(0,107,63,.18)">May 2026</span></div>
+    <table>
+      <thead><tr><th></th><th>Member</th><th>Region</th><th>Total donated</th><th>Streak</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="rank gold">🥇 1</td><td><div class="who"><img src="https://i.pravatar.cc/60?u=lb1"><div><b>Kwabena Asante</b><span>Kumasi Central 01</span></div></div></td><td>Ashanti</td><td class="amt-cell top tnum">₵4,200</td><td><span class="pill pill-ok" style="font-family:'Public Sans';font-weight:800;font-size:10px">14 months</span></td><td><button class="btn btn-outline btn-sm">View profile</button></td></tr>
+        <tr><td class="rank silver">🥈 2</td><td><div class="who"><img src="https://i.pravatar.cc/60?u=lb2"><div><b>Ama Darkoa</b><span>Lapaz Branch 04</span></div></div></td><td>Greater Accra</td><td class="amt-cell top tnum">₵3,840</td><td><span class="pill pill-ok" style="font-family:'Public Sans';font-weight:800;font-size:10px">12 months</span></td><td><button class="btn btn-outline btn-sm">View profile</button></td></tr>
+        <tr><td class="rank bronze">🥉 3</td><td><div class="who"><img src="https://i.pravatar.cc/60?u=lb3"><div><b>Kofi Mensah</b><span>London Diaspora Hub</span></div></div></td><td>UK Diaspora</td><td class="amt-cell top tnum">₵2,950</td><td><span class="pill pill-warn" style="font-family:'Public Sans';font-weight:800;font-size:10px">8 months</span></td><td><button class="btn btn-outline btn-sm">View profile</button></td></tr>
+        <tr><td class="rank">4</td><td><div class="who"><img src="https://i.pravatar.cc/60?u=lb4"><div><b>Akua Sarpong</b><span>Cape Coast Chapter 02</span></div></div></td><td>Central</td><td class="amt-cell tnum">₵2,400</td><td><span class="pill pill-mute" style="font-family:'Public Sans';font-weight:800;font-size:10px">6 months</span></td><td><button class="btn btn-outline btn-sm">View profile</button></td></tr>
+        <tr><td class="rank">5</td><td><div class="who"><img src="https://i.pravatar.cc/60?u=lb5"><div><b>Yaw Boateng</b><span>Kumasi South 03</span></div></div></td><td>Ashanti</td><td class="amt-cell tnum">₵1,980</td><td><span class="pill pill-mute" style="font-family:'Public Sans';font-weight:800;font-size:10px">5 months</span></td><td><button class="btn btn-outline btn-sm">View profile</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<section class="cta">
+  <h2>Be part of the numbers.</h2>
+  <p>Every member, every cedi, every branch meeting moves the needle. Join or donate today.</p>
+  <div class="btns">
+    <button class="btn btn-gold btn-lg">Join the movement →</button>
+    <button class="btn btn-primary btn-lg">Donate ₵50</button>
+  </div>
+</section>
+
+</body>
+</html>

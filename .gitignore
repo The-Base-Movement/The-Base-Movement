@@ -52,10 +52,14 @@ tsconfig.*.tsbuildinfo
 supabase/config.toml
 supabase/.temp/
 
-# Docs — never commit (all subdirectories included)
+# Docs — never commit (all subdirectories included).
+# docs/ holds member CSVs, polling data and security reports — keep it ignored.
+# Only explicitly safe, developer-facing subfolders are excepted below.
 docs/*
 !docs/graphify-site/
 !docs/graphify-site/**
+!docs/design-system-handoff/
+!docs/design-system-handoff/**
 
 # Test files — kept locally only
 src/test/
