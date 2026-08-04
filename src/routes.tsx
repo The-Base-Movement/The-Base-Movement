@@ -138,7 +138,6 @@ const MediaAssignments = lazy(() => import('./pages/admin/media-hub/MediaAssignm
 const MediaInbox = lazy(() => import('./pages/admin/media-hub/MediaInbox'))
 const MediaMembers = lazy(() => import('./pages/admin/media-hub/MediaMembers'))
 const ITDashboard = lazy(() => import('./pages/admin/it/ITDashboard'))
-const ITBrain = lazy(() => import('./pages/admin/it/ITBrain'))
 const ITNotes = lazy(() => import('./pages/admin/it/ITNotes'))
 const ITProjects = lazy(() => import('./pages/admin/it/ITProjects'))
 const ITTodos = lazy(() => import('./pages/admin/it/ITTodos'))
@@ -375,7 +374,6 @@ export const routes: RouteObject[] = [
                 element: <ITDepartmentLayout />,
                 children: [
                   { path: '/admin/it-department', element: <ITDashboard /> },
-                  { path: '/admin/it-department/brain', element: <ITBrain /> },
                   { path: '/admin/it-department/tickets', element: <ITTickets /> },
                   { path: '/admin/it-department/helpdesk', element: <ITHelpdesk /> },
                   { path: '/admin/it-department/projects', element: <ITProjects /> },
