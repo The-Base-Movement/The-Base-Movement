@@ -302,7 +302,7 @@ class MessagingService {
             message: preview,
             link: '/dashboard/messages',
           })
-          // ponytail: reuse existing send-push-notification edge fn
+          // reuse existing send-push-notification edge fn
           supabase.functions
             .invoke('send-push-notification', {
               body: {

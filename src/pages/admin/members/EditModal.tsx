@@ -71,7 +71,7 @@ const sectionHeadingStyle: CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
 }
 
-// ponytail: display-only bucket; DB trigger is the source of truth on save.
+// display-only bucket; DB trigger is the source of truth on save.
 // Buckets per contract: <=25→18-25, <=35→26-35, <=45→36-45, <=60→46-60, else 60+.
 function ageBucket(birthYear: number): string {
   const age = new Date().getFullYear() - birthYear
