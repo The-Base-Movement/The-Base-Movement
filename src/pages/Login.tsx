@@ -4,6 +4,7 @@ import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { sessionStore } from '@/lib/sessionStore'
+import { takeForcedLogoutReason } from '@/lib/forcedLogout'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
@@ -78,6 +79,11 @@ export default function Login() {
   useEffect(() => {
     if (session) navigate('/dashboard', { replace: true })
   }, [session, navigate])
+
+  useEffect(() => {
+    const reason = takeForcedLogoutReason()
+    if (reason) toast.info(reason)
+  }, [])
 
   useEffect(() => {
     const timer = window.setInterval(() => {

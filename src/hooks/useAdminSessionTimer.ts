@@ -1,16 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-
-const ACTIVITY_EVENTS = [
-  'pointermove',
-  'mousemove',
-  'mousedown',
-  'click',
-  'keydown',
-  'touchstart',
-  'wheel',
-  'scroll',
-  'focus',
-] as const
+import { useEffect, useRef, useState } from 'react'
+import { ACTIVITY_EVENTS, getLastActivity, markActivity } from '@/lib/lastActivity'
 
 function getTimeoutMinutes(): number {
   const stored = Number(localStorage.getItem('admin_session_timeout_minutes'))
@@ -23,29 +12,27 @@ interface UseAdminSessionTimerOptions {
 
 export function useAdminSessionTimer({ onTimeout }: UseAdminSessionTimerOptions) {
   const [secondsLeft, setSecondsLeft] = useState(() => getTimeoutMinutes() * 60)
-  const deadlineRef = useRef(0)
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const onTimeoutRef = useRef(onTimeout)
+  const hasTimedOutRef = useRef(false)
 
   useEffect(() => {
     onTimeoutRef.current = onTimeout
   }, [onTimeout])
 
-  const resetDeadline = useCallback(() => {
-    const ms = getTimeoutMinutes() * 60 * 1000
-    deadlineRef.current = Date.now() + ms
-  }, [])
-
   useEffect(() => {
-    resetDeadline()
+    markActivity()
 
-    const handleActivity = () => resetDeadline()
+    const handleActivity = () => markActivity()
     ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, handleActivity, { passive: true }))
 
     tickRef.current = setInterval(() => {
-      const remaining = Math.max(0, Math.round((deadlineRef.current - Date.now()) / 1000))
+      const timeoutMs = getTimeoutMinutes() * 60 * 1000
+      const remaining = Math.max(0, Math.round((getLastActivity() + timeoutMs - Date.now()) / 1000))
       setSecondsLeft(remaining)
-      if (remaining <= 0) {
+      if (remaining <= 0 && !hasTimedOutRef.current) {
+        // logout is async and the interval keeps running; only fire once.
+        hasTimedOutRef.current = true
         onTimeoutRef.current()
       }
     }, 1000)
@@ -54,7 +41,7 @@ export function useAdminSessionTimer({ onTimeout }: UseAdminSessionTimerOptions)
       ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, handleActivity))
       if (tickRef.current) clearInterval(tickRef.current)
     }
-  }, [resetDeadline])
+  }, [])
 
   return { secondsLeft }
 }

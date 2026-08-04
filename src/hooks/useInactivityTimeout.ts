@@ -1,10 +1,16 @@
 /**
  * @file useInactivityTimeout.ts
  * @description Custom React hook to track user inactivity. Fires callbacks when the warning threshold
- * is reached and when the inactivity limit is exceeded. Tracks common mouse/keyboard/touch events.
+ * is reached and when the inactivity limit is exceeded. Idleness is measured against the cross-tab
+ * activity clock in `@/lib/lastActivity`, so a background tab cannot time out a session the user is
+ * actively using elsewhere.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ACTIVITY_EVENTS, getLastActivity, markActivity } from '@/lib/lastActivity'
+
+/** How often idleness is re-evaluated. Well below the smallest threshold it checks. */
+const TICK_MS = 5000
 
 /**
  * Options parameters for configuring inactivity detection hook
@@ -21,7 +27,11 @@ interface UseInactivityTimeoutOptions {
 }
 
 /**
- * Hook that sets up inactivity timers and event listeners for keydown/mousedown/scroll/touchstart/click.
+ * Hook that polls the shared activity clock and reports warning / timeout thresholds.
+ *
+ * Callbacks are held in refs rather than listed as effect dependencies: callers pass inline
+ * arrows, and depending on them would tear down and restart the timers on every render,
+ * silently extending the idle window.
  *
  * @param options - Configuration options for inactivity check
  * @returns Object enclosing warning visibility status and the warning dismissal handler.
@@ -32,58 +42,61 @@ export function useInactivityTimeout({
   onWarning,
   onTimeout,
 }: UseInactivityTimeoutOptions) {
-  const inactivityTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const warningTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [isWarningVisible, setIsWarningVisible] = useState(false)
+  const onWarningRef = useRef(onWarning)
+  const onTimeoutRef = useRef(onTimeout)
+  const hasWarnedRef = useRef(false)
+  const hasTimedOutRef = useRef(false)
 
-  const resetTimeout = useCallback(() => {
-    // Clear existing timeouts
-    if (inactivityTimeoutRef.current) clearTimeout(inactivityTimeoutRef.current)
-    if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current)
+  useEffect(() => {
+    onWarningRef.current = onWarning
+    onTimeoutRef.current = onTimeout
+  })
+
+  const dismissWarning = useCallback(() => {
+    markActivity()
+    hasWarnedRef.current = false
+    setIsWarningVisible(false)
+  }, [])
+
+  useEffect(() => {
+    markActivity()
+
+    const handleActivity = () => markActivity()
+    ACTIVITY_EVENTS.forEach((event) =>
+      window.addEventListener(event, handleActivity, { passive: true })
+    )
 
     const warningMs = (inactivityMinutes - warningMinutes) * 60 * 1000
     const logoutMs = inactivityMinutes * 60 * 1000
 
-    // Set warning timeout (5 minutes before logout)
-    warningTimeoutRef.current = setTimeout(() => {
-      setIsWarningVisible(true)
-      onWarning?.()
-    }, warningMs)
+    const tick = setInterval(() => {
+      const idleMs = Date.now() - getLastActivity()
 
-    // Set logout timeout
-    inactivityTimeoutRef.current = setTimeout(() => {
-      setIsWarningVisible(false)
-      onTimeout?.()
-    }, logoutMs)
-  }, [inactivityMinutes, warningMinutes, onWarning, onTimeout])
+      if (idleMs >= logoutMs) {
+        // signOut is async and the interval keeps running; only fire once.
+        if (hasTimedOutRef.current) return
+        hasTimedOutRef.current = true
+        setIsWarningVisible(false)
+        onTimeoutRef.current?.()
+        return
+      }
 
-  const dismissWarning = useCallback(() => {
-    setIsWarningVisible(false)
-    resetTimeout()
-  }, [resetTimeout])
-
-  useEffect(() => {
-    resetTimeout()
-
-    // Track user activity
-    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click']
-
-    const handleActivity = () => {
-      resetTimeout()
-    }
-
-    events.forEach((event) => {
-      document.addEventListener(event, handleActivity)
-    })
+      const shouldWarn = idleMs >= warningMs
+      setIsWarningVisible(shouldWarn)
+      if (shouldWarn && !hasWarnedRef.current) {
+        hasWarnedRef.current = true
+        onWarningRef.current?.()
+      } else if (!shouldWarn) {
+        hasWarnedRef.current = false
+      }
+    }, TICK_MS)
 
     return () => {
-      events.forEach((event) => {
-        document.removeEventListener(event, handleActivity)
-      })
-      if (inactivityTimeoutRef.current) clearTimeout(inactivityTimeoutRef.current)
-      if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current)
+      ACTIVITY_EVENTS.forEach((event) => window.removeEventListener(event, handleActivity))
+      clearInterval(tick)
     }
-  }, [resetTimeout])
+  }, [inactivityMinutes, warningMinutes])
 
   return { isWarningVisible, dismissWarning }
 }

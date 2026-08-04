@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { beginIntentionalSignOut, endIntentionalSignOut } from '@/lib/forcedLogout'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
@@ -162,7 +163,13 @@ export default function ResetPassword() {
         // Otherwise, sign out the mismatched user first.
         if (queryEmail && session.user?.email?.toLowerCase() !== queryEmail.toLowerCase()) {
           console.warn('[reset-password] Session email mismatch. Signing out old session.')
-          await supabase.auth.signOut({ scope: 'local' })
+          // Deliberate: don't let this surface as "your session expired" on /login.
+          beginIntentionalSignOut()
+          try {
+            await supabase.auth.signOut({ scope: 'local' })
+          } finally {
+            endIntentionalSignOut()
+          }
         } else {
           if (isMounted.current) {
             if (timeout) {
