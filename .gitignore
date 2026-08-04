@@ -20,7 +20,6 @@ dist-ssr
 /fix-dark.cjs
 /replace-colors.cjs
 /.cache_ggshield
-/agent/
 
 .env
 .env.*
@@ -56,8 +55,6 @@ supabase/.temp/
 # docs/ holds member CSVs, polling data and security reports — keep it ignored.
 # Only explicitly safe, developer-facing subfolders are excepted below.
 docs/*
-!docs/graphify-site/
-!docs/graphify-site/**
 !docs/design-system-handoff/
 !docs/design-system-handoff/**
 
@@ -67,19 +64,6 @@ src/test/
 **/*.test.tsx
 **/*.spec.ts
 **/*.spec.tsx
-
-# AI agent and tooling directories — local dev only
-.agents/
-.agent/
-agent/
-.codex/
-.claude/
-.superpowers/
-.windsurf/
-.playwright-mcp/
-graphify-out/
-AGENTS.md
-CLAUDE.md
 
 # Python caching
 __pycache__/
