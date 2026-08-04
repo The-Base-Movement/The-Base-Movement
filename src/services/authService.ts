@@ -7,6 +7,8 @@ import { supabase } from '@/lib/supabase'
 import type { Session, User, AuthResponse } from '@supabase/supabase-js'
 import { userActivityService } from './userActivityService'
 import { sessionStore } from '@/lib/sessionStore'
+import { clearActivity } from '@/lib/lastActivity'
+import { beginIntentionalSignOut, endIntentionalSignOut } from '@/lib/forcedLogout'
 
 export interface AuthSession {
   session: Session | null
@@ -178,6 +180,7 @@ class AuthService {
   }
 
   async logout() {
+    beginIntentionalSignOut()
     // Mark this member's active session(s) as ended before signing out (while the
     // JWT is still valid for the RLS update). Best-effort — never blocks logout.
     const uid = this.currentSession?.user?.id
@@ -210,7 +213,12 @@ class AuthService {
 
     this.lastLoggedToken = null
     this.currentSession = null
-    await supabase.auth.signOut({ scope: 'local' })
+    clearActivity()
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } finally {
+      endIntentionalSignOut()
+    }
   }
 
   getToken(): string | null {
@@ -311,7 +319,13 @@ class AuthService {
     if (error) throw new Error(error.message || 'Failed to deactivate account')
 
     sessionStore.clearAll()
-    await supabase.auth.signOut({ scope: 'global' })
+    clearActivity()
+    beginIntentionalSignOut()
+    try {
+      await supabase.auth.signOut({ scope: 'global' })
+    } finally {
+      endIntentionalSignOut()
+    }
   }
 }
 

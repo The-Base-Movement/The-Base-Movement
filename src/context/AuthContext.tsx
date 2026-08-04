@@ -10,6 +10,13 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { supabase } from '@/lib/supabase'
 import type { Session, User } from '@supabase/supabase-js'
 import { userActivityService } from '@/services/userActivityService'
+import { clearActivity } from '@/lib/lastActivity'
+import {
+  beginIntentionalSignOut,
+  endIntentionalSignOut,
+  isIntentionalSignOut,
+  setForcedLogoutReason,
+} from '@/lib/forcedLogout'
 
 interface AuthContextValue {
   session: Session | null
@@ -43,6 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!hydrated.current) return
 
+      if (event === 'SIGNED_OUT' && !isIntentionalSignOut()) {
+        // auth-js drops the session on a non-retryable refresh failure. That is
+        // not idleness, so say so rather than dumping the user at /login silently.
+        setForcedLogoutReason('Your session expired and you were signed out. Please log in again.')
+        clearActivity()
+      }
       if (event === 'SIGNED_IN' && session?.user) {
         // SIGNED_IN re-fires on tab focus and revalidation, so dedupe on the
         // auth server's last_sign_in_at rather than trusting the event.
@@ -63,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signOut = async () => {
+    beginIntentionalSignOut()
     if (user) {
       try {
         const { deviceTrackingService } = await import('@/services/deviceTrackingService')
@@ -74,8 +88,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     sessionStorage.removeItem('admin_device_captured')
+    clearActivity()
 
-    await supabase.auth.signOut({ scope: 'local' })
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } finally {
+      endIntentionalSignOut()
+    }
   }
 
   return (

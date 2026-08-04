@@ -27,15 +27,39 @@ declare global {
   var __supabase_singleton__: SupabaseClient | undefined
 }
 
-// Use sessionStorage for auth tokens so the JWT is not accessible across tabs
-// and is automatically cleared when the browser session ends.
-// Trade-off: users must re-login after closing the tab. If persistent login is
-// required, revert to the default (localStorage) storage.
-const sessionStorageAdapter = {
-  getItem: (key: string) => (isBrowser ? sessionStorage.getItem(key) : null),
+// Auth tokens live in localStorage so a single session is shared across tabs.
+//
+// This replaces a previous sessionStorage adapter. Tab-scoped tokens meant every
+// new tab required its own login, and each of those logins could revoke the
+// refresh-token family of the tab already open — so an actively-used tab would
+// die at its next refresh (~55 min in) with `session_expired / Revoked by Newer
+// Login`, entirely independent of whether the user was doing anything.
+// Session lifetime is now bounded by the inactivity timers (useInactivityTimeout
+// for members, useAdminSessionTimer for admins), which is the intended behaviour:
+// log out on idle, not at an arbitrary token boundary.
+const localStorageAdapter = {
+  getItem: (key: string) => {
+    if (!isBrowser) return null
+    const fromLocal = localStorage.getItem(key)
+    if (fromLocal !== null) return fromLocal
+
+    // One-time migration off the previous sessionStorage adapter, so the deploy
+    // that flips this over doesn't sign out everyone who is currently logged in.
+    const fromSession = sessionStorage.getItem(key)
+    if (fromSession !== null) {
+      localStorage.setItem(key, fromSession)
+      sessionStorage.removeItem(key)
+      return fromSession
+    }
+    return null
+  },
   setItem: (key: string, value: string) =>
-    isBrowser ? sessionStorage.setItem(key, value) : undefined,
-  removeItem: (key: string) => (isBrowser ? sessionStorage.removeItem(key) : undefined),
+    isBrowser ? localStorage.setItem(key, value) : undefined,
+  removeItem: (key: string) => {
+    if (!isBrowser) return
+    localStorage.removeItem(key)
+    sessionStorage.removeItem(key)
+  },
 }
 
 function createMissingSupabaseClient(): SupabaseClient {
@@ -57,23 +81,10 @@ function createSupabaseSingleton(): SupabaseClient {
 
   return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      storage: sessionStorageAdapter,
-      // Some browsers (Brave, Firefox private mode) return null from
-      // navigator.locks.request() — violating the LockManager spec and
-      // causing a console warning from gotrue-js. Use ifAvailable so we
-      // never block on a null lock, and fall back gracefully.
-      lock: async (name, _timeout, fn) => {
-        if (typeof navigator !== 'undefined' && navigator.locks) {
-          try {
-            return await navigator.locks.request(name, { ifAvailable: true }, async (lock) =>
-              lock ? fn() : fn()
-            )
-          } catch {
-            return fn()
-          }
-        }
-        return fn()
-      },
+      storage: localStorageAdapter,
+      // No `lock` option: auth-js coordinates concurrent refreshes itself and the
+      // server resolves races, so it deprecated the option outright. The previous
+      // custom lock was a no-op anyway (`lock ? fn() : fn()` ran fn either way).
     },
   })
 }
