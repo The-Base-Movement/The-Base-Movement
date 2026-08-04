@@ -1,4 +1,4 @@
-// ponytail: colocated service — direct supabase is acceptable here since this is
+// colocated service — direct supabase is acceptable here since this is
 // a service file, not a component. Move to src/services/ if chapter ops grows.
 import { supabase } from '@/lib/supabase'
 import type { ChapterMember, ChapterDonation } from './types'

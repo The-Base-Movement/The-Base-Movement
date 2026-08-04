@@ -4,7 +4,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // IndexNow: ping search engines (Bing, Yandex, etc.) the moment a URL changes so
 // they re-crawl immediately instead of waiting. The key file must be hosted at
 // https://<HOST>/<KEY>.txt (see public/aadb12316ed74e68a71db271317e17e0.txt).
-// ponytail: key + host hardcoded — the key is public (served at the site root),
+// key + host hardcoded — the key is public (served at the site root),
 // so there's nothing to hide in a secret. If the key rotates, update both the
 // public file and this constant.
 const HOST = 'www.thebasemovement.org.gh'

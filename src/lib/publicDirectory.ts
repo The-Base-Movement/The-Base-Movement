@@ -12,7 +12,7 @@ export async function getPublicDirectoryProfiles(
   ids?: string[]
 ): Promise<PublicDirectoryProfile[]> {
   const uniqueIds = ids ? [...new Set(ids.filter(Boolean))] : null
-  // ponytail: chapter/constituency counts need a whole-directory read; split by dedicated count RPCs only if this gets large.
+  // chapter/constituency counts need a whole-directory read; split by dedicated count RPCs only if this gets large.
   const { data, error } = await supabase.rpc('public_directory_profiles', {
     target_ids: uniqueIds && uniqueIds.length > 0 ? uniqueIds : null,
   })

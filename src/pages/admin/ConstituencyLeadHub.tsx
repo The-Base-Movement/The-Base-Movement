@@ -321,7 +321,7 @@ export default function AdminConstituencyLeadHub() {
       {/* Members tab */}
       {activeTab === 'members' && (
         <>
-          {/* ponytail: Add routes to the shared /admin/members directory flow (same
+          {/* Add routes to the shared /admin/members directory flow (same
             entry point the diaspora hub uses) rather than auto-scoping to this
             constituency — the diaspora Add form isn't pre-scoped either, so this
             keeps parity and avoids re-wiring the protected RegistrationOverlay. */}

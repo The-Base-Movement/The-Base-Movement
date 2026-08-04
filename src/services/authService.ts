@@ -67,7 +67,7 @@ class AuthService {
         formattedPhone = '+' + formattedPhone
       }
 
-      // ponytail: skip client-side dummy email attempt — it always 400s for
+      // skip client-side dummy email attempt — it always 400s for
       // admin-promoted members and leaks errors to console. The edge function
       // handles both dummy-email and real-email resolution server-side.
       const { data: fnData, error: fnError } = await supabase.functions.invoke('phone-login', {

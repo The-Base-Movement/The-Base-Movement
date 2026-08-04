@@ -335,7 +335,7 @@ const entries = [
     false,
     false,
   ],
-  // ponytail: national scope (no per-country scope type exists); add a
+  // national scope (no per-country scope type exists); add a
   // 'country' RoleScopeType if diaspora leads must be pinned to one country.
   ['BASE_DIASPORA_LEAD', 'Base Diaspora Lead', 'DIASPORA AFFAIRS', ops, 'national', false, false],
   [

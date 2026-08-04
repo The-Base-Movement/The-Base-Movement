@@ -1,4 +1,4 @@
-// ponytail: one pure function, no deps. Returns a corrected email suggestion or null.
+// one pure function, no deps. Returns a corrected email suggestion or null.
 
 const KNOWN_DOMAINS = [
   'gmail.com',

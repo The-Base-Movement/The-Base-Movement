@@ -57,7 +57,7 @@ export function HubtelPaymentModal({
           : 'store_orders'
     const channelName = `hubtel_checkout_${type}_${referenceId}`
 
-    // ponytail: group rows belong to other members, so RLS hides them from
+    // group rows belong to other members, so RLS hides them from
     // realtime; the polling below uses the get_group_donation_status RPC.
     const channel =
       type === 'group_donation'

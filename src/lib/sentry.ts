@@ -41,7 +41,7 @@ export function initSentry() {
       dsn,
       environment: import.meta.env.MODE,
       sendDefaultPii: true,
-      // ponytail: lowered to avoid 429 rate-limit on free tier
+      // lowered to avoid 429 rate-limit on free tier
       tracesSampleRate: 0.02,
       replaysSessionSampleRate: 0.01,
       replaysOnErrorSampleRate: 0.5,
@@ -49,7 +49,7 @@ export function initSentry() {
       integrations: [
         Sentry.browserTracingIntegration(),
         Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }),
-        // ponytail: warn+error only — capturing log/info/debug would flood the free-tier quota
+        // warn+error only — capturing log/info/debug would flood the free-tier quota
         Sentry.consoleLoggingIntegration({ levels: ['warn', 'error'] }),
       ],
       beforeSend(event) {
