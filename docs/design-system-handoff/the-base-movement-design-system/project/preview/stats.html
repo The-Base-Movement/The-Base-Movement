@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:32px; background:#f6fbf4; color:var(--on-surface);
+    font-family:var(--font-meta); font-feature-settings:"tnum" 1; }
+
+  .head { display:flex; align-items:flex-end; justify-content:space-between;
+    margin:0 4px 18px; }
+  .head h3 { margin:0; font-family:var(--font-display); font-weight:800;
+    font-size:20px; letter-spacing:-.015em; color:#181d19; }
+  .head .meta { font-size:10px; font-weight:700; color:var(--on-surface-muted); letter-spacing:.06em; text-transform:uppercase; }
+
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+
+  .card { background:#fff; border:1px solid var(--border); border-radius:6px;
+    padding:22px 22px 20px; position:relative; overflow:hidden;
+    box-shadow:0 4px 20px -2px rgba(0,0,0,.04);
+    display:flex; flex-direction:column; gap:14px;
+    transition:transform .18s ease, box-shadow .18s ease; }
+  .card:hover { transform:translateY(-2px); box-shadow:0 12px 30px -8px rgba(0,0,0,.1); }
+
+  /* Accent bar — top edge, full width */
+  .card::before { content:""; position:absolute; left:0; right:0; top:0; height:5px; background:var(--accent); }
+  /* corner star marker */
+  .card::after { content:""; position:absolute; top:14px; right:18px; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); }
+
+  .row { display:flex; align-items:baseline; justify-content:space-between; }
+  .eye { font-size:9.5px; font-weight:700; color:var(--on-surface-muted);
+    letter-spacing:.08em; text-transform:uppercase; }
+
+  .num { font-family:var(--font-display); font-weight:800; font-size:48px;
+    letter-spacing:-.03em; line-height:.95; color:#181d19;
+    font-feature-settings:"tnum" 1; }
+  .num small { font-size:20px; font-weight:700; color:var(--on-surface-muted);
+    margin-left:2px; letter-spacing:0; }
+
+  .lbl { font-size:12px; font-weight:700; color:#181d19; letter-spacing:-.005em;
+    line-height:1.4; }
+
+  /* Foot row */
+  .foot { display:flex; align-items:center; justify-content:space-between;
+    border-top:1px solid var(--border); padding-top:12px; margin-top:auto; }
+  .delta { display:inline-flex; align-items:center; gap:5px; font-size:10.5px;
+    font-weight:700; color:var(--accent); letter-spacing:-.005em; }
+  .delta svg { width:9px; height:9px; }
+
+  .spark { display:flex; align-items:flex-end; gap:2px; height:18px; width:78px; }
+  .spark span { flex:1; background:var(--accent); opacity:.18; border-radius:1px; min-height:3px; }
+  .spark span.on { opacity:.85; }
+
+  /* Brand colors */
+  .red   { --accent:#CE1126; }
+  .gold  { --accent:#DAA520; }
+  .black { --accent:#1A1A1A; }
+  .green { --accent:#006B3F; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h3>Movement at a glance</h3>
+    <span class="meta">Updated · Q2 2026</span>
+  </div>
+
+  <div class="grid">
+
+    <div class="card red">
+      <div class="row">
+        <span class="eye">Regions</span>
+      </div>
+      <div class="num">16<small>/16</small></div>
+      <div class="lbl">Full presence across every administrative region of Ghana</div>
+      <div class="foot">
+        <div class="spark"><span class="on" style="height:6px"></span><span class="on" style="height:8px"></span><span class="on" style="height:10px"></span><span class="on" style="height:11px"></span><span class="on" style="height:12px"></span><span class="on" style="height:13px"></span><span class="on" style="height:14px"></span><span class="on" style="height:15px"></span><span class="on" style="height:16px"></span><span class="on" style="height:17px"></span><span class="on" style="height:18px"></span><span class="on" style="height:18px"></span></div>
+        <span class="delta">
+          <svg viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>
+          National coverage
+        </span>
+      </div>
+    </div>
+
+    <div class="card gold">
+      <div class="row">
+        <span class="eye">Branches</span>
+      </div>
+      <div class="num">1,247</div>
+      <div class="lbl">Community branches active in nearly every district</div>
+      <div class="foot">
+        <div class="spark"><span style="height:5px"></span><span style="height:6px"></span><span class="on" style="height:7px"></span><span style="height:7px"></span><span class="on" style="height:9px"></span><span class="on" style="height:10px"></span><span style="height:10px"></span><span class="on" style="height:12px"></span><span class="on" style="height:13px"></span><span class="on" style="height:14px"></span><span class="on" style="height:16px"></span><span class="on" style="height:18px"></span></div>
+        <span class="delta">
+          <svg viewBox="0 0 8 8"><path d="M0 6 L4 2 L8 6 Z" fill="currentColor"/></svg>
+          +84 this quarter
+        </span>
+      </div>
+    </div>
+
+    <div class="card black">
+      <div class="row">
+        <span class="eye">Diaspora</span>
+      </div>
+      <div class="num">28,400</div>
+      <div class="lbl">Global Ghanaians supporting from abroad in 21 countries</div>
+      <div class="foot">
+        <div class="spark"><span style="height:3px"></span><span style="height:4px"></span><span style="height:4px"></span><span style="height:5px"></span><span class="on" style="height:7px"></span><span style="height:7px"></span><span class="on" style="height:10px"></span><span class="on" style="height:11px"></span><span class="on" style="height:13px"></span><span class="on" style="height:14px"></span><span class="on" style="height:16px"></span><span class="on" style="height:18px"></span></div>
+        <span class="delta">
+          <svg viewBox="0 0 8 8"><path d="M0 6 L4 2 L8 6 Z" fill="currentColor"/></svg>
+          +9.1% MoM
+        </span>
+      </div>
+    </div>
+
+    <div class="card green">
+      <div class="row">
+        <span class="eye">Members</span>
+      </div>
+      <div class="num">355,212</div>
+      <div class="lbl">Verified citizens registered nationwide</div>
+      <div class="foot">
+        <div class="spark"><span style="height:4px"></span><span style="height:6px"></span><span class="on" style="height:7px"></span><span style="height:7px"></span><span class="on" style="height:9px"></span><span class="on" style="height:11px"></span><span class="on" style="height:12px"></span><span class="on" style="height:14px"></span><span class="on" style="height:15px"></span><span class="on" style="height:16px"></span><span class="on" style="height:17px"></span><span class="on" style="height:18px"></span></div>
+        <span class="delta">
+          <svg viewBox="0 0 8 8"><path d="M0 6 L4 2 L8 6 Z" fill="currentColor"/></svg>
+          +12.4% QoQ
+        </span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Civic content — The Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:#fff; }
+  .wrap { max-width:1280px; margin:0 auto; padding:32px; }
+  .sec { margin-bottom:48px; padding-bottom:40px; border-bottom:1px solid var(--border); }
+  .sec:last-child { border-bottom:0; }
+  .sec h2 { font-family:'Public Sans'; font-weight:800; font-size:26px; letter-spacing:-.02em; }
+  .sec .sub { color:var(--on-surface-muted); font-size:14px; margin-top:6px; margin-bottom:18px; }
+
+  /* Blog row */
+  .blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .post { background:#fff; border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:all .2s; cursor:pointer; }
+  .post:hover { transform:translateY(-2px); box-shadow:0 16px 32px -8px rgba(0,0,0,.1); border-color:var(--primary); }
+  .post .ph { aspect-ratio:16/10; background:var(--container-low); position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .post .ph .lg { font-family:'Public Sans'; font-weight:800; font-size:64px; color:rgba(0,0,0,.06); letter-spacing:-.04em; }
+  .post .ph .cat { position:absolute; bottom:14px; left:14px; padding:4px 10px; background:#fff; font-family:'Public Sans'; font-weight:800; font-size:9.5px; color:var(--primary); letter-spacing:.06em; text-transform:uppercase; border-radius:2px; }
+  .post .body { padding:18px; }
+  .post .body .meta { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-bottom:8px; display:flex; gap:8px; align-items:center; }
+  .post .body .meta .dot { width:3px; height:3px; background:var(--on-surface-muted); border-radius:50%; }
+  .post .body h3 { font-family:'Public Sans'; font-weight:800; font-size:17px; line-height:1.3; letter-spacing:-.01em; margin-bottom:8px; }
+  .post .body p { font-size:13px; color:var(--on-surface-muted); line-height:1.55; margin-bottom:14px; }
+  .post .body .author { display:flex; align-items:center; gap:8px; padding-top:14px; border-top:1px solid var(--border); }
+  .post .body .author img { width:24px; height:24px; border-radius:50%; }
+  .post .body .author b { font-family:'Public Sans'; font-size:11.5px; font-weight:800; }
+  .post .body .author span { font-size:10.5px; color:var(--on-surface-muted); margin-left:auto; font-family:'Public Sans'; font-weight:700; }
+
+  /* Poll cards */
+  .poll-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .poll { background:#fff; border:1px solid var(--border); border-radius:6px; padding:22px; position:relative; overflow:hidden; }
+  .poll::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--ac); }
+  .poll.live { --ac:var(--destructive); }
+  .poll.closed { --ac:var(--on-surface-muted); }
+  .poll-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; }
+  .poll-head .eye { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ac, var(--primary)); font-family:'Public Sans'; display:flex; align-items:center; gap:6px; }
+  .poll-head .eye i { width:6px; height:6px; background:currentColor; border-radius:50%; }
+  .poll-head .closes { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .poll h3 { font-family:'Public Sans'; font-weight:800; font-size:17px; line-height:1.3; letter-spacing:-.01em; margin-bottom:14px; }
+  .opts { display:flex; flex-direction:column; gap:8px; }
+  .opt { position:relative; padding:10px 14px; background:var(--container-low); border:1px solid var(--border); border-radius:4px; overflow:hidden; cursor:pointer; transition:all .15s; }
+  .opt:hover { border-color:var(--primary); }
+  .opt .bar { position:absolute; left:0; top:0; bottom:0; background:rgba(0,107,63,.1); }
+  .opt.lead .bar { background:rgba(0,107,63,.18); }
+  .opt .lbl { position:relative; display:flex; justify-content:space-between; font-family:'Public Sans'; font-size:12.5px; font-weight:800; letter-spacing:-.005em; }
+  .opt.lead .lbl { color:var(--primary); }
+  .opt .lbl .pct { font-variant-numeric:tabular-nums; }
+  .poll-foot { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
+  .poll-foot .votes { font-size:11px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+
+  /* Chapter cards */
+  .chap-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .chap { background:#fff; border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+  .chap .head { padding:14px 16px; background:var(--on-surface); color:#fff; display:flex; justify-content:space-between; align-items:center; }
+  .chap .head h4 { font-family:'Public Sans'; font-weight:800; font-size:14px; letter-spacing:-.005em; }
+  .chap .head .reg { font-size:9.5px; color:var(--accent); font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-family:'Public Sans'; margin-top:2px; }
+  .chap .head .badge { padding:2px 8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:2px; font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.05em; text-transform:uppercase; }
+  .chap .body { padding:16px; }
+  .chap .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+  .chap .stat .v { font-family:'Public Sans'; font-weight:800; font-size:18px; letter-spacing:-.015em; }
+  .chap .stat .l { font-size:9.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; margin-top:2px; }
+  .chap .lead { display:flex; align-items:center; gap:10px; padding-top:12px; border-top:1px solid var(--border); }
+  .chap .lead img { width:32px; height:32px; border-radius:50%; border:2px solid var(--accent); }
+  .chap .lead b { font-family:'Public Sans'; font-size:11.5px; font-weight:800; }
+  .chap .lead span { font-size:10px; color:var(--on-surface-muted); display:block; font-family:'Public Sans'; font-weight:700; }
+
+  /* Roadmap */
+  .road { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
+  .road::before { content:""; position:absolute; left:0; right:0; top:24px; height:3px;
+    background:linear-gradient(to right, var(--brand-red), var(--brand-gold), var(--charcoal), var(--brand-green)); }
+  .ms { padding-top:60px; padding-right:18px; position:relative; }
+  .ms .dot { position:absolute; top:14px; left:0; width:24px; height:24px; border-radius:50%; background:#fff; border:4px solid; display:flex; align-items:center; justify-content:center; }
+  .ms .dot .material-symbols-outlined { font-size:12px; color:#fff; }
+  .ms.r .dot { border-color:var(--brand-red); background:var(--brand-red); }
+  .ms.g .dot { border-color:var(--brand-gold); background:var(--brand-gold); }
+  .ms.k .dot { border-color:var(--charcoal); background:var(--charcoal); }
+  .ms.gr .dot { border-color:var(--brand-green); background:#fff; }
+  .ms.gr .dot::after { content:""; width:8px; height:8px; background:var(--brand-green); border-radius:50%; }
+  .ms .yr { font-family:'Public Sans'; font-weight:800; font-size:11px; letter-spacing:.06em; color:var(--on-surface-muted); text-transform:uppercase; margin-bottom:6px; }
+  .ms h4 { font-family:'Public Sans'; font-weight:800; font-size:15px; letter-spacing:-.01em; margin-bottom:6px; }
+  .ms p { font-size:12px; color:var(--on-surface-muted); line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Blog -->
+  <section class="sec">
+    <h2>Updates from the movement</h2>
+    <p class="sub">Stories, briefings, and field reports from across the 16 regions.</p>
+    <div class="blog-grid">
+      <article class="post">
+        <div class="ph" style="background:linear-gradient(135deg,#006B3F,#005733)">
+          <span class="lg" style="color:rgba(255,255,255,.15)">Jobs</span>
+          <span class="cat">Field report</span>
+        </div>
+        <div class="body">
+          <div class="meta">Eastern region<span class="dot"></span>5 min read</div>
+          <h3>Eastern region branch launches youth jobs program in 14 districts</h3>
+          <p>The first cohort of 600 graduates begin paid apprenticeships this month, with placements at construction sites and tech hubs across Koforidua.</p>
+          <div class="author">
+            <img src="https://i.pravatar.cc/48?u=editor1">
+            <b>Esi Mensah</b>
+            <span>2 days ago</span>
+          </div>
+        </div>
+      </article>
+      <article class="post">
+        <div class="ph" style="background:linear-gradient(135deg,#DAA520,#c4951c)">
+          <span class="lg" style="color:rgba(0,0,0,.15)">Plan</span>
+          <span class="cat" style="color:var(--accent)">Briefing</span>
+        </div>
+        <div class="body">
+          <div class="meta">National<span class="dot"></span>9 min read</div>
+          <h3>The Plan, explained: how we will create one million jobs by 2030</h3>
+          <p>A clear breakdown of the funding model, the four sectors of focus, and the accountability mechanism every chapter can use to hold leaders to it.</p>
+          <div class="author">
+            <img src="https://i.pravatar.cc/48?u=editor2">
+            <b>Yaw Boateng</b>
+            <span>4 days ago</span>
+          </div>
+        </div>
+      </article>
+      <article class="post">
+        <div class="ph" style="background:#181d19">
+          <span class="lg" style="color:rgba(255,255,255,.08)">Vote</span>
+          <span class="cat" style="color:var(--destructive)">Civic action</span>
+        </div>
+        <div class="body">
+          <div class="meta">Diaspora<span class="dot"></span>4 min read</div>
+          <h3>How Ghanaians abroad can register and vote in the 2028 elections</h3>
+          <p>A practical, embassy-by-embassy guide for Base Diaspora members, with deadlines and the documents you need before you go.</p>
+          <div class="author">
+            <img src="https://i.pravatar.cc/48?u=editor3">
+            <b>Akua Sarpong</b>
+            <span>1 week ago</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Polls -->
+  <section class="sec">
+    <h2>Open polls</h2>
+    <p class="sub">Member voice surveys. Results visible to the chapter leadership.</p>
+    <div class="poll-grid">
+      <div class="poll live">
+        <div class="poll-head">
+          <span class="eye"><i></i>Live · Closes in 4 days</span>
+          <span class="closes">3,412 votes</span>
+        </div>
+        <h3>Which sector should the movement prioritize for the 2027 youth jobs plan?</h3>
+        <div class="opts">
+          <div class="opt lead">
+            <div class="bar" style="width:48%"></div>
+            <div class="lbl"><span>Agriculture &amp; agro-processing</span><span class="pct">48%</span></div>
+          </div>
+          <div class="opt">
+            <div class="bar" style="width:27%"></div>
+            <div class="lbl"><span>Construction &amp; infrastructure</span><span class="pct">27%</span></div>
+          </div>
+          <div class="opt">
+            <div class="bar" style="width:18%"></div>
+            <div class="lbl"><span>Tech &amp; digital services</span><span class="pct">18%</span></div>
+          </div>
+          <div class="opt">
+            <div class="bar" style="width:7%"></div>
+            <div class="lbl"><span>Tourism &amp; creative arts</span><span class="pct">7%</span></div>
+          </div>
+        </div>
+        <div class="poll-foot">
+          <span class="votes">You have not voted yet.</span>
+          <button class="btn btn-primary btn-sm">Cast your vote →</button>
+        </div>
+      </div>
+
+      <div class="poll closed">
+        <div class="poll-head">
+          <span class="eye" style="color:var(--on-surface-muted)"><i></i>Closed · 12 Apr</span>
+          <span class="closes">8,914 votes</span>
+        </div>
+        <h3>Should branch chairs serve a maximum of two terms?</h3>
+        <div class="opts">
+          <div class="opt lead">
+            <div class="bar" style="width:71%"></div>
+            <div class="lbl"><span>Yes, two terms is enough</span><span class="pct">71%</span></div>
+          </div>
+          <div class="opt">
+            <div class="bar" style="width:21%"></div>
+            <div class="lbl"><span>No term limits, let members decide</span><span class="pct">21%</span></div>
+          </div>
+          <div class="opt">
+            <div class="bar" style="width:8%"></div>
+            <div class="lbl"><span>Undecided</span><span class="pct">8%</span></div>
+          </div>
+        </div>
+        <div class="poll-foot">
+          <span class="votes">You voted: <b>Yes, two terms is enough</b></span>
+          <span class="pill pill-ok">Result published</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapters -->
+  <section class="sec">
+    <h2>Chapters near you</h2>
+    <p class="sub">1,247 community branches across all 16 regions. Find yours.</p>
+    <div class="chap-grid">
+      <div class="chap">
+        <div class="head">
+          <div>
+            <h4>Lapaz Branch 04</h4>
+            <div class="reg">Greater Accra</div>
+          </div>
+          <span class="badge">Active</span>
+        </div>
+        <div class="body">
+          <div class="stats">
+            <div class="stat"><div class="v tnum">412</div><div class="l">Members</div></div>
+            <div class="stat"><div class="v tnum">18</div><div class="l">Events</div></div>
+            <div class="stat"><div class="v tnum">7</div><div class="l">Programs</div></div>
+          </div>
+          <div class="lead">
+            <img src="https://i.pravatar.cc/64?u=ch1">
+            <div><b>Akosua Adjei</b><span>Branch chair</span></div>
+            <button class="btn btn-outline btn-sm" style="margin-left:auto">Join</button>
+          </div>
+        </div>
+      </div>
+      <div class="chap">
+        <div class="head" style="background:var(--brand-green)">
+          <div>
+            <h4>Kumasi Central 01</h4>
+            <div class="reg" style="color:rgba(255,255,255,.85)">Ashanti</div>
+          </div>
+          <span class="badge">Featured</span>
+        </div>
+        <div class="body">
+          <div class="stats">
+            <div class="stat"><div class="v tnum">1,204</div><div class="l">Members</div></div>
+            <div class="stat"><div class="v tnum">42</div><div class="l">Events</div></div>
+            <div class="stat"><div class="v tnum">11</div><div class="l">Programs</div></div>
+          </div>
+          <div class="lead">
+            <img src="https://i.pravatar.cc/64?u=ch2">
+            <div><b>Kwabena Asante</b><span>Branch chair</span></div>
+            <button class="btn btn-primary btn-sm" style="margin-left:auto">Join</button>
+          </div>
+        </div>
+      </div>
+      <div class="chap">
+        <div class="head">
+          <div>
+            <h4>London Diaspora Hub</h4>
+            <div class="reg">United Kingdom</div>
+          </div>
+          <span class="badge">Diaspora</span>
+        </div>
+        <div class="body">
+          <div class="stats">
+            <div class="stat"><div class="v tnum">189</div><div class="l">Members</div></div>
+            <div class="stat"><div class="v tnum">9</div><div class="l">Events</div></div>
+            <div class="stat"><div class="v tnum">3</div><div class="l">Programs</div></div>
+          </div>
+          <div class="lead">
+            <img src="https://i.pravatar.cc/64?u=ch3">
+            <div><b>Kofi Mensah</b><span>Hub coordinator</span></div>
+            <button class="btn btn-outline btn-sm" style="margin-left:auto">Join</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section class="sec" style="border-bottom:0">
+    <h2>Movement roadmap</h2>
+    <p class="sub">Where we are, what's next.</p>
+    <div class="road">
+      <div class="ms r">
+        <div class="dot"><span class="material-symbols-outlined">check</span></div>
+        <div class="yr">2024</div>
+        <h4>Foundation laid</h4>
+        <p>Movement formally launched. First 50 branches opened across Greater Accra and Ashanti.</p>
+      </div>
+      <div class="ms g">
+        <div class="dot"><span class="material-symbols-outlined">check</span></div>
+        <div class="yr">2025</div>
+        <h4>National coverage</h4>
+        <p>Reached presence in all 16 regions with 1,000+ branches and a verified diaspora chapter network.</p>
+      </div>
+      <div class="ms k">
+        <div class="dot"><span class="material-symbols-outlined">bolt</span></div>
+        <div class="yr">2026 · Now</div>
+        <h4>Jobs program scale-up</h4>
+        <p>1M-job plan launched. First 50,000 youth in apprenticeships across four priority sectors.</p>
+      </div>
+      <div class="ms gr">
+        <div class="dot"></div>
+        <div class="yr">2028</div>
+        <h4>National election</h4>
+        <p>Field every promise we made. Hold every leader accountable to the published Plan.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

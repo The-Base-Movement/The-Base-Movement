@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ground game — The Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:var(--container-low); }
+  .app { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+  .side { background:#0f1310; color:#fff; padding:20px 0; }
+  .brand { padding:0 18px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:12px; }
+  .brand .lg { width:30px; height:30px; background:var(--destructive); color:#fff; font-family:'Public Sans'; font-weight:800; font-size:14px; border-radius:6px; display:flex; align-items:center; justify-content:center; }
+  .brand h1 { font-family:'Public Sans'; font-size:14px; font-weight:800; }
+  .brand span { display:block; font-size:9px; color:var(--destructive); font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-family:'Public Sans'; }
+  .nav { padding:0 12px; }
+  .nav h6 { font-size:9px; font-weight:800; color:rgba(255,255,255,.35); letter-spacing:.08em; text-transform:uppercase; padding:10px 8px 6px; font-family:'Public Sans'; }
+  .nav a { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:3px; font-family:'Public Sans'; font-weight:700; font-size:11.5px; color:rgba(255,255,255,.7); }
+  .nav a:hover { background:rgba(255,255,255,.05); color:#fff; }
+  .nav a.on { background:var(--destructive); color:#fff; }
+  .nav a .material-symbols-outlined { font-size:16px; }
+
+  .main { padding:24px 28px 60px; min-width:0; }
+  .top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:18px; gap:18px; flex-wrap:wrap; }
+  .crumbs { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .top h2 { font-family:'Public Sans'; font-weight:800; font-size:24px; letter-spacing:-.015em; margin-top:4px; }
+  .top .sub { color:var(--on-surface-muted); font-size:12.5px; margin-top:2px; max-width:560px; }
+  .top .actions { display:flex; gap:8px; }
+
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+  .kpi { background:#fff; border:1px solid var(--border); border-radius:6px; padding:14px 16px; position:relative; }
+  .kpi::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--ac); }
+  .kpi.r { --ac:var(--destructive); } .kpi.g { --ac:var(--accent); } .kpi.gr { --ac:var(--primary); } .kpi.k { --ac:var(--charcoal); }
+  .kpi .l { font-size:9.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .kpi .v { font-family:'Public Sans'; font-weight:800; font-size:24px; letter-spacing:-.02em; line-height:1; margin:8px 0 4px; font-variant-numeric:tabular-nums; }
+  .kpi .d { font-size:10.5px; font-family:'Public Sans'; font-weight:800; color:var(--on-surface-muted); }
+
+  .layout { display:grid; grid-template-columns:1.4fr 1fr; gap:14px; }
+  .panel { background:#fff; border:1px solid var(--border); border-radius:6px; }
+  .ph { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .ph h3 { font-family:'Public Sans'; font-weight:800; font-size:13.5px; }
+  .ph .meta { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+
+  /* Map */
+  .gmap { height:440px; background:#f1f5ee; position:relative; overflow:hidden; }
+  .gmap::before { content:""; position:absolute; inset:0; background-image:
+    linear-gradient(rgba(0,107,63,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,107,63,.04) 1px, transparent 1px);
+    background-size:32px 32px; }
+  .road { position:absolute; background:#dfe4dd; }
+  .road.h1 { left:0; right:0; top:35%; height:14px; }
+  .road.h2 { left:0; right:0; top:62%; height:8px; }
+  .road.v1 { top:0; bottom:0; left:28%; width:12px; }
+  .road.v2 { top:0; bottom:0; left:68%; width:8px; }
+  .park { position:absolute; background:rgba(0,107,63,.12); border-radius:50%; }
+  .park.p1 { width:120px; height:120px; left:10%; top:8%; }
+  .park.p2 { width:80px; height:80px; left:75%; top:72%; }
+  .water { position:absolute; right:-40px; bottom:-40px; width:200px; height:140px; background:rgba(0,107,180,.1); border-radius:60% 40% 50% 50%; }
+  .can { position:absolute; transform:translate(-50%,-50%); }
+  .can .av { width:30px; height:30px; border-radius:50%; border:2px solid #fff; box-shadow:0 4px 12px rgba(0,0,0,.2); position:relative; z-index:2; }
+  .can .stat { position:absolute; bottom:-3px; right:-3px; width:12px; height:12px; border-radius:50%; border:2px solid #fff; background:var(--st); }
+  .can.on .stat { background:var(--primary); }
+  .can.idle .stat { background:var(--accent); }
+  .can.off .stat { background:var(--on-surface-muted); }
+  .can .lbl { position:absolute; left:36px; top:0; background:#fff; border:1px solid var(--border); padding:5px 10px; border-radius:4px; font-family:'Public Sans'; font-weight:800; font-size:10px; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,.06); }
+  .can .lbl b { display:block; font-size:10px; color:var(--on-surface); }
+  .can .lbl span { font-size:9px; color:var(--primary); font-weight:800; }
+  .turf { position:absolute; border:2px dashed var(--accent); border-radius:50%; opacity:.6; }
+  .turf .t-lbl { position:absolute; top:-22px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; padding:2px 8px; font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.06em; text-transform:uppercase; border-radius:3px; white-space:nowrap; }
+  .turf.t1 { left:35%; top:42%; width:140px; height:140px; }
+  .turf.t2 { left:62%; top:25%; width:100px; height:100px; }
+
+  /* Canvasser leaderboard */
+  .lb { padding:6px 0; }
+  .lbi { display:flex; align-items:center; gap:12px; padding:12px 18px; border-bottom:1px solid var(--border); }
+  .lbi:last-child { border-bottom:0; }
+  .lbi .rk { font-family:'Public Sans'; font-weight:800; font-size:18px; color:var(--on-surface-muted); width:24px; font-variant-numeric:tabular-nums; }
+  .lbi .rk.gold { color:var(--accent); }
+  .lbi img { width:36px; height:36px; border-radius:50%; }
+  .lbi .b { flex:1; min-width:0; }
+  .lbi .b b { font-family:'Public Sans'; font-weight:800; font-size:12.5px; display:block; }
+  .lbi .b span { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .lbi .b .bar { margin-top:5px; height:4px; background:var(--container-low); border-radius:99px; overflow:hidden; max-width:200px; }
+  .lbi .b .bar i { display:block; height:100%; background:linear-gradient(to right, var(--primary), var(--accent)); }
+  .lbi .stat { font-family:'Public Sans'; font-weight:800; font-variant-numeric:tabular-nums; }
+  .lbi .stat b { font-size:18px; letter-spacing:-.015em; line-height:1; }
+  .lbi .stat span { font-size:9.5px; color:var(--on-surface-muted); letter-spacing:.05em; text-transform:uppercase; display:block; }
+
+  /* Routes panel */
+  .routes { padding:6px 0; }
+  .route { padding:12px 18px; border-bottom:1px solid var(--border); }
+  .route:last-child { border-bottom:0; }
+  .route .rh { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .route .rh b { font-family:'Public Sans'; font-weight:800; font-size:12.5px; }
+  .route .rh .pill { font-size:9.5px; padding:2px 8px; }
+  .route .meta { display:flex; gap:14px; font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.03em; }
+  .route .meta b { color:var(--on-surface); font-weight:800; }
+  .route .prog { margin-top:8px; height:6px; background:var(--container-low); border-radius:99px; overflow:hidden; }
+  .route .prog i { display:block; height:100%; background:var(--primary); position:relative; }
+  .route .prog i.warn { background:var(--accent); }
+  .route .prog i.bad { background:var(--destructive); }
+
+  /* Bottom row */
+  .bottom { display:grid; grid-template-columns:2fr 1fr; gap:14px; margin-top:14px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="lg">B</div>
+      <div><h1>The Base</h1><span>Admin · v3.2</span></div>
+    </div>
+    <div class="nav">
+      <h6>Command</h6>
+      <a><span class="material-symbols-outlined">dashboard</span>Overview</a>
+      <a><span class="material-symbols-outlined">radar</span>War room</a>
+      <a class="on"><span class="material-symbols-outlined">map</span>Ground game</a>
+      <h6>Members</h6>
+      <a><span class="material-symbols-outlined">groups</span>Members</a>
+      <a><span class="material-symbols-outlined">verified</span>KYC queue</a>
+      <a><span class="material-symbols-outlined">badge</span>Canvassers</a>
+      <h6>Money</h6>
+      <a><span class="material-symbols-outlined">volunteer_activism</span>Donations</a>
+      <a><span class="material-symbols-outlined">storefront</span>Supplies</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <div>
+        <div class="crumbs">Command → Ground game → Greater Accra</div>
+        <h2>Ground game · Lapaz, Greater Accra</h2>
+        <p class="sub">Daily field operations — turf assignments, canvasser activity, and route progress for branch 04.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:14px">place</span>Switch region</button>
+        <button class="btn btn-primary btn-sm"><span class="material-symbols-outlined" style="font-size:14px">add</span>Assign turf</button>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi r"><div class="l">Canvassers online</div><div class="v">28</div><div class="d">of 42 assigned today</div></div>
+      <div class="kpi g"><div class="l">Doors knocked</div><div class="v">1,184</div><div class="d">▲ on track · 64% of day</div></div>
+      <div class="kpi gr"><div class="l">Sign-ups · today</div><div class="v">214</div><div class="d">avg 7.6 per canvasser</div></div>
+      <div class="kpi k"><div class="l">Route completion</div><div class="v">76%</div><div class="d">2 routes flagged behind</div></div>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="ph">
+          <h3>Live turf map · Lapaz 04</h3>
+          <span class="meta">updated 14 s ago</span>
+        </div>
+        <div class="gmap">
+          <div class="road h1"></div><div class="road h2"></div>
+          <div class="road v1"></div><div class="road v2"></div>
+          <div class="park p1"></div><div class="park p2"></div>
+          <div class="water"></div>
+
+          <div class="turf t1"><span class="t-lbl">Turf A · Yaw K.</span></div>
+          <div class="turf t2"><span class="t-lbl">Turf B · Esi M.</span></div>
+
+          <div class="can on" style="left:40%; top:48%">
+            <img class="av" src="https://i.pravatar.cc/60?u=yaw">
+            <span class="stat"></span>
+            <span class="lbl"><b>Yaw K.</b><span>32 sign-ups</span></span>
+          </div>
+          <div class="can on" style="left:65%; top:30%">
+            <img class="av" src="https://i.pravatar.cc/60?u=esi">
+            <span class="stat"></span>
+            <span class="lbl"><b>Esi M.</b><span>28 sign-ups</span></span>
+          </div>
+          <div class="can idle" style="left:22%; top:70%">
+            <img class="av" src="https://i.pravatar.cc/60?u=kofi">
+            <span class="stat"></span>
+            <span class="lbl" style="left:36px"><b>Kofi A.</b><span>idle · 14 m</span></span>
+          </div>
+          <div class="can on" style="left:78%; top:68%">
+            <img class="av" src="https://i.pravatar.cc/60?u=akua">
+            <span class="stat"></span>
+            <span class="lbl" style="left:auto;right:36px"><b>Akua O.</b><span>22 sign-ups</span></span>
+          </div>
+          <div class="can off" style="left:50%; top:18%">
+            <img class="av" src="https://i.pravatar.cc/60?u=naa">
+            <span class="stat"></span>
+            <span class="lbl"><b>Naa A.</b><span>offline · 1 h</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">
+          <h3>Today's leaderboard</h3>
+          <span class="meta">sign-ups · 64 canvassers</span>
+        </div>
+        <div class="lb">
+          <div class="lbi">
+            <div class="rk gold">1</div>
+            <img src="https://i.pravatar.cc/56?u=yaw">
+            <div class="b">
+              <b>Yaw Kankam</b>
+              <span>Lapaz 04 · 4h 12m active</span>
+              <div class="bar"><i style="width:90%"></i></div>
+            </div>
+            <div class="stat"><b>32</b><span>signups</span></div>
+          </div>
+          <div class="lbi">
+            <div class="rk">2</div>
+            <img src="https://i.pravatar.cc/56?u=esi">
+            <div class="b">
+              <b>Esi Mensah</b>
+              <span>Lapaz 04 · 3h 48m active</span>
+              <div class="bar"><i style="width:78%"></i></div>
+            </div>
+            <div class="stat"><b>28</b><span>signups</span></div>
+          </div>
+          <div class="lbi">
+            <div class="rk">3</div>
+            <img src="https://i.pravatar.cc/56?u=akua">
+            <div class="b">
+              <b>Akua Owusu</b>
+              <span>Achimota 07 · 3h 02m active</span>
+              <div class="bar"><i style="width:62%"></i></div>
+            </div>
+            <div class="stat"><b>22</b><span>signups</span></div>
+          </div>
+          <div class="lbi">
+            <div class="rk">4</div>
+            <img src="https://i.pravatar.cc/56?u=kweku">
+            <div class="b">
+              <b>Kweku Donkor</b>
+              <span>Lapaz 04 · 2h 41m active</span>
+              <div class="bar"><i style="width:50%"></i></div>
+            </div>
+            <div class="stat"><b>18</b><span>signups</span></div>
+          </div>
+          <div class="lbi">
+            <div class="rk">5</div>
+            <img src="https://i.pravatar.cc/56?u=ama">
+            <div class="b">
+              <b>Ama Sarpong</b>
+              <span>Achimota 07 · 2h 18m active</span>
+              <div class="bar"><i style="width:42%"></i></div>
+            </div>
+            <div class="stat"><b>15</b><span>signups</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="panel">
+        <div class="ph"><h3>Routes today</h3><span class="meta">8 routes · 4 branches</span></div>
+        <div class="routes">
+          <div class="route">
+            <div class="rh"><b>Route A-12 · Lapaz market loop</b><span class="pill pill-ok">On track</span></div>
+            <div class="meta"><span><b>Yaw K.</b> · lead</span><span><b>184</b> / 240 doors</span><span><b>32</b> sign-ups</span><span>4h 12m</span></div>
+            <div class="prog"><i style="width:78%"></i></div>
+          </div>
+          <div class="route">
+            <div class="rh"><b>Route A-13 · Lapaz school corridor</b><span class="pill pill-ok">On track</span></div>
+            <div class="meta"><span><b>Esi M.</b> · lead</span><span><b>152</b> / 200 doors</span><span><b>28</b> sign-ups</span><span>3h 48m</span></div>
+            <div class="prog"><i style="width:76%"></i></div>
+          </div>
+          <div class="route">
+            <div class="rh"><b>Route B-04 · Achimota north</b><span class="pill pill-warn">Behind pace</span></div>
+            <div class="meta"><span><b>Akua O.</b> · lead</span><span><b>96</b> / 200 doors</span><span><b>22</b> sign-ups</span><span>3h 02m</span></div>
+            <div class="prog"><i class="warn" style="width:48%"></i></div>
+          </div>
+          <div class="route">
+            <div class="rh"><b>Route C-09 · Awoshie estates</b><span class="pill pill-err">Stalled</span></div>
+            <div class="meta"><span><b>Naa A.</b> · lead</span><span><b>22</b> / 180 doors</span><span><b>4</b> sign-ups</span><span>idle 1h+</span></div>
+            <div class="prog"><i class="bad" style="width:12%"></i></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h3>Quick actions</h3></div>
+        <div style="padding:16px 18px; display:flex; flex-direction:column; gap:8px;">
+          <button class="btn btn-primary"><span class="material-symbols-outlined" style="font-size:16px">add_location_alt</span>Assign new turf</button>
+          <button class="btn btn-gold"><span class="material-symbols-outlined" style="font-size:16px">campaign</span>Broadcast to canvassers</button>
+          <button class="btn btn-outline"><span class="material-symbols-outlined" style="font-size:16px">person_add</span>Onboard a canvasser</button>
+          <button class="btn btn-outline"><span class="material-symbols-outlined" style="font-size:16px">download</span>Export route sheet (PDF)</button>
+        </div>
+        <div style="padding:0 18px 18px;">
+          <div style="font-size:9.5px;font-weight:800;color:var(--on-surface-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;font-family:'Public Sans'">Alerts</div>
+          <div style="background:rgba(206,17,38,.04); border:1px solid rgba(206,17,38,.18); border-radius:4px; padding:10px 12px; margin-bottom:8px;">
+            <b style="font-family:'Public Sans';font-weight:800;font-size:11.5px;color:var(--destructive);display:block">Route C-09 stalled</b>
+            <span style="font-size:11px;color:var(--on-surface-muted)">Naa A. has been idle for 1h. Re-route or reassign?</span>
+          </div>
+          <div style="background:rgba(218,165,32,.06); border:1px solid rgba(218,165,32,.22); border-radius:4px; padding:10px 12px;">
+            <b style="font-family:'Public Sans';font-weight:800;font-size:11.5px;color:#a87d10;display:block">Achimota below pace</b>
+            <span style="font-size:11px;color:var(--on-surface-muted)">2 routes tracking 18% below daily goal.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

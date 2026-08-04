@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Plan — The Base Movement</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:#fff; }
+
+  /* Sticky nav progress */
+  .progress { position:fixed; top:0; left:0; right:0; height:4px; z-index:100; background:var(--border); }
+  .progress-fill { height:100%; width:34%; background:linear-gradient(to right,var(--brand-red),var(--brand-gold),var(--brand-green)); }
+
+  /* Subnav */
+  .subnav { position:sticky; top:4px; z-index:50; background:#fff; border-bottom:1px solid var(--border); padding:0 32px; display:flex; gap:0; }
+  .subnav a { padding:14px 20px; font-family:'Public Sans'; font-weight:800; font-size:11.5px; color:var(--on-surface-muted); border-bottom:3px solid transparent; letter-spacing:-.005em; }
+  .subnav a:hover { color:var(--on-surface); }
+  .subnav a.on { color:var(--on-surface); border-bottom-color:var(--destructive); }
+  .subnav .dl { margin-left:auto; display:flex; align-items:center; }
+
+  /* Hero */
+  .hero { background:#181d19; color:#fff; padding:88px 48px 72px; position:relative; overflow:hidden; }
+  .hero::after { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 50% 100% at 80% 50%, rgba(218,165,32,.12), transparent 60%); pointer-events:none; }
+  .hero .wrap { max-width:1040px; margin:0 auto; position:relative; z-index:1; }
+  .hero .bl { display:flex; height:5px; width:96px; margin-bottom:24px; }
+  .hero .bl .a { flex:1; background:var(--brand-red); }
+  .hero .bl .b { flex:1; background:var(--brand-gold); }
+  .hero .bl .c { flex:1; background:var(--brand-green); }
+  .hero .eye { font-family:'Public Sans'; font-weight:800; font-size:10px; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:14px; }
+  .hero h1 { font-family:'Public Sans'; font-weight:800; font-size:72px; letter-spacing:-.03em; line-height:.95; margin-bottom:24px; }
+  .hero h1 em { font-style:normal; color:var(--accent); }
+  .hero .intro { font-size:19px; color:rgba(255,255,255,.8); max-width:640px; line-height:1.6; margin-bottom:32px; font-family:'Lora',serif; }
+  .hero .meta { display:flex; gap:32px; flex-wrap:wrap; }
+  .hero .meta .m { }
+  .hero .meta .m .v { font-family:'Public Sans'; font-weight:800; font-size:36px; letter-spacing:-.025em; line-height:1; }
+  .hero .meta .m .l { font-size:11px; color:rgba(255,255,255,.55); font-family:'Public Sans'; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-top:4px; }
+  .hero .meta .m.r .v { color:var(--destructive); }
+  .hero .meta .m.g .v { color:var(--accent); }
+  .hero .meta .m.gr .v { color:var(--primary); }
+
+  /* Layout */
+  .wrap { max-width:1040px; margin:0 auto; padding:0 48px; }
+
+  /* Pillars overview */
+  .pillars { padding:72px 0; }
+  .pillars .top { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; }
+  .pillars h2 { font-family:'Public Sans'; font-weight:800; font-size:40px; letter-spacing:-.025em; }
+  .pillars .sub { font-size:14px; color:var(--on-surface-muted); max-width:380px; text-align:right; }
+  .pill-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .pc { border-radius:6px; overflow:hidden; border:1px solid var(--border); cursor:pointer; transition:all .2s; }
+  .pc:hover { transform:translateY(-2px); box-shadow:0 16px 32px -8px rgba(0,0,0,.1); }
+  .pc .ph { padding:20px 22px; }
+  .pc .ph .num { font-family:'Public Sans'; font-weight:800; font-size:48px; letter-spacing:-.04em; line-height:1; opacity:.15; }
+  .pc .ph .eye { font-family:'Public Sans'; font-weight:800; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; display:block; }
+  .pc .ph h3 { font-family:'Public Sans'; font-weight:800; font-size:20px; letter-spacing:-.01em; line-height:1.25; }
+  .pc .bd { padding:16px 22px; background:#fff; border-top:1px solid var(--border); }
+  .pc .bd p { font-size:13px; color:var(--on-surface-muted); line-height:1.6; margin-bottom:12px; }
+  .pc .bd .tag-row { display:flex; gap:5px; flex-wrap:wrap; }
+  .pc .bd .tag { padding:3px 8px; border-radius:3px; font-family:'Public Sans'; font-weight:800; font-size:10px; background:var(--container-low); }
+  /* colors per pillar */
+  .pc.red { border-top:3px solid var(--brand-red); } .pc.red .ph { background:#fff5f6; } .pc.red .ph .eye,.pc.red .ph .num { color:var(--brand-red); }
+  .pc.gold { border-top:3px solid var(--brand-gold); } .pc.gold .ph { background:#fffbf0; } .pc.gold .ph .eye,.pc.gold .ph .num { color:var(--brand-gold); }
+  .pc.green { border-top:3px solid var(--brand-green); } .pc.green .ph { background:#f4fbf7; } .pc.green .ph .eye,.pc.green .ph .num { color:var(--brand-green); }
+  .pc.ink { border-top:3px solid var(--charcoal); } .pc.ink .ph { background:var(--container-low); } .pc.ink .ph .eye,.pc.ink .ph .num { color:var(--charcoal); }
+
+  /* Full pillar section */
+  .pl-sec { padding:80px 0; border-top:1px solid var(--border); }
+  .pl-sec .pl-head { display:grid; grid-template-columns:auto 1fr; gap:32px; align-items:start; margin-bottom:40px; }
+  .pl-sec .pl-num { font-family:'Public Sans'; font-weight:800; font-size:96px; letter-spacing:-.05em; line-height:1; opacity:.07; }
+  .pl-sec .pl-info { padding-top:8px; }
+  .pl-sec .pl-info .eye { font-family:'Public Sans'; font-weight:800; font-size:10px; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:10px; }
+  .pl-sec h2 { font-family:'Public Sans'; font-weight:800; font-size:38px; letter-spacing:-.02em; line-height:1.15; margin-bottom:12px; }
+  .pl-sec .tagline { font-family:'Lora',serif; font-size:18px; line-height:1.6; color:var(--on-surface-muted); margin-bottom:0; }
+  .pl-body { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+  .pl-text p { font-family:'Lora',serif; font-size:16.5px; line-height:1.75; color:var(--on-surface); margin-bottom:16px; }
+  .pl-text .pull { border-left:3px solid; padding-left:20px; margin:24px 0; }
+  .pl-text .pull p { font-style:italic; }
+  .pl-metrics { display:flex; flex-direction:column; gap:12px; }
+  .metric { background:var(--container-low); border-radius:6px; padding:16px 18px; border-left:3px solid; }
+  .metric .v { font-family:'Public Sans'; font-weight:800; font-size:32px; letter-spacing:-.025em; line-height:1; margin-bottom:4px; font-variant-numeric:tabular-nums; }
+  .metric .l { font-size:12px; font-family:'Public Sans'; font-weight:700; color:var(--on-surface-muted); letter-spacing:.04em; text-transform:uppercase; }
+  .metric .d { font-size:11px; color:var(--on-surface-muted); margin-top:4px; }
+  .actions-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+
+  /* Accountability section */
+  .account { padding:72px 0; background:var(--container-low); margin:0 -48px; padding-left:48px; padding-right:48px; }
+  .account h2 { font-family:'Public Sans'; font-weight:800; font-size:32px; letter-spacing:-.02em; margin-bottom:6px; }
+  .account .sub { color:var(--on-surface-muted); font-size:14px; margin-bottom:32px; }
+  .account-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .ac { background:#fff; border:1px solid var(--border); border-radius:6px; padding:18px; }
+  .ac .num { font-family:'Public Sans'; font-weight:800; font-size:11px; color:var(--on-surface-muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px; }
+  .ac h4 { font-family:'Public Sans'; font-weight:800; font-size:15px; letter-spacing:-.005em; margin-bottom:6px; }
+  .ac p { font-size:12px; color:var(--on-surface-muted); line-height:1.55; }
+  .ac .bl { display:flex; height:3px; width:48px; margin-top:14px; }
+  .ac .bl .a { flex:1; background:var(--brand-red); }
+  .ac .bl .b { flex:1; background:var(--brand-gold); }
+  .ac .bl .c { flex:1; background:var(--brand-green); }
+
+  /* CTA strip */
+  .cta-strip { background:#181d19; color:#fff; padding:56px 48px; text-align:center; }
+  .cta-strip h2 { font-family:'Public Sans'; font-weight:800; font-size:34px; letter-spacing:-.02em; margin-bottom:8px; }
+  .cta-strip p { color:rgba(255,255,255,.7); font-size:15px; margin-bottom:28px; }
+  .cta-strip .btns { display:flex; gap:10px; justify-content:center; }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-fill"></div></div>
+
+<nav class="subnav">
+  <a class="on">Overview</a>
+  <a>Economy</a>
+  <a>Youth</a>
+  <a>Governance</a>
+  <a>Infrastructure</a>
+  <div class="dl"><button class="btn btn-outline btn-sm">Download PDF</button></div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="wrap">
+    <div class="bl"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+    <span class="eye">The Base Movement · Official agenda</span>
+    <h1>The <em>Plan</em><br>for Ghana.</h1>
+    <p class="intro">A detailed, costed, and accountable agenda for youth employment, responsible governance, and national industrialisation — written to be read, challenged, and held to account.</p>
+    <div class="meta">
+      <div class="m r"><div class="v tnum">1M</div><div class="l">Jobs target · 2030</div></div>
+      <div class="m g"><div class="v tnum">4</div><div class="l">Core pillars</div></div>
+      <div class="m gr"><div class="v tnum">16</div><div class="l">Regions covered</div></div>
+      <div class="m"><div class="v tnum" style="color:rgba(255,255,255,.9)">2026</div><div class="l">Publication date</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Pillars grid -->
+<section class="pillars">
+  <div class="wrap">
+    <div class="top">
+      <h2>Four pillars.<br>One plan.</h2>
+      <p class="sub">Each pillar has a specific target, a funding mechanism, and a named accountability officer. No pillar is aspirational. All are measurable.</p>
+    </div>
+    <div class="pill-grid">
+      <div class="pc red">
+        <div class="ph">
+          <div class="num">01</div>
+          <span class="eye">Economic responsibility</span>
+          <h3>Transparent resource management for sustainable jobs</h3>
+        </div>
+        <div class="bd">
+          <p>Redirecting mineral revenue into a ring-fenced youth employment fund, audited quarterly by an independent national board.</p>
+          <div class="tag-row"><span class="tag">₵2.4B fund</span><span class="tag">Mining revenue</span><span class="tag">Quarterly audit</span></div>
+        </div>
+      </div>
+      <div class="pc gold">
+        <div class="ph">
+          <div class="num">02</div>
+          <span class="eye">Youth participation</span>
+          <h3>Equip and deploy a generation of skilled workers</h3>
+        </div>
+        <div class="bd">
+          <p>A four-sector apprenticeship programme — construction, agro-processing, tech, and creative industries — with stipends and certification.</p>
+          <div class="tag-row"><span class="tag">1M jobs</span><span class="tag">4 sectors</span><span class="tag">Stipend + cert</span></div>
+        </div>
+      </div>
+      <div class="pc green">
+        <div class="ph">
+          <div class="num">03</div>
+          <span class="eye">Integrity &amp; accountability</span>
+          <h3>Leaders held to every promise they make</h3>
+        </div>
+        <div class="bd">
+          <p>A public ledger of every promise made during campaigning, with a published status dashboard updated monthly by constituency.</p>
+          <div class="tag-row"><span class="tag">Public ledger</span><span class="tag">Monthly updates</span><span class="tag">Constituency</span></div>
+        </div>
+      </div>
+      <div class="pc ink">
+        <div class="ph">
+          <div class="num">04</div>
+          <span class="eye">Infrastructure &amp; industry</span>
+          <h3>Three industrial parks, twelve agro-hubs by 2030</h3>
+        </div>
+        <div class="bd">
+          <p>Zones built for production, not prestige — anchored in Accra, Kumasi, and Tamale, with feeder agro-hubs in every agricultural region.</p>
+          <div class="tag-row"><span class="tag">3 zones</span><span class="tag">12 agro-hubs</span><span class="tag">2030 target</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pillar 01 full -->
+<section class="pl-sec">
+  <div class="wrap">
+    <div class="pl-head">
+      <div class="pl-num" style="color:var(--brand-red)">01</div>
+      <div class="pl-info">
+        <span class="eye" style="color:var(--brand-red)">Core Pillar 01 · Economic responsibility</span>
+        <h2>Transparent resource management for sustainable jobs</h2>
+        <p class="tagline">Ghana's mineral wealth must create jobs, not headlines. This pillar sets the rules, the fund, and the independent oversight body.</p>
+      </div>
+    </div>
+    <div class="pl-body">
+      <div class="pl-text">
+        <p>Ghana earned an estimated ₵14.8 billion from mineral royalties between 2020 and 2025. The number of youth in formal employment fell in the same period. This is the accountability gap The Plan addresses directly.</p>
+        <div class="pull" style="border-color:var(--brand-red)">
+          <p>"Ring-fence 16% of annual mineral royalties into the Youth Employment Fund, administered by an independent board with published quarterly accounts."</p>
+        </div>
+        <p>The fund is not a new government agency. It is a legally binding trust, managed jointly by the National Development Planning Commission, three civil society seats, and one representative elected by The Base's member chapters.</p>
+        <div class="actions-row">
+          <button class="btn btn-outline btn-sm">Read full policy brief →</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--brand-red)">See the numbers →</button>
+        </div>
+      </div>
+      <div class="pl-metrics">
+        <div class="metric" style="border-color:var(--brand-red)">
+          <div class="v tnum" style="color:var(--brand-red)">₵2.4B</div>
+          <div class="l">Projected fund by 2030</div>
+          <div class="d">Based on 16% royalty ringfence at current extraction rates.</div>
+        </div>
+        <div class="metric" style="border-color:var(--brand-gold)">
+          <div class="v tnum" style="color:var(--brand-gold)">Q4</div>
+          <div class="l">First public audit deadline</div>
+          <div class="d">Year one report published by December 2027.</div>
+        </div>
+        <div class="metric" style="border-color:var(--brand-green)">
+          <div class="v tnum" style="color:var(--brand-green)">3</div>
+          <div class="l">Civil society seats on board</div>
+          <div class="d">Gender-balanced · term-limited · publicly nominated.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Accountability -->
+<section>
+  <div class="account">
+    <div class="wrap" style="max-width:1040px;padding:0">
+      <h2>How we hold ourselves to it.</h2>
+      <p class="sub">Accountability is not a value. It is a mechanism. Here is ours.</p>
+      <div class="account-grid">
+        <div class="ac">
+          <div class="num">01 · Public ledger</div>
+          <h4>Every promise published</h4>
+          <p>Every campaign commitment is recorded before any election with a named delivery officer and a measurable target.</p>
+          <div class="bl"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+        </div>
+        <div class="ac">
+          <div class="num">02 · Monthly status</div>
+          <h4>Live dashboard by constituency</h4>
+          <p>Updated every 30 days. Green means on track. Red means the officer owes the public an explanation within 14 days.</p>
+          <div class="bl"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+        </div>
+        <div class="ac">
+          <div class="num">03 · Member recall</div>
+          <h4>Chapters can trigger a review</h4>
+          <p>Any 500 verified members can petition for a full public review of a named promise. We cannot ignore it.</p>
+          <div class="bl"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+        </div>
+        <div class="ac">
+          <div class="num">04 · Annual report</div>
+          <h4>Audited, published, tabled</h4>
+          <p>An independent auditor produces an annual report. We table it publicly — no edits, no omissions.</p>
+          <div class="bl"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <h2>Read the full plan. Hold us to it.</h2>
+  <p>The complete 84-page agenda is free to download. Every number is sourced. Every target is measurable.</p>
+  <div class="btns">
+    <button class="btn btn-gold btn-lg">Download The Plan PDF →</button>
+    <button class="btn btn-primary btn-lg">Join the movement</button>
+  </div>
+</section>
+
+</body>
+</html>
