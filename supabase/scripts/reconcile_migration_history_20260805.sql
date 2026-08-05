@@ -208,5 +208,7 @@ values
 ('20260803164631','impact_projects_migration')
 on conflict (version) do nothing;
 
--- Verify: expect 176 total (9 pre-existing + 167 inserted).
+-- Verify: expect 167 total. All nine pre-existing rows are themselves real
+-- migration files and so appear in the list above; ON CONFLICT skips them
+-- rather than adding to the count. 167 = 169 versioned files - 2 unapplied.
 select count(*) as total_recorded from supabase_migrations.schema_migrations;
