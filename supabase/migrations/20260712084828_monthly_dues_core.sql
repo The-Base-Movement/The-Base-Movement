@@ -1,6 +1,6 @@
 -- Monthly dues core data model: settings, enrollments, append-only consents,
 -- monthly obligations/payments, and reminder delivery ledger.
--- Design: docs/superpowers/specs/2026-07-12-monthly-dues-system-design.md
+-- Design: docs/specs/2026-07-12-monthly-dues-system-design.md
 
 -- ---------------------------------------------------------------------------
 -- Finance permission helper (MANAGE_DONATIONS:DONATIONS or privileged role)
