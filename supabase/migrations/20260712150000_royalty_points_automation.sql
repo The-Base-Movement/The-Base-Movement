@@ -4,7 +4,7 @@
 -- 'Verified', store orders → payment_status 'Paid', monthly dues → 'paid').
 -- Triggers catch every path — Hubtel callbacks, status polling, and offline /
 -- admin verification — with no edge-function changes.
--- Design: docs/superpowers/specs/2026-07-12-royalty-points-automation-design.md
+-- Design: docs/specs/2026-07-12-royalty-points-automation-design.md
 
 -- ---------------------------------------------------------------------------
 -- Settings singleton (default rates approved 2026-07-12)
