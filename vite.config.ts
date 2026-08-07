@@ -156,7 +156,9 @@ export default defineConfig(({ mode }) => {
       globals: true,
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],
-      include: ['src/**/*.{test,spec}.{ts,tsx}'],
+      // Tests live in docs/test-files/ (gitignored, local only); src/ is kept
+      // in the pattern for the suites that predate that convention.
+      include: ['src/**/*.{test,spec}.{ts,tsx}', 'docs/test-files/**/*.{test,spec}.{ts,tsx}'],
       passWithNoTests: true,
       coverage: {
         reporter: ['text', 'lcov'],
