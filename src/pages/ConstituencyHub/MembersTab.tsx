@@ -1,15 +1,29 @@
 import type { ConstituencyMember } from './ConstituencyHubTypes'
+import { downloadCsv } from '@/lib/csv'
 
 interface Props {
   memberSearch: string
   setMemberSearch: (v: string) => void
   filteredMembers: ConstituencyMember[]
+  constituencyName?: string
 }
 
-export function MembersTab({ memberSearch, setMemberSearch, filteredMembers }: Props) {
+export function MembersTab({
+  memberSearch,
+  setMemberSearch,
+  filteredMembers,
+  constituencyName,
+}: Props) {
+  const handleExport = () =>
+    downloadCsv(
+      `${(constituencyName || 'constituency').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-members`,
+      ['Reg No', 'Name', 'Phone', 'Email', 'Region', 'Status', 'Joined'],
+      filteredMembers.map((m) => [m.regNo, m.name, m.phone, m.email, m.region, m.status, m.joined])
+    )
+
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
         <input
           value={memberSearch}
           onChange={(e) => setMemberSearch(e.target.value)}
@@ -26,6 +40,17 @@ export function MembersTab({ memberSearch, setMemberSearch, filteredMembers }: P
             boxSizing: 'border-box',
           }}
         />
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={handleExport}
+          disabled={filteredMembers.length === 0}
+          title="Download these members as CSV"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+            download
+          </span>
+          Export data
+        </button>
       </div>
       {filteredMembers.length === 0 ? (
         <p style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>No members found.</p>

@@ -51,11 +51,14 @@ export default function MembersList() {
     ageRangeFilter,
     religionFilter,
     platformFilter,
+    countryFilter,
+    chapterFilter,
     sortOrder,
     setSortOrder,
     stats,
     statsLoading,
     fetchMembers,
+    fetchAllFilteredMembers,
     handleSearchChange,
     handleSearchTypeChange,
     handleSourceFilterChange,
@@ -63,6 +66,8 @@ export default function MembersList() {
     handleAgeRangeFilterChange,
     handleReligionFilterChange,
     handlePlatformFilterChange,
+    handleCountryFilterChange,
+    handleChapterFilterChange,
     handleClearSearch,
     handleNextPage,
     handlePrevPage,
@@ -107,7 +112,7 @@ export default function MembersList() {
     handleOpenAssign,
     handleConfirmAssignment,
     clearSelection,
-  } = useMembersActions(members, fetchMembers)
+  } = useMembersActions(members, fetchMembers, fetchAllFilteredMembers)
 
   return (
     <div className="main">
@@ -175,6 +180,8 @@ export default function MembersList() {
         ageRangeFilter={ageRangeFilter}
         religionFilter={religionFilter}
         platformFilter={platformFilter}
+        countryFilter={countryFilter}
+        chapterFilter={chapterFilter}
         sortOrder={sortOrder}
         onSearchChange={handleSearchChange}
         onSearchTypeChange={handleSearchTypeChange}
@@ -183,6 +190,8 @@ export default function MembersList() {
         onAgeRangeFilterChange={handleAgeRangeFilterChange}
         onReligionFilterChange={handleReligionFilterChange}
         onPlatformFilterChange={handlePlatformFilterChange}
+        onCountryFilterChange={handleCountryFilterChange}
+        onChapterFilterChange={handleChapterFilterChange}
         onSortChange={setSortOrder}
         onClearSearch={handleClearSearch}
       />

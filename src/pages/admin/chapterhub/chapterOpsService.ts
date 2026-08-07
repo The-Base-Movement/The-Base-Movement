@@ -5,10 +5,12 @@ import type { ChapterMember, ChapterDonation } from './types'
 
 export const chapterOpsService = {
   async loadChapterData(chapterName: string): Promise<[ChapterMember[], ChapterDonation[]]> {
+    // ponytail: unpaged — caps at PostgREST's ~1000 rows, which is far above any
+    // diaspora community's size. Page it like constituencyService if one grows past that.
     const { data: memberData } = await supabase
       .from('users')
       .select(
-        'id, registration_number, full_name, phone_number, region, constituency, status, joined_at, avatar_url'
+        'id, registration_number, full_name, phone_number, email, country, region, constituency, status, joined_at, avatar_url'
       )
       .eq('chapter', chapterName)
       .order('joined_at', { ascending: false })
@@ -18,6 +20,8 @@ export const chapterOpsService = {
       regNo: u.registration_number,
       name: u.full_name,
       phone: u.phone_number || 'N/A',
+      email: u.email || '',
+      country: u.country || '',
       region: u.region || 'N/A',
       constituency: u.constituency || 'N/A',
       status: u.status,

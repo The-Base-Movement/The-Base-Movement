@@ -25,6 +25,7 @@ interface ChapterMember {
   regNo: string
   name: string
   phone: string
+  email: string
   region: string
   constituency: string
   status: string
@@ -158,7 +159,7 @@ export default function ChapterHub() {
       const { data: memberData } = await supabase
         .from('users')
         .select(
-          'id, registration_number, full_name, phone_number, region, constituency, status, joined_at, avatar_url'
+          'id, registration_number, full_name, phone_number, email, region, constituency, status, joined_at, avatar_url'
         )
         .eq('chapter', mine.name)
         .order('joined_at', { ascending: false })
@@ -169,6 +170,7 @@ export default function ChapterHub() {
           regNo: u.registration_number,
           name: u.full_name,
           phone: u.phone_number || 'N/A',
+          email: u.email || '',
           region: u.region || 'N/A',
           constituency: u.constituency || 'N/A',
           status: u.status,
@@ -544,6 +546,7 @@ export default function ChapterHub() {
           filteredMembers={filteredMembers}
           memberSearch={memberSearch}
           onSearchChange={setMemberSearch}
+          chapterName={chapter?.name}
         />
       )}
 

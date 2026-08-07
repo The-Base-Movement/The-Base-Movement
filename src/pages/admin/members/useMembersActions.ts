@@ -7,8 +7,13 @@ import { toast } from 'sonner'
 import { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import { type ConstituencyLeader } from '@/types/admin'
 import { getCroppedImg } from '@/lib/imageUtils'
+import { downloadCsv } from '@/lib/csv'
 
-export function useMembersActions(members: Member[], fetchMembers: () => void) {
+export function useMembersActions(
+  members: Member[],
+  fetchMembers: () => void,
+  fetchAllFilteredMembers: () => Promise<Member[]>
+) {
   const { chapters } = useChapters()
 
   const [isExporting, setIsExporting] = useState(false)
@@ -206,62 +211,54 @@ export function useMembersActions(members: Member[], fetchMembers: () => void) {
   }
 
   const handleExport = async () => {
-    if (members.length === 0) return
     setIsExporting(true)
     toast.success('Generating membership directory records…')
     try {
-      const headers = [
-        'ID',
-        'Name',
-        'Email',
-        'Phone',
-        'Region',
-        'Constituency',
-        'Status',
-        'Joined',
-        'Type',
-        'Chapter',
-        'Country',
-      ]
-      const rows = members.map((m) => [
-        m.id,
-        m.name,
-        m.email,
-        m.phone,
-        m.region,
-        m.constituency,
-        m.status,
-        m.joined,
-        m.type,
-        m.chapter,
-        m.country,
-      ])
-      const csvContent = [
-        headers.join(','),
-        ...rows.map((row) =>
-          row.map((cell) => `"${String(cell || '').replace(/"/g, '""')}"`).join(',')
-        ),
-      ].join('\n')
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.setAttribute('href', url)
-      link.setAttribute(
-        'download',
-        `the-base-members-${new Date().toISOString().split('T')[0]}.csv`
+      // Export every member matching the active filters, not just the page on screen.
+      const allMembers = await fetchAllFilteredMembers()
+      if (allMembers.length === 0) {
+        toast.error('No members match the current filters.')
+        return
+      }
+      downloadCsv(
+        'the-base-members',
+        [
+          'ID',
+          'Name',
+          'Email',
+          'Phone',
+          'Gender',
+          'Region',
+          'Constituency',
+          'District',
+          'Status',
+          'Joined',
+          'Type',
+          'Chapter',
+          'Country',
+        ],
+        allMembers.map((m) => [
+          m.id,
+          m.name,
+          m.email,
+          m.phone,
+          m.gender,
+          m.region,
+          m.constituency,
+          m.district,
+          m.status,
+          m.joined,
+          m.type,
+          m.chapter,
+          m.country,
+        ])
       )
-      link.style.visibility = 'hidden'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      setTimeout(() => {
-        setIsExporting(false)
-        toast.success('Membership directory downloaded.')
-      }, 1000)
+      toast.success(`${allMembers.length.toLocaleString()} members downloaded.`)
     } catch (error) {
       console.error('Export failed:', error)
-      setIsExporting(false)
       toast.error('An error occurred while generating the directory.')
+    } finally {
+      setIsExporting(false)
     }
   }
 

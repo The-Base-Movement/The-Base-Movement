@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { downloadCsv } from '@/lib/csv'
 
 interface ChapterMember {
   authId: string
   regNo: string
   name: string
   phone: string
+  email: string
   region: string
   constituency: string
   status: string
@@ -17,6 +19,7 @@ interface Props {
   filteredMembers: ChapterMember[]
   memberSearch: string
   onSearchChange: (value: string) => void
+  chapterName?: string
 }
 
 function MemberAvatar({ member, size = 34 }: { member: ChapterMember; size?: number }) {
@@ -221,7 +224,13 @@ function ProfileCard({ member, onClose }: { member: ChapterMember; onClose: () =
   )
 }
 
-export function MembersTab({ members, filteredMembers, memberSearch, onSearchChange }: Props) {
+export function MembersTab({
+  members,
+  filteredMembers,
+  memberSearch,
+  onSearchChange,
+  chapterName,
+}: Props) {
   const [isMobile, setIsMobile] = useState(false)
   const [selectedMember, setSelectedMember] = useState<ChapterMember | null>(null)
 
@@ -232,52 +241,83 @@ export function MembersTab({ members, filteredMembers, memberSearch, onSearchCha
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const handleExport = () =>
+    downloadCsv(
+      `${(chapterName || 'diaspora').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-members`,
+      ['Reg. ID', 'Name', 'Phone', 'Email', 'Region', 'Constituency', 'Status', 'Joined'],
+      filteredMembers.map((m) => [
+        m.regNo,
+        m.name,
+        m.phone,
+        m.email,
+        m.region,
+        m.constituency,
+        m.status,
+        m.joined,
+      ])
+    )
+
   const searchBar = (
     <div
       style={{
         padding: '12px 18px',
         borderBottom: '1px solid hsl(var(--border))',
-        position: 'relative',
+        display: 'flex',
+        gap: 10,
+        alignItems: 'center',
       }}
     >
-      <span
-        className="material-symbols-outlined"
-        style={{
-          position: 'absolute',
-          left: 30,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          fontSize: 16,
-          color: 'hsl(var(--on-surface-muted))',
-          opacity: 0.4,
-          pointerEvents: 'none',
-        }}
+      <div style={{ position: 'relative', flex: 1 }}>
+        <span
+          className="material-symbols-outlined"
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 16,
+            color: 'hsl(var(--on-surface-muted))',
+            opacity: 0.4,
+            pointerEvents: 'none',
+          }}
+        >
+          search
+        </span>
+        <input
+          aria-label="Search by name, reg. ID, or phone…"
+          name="memberSearch"
+          id="input-d74d97"
+          type="text"
+          placeholder="Search by name, reg. ID, or phone…"
+          value={memberSearch}
+          onChange={(e) => onSearchChange(e.target.value)}
+          style={{
+            width: '100%',
+            height: 38,
+            paddingLeft: 38,
+            paddingRight: 12,
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: 13,
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 'var(--font-weight-medium, 500)',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
+      </div>
+      <button
+        className="btn btn-outline btn-sm"
+        onClick={handleExport}
+        disabled={filteredMembers.length === 0}
+        title="Download these members as CSV"
       >
-        search
-      </span>
-      <input
-        aria-label="Search by name, reg. ID, or phone…"
-        name="memberSearch"
-        id="input-d74d97"
-        type="text"
-        placeholder="Search by name, reg. ID, or phone…"
-        value={memberSearch}
-        onChange={(e) => onSearchChange(e.target.value)}
-        style={{
-          width: '100%',
-          height: 38,
-          paddingLeft: 38,
-          paddingRight: 12,
-          background: 'hsl(var(--container-low))',
-          border: '1px solid hsl(var(--border))',
-          borderRadius: 'var(--radius-sm)',
-          fontSize: 13,
-          fontFamily: "'Public Sans', sans-serif",
-          fontWeight: 'var(--font-weight-medium, 500)',
-          outline: 'none',
-          boxSizing: 'border-box',
-        }}
-      />
+        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+          download
+        </span>
+        Export
+      </button>
     </div>
   )
 

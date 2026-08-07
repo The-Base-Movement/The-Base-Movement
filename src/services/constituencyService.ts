@@ -347,11 +347,31 @@ class ConstituencyService {
   }
 
   async getMembersByConstituencyName(constituencyName: string) {
+    // Paged — a large constituency exceeds PostgREST's per-request row cap, and
+    // a truncated list would silently truncate the hub's CSV export too.
+    const PAGE_SIZE = 1000
+    const all: Awaited<ReturnType<typeof this.fetchConstituencyMemberPage>> = []
+    for (let page = 0; ; page++) {
+      const rows = await this.fetchConstituencyMemberPage(constituencyName, page, PAGE_SIZE)
+      all.push(...rows)
+      if (rows.length < PAGE_SIZE) break
+    }
+    return all
+  }
+
+  private async fetchConstituencyMemberPage(
+    constituencyName: string,
+    page: number,
+    pageSize: number
+  ) {
     const { data, error } = await supabase
       .from('users')
-      .select('id, full_name, avatar_url, status, profession, registration_number')
+      .select(
+        'id, full_name, avatar_url, status, profession, registration_number, phone_number, email, gender, region, joined_at'
+      )
       .eq('constituency', constituencyName)
       .order('full_name', { ascending: true })
+      .range(page * pageSize, page * pageSize + pageSize - 1)
     if (error) throw error
     return data ?? []
   }

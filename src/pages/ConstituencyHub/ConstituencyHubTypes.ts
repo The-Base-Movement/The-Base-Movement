@@ -3,6 +3,7 @@ export interface ConstituencyMember {
   regNo: string
   name: string
   phone: string
+  email: string
   region: string
   status: string
   joined: string

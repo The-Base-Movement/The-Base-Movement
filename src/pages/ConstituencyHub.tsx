@@ -165,7 +165,7 @@ export default function ConstituencyHub() {
           supabase
             .from('users')
             .select(
-              'id, registration_number, full_name, phone_number, region, status, joined_at, avatar_url'
+              'id, registration_number, full_name, phone_number, email, region, status, joined_at, avatar_url'
             )
             .eq('constituency', c.name)
             .order('joined_at', { ascending: false }),
@@ -187,6 +187,7 @@ export default function ConstituencyHub() {
         regNo: u.registration_number ?? '',
         name: u.full_name,
         phone: u.phone_number ?? 'N/A',
+        email: u.email ?? '',
         region: u.region ?? 'N/A',
         status: u.status,
         joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString('en-GB') : 'N/A',
@@ -510,6 +511,7 @@ export default function ConstituencyHub() {
           memberSearch={memberSearch}
           setMemberSearch={setMemberSearch}
           filteredMembers={filteredMembers}
+          constituencyName={constituency?.name}
         />
       )}
 

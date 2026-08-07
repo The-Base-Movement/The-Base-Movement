@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { religions } from '@/components/admin/RegistrationForm.constants'
+import { useChapters } from '@/context/ChaptersContext'
+import { memberService } from '@/services/memberService'
+import { shortDiasporaName } from '@/lib/diaspora'
 
 type SearchType = 'default' | 'constituency' | 'district' | 'region' | 'polling_station'
 
@@ -11,6 +15,8 @@ interface MembersFilterBarProps {
   ageRangeFilter: string
   religionFilter: string
   platformFilter: 'all' | 'GHANA' | 'DIASPORA'
+  countryFilter: string
+  chapterFilter: string
   sortOrder: 'asc' | 'desc'
   onSearchChange: (val: string) => void
   onSearchTypeChange: (val: SearchType) => void
@@ -19,6 +25,8 @@ interface MembersFilterBarProps {
   onAgeRangeFilterChange: (val: string) => void
   onReligionFilterChange: (val: string) => void
   onPlatformFilterChange: (val: 'all' | 'GHANA' | 'DIASPORA') => void
+  onCountryFilterChange: (val: string) => void
+  onChapterFilterChange: (val: string) => void
   onSortChange: (next: 'asc' | 'desc') => void
   onClearSearch: () => void
 }
@@ -90,6 +98,8 @@ export function MembersFilterBar({
   ageRangeFilter,
   religionFilter,
   platformFilter,
+  countryFilter,
+  chapterFilter,
   sortOrder,
   onSearchChange,
   onSearchTypeChange,
@@ -98,11 +108,23 @@ export function MembersFilterBar({
   onAgeRangeFilterChange,
   onReligionFilterChange,
   onPlatformFilterChange,
+  onCountryFilterChange,
+  onChapterFilterChange,
   onSortChange,
   onClearSearch,
 }: MembersFilterBarProps) {
   const activeOption =
     SEARCH_TYPE_OPTIONS.find((o) => o.value === searchType) ?? SEARCH_TYPE_OPTIONS[0]
+
+  const { chapters } = useChapters()
+  const [countries, setCountries] = useState<string[]>([])
+
+  useEffect(() => {
+    memberService
+      .getCountries()
+      .then((list) => setCountries(list.map((c) => c.name)))
+      .catch(console.error)
+  }, [])
 
   return (
     <div className="panel" style={{ marginBottom: 20 }}>
@@ -281,6 +303,32 @@ export function MembersFilterBar({
             <option value="all">Ghana + Diaspora</option>
             <option value="GHANA">Ghana Network</option>
             <option value="DIASPORA">Diaspora Network</option>
+          </select>
+          <select
+            aria-label="Filter by country"
+            value={countryFilter}
+            onChange={(e) => onCountryFilterChange(e.target.value)}
+            style={selectSt}
+          >
+            <option value="all">All countries</option>
+            {countries.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="Filter by diaspora community"
+            value={chapterFilter}
+            onChange={(e) => onChapterFilterChange(e.target.value)}
+            style={selectSt}
+          >
+            <option value="all">All diaspora</option>
+            {chapters.map((c) => (
+              <option key={c.id} value={c.name}>
+                {shortDiasporaName(c.name)}
+              </option>
+            ))}
           </select>
           <SortToggle value={sortOrder} onChange={onSortChange} />
         </div>

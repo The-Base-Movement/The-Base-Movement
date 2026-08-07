@@ -131,6 +131,7 @@ export default function AdminChapterLeadHub() {
           searchQuery={memberSearch}
           setSearchQuery={setMemberSearch}
           canSeePhone={canSeePhone}
+          chapterName={chapter.name}
         />
       )}
 

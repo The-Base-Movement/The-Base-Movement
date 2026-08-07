@@ -1,5 +1,6 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { adminService, type Member } from '@/services/adminService'
+import type { MemberDirectoryFilters } from '@/services/memberService'
 
 export function useMembersData() {
   const [members, setMembers] = useState<Member[]>([])
@@ -26,43 +27,55 @@ export function useMembersData() {
   const [ageRangeFilter, setAgeRangeFilter] = useState<string>('all')
   const [religionFilter, setReligionFilter] = useState<string>('all')
   const [platformFilter, setPlatformFilter] = useState<'all' | 'GHANA' | 'DIASPORA'>('all')
+  const [countryFilter, setCountryFilter] = useState<string>('all')
+  const [chapterFilter, setChapterFilter] = useState<string>('all')
   const [searchType, setSearchType] = useState<
     'default' | 'constituency' | 'district' | 'region' | 'polling_station'
   >('default')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const itemsPerPage = 8
 
+  const filters: MemberDirectoryFilters = useMemo(
+    () => ({
+      searchTerm,
+      registrationSource: sourceFilter,
+      searchType,
+      sortOrder,
+      gender: genderFilter !== 'all' ? genderFilter : undefined,
+      ageRange: ageRangeFilter !== 'all' ? ageRangeFilter : undefined,
+      religion: religionFilter !== 'all' ? religionFilter : undefined,
+      platform: platformFilter !== 'all' ? platformFilter : undefined,
+      country: countryFilter !== 'all' ? countryFilter : undefined,
+      chapter: chapterFilter !== 'all' ? chapterFilter : undefined,
+    }),
+    [
+      searchTerm,
+      sourceFilter,
+      searchType,
+      sortOrder,
+      genderFilter,
+      ageRangeFilter,
+      religionFilter,
+      platformFilter,
+      countryFilter,
+      chapterFilter,
+    ]
+  )
+
   const fetchMembers = useCallback(() => {
     setIsLoading(true)
     adminService
-      .getMembersPaginated(
-        currentPage,
-        itemsPerPage,
-        searchTerm,
-        sourceFilter,
-        searchType,
-        sortOrder,
-        genderFilter !== 'all' ? genderFilter : undefined,
-        ageRangeFilter !== 'all' ? ageRangeFilter : undefined,
-        religionFilter !== 'all' ? religionFilter : undefined,
-        platformFilter !== 'all' ? platformFilter : undefined
-      )
+      .getMembersPaginated(currentPage, itemsPerPage, filters)
       .then(({ data, totalCount: total }) => {
         setMembers(data)
         setTotalMembers(total)
         setIsLoading(false)
       })
-  }, [
-    currentPage,
-    searchTerm,
-    sourceFilter,
-    searchType,
-    sortOrder,
-    genderFilter,
-    ageRangeFilter,
-    religionFilter,
-    platformFilter,
-  ])
+  }, [currentPage, filters])
+
+  // Every member matching the active filters — the export reads this, not the
+  // single page the table renders.
+  const fetchAllFilteredMembers = useCallback(() => adminService.getAllMembers(filters), [filters])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -106,6 +119,14 @@ export function useMembersData() {
     setPlatformFilter(val)
     setCurrentPage(1)
   }
+  const handleCountryFilterChange = (val: string) => {
+    setCountryFilter(val)
+    setCurrentPage(1)
+  }
+  const handleChapterFilterChange = (val: string) => {
+    setChapterFilter(val)
+    setCurrentPage(1)
+  }
   const handleClearSearch = () => {
     setSearchTerm('')
     setCurrentPage(1)
@@ -140,11 +161,14 @@ export function useMembersData() {
     ageRangeFilter,
     religionFilter,
     platformFilter,
+    countryFilter,
+    chapterFilter,
     sortOrder,
     setSortOrder,
     stats,
     statsLoading,
     fetchMembers,
+    fetchAllFilteredMembers,
     handleSearchChange,
     handleSearchTypeChange,
     handleSourceFilterChange,
@@ -152,6 +176,8 @@ export function useMembersData() {
     handleAgeRangeFilterChange,
     handleReligionFilterChange,
     handlePlatformFilterChange,
+    handleCountryFilterChange,
+    handleChapterFilterChange,
     handleClearSearch,
     handleNextPage,
     handlePrevPage,

@@ -5,7 +5,7 @@ import { ROLE_CATALOG, resolveRoleAlias } from '@/lib/roleCatalog'
 import { resolveStoredAdminPermissions } from '@/lib/adminPermissionHydration'
 import { isUuid } from '@/lib/supabaseFilters'
 import { authService } from './authService'
-import { memberService } from './memberService'
+import { memberService, type MemberDirectoryFilters } from './memberService'
 import { logisticsService } from './logisticsService'
 import { tacticalService } from './tacticalService'
 import { chapterService } from './chapterService'
@@ -305,27 +305,13 @@ class AdminService {
   async getMembersPaginated(
     page: number,
     pageSize: number,
-    searchTerm?: string,
-    registrationSource?: string,
-    searchType: 'default' | 'constituency' | 'district' | 'region' | 'polling_station' = 'default',
-    sortOrder?: 'asc' | 'desc',
-    gender?: string,
-    ageRange?: string,
-    religion?: string,
-    platform?: string
+    filters: MemberDirectoryFilters = {}
   ): Promise<{ data: Member[]; totalCount: number }> {
-    return memberService.getMembersPaginated(
-      page,
-      pageSize,
-      searchTerm,
-      registrationSource,
-      searchType,
-      sortOrder,
-      gender,
-      ageRange,
-      religion,
-      platform
-    )
+    return memberService.getMembersPaginated(page, pageSize, filters)
+  }
+
+  async getAllMembers(filters: MemberDirectoryFilters = {}): Promise<Member[]> {
+    return memberService.getAllMembers(filters)
   }
 
   async getDirectoryStats(recentHours = 24) {
