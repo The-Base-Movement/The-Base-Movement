@@ -132,29 +132,32 @@ export function StatCard({
           marginTop: 'auto',
         }}
       >
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '5px',
-            fontSize: '10.5px',
-            fontWeight: 'var(--font-weight-medium, 500)',
-            color: accent,
-            letterSpacing: '-.005em',
-            fontFamily: "'Public Sans', sans-serif",
-          }}
-        >
-          {deltaIcon === 'circle' ? (
-            <svg viewBox="0 0 8 8" width="9" height="9">
-              <circle cx="4" cy="4" r="3" fill="currentColor" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 8 8" width="9" height="9">
-              <path d="M0 6 L4 2 L8 6 Z" fill="currentColor" />
-            </svg>
-          )}
-          {delta}
-        </span>
+        {/* No delta to report — drop the row rather than show a bare arrow. */}
+        {delta && (
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              fontSize: '10.5px',
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: accent,
+              letterSpacing: '-.005em',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            {deltaIcon === 'circle' ? (
+              <svg viewBox="0 0 8 8" width="9" height="9">
+                <circle cx="4" cy="4" r="3" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 8 8" width="9" height="9">
+                <path d="M0 6 L4 2 L8 6 Z" fill="currentColor" />
+              </svg>
+            )}
+            {delta}
+          </span>
+        )}
         <Sparkline heights={sparkHeights} accent={accent} />
       </div>
     </div>

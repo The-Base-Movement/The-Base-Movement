@@ -47,9 +47,11 @@ const DEFAULT_STATS = {
   regions: 0,
   diaspora: 0,
   countries: 0,
-  membersDelta: '...',
-  chaptersDelta: '...',
-  diasporaDelta: '...',
+  // Blank, not '...': the stat cards hide the trend row when there is no
+  // delta, so nothing flashes before the RPC resolves.
+  membersDelta: '',
+  chaptersDelta: '',
+  diasporaDelta: '',
 }
 
 const fallbackMilestones = [
@@ -133,10 +135,7 @@ export default function Home() {
 
   return (
     <main className="bg-background font-body-md">
-      <SEO
-        title="The Base Movement Ghana | Ghana First, Jobs for the Youth"
-        canonical="/"
-      />
+      <SEO title="The Base Movement Ghana | Ghana First, Jobs for the Youth" canonical="/" />
 
       <HeroSection
         heroBgUrl={settings.hero_bg_url || '/hero-bg.png'}
