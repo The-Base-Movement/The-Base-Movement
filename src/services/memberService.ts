@@ -12,6 +12,19 @@ function stripMarkdownEmail(value: string | null | undefined): string {
   return match ? match[1] : value
 }
 
+export interface MemberDirectoryFilters {
+  searchTerm?: string
+  registrationSource?: string
+  searchType?: 'default' | 'constituency' | 'district' | 'region' | 'polling_station'
+  sortOrder?: 'asc' | 'desc'
+  gender?: string
+  ageRange?: string
+  religion?: string
+  platform?: string
+  country?: string
+  chapter?: string
+}
+
 export interface VerifiedMemberEvent {
   name: string
   region: string
@@ -898,15 +911,20 @@ class MemberService {
   async getMembersPaginated(
     page: number,
     pageSize: number,
-    searchTerm?: string,
-    registrationSource?: string,
-    searchType: 'default' | 'constituency' | 'district' | 'region' | 'polling_station' = 'default',
-    sortOrder?: 'asc' | 'desc',
-    gender?: string,
-    ageRange?: string,
-    religion?: string,
-    platform?: string
+    filters: MemberDirectoryFilters = {}
   ): Promise<{ data: Member[]; totalCount: number }> {
+    const {
+      searchTerm,
+      registrationSource,
+      searchType = 'default',
+      sortOrder,
+      gender,
+      ageRange,
+      religion,
+      platform,
+      country,
+      chapter,
+    } = filters
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
@@ -923,6 +941,8 @@ class MemberService {
     if (ageRange) query = query.eq('age_range', ageRange)
     if (religion) query = query.eq('religion', religion)
     if (platform) query = query.eq('platform', platform)
+    if (country) query = query.eq('country', country)
+    if (chapter) query = query.eq('chapter', chapter)
 
     if (searchTerm) {
       if (searchType === 'constituency') {
@@ -986,6 +1006,21 @@ class MemberService {
     }))
 
     return { data: members, totalCount: count || 0 }
+  }
+
+  /**
+   * Every member matching the given filters, paged past PostgREST's per-request
+   * row cap. Used by the directory export — the table itself stays paginated.
+   */
+  async getAllMembers(filters: MemberDirectoryFilters = {}): Promise<Member[]> {
+    const PAGE_SIZE = 1000
+    const all: Member[] = []
+    for (let page = 1; ; page++) {
+      const { data, totalCount } = await this.getMembersPaginated(page, PAGE_SIZE, filters)
+      all.push(...data)
+      if (data.length < PAGE_SIZE || all.length >= totalCount) break
+    }
+    return all
   }
 
   async getTotalMemberCount(): Promise<number> {

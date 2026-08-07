@@ -3,6 +3,8 @@ export interface ChapterMember {
   regNo: string
   name: string
   phone: string
+  email: string
+  country: string
   region: string
   constituency: string
   status: string

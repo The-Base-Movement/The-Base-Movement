@@ -8,6 +8,7 @@ import { HubDonationsList } from './chapterhub/HubDonationsList'
 import type { ChapterDonation } from './chapterhub/types'
 import type { Constituency, ConstituencyActivity, ConstituencyLeader } from '@/types/admin'
 import { toast } from 'sonner'
+import { downloadCsv } from '@/lib/csv'
 import { AddActivityModal } from './constituencyLeadHub/AddActivityModal'
 import { AssignCommitteeModal } from './constituencyLeadHub/AssignCommitteeModal'
 import { AssignLeaderModal } from './constituencyLeadHub/AssignLeaderModal'
@@ -33,6 +34,11 @@ type Member = {
   status?: string
   profession?: string
   registration_number?: string
+  phone_number?: string
+  email?: string
+  gender?: string
+  region?: string
+  joined_at?: string
 }
 
 export default function AdminConstituencyLeadHub() {
@@ -237,6 +243,23 @@ export default function AdminConstituencyLeadHub() {
     (m) => m.status === 'Active' || m.status === 'Approved'
   ).length
 
+  const handleExportMembers = () =>
+    downloadCsv(
+      `${constituency.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-members`,
+      ['Reg No', 'Name', 'Phone', 'Email', 'Gender', 'Profession', 'Region', 'Status', 'Joined'],
+      members.map((m) => [
+        m.registration_number,
+        m.full_name,
+        m.phone_number,
+        m.email,
+        m.gender,
+        m.profession,
+        m.region,
+        m.status ?? 'Pending',
+        m.joined_at ? new Date(m.joined_at).toLocaleDateString('en-GB') : '',
+      ])
+    )
+
   return (
     <div className="main">
       <AdminPageHeader
@@ -325,12 +348,23 @@ export default function AdminConstituencyLeadHub() {
             entry point the diaspora hub uses) rather than auto-scoping to this
             constituency — the diaspora Add form isn't pre-scoped either, so this
             keeps parity and avoids re-wiring the protected RegistrationOverlay. */}
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button className="btn btn-primary btn-sm" onClick={() => navigate('/admin/members')}>
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                 person_add
               </span>
               Add member
+            </button>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={handleExportMembers}
+              disabled={members.length === 0}
+              title="Download this constituency's members as CSV"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                download
+              </span>
+              Export data
             </button>
           </div>
           <div className="panel" style={{ overflowX: 'auto' }}>

@@ -2,12 +2,14 @@ import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { ChapterMember } from './types'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { downloadCsv } from '@/lib/csv'
 
 interface HubMembersListProps {
   members: ChapterMember[]
   searchQuery: string
   setSearchQuery: (query: string) => void
   canSeePhone?: boolean
+  chapterName?: string
 }
 
 function firstName(full: string) {
@@ -30,6 +32,7 @@ export function HubMembersList({
   searchQuery,
   setSearchQuery,
   canSeePhone = false,
+  chapterName,
 }: HubMembersListProps) {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
@@ -49,6 +52,33 @@ export function HubMembersList({
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
     })
   }, [members, searchQuery, sortOrder])
+
+  const handleExport = () =>
+    downloadCsv(
+      `${(chapterName || 'diaspora').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-members`,
+      [
+        'Reg. ID',
+        'Name',
+        'Phone',
+        'Email',
+        'Country',
+        'Region',
+        'Constituency',
+        'Status',
+        'Joined',
+      ],
+      sortedMembers.map((m) => [
+        m.regNo,
+        m.name,
+        m.phone,
+        m.email,
+        m.country,
+        m.region,
+        m.constituency,
+        m.status,
+        m.joined,
+      ])
+    )
 
   const searchBar = (
     <div
@@ -101,6 +131,17 @@ export function HubMembersList({
         />
       </div>
       <SortToggle value={sortOrder} onChange={setSortOrder} />
+      <button
+        className="btn btn-outline btn-sm"
+        onClick={handleExport}
+        disabled={sortedMembers.length === 0}
+        title="Download these members as CSV"
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+          download
+        </span>
+        Export
+      </button>
     </div>
   )
 
