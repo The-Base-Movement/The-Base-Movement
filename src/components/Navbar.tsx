@@ -127,11 +127,21 @@ export default function Navbar() {
       if (e.key === 'Escape') {
         setIsMoreMenuOpen(false)
         setIsDropdownOpen(false)
+        setIsOpen(false)
       }
     }
     document.addEventListener('keydown', onEscape)
     return () => document.removeEventListener('keydown', onEscape)
   }, [])
+
+  // The mobile drawer dismisses on page scroll; tapping outside it is handled
+  // by the backdrop, and route changes by the location effect above.
+  useEffect(() => {
+    if (!isOpen) return
+    const close = () => setIsOpen(false)
+    window.addEventListener('scroll', close, { passive: true })
+    return () => window.removeEventListener('scroll', close)
+  }, [isOpen])
 
   const handleLogout = async () => {
     await authService.logout()
@@ -599,283 +609,321 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — fixed panel sliding in from the right, sitting below the
+          sticky header so the hamburger stays reachable. The backdrop is kept
+          under the header (z 45 < 50) for the same reason. */}
       {isOpen && (
-        <div
-          className="mobile-only"
-          style={{
-            background: 'hsl(var(--background))',
-            borderTop: '1px solid hsl(var(--border))',
-            padding: '16px 20px 24px',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {PRIMARY_NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                to={linkPath(link)}
+        <>
+          <div
+            className="mobile-only"
+            onClick={() => setIsOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.45)',
+              zIndex: 45,
+            }}
+          />
+          <div
+            className="mobile-only"
+            id="mobile-nav-drawer"
+            style={{
+              position: 'fixed',
+              top: 72,
+              right: 0,
+              bottom: 0,
+              width: 'min(320px, 82vw)',
+              overflowY: 'auto',
+              overscrollBehavior: 'contain',
+              WebkitOverflowScrolling: 'touch',
+              background: 'hsl(var(--background))',
+              borderLeft: '1px solid hsl(var(--border))',
+              borderTop: '1px solid hsl(var(--border))',
+              boxShadow: '-8px 0 30px rgba(0,0,0,0.14)',
+              padding: '16px 20px 24px',
+              zIndex: 55,
+              animation: 'navDrawerIn 0.22s ease',
+            }}
+          >
+            <style>{`
+              @keyframes navDrawerIn {
+                from { transform: translateX(100%); }
+                to   { transform: translateX(0); }
+              }
+              @media (prefers-reduced-motion: reduce) {
+                #mobile-nav-drawer { animation: none !important; }
+              }
+            `}</style>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {PRIMARY_NAV_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  to={linkPath(link)}
+                  style={{
+                    display: 'block',
+                    padding: '10px 14px',
+                    borderRadius: 'var(--radius-sm)',
+                    textDecoration: 'none',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 13,
+                    background: linkActive(link) ? 'hsl(var(--primary) / 8%)' : 'none',
+                    color: linkActive(link)
+                      ? 'hsl(var(--primary))'
+                      : 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              <button
+                onClick={() => setIsMobileMoreOpen((value) => !value)}
+                aria-expanded={isMobileMoreOpen}
                 style={{
-                  display: 'block',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
                   padding: '10px 14px',
+                  border: 'none',
+                  background: moreMenuActive ? 'hsl(var(--primary) / 8%)' : 'none',
                   borderRadius: 'var(--radius-sm)',
-                  textDecoration: 'none',
+                  cursor: 'pointer',
                   fontFamily: "'Public Sans', sans-serif",
                   fontWeight: 'var(--font-weight-medium, 500)',
                   fontSize: 13,
-                  background: linkActive(link) ? 'hsl(var(--primary) / 8%)' : 'none',
-                  color: linkActive(link) ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                  color: moreMenuActive ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                  textAlign: 'left',
                 }}
               >
-                {link.label}
-              </Link>
-            ))}
+                Explore
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    fontSize: 18,
+                    transition: 'transform 0.2s ease',
+                    transform: isMobileMoreOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                >
+                  expand_more
+                </span>
+              </button>
 
-            <button
-              onClick={() => setIsMobileMoreOpen((value) => !value)}
-              aria-expanded={isMobileMoreOpen}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-                padding: '10px 14px',
-                border: 'none',
-                background: moreMenuActive ? 'hsl(var(--primary) / 8%)' : 'none',
-                borderRadius: 'var(--radius-sm)',
-                cursor: 'pointer',
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 13,
-                color: moreMenuActive ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
-                textAlign: 'left',
-              }}
-            >
-              Explore
-              <span
-                className="material-symbols-outlined"
-                style={{
-                  fontSize: 18,
-                  transition: 'transform 0.2s ease',
-                  transform: isMobileMoreOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                }}
-              >
-                expand_more
-              </span>
-            </button>
-
-            {isMobileMoreOpen && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                  paddingLeft: 12,
-                  borderLeft: '2px solid hsl(var(--border))',
-                  marginLeft: 14,
-                }}
-              >
-                {MORE_NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.label}
-                    to={linkPath(link)}
-                    style={{
-                      display: 'block',
-                      padding: '10px 14px',
-                      borderRadius: 'var(--radius-sm)',
-                      textDecoration: 'none',
-                      fontFamily: "'Public Sans', sans-serif",
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontSize: 13,
-                      background: linkActive(link) ? 'hsl(var(--primary) / 8%)' : 'none',
-                      color: linkActive(link)
-                        ? 'hsl(var(--primary))'
-                        : 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div
-            style={{
-              borderTop: '1px solid hsl(var(--border))',
-              marginTop: 16,
-              paddingTop: 16,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 8,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '8px 14px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'hsl(var(--card))',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  fontSize: 12,
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                Theme
-              </span>
-              {themeToggle}
-            </div>
-            {isLoggedIn ? (
-              <>
+              {isMobileMoreOpen && (
                 <div
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '10px 14px',
-                    borderRadius: 'var(--radius-md)',
-                    background: 'hsl(var(--card))',
+                    flexDirection: 'column',
+                    gap: 2,
+                    paddingLeft: 12,
+                    borderLeft: '2px solid hsl(var(--border))',
+                    marginLeft: 14,
                   }}
                 >
-                  {userAvatar ? (
-                    <img
-                      src={userAvatar}
-                      alt="Profile"
+                  {MORE_NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.label}
+                      to={linkPath(link)}
                       style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '50%',
-                        border: '2px solid hsl(var(--primary))',
-                        objectFit: 'cover',
-                        flexShrink: 0,
-                      }}
-                      decoding="async"
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '50%',
-                        background: 'hsl(var(--primary))',
-                        color: '#fff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                        person
-                      </span>
-                    </div>
-                  )}
-                  <div>
-                    <div
-                      style={{
+                        display: 'block',
+                        padding: '10px 14px',
+                        borderRadius: 'var(--radius-sm)',
+                        textDecoration: 'none',
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 13,
-                        color: 'hsl(var(--on-surface))',
+                        background: linkActive(link) ? 'hsl(var(--primary) / 8%)' : 'none',
+                        color: linkActive(link)
+                          ? 'hsl(var(--primary))'
+                          : 'hsl(var(--on-surface-muted))',
                       }}
                     >
-                      {userName || 'Member'}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "'Public Sans', sans-serif",
-                        fontWeight: 500,
-                        fontSize: 11,
-                        color: 'hsl(var(--accent))',
-                      }}
-                    >
-                      Active member
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div
+              style={{
+                borderTop: '1px solid hsl(var(--border))',
+                marginTop: 16,
+                paddingTop: 16,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 14px',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'hsl(var(--card))',
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  Theme
+                </span>
+                {themeToggle}
+              </div>
+              {isLoggedIn ? (
+                <>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      padding: '10px 14px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'hsl(var(--card))',
+                    }}
+                  >
+                    {userAvatar ? (
+                      <img
+                        src={userAvatar}
+                        alt="Profile"
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          border: '2px solid hsl(var(--primary))',
+                          objectFit: 'cover',
+                          flexShrink: 0,
+                        }}
+                        decoding="async"
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          background: 'hsl(var(--primary))',
+                          color: '#fff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                          person
+                        </span>
+                      </div>
+                    )}
+                    <div>
+                      <div
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
+                        {userName || 'Member'}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 500,
+                          fontSize: 11,
+                          color: 'hsl(var(--accent))',
+                        }}
+                      >
+                        Active member
+                      </div>
                     </div>
                   </div>
+                  <Link
+                    to="/dashboard"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '10px 14px',
+                      background: isActive('/dashboard') ? 'hsl(var(--primary) / 8%)' : 'none',
+                      color: 'hsl(var(--primary))',
+                      borderRadius: 'var(--radius-sm)',
+                      textDecoration: 'none',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 500,
+                      fontSize: 13,
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      dashboard
+                    </span>
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/dashboard/settings"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '10px 14px',
+                      color: 'hsl(var(--on-surface-muted))',
+                      borderRadius: 'var(--radius-sm)',
+                      textDecoration: 'none',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 500,
+                      fontSize: 13,
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      settings
+                    </span>
+                    Settings
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '10px 14px',
+                      border: 'none',
+                      background: 'none',
+                      color: 'hsl(var(--destructive))',
+                      borderRadius: 'var(--radius-sm)',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 500,
+                      fontSize: 13,
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      logout
+                    </span>
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                  <Button asChild variant="outline" size="default" style={{ flex: 1 }}>
+                    <Link to="/login">Login</Link>
+                  </Button>
+                  <Button asChild variant="accent" size="default" style={{ flex: 1 }}>
+                    <Link to="/register">Register</Link>
+                  </Button>
                 </div>
-                <Link
-                  to="/dashboard"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: '10px 14px',
-                    background: isActive('/dashboard') ? 'hsl(var(--primary) / 8%)' : 'none',
-                    color: 'hsl(var(--primary))',
-                    borderRadius: 'var(--radius-sm)',
-                    textDecoration: 'none',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 13,
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                    dashboard
-                  </span>
-                  Dashboard
-                </Link>
-                <Link
-                  to="/dashboard/settings"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: '10px 14px',
-                    color: 'hsl(var(--on-surface-muted))',
-                    borderRadius: 'var(--radius-sm)',
-                    textDecoration: 'none',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 13,
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                    settings
-                  </span>
-                  Settings
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: '10px 14px',
-                    border: 'none',
-                    background: 'none',
-                    color: 'hsl(var(--destructive))',
-                    borderRadius: 'var(--radius-sm)',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontFamily: "'Public Sans', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 13,
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                    logout
-                  </span>
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-                <Button asChild variant="outline" size="default" style={{ flex: 1 }}>
-                  <Link to="/login">Login</Link>
-                </Button>
-                <Button asChild variant="accent" size="default" style={{ flex: 1 }}>
-                  <Link to="/register">Register</Link>
-                </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </header>
   )
