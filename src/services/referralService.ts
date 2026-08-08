@@ -169,7 +169,7 @@ export const referralService = {
     const totalReferrals = referrals.length
 
     const pointsMap: Record<string, number> = {}
-    let totalPointsAwarded = 0
+    let totalPointsAwarded: number
 
     if (memberPoints.length > 0) {
       totalPointsAwarded = memberPoints.reduce((s, a) => s + (a.points ?? 0), 0)

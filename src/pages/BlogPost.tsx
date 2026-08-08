@@ -73,7 +73,7 @@ export default function BlogPost() {
     if (!post) return
     const url = window.location.href
     const title = post.title
-    let shareUrl = ''
+    let shareUrl: string
     switch (platform) {
       case 'facebook':
         shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`

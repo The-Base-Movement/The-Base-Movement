@@ -353,7 +353,7 @@ export const financeAnalyticsService = {
     })
     const totals: Record<string, number> = {}
     for (const e of entries) {
-      let key = 'General Fund'
+      let key: string
       if (groupBy === 'country') {
         key = e.country || 'Unknown'
       } else {

@@ -270,7 +270,7 @@ export default function DashboardLayout() {
 
       // 2. Fallback to Auth metadata if no stored member ID or DB fetch fails
       const user = authService.getUser()
-      let resolvedName = 'Member'
+      let resolvedName: string
       if (user) {
         const profile = await adminService.getMemberProfileByAuthId(user.id)
         if (profile) {

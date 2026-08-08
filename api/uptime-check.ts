@@ -59,7 +59,7 @@ export default async function handler(request: Request) {
 
   let ok = false
   let statusCode: number | null = null
-  let latencyMs: number | null = null
+  let latencyMs: number | null
   let errorMessage: string | null = null
 
   try {

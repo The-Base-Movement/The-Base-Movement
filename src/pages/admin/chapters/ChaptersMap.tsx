@@ -51,7 +51,7 @@ export function ChaptersMap({
   const chapterMarkers = useMemo(() => {
     return chapters
       .map((chapter, i) => {
-        let baseCoords: { lat: number; lng: number } | null = null
+        let baseCoords: { lat: number; lng: number } | null
 
         if (chapter.latitude !== undefined && chapter.longitude !== undefined) {
           baseCoords = { lat: chapter.latitude, lng: chapter.longitude }

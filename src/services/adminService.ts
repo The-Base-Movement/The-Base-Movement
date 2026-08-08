@@ -2377,7 +2377,9 @@ class AdminService {
       return JSON.stringify(reportData, null, 2)
     } catch (error) {
       console.error('[AUDIT-GEN] Report generation failed:', error)
-      throw new Error('Failed to aggregate compliance metrics from live database.')
+      throw new Error('Failed to aggregate compliance metrics from live database.', {
+        cause: error,
+      })
     }
   }
 
