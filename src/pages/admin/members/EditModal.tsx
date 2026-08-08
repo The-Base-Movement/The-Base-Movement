@@ -450,7 +450,7 @@ export function EditModal({
 
             <div>
               <label htmlFor="input-edit-partyAffiliation" style={labelStyle}>
-                Party Affiliation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+                Party Affiliation / CSO <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
               <select
                 id="input-edit-partyAffiliation"

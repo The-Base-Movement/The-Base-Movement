@@ -126,7 +126,7 @@ export default function PartyAffiliations() {
   return (
     <div className="admin-page-container space-y-6">
       <AdminPageHeader
-        title="Party affiliations analytics"
+        title="Party affiliations / CSO analytics"
         icon="how_to_vote"
         description="Strategic distribution and member affiliation intelligence across political parties in Ghana and the Diaspora."
         actions={
@@ -430,7 +430,7 @@ export default function PartyAffiliations() {
         <div className="ph p-4 border-b border-border flex items-center justify-between">
           <div>
             <h3 className="text-base font-semibold text-on-surface">
-              Party Affiliation Directory & Breakdown
+              Party Affiliation / CSO Directory & Breakdown
             </h3>
             <div className="meta text-xs text-on-surface-muted">
               Ranked list of political parties and member totals

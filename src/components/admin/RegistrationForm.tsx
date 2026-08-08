@@ -191,7 +191,7 @@ export default function RegistrationForm({
     e.preventDefault()
     if (formStep < 4) {
       if (formStep === 2 && !formData.partyAffiliation) {
-        toast.error('Party affiliation is required.')
+        toast.error('Party affiliation / CSO is required.')
         return
       }
       if (formStep === 3) {

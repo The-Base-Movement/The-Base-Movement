@@ -997,7 +997,7 @@ class ContentService {
         { id: 'logos-favicons', label: 'Logos & Favicons' },
         { id: 'public-assets', label: 'Public Assets' },
         { id: 'party-officials', label: 'Party Officials' },
-        { id: 'party-affiliations', label: 'Party Affiliations' },
+        { id: 'party-affiliations', label: 'Party Affiliations / CSO' },
         { id: 'strategic-focus', label: 'Strategic Focus' },
       ]
     }
@@ -1008,7 +1008,7 @@ class ContentService {
     }))
 
     if (!foldersList.some((f) => f.id === 'party-affiliations')) {
-      foldersList.push({ id: 'party-affiliations', label: 'Party Affiliations' })
+      foldersList.push({ id: 'party-affiliations', label: 'Party Affiliations / CSO' })
     }
     if (!foldersList.some((f) => f.id === 'strategic-focus')) {
       foldersList.push({ id: 'strategic-focus', label: 'Strategic Focus' })

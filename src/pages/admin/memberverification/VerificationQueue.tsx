@@ -326,9 +326,9 @@ export function VerificationQueue({
               outline: 'none',
               cursor: 'pointer',
             }}
-            aria-label="Filter by party affiliation"
+            aria-label="Filter by party affiliation / CSO"
           >
-            <option value="">All party affiliations</option>
+            <option value="">All party affiliations / CSO</option>
             {politicalParties.map((p) => (
               <option key={p} value={p}>
                 {p}

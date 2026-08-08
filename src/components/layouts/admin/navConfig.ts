@@ -115,7 +115,7 @@ export const getNavGroups = (
       {
         to: '/admin/party-affiliations',
         icon: 'how_to_vote',
-        label: 'Party affiliations',
+        label: 'Party affiliations / CSO',
         allowedRoles: [
           'SUPER_ADMIN',
           'FOUNDER',
