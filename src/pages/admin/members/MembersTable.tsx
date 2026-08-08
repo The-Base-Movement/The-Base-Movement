@@ -332,8 +332,17 @@ export function MembersTable({
                         fontSize: 12,
                         fontFamily: "'Public Sans', sans-serif",
                         fontWeight: 'var(--font-weight-medium, 500)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 5,
                       }}
                     >
+                      {(() => {
+                        const flag = getMemberFlag(member.platform, member.country)
+                        return flag ? (
+                          <span style={{ fontSize: 15, lineHeight: 1, flexShrink: 0 }}>{flag}</span>
+                        ) : null
+                      })()}
                       {member.platform === 'DIASPORA'
                         ? member.country || '—'
                         : member.region || '—'}
