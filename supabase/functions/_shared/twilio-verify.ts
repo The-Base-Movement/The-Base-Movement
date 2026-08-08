@@ -1,14 +1,21 @@
 const TWILIO_VERIFY_BASE_URL = 'https://verify.twilio.com/v2'
 
 function resolveTwilioVerifyVars() {
-  const accountSid = (Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID'))?.trim() ?? ''
-  const authToken = (Deno.env.get('TWILIO_AUTH_TOKEN') || Deno.env.get('TWILIO_TOKEN') || Deno.env.get('TWILIO_SECRET'))?.trim() ?? ''
-  const serviceSid = (
-    Deno.env.get('TWILIO_VERIFY_SERVICE_SID') ||
-    Deno.env.get('TWILIO_VERIFY_SID') ||
-    Deno.env.get('TWILIO_VERIFY_SERVICE_ID') ||
-    Deno.env.get('TWILIO_VERIFY_ID')
-  )?.trim() ?? ''
+  const accountSid =
+    (Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID'))?.trim() ?? ''
+  const authToken =
+    (
+      Deno.env.get('TWILIO_AUTH_TOKEN') ||
+      Deno.env.get('TWILIO_TOKEN') ||
+      Deno.env.get('TWILIO_SECRET')
+    )?.trim() ?? ''
+  const serviceSid =
+    (
+      Deno.env.get('TWILIO_VERIFY_SERVICE_SID') ||
+      Deno.env.get('TWILIO_VERIFY_SID') ||
+      Deno.env.get('TWILIO_VERIFY_SERVICE_ID') ||
+      Deno.env.get('TWILIO_VERIFY_ID')
+    )?.trim() ?? ''
 
   return { accountSid, authToken, serviceSid }
 }

@@ -26,22 +26,24 @@ async function createAuthUser(
 ): Promise<{ via: 'phone' | 'email' | null; error?: { message: string } }> {
   let error: { message: string } | null = null
   if (normalizedPhone) {
+    // deno-lint-ignore no-explicit-any
     const res = await supabase.auth.admin.createUser({
       id,
       phone: normalizedPhone,
       phone_confirm: true,
       password: randomPassword(24),
-    })
+    } as any)
     if (!res.error) return { via: 'phone' }
     error = res.error
   }
   if (email) {
+    // deno-lint-ignore no-explicit-any
     const res = await supabase.auth.admin.createUser({
       id,
       email,
       email_confirm: true,
       password: randomPassword(24),
-    })
+    } as any)
     if (!res.error) return { via: 'email' }
     error = res.error
   }
@@ -323,12 +325,13 @@ Deno.serve(async (req) => {
       // Prefer phone; fall back to email if phone is absent or GoTrue rejects it.
       let createErr: { message: string } | null = null
       if (normalizedPhone) {
+        // deno-lint-ignore no-explicit-any
         const res = await supabase.auth.admin.createUser({
           id,
           phone: normalizedPhone,
           phone_confirm: true,
           password: randomPassword(24),
-        })
+        } as any)
         if (!res.error) {
           created += 1
           createdViaPhone += 1
@@ -338,12 +341,13 @@ Deno.serve(async (req) => {
       }
 
       if (email) {
+        // deno-lint-ignore no-explicit-any
         const res = await supabase.auth.admin.createUser({
           id,
           email,
           email_confirm: true,
           password: randomPassword(24),
-        })
+        } as any)
         if (!res.error) {
           created += 1
           createdViaEmail += 1

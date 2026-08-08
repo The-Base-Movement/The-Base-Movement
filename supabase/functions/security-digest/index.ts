@@ -99,7 +99,9 @@ serve(async (req: Request) => {
 
     const fmt = (n: unknown) => String(n ?? 0)
     const embed = {
-      title: attention ? 'ðŸ›¡ï¸ Security Digest â€” attention needed' : 'ðŸ›¡ï¸ Security Digest â€” all clear',
+      title: attention
+        ? 'ðŸ›¡ï¸ Security Digest â€” attention needed'
+        : 'ðŸ›¡ï¸ Security Digest â€” all clear',
       description: attention
         ? 'âš ï¸ One or more metrics drifted from baseline or failed/denied events occurred. Review below.'
         : 'No configuration drift and no failed/denied admin events in the last 7 days.',
@@ -134,7 +136,10 @@ serve(async (req: Request) => {
     }
 
     if (drifted.length > 0) {
-      embed.fields.push({ name: 'Drift detected', value: drifted.map((d) => `â€¢ ${d}`).join('\n') })
+      embed.fields.push({
+        name: 'Drift detected',
+        value: drifted.map((d) => `â€¢ ${d}`).join('\n'),
+      })
     }
 
     const discordRes = await fetch(webhookUrl, {
