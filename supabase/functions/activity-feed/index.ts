@@ -1,4 +1,4 @@
-﻿// activity-feed â†’ Discord
+// activity-feed â†’ Discord
 //
 // Near-real-time feed of member activity (logins, logouts, on-site actions).
 // Invoked by a pg_cron job every few minutes. Reads new rows from
@@ -67,10 +67,15 @@ serve(async (req: Request) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const webhookUrl = Deno.env.get('DISCORD_ACTIVITY_WEBHOOK_URL')
     const cronToken = Deno.env.get('DISCORD_ACTIVITY_CRON_TOKEN')
+
+    if (!supabaseUrl || !serviceKey) {
+      console.error('[ACTIVITY-FEED] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set.')
+      return json({ error: 'SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing.' }, 500, corsHeaders)
+    }
 
     if (!webhookUrl) {
       console.error('[ACTIVITY-FEED] DISCORD_ACTIVITY_WEBHOOK_URL is not set.')

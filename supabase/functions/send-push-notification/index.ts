@@ -1,9 +1,9 @@
-﻿// THE BASE: WEB PUSH SENDER
+// THE BASE: WEB PUSH SENDER
 // Sends Web Push notifications to a list of users (or all opted-in subscribers).
 // Invoke with: { userIds: string[] | "all", title: string, body: string, url?: string }
 // Requires Supabase secrets: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import webpush from 'npm:web-push'
+import * as webpush from 'https://esm.sh/web-push@3.6.7'
 import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
