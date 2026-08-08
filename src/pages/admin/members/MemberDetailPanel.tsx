@@ -12,6 +12,7 @@ import {
   type MemberNote,
 } from '@/services/adminService'
 import { ActivityTab } from './ActivityTab'
+import { getFlagImageUrl } from '@/lib/utils'
 import { IdentityTab } from './IdentityTab'
 import { DonationsTab } from './DonationsTab'
 import { PollsTab } from './PollsTab'
@@ -267,9 +268,32 @@ export function MemberDetailPanel({
                     letterSpacing: '-.02em',
                     marginTop: 4,
                     lineHeight: 1.1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
                   }}
                 >
                   {member.name}
+                  {(() => {
+                    const flagSrc =
+                      member.platform === 'GHANA'
+                        ? getFlagImageUrl('Ghana')
+                        : getFlagImageUrl(member.country ?? '')
+                    return flagSrc ? (
+                      <img
+                        src={flagSrc}
+                        alt={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                        title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                        style={{
+                          height: 20,
+                          width: 'auto',
+                          verticalAlign: 'middle',
+                          borderRadius: 3,
+                          flexShrink: 0,
+                        }}
+                      />
+                    ) : null
+                  })()}
                 </h2>
                 <div
                   style={{
