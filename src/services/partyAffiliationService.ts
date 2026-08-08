@@ -38,41 +38,70 @@ export const partyAffiliationService = {
     const platform = options?.platform || 'ALL'
     const regionOrCountry = options?.regionOrCountry || ''
 
-    // Build query for users with non-deleted status
-    let query = supabase
-      .from('users')
-      .select('id, party_affiliation, platform, region, country')
-      .is('deleted_at', null)
+    const BATCH_SIZE = 1000
+    let users: Array<{
+      id: string
+      party_affiliation: string | null
+      platform: string | null
+      region: string | null
+      country: string | null
+    }> = []
 
-    if (platform === 'GHANA') {
-      query = query.eq('platform', 'GHANA')
-      if (regionOrCountry) {
-        query = query.eq('region', regionOrCountry)
+    let page = 0
+    let hasMore = true
+
+    while (hasMore) {
+      const from = page * BATCH_SIZE
+      const to = from + BATCH_SIZE - 1
+
+      let query = supabase
+        .from('users')
+        .select('id, party_affiliation, platform, region, country')
+        .is('deleted_at', null)
+        .range(from, to)
+
+      if (platform === 'GHANA') {
+        query = query.eq('platform', 'GHANA')
+        if (regionOrCountry) {
+          query = query.eq('region', regionOrCountry)
+        }
+      } else if (platform === 'DIASPORA') {
+        query = query.eq('platform', 'DIASPORA')
+        if (regionOrCountry) {
+          query = query.eq('country', regionOrCountry)
+        }
       }
-    } else if (platform === 'DIASPORA') {
-      query = query.eq('platform', 'DIASPORA')
-      if (regionOrCountry) {
-        query = query.eq('country', regionOrCountry)
+
+      const { data: batch, error } = await query
+      if (error) {
+        console.warn('[partyAffiliationService] Failed to fetch users:', error.message)
+        if (page === 0) {
+          return {
+            totalMembers: 0,
+            totalAffiliated: 0,
+            affiliationRate: 0,
+            topParty: null,
+            ghanaTotal: 0,
+            diasporaTotal: 0,
+            partyStats: [],
+            availableGhanaRegions: [],
+            availableDiasporaCountries: [],
+          }
+        }
+        break
+      }
+
+      if (!batch || batch.length === 0) {
+        hasMore = false
+      } else {
+        users = users.concat(batch)
+        if (batch.length < BATCH_SIZE) {
+          hasMore = false
+        } else {
+          page++
+        }
       }
     }
-
-    const { data: rawUsers, error } = await query
-    if (error) {
-      console.warn('[partyAffiliationService] Failed to fetch users:', error.message)
-      return {
-        totalMembers: 0,
-        totalAffiliated: 0,
-        affiliationRate: 0,
-        topParty: null,
-        ghanaTotal: 0,
-        diasporaTotal: 0,
-        partyStats: [],
-        availableGhanaRegions: [],
-        availableDiasporaCountries: [],
-      }
-    }
-
-    const users = rawUsers || []
     const totalMembers = users.length
 
     // Extract unique regions for Ghana and countries for Diaspora dropdowns
