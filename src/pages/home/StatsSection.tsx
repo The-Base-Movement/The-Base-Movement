@@ -1,21 +1,11 @@
 import { memo, useEffect, type RefObject } from 'react'
 import { gsap } from 'gsap'
 import { StatCard } from './StatCard'
-
-interface Stats {
-  members: number
-  chapters: number
-  regions: number
-  diaspora: number
-  countries: number
-  membersDelta: string
-  chaptersDelta: string
-  diasporaDelta: string
-}
+import type { PublicStats } from '@/services/publicSiteService'
 
 interface StatsSectionProps {
   statsGridRef: RefObject<HTMLDivElement | null>
-  stats: Stats
+  stats: PublicStats
 }
 
 function StatsSectionInner({ statsGridRef, stats }: StatsSectionProps) {
@@ -97,7 +87,7 @@ function StatsSectionInner({ statsGridRef, stats }: StatsSectionProps) {
             value={stats.regions}
             suffix="/16"
             label="Full presence across every administrative region of Ghana"
-            sparkHeights={[6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18]}
+            series={stats.regionsSeries}
             delta="National coverage"
             deltaIcon="circle"
           />
@@ -106,7 +96,7 @@ function StatsSectionInner({ statsGridRef, stats }: StatsSectionProps) {
             eye="Diaspora Countries"
             value={stats.countries}
             label="Countries worldwide with Base Diaspora members"
-            sparkHeights={[5, 6, 7, 7, 9, 10, 10, 12, 13, 14, 16, 18]}
+            series={stats.countriesSeries}
             delta={stats.chaptersDelta}
             deltaIcon="up"
           />
@@ -115,7 +105,7 @@ function StatsSectionInner({ statsGridRef, stats }: StatsSectionProps) {
             eye="Diaspora"
             value={stats.diaspora}
             label="Global Ghanaians supporting from abroad"
-            sparkHeights={[3, 4, 4, 5, 7, 7, 10, 11, 13, 14, 16, 18]}
+            series={stats.diasporaSeries}
             delta={stats.diasporaDelta}
             deltaIcon="up"
           />
@@ -124,7 +114,7 @@ function StatsSectionInner({ statsGridRef, stats }: StatsSectionProps) {
             eye="Ghana Base"
             value={stats.members}
             label="Verified citizens registered nationwide"
-            sparkHeights={[4, 6, 7, 7, 9, 11, 12, 14, 15, 16, 17, 18]}
+            series={stats.membersSeries}
             delta={stats.membersDelta}
             deltaIcon="up"
           />

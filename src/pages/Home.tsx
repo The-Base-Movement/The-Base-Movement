@@ -6,6 +6,7 @@ import {
   useActivePolls,
 } from '@/hooks/queries/usePublicContent'
 import { usePerformance } from '@/context/PerformanceContext'
+import { EMPTY_PUBLIC_STATS } from '@/services/publicSiteService'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
 
@@ -41,18 +42,10 @@ const StatsSection = lazy(() =>
   import('./home/StatsSection').then((module) => ({ default: module.StatsSection }))
 )
 
-const DEFAULT_STATS = {
-  members: 0,
-  chapters: 0,
-  regions: 0,
-  diaspora: 0,
-  countries: 0,
-  // Blank, not '...': the stat cards hide the trend row when there is no
-  // delta, so nothing flashes before the RPC resolves.
-  membersDelta: '',
-  chaptersDelta: '',
-  diasporaDelta: '',
-}
+// Zeroed placeholder until the RPC resolves. Deltas and series are blank so
+// the stat cards hide their trend row and sparkline rather than flash a
+// placeholder shape.
+const DEFAULT_STATS = EMPTY_PUBLIC_STATS
 
 const fallbackMilestones = [
   {

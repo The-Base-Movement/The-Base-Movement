@@ -8,34 +8,53 @@ function formatDelta(value: unknown): string {
   return `+${count.toLocaleString()} in the last 30 days`
 }
 
+/** 12-week trend series from the RPC. Empty when absent, which tells the
+ *  sparkline to render nothing rather than invent a shape. */
+function toSeries(value: unknown): number[] {
+  if (!Array.isArray(value)) return []
+  return value.map((n) => Number(n) || 0)
+}
+
+export interface PublicStats {
+  members: number
+  chapters: number
+  regions: number
+  diaspora: number
+  countries: number
+  membersDelta: string
+  chaptersDelta: string
+  diasporaDelta: string
+  membersSeries: number[]
+  diasporaSeries: number[]
+  countriesSeries: number[]
+  regionsSeries: number[]
+}
+
+export const EMPTY_PUBLIC_STATS: PublicStats = {
+  members: 0,
+  chapters: 0,
+  regions: 16,
+  diaspora: 0,
+  countries: 0,
+  membersDelta: '',
+  chaptersDelta: '',
+  diasporaDelta: '',
+  membersSeries: [],
+  diasporaSeries: [],
+  countriesSeries: [],
+  regionsSeries: [],
+}
+
 export const publicSiteService = {
-  async getPublicStats(): Promise<{
-    members: number
-    chapters: number
-    regions: number
-    diaspora: number
-    countries: number
-    membersDelta: string
-    chaptersDelta: string
-    diasporaDelta: string
-  }> {
+  async getPublicStats(): Promise<PublicStats> {
     const { data, error } = await supabase.rpc('get_public_stats')
     if (error || !data) {
       console.warn('[PUBLIC SITE] Failed to fetch public stats:', error)
-      return {
-        members: 0,
-        chapters: 0,
-        regions: 16,
-        diaspora: 0,
-        countries: 0,
-        membersDelta: '',
-        chaptersDelta: '',
-        diasporaDelta: '',
-      }
+      return EMPTY_PUBLIC_STATS
     }
 
     // get_public_stats() returns: members, diaspora, chapters, regions,
-    // countries, members_delta_30d, diaspora_delta_30d.
+    // countries, {members,diaspora}_delta_30d, and *_series (12 weekly points).
     const chapters = Number(data.chapters ?? 0)
     return {
       members: Number(data.members ?? 0),
@@ -48,6 +67,10 @@ export const publicSiteService = {
       // the countries card — it reports the live community count instead.
       chaptersDelta: chapters ? `Across ${chapters.toLocaleString()} communities` : '',
       diasporaDelta: formatDelta(data.diaspora_delta_30d),
+      membersSeries: toSeries(data.members_series),
+      diasporaSeries: toSeries(data.diaspora_series),
+      countriesSeries: toSeries(data.countries_series),
+      regionsSeries: toSeries(data.regions_series),
     }
   },
 
