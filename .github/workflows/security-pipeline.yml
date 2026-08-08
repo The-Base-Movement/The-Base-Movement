@@ -27,7 +27,7 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
+          deno-version: v2.x
 
       - name: Install dependencies
         run: npm ci
@@ -40,7 +40,7 @@ jobs:
 
       - name: Deno check all edge functions
         run: |
-          find supabase/functions -name index.ts -print0 | xargs -0 -n1 deno check
+          find supabase/functions -name index.ts -print0 | xargs -0 -n1 deno check --no-lock
 
       - name: Create stub .env for tests
         run: |
