@@ -1,40 +1,24 @@
 import { useEffect, useState } from 'react'
 import SEO from '@/components/SEO'
-import { publicSiteService } from '@/services/publicSiteService'
+import {
+  publicSiteService,
+  EMPTY_PUBLIC_STATS,
+  type PublicStats,
+} from '@/services/publicSiteService'
 import { AboutHero } from './about/AboutHero'
 import { AboutPillars } from './about/AboutPillars'
 import { AboutStats } from './about/AboutStats'
 import { AboutCTA } from './about/AboutCTA'
 import { WingDivider } from '@/components/ui/WingDivider'
 
-const DEFAULT_STATS = {
-  members: 0,
-  chapters: 0,
-  regions: 16,
-  diaspora: 0,
-  membersDelta: '',
-  chaptersDelta: '',
-  diasporaDelta: '',
-}
-
 export default function About() {
-  const [stats, setStats] = useState(DEFAULT_STATS)
+  const [stats, setStats] = useState<PublicStats>(EMPTY_PUBLIC_STATS)
   const [siteSettings, setSiteSettings] = useState<Record<string, string>>({})
 
   useEffect(() => {
     publicSiteService
       .getPublicStats()
-      .then((s) => {
-        setStats({
-          members: s.members,
-          chapters: s.chapters,
-          regions: s.regions,
-          diaspora: s.diaspora,
-          membersDelta: s.membersDelta,
-          chaptersDelta: s.chaptersDelta,
-          diasporaDelta: s.diasporaDelta,
-        })
-      })
+      .then(setStats)
       .catch(() => {})
 
     publicSiteService
