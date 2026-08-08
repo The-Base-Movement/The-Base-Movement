@@ -4,6 +4,7 @@ import { religions, politicalParties } from '@/components/admin/RegistrationForm
 import { useChapters } from '@/context/ChaptersContext'
 import { memberService } from '@/services/memberService'
 import { shortDiasporaName } from '@/lib/diaspora'
+import { getMemberFlag } from '@/utils/countryFlag'
 
 type SearchType = 'default' | 'constituency' | 'district' | 'region' | 'polling_station'
 
@@ -317,9 +318,9 @@ export function MembersFilterBar({
             onChange={(e) => onPlatformFilterChange(e.target.value as 'all' | 'GHANA' | 'DIASPORA')}
             style={selectSt}
           >
-            <option value="all">Ghana + Diaspora</option>
-            <option value="GHANA">Ghana Network</option>
-            <option value="DIASPORA">Diaspora Network</option>
+            <option value="all">🌍 Ghana + Diaspora</option>
+            <option value="GHANA">🇬🇭 Ghana Network</option>
+            <option value="DIASPORA">✈️ Diaspora Network</option>
           </select>
           <select
             aria-label="Filter by country"
@@ -327,12 +328,15 @@ export function MembersFilterBar({
             onChange={(e) => onCountryFilterChange(e.target.value)}
             style={selectSt}
           >
-            <option value="all">All countries</option>
-            {countries.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
+            <option value="all">🌍 All countries</option>
+            {countries.map((c) => {
+              const flag = getMemberFlag('DIASPORA', c)
+              return (
+                <option key={c} value={c}>
+                  {flag ? `${flag} ${c}` : c}
+                </option>
+              )
+            })}
           </select>
           <select
             aria-label="Filter by diaspora community"
