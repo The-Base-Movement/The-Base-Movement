@@ -7,7 +7,7 @@
  */
 
 import type { Member } from '@/services/adminService'
-import { getMemberFlag } from '@/utils/countryFlag'
+import { getEmojiFlag } from '@/lib/utils'
 
 interface Props {
   member: Member
@@ -135,7 +135,10 @@ export default function MemberListCard({
               {member.name}
             </span>
             {(() => {
-              const flag = getMemberFlag(member.platform, member.country)
+              const flag =
+                member.platform === 'GHANA'
+                  ? getEmojiFlag('GH')
+                  : getEmojiFlag(member.country ?? '')
               return flag ? (
                 <span
                   title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}

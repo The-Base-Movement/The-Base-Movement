@@ -4,7 +4,7 @@ import { religions, politicalParties } from '@/components/admin/RegistrationForm
 import { useChapters } from '@/context/ChaptersContext'
 import { memberService } from '@/services/memberService'
 import { shortDiasporaName } from '@/lib/diaspora'
-import { getMemberFlag } from '@/utils/countryFlag'
+import { getEmojiFlag } from '@/lib/utils'
 
 type SearchType = 'default' | 'constituency' | 'district' | 'region' | 'polling_station'
 
@@ -122,12 +122,19 @@ export function MembersFilterBar({
     SEARCH_TYPE_OPTIONS.find((o) => o.value === searchType) ?? SEARCH_TYPE_OPTIONS[0]
 
   const { chapters } = useChapters()
-  const [countries, setCountries] = useState<string[]>([])
+  const [countries, setCountries] = useState<{ name: string; flag_url?: string | null }[]>([])
 
   useEffect(() => {
     memberService
       .getCountries()
-      .then((list) => setCountries(list.map((c) => c.name)))
+      .then((list) =>
+        setCountries(
+          list.map((c) => ({
+            name: c.name,
+            flag_url: (c as { flag_url?: string | null }).flag_url ?? null,
+          }))
+        )
+      )
       .catch(console.error)
   }, [])
 
@@ -330,10 +337,14 @@ export function MembersFilterBar({
           >
             <option value="all">🌍 All countries</option>
             {countries.map((c) => {
-              const flag = getMemberFlag('DIASPORA', c)
+              const flag = c.flag_url ? undefined : getEmojiFlag(c.name)
               return (
-                <option key={c} value={c}>
-                  {flag ? `${flag} ${c}` : c}
+                <option key={c.name} value={c.name}>
+                  {c.flag_url
+                    ? `${getEmojiFlag(c.name) || '🌍'} ${c.name}`
+                    : flag
+                      ? `${flag} ${c.name}`
+                      : c.name}
                 </option>
               )
             })}

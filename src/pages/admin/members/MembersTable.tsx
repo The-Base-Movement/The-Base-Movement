@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { type Member, adminService } from '@/services/adminService'
 import MemberListCard from '@/components/admin/MemberListCard'
-import { getMemberFlag } from '@/utils/countryFlag'
+import { getEmojiFlag } from '@/lib/utils'
 
 const thStyle: React.CSSProperties = {
   padding: '10px 16px',
@@ -276,7 +276,10 @@ export function MembersTable({
                         >
                           {member.name}
                           {(() => {
-                            const flag = getMemberFlag(member.platform, member.country)
+                            const flag =
+                              member.platform === 'GHANA'
+                                ? getEmojiFlag('GH')
+                                : getEmojiFlag(member.country ?? '')
                             return flag ? (
                               <span
                                 title={
@@ -338,7 +341,10 @@ export function MembersTable({
                       }}
                     >
                       {(() => {
-                        const flag = getMemberFlag(member.platform, member.country)
+                        const flag =
+                          member.platform === 'GHANA'
+                            ? getEmojiFlag('GH')
+                            : getEmojiFlag(member.country ?? '')
                         return flag ? (
                           <span style={{ fontSize: 15, lineHeight: 1, flexShrink: 0 }}>{flag}</span>
                         ) : null
