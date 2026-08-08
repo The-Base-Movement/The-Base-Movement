@@ -16,6 +16,7 @@ import {
   emergencyRelationships,
   educationLevels,
   religions,
+  politicalParties,
 } from '@/components/admin/RegistrationForm.constants'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
@@ -849,6 +850,32 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="select-party-affiliation"
+                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
+                  >
+                    Party Affiliation{' '}
+                    <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
+                      (Optional)
+                    </span>
+                  </label>
+                  <select
+                    name="name-party-affiliation"
+                    id="select-party-affiliation"
+                    value={formData.partyAffiliation || ''}
+                    onChange={(e) => onInputChange('partyAffiliation', e.target.value)}
+                    className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                  >
+                    <option value="">Select Party Affiliation</option>
+                    {politicalParties.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {platform === 'DIASPORA' && (

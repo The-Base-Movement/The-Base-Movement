@@ -10,6 +10,19 @@ export const ageRanges = ['18-25', '26-35', '36-45', '46-60', '60+']
 // Optional dropdown; free-form intentionally avoided to keep the data clean.
 export const religions = ['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']
 
+export const politicalParties = [
+  'New Patriotic Party — NPP',
+  'Great Consolidated Popular Party — GCPP',
+  'Ghana Freedom Party — GFP',
+  'Ghana Union Movement — GUM',
+  'Liberal Party of Ghana — LPG',
+  'National Democratic Party — NDP',
+  'Convention People’s Party — CPP',
+  'National Democratic Congress — NDC',
+  'All People’s Congress — APC',
+  'The New Force — NF',
+]
+
 export const educationLevels = [
   'None',
   'Primary',

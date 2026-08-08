@@ -780,6 +780,10 @@ class AdminService {
     return memberService.getCountries()
   }
 
+  async getPoliticalParties() {
+    return memberService.getPoliticalParties()
+  }
+
   async deleteMember(id: string): Promise<boolean> {
     const success = await memberService.deleteMember(id)
     if (success) await this.logAction('DELETE_MEMBER', `MEMBERS/${id}`, 'Warning')

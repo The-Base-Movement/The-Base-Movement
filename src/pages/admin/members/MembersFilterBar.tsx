@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { SortToggle } from '@/components/ui/SortToggle'
-import { religions } from '@/components/admin/RegistrationForm.constants'
+import { religions, politicalParties } from '@/components/admin/RegistrationForm.constants'
 import { useChapters } from '@/context/ChaptersContext'
 import { memberService } from '@/services/memberService'
 import { shortDiasporaName } from '@/lib/diaspora'
@@ -14,6 +14,7 @@ interface MembersFilterBarProps {
   genderFilter: 'all' | 'Male' | 'Female'
   ageRangeFilter: string
   religionFilter: string
+  partyAffiliationFilter: string
   platformFilter: 'all' | 'GHANA' | 'DIASPORA'
   countryFilter: string
   chapterFilter: string
@@ -24,6 +25,7 @@ interface MembersFilterBarProps {
   onGenderFilterChange: (val: 'all' | 'Male' | 'Female') => void
   onAgeRangeFilterChange: (val: string) => void
   onReligionFilterChange: (val: string) => void
+  onPartyAffiliationFilterChange: (val: string) => void
   onPlatformFilterChange: (val: 'all' | 'GHANA' | 'DIASPORA') => void
   onCountryFilterChange: (val: string) => void
   onChapterFilterChange: (val: string) => void
@@ -97,6 +99,7 @@ export function MembersFilterBar({
   genderFilter,
   ageRangeFilter,
   religionFilter,
+  partyAffiliationFilter,
   platformFilter,
   countryFilter,
   chapterFilter,
@@ -107,6 +110,7 @@ export function MembersFilterBar({
   onGenderFilterChange,
   onAgeRangeFilterChange,
   onReligionFilterChange,
+  onPartyAffiliationFilterChange,
   onPlatformFilterChange,
   onCountryFilterChange,
   onChapterFilterChange,
@@ -292,6 +296,19 @@ export function MembersFilterBar({
             {religions.map((r) => (
               <option key={r} value={r}>
                 {r}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="Filter by party affiliation"
+            value={partyAffiliationFilter}
+            onChange={(e) => onPartyAffiliationFilterChange(e.target.value)}
+            style={selectSt}
+          >
+            <option value="all">All party affiliations</option>
+            {politicalParties.map((p) => (
+              <option key={p} value={p}>
+                {p}
               </option>
             ))}
           </select>

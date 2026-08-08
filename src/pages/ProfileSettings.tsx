@@ -43,6 +43,7 @@ interface FormState {
   gender: string
   birthYear: string
   religion: string
+  partyAffiliation: string
   secondaryPhone: string
   secondaryCountryCode: string
   joinedDate: string
@@ -157,6 +158,7 @@ export default function ProfileSettings() {
     gender: 'Male / 26-35',
     birthYear: '',
     religion: '',
+    partyAffiliation: '',
     secondaryPhone: '',
     secondaryCountryCode: '+233',
     joinedDate: new Date().toLocaleDateString('en-GB', {
@@ -246,6 +248,7 @@ export default function ProfileSettings() {
               : 'Male / 26-35',
           birthYear: profile.birthYear ? String(profile.birthYear) : '',
           religion: profile.religion || '',
+          partyAffiliation: profile.partyAffiliation || '',
           secondaryPhone: secondaryParts.phone,
           secondaryCountryCode: secondaryParts.countryCode,
           joinedDate: profile.joined,
@@ -422,6 +425,7 @@ export default function ProfileSettings() {
         gender: form.birthYear ? form.gender.split(' / ')[0] : form.gender,
         birthYear: form.birthYear ? Number(form.birthYear) : undefined,
         religion: form.religion,
+        partyAffiliation: form.partyAffiliation,
         secondaryPhone: normalizedSecondary,
         district: form.district,
         // Chapter is Diaspora-only; Ghana Network members are organised by constituency

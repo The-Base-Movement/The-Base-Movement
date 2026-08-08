@@ -148,6 +148,7 @@ export const registrationService = {
       voters_id_card: formData.votersIdCard || null,
       district: formData.district || null,
       polling_station_code: formData.pollingStationCode || null,
+      party_affiliation: formData.partyAffiliation || null,
     }
 
     // 3. Create the auth user AND the member row ATOMICALLY on the server. The

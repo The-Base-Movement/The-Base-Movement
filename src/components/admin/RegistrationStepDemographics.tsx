@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ageRanges, religions } from './RegistrationForm.constants'
+import { ageRanges, religions, politicalParties } from './RegistrationForm.constants'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
 import {
   getConstituenciesByRegion,
@@ -362,6 +362,47 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
           {religions.map((r) => (
             <option key={r} value={r}>
               {r}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="space-y-2">
+        <label
+          htmlFor="select-party-affiliation-admin"
+          style={{
+            fontSize: '10px',
+            fontWeight: 'var(--font-weight-medium, 500)',
+            color: 'hsl(var(--on-surface-muted))',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          Party Affiliation{' '}
+          <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+            (optional)
+          </span>
+        </label>
+        <select
+          name="name-party-affiliation-admin"
+          id="select-party-affiliation-admin"
+          value={formData.partyAffiliation || ''}
+          onChange={(e) => handleChange('partyAffiliation', e.target.value)}
+          className="reg"
+          style={{
+            width: '100%',
+            padding: '14px 18px',
+            fontSize: '14px',
+            background: 'hsl(var(--container-low))',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          <option value="">Select Party Affiliation</option>
+          {politicalParties.map((p) => (
+            <option key={p} value={p}>
+              {p}
             </option>
           ))}
         </select>

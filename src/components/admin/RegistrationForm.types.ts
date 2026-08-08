@@ -30,6 +30,7 @@ export interface RegistrationFormData {
   ghanaCardNumber: string
   votersIdCard?: string
   pollingStationCode?: string
+  partyAffiliation?: string
 }
 
 export interface RegistrationSubmission extends RegistrationFormData {

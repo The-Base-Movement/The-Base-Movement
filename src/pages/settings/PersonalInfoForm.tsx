@@ -2,7 +2,11 @@ import { labelStyle, inputStyle, selectStyle } from './shared'
 import { SelIcon } from './SelIcon'
 import { JobSelector } from '@/components/JobSelector'
 import type { JobSelection } from '@/services/jobTaxonomyService'
-import { emergencyRelationships, religions } from '@/components/admin/RegistrationForm.constants'
+import {
+  emergencyRelationships,
+  religions,
+  politicalParties,
+} from '@/components/admin/RegistrationForm.constants'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { diasporaName } from '@/lib/diaspora'
 
@@ -34,6 +38,7 @@ interface FormState {
   gender: string
   birthYear: string
   religion: string
+  partyAffiliation: string
   secondaryPhone: string
   secondaryCountryCode: string
   joinedDate: string
@@ -318,6 +323,32 @@ export function PersonalInfoForm({
                 {religions.map((r) => (
                   <option key={r} value={r}>
                     {r}
+                  </option>
+                ))}
+              </select>
+              <SelIcon />
+            </div>
+          </div>
+
+          {/* Party Affiliation — optional */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label htmlFor="select-party-affiliation" style={labelStyle}>
+              Party Affiliation{' '}
+              <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
+                (optional)
+              </span>
+            </label>
+            <div style={{ position: 'relative' }}>
+              <select
+                id="select-party-affiliation"
+                value={form.partyAffiliation}
+                onChange={(e) => onChange('partyAffiliation', e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">Select</option>
+                {politicalParties.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
                   </option>
                 ))}
               </select>

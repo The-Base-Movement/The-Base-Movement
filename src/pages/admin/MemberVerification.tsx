@@ -47,6 +47,7 @@ export default function MemberVerification() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [countryFilter, setCountryFilter] = useState('')
   const [religionFilter, setReligionFilter] = useState('')
+  const [partyAffiliationFilter, setPartyAffiliationFilter] = useState('')
   const [ageRangeFilter, setAgeRangeFilter] = useState('')
 
   // Region / constituency / country lookups for the filters + inline edit form.
@@ -217,6 +218,7 @@ export default function MemberVerification() {
       (constituencyFilter === '' || m.constituency === constituencyFilter) &&
       (countryFilter === '' || m.country === countryFilter) &&
       (religionFilter === '' || m.religion === religionFilter) &&
+      (partyAffiliationFilter === '' || m.partyAffiliation === partyAffiliationFilter) &&
       (ageRangeFilter === '' || m.ageRange === ageRangeFilter) &&
       ((m.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
         (m.id?.toLowerCase() || '').includes(search.toLowerCase()) ||
@@ -349,6 +351,8 @@ export default function MemberVerification() {
           countries={countries}
           religionFilter={religionFilter}
           setReligionFilter={setReligionFilter}
+          partyAffiliationFilter={partyAffiliationFilter}
+          setPartyAffiliationFilter={setPartyAffiliationFilter}
           ageRangeFilter={ageRangeFilter}
           setAgeRangeFilter={setAgeRangeFilter}
           filtered={filtered}

@@ -244,6 +244,7 @@ serve(async (req: Request) => {
       digital_address: sanitizeStr(userRow.digital_address, 200) || null,
       birth_year: typeof userRow.birth_year === 'number' ? userRow.birth_year : null,
       religion: sanitizeStr(userRow.religion, 50) || null,
+      party_affiliation: sanitizeStr(userRow.party_affiliation, 100) || null,
       secondary_phone: sanitizeStr(userRow.secondary_phone, 20) || null,
       referred_by:
         refParam ||
