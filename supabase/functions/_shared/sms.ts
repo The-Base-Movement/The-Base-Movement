@@ -146,7 +146,10 @@ export async function sendTwilioSms(recipients: string[], message: string): Prom
   // @ts-ignore: Deno global
   const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID')
   // @ts-ignore: Deno global
-  const authToken = Deno.env.get('TWILIO_AUTH_TOKEN') || Deno.env.get('TWILIO_TOKEN') || Deno.env.get('TWILIO_SECRET')
+  const authToken =
+    Deno.env.get('TWILIO_AUTH_TOKEN') ||
+    Deno.env.get('TWILIO_TOKEN') ||
+    Deno.env.get('TWILIO_SECRET')
   // @ts-ignore: Deno global
   const fromPhone =
     Deno.env.get('TWILIO_PHONE_NUMBER') ||
@@ -213,7 +216,11 @@ export async function sendTwilioSms(recipients: string[], message: string): Prom
 /**
  * Send one message to one or more recipients through Infobip, MNotify, or Twilio API.
  */
-export async function sendSms(recipients: string[], message: string): Promise<SmsResult> {
+export async function sendSms(
+  recipients: string[],
+  message: string,
+  options?: { mnotifyOnly?: boolean }
+): Promise<SmsResult> {
   // @ts-ignore: Deno global
   const infobipKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
   // @ts-ignore: Deno global
@@ -224,14 +231,14 @@ export async function sendSms(recipients: string[], message: string): Promise<Sm
   const sender: string = Deno.env.get('MNOTIFY_SENDER_ID') ?? 'THEBASE'
 
   // 1. If Infobip API key is configured, use Infobip for International SMS dispatches
-  if (infobipKey) {
+  if (infobipKey && !options?.mnotifyOnly) {
     const infobipResult = await sendInfobipSms(recipients, message)
     if (infobipResult.ok) return infobipResult
     console.warn('[SMS] Infobip send failed, falling back:', infobipResult.detail)
   }
 
   // 2. If Twilio is configured, try Twilio
-  if (twilioSid) {
+  if (twilioSid && !options?.mnotifyOnly) {
     const twilioResult = await sendTwilioSms(recipients, message)
     if (twilioResult.ok) return twilioResult
     console.warn('[SMS] Twilio send failed, falling back to MNotify:', twilioResult.detail)

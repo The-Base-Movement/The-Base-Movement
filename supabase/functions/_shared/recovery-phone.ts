@@ -28,3 +28,7 @@ export function normalizeRecoveryPhone(raw: string): string {
   // Fallback: prepend '+'
   return `+${cleaned}`
 }
+
+export function isGhanaRecoveryPhone(phone: string): boolean {
+  return phone.startsWith('+233') || phone.startsWith('233')
+}

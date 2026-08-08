@@ -5,7 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { hashOtp } from '../_shared/otp.ts'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { peekRateLimit, recordFailedAttempt } from '../_shared/persistent-rate-limit.ts'
-import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
+import { isGhanaRecoveryPhone, normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 import { isTwilioVerifyConfigured, checkTwilioVerify } from '../_shared/twilio-verify.ts'
 
 function clientIp(req: Request) {
@@ -95,7 +95,7 @@ serve(async (req: Request) => {
 
     let approved = false
 
-    if (isTwilioVerifyConfigured()) {
+    if (!isGhanaRecoveryPhone(normalizedPhone) && isTwilioVerifyConfigured()) {
       try {
         approved = await checkTwilioVerify(normalizedPhone, String(otp).trim())
       } catch (tErr: unknown) {

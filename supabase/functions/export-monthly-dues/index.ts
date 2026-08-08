@@ -1,17 +1,15 @@
 /**
  * export-monthly-dues
- * ─────────────────────────────────────────────────────────────
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * Server-authorized dues exports.
- *   scope 'member'  — the caller's own dues rows (JWT-bound)
- *   scope 'finance' — filtered rows with minimal member identity;
+ *   scope 'member'  â€” the caller's own dues rows (JWT-bound)
+ *   scope 'finance' â€” filtered rows with minimal member identity;
  *                     requires MANAGE_DONATIONS:DONATIONS
  * format 'csv' returns a complete CSV file; 'json' returns the same
  * whitelisted rows for client-side PDF rendering. Columns are a strict
- * whitelist — national id, notes, and contact details can never appear.
+ * whitelist â€” national id, notes, and contact details can never appear.
  * Failures return a JSON error, never a partial file.
  */
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageDonations, type AdminAuthRow } from '../_shared/admin-auth.ts'
 
@@ -65,7 +63,7 @@ function modeLabel(mode: string): string {
 
 /**
  * Maps a payment onto whitelisted export columns. This is the only place
- * export data is produced — anything not named here cannot leak.
+ * export data is produced â€” anything not named here cannot leak.
  */
 export function toExportRow(payment: ExportPaymentRow, scope: ExportScope): Record<string, string> {
   const row: Record<string, string> = {
@@ -123,13 +121,8 @@ function json(body: unknown, status = 200) {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
 }
-
-// @ts-expect-error: Deno global
 if (import.meta.main) {
-  // @ts-expect-error: Deno global
   const env = (name: string) => Deno.env.get(name) ?? ''
-
-  // @ts-expect-error: Deno global
   Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
     if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -161,7 +154,7 @@ if (import.meta.main) {
       const scopeResult = resolveExportScope(user.id, isFinance, body.scope ?? 'member')
       if (!scopeResult.ok) return json({ error: scopeResult.error }, 403)
 
-      // Whitelisted select only — national_id and contact fields are never
+      // Whitelisted select only â€” national_id and contact fields are never
       // part of this query.
       let query = supabaseAdmin
         .from('monthly_dues_payments')
@@ -184,7 +177,7 @@ if (import.meta.main) {
 
       const { data, error } = await query
       if (error) throw error
-      const rows = (data ?? []) as ExportPaymentRow[]
+      const rows = (data ?? []) as unknown as ExportPaymentRow[]
 
       if ((body.format ?? 'csv') === 'json') {
         return json({ rows: rows.map((r) => toExportRow(r, scopeResult.scope)) })

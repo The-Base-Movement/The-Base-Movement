@@ -9,19 +9,14 @@
 // the request Origin and validated against an allowlist, so the same code works
 // on localhost and the live thebasemovement.org.gh domains (extra origins can be
 // added via ALLOWED_RP_ORIGINS).
-
-// @ts-expect-error: Deno URL import
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-// @ts-expect-error: Deno URL import
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
-  // @ts-expect-error: Deno URL import
 } from 'https://esm.sh/@simplewebauthn/server@13.1.1'
-// @ts-expect-error: Deno URL import
 import { isoBase64URL } from 'https://esm.sh/@simplewebauthn/server@13.1.1/helpers'
 
 function jwtAal(jwt: string): string | null {
@@ -110,7 +105,6 @@ function resolveRp(origin: string | null): { rpID: string; origin: string } | nu
   // stale ALLOWED_RP_ORIGINS secret can never exclude the live production URL.
   // Keep in sync with the domains attached to the Vercel project.
   const BASELINE = ['https://thebasemovement.org.gh', 'https://www.thebasemovement.org.gh']
-  // @ts-expect-error: Deno global
   const envOrigins = Deno.env.get('ALLOWED_RP_ORIGINS') ?? ''
   const extra = envOrigins
     .split(',')
@@ -131,9 +125,7 @@ serve(async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, serviceKey)
 
@@ -189,7 +181,8 @@ serve(async (req: Request) => {
         excludeCredentials: (existing ?? []).map(
           (c: { credential_id: string; transports: string[] | null }) => ({
             id: c.credential_id,
-            transports: c.transports ?? undefined,
+            // deno-lint-ignore no-explicit-any
+            transports: (c.transports ?? undefined) as any,
           })
         ),
         authenticatorSelection: {
@@ -308,7 +301,8 @@ serve(async (req: Request) => {
         allowCredentials: creds.map(
           (c: { credential_id: string; transports: string[] | null }) => ({
             id: c.credential_id,
-            transports: c.transports ?? undefined,
+            // deno-lint-ignore no-explicit-any
+            transports: (c.transports ?? undefined) as any,
           })
         ),
       })

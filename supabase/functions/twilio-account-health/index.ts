@@ -1,4 +1,4 @@
-// Twilio Account Health & Balance Monitor Edge Function
+﻿// Twilio Account Health & Balance Monitor Edge Function
 // Validates Twilio credentials and returns account status, SMS balance, and secret key aliases.
 
 const corsHeaders = {
@@ -8,7 +8,6 @@ const corsHeaders = {
 
 function getEnv(keys: string[]): { foundKey: string | null; value: string | null } {
   for (const k of keys) {
-    // @ts-expect-error: Deno global
     const val = Deno.env.get(k)
     if (val && val.trim()) {
       return { foundKey: k, value: val.trim() }
@@ -16,8 +15,6 @@ function getEnv(keys: string[]): { foundKey: string | null; value: string | null
   }
   return { foundKey: null, value: null }
 }
-
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })

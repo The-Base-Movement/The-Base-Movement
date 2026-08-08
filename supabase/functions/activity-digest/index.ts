@@ -4,7 +4,6 @@
 // activity_digest_summary() RPC and posts a summary embed to the default
 // notifications Discord channel (DISCORD_WEBHOOK_URL).
 
-// @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
@@ -20,12 +19,14 @@ serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
-    // @ts-expect-error: Deno global
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    // @ts-expect-error: Deno global
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const webhookUrl = Deno.env.get('DISCORD_WEBHOOK_URL')
+
+    if (!supabaseUrl) {
+      console.error('[ACTIVITY-DIGEST] SUPABASE_URL is not set.')
+      return json({ error: 'SUPABASE_URL secret missing.' }, 500, corsHeaders)
+    }
 
     if (!webhookUrl) {
       console.error('[ACTIVITY-DIGEST] DISCORD_WEBHOOK_URL is not set.')

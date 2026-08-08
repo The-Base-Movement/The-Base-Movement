@@ -1,13 +1,10 @@
-// THE BASE: MULTI-CHANNEL BROADCAST DISPATCHER
+﻿// THE BASE: MULTI-CHANNEL BROADCAST DISPATCHER
 // Handles SMS/email dispatch for Urgent broadcasts.
 // Set RESEND_API_KEY in Supabase secrets to activate email sending.
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { broadcastEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
-// @ts-expect-error: Deno supports URL imports
 import { sendEmailBatch } from '../_shared/email.ts'
 
 const corsHeaders = {
@@ -74,7 +71,7 @@ Deno.serve(async (req: Request) => {
       preheader: subject ?? 'An important update from The Base Movement.',
       body: body ? `<p style="line-height:1.65;color:#444;margin-bottom:14px">${body}</p>` : '',
       region: region ?? targetValue,
-      ctaLabel: 'Read the full update →',
+      ctaLabel: 'Read the full update â†’',
       ctaUrl: 'https://www.thebasemovement.org.gh/dashboard',
     })
 
@@ -113,15 +110,13 @@ Deno.serve(async (req: Request) => {
     }
 
     console.warn(
-      `[URGENT DISPATCH] ${broadcastId} — ${emailRecipients.length} email / ${phoneRecipients.length} SMS recipients`
+      `[URGENT DISPATCH] ${broadcastId} â€” ${emailRecipients.length} email / ${phoneRecipients.length} SMS recipients`
     )
 
-    // Push notifications — fire and forget
+    // Push notifications â€” fire and forget
     const userIds = (users as Compatriot[])?.map((u) => u.id) ?? []
     if (userIds.length > 0) {
-      // @ts-expect-error: Deno global
       const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''
-      // @ts-expect-error: Deno global
       const serviceKey: string = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       fetch(`${supabaseUrl}/functions/v1/send-push-notification`, {
         method: 'POST',

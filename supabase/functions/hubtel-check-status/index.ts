@@ -1,5 +1,4 @@
-// @ts-expect-error: Deno supports URL imports
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+﻿import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
 const corsHeaders = {
@@ -17,13 +16,10 @@ function json(body: unknown, status = 200) {
 }
 
 function getRequiredEnv(name: string) {
-  // @ts-expect-error: Deno global
   const value = Deno.env.get(name)
   if (!value) throw new Error(`${name} is not configured`)
   return value
 }
-
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -48,8 +44,6 @@ Deno.serve(async (req: Request) => {
     const clientId = getRequiredEnv('HUBTEL_API_ID')
     const clientSecret = getRequiredEnv('HUBTEL_API_KEY')
     getRequiredEnv('HUBTEL_ACCOUNT_NUMBER')
-
-    // @ts-expect-error: Deno global
     const statusBaseUrl =
       Deno.env.get('HUBTEL_STATUS_URL') ?? 'https://payproxyapi.hubtel.com/items'
 

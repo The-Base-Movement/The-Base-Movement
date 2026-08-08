@@ -1,7 +1,6 @@
 // THE BASE: BACKFILL DONATION RECEIPTS
 // Generates + stores HTML receipts for all Verified donations that don't have one yet.
-// Does NOT send emails — this is a silent catch-up for pre-existing donations.
-// @ts-expect-error: Deno supports URL imports
+// Does NOT send emails â€” this is a silent catch-up for pre-existing donations.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptHtml } from '../_shared/email-templates.ts'
 import { canManageDonations, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
@@ -57,7 +56,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // Fetch Verified donations — all when force=true, otherwise only those missing a receipt
+    // Fetch Verified donations â€” all when force=true, otherwise only those missing a receipt
     const baseSelect = supabaseAdmin
       .from('donations')
       .select(
@@ -69,7 +68,7 @@ Deno.serve(async (req: Request) => {
     const { data, error } = force ? await baseSelect : await baseSelect.is('receipt_url', null)
 
     if (error) throw new Error(`Failed to fetch donations: ${error.message}`)
-    const rows = (data ?? []) as DonationRow[]
+    const rows = (data ?? []) as unknown as DonationRow[]
 
     let processed = 0
     let failed = 0
@@ -87,7 +86,7 @@ Deno.serve(async (req: Request) => {
             timeZone: 'Africa/Accra',
           }) + ' GMT'
 
-        const amountStr = `₵${Number(row.amount).toFixed(2)}`
+        const amountStr = `â‚µ${Number(row.amount).toFixed(2)}`
 
         const html = donationReceiptHtml({
           name: row.full_name,

@@ -5,14 +5,14 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { hashOtp } from '../_shared/otp.ts'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
-import { normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
+import { isGhanaRecoveryPhone, normalizeRecoveryPhone } from '../_shared/recovery-phone.ts'
 import { isTwilioVerifyConfigured, startTwilioVerify } from '../_shared/twilio-verify.ts'
 import { sendSms, sendInfobipSms } from '../_shared/sms.ts'
 import { sendEmail } from '../_shared/email.ts'
 
 const OTP_WINDOW_MS = 5 * 60 * 1000 // 5-minute window
-const OTP_COOLDOWN_MS = 15 * 1000    // 15-second cooldown between resends
-const OTP_MAX_PER_WINDOW = 10         // Max 10 OTP requests per 5 minutes
+const OTP_COOLDOWN_MS = 15 * 1000 // 15-second cooldown between resends
+const OTP_MAX_PER_WINDOW = 10 // Max 10 OTP requests per 5 minutes
 
 function clientIp(req: Request) {
   return (
@@ -98,8 +98,7 @@ serve(async (req: Request) => {
     if (!user) {
       return json(
         {
-          error:
-            `No registered member account was found with phone number ${normalizedPhone}. Please verify your registered number or use the Email recovery tab.`,
+          error: `No registered member account was found with phone number ${normalizedPhone}. Please verify your registered number or use the Email recovery tab.`,
         },
         404
       )
@@ -138,11 +137,14 @@ serve(async (req: Request) => {
     }
 
     if ((recentOtpCount ?? 0) >= OTP_MAX_PER_WINDOW) {
-      return json({ error: 'Too many reset requests for this phone number. Please wait a few minutes.' }, 429)
+      return json(
+        { error: 'Too many reset requests for this phone number. Please wait a few minutes.' },
+        429
+      )
     }
 
     // --- Smart Gateway Routing ---
-    const isGhana = sendToPhone.startsWith('+233') || sendToPhone.startsWith('233')
+    const isGhana = isGhanaRecoveryPhone(sendToPhone)
     const infobipApiKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
 
     let dispatchSuccess = false
@@ -168,13 +170,16 @@ serve(async (req: Request) => {
         dispatchSuccess = true
         dispatchDetail = 'Dispatched via Infobip'
       } else {
-        console.warn('[SEND-OTP] Infobip dispatch failed, falling back to Twilio/mNotify:', ibResult.detail)
+        console.warn(
+          '[SEND-OTP] Infobip dispatch failed, falling back to Twilio/mNotify:',
+          ibResult.detail
+        )
       }
     }
 
     // 2. Try mNotify for Ghana numbers
     if (!dispatchSuccess && isGhana) {
-      const smsResult = await sendSms([sendToPhone], messageText)
+      const smsResult = await sendSms([sendToPhone], messageText, { mnotifyOnly: true })
       if (smsResult.ok) {
         await supabaseAdmin.from('password_reset_otps').insert({
           phone: sendToPhone,
@@ -190,7 +195,7 @@ serve(async (req: Request) => {
     }
 
     // 3. Fallback Gateway: Twilio Verify
-    if (!dispatchSuccess && isTwilioVerifyConfigured()) {
+    if (!dispatchSuccess && !isGhana && isTwilioVerifyConfigured()) {
       try {
         await startTwilioVerify(sendToPhone)
         const hashedAuditToken = await hashOtp(crypto.randomUUID(), otpSecret)
@@ -236,8 +241,7 @@ serve(async (req: Request) => {
     if (!dispatchSuccess) {
       return json(
         {
-          error:
-            `SMS delivery failed (${dispatchDetail}). If you are overseas, please use the Email recovery tab or contact support.`,
+          error: `SMS delivery failed (${dispatchDetail}). If you are overseas, please use the Email recovery tab or contact support.`,
         },
         400
       )

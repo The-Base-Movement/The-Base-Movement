@@ -1,4 +1,4 @@
-// log-member-session
+﻿// log-member-session
 //
 // Called right after a member signs in. Derives the member from the verified JWT
 // (never trusts a client-supplied id), reads the TRUE client IP + user-agent from
@@ -7,10 +7,7 @@
 // member's previous "current" flag so the dashboard shows one active session.
 //
 // Returns: { ok: true } on success.
-
-// @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 const corsHeaders = {
@@ -92,7 +89,7 @@ async function geoLocate(ip: string | null): Promise<string | null> {
       }
     }
   } catch {
-    // ignore — geo is non-essential
+    // ignore â€” geo is non-essential
   }
   return null
 }
@@ -102,9 +99,7 @@ serve(async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, serviceKey)
 

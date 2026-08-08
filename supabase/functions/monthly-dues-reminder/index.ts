@@ -303,7 +303,7 @@ if (import.meta.main) {
                     ? `Hi ${firstName}, your ${amount} Base Movement monthly dues are due today. Pay at ${payUrl}`
                     : `Hi ${firstName}, your ${amount} Base Movement monthly dues are overdue. Pay at ${payUrl}`
               const result = await sendSms([normalizeGhanaPhone(member.phone_number)], message)
-              ok = result.success
+              ok = result.ok
               if (!ok) failure = 'sms provider rejected the send'
             } else {
               failure = 'member has no phone number'

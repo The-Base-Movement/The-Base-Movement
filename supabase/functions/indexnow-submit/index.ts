@@ -1,10 +1,9 @@
-// @ts-expect-error: Deno supports URL imports
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 // IndexNow: ping search engines (Bing, Yandex, etc.) the moment a URL changes so
 // they re-crawl immediately instead of waiting. The key file must be hosted at
 // https://<HOST>/<KEY>.txt (see public/aadb12316ed74e68a71db271317e17e0.txt).
-// key + host hardcoded — the key is public (served at the site root),
+// key + host hardcoded â€” the key is public (served at the site root),
 // so there's nothing to hide in a secret. If the key rotates, update both the
 // public file and this constant.
 const HOST = 'www.thebasemovement.org.gh'
@@ -30,7 +29,7 @@ serve(async (req: Request) => {
   try {
     const { urls } = await req.json()
     // Trust boundary: this endpoint is unauthenticated, so only accept URLs on
-    // our own host — otherwise anyone could submit arbitrary URLs under our key.
+    // our own host â€” otherwise anyone could submit arbitrary URLs under our key.
     const urlList = (Array.isArray(urls) ? urls : [urls]).filter(
       (u: unknown): u is string => typeof u === 'string' && u.startsWith(ALLOWED_PREFIX)
     )
