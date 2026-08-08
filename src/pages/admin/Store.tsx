@@ -175,7 +175,7 @@ export default function AdminStore() {
       return
     }
     setIsSaving(true)
-    let success = false
+    let success: boolean
     if ('id' in selectedProduct && selectedProduct.id) {
       success = await adminService.updateInventoryItem(selectedProduct.id, selectedProduct)
     } else {
