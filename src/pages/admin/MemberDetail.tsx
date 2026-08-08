@@ -18,6 +18,7 @@ import {
   type JobSelection,
 } from '@/services/jobTaxonomyService'
 import { formatGhsAmount } from '@/lib/currency'
+import { getFlagImageUrl } from '@/lib/utils'
 import { toast } from 'sonner'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
@@ -533,9 +534,32 @@ export default function AdminMemberDetail() {
                 letterSpacing: '-.02em',
                 marginTop: 4,
                 lineHeight: 1.1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
               }}
             >
               {member.name}
+              {(() => {
+                const flagSrc =
+                  member.platform === 'GHANA'
+                    ? getFlagImageUrl('Ghana')
+                    : getFlagImageUrl(member.country ?? '')
+                return flagSrc ? (
+                  <img
+                    src={flagSrc}
+                    alt={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                    title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                    style={{
+                      height: 20,
+                      width: 'auto',
+                      verticalAlign: 'middle',
+                      borderRadius: 3,
+                      flexShrink: 0,
+                    }}
+                  />
+                ) : null
+              })()}
             </h2>
             <div
               style={{
