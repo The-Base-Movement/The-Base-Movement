@@ -3,7 +3,11 @@ import { createPortal } from 'react-dom'
 import { type Member, type Region } from '@/services/adminService'
 import { JobSelector } from '@/components/JobSelector'
 import { type JobSelection } from '@/services/jobTaxonomyService'
-import { ageRanges, religions } from '@/components/admin/RegistrationForm.constants'
+import {
+  ageRanges,
+  religions,
+  politicalParties,
+} from '@/components/admin/RegistrationForm.constants'
 import {
   getConstituenciesByRegion,
   getDistrictForConstituency,
@@ -439,6 +443,26 @@ export function EditModal({
                 {religions.map((r) => (
                   <option key={r} value={r}>
                     {r}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="input-edit-partyAffiliation" style={labelStyle}>
+                Party Affiliation
+              </label>
+              <select
+                id="input-edit-partyAffiliation"
+                name="partyAffiliation"
+                value={form.partyAffiliation ?? ''}
+                onChange={(e) => onChange('partyAffiliation', e.target.value)}
+                style={controlStyle}
+              >
+                <option value="">— select party —</option>
+                {politicalParties.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
                   </option>
                 ))}
               </select>

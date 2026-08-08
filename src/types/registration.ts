@@ -30,6 +30,7 @@ export interface RegistrationFormData {
   city?: string
   votersIdCard?: string
   pollingStationCode?: string
+  partyAffiliation?: string
 }
 
 export interface Region {

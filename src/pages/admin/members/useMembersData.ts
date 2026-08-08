@@ -26,6 +26,7 @@ export function useMembersData() {
   const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>('all')
   const [ageRangeFilter, setAgeRangeFilter] = useState<string>('all')
   const [religionFilter, setReligionFilter] = useState<string>('all')
+  const [partyAffiliationFilter, setPartyAffiliationFilter] = useState<string>('all')
   const [platformFilter, setPlatformFilter] = useState<'all' | 'GHANA' | 'DIASPORA'>('all')
   const [countryFilter, setCountryFilter] = useState<string>('all')
   const [chapterFilter, setChapterFilter] = useState<string>('all')
@@ -44,6 +45,7 @@ export function useMembersData() {
       gender: genderFilter !== 'all' ? genderFilter : undefined,
       ageRange: ageRangeFilter !== 'all' ? ageRangeFilter : undefined,
       religion: religionFilter !== 'all' ? religionFilter : undefined,
+      partyAffiliation: partyAffiliationFilter !== 'all' ? partyAffiliationFilter : undefined,
       platform: platformFilter !== 'all' ? platformFilter : undefined,
       country: countryFilter !== 'all' ? countryFilter : undefined,
       chapter: chapterFilter !== 'all' ? chapterFilter : undefined,
@@ -56,6 +58,7 @@ export function useMembersData() {
       genderFilter,
       ageRangeFilter,
       religionFilter,
+      partyAffiliationFilter,
       platformFilter,
       countryFilter,
       chapterFilter,
@@ -115,6 +118,10 @@ export function useMembersData() {
     setReligionFilter(val)
     setCurrentPage(1)
   }
+  const handlePartyAffiliationFilterChange = (val: string) => {
+    setPartyAffiliationFilter(val)
+    setCurrentPage(1)
+  }
   const handlePlatformFilterChange = (val: 'all' | 'GHANA' | 'DIASPORA') => {
     setPlatformFilter(val)
     setCurrentPage(1)
@@ -160,6 +167,7 @@ export function useMembersData() {
     genderFilter,
     ageRangeFilter,
     religionFilter,
+    partyAffiliationFilter,
     platformFilter,
     countryFilter,
     chapterFilter,
@@ -175,6 +183,7 @@ export function useMembersData() {
     handleGenderFilterChange,
     handleAgeRangeFilterChange,
     handleReligionFilterChange,
+    handlePartyAffiliationFilterChange,
     handlePlatformFilterChange,
     handleCountryFilterChange,
     handleChapterFilterChange,

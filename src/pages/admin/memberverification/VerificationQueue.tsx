@@ -4,7 +4,7 @@ import type { PendingVerification } from '@/services/adminService'
 import { Skeleton } from '@/components/states'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { Pagination } from '@/components/Pagination'
-import { religions } from '@/components/admin/RegistrationForm.constants'
+import { religions, politicalParties } from '@/components/admin/RegistrationForm.constants'
 
 const AGE_RANGES = ['18-25', '26-35', '36-45', '46-60', '60+']
 
@@ -22,6 +22,8 @@ interface VerificationQueueProps {
   countries: string[]
   religionFilter: string
   setReligionFilter: (val: string) => void
+  partyAffiliationFilter: string
+  setPartyAffiliationFilter: (val: string) => void
   ageRangeFilter: string
   setAgeRangeFilter: (val: string) => void
   filtered: PendingVerification[]
@@ -50,6 +52,8 @@ export function VerificationQueue({
   countries,
   religionFilter,
   setReligionFilter,
+  partyAffiliationFilter,
+  setPartyAffiliationFilter,
   ageRangeFilter,
   setAgeRangeFilter,
   filtered,
@@ -282,6 +286,52 @@ export function VerificationQueue({
             {religions.map((r) => (
               <option key={r} value={r}>
                 {r}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 9,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 15,
+              color: 'hsl(var(--on-surface-muted))',
+              pointerEvents: 'none',
+            }}
+          >
+            how_to_vote
+          </span>
+          <select
+            name="partyAffiliationFilter"
+            value={partyAffiliationFilter}
+            onChange={(e) => {
+              setPartyAffiliationFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            style={{
+              height: 36,
+              paddingLeft: 30,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 4,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 'var(--font-weight-normal, 400)',
+              fontSize: 12,
+              background: 'hsl(var(--card))',
+              color: 'hsl(var(--on-surface))',
+              outline: 'none',
+              cursor: 'pointer',
+            }}
+            aria-label="Filter by party affiliation"
+          >
+            <option value="">All party affiliations</option>
+            {politicalParties.map((p) => (
+              <option key={p} value={p}>
+                {p}
               </option>
             ))}
           </select>

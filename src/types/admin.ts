@@ -34,6 +34,7 @@ export interface Member {
   deletedAt?: string
   votersIdCard?: string
   pollingStationCode?: string
+  partyAffiliation?: string
 }
 
 export interface User {
@@ -75,6 +76,7 @@ export interface User {
   registration_source?: string
   voters_id_card?: string
   polling_station_code?: string
+  party_affiliation?: string
 }
 
 export interface Region {
@@ -562,6 +564,7 @@ export interface PendingVerification {
   chapter?: string
   votersIdCard?: string
   pollingStationCode?: string
+  partyAffiliation?: string
 }
 
 export interface ActivityLog {

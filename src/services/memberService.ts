@@ -20,6 +20,7 @@ export interface MemberDirectoryFilters {
   gender?: string
   ageRange?: string
   religion?: string
+  partyAffiliation?: string
   platform?: string
   country?: string
   chapter?: string
@@ -51,7 +52,7 @@ class MemberService {
       supabase
         .from('users')
         .select(
-          'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,voters_id_card,polling_station_code'
+          'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,voters_id_card,polling_station_code,party_affiliation'
         )
         .is('deleted_at', null)
         .order('joined_at', { ascending: false }),
@@ -89,6 +90,7 @@ class MemberService {
         digitalAddress: u.digital_address || undefined,
         votersIdCard: u.voters_id_card || undefined,
         pollingStationCode: u.polling_station_code || undefined,
+        partyAffiliation: u.party_affiliation || undefined,
       }))
   }
 
@@ -141,7 +143,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,age_range,job_industry_id,job_sub_category_id,job_role_id,job_custom_title,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district,party_affiliation'
       )
       .eq('registration_number', regNo)
       .maybeSingle()
@@ -185,6 +187,7 @@ class MemberService {
       religion: data.religion || undefined,
       secondaryPhone: data.secondary_phone || undefined,
       district: data.district || undefined,
+      partyAffiliation: data.party_affiliation || undefined,
     }
   }
 
@@ -198,7 +201,7 @@ class MemberService {
     const { data, error } = await supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district'
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,age_range,emergency_name,emergency_relationship,emergency_phone,voters_id_card,polling_station_code,birth_year,religion,secondary_phone,district,party_affiliation'
       )
       .eq('id', authId)
       .maybeSingle()
@@ -234,6 +237,7 @@ class MemberService {
       religion: data.religion || undefined,
       secondaryPhone: data.secondary_phone || undefined,
       district: data.district || undefined,
+      partyAffiliation: data.party_affiliation || undefined,
     }
   }
 
@@ -436,6 +440,8 @@ class MemberService {
     // age_range is auto-derived from birth_year by a DB trigger; we just send the year.
     if (profile.birthYear !== undefined) updateData.birth_year = profile.birthYear || null
     if (profile.religion !== undefined) updateData.religion = profile.religion || null
+    if (profile.partyAffiliation !== undefined)
+      updateData.party_affiliation = profile.partyAffiliation || null
     if (profile.secondaryPhone !== undefined)
       updateData.secondary_phone = profile.secondaryPhone || null
     if (profile.district !== undefined) updateData.district = profile.district || null
@@ -494,7 +500,7 @@ class MemberService {
       const { data, error } = await supabase
         .from('users')
         .select(
-          'id,registration_number,full_name,region,constituency,district,platform,country,phone_number,email,gender,age_range,religion,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status,voters_id_card,polling_station_code'
+          'id,registration_number,full_name,region,constituency,district,platform,country,phone_number,email,gender,age_range,religion,profession,education_level,emergency_name,emergency_relationship,emergency_phone,joined_at,avatar_url,chapter,verification_status,voters_id_card,polling_station_code,party_affiliation'
         )
         .in('verification_status', statuses)
         .order('joined_at', { ascending: false })
@@ -535,6 +541,7 @@ class MemberService {
       chapter: u.chapter,
       votersIdCard: u.voters_id_card,
       pollingStationCode: u.polling_station_code,
+      partyAffiliation: u.party_affiliation || undefined,
     }))
   }
 
@@ -662,6 +669,18 @@ class MemberService {
       .from('countries')
       .select('*')
       .order('name', { ascending: true })
+
+    if (error || !Array.isArray(data)) return []
+    return data
+  }
+
+  async getPoliticalParties(): Promise<
+    { id: string; name: string; code: string; full_label: string; sort_order: number }[]
+  > {
+    const { data, error } = await supabase
+      .from('political_parties')
+      .select('*')
+      .order('sort_order', { ascending: true })
 
     if (error || !Array.isArray(data)) return []
     return data
@@ -921,6 +940,7 @@ class MemberService {
       gender,
       ageRange,
       religion,
+      partyAffiliation,
       platform,
       country,
       chapter,
@@ -931,7 +951,7 @@ class MemberService {
     let query = supabase
       .from('users')
       .select(
-        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,registration_source,age_range,district,religion,polling_station_code',
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,digital_address,registration_source,age_range,district,religion,polling_station_code,party_affiliation',
         { count: 'exact' }
       )
       .is('deleted_at', null)
@@ -940,6 +960,7 @@ class MemberService {
     if (gender) query = query.eq('gender', gender)
     if (ageRange) query = query.eq('age_range', ageRange)
     if (religion) query = query.eq('religion', religion)
+    if (partyAffiliation) query = query.eq('party_affiliation', partyAffiliation)
     if (platform) query = query.eq('platform', platform)
     if (country) query = query.eq('country', country)
     if (chapter) query = query.eq('chapter', chapter)
@@ -1003,6 +1024,7 @@ class MemberService {
       district: u.district || undefined,
       religion: u.religion || undefined,
       pollingStationCode: u.polling_station_code || undefined,
+      partyAffiliation: u.party_affiliation || undefined,
     }))
 
     return { data: members, totalCount: count || 0 }

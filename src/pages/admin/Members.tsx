@@ -50,6 +50,7 @@ export default function MembersList() {
     genderFilter,
     ageRangeFilter,
     religionFilter,
+    partyAffiliationFilter,
     platformFilter,
     countryFilter,
     chapterFilter,
@@ -65,6 +66,7 @@ export default function MembersList() {
     handleGenderFilterChange,
     handleAgeRangeFilterChange,
     handleReligionFilterChange,
+    handlePartyAffiliationFilterChange,
     handlePlatformFilterChange,
     handleCountryFilterChange,
     handleChapterFilterChange,
@@ -179,6 +181,7 @@ export default function MembersList() {
         genderFilter={genderFilter}
         ageRangeFilter={ageRangeFilter}
         religionFilter={religionFilter}
+        partyAffiliationFilter={partyAffiliationFilter}
         platformFilter={platformFilter}
         countryFilter={countryFilter}
         chapterFilter={chapterFilter}
@@ -189,6 +192,7 @@ export default function MembersList() {
         onGenderFilterChange={handleGenderFilterChange}
         onAgeRangeFilterChange={handleAgeRangeFilterChange}
         onReligionFilterChange={handleReligionFilterChange}
+        onPartyAffiliationFilterChange={handlePartyAffiliationFilterChange}
         onPlatformFilterChange={handlePlatformFilterChange}
         onCountryFilterChange={handleCountryFilterChange}
         onChapterFilterChange={handleChapterFilterChange}
