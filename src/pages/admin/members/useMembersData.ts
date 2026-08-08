@@ -26,8 +26,21 @@ export function useMembersData() {
   const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>('all')
   const [ageRangeFilter, setAgeRangeFilter] = useState<string>('all')
   const [religionFilter, setReligionFilter] = useState<string>('all')
-  const [partyAffiliationFilter, setPartyAffiliationFilter] = useState<string>('all')
-  const [platformFilter, setPlatformFilter] = useState<'all' | 'GHANA' | 'DIASPORA'>('all')
+  const [partyAffiliationFilter, setPartyAffiliationFilter] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      return params.get('party') || 'all'
+    }
+    return 'all'
+  })
+  const [platformFilter, setPlatformFilter] = useState<'all' | 'GHANA' | 'DIASPORA'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const p = params.get('platform')
+      if (p === 'GHANA' || p === 'DIASPORA') return p
+    }
+    return 'all'
+  })
   const [countryFilter, setCountryFilter] = useState<string>('all')
   const [chapterFilter, setChapterFilter] = useState<string>('all')
   const [searchType, setSearchType] = useState<

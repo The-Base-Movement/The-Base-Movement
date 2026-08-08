@@ -88,6 +88,7 @@ const AdminDonations = lazy(() => import('./pages/admin/DonationVerification'))
 const AdminSpendingLedger = lazy(() => import('./pages/admin/SpendingLedger'))
 const AdminAdministrators = lazy(() => import('./pages/admin/Administrators'))
 const AdminPartyOfficials = lazy(() => import('./pages/admin/PartyOfficials'))
+const AdminPartyAffiliations = lazy(() => import('./pages/admin/PartyAffiliations'))
 const AdminOfficialForm = lazy(() => import('./pages/admin/partyofficials/OfficialForm'))
 const AdminBroadcasts = lazy(() => import('./pages/admin/Broadcasts'))
 const AdminNewBroadcast = lazy(() => import('./pages/admin/NewBroadcast'))
@@ -355,6 +356,7 @@ export const routes: RouteObject[] = [
               { path: '/admin/broadcasts/new', element: <AdminNewBroadcast /> },
               { path: '/admin/administrators', element: <AdminAdministrators /> },
               { path: '/admin/party-officials', element: <AdminPartyOfficials /> },
+              { path: '/admin/party-affiliations', element: <AdminPartyAffiliations /> },
               { path: '/admin/party-officials/new', element: <AdminOfficialForm /> },
               { path: '/admin/party-officials/:id/edit', element: <AdminOfficialForm /> },
               { path: '/admin/orders', element: <AdminOrders /> },

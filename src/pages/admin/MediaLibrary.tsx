@@ -27,6 +27,8 @@ export default function MediaLibrary() {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const [activeFolder, setActiveFolder] = useState('branding')
   const [assetToDelete, setAssetToDelete] = useState<string | null>(null)
+  const [assetToReplace, setAssetToReplace] = useState<string | null>(null)
+  const [isReplacing, setIsReplacing] = useState(false)
 
   // Dynamic Categories State
   const [folders, setFolders] = useState<{ id: string; label: string; icon: string }[]>([])
@@ -154,6 +156,34 @@ export default function MediaLibrary() {
     }
   }
 
+  // Replace existing asset file
+  const handleReplaceFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !assetToReplace) return
+
+    setIsReplacing(true)
+    try {
+      const newUrl = await contentService.replaceMediaFile(assetToReplace, file, activeFolder)
+      if (newUrl) {
+        toast.success('Asset replaced successfully')
+        await loadFiles()
+        adminService.logAction(
+          'REPLACE_MEDIA',
+          `MEDIA/${assetToReplace.split('/').pop()}`,
+          'Success'
+        )
+      } else {
+        toast.error('Failed to replace asset')
+      }
+    } catch {
+      toast.error('An error occurred while replacing asset')
+    } finally {
+      setIsReplacing(false)
+      setAssetToReplace(null)
+      e.target.value = ''
+    }
+  }
+
   // Copy selected asset's URL to user clipboard
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url)
@@ -162,7 +192,9 @@ export default function MediaLibrary() {
     setTimeout(() => setCopiedUrl(null), 2000)
   }
 
-  const filteredFiles = files.filter((url) => url.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredFiles = Array.from(new Set(files)).filter((url) =>
+    url.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   // Execute deletion of target file and stage in trash bin
   const handleConfirmedDelete = async () => {
@@ -230,6 +262,14 @@ export default function MediaLibrary() {
               onChange={handleUpload}
               accept="image/*"
               disabled={isUploading}
+            />
+            <input
+              type="file"
+              id="media-replace"
+              style={{ display: 'none' }}
+              onChange={handleReplaceFile}
+              accept="image/*"
+              disabled={isReplacing}
             />
             <label
               htmlFor="media-upload"
@@ -534,6 +574,29 @@ export default function MediaLibrary() {
                           open_in_new
                         </span>
                       </a>
+                      <button
+                        onClick={() => {
+                          setAssetToReplace(url)
+                          document.getElementById('media-replace')?.click()
+                        }}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 4,
+                          background: '#eab308',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#000',
+                        }}
+                        title="Replace / Update asset"
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                          swap_vert
+                        </span>
+                      </button>
                       <button
                         onClick={() => setAssetToDelete(url)}
                         style={{
