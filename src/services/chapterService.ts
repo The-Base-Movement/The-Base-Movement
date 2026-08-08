@@ -81,11 +81,36 @@ class ChapterService {
       return []
     }
 
-    // Collect leader_ids to fetch their real avatars
-    // Fetch countries, live member counts, and leader avatars + chapters in parallel
-    const [{ data: countriesData }, directoryRows] = await Promise.all([
+    const chapterNames = (data || []).map((c) => c.name as string).filter(Boolean)
+
+    // Fetch countries flags, live member counts (direct per-chapter DB count),
+    // and leader avatars in parallel.
+    const [{ data: countriesData }, directoryRows, liveCountRows] = await Promise.all([
       supabase.from('countries').select('name, flag_url'),
-      getPublicDirectoryProfiles(),
+      getPublicDirectoryProfiles(), // used for leader avatar lookup only
+      // Count members per chapter directly in the DB — no row-level cap.
+      // Paginate past the PostgREST 1000-row default.
+      chapterNames.length > 0
+        ? (async () => {
+            const PAGE = 1000
+            let from = 0
+            const rows: { chapter: string }[] = []
+            while (true) {
+              const { data: page } = await supabase
+                .from('users')
+                .select('chapter')
+                .in('chapter', chapterNames)
+                .eq('status', 'Active')
+                .is('deleted_at', null)
+                .range(from, from + PAGE - 1)
+              if (!page || page.length === 0) break
+              rows.push(...(page as { chapter: string }[]))
+              if (page.length < PAGE) break
+              from += PAGE
+            }
+            return { data: rows }
+          })()
+        : Promise.resolve({ data: [] as { chapter: string }[] }),
     ])
 
     const leaderAvatarMap: Record<string, string> = {}
@@ -104,8 +129,9 @@ class ChapterService {
       return acc
     }, {})
 
+    // Build live count map from the direct DB rows (accurate, no row-cap)
     const liveCounts: Record<string, number> = {}
-    directoryRows.forEach((u: { chapter: string | null }) => {
+    ;(liveCountRows.data ?? []).forEach((u: { chapter: string }) => {
       if (u.chapter)
         liveCounts[u.chapter.toLowerCase()] = (liveCounts[u.chapter.toLowerCase()] || 0) + 1
     })
@@ -124,19 +150,7 @@ class ChapterService {
         leader_name: c.leader_name || 'Unassigned',
         leader_id: c.leader_id || undefined,
         leader_avatar_url: (c.leader_id && leaderAvatarMap[c.leader_id]) || undefined,
-        member_count: (() => {
-          let count = liveCounts[(c.name || '').toLowerCase()] ?? 0
-          if (c.leader_id) {
-            const leaderRegChapter = leaderChapterMap[c.leader_id]
-            if (
-              !leaderRegChapter ||
-              leaderRegChapter.toLowerCase() !== (c.name || '').toLowerCase()
-            ) {
-              count += 1
-            }
-          }
-          return count
-        })(),
+        member_count: liveCounts[(c.name || '').toLowerCase()] ?? 0,
         status: c.status || 'Pending',
         region: c.region || undefined,
         description: c.description || undefined,
