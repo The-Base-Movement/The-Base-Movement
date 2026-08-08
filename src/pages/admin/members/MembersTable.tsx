@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { type Member, adminService } from '@/services/adminService'
 import MemberListCard from '@/components/admin/MemberListCard'
-import { getEmojiFlag } from '@/lib/utils'
+import { getFlagImageUrl } from '@/lib/utils'
 
 const thStyle: React.CSSProperties = {
   padding: '10px 16px',
@@ -276,20 +276,26 @@ export function MembersTable({
                         >
                           {member.name}
                           {(() => {
-                            const flag =
+                            const flagSrc =
                               member.platform === 'GHANA'
-                                ? getEmojiFlag('GH')
-                                : getEmojiFlag(member.country ?? '')
-                            return flag ? (
-                              <span
+                                ? getFlagImageUrl('Ghana')
+                                : getFlagImageUrl(member.country ?? '')
+                            return flagSrc ? (
+                              <img
+                                src={flagSrc}
+                                alt={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
                                 title={
                                   member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')
                                 }
-                                style={{ fontSize: 16, lineHeight: 1, flexShrink: 0 }}
-                                aria-label={`Flag: ${member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}`}
-                              >
-                                {flag}
-                              </span>
+                                style={{
+                                  height: 12,
+                                  width: 'auto',
+                                  verticalAlign: 'middle',
+                                  borderRadius: 2,
+                                  flexShrink: 0,
+                                  display: 'inline-block',
+                                }}
+                              />
                             ) : null
                           })()}
                         </p>
@@ -341,12 +347,23 @@ export function MembersTable({
                       }}
                     >
                       {(() => {
-                        const flag =
+                        const flagSrc =
                           member.platform === 'GHANA'
-                            ? getEmojiFlag('GH')
-                            : getEmojiFlag(member.country ?? '')
-                        return flag ? (
-                          <span style={{ fontSize: 15, lineHeight: 1, flexShrink: 0 }}>{flag}</span>
+                            ? getFlagImageUrl('Ghana')
+                            : getFlagImageUrl(member.country ?? '')
+                        return flagSrc ? (
+                          <img
+                            src={flagSrc}
+                            alt={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                            title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                            style={{
+                              height: 12,
+                              width: 'auto',
+                              verticalAlign: 'middle',
+                              borderRadius: 2,
+                              flexShrink: 0,
+                            }}
+                          />
                         ) : null
                       })()}
                       {member.platform === 'DIASPORA'

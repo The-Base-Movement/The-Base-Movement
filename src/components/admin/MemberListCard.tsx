@@ -7,7 +7,7 @@
  */
 
 import type { Member } from '@/services/adminService'
-import { getEmojiFlag } from '@/lib/utils'
+import { getFlagImageUrl } from '@/lib/utils'
 
 interface Props {
   member: Member
@@ -135,18 +135,23 @@ export default function MemberListCard({
               {member.name}
             </span>
             {(() => {
-              const flag =
+              const flagSrc =
                 member.platform === 'GHANA'
-                  ? getEmojiFlag('GH')
-                  : getEmojiFlag(member.country ?? '')
-              return flag ? (
-                <span
+                  ? getFlagImageUrl('Ghana')
+                  : getFlagImageUrl(member.country ?? '')
+              return flagSrc ? (
+                <img
+                  src={flagSrc}
+                  alt={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
                   title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
-                  style={{ fontSize: 17, lineHeight: 1, flexShrink: 0 }}
-                  aria-label={`Flag: ${member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}`}
-                >
-                  {flag}
-                </span>
+                  style={{
+                    height: 13,
+                    width: 'auto',
+                    verticalAlign: 'middle',
+                    borderRadius: 2,
+                    flexShrink: 0,
+                  }}
+                />
               ) : null
             })()}
           </p>

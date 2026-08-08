@@ -4,7 +4,6 @@ import { religions, politicalParties } from '@/components/admin/RegistrationForm
 import { useChapters } from '@/context/ChaptersContext'
 import { memberService } from '@/services/memberService'
 import { shortDiasporaName } from '@/lib/diaspora'
-import { getEmojiFlag } from '@/lib/utils'
 
 type SearchType = 'default' | 'constituency' | 'district' | 'region' | 'polling_station'
 
@@ -325,9 +324,9 @@ export function MembersFilterBar({
             onChange={(e) => onPlatformFilterChange(e.target.value as 'all' | 'GHANA' | 'DIASPORA')}
             style={selectSt}
           >
-            <option value="all">🌍 Ghana + Diaspora</option>
-            <option value="GHANA">🇬🇭 Ghana Network</option>
-            <option value="DIASPORA">✈️ Diaspora Network</option>
+            <option value="all">Ghana + Diaspora</option>
+            <option value="GHANA">Ghana Network</option>
+            <option value="DIASPORA">Diaspora Network</option>
           </select>
           <select
             aria-label="Filter by country"
@@ -335,19 +334,12 @@ export function MembersFilterBar({
             onChange={(e) => onCountryFilterChange(e.target.value)}
             style={selectSt}
           >
-            <option value="all">🌍 All countries</option>
-            {countries.map((c) => {
-              const flag = c.flag_url ? undefined : getEmojiFlag(c.name)
-              return (
-                <option key={c.name} value={c.name}>
-                  {c.flag_url
-                    ? `${getEmojiFlag(c.name) || '🌍'} ${c.name}`
-                    : flag
-                      ? `${flag} ${c.name}`
-                      : c.name}
-                </option>
-              )
-            })}
+            <option value="all">All countries</option>
+            {countries.map((c) => (
+              <option key={c.name} value={c.name}>
+                {c.name}
+              </option>
+            ))}
           </select>
           <select
             aria-label="Filter by diaspora community"
