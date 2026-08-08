@@ -267,6 +267,7 @@ export default function Register() {
       }
       const phoneErr = validatePhone(formData.contactNumber, formData.countryCode)
       if (phoneErr) return phoneErr
+      if (!formData.partyAffiliation) return 'Please select your party affiliation.'
       if (!formData.gender) return 'Please select your gender.'
       // Birth year drives the age range (DB-derived); require age range only as fallback.
       if (!formData.ageRange && !formData.birthYear)
