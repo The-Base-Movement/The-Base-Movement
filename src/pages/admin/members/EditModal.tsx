@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { type Member, type Region } from '@/services/adminService'
+import { getFlagImageUrl } from '@/lib/utils'
 import { JobSelector } from '@/components/JobSelector'
 import { type JobSelection } from '@/services/jobTaxonomyService'
 import {
@@ -296,9 +297,32 @@ export function EditModal({
                   fontWeight: 'var(--font-weight-normal, 400)',
                   fontSize: 11.5,
                   color: 'rgba(255,255,255,.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
                 }}
               >
                 {member.name}
+                {(() => {
+                  const flagSrc =
+                    member.platform === 'GHANA'
+                      ? getFlagImageUrl('Ghana')
+                      : getFlagImageUrl(member.country ?? '')
+                  return flagSrc ? (
+                    <img
+                      src={flagSrc}
+                      alt={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                      title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                      style={{
+                        height: 12,
+                        width: 'auto',
+                        verticalAlign: 'middle',
+                        borderRadius: 2,
+                        flexShrink: 0,
+                      }}
+                    />
+                  ) : null
+                })()}
               </p>
             </div>
           </div>

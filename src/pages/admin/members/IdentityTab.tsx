@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { type Member, adminService } from '@/services/adminService'
 import { kycService, type KycStatus } from '@/services/kycService'
 import { KycDocuments } from '@/components/KycDocuments'
+import { getFlagImageUrl } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface IdentityTabProps {
@@ -180,7 +181,31 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                       gap: 6,
                     }}
                   >
-                    {k === 'Email' && v !== '—' ? (
+                    {k === 'Full name' ? (
+                      <>
+                        {v}
+                        {(() => {
+                          const flagSrc =
+                            member.platform === 'GHANA'
+                              ? getFlagImageUrl('Ghana')
+                              : getFlagImageUrl(member.country ?? '')
+                          return flagSrc ? (
+                            <img
+                              src={flagSrc}
+                              alt={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                              title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                              style={{
+                                height: 13,
+                                width: 'auto',
+                                verticalAlign: 'middle',
+                                borderRadius: 2,
+                                flexShrink: 0,
+                              }}
+                            />
+                          ) : null
+                        })()}
+                      </>
+                    ) : k === 'Email' && v !== '—' ? (
                       <a
                         href={`mailto:${v}`}
                         style={{ color: 'hsl(var(--primary))', textDecoration: 'none' }}
