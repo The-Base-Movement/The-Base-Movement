@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { type Member, adminService } from '@/services/adminService'
 import MemberListCard from '@/components/admin/MemberListCard'
+import { getMemberFlag } from '@/utils/countryFlag'
 
 const thStyle: React.CSSProperties = {
   padding: '10px 16px',
@@ -268,9 +269,26 @@ export function MembersTable({
                             fontFamily: "'Public Sans', sans-serif",
                             fontWeight: 'var(--font-weight-medium, 500)',
                             fontSize: 13,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 5,
                           }}
                         >
                           {member.name}
+                          {(() => {
+                            const flag = getMemberFlag(member.platform, member.country)
+                            return flag ? (
+                              <span
+                                title={
+                                  member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')
+                                }
+                                style={{ fontSize: 16, lineHeight: 1, flexShrink: 0 }}
+                                aria-label={`Flag: ${member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}`}
+                              >
+                                {flag}
+                              </span>
+                            ) : null
+                          })()}
                         </p>
                         <span
                           style={{

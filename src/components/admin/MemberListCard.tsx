@@ -7,6 +7,7 @@
  */
 
 import type { Member } from '@/services/adminService'
+import { getMemberFlag } from '@/utils/countryFlag'
 
 interface Props {
   member: Member
@@ -117,9 +118,34 @@ export default function MemberListCard({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
             }}
           >
-            {member.name}
+            <span
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                flex: '1 1 0',
+                minWidth: 0,
+              }}
+            >
+              {member.name}
+            </span>
+            {(() => {
+              const flag = getMemberFlag(member.platform, member.country)
+              return flag ? (
+                <span
+                  title={member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}
+                  style={{ fontSize: 17, lineHeight: 1, flexShrink: 0 }}
+                  aria-label={`Flag: ${member.platform === 'GHANA' ? 'Ghana' : (member.country ?? '')}`}
+                >
+                  {flag}
+                </span>
+              ) : null
+            })()}
           </p>
           <span
             style={{
