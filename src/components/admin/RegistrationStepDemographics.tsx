@@ -371,17 +371,16 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
         <label
           htmlFor="select-party-affiliation-admin"
           style={{
-            fontSize: '10px',
+            display: 'block',
+            marginBottom: '8px',
+            fontSize: '11px',
             fontWeight: 'var(--font-weight-medium, 500)',
-            color: 'hsl(var(--on-surface-muted))',
             textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            letterSpacing: '0.04em',
+            color: 'hsl(var(--on-surface-muted))',
           }}
         >
-          Party Affiliation{' '}
-          <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
-            (optional)
-          </span>
+          Party Affiliation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
         </label>
         <select
           name="name-party-affiliation-admin"

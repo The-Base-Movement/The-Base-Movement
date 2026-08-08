@@ -857,10 +857,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     htmlFor="select-party-affiliation"
                     className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                   >
-                    Party Affiliation{' '}
-                    <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
-                      (Optional)
-                    </span>
+                    Party Affiliation <span className="text-destructive">*</span>
                   </label>
                   <select
                     name="name-party-affiliation"
