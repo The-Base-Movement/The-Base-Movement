@@ -300,12 +300,12 @@ export function MembersFilterBar({
             ))}
           </select>
           <select
-            aria-label="Filter by party affiliation"
+            aria-label="Filter by party affiliation / CSO"
             value={partyAffiliationFilter}
             onChange={(e) => onPartyAffiliationFilterChange(e.target.value)}
             style={selectSt}
           >
-            <option value="all">All party affiliations</option>
+            <option value="all">All party affiliations / CSO</option>
             {politicalParties.map((p) => (
               <option key={p} value={p}>
                 {p}

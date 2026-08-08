@@ -367,7 +367,7 @@ export default function ProfileSettings() {
     if (!regNo) return
 
     if (!form.partyAffiliation) {
-      toast.error('Party affiliation is required.')
+      toast.error('Party affiliation / CSO is required.')
       return
     }
 

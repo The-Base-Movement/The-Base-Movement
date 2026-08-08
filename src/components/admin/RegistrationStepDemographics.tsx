@@ -380,7 +380,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
             color: 'hsl(var(--on-surface-muted))',
           }}
         >
-          Party Affiliation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+          Party Affiliation / CSO <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
         </label>
         <select
           name="name-party-affiliation-admin"
@@ -398,7 +398,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
             color: 'hsl(var(--on-surface))',
           }}
         >
-          <option value="">Select Party Affiliation</option>
+          <option value="">Select Party Affiliation / CSO</option>
           {politicalParties.map((p) => (
             <option key={p} value={p}>
               {p}

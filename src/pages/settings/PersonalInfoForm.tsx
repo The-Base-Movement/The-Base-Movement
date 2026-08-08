@@ -330,10 +330,10 @@ export function PersonalInfoForm({
             </div>
           </div>
 
-          {/* Party Affiliation — required */}
+          {/* Party Affiliation / CSO — required */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <label htmlFor="select-party-affiliation" style={labelStyle}>
-              Party Affiliation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+              Party Affiliation / CSO <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
             <div style={{ position: 'relative' }}>
               <select

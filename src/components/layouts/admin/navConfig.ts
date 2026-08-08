@@ -113,6 +113,19 @@ export const getNavGroups = (
         permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
       },
       {
+        to: '/admin/party-affiliations',
+        icon: 'how_to_vote',
+        label: 'Party affiliations / CSO',
+        allowedRoles: [
+          'SUPER_ADMIN',
+          'FOUNDER',
+          'EXECUTIVE',
+          'EXECUTIVE_MEMBER',
+          'MOVEMENT_MANAGER',
+          'MOVEMENT_MANAGER_SECRETARY',
+        ],
+      },
+      {
         to: '/admin/leadership',
         icon: 'shield',
         label: 'Leadership hub',

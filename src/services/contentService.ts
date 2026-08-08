@@ -475,7 +475,7 @@ class ContentService {
 
   async getMediaFiles(path: string): Promise<string[]> {
     // 1. Handle local-only folders
-    if (path === 'logos-favicons' || path === 'branding') {
+    if (path === 'logos-favicons' || path === 'branding' || path === 'party-affiliations') {
       return this.getLocalAssets(path)
     }
 
@@ -623,14 +623,65 @@ class ContentService {
         return [...(mediaManifest.branding || []), ...(mediaManifest.publicAssets || [])]
       case 'public-assets':
         return mediaManifest.publicAssets || []
-      case 'strategic-focus':
+      case 'party-affiliations':
         return [
-          '/strategic-focus/agro_processing_illustration.webp',
-          '/strategic-focus/digital_economy_illustration.webp',
-          '/strategic-focus/ghana_network_map.webp',
+          '/party-affiliations/All_Peoples_Congress_-_APC.jpeg',
+          '/party-affiliations/Convention_Peoples_Party.jpeg',
+          '/party-affiliations/Ghana_Freedom_Party.jpeg',
+          '/party-affiliations/Ghana_Union_Movement_-_GUM.jpeg',
+          '/party-affiliations/Great_Consolidated_Popular_Party_-_GCPP.jpeg',
+          '/party-affiliations/Liberal_Party_of_Ghana_-_LPG.jpeg',
+          '/party-affiliations/National_Democratic_Congress_-_NDC.jpeg',
+          '/party-affiliations/National_Democratic_Party_-_NDP.jpeg',
+          '/party-affiliations/New_Patriotic_Party_-_NPP.jpeg',
+          '/party-affiliations/The_New_Force_-_NF.jpeg',
         ]
       default:
         return []
+    }
+  }
+
+  async replaceMediaFile(oldUrl: string, newFile: File, folder: string): Promise<string | null> {
+    try {
+      const compressed = await compressForUpload(newFile)
+      let filename = 'replaced_file.webp'
+      try {
+        const urlObj = new URL(oldUrl)
+        filename = urlObj.pathname.split('/').pop() || filename
+      } catch {
+        filename = `${Date.now()}.${compressed.name.split('.').pop() || 'webp'}`
+      }
+
+      const filePath = `${folder}/${filename}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('media')
+        .upload(filePath, compressed, { upsert: true })
+
+      if (uploadError) {
+        console.error('[STORAGE] Replace upload failed:', uploadError)
+        return null
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('media').getPublicUrl(filePath)
+
+      const freshUrl = `${publicUrl}?t=${Date.now()}`
+
+      await supabase
+        .from('media_library')
+        .update({
+          size_bytes: compressed.size,
+          mime_type: compressed.type || 'image/webp',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('url', oldUrl)
+
+      return freshUrl
+    } catch (err) {
+      console.error('[STORAGE] Error replacing media asset:', err)
+      return null
     }
   }
 
@@ -946,6 +997,7 @@ class ContentService {
         { id: 'logos-favicons', label: 'Logos & Favicons' },
         { id: 'public-assets', label: 'Public Assets' },
         { id: 'party-officials', label: 'Party Officials' },
+        { id: 'party-affiliations', label: 'Party Affiliations / CSO' },
         { id: 'strategic-focus', label: 'Strategic Focus' },
       ]
     }
@@ -955,6 +1007,9 @@ class ContentService {
       label: item.label,
     }))
 
+    if (!foldersList.some((f) => f.id === 'party-affiliations')) {
+      foldersList.push({ id: 'party-affiliations', label: 'Party Affiliations / CSO' })
+    }
     if (!foldersList.some((f) => f.id === 'strategic-focus')) {
       foldersList.push({ id: 'strategic-focus', label: 'Strategic Focus' })
     }

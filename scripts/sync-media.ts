@@ -12,17 +12,18 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Use service role for bypass RLS
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error(
-    'Missing Supabase environment variables (VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)'
-  )
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Missing Supabase environment variables (SUPABASE_URL, SUPABASE_ANON_KEY)')
   process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Uploads a local file to a specified path in the Supabase 'media' storage bucket
 async function uploadFile(localPath: string, bucketPath: string) {
@@ -75,20 +76,30 @@ async function sync() {
     }
   }
 
-  // 2. Sync Root Logos/Images -> logos-favicons/ or public-assets/
-  console.log('\n📂 Syncing Root Assets...')
-  const rootAssets = [
-    'logo.png',
-    'hero-bg.png',
-    'og-image.png',
-    'founder.jpg',
-    'the-base-banner-1.png',
-  ]
-  for (const asset of rootAssets) {
-    const localPath = path.join('public', asset)
-    if (fs.existsSync(localPath)) {
-      const category = asset.includes('logo') ? 'logos-favicons' : 'public-assets'
-      await uploadFile(localPath, `${category}/${asset}`)
+  // 2. Sync Branding Directory -> branding/
+  const brandingDir = 'public/branding'
+  if (fs.existsSync(brandingDir)) {
+    console.log('\n📂 Syncing Branding Assets...')
+    const files = fs.readdirSync(brandingDir)
+    for (const file of files) {
+      const fullPath = path.join(brandingDir, file)
+      if (fs.lstatSync(fullPath).isFile()) {
+        await uploadFile(fullPath, `branding/${file}`)
+        await uploadFile(fullPath, `logos-favicons/${file}`)
+      }
+    }
+  }
+
+  // 3. Sync Party Affiliations -> party-affiliations/
+  const partyDir = 'public/party-affiliations'
+  if (fs.existsSync(partyDir)) {
+    console.log('\n📂 Syncing Party Affiliations Assets...')
+    const files = fs.readdirSync(partyDir)
+    for (const file of files) {
+      const fullPath = path.join(partyDir, file)
+      if (fs.lstatSync(fullPath).isFile()) {
+        await uploadFile(fullPath, `party-affiliations/${file}`)
+      }
     }
   }
 

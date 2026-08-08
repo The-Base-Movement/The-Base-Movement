@@ -857,7 +857,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     htmlFor="select-party-affiliation"
                     className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
                   >
-                    Party Affiliation <span className="text-destructive">*</span>
+                    Party Affiliation / CSO <span className="text-destructive">*</span>
                   </label>
                   <select
                     name="name-party-affiliation"
@@ -866,7 +866,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     onChange={(e) => onInputChange('partyAffiliation', e.target.value)}
                     className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
                   >
-                    <option value="">Select Party Affiliation</option>
+                    <option value="">Select Party Affiliation / CSO</option>
                     {politicalParties.map((p) => (
                       <option key={p} value={p}>
                         {p}
