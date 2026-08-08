@@ -11,15 +11,15 @@ export const ageRanges = ['18-25', '26-35', '36-45', '46-60', '60+']
 export const religions = ['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']
 
 export const politicalParties = [
-  'New Patriotic Party — NPP',
-  'Great Consolidated Popular Party — GCPP',
+  'All People’s Congress — APC',
+  'Convention People’s Party — CPP',
   'Ghana Freedom Party — GFP',
   'Ghana Union Movement — GUM',
+  'Great Consolidated Popular Party — GCPP',
   'Liberal Party of Ghana — LPG',
-  'National Democratic Party — NDP',
-  'Convention People’s Party — CPP',
   'National Democratic Congress — NDC',
-  'All People’s Congress — APC',
+  'National Democratic Party — NDP',
+  'New Patriotic Party — NPP',
   'The New Force — NF',
 ]
 
