@@ -1,4 +1,4 @@
-// activity-feed → Discord
+﻿// activity-feed â†’ Discord
 //
 // Near-real-time feed of member activity (logins, logouts, on-site actions).
 // Invoked by a pg_cron job every few minutes. Reads new rows from
@@ -8,8 +8,6 @@
 // Batched + capped (BATCH_LIMIT per run) so it never floods the channel or
 // trips Discord's webhook rate limit; anything beyond the cap flows on the
 // next run because the cursor only advances past what was actually posted.
-
-// @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { json } from '../_shared/admin-auth.ts'
 
@@ -33,11 +31,11 @@ interface ActivityRow {
 function icon(actionType: string | null): string {
   switch ((actionType || '').toLowerCase()) {
     case 'login':
-      return '🟢'
+      return 'ðŸŸ¢'
     case 'logout':
-      return '🔴'
+      return 'ðŸ”´'
     default:
-      return '▫️'
+      return 'â–«ï¸'
   }
 }
 
@@ -69,13 +67,9 @@ serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
-    // @ts-expect-error: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    // @ts-expect-error: Deno global
     const webhookUrl = Deno.env.get('DISCORD_ACTIVITY_WEBHOOK_URL')
-    // @ts-expect-error: Deno global
     const cronToken = Deno.env.get('DISCORD_ACTIVITY_CRON_TOKEN')
 
     if (!webhookUrl) {
@@ -146,10 +140,10 @@ serve(async (req: Request) => {
     const lines = rows.map((r) => {
       const who = nameById[r.user_id] || 'Unknown member'
       const what = r.description || r.action_type || 'activity'
-      return `${icon(r.action_type)} \`${hhmm(r.created_at)}\` **${who}** — ${what}`
+      return `${icon(r.action_type)} \`${hhmm(r.created_at)}\` **${who}** â€” ${what}`
     })
 
-    const header = `**Member activity** · ${rows.length} event${rows.length === 1 ? '' : 's'}`
+    const header = `**Member activity** Â· ${rows.length} event${rows.length === 1 ? '' : 's'}`
     const chunks: string[] = []
     let buf = header
     for (const line of lines) {

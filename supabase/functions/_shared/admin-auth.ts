@@ -1,4 +1,3 @@
-// @ts-expect-error: Deno supports URL imports
 import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 const PRIVILEGED_ROLES = new Set(['SUPER_ADMIN', 'FOUNDER', 'EXECUTIVE'])
@@ -98,7 +97,6 @@ export function requireServiceRoleCall(
   // the injected SUPABASE_SERVICE_ROLE_KEY no longer equals the legacy service_role
   // JWT that a pg_cron job can pass, so cron→function calls are authenticated with
   // a dedicated CRON_TOKEN secret instead. Both credentials are trusted equally.
-  // @ts-expect-error: Deno supports Deno.env
   const cronToken = Deno.env.get('CRON_TOKEN') ?? ''
 
   if (!serviceRoleKey && !cronToken) {
@@ -175,7 +173,6 @@ export async function requireAuthorizedAdmin(
  * 3. fallback to 'noreply@thebasemovement.org.gh'
  */
 export async function getSenderEmail(supabaseAdmin: SupabaseClient): Promise<string> {
-  // @ts-expect-error: Deno supports Deno.env
   let senderEmail = Deno.env.get('SENDER_EMAIL')
   if (!senderEmail) {
     const { data: emailSetting } = await supabaseAdmin

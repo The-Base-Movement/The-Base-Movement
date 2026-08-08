@@ -1,9 +1,6 @@
-// THE BASE: SMS GATEWAY WEBHOOK RECEIVER CALLBACK
+﻿// THE BASE: SMS GATEWAY WEBHOOK RECEIVER CALLBACK
 // Receives real-time delivery status receipts from MNotify and logs them.
-
-// @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 const corsHeaders = {
@@ -23,7 +20,6 @@ function timingSafeEqual(a: string, b: string) {
 }
 
 function getExpectedCallbackSecret() {
-  // @ts-expect-error: Deno global
   return Deno.env.get('MNOTIFY_CALLBACK_SECRET') ?? Deno.env.get('MNOTIFY_API_KEY') ?? ''
 }
 
@@ -61,9 +57,7 @@ serve(async (req: Request) => {
     }
 
     // 1. Initialize Supabase Admin client
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 

@@ -145,8 +145,7 @@ export async function sendMonthlyDuesDiscordAlert(
     const webhookUrl =
       options.webhookUrl !== undefined
         ? options.webhookUrl
-        : // @ts-expect-error: Deno global
-          (Deno.env.get('MONTHLY_DUES_DISCORD_WEBHOOK_URL') ?? '')
+        : (Deno.env.get('MONTHLY_DUES_DISCORD_WEBHOOK_URL') ?? '')
     if (!webhookUrl) return { sent: false }
 
     const fetchImpl = options.fetchImpl ?? fetch

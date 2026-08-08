@@ -70,7 +70,7 @@ async function verifySignature(
   return crypto.subtle.verify(
     'HMAC',
     key,
-    base64UrlDecode(signatureSegment),
+    base64UrlDecode(signatureSegment) as unknown as BufferSource,
     new TextEncoder().encode(payloadSegment)
   )
 }

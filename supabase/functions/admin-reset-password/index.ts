@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 // admin-reset-password
 //
 // Lets a privileged admin trigger a password reset for any member from inside
@@ -8,12 +8,9 @@
 //
 // Caller must be SUPER_ADMIN / FOUNDER.
 // Body: { user_id: string }
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail } from '../_shared/admin-auth.ts'
 import { passwordResetEmail } from '../_shared/email-templates.ts'
-// @ts-expect-error: Deno supports URL imports
 import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {

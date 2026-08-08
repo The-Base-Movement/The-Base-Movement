@@ -1,4 +1,4 @@
-// Supabase "Send SMS" auth hook — routes Supabase phone-auth SMS through mNotify.
+﻿// Supabase "Send SMS" auth hook â€” routes Supabase phone-auth SMS through mNotify.
 //
 // Why: Supabase won't let you enable the Phone provider without an SMS provider,
 // and mNotify isn't a native option. This hook satisfies that requirement using
@@ -6,18 +6,14 @@
 // phone+password login works again. (On a password login no SMS is sent, so this
 // hook is only invoked for genuine OTP/verification sends.)
 //
-// Wire-up: Dashboard → Authentication → Hooks → Send SMS → HTTPS →
+// Wire-up: Dashboard â†’ Authentication â†’ Hooks â†’ Send SMS â†’ HTTPS â†’
 //   https://<project-ref>.supabase.co/functions/v1/send-sms-hook
-// Supabase generates SEND_SMS_HOOK_SECRET (format "v1,whsec_<base64>") — set it as
+// Supabase generates SEND_SMS_HOOK_SECRET (format "v1,whsec_<base64>") â€” set it as
 // a function secret. Reuses MNOTIFY_API_KEY / MNOTIFY_SENDER_ID.
 // Deploy with: supabase functions deploy send-sms-hook --no-verify-jwt
 // (Supabase Auth calls this server-side with a Standard Webhooks signature, not a user JWT.)
-
-// @ts-expect-error: Deno supports URL imports
 import { Webhook } from 'https://esm.sh/standardwebhooks@1.0.0'
 import { sendSms } from '../_shared/sms.ts'
-
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: { message: 'Method not allowed' } }), {
@@ -27,7 +23,6 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
     const hookSecret = Deno.env.get('SEND_SMS_HOOK_SECRET')
     if (!hookSecret) throw new Error('SEND_SMS_HOOK_SECRET is not configured')
 

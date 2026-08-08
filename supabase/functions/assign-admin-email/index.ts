@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 // assign-admin-email
 //
 // Phone-registered members carry a placeholder auth email (<phone>@thebase.org)
@@ -10,15 +10,12 @@
 // Caller must be a privileged admin (SUPER_ADMIN / FOUNDER / EXECUTIVE).
 //
 // Body:
-//   { user_id: string, check_only: true }            → { needsEmail, currentEmail }
-//   { user_id: string, email: string }               → performs the switch
+//   { user_id: string, check_only: true }            â†’ { needsEmail, currentEmail }
+//   { user_id: string, email: string }               â†’ performs the switch
 //
 // Optional secret: RESEND_API_KEY (notifies the appointee of their login email)
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getSenderEmail } from '../_shared/admin-auth.ts'
-// @ts-expect-error: Deno supports URL imports
 import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
@@ -42,14 +39,12 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
     const admin = createClient(supabaseUrl, serviceKey)
 
-    // ── Authenticate + authorize the caller ──
+    // â”€â”€ Authenticate + authorize the caller â”€â”€
     const authHeader = req.headers.get('Authorization') ?? ''
     const jwt = authHeader.replace('Bearer ', '')
     if (!jwt) return json({ error: 'Not authenticated.' }, 401)
@@ -71,7 +66,7 @@ Deno.serve(async (req: Request) => {
       return json({ error: 'Not authorized to manage admin credentials.' }, 403)
     }
 
-    // ── Load the target user ──
+    // â”€â”€ Load the target user â”€â”€
     const { user_id, email, check_only } = await req.json()
     if (!user_id) return json({ error: 'user_id is required.' }, 400)
 
@@ -95,7 +90,7 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    // ── Perform the switch ──
+    // â”€â”€ Perform the switch â”€â”€
     const newEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
     if (!newEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
       return json({ error: 'A valid email address is required.' }, 400)
@@ -120,18 +115,18 @@ Deno.serve(async (req: Request) => {
 
     await admin.from('users').update({ email: newEmail }).eq('id', user_id)
 
-    // ── Notify the appointee (best-effort) ──
+    // â”€â”€ Notify the appointee (best-effort) â”€â”€
     {
       try {
         const senderEmail = await getSenderEmail(admin)
         await sendEmail({
           to: newEmail,
           from: `The Base Movement <${senderEmail}>`,
-          subject: 'Admin access granted — The Base Movement',
+          subject: 'Admin access granted â€” The Base Movement',
           text:
             `You have been granted administrative access to The Base Movement.\n\n` +
             `Sign in to the admin panel with this email address (${newEmail}) and your existing password.\n\n` +
-            `For security, please set up two-factor authentication in Settings → Security after your first login.`,
+            `For security, please set up two-factor authentication in Settings â†’ Security after your first login.`,
         })
       } catch (mailErr) {
         console.warn('[ASSIGN-ADMIN-EMAIL] Notification email failed:', mailErr)

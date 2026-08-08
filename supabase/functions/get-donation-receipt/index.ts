@@ -1,5 +1,4 @@
-// @ts-expect-error: Deno supports URL imports
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+﻿import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageDonations, canViewGuestDonationReceipts, json } from '../_shared/admin-auth.ts'
 
 declare const Deno: {

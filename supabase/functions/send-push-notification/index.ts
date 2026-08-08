@@ -1,11 +1,8 @@
-// THE BASE: WEB PUSH SENDER
+﻿// THE BASE: WEB PUSH SENDER
 // Sends Web Push notifications to a list of users (or all opted-in subscribers).
 // Invoke with: { userIds: string[] | "all", title: string, body: string, url?: string }
 // Requires Supabase secrets: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-// @ts-expect-error: npm import in Deno
 import webpush from 'npm:web-push'
 import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
@@ -13,8 +10,6 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
-
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') {
@@ -34,25 +29,18 @@ Deno.serve(async (req: Request) => {
     const { userIds, title, body, url } = await req.json()
 
     if (!title || !body) throw new Error('title and body are required')
-
-    // @ts-expect-error: Deno global
     const supabaseAdmin = createClient(
-      // @ts-expect-error: Deno global
       Deno.env.get('SUPABASE_URL') ?? '',
-      // @ts-expect-error: Deno global
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     webpush.setVapidDetails(
-      // @ts-expect-error: Deno global
       Deno.env.get('VAPID_SUBJECT') ?? '',
-      // @ts-expect-error: Deno global
       Deno.env.get('VAPID_PUBLIC_KEY') ?? '',
-      // @ts-expect-error: Deno global
       Deno.env.get('VAPID_PRIVATE_KEY') ?? ''
     )
 
-    // Fetch subscriptions — either all opted-in users or a specific list
+    // Fetch subscriptions â€” either all opted-in users or a specific list
     let query = supabaseAdmin.from('push_subscriptions').select('id, user_id, subscription')
     if (userIds !== 'all') {
       if (!Array.isArray(userIds) || userIds.length === 0) {
@@ -90,7 +78,7 @@ Deno.serve(async (req: Request) => {
       } catch (err: unknown) {
         const status = (err as { statusCode?: number }).statusCode
         if (status === 410 || status === 404) {
-          // Subscription expired or revoked — clean up
+          // Subscription expired or revoked â€” clean up
           expiredIds.push(row.id)
         } else {
           failed++

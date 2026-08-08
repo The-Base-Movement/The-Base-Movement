@@ -1,16 +1,14 @@
-/**
+﻿/**
  * monthly-dues-recurring
- * ─────────────────────────────────────────────────────────────
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * Authenticated member lifecycle for Hubtel Recurring Invoice:
- *   action: 'create'  — create the provider invoice for a pending enrollment
- *   action: 'verify'  — reconcile provider state; activate on confirmation
- *   action: 'cancel'  — cancel at the provider; opt out only on success
+ *   action: 'create'  â€” create the provider invoice for a pending enrollment
+ *   action: 'verify'  â€” reconcile provider state; activate on confirmation
+ *   action: 'cancel'  â€” cancel at the provider; opt out only on success
  *
  * Credentials come from the same env vars as checkout. No provider error
  * ever activates an enrollment or completes a cancellation.
  */
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { buildSignedHubtelCallbackUrl } from '../hubtel-payment-shared/callback-auth.ts'
 import { sendMonthlyDuesDiscordAlert } from '../_shared/monthly-dues-discord.ts'
@@ -141,18 +139,13 @@ function json(body: unknown, status = 200) {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
 }
-
-// @ts-expect-error: Deno global
 if (import.meta.main) {
-  // @ts-expect-error: Deno global
   const env = (name: string) => Deno.env.get(name)
   const requiredEnv = (name: string) => {
     const value = env(name)
     if (!value) throw new Error(`${name} is not configured`)
     return value
   }
-
-  // @ts-expect-error: Deno global
   Deno.serve(async (req: Request) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
     if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)

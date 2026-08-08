@@ -1,11 +1,8 @@
 const TWILIO_VERIFY_BASE_URL = 'https://verify.twilio.com/v2'
 
 function resolveTwilioVerifyVars() {
-  // @ts-expect-error: Deno global
   const accountSid = (Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID'))?.trim() ?? ''
-  // @ts-expect-error: Deno global
   const authToken = (Deno.env.get('TWILIO_AUTH_TOKEN') || Deno.env.get('TWILIO_TOKEN') || Deno.env.get('TWILIO_SECRET'))?.trim() ?? ''
-  // @ts-expect-error: Deno global
   const serviceSid = (
     Deno.env.get('TWILIO_VERIFY_SERVICE_SID') ||
     Deno.env.get('TWILIO_VERIFY_SID') ||

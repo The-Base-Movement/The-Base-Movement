@@ -5,8 +5,6 @@
 // by their last sign-in timestamp, then posts a summary to Discord.
 //
 // Required secrets: CRON_TOKEN (for pg_cron), DISCORD_MEMBERS_WEBHOOK_URL (optional)
-
-// @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { json, requireServiceRoleCall } from '../_shared/admin-auth.ts'
 
@@ -24,8 +22,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const authz = requireServiceRoleCall(req, serviceKey)
     if (!authz.ok) {
       return new Response(await authz.response.text(), {
@@ -33,9 +30,15 @@ serve(async (req: Request) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
 
-    // @ts-expect-error: Deno global
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    if (!supabaseUrl) {
+      console.error('[CATEGORIZE-ENGAGEMENT] SUPABASE_URL is not set.')
+      return new Response(JSON.stringify({ error: 'SUPABASE_URL secret missing.' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      })
+    }
 
     // Call the SQL function to categorize all active members by engagement.
     const rpcRes = await fetch(`${supabaseUrl}/rest/v1/rpc/categorize_member_engagement`, {
@@ -90,7 +93,6 @@ serve(async (req: Request) => {
     )
 
     // Post Discord notification.
-    // @ts-expect-error: Deno global
     const webhookUrl = Deno.env.get('DISCORD_MEMBERS_WEBHOOK_URL')
     if (webhookUrl) {
       const discordRes = await fetch(webhookUrl, {

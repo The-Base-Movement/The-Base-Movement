@@ -1,14 +1,11 @@
-// THE BASE: MOBILIZATION NOTIFICATION EDGE FUNCTION
+﻿// THE BASE: MOBILIZATION NOTIFICATION EDGE FUNCTION
 // Sends a welcome email to new verified members via SendGrid,
 // then syncs the member into the SendGrid marketing contacts list.
 // Set RESEND_API_KEY (+ optionally SENDGRID_LIST_ID) in Supabase secrets.
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { welcomeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
-// @ts-expect-error: Deno supports URL imports
 import { sendEmail } from '../_shared/email.ts'
 
 const corsHeaders = {
@@ -168,10 +165,7 @@ Deno.serve(async (req: Request) => {
         platform: record.platform ?? '',
         status: record.status ?? '',
       }
-
-      // @ts-expect-error: Deno global
       const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''
-      // @ts-expect-error: Deno global
       const serviceKey: string = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
       fetch(`${supabaseUrl}/functions/v1/sync-resend-contact`, {
@@ -245,7 +239,7 @@ Deno.serve(async (req: Request) => {
           body: JSON.stringify({
             embeds: [
               {
-                title: '🆕 New Member Registration Verified',
+                title: 'ðŸ†• New Member Registration Verified',
                 description: `A new member has completed registration and verification.`,
                 color: 2067276, // Green
                 fields: [

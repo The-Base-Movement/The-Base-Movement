@@ -1,4 +1,4 @@
-// capture-admin-device
+﻿// capture-admin-device
 //
 // Called when a privileged admin enters the admin area. Derives the admin from
 // the verified JWT (never trusts a client-supplied id), reads the TRUE client IP
@@ -6,12 +6,9 @@
 // enrol-or-validate logic via the evaluate_admin_device RPC (service role).
 //
 // Returns: { tracked, decision, device_id, webauthn_required }
-//   decision ∈ enrolled | verified | step_up_required | blocked
+//   decision âˆˆ enrolled | verified | step_up_required | blocked
 //   tracked=false  -> caller is not a device-tracked role; client treats as allow.
-
-// @ts-expect-error: Deno supports URL imports
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 const corsHeaders = {
@@ -84,7 +81,7 @@ async function geoLocate(
       }
     }
   } catch {
-    // ignore — geo/ISP is best-effort
+    // ignore â€” geo/ISP is best-effort
   }
 
   return { location: null, isp: null }
@@ -128,19 +125,19 @@ async function alertBlocked(
         channel: 'alerts',
         embeds: [
           {
-            title: '🔴 Blocked device login attempt',
+            title: 'ðŸ”´ Blocked device login attempt',
             description,
             color: 0xce1126,
             fields: [
               { name: 'Leader', value: adminName, inline: true },
-              { name: 'Device Type', value: deviceType ?? '—', inline: true },
+              { name: 'Device Type', value: deviceType ?? 'â€”', inline: true },
               {
                 name: 'Browser / OS',
-                value: `${browser ?? '—'} on ${osType ?? '—'}`,
+                value: `${browser ?? 'â€”'} on ${osType ?? 'â€”'}`,
                 inline: true,
               },
-              { name: 'IP', value: ip ?? '—', inline: true },
-              { name: 'Location', value: location ?? '—', inline: true },
+              { name: 'IP', value: ip ?? 'â€”', inline: true },
+              { name: 'Location', value: location ?? 'â€”', inline: true },
             ],
             timestamp: new Date().toISOString(),
           },
@@ -157,9 +154,7 @@ serve(async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(supabaseUrl, serviceKey)
 
@@ -179,7 +174,7 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (!admin || !TRACKED_ROLES.includes(admin.role)) {
-      // Not tracked — nothing to capture; client proceeds normally.
+      // Not tracked â€” nothing to capture; client proceeds normally.
       return json({ tracked: false, decision: 'verified' })
     }
 

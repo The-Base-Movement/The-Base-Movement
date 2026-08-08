@@ -1,6 +1,4 @@
-// @ts-expect-error: Deno supports URL imports
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-// @ts-expect-error: Deno supports URL imports
+﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { json, requireAuthorizedAdmin } from '../_shared/admin-auth.ts'
 
@@ -17,9 +15,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)

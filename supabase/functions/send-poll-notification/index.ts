@@ -1,13 +1,10 @@
-// THE BASE: POLL CLOSING NOTIFICATION EMAIL
+﻿// THE BASE: POLL CLOSING NOTIFICATION EMAIL
 // Called manually or via a scheduled job when a poll is 24h from closing.
 // Set RESEND_API_KEY in Supabase secrets to activate sending.
 // Invoke with: { pollId, targetRegion? }
-
-// @ts-expect-error: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { pollClosingEmail } from '../_shared/email-templates.ts'
 import { json, requireServiceRoleCall, getSenderEmail } from '../_shared/admin-auth.ts'
-// @ts-expect-error: Deno supports URL imports
 import { sendEmailBatch } from '../_shared/email.ts'
 
 const corsHeaders = {
@@ -118,7 +115,7 @@ Deno.serve(async (req: Request) => {
     const emailResult = await sendEmailBatch(messages)
     const sentCount = emailResult.sent
 
-    // Push notifications for all matching members — fire and forget
+    // Push notifications for all matching members â€” fire and forget
     const memberIds = ((members ?? []) as Member[]).map((m) => m.id)
     if (memberIds.length > 0) {
       // @ts-ignore: Deno global
@@ -133,7 +130,7 @@ Deno.serve(async (req: Request) => {
         },
         body: JSON.stringify({
           userIds: memberIds,
-          title: `Poll closing in ${hoursRemaining}h — vote now`,
+          title: `Poll closing in ${hoursRemaining}h â€” vote now`,
           body: row.title.slice(0, 100),
           url: '/dashboard/polls',
         }),

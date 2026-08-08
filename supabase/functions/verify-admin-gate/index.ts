@@ -1,5 +1,4 @@
-// @ts-expect-error: Deno supports URL imports
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+﻿import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import {
   getRetryAfterMs,
   registerAttempt,
@@ -48,8 +47,6 @@ function clientIp(req: Request) {
     'unknown'
   )
 }
-
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -71,10 +68,7 @@ Deno.serve(async (req: Request) => {
         429
       )
     }
-
-    // @ts-expect-error: Deno global
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    // @ts-expect-error: Deno global
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -83,8 +77,6 @@ Deno.serve(async (req: Request) => {
       .select('value')
       .eq('key', 'admin_gate_passphrase')
       .maybeSingle()
-
-    // @ts-expect-error: Deno global
     const stored = data?.value || Deno.env.get('ADMIN_GATE_PASSPHRASE')
     if (!stored || typeof stored !== 'string' || !stored.trim()) {
       console.error('[ADMIN-GATE] No configured passphrase found.')
