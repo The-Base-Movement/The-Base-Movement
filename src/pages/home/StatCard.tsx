@@ -6,7 +6,8 @@ interface StatCardProps {
   value: number
   suffix?: string
   label: string
-  sparkHeights: number[]
+  /** Cumulative weekly series from get_public_stats(); empty hides the chart. */
+  series: number[]
   delta: string
   deltaIcon: 'up' | 'circle'
 }
@@ -17,7 +18,7 @@ export function StatCard({
   value,
   suffix,
   label,
-  sparkHeights,
+  series,
   delta,
   deltaIcon,
 }: StatCardProps) {
@@ -158,7 +159,7 @@ export function StatCard({
             {delta}
           </span>
         )}
-        <Sparkline heights={sparkHeights} accent={accent} />
+        <Sparkline values={series} accent={accent} />
       </div>
     </div>
   )

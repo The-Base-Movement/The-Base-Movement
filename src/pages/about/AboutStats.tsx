@@ -1,5 +1,6 @@
 ﻿import { useEffect, useRef, useState } from 'react'
 import { Sparkline } from '../home/Sparkline'
+import type { PublicStats } from '@/services/publicSiteService'
 
 function useCountUp(target: number, active: boolean, duration = 1800) {
   const [count, setCount] = useState(0)
@@ -29,7 +30,8 @@ interface StatCardProps {
   value: number
   suffix?: string
   label: string
-  sparkHeights: number[]
+  /** Cumulative weekly series from get_public_stats(); empty hides the chart. */
+  series: number[]
   delta: string
   deltaIcon: 'up' | 'circle'
   delay: number
@@ -41,7 +43,7 @@ function StatCard({
   value,
   suffix,
   label,
-  sparkHeights,
+  series,
   delta,
   deltaIcon,
   delay,
@@ -200,22 +202,14 @@ function StatCard({
           )}
           {delta}
         </span>
-        <Sparkline heights={sparkHeights} accent={accent} />
+        <Sparkline values={series} accent={accent} />
       </div>
     </div>
   )
 }
 
 interface AboutStatsProps {
-  stats: {
-    members: number
-    chapters: number
-    regions: number
-    diaspora: number
-    membersDelta: string
-    chaptersDelta: string
-    diasporaDelta: string
-  }
+  stats: PublicStats
 }
 
 export function AboutStats({ stats }: AboutStatsProps) {
@@ -227,7 +221,7 @@ export function AboutStats({ stats }: AboutStatsProps) {
         value={stats.regions}
         suffix="/16"
         label="Full presence across every administrative region of Ghana"
-        sparkHeights={[6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 18]}
+        series={stats.regionsSeries}
         delta="National coverage"
         deltaIcon="circle"
         delay={0}
@@ -237,8 +231,8 @@ export function AboutStats({ stats }: AboutStatsProps) {
         eye="Base Diaspora"
         value={stats.chapters}
         label="Base Diaspora networks organised by country worldwide"
-        sparkHeights={[5, 6, 7, 7, 9, 10, 10, 12, 13, 14, 16, 18]}
-        delta={stats.chaptersDelta}
+        series={[]}
+        delta={stats.countries ? `In ${stats.countries.toLocaleString()} countries` : ''}
         deltaIcon="up"
         delay={80}
       />
@@ -247,7 +241,7 @@ export function AboutStats({ stats }: AboutStatsProps) {
         eye="Diaspora"
         value={stats.diaspora}
         label="Global Ghanaians supporting from abroad"
-        sparkHeights={[3, 4, 4, 5, 7, 7, 10, 11, 13, 14, 16, 18]}
+        series={stats.diasporaSeries}
         delta={stats.diasporaDelta}
         deltaIcon="up"
         delay={160}
@@ -257,7 +251,7 @@ export function AboutStats({ stats }: AboutStatsProps) {
         eye="Ghana Base"
         value={stats.members}
         label="Verified citizens registered nationwide"
-        sparkHeights={[4, 6, 7, 7, 9, 11, 12, 14, 15, 16, 17, 18]}
+        series={stats.membersSeries}
         delta={stats.membersDelta}
         deltaIcon="up"
         delay={240}
