@@ -450,7 +450,14 @@ export function MembershipFormBody({
               <FieldLine label="Digital Address (Ghana Post GPS)" hint="e.g. GA-183-9020" />
             </div>
 
-            <div style={{ marginTop: 10, marginBottom: 12 }}>
+            <div
+              style={{
+                marginTop: 10,
+                marginBottom: 12,
+                pageBreakBefore: 'always',
+                breakBefore: 'page',
+              }}
+            >
               <p
                 style={{
                   fontSize: '10px',
