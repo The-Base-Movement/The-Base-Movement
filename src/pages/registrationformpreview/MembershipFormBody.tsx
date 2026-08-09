@@ -115,7 +115,7 @@ export function MembershipFormBody({
   formTitle,
   logoUrl,
   parties,
-  watermarkOpacity = 0.07,
+  watermarkOpacity = 0.03,
 }: MembershipFormBodyProps) {
   const isGhana = platform === 'GHANA'
 

@@ -8,17 +8,9 @@ interface FormControlsProps {
   onPrint: () => void
   formUrl: string | undefined
   platform: string
-  watermarkOpacity: number
-  onWatermarkOpacityChange: (value: number) => void
 }
 
-export function FormControls({
-  onBack,
-  onPrint,
-  platform,
-  watermarkOpacity,
-  onWatermarkOpacityChange,
-}: FormControlsProps) {
+export function FormControls({ onBack, onPrint, platform }: FormControlsProps) {
   const [downloading, setDownloading] = useState(false)
 
   const handleDownloadPdf = async () => {
@@ -59,7 +51,7 @@ export function FormControls({
   }
 
   return (
-    <div className="max-w-[210mm] mx-auto mb-8 flex flex-wrap items-center justify-between gap-4 print:hidden">
+    <div className="max-w-[210mm] mx-auto mb-8 flex items-center justify-between print:hidden">
       <button
         onClick={onBack}
         className="flex items-center gap-2 text-stone-600 hover:text-stone-900 text-sm font-bold bg-transparent border-none cursor-pointer transition-colors"
@@ -70,27 +62,7 @@ export function FormControls({
         Back to Registration
       </button>
 
-      <div className="flex flex-wrap items-center gap-4">
-        {/* Watermark Opacity Control Slider */}
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-stone-200 rounded shadow-sm">
-          <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 16 }}>
-            watermark
-          </span>
-          <span className="text-xs font-semibold text-stone-700 whitespace-nowrap">
-            Watermark: {Math.round(watermarkOpacity * 100)}%
-          </span>
-          <input
-            type="range"
-            min="0"
-            max="0.25"
-            step="0.01"
-            value={watermarkOpacity}
-            onChange={(e) => onWatermarkOpacityChange(parseFloat(e.target.value))}
-            className="w-24 h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-primary"
-            title="Adjust Eagle Watermark Opacity"
-          />
-        </div>
-
+      <div className="flex items-center gap-4">
         <button
           onClick={onPrint}
           className="flex items-center gap-2 h-10 px-4 border border-stone-200 text-stone-600 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm text-sm font-bold bg-white cursor-pointer"
