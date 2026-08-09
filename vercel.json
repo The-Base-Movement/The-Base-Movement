@@ -32,7 +32,7 @@
       ]
     },
     {
-      "source": "/assets/(.*)",
+      "source": "/(assets|branding|fonts|pdf)/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
