@@ -433,9 +433,8 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
       {/* Section 6: Emergency Contact */}
       <div style={{ marginBottom: 18 }}>
         <SectionHeader number={6} label="Emergency Contact" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <FieldLine label="Emergency Contact Name" />
-          <FieldLine label="Relationship" hint="Select from approved options below" />
           <FieldLine label="Emergency Contact Phone" />
         </div>
         <div style={{ marginTop: 6 }}>
