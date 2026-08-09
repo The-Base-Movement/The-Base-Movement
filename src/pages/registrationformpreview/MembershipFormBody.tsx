@@ -459,7 +459,7 @@ export function MembershipFormBody({
         {isGhana ? (
           <>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 6 }}>
-              <FieldLine label="Email Address" hint="optional" />
+              <FieldLine label="Email Address" hint="optional, but advised" />
               <FieldLine label="Digital Address (Ghana Post GPS)" hint="e.g. GA-183-9020" />
             </div>
 
@@ -490,7 +490,7 @@ export function MembershipFormBody({
         ) : (
           <>
             <div style={{ marginTop: 6 }}>
-              <FieldLine label="Email Address" hint="optional" />
+              <FieldLine label="Email Address" hint="optional, but advised" />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 6 }}>
