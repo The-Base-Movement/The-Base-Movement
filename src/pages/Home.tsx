@@ -11,7 +11,6 @@ import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
 
 import { HeroSection, MobileHeroUpdatesTicker } from './home/HeroSection'
-import { WingDivider } from '@/components/ui/WingDivider'
 
 const MILESTONE_COLORS = ['#CE1126', '#DAA520', '#181d19', '#006B3F']
 
@@ -144,49 +143,34 @@ export default function Home() {
         <StatsSection statsGridRef={statsGridRef} stats={stats} />
       </Suspense>
 
-      <WingDivider />
-
       <Suspense fallback={null}>
         <PlatformsSection />
       </Suspense>
-
-      <WingDivider />
 
       <Suspense fallback={null}>
         <FoundationSection />
       </Suspense>
 
-      <WingDivider />
-
       <Suspense fallback={null}>
         <RoadmapSection roadmapItems={roadmapItems} />
       </Suspense>
-
-      <WingDivider />
 
       <Suspense fallback={null}>
         <NetworkStructureSection />
       </Suspense>
 
-      <WingDivider />
-
       <Suspense fallback={null}>
         <HomeOfficers />
       </Suspense>
-
-      <WingDivider />
 
       <Suspense fallback={null}>
         <LatestUpdatesSection latestPosts={latestPosts} />
       </Suspense>
 
       {activePolls.length > 0 && (
-        <>
-          <WingDivider />
-          <Suspense fallback={null}>
-            <PollsSection activePolls={activePolls} />
-          </Suspense>
-        </>
+        <Suspense fallback={null}>
+          <PollsSection activePolls={activePolls} />
+        </Suspense>
       )}
     </main>
   )
