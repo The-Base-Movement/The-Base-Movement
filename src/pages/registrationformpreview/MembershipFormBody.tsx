@@ -495,7 +495,12 @@ export function MembershipFormBody({
       </div>
 
       {/* Section 4: Profession & Career */}
-      <div style={{ marginBottom: 18 }}>
+      <div
+        style={{
+          marginBottom: 18,
+          ...(isGhana ? {} : { pageBreakBefore: 'always', breakBefore: 'page' }),
+        }}
+      >
         <SectionHeader number={4} label="Profession & Career" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <FieldLine label="Profession / Job Title" hint="e.g. Software Engineer, Farmer" />
