@@ -106,9 +106,9 @@ export function SuccessStep({
       <div className="space-y-8">
         <div className="bg-white border border-border/60 p-2 shadow-2xl relative">
           <div className="border-b border-border/40 pb-3 mb-4 px-4 pt-2">
-            <h3 className="font-meta font-semibold text-micro text-muted-foreground/80 tracking-tight">
+            <h2 className="font-meta font-semibold text-micro text-muted-foreground/80 tracking-tight">
               Official membership card
-            </h3>
+            </h2>
           </div>
 
           <div className="max-w-md mx-auto py-4" ref={cardRef}>
@@ -140,9 +140,9 @@ export function SuccessStep({
           <div className="bg-muted/30 p-6 mt-4 border-t border-border/40">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>
-                <h4 className="font-meta font-semibold text-xs text-on-surface tracking-tight mb-1">
+                <h3 className="font-meta font-semibold text-xs text-on-surface tracking-tight mb-1">
                   Registration number
-                </h4>
+                </h3>
                 <p className="font-meta font-medium text-xl text-primary tracking-tight">
                   {regNumber}
                 </p>
@@ -196,9 +196,9 @@ export function SuccessStep({
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white border border-border/60 p-8 shadow-sm">
-            <h4 className="font-meta font-semibold text-micro text-muted-foreground/80 tracking-tight mb-4">
+            <h2 className="font-meta font-semibold text-micro text-muted-foreground/80 tracking-tight mb-4">
               Membership verification
-            </h4>
+            </h2>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
               <p className="text-xs font-medium text-on-surface font-meta tracking-tight">
@@ -212,9 +212,9 @@ export function SuccessStep({
 
           <div className="bg-primary text-primary-foreground p-8 flex flex-col justify-between shadow-lg">
             <div>
-              <h4 className="font-meta font-semibold text-micro text-primary-foreground/90 tracking-tight mb-4 normal-case">
+              <h2 className="font-meta font-semibold text-micro text-primary-foreground/90 tracking-tight mb-4 normal-case">
                 Next step
-              </h4>
+              </h2>
               <p className="text-sm font-medium font-meta leading-tight mb-4">
                 Access your portal to join a chapter.
               </p>
