@@ -433,13 +433,12 @@ export function MembershipFormBody({
       {/* Section 3: Contact & Location */}
       <div style={{ marginBottom: 18 }}>
         <SectionHeader number={3} label="Contact & Location" />
-        <FieldLine
-          label="Primary Phone"
-          required
-          hint={isGhana ? 'with country code e.g. +233 24 123 4567' : 'with country code e.g. +44 7911 123456 / +1 212 555 0199'}
-        />
-
-        <div style={{ marginTop: 6 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <FieldLine
+            label="Primary Phone"
+            required
+            hint={isGhana ? 'e.g. +233 24 123 4567' : 'e.g. +44 7911 123456 / +1 212 555 0199'}
+          />
           <FieldLine label="Secondary Phone" hint="optional" />
         </div>
 
