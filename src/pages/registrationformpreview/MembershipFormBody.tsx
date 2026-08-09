@@ -24,6 +24,8 @@ function SectionHeader({ number, label }: { number: number; label: string }) {
         borderRadius: '2px',
         marginBottom: '14px',
         fontFamily: "'Public Sans', sans-serif",
+        WebkitPrintColorAdjust: 'exact',
+        printColorAdjust: 'exact',
       }}
     >
       <span

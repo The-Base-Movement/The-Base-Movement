@@ -50,7 +50,19 @@ export default function RegistrationFormPreview() {
         dangerouslySetInnerHTML={{
           __html: `
         @media print {
-          body { background: white; }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          body {
+            background: white !important;
+          }
+          #membership-form-body {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+          }
           .print\\:shadow-none { box-shadow: none !important; }
           .print\\:border-none { border: none !important; }
           .print\\:p-0 { padding: 0 !important; }
