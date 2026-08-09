@@ -14,8 +14,12 @@
     <meta name="apple-mobile-web-app-title" content="The Base">
     <meta name="msapplication-TileColor" content="#1a6b3c">
     <meta name="theme-color" content="#1a6b3c">
-    <!-- Material Symbols are self-hosted; preload the variable font for faster icon rendering -->
+    <!-- Preload critical fonts for faster FCP and text render -->
+    <link rel="preload" href="/fonts/PublicSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/PublicSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/MaterialSymbolsOutlined.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Preload LCP hero background image -->
+    <link rel="preload" href="/hero-bg.png" as="image" fetchpriority="high">
     <!--app-head-->
   </head>
   <body>

@@ -235,6 +235,9 @@ export function HeroSection({
             src={resolvedHeroBgUrl}
             alt=""
             aria-hidden="true"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="home-hero-bg absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
             onError={() => {
               if (heroBgUrl && resolvedHeroBgUrl !== DEFAULT_HERO_BG) setFailedHeroBgUrl(heroBgUrl)
