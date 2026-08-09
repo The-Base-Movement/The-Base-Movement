@@ -246,9 +246,9 @@ export function MovementRoadmap() {
                         {milestone.category}
                       </span>
                     </div>
-                    <h4 className="text-lg font-semibold italic tracking-tight text-on-surface group-hover:text-[var(--brand-red)] transition-colors leading-tight">
+                    <h3 className="text-lg font-semibold italic tracking-tight text-on-surface group-hover:text-[var(--brand-red)] transition-colors leading-tight">
                       {milestone.title}
-                    </h4>
+                    </h3>
                   </div>
 
                   <p className="text-sm text-on-surface/60 leading-relaxed font-medium mb-6">

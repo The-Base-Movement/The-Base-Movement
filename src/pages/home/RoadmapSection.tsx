@@ -82,9 +82,9 @@ export function RoadmapSection({ roadmapItems }: RoadmapSectionProps) {
                   >
                     {ms.year}
                   </div>
-                  <h4 className="font-meta font-semibold text-[15px] tracking-[-0.01em] text-on-surface mb-1.5 leading-snug">
+                  <h3 className="font-meta font-semibold text-[15px] tracking-[-0.01em] text-on-surface mb-1.5 leading-snug">
                     {ms.title}
-                  </h4>
+                  </h3>
                   <p className="text-[12px] text-muted-foreground leading-[1.5] font-body-md">
                     {ms.body}
                   </p>
