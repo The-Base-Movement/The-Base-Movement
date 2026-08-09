@@ -1,4 +1,5 @@
 import { useBranding } from '@/hooks/useBranding'
+import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { FormControls } from './registrationformpreview/FormControls'
@@ -6,6 +7,7 @@ import { MembershipFormBody } from './registrationformpreview/MembershipFormBody
 
 export default function RegistrationFormPreview() {
   const { settings } = useBranding()
+  const parties = usePoliticalParties()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const platform = searchParams.get('platform') || 'GHANA'
@@ -26,7 +28,12 @@ export default function RegistrationFormPreview() {
         formUrl={formUrl}
         platform={platform}
       />
-      <MembershipFormBody platform={platform} formTitle={formTitle} logoUrl={settings.logo_url} />
+      <MembershipFormBody
+        platform={platform}
+        formTitle={formTitle}
+        logoUrl={settings.logo_url}
+        parties={parties}
+      />
       <style
         dangerouslySetInnerHTML={{
           __html: `
