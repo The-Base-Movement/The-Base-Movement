@@ -68,7 +68,7 @@ function StatsSectionInner({ statsGridRef, stats }: StatsSectionProps) {
         <div className="mb-5">
           <h2
             id="stats-heading"
-            className="font-meta font-medium text-xl tracking-tight text-on-surface"
+            className="text-2xl md:text-3xl font-meta font-medium tracking-tight text-on-surface"
           >
             Movement at a glance
           </h2>

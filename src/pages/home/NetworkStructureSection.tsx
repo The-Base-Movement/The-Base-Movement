@@ -55,7 +55,7 @@ export function NetworkStructureSection() {
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 'clamp(22px, 3.5vw, 32px)',
+              fontSize: 'clamp(24px, 3.5vw, 30px)',
               color: 'hsl(var(--on-surface))',
               letterSpacing: '-0.02em',
               lineHeight: 1.2,
