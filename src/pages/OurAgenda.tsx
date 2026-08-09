@@ -11,7 +11,6 @@ import { AgendaSubnav } from './ouragenda/AgendaSubnav'
 import { AgendaIntroCards } from './ouragenda/AgendaIntroCards'
 import { AgendaPillarsContent } from './ouragenda/AgendaPillarsContent'
 import { AgendaCovenant } from './ouragenda/AgendaCovenant'
-import { WingDivider } from '@/components/ui/WingDivider'
 
 export default function OurAgenda() {
   const [pillars, setPillars] = useState<AgendaPillar[]>(agendaPillars)
@@ -73,8 +72,6 @@ export default function OurAgenda() {
             onSelect={setActiveSection}
           />
         )}
-
-        <WingDivider />
 
         <AgendaCovenant isLoggedIn={isLoggedIn} />
       </div>

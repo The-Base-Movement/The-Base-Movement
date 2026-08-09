@@ -9,7 +9,6 @@ import { AboutHero } from './about/AboutHero'
 import { AboutPillars } from './about/AboutPillars'
 import { AboutStats } from './about/AboutStats'
 import { AboutCTA } from './about/AboutCTA'
-import { WingDivider } from '@/components/ui/WingDivider'
 
 export default function About() {
   const [stats, setStats] = useState<PublicStats>(EMPTY_PUBLIC_STATS)
@@ -30,7 +29,7 @@ export default function About() {
   return (
     <main
       style={{
-        background: `linear-gradient(to bottom, hsl(var(--surface-warm)), hsl(var(--background)))`,
+        background: 'hsl(var(--background))',
         minHeight: '100vh',
         overflowX: 'hidden',
       }}
@@ -39,56 +38,33 @@ export default function About() {
         title="About"
         description="Learn about The Base Movement — a grassroots political movement for Ghana built on patriotism, honesty, and discipline, uniting compatriots at home and across the diaspora behind a Ghana First agenda."
       />
-      <section
-        style={{
-          padding: 'clamp(64px, 10vw, 100px) clamp(16px, 5vw, 32px) clamp(48px, 6vw, 72px)',
-        }}
-      >
+      <section className="bg-[#F7F5F2] border-b border-border/60 py-16 md:py-24 px-4 sm:px-8">
         <AboutHero tagline={siteSettings.about_hero_tagline} />
       </section>
 
-      <WingDivider />
-
-      <section
-        style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          padding: '0 clamp(16px, 5vw, 48px) clamp(64px, 8vw, 96px)',
-        }}
-      >
-        <AboutPillars
-          mission={siteSettings.about_pillar_mission}
-          vision={siteSettings.about_pillar_vision}
-          values={siteSettings.about_pillar_values}
-          leadership={siteSettings.about_pillar_leadership}
-          ghanaNetwork={siteSettings.about_pillar_ghana_network}
-          diaspora={siteSettings.about_pillar_diaspora}
-        />
+      <section className="bg-white py-20 md:py-28 border-b border-border/60 px-4 sm:px-8">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <AboutPillars
+            mission={siteSettings.about_pillar_mission}
+            vision={siteSettings.about_pillar_vision}
+            values={siteSettings.about_pillar_values}
+            leadership={siteSettings.about_pillar_leadership}
+            ghanaNetwork={siteSettings.about_pillar_ghana_network}
+            diaspora={siteSettings.about_pillar_diaspora}
+          />
+        </div>
       </section>
 
-      <WingDivider />
-
-      <section
-        style={{
-          padding: 'clamp(48px, 6vw, 80px) clamp(16px, 5vw, 48px)',
-          background: 'hsl(var(--background) / 0.6)',
-        }}
-      >
+      <section className="bg-[#181d19] text-white py-20 md:py-28 px-4 sm:px-8">
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <AboutStats stats={stats} />
         </div>
       </section>
 
-      <WingDivider />
-
-      <section
-        style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          padding: 'clamp(48px, 6vw, 80px) clamp(16px, 5vw, 48px)',
-        }}
-      >
-        <AboutCTA />
+      <section className="bg-[#F7F5F2] py-20 md:py-28 px-4 sm:px-8 border-t border-border/60">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <AboutCTA />
+        </div>
       </section>
     </main>
   )
