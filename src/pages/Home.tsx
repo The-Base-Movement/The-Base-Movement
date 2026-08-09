@@ -130,7 +130,7 @@ export default function Home() {
       <SEO title="The Base Movement Ghana | Ghana First, Jobs for the Youth" canonical="/" />
 
       <HeroSection
-        heroBgUrl={settings.hero_bg_url || '/hero-bg.png'}
+        heroBgUrl={settings.hero_bg_url || '/branding/hero-background-image.webp'}
         latestPosts={latestPosts}
         mousePos={mousePos}
         onMouseMove={handleMouseMove}
