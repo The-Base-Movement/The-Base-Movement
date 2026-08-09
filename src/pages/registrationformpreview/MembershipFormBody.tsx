@@ -73,9 +73,14 @@ function FieldLine({ label, required = false, hint }: { label: string; required?
   )
 }
 
-function CheckboxGroup({ items }: { items: string[] }) {
+function CheckboxGroup({ items, columns = 0 }: { items: string[]; columns?: number }) {
+  const layoutStyle: React.CSSProperties =
+    columns > 0
+      ? { display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: '8px 16px' }
+      : { display: 'flex', flexWrap: 'wrap', gap: '8px 20px' }
+
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 20px' }}>
+    <div style={layoutStyle}>
       {items.map((item) => (
         <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <div
@@ -85,6 +90,7 @@ function CheckboxGroup({ items }: { items: string[] }) {
               border: '1.5px solid #64748b',
               borderRadius: 2,
               background: '#fff',
+              flexShrink: 0,
             }}
           />
           <span
@@ -385,7 +391,7 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
             (Note: Registrar selects only ONE option)
           </span>
         </p>
-        <CheckboxGroup items={partyChecklist} />
+        <CheckboxGroup items={partyChecklist} columns={3} />
       </div>
 
       {/* Section 4: Contact & Location */}
