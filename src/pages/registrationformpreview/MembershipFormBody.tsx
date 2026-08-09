@@ -365,7 +365,7 @@ export function MembershipFormBody({
       {/* Section 2: Personal Information */}
       <div style={{ marginBottom: 18 }}>
         <SectionHeader number={2} label="Personal Information" />
-        <FieldLine label="Full Name (As shown on Ghana Card or Passport)" required />
+        <FieldLine label="Full Name (As shown on your ID Card or Passport)" required />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 10 }}>
           <FieldLine label="Birth Year" hint="e.g. 1992" />
@@ -400,8 +400,16 @@ export function MembershipFormBody({
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 10 }}>
-          <FieldLine label="Ghana Card Number" required hint="e.g. GHA-123456789-0" />
-          <FieldLine label="Voter's ID Card Number" required hint="10-digit Voter ID" />
+          <FieldLine
+            label="Ghana Card Number"
+            required={isGhana}
+            hint={isGhana ? 'e.g. GHA-123456789-0' : 'Optional for Diaspora'}
+          />
+          <FieldLine
+            label="Voter's ID Card Number"
+            required={isGhana}
+            hint={isGhana ? '10-digit Voter ID' : 'Optional for Diaspora'}
+          />
         </div>
 
         <div style={{ marginTop: 10 }}>
