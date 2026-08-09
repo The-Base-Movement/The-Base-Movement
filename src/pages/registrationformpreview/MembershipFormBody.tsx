@@ -456,13 +456,13 @@ export function MembershipFormBody({
           <FieldLine label="Secondary Phone Number" hint="optional" />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 6 }}>
-          <FieldLine label="Email Address" hint="optional" />
-          <FieldLine label="Digital Address (Ghana Post GPS)" hint="e.g. GA-183-9020" />
-        </div>
-
         {isGhana ? (
           <>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 6 }}>
+              <FieldLine label="Email Address" hint="optional, but advised" />
+              <FieldLine label="Digital Address (Ghana Post GPS)" hint="e.g. GA-183-9020" />
+            </div>
+
             <div style={{ marginTop: 10, marginBottom: 12 }}>
               <p
                 style={{
@@ -488,11 +488,16 @@ export function MembershipFormBody({
             </div>
           </>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 6 }}>
-            <FieldLine label="Country of Residence" required />
-            <FieldLine label="City / Locality" required />
-            <FieldLine label="Base Diaspora Chapter" required hint="e.g. UK Chapter" />
-          </div>
+          <>
+            <div style={{ marginTop: 6 }}>
+              <FieldLine label="Email Address" hint="optional, but advised" />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 6 }}>
+              <FieldLine label="Country of Residence" required hint="e.g. United Kingdom, USA" />
+              <FieldLine label="City / Locality" required hint="e.g. London, Atlanta" />
+            </div>
+          </>
         )}
       </div>
 
