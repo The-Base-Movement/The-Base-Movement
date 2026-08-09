@@ -122,14 +122,17 @@ export default function PartyAffiliations() {
     }
   }, [platform, selectedLocation])
 
-  // Filter party stats by search query
+  // Filter party stats by search query and automatically sort alphabetically (A–Z)
   const filteredPartyStats = useMemo(() => {
     if (!data) return []
-    if (!searchQuery.trim()) return data.partyStats
-    const q = searchQuery.toLowerCase().trim()
-    return data.partyStats.filter(
-      (p) => p.partyName.toLowerCase().includes(q) || p.abbreviation.toLowerCase().includes(q)
-    )
+    let stats = data.partyStats
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim()
+      stats = stats.filter(
+        (p) => p.partyName.toLowerCase().includes(q) || p.abbreviation.toLowerCase().includes(q)
+      )
+    }
+    return [...stats].sort((a, b) => a.partyName.localeCompare(b.partyName))
   }, [data, searchQuery])
 
   // Recharts Bar Data
