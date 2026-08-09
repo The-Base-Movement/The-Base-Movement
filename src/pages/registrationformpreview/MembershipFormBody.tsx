@@ -393,10 +393,10 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
         </div>
 
         {isGhana ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12, marginTop: 6 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 6 }}>
             <FieldLine label="Region" required />
             <FieldLine label="Constituency" required />
-            <FieldLine label="District" hint="Auto-filled" />
+            <FieldLine label="District" />
             <FieldLine label="Polling Station Code / Name" hint="optional" />
           </div>
         ) : (
@@ -410,7 +410,7 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
 
       {/* Section 5: Profession & Career */}
       <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={5} label="Profession & Career Taxonomy" />
+        <SectionHeader number={5} label="Profession & Career" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <FieldLine label="Profession / Job Title" hint="e.g. Software Engineer, Farmer" />
           <div>
@@ -435,8 +435,35 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
         <SectionHeader number={6} label="Emergency Contact" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
           <FieldLine label="Emergency Contact Name" />
-          <FieldLine label="Relationship" hint="e.g. Spouse, Parent, Sibling" />
+          <FieldLine label="Relationship" hint="Select from approved options below" />
           <FieldLine label="Emergency Contact Phone" />
+        </div>
+        <div style={{ marginTop: 6 }}>
+          <p
+            style={{
+              fontSize: '9.5px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              color: '#475569',
+              margin: '0 0 4px',
+            }}
+          >
+            Relationship Options:
+          </p>
+          <CheckboxGroup
+            items={[
+              'Spouse / Husband / Wife',
+              'Parent (Father / Mother)',
+              'Sibling (Brother / Sister)',
+              'Child',
+              'Aunt / Uncle',
+              'Cousin',
+              'Grandparent',
+              'Friend',
+              'Other',
+            ]}
+            columns={3}
+          />
         </div>
       </div>
 
