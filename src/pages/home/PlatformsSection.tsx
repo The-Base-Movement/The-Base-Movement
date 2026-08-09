@@ -12,7 +12,7 @@ export function PlatformsSection() {
           </span>
           <h2
             id="platforms-heading"
-            className="text-2xl md:text-4xl font-meta font-medium text-on-surface tracking-tight leading-tight"
+            className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight leading-tight"
           >
             Two equal tracks. One unified mission for Ghana.
           </h2>
