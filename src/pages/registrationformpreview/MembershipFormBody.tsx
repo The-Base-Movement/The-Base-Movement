@@ -473,7 +473,7 @@ export function MembershipFormBody({
               <CheckboxGroup items={regionList} columns={4} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 6 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12, marginTop: 6 }}>
               <FieldLine label="Constituency" required hint="e.g. Ayawaso West Wuogon" />
               <FieldLine label="District" hint="e.g. Ayawaso West Municipal" />
               <FieldLine label="Polling Station Code / Name" hint="e.g. C090201 — Legon Hall" />
