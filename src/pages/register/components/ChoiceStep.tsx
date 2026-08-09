@@ -110,20 +110,28 @@ export function ChoiceStep({
               )}
             >
               <div className={cn('flex gap-2', compact ? 'w-full flex-col' : 'flex-col')}>
-                <a
-                  href="/registration-form-ghana.pdf"
-                  download
-                  className="inline-flex items-center justify-center px-4 py-2 bg-primary/10 text-primary text-[11px] font-medium tracking-tight rounded-sm hover:bg-primary/20 transition-all border border-primary/20"
+                <Link
+                  to="/registration-form-preview?platform=GHANA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-primary/10 text-primary text-[11px] font-medium tracking-tight rounded-sm hover:bg-primary/20 transition-all border border-primary/20"
                 >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    description
+                  </span>
                   Download Ghana Form
-                </a>
-                <a
-                  href="/registration-form-diaspora.pdf"
-                  download
-                  className="inline-flex items-center justify-center px-4 py-2 bg-brand-gold/10 text-brand-gold text-[11px] font-medium tracking-tight rounded-sm hover:bg-brand-gold/20 transition-all border border-brand-gold/20"
+                </Link>
+                <Link
+                  to="/registration-form-preview?platform=DIASPORA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-brand-gold/10 text-brand-gold text-[11px] font-medium tracking-tight rounded-sm hover:bg-brand-gold/20 transition-all border border-brand-gold/20"
                 >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    description
+                  </span>
                   Download Diaspora Form
-                </a>
+                </Link>
               </div>
               <label
                 className={cn(

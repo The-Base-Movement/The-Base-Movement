@@ -1,3 +1,8 @@
+import { useState } from 'react'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
+import { toast } from 'sonner'
+
 interface FormControlsProps {
   onBack: () => void
   onPrint: () => void
@@ -5,7 +10,46 @@ interface FormControlsProps {
   platform: string
 }
 
-export function FormControls({ onBack, onPrint, formUrl, platform }: FormControlsProps) {
+export function FormControls({ onBack, onPrint, platform }: FormControlsProps) {
+  const [downloading, setDownloading] = useState(false)
+
+  const handleDownloadPdf = async () => {
+    const el = document.getElementById('membership-form-body')
+    if (!el) {
+      toast.error('Form element not found')
+      return
+    }
+
+    setDownloading(true)
+    try {
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      })
+
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      })
+
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      pdf.save(`The_Base_${platform}_Registration_Form.pdf`)
+      toast.success('Registration form PDF downloaded')
+    } catch (err) {
+      console.error('Failed to generate form PDF:', err)
+      toast.error('Failed to download PDF form')
+    } finally {
+      setDownloading(false)
+    }
+  }
+
   return (
     <div className="max-w-[210mm] mx-auto mb-8 flex items-center justify-between print:hidden">
       <button
@@ -27,16 +71,16 @@ export function FormControls({ onBack, onPrint, formUrl, platform }: FormControl
           </span>
           Print Form
         </button>
-        <a
-          href={formUrl || '#'}
-          download={`The_Base_${platform}_Registration_Form.pdf`}
-          className="inline-flex h-10 items-center justify-center bg-primary px-4 text-sm font-bold text-white hover:opacity-90 transition-opacity gap-2"
+        <button
+          onClick={handleDownloadPdf}
+          disabled={downloading}
+          className="inline-flex h-10 items-center justify-center bg-primary px-4 text-sm font-bold text-white hover:opacity-90 transition-opacity gap-2 cursor-pointer border-none"
         >
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-            download
+            {downloading ? 'progress_activity' : 'download'}
           </span>
-          Download {platform === 'DIASPORA' ? 'Diaspora' : 'Ghana'} PDF
-        </a>
+          {downloading ? 'Generating PDF…' : `Download ${platform === 'DIASPORA' ? 'Diaspora' : 'Ghana'} PDF`}
+        </button>
       </div>
     </div>
   )
