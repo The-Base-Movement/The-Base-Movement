@@ -15,8 +15,32 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import {
   partyAffiliationService,
   type PartyAffiliationSummary,
+  type PartyAffiliationStat,
 } from '@/services/partyAffiliationService'
 import { toast } from 'sonner'
+
+interface PartyFormData {
+  id?: string
+  name: string
+  code: string
+  fullLabel: string
+  color: string
+  logoUrl: string
+  sortOrder: number
+}
+
+const PRESET_COLORS = [
+  '#1d4ed8', // Deep Blue (NPP)
+  '#15803d', // Green (NDC)
+  '#dc2626', // Red (CPP)
+  '#eab308', // Gold / Yellow (NF)
+  '#9333ea', // Purple (GUM)
+  '#ea580c', // Orange (APC)
+  '#06b6d4', // Cyan (GFP)
+  '#059669', // Emerald (GCPP)
+  '#d97706', // Amber (LPG)
+  '#4f46e5', // Indigo (NDP)
+]
 
 export default function PartyAffiliations() {
   const navigate = useNavigate()
@@ -27,6 +51,20 @@ export default function PartyAffiliations() {
   const [platform, setPlatform] = useState<'ALL' | 'GHANA' | 'DIASPORA'>('ALL')
   const [selectedLocation, setSelectedLocation] = useState<string>('')
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false)
+
+  const [formData, setFormData] = useState<PartyFormData>({
+    name: '',
+    code: '',
+    fullLabel: '',
+    color: PRESET_COLORS[0],
+    logoUrl: '',
+    sortOrder: 10,
+  })
 
   // Reset location filter whenever platform changes
   const handlePlatformChange = (newPlatform: 'ALL' | 'GHANA' | 'DIASPORA') => {
@@ -123,6 +161,119 @@ export default function PartyAffiliations() {
     return []
   }, [data, platform])
 
+  // Modal Handlers
+  const handleOpenAddModal = () => {
+    setFormData({
+      name: '',
+      code: '',
+      fullLabel: '',
+      color: PRESET_COLORS[Math.floor(Math.random() * PRESET_COLORS.length)],
+      logoUrl: '',
+      sortOrder: (data?.partyStats.length || 10) + 1,
+    })
+    setIsModalOpen(true)
+  }
+
+  const handleOpenEditModal = (p: PartyAffiliationStat) => {
+    setFormData({
+      id: p.id,
+      name: p.partyName.split('—')[0]?.trim() || p.partyName,
+      code: p.abbreviation,
+      fullLabel: p.partyName,
+      color: p.color,
+      logoUrl: p.logoUrl || '',
+      sortOrder: 10,
+    })
+    setIsModalOpen(true)
+  }
+
+  const handleLogoFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file (PNG, JPG, WEBP)')
+      return
+    }
+
+    try {
+      setIsUploadingLogo(true)
+      const url = await partyAffiliationService.uploadPartyLogo(file)
+      setFormData((prev) => ({ ...prev, logoUrl: url }))
+      toast.success('Logo uploaded successfully!')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Logo upload failed'
+      toast.error(msg)
+    } finally {
+      setIsUploadingLogo(false)
+    }
+  }
+
+  const handleSaveParty = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!formData.name.trim()) {
+      toast.error('Party / CSO name is required')
+      return
+    }
+    if (!formData.code.trim()) {
+      toast.error('Party / CSO code (abbreviation) is required')
+      return
+    }
+
+    try {
+      setIsSaving(true)
+      const fullLabel =
+        formData.fullLabel.trim() ||
+        `${formData.name.trim()} — ${formData.code.trim().toUpperCase()}`
+
+      if (formData.id) {
+        await partyAffiliationService.updateParty(formData.id, {
+          name: formData.name.trim(),
+          code: formData.code.trim().toUpperCase(),
+          full_label: fullLabel,
+          logo_url: formData.logoUrl.trim() || null,
+          color: formData.color,
+          sort_order: formData.sortOrder,
+        })
+        toast.success(`Updated "${formData.name}" successfully!`)
+      } else {
+        await partyAffiliationService.createParty({
+          name: formData.name.trim(),
+          code: formData.code.trim().toUpperCase(),
+          full_label: fullLabel,
+          logo_url: formData.logoUrl.trim() || null,
+          color: formData.color,
+          sort_order: formData.sortOrder,
+        })
+        toast.success(`Created party / CSO "${formData.name}" successfully!`)
+      }
+
+      setIsModalOpen(false)
+      fetchSummary()
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to save party / CSO'
+      toast.error(msg)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDeleteParty = async (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${name}" from the party directory?`)) {
+      return
+    }
+
+    try {
+      await partyAffiliationService.deleteParty(id)
+      toast.success(`Deleted "${name}"`)
+      fetchSummary()
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to delete party'
+      toast.error(msg)
+    }
+  }
+
   return (
     <div className="admin-page-container space-y-6">
       <AdminPageHeader
@@ -130,23 +281,35 @@ export default function PartyAffiliations() {
         icon="how_to_vote"
         description="Strategic distribution and member affiliation intelligence across political parties in Ghana and the Diaspora."
         actions={
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={handleRefreshClick}
-            disabled={isLoading}
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: 15,
-                ...(isLoading ? { animation: 'spin 1s linear infinite' } : {}),
-              }}
+          <div className="flex items-center gap-2">
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={handleOpenAddModal}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
             >
-              {isLoading ? 'sync' : 'refresh'}
-            </span>
-            {isLoading ? 'Refreshing…' : 'Refresh analytics'}
-          </button>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                add
+              </span>
+              Add Party / CSO
+            </button>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={handleRefreshClick}
+              disabled={isLoading}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: 15,
+                  ...(isLoading ? { animation: 'spin 1s linear infinite' } : {}),
+                }}
+              >
+                {isLoading ? 'sync' : 'refresh'}
+              </span>
+              {isLoading ? 'Refreshing…' : 'Refresh analytics'}
+            </button>
+          </div>
         }
       />
 
@@ -255,7 +418,7 @@ export default function PartyAffiliations() {
             </div>
           </div>
 
-          {/* Cascading Location Filter (Region when Ghana / Country when Diaspora) */}
+          {/* Cascading Location Filter */}
           {platform !== 'ALL' && locationOptions.length > 0 && (
             <div className="flex items-center gap-1.5">
               <label
@@ -303,7 +466,7 @@ export default function PartyAffiliations() {
 
       {/* Visual Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Bar Chart: Party Member Counts */}
+        {/* Bar Chart */}
         <div className="panel p-5 lg:col-span-2 flex flex-col justify-between">
           <div className="ph mb-4 flex items-center justify-between pb-3 border-b border-border">
             <div>
@@ -368,7 +531,7 @@ export default function PartyAffiliations() {
           )}
         </div>
 
-        {/* Pie/Donut Chart: Market Share % */}
+        {/* Pie/Donut Chart */}
         <div className="panel p-5 flex flex-col justify-between">
           <div className="ph mb-4 flex items-center justify-between pb-3 border-b border-border">
             <div>
@@ -433,11 +596,11 @@ export default function PartyAffiliations() {
               Party Affiliation / CSO Directory & Breakdown
             </h3>
             <div className="meta text-xs text-on-surface-muted">
-              Ranked list of political parties and member totals
+              Ranked list of political parties, CSOs, and member totals
             </div>
           </div>
           <span className="text-xs text-on-surface-muted">
-            Showing {filteredPartyStats.length} parties
+            Showing {filteredPartyStats.length} entries
           </span>
         </div>
 
@@ -446,7 +609,7 @@ export default function PartyAffiliations() {
             <thead>
               <tr className="border-b border-border bg-container-low text-on-surface-muted font-medium uppercase text-[10px] tracking-wider">
                 <th className="py-3 px-4 w-12 text-center">Rank</th>
-                <th className="py-3 px-4">Political Party</th>
+                <th className="py-3 px-4">Political Party / CSO</th>
                 <th className="py-3 px-4 text-center">Code</th>
                 <th className="py-3 px-4 text-right">Affiliated Members</th>
                 <th className="py-3 px-4 text-right">Share (%)</th>
@@ -483,14 +646,23 @@ export default function PartyAffiliations() {
                           <img
                             src={p.logoUrl}
                             alt={p.partyName}
-                            className="w-7 h-7 object-contain rounded bg-white/10 p-0.5 shrink-0"
+                            className="w-8 h-8 object-contain rounded bg-white/10 p-0.5 shrink-0 border border-border/40"
                           />
                         ) : (
-                          <div className="w-7 h-7 rounded bg-container-low border border-border flex items-center justify-center text-[10px] font-bold text-on-surface-muted shrink-0">
+                          <div
+                            className="w-8 h-8 rounded border flex items-center justify-center text-[10px] font-bold shrink-0"
+                            style={{
+                              background: `${p.color}20`,
+                              borderColor: `${p.color}40`,
+                              color: p.color,
+                            }}
+                          >
                             {p.abbreviation}
                           </div>
                         )}
-                        <span className="font-semibold text-sm">{p.partyName}</span>
+                        <div>
+                          <span className="font-semibold text-sm block">{p.partyName}</span>
+                        </div>
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-center">
@@ -521,22 +693,49 @@ export default function PartyAffiliations() {
                       {p.topRegionOrCountry}
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() =>
-                          navigate(
-                            `/admin/members?party=${encodeURIComponent(
-                              p.partyName
-                            )}&platform=${platform}`
-                          )
-                        }
-                        className="btn btn-outline btn-xs"
-                        style={{ fontSize: '11px' }}
-                      >
-                        View members
-                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                          arrow_forward
-                        </span>
-                      </button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => handleOpenEditModal(p)}
+                          className="btn btn-outline btn-xs"
+                          title="Edit logo and details"
+                          style={{ fontSize: '11px', padding: '2px 8px' }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                            edit
+                          </span>
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/admin/members?party=${encodeURIComponent(
+                                p.partyName
+                              )}&platform=${platform}`
+                            )
+                          }
+                          className="btn btn-outline btn-xs"
+                          style={{ fontSize: '11px', padding: '2px 8px' }}
+                        >
+                          Members
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                            arrow_forward
+                          </span>
+                        </button>
+
+                        {p.id && (
+                          <button
+                            onClick={() => handleDeleteParty(p.id!, p.partyName)}
+                            className="btn btn-xs text-destructive hover:bg-destructive/10 border-transparent"
+                            title="Delete party entry"
+                            style={{ fontSize: '11px', padding: '2px 6px' }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                              delete
+                            </span>
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -545,6 +744,253 @@ export default function PartyAffiliations() {
           </table>
         </div>
       </div>
+
+      {/* Add / Edit Party Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)' }}
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="panel w-full max-w-md bg-surface p-6 shadow-2xl rounded-lg border border-border animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-border mb-5">
+              <div>
+                <h3 className="text-lg font-bold text-on-surface">
+                  {formData.id ? 'Edit Party / CSO' : 'Add New Party / CSO'}
+                </h3>
+                <p className="text-xs text-on-surface-muted">
+                  Configure political party or CSO branding, logo, and classification.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="text-on-surface-muted hover:text-on-surface p-1 rounded"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveParty} className="space-y-4">
+              {/* Logo Preview & Upload */}
+              <div className="flex items-center gap-4 p-3 bg-container-low rounded border border-border">
+                <div className="relative shrink-0">
+                  {formData.logoUrl ? (
+                    <img
+                      src={formData.logoUrl}
+                      alt="Party logo preview"
+                      className="w-14 h-14 object-contain rounded bg-white p-1 border border-border"
+                    />
+                  ) : (
+                    <div
+                      className="w-14 h-14 rounded border flex items-center justify-center font-bold text-base"
+                      style={{
+                        background: `${formData.color}22`,
+                        borderColor: `${formData.color}44`,
+                        color: formData.color,
+                      }}
+                    >
+                      {formData.code || 'CSO'}
+                    </div>
+                  )}
+                  {isUploadingLogo && (
+                    <div className="absolute inset-0 bg-surface/80 rounded flex items-center justify-center">
+                      <span className="material-symbols-outlined animate-spin text-sm">sync</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-1.5">
+                  <label className="text-xs font-medium text-on-surface block">
+                    Party / CSO Logo
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="btn btn-outline btn-xs cursor-pointer inline-flex items-center gap-1">
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        upload
+                      </span>
+                      Upload image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoFileUpload}
+                        className="hidden"
+                        disabled={isUploadingLogo}
+                      />
+                    </label>
+                    {formData.logoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, logoUrl: '' }))}
+                        className="text-xs text-destructive hover:underline"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-on-surface-muted">
+                    Supports PNG, WEBP, or JPG format.
+                  </p>
+                </div>
+              </div>
+
+              {/* Direct Image URL input */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="input-party-logourl"
+                  className="text-xs font-semibold text-on-surface-muted uppercase tracking-wider block"
+                >
+                  Logo URL (Optional override)
+                </label>
+                <input
+                  id="input-party-logourl"
+                  type="text"
+                  placeholder="https://... or /party-affiliations/..."
+                  value={formData.logoUrl}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, logoUrl: e.target.value }))}
+                  className="w-full h-9 px-3 bg-container-low border border-border rounded text-xs text-on-surface outline-none focus:border-primary"
+                />
+              </div>
+
+              {/* Name & Abbreviation */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-2 space-y-1">
+                  <label
+                    htmlFor="input-party-name"
+                    className="text-xs font-semibold text-on-surface-muted uppercase tracking-wider block"
+                  >
+                    Name <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    id="input-party-name"
+                    type="text"
+                    required
+                    placeholder="e.g. Ghana Union Movement"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                        fullLabel: prev.code
+                          ? `${e.target.value} — ${prev.code}`
+                          : prev.fullLabel,
+                      }))
+                    }
+                    className="w-full h-9 px-3 bg-container-low border border-border rounded text-xs text-on-surface outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label
+                    htmlFor="input-party-code"
+                    className="text-xs font-semibold text-on-surface-muted uppercase tracking-wider block"
+                  >
+                    Code <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    id="input-party-code"
+                    type="text"
+                    required
+                    placeholder="e.g. GUM"
+                    value={formData.code}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        code: e.target.value.toUpperCase(),
+                        fullLabel: prev.name
+                          ? `${prev.name} — ${e.target.value.toUpperCase()}`
+                          : prev.fullLabel,
+                      }))
+                    }
+                    className="w-full h-9 px-3 bg-container-low border border-border rounded text-xs font-bold uppercase text-on-surface outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+
+              {/* Full Display Label */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="input-party-fulllabel"
+                  className="text-xs font-semibold text-on-surface-muted uppercase tracking-wider block"
+                >
+                  Full Display Label
+                </label>
+                <input
+                  id="input-party-fulllabel"
+                  type="text"
+                  placeholder="e.g. Ghana Union Movement — GUM"
+                  value={formData.fullLabel}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, fullLabel: e.target.value }))
+                  }
+                  className="w-full h-9 px-3 bg-container-low border border-border rounded text-xs text-on-surface outline-none focus:border-primary"
+                />
+              </div>
+
+              {/* Brand Accent Color */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-on-surface-muted uppercase tracking-wider block">
+                  Brand Color
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={formData.color}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, color: e.target.value }))}
+                    className="w-8 h-8 rounded border border-border cursor-pointer bg-transparent"
+                  />
+                  <input
+                    type="text"
+                    value={formData.color}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, color: e.target.value }))}
+                    className="w-28 h-8 px-2 bg-container-low border border-border rounded text-xs font-mono text-on-surface"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                  {PRESET_COLORS.map((hex) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, color: hex }))}
+                      className={`w-6 h-6 rounded-full border transition-transform ${
+                        formData.color.toLowerCase() === hex.toLowerCase()
+                          ? 'scale-110 border-white shadow'
+                          : 'border-transparent opacity-80 hover:opacity-100'
+                      }`}
+                      style={{ background: hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-border mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="btn btn-outline btn-sm"
+                  disabled={isSaving}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm min-w-[100px] flex items-center justify-center gap-1"
+                  disabled={isSaving || isUploadingLogo}
+                >
+                  {isSaving && (
+                    <span className="material-symbols-outlined animate-spin text-sm">sync</span>
+                  )}
+                  {isSaving ? 'Saving…' : formData.id ? 'Save changes' : 'Add Party / CSO'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
