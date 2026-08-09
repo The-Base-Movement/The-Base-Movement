@@ -1,14 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { Swiper as SwiperInstance } from 'swiper'
-import { Pagination } from 'swiper/modules'
-import { Swiper, SwiperSlide } from 'swiper/react'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
 import { getBlogImageUrl } from '@/lib/blogImages'
 import { type BlogPost } from '@/services/adminService'
-import 'swiper/css'
-import 'swiper/css/pagination'
 
 interface HeroSectionProps {
   heroBgUrl: string
@@ -19,137 +14,112 @@ interface HeroSectionProps {
 }
 
 const DEFAULT_HERO_BG = '/branding/hero-background-image.webp'
+
 function HeroUpdatesSlider({ latestPosts }: { latestPosts: BlogPost[] }) {
   const updates = latestPosts.slice(0, 3)
-  const swiperRef = useRef<SwiperInstance | null>(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     if (updates.length < 2) return undefined
 
     const intervalId = window.setInterval(() => {
-      swiperRef.current?.slideNext()
+      setCurrentIndex((prev) => (prev + 1) % updates.length)
     }, 4200)
 
     return () => window.clearInterval(intervalId)
   }, [updates.length])
+
+  const post = updates[currentIndex]
 
   return (
     <div
       className="w-full max-w-[320px] md:max-w-[360px]"
       aria-label="Latest movement updates"
     >
-      <Swiper
-        modules={[Pagination]}
-        slidesPerView={1}
-        loop={updates.length > 1}
-        pagination={{ clickable: true }}
-        onSwiper={(swiper) => {
-          swiperRef.current = swiper
-        }}
-        onDestroy={() => {
-          swiperRef.current = null
-        }}
-        speed={650}
-        style={{ paddingBottom: 34 }}
-      >
-        {updates.length === 0 ? (
-          <SwiperSlide>
-            <Link
-              to="/blog"
-              className="group block overflow-hidden border border-white/20 bg-white/95 text-on-surface"
-              style={{ borderRadius: 'var(--radius-lg)' }}
-            >
-              <div className="aspect-[16/7] overflow-hidden bg-muted">
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                  <span className="text-micro font-semibold tracking-tight text-muted-foreground/80">
-                    Latest updates
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <span className="text-micro font-meta font-medium text-primary tracking-tight">
-                    Updates
-                  </span>
-                </div>
-                <h2 className="font-meta text-base md:text-lg font-medium leading-tight tracking-tight text-on-surface group-hover:text-primary transition-colors">
-                  Latest stories are loading
-                </h2>
-                <span className="mt-3 inline-flex items-center gap-2 text-xs font-meta font-medium text-primary">
-                  View all updates
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    arrow_forward
-                  </span>
+      {updates.length === 0 || !post ? (
+        <Link
+          to="/blog"
+          className="group block overflow-hidden border border-white/20 bg-white/95 text-on-surface"
+          style={{ borderRadius: 'var(--radius-lg)' }}
+        >
+          <div className="aspect-[16/7] overflow-hidden bg-muted">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/80">
+              <span className="text-micro font-semibold tracking-tight text-muted-foreground/80">
+                Latest updates
+              </span>
+            </div>
+          </div>
+          <div className="p-4">
+            <h2 className="font-meta text-base md:text-lg font-medium leading-tight tracking-tight text-on-surface">
+              Latest stories are loading
+            </h2>
+          </div>
+        </Link>
+      ) : (
+        <div
+          className="group block overflow-hidden border border-white/20 bg-white/95 text-on-surface"
+          style={{ borderRadius: 'var(--radius-lg)' }}
+        >
+          <Link to={`/blog/${post.slug}`} aria-label={`Read update: ${post.title}`}>
+            <div className="aspect-[16/7] overflow-hidden bg-muted">
+              <img
+                src={getBlogImageUrl(post.imageUrl)}
+                alt=""
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                decoding="async"
+                loading="lazy"
+              />
+            </div>
+            <div className="p-4">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <span className="text-micro font-meta font-medium text-primary tracking-tight">
+                  {post.category}
+                </span>
+                <span className="text-micro font-meta text-muted-foreground">
+                  {new Date(post.publishedAt).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                  })}
                 </span>
               </div>
-            </Link>
-          </SwiperSlide>
-        ) : (
-          updates.map((post) => {
-            const updateHref = `/blog/${post.slug}`
-
-            return (
-              <SwiperSlide key={post.id}>
-                <Link
-                  to={updateHref}
-                  aria-label={`Read update: ${post.title}`}
-                  className="group block overflow-hidden border border-white/20 bg-white/95 text-on-surface"
-                  style={{ borderRadius: 'var(--radius-lg)' }}
-                >
-                  <div className="aspect-[16/7] overflow-hidden bg-muted">
-                    <img
-                      src={getBlogImageUrl(post.imageUrl)}
-                      alt=""
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      decoding="async"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className="text-micro font-meta font-medium text-primary tracking-tight">
-                        {post.category}
-                      </span>
-                      <span className="text-micro font-meta text-muted-foreground">
-                        {new Date(post.publishedAt).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'short',
-                        })}
-                      </span>
-                    </div>
-                    <h2 className="font-meta text-base md:text-lg font-medium leading-tight tracking-tight text-on-surface group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h2>
-                    <span className="mt-3 inline-flex items-center gap-2 text-xs font-meta font-medium text-primary">
-                      Read update
-                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                        arrow_forward
-                      </span>
-                    </span>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            )
-          })
-        )}
-      </Swiper>
+              <h2 className="font-meta text-base md:text-lg font-medium leading-tight tracking-tight text-on-surface group-hover:text-primary transition-colors">
+                {post.title}
+              </h2>
+            </div>
+          </Link>
+          {updates.length > 1 && (
+            <div className="flex justify-center gap-1.5 pb-3">
+              {updates.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`h-1.5 rounded-full transition-all ${idx === currentIndex ? 'w-5 bg-primary' : 'w-1.5 bg-muted-foreground/40'}`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
 
 export function MobileHeroUpdatesTicker({ latestPosts }: { latestPosts: BlogPost[] }) {
   const updates = latestPosts.slice(0, 5)
-  const swiperRef = useRef<SwiperInstance | null>(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     if (updates.length < 2) return undefined
 
     const intervalId = window.setInterval(() => {
-      swiperRef.current?.slideNext()
+      setCurrentIndex((prev) => (prev + 1) % updates.length)
     }, 3600)
 
     return () => window.clearInterval(intervalId)
   }, [updates.length])
+
+  const post = updates[currentIndex]
 
   return (
     <section
@@ -168,7 +138,7 @@ export function MobileHeroUpdatesTicker({ latestPosts }: { latestPosts: BlogPost
 
           <div className="flex items-start gap-3">
             <div className="min-w-0 flex-1">
-              {updates.length === 0 ? (
+              {updates.length === 0 || !post ? (
                 <Link
                   to="/blog"
                   className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
@@ -176,29 +146,13 @@ export function MobileHeroUpdatesTicker({ latestPosts }: { latestPosts: BlogPost
                   Latest movement updates are loading
                 </Link>
               ) : (
-                <Swiper
-                  slidesPerView={1}
-                  loop={updates.length > 1}
-                  onSwiper={(swiper) => {
-                    swiperRef.current = swiper
-                  }}
-                  onDestroy={() => {
-                    swiperRef.current = null
-                  }}
-                  speed={520}
+                <Link
+                  to={`/blog/${post.slug}`}
+                  className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
+                  aria-label={`Read update: ${post.title}`}
                 >
-                  {updates.map((post) => (
-                    <SwiperSlide key={post.id}>
-                      <Link
-                        to={`/blog/${post.slug}`}
-                        className="line-clamp-2 font-meta text-sm font-medium leading-snug tracking-tight"
-                        aria-label={`Read update: ${post.title}`}
-                      >
-                        {post.title}
-                      </Link>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                  {post.title}
+                </Link>
               )}
             </div>
 
