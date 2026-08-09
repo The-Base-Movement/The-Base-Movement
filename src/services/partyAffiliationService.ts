@@ -41,15 +41,24 @@ export interface PartyAffiliationSummary {
 export const partyAffiliationService = {
   /**
    * Fetches all registered political parties / CSOs from the database.
+   * Handles schema variations gracefully.
    */
   async getParties(): Promise<PoliticalPartyRecord[]> {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('political_parties')
       .select('*')
       .order('sort_order', { ascending: true })
 
-    if (error || !Array.isArray(data)) {
-      console.warn('[partyAffiliationService] Failed to fetch political_parties:', error?.message)
+    if (error) {
+      console.warn('[partyAffiliationService] getParties fallback query:', error.message)
+      const fallback = await supabase
+        .from('political_parties')
+        .select('id, name, code, full_label, sort_order')
+        .order('sort_order', { ascending: true })
+      data = fallback.data as unknown as typeof data
+    }
+
+    if (!Array.isArray(data)) {
       return []
     }
     return data as PoliticalPartyRecord[]
@@ -57,6 +66,7 @@ export const partyAffiliationService = {
 
   /**
    * Creates a new political party or CSO entry.
+   * Retries automatically without extra columns if live DB table lacks them.
    */
   async createParty(party: {
     name: string
@@ -69,7 +79,7 @@ export const partyAffiliationService = {
     const fullLabel =
       party.full_label?.trim() || `${party.name.trim()} — ${party.code.trim().toUpperCase()}`
 
-    const payload = {
+    const payload: Record<string, string | number | null> = {
       name: party.name.trim(),
       code: party.code.trim().toUpperCase(),
       full_label: fullLabel,
@@ -78,11 +88,25 @@ export const partyAffiliationService = {
       sort_order: party.sort_order ?? 99,
     }
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('political_parties')
       .insert([payload])
       .select()
       .single()
+
+    if (error && (error.code === 'PGRST204' || error.message.includes('column') || error.message.includes('400'))) {
+      console.warn('[partyAffiliationService] createParty retrying without new columns:', error.message)
+      const safePayload = { ...payload }
+      delete safePayload.color
+      delete safePayload.logo_url
+      const retry = await supabase
+        .from('political_parties')
+        .insert([safePayload])
+        .select('id, name, code, full_label, sort_order')
+        .single()
+      data = retry.data as unknown as typeof data
+      error = retry.error
+    }
 
     if (error) {
       console.error('[partyAffiliationService] createParty failed:', error)
@@ -106,12 +130,27 @@ export const partyAffiliationService = {
       sort_order: number
     }>
   ): Promise<PoliticalPartyRecord> {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('political_parties')
       .update(updates)
       .eq('id', id)
       .select()
       .single()
+
+    if (error && (error.code === 'PGRST204' || error.message.includes('column') || error.message.includes('400'))) {
+      console.warn('[partyAffiliationService] updateParty retrying without new columns:', error.message)
+      const safeUpdates = { ...updates }
+      delete safeUpdates.color
+      delete safeUpdates.logo_url
+      const retry = await supabase
+        .from('political_parties')
+        .update(safeUpdates)
+        .eq('id', id)
+        .select('id, name, code, full_label, sort_order')
+        .single()
+      data = retry.data as unknown as typeof data
+      error = retry.error
+    }
 
     if (error) {
       console.error('[partyAffiliationService] updateParty failed:', error)
@@ -173,14 +212,23 @@ export const partyAffiliationService = {
     const regionOrCountry = options?.regionOrCountry || ''
 
     // 1. Fetch DB political parties for dynamic matching & reference metadata
-    const { data: dbParties } = await supabase
+    let { data: dbParties, error: partiesErr } = await supabase
       .from('political_parties')
-      .select('id, name, code, full_label, logo_url, color, sort_order')
+      .select('*')
       .order('sort_order', { ascending: true })
+
+    if (partiesErr) {
+      console.warn('[partyAffiliationService] Falling back to standard columns for political_parties:', partiesErr.message)
+      const fallback = await supabase
+        .from('political_parties')
+        .select('id, name, code, full_label, sort_order')
+        .order('sort_order', { ascending: true })
+      dbParties = fallback.data as unknown as typeof dbParties
+    }
 
     const dbPartyMap = new Map<
       string,
-      { id: string; name: string; code: string; full_label: string; logo_url: string | null; color: string | null }
+      { id: string; name: string; code: string; full_label: string; logo_url?: string | null; color?: string | null }
     >()
 
     const allKnownParties = new Set<string>()
