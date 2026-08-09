@@ -1,8 +1,20 @@
 import { supabase } from '@/lib/supabase'
-import { politicalParties } from '@/components/admin/RegistrationForm.constants'
+import { politicalParties as defaultParties } from '@/components/admin/RegistrationForm.constants'
 import { getPartyLogo, getPartyColor, getCanonicalPartyName } from '@/utils/partyLogos'
 
+export interface PoliticalPartyRecord {
+  id: string
+  name: string
+  code: string
+  full_label: string
+  sort_order: number
+  logo_url: string | null
+  color: string | null
+  created_at?: string
+}
+
 export interface PartyAffiliationStat {
+  id?: string
   partyName: string
   abbreviation: string
   logoUrl: string | null
@@ -28,6 +40,128 @@ export interface PartyAffiliationSummary {
 
 export const partyAffiliationService = {
   /**
+   * Fetches all registered political parties / CSOs from the database.
+   */
+  async getParties(): Promise<PoliticalPartyRecord[]> {
+    const { data, error } = await supabase
+      .from('political_parties')
+      .select('*')
+      .order('sort_order', { ascending: true })
+
+    if (error || !Array.isArray(data)) {
+      console.warn('[partyAffiliationService] Failed to fetch political_parties:', error?.message)
+      return []
+    }
+    return data as PoliticalPartyRecord[]
+  },
+
+  /**
+   * Creates a new political party or CSO entry.
+   */
+  async createParty(party: {
+    name: string
+    code: string
+    full_label?: string
+    logo_url?: string | null
+    color?: string | null
+    sort_order?: number
+  }): Promise<PoliticalPartyRecord> {
+    const fullLabel =
+      party.full_label?.trim() || `${party.name.trim()} — ${party.code.trim().toUpperCase()}`
+
+    const payload = {
+      name: party.name.trim(),
+      code: party.code.trim().toUpperCase(),
+      full_label: fullLabel,
+      logo_url: party.logo_url?.trim() || null,
+      color: party.color?.trim() || null,
+      sort_order: party.sort_order ?? 99,
+    }
+
+    const { data, error } = await supabase
+      .from('political_parties')
+      .insert([payload])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('[partyAffiliationService] createParty failed:', error)
+      throw new Error(error.message || 'Failed to create political party / CSO')
+    }
+
+    return data as PoliticalPartyRecord
+  },
+
+  /**
+   * Updates an existing political party or CSO entry (name, logo, code, color, sort order).
+   */
+  async updateParty(
+    id: string,
+    updates: Partial<{
+      name: string
+      code: string
+      full_label: string
+      logo_url: string | null
+      color: string | null
+      sort_order: number
+    }>
+  ): Promise<PoliticalPartyRecord> {
+    const { data, error } = await supabase
+      .from('political_parties')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('[partyAffiliationService] updateParty failed:', error)
+      throw new Error(error.message || 'Failed to update political party / CSO')
+    }
+
+    return data as PoliticalPartyRecord
+  },
+
+  /**
+   * Deletes a political party or CSO entry from the database.
+   */
+  async deleteParty(id: string): Promise<boolean> {
+    const { error } = await supabase.from('political_parties').delete().eq('id', id)
+    if (error) {
+      console.error('[partyAffiliationService] deleteParty failed:', error)
+      throw new Error(error.message || 'Failed to delete political party / CSO')
+    }
+    return true
+  },
+
+  /**
+   * Uploads a logo image for a party/CSO to Supabase storage and returns the public URL.
+   */
+  async uploadPartyLogo(file: File): Promise<string> {
+    const fileExt = file.name.split('.').pop() || 'png'
+    const fileName = `party-logos/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('media')
+      .upload(fileName, file, { cacheControl: '3600', upsert: true })
+
+    if (uploadError) {
+      // Fallback to branding bucket if media bucket fails
+      const { error: fallbackError } = await supabase.storage
+        .from('branding')
+        .upload(fileName, file, { cacheControl: '3600', upsert: true })
+
+      if (fallbackError) {
+        throw new Error(uploadError.message || 'Failed to upload logo image')
+      }
+      const { data } = supabase.storage.from('branding').getPublicUrl(fileName)
+      return data.publicUrl
+    }
+
+    const { data } = supabase.storage.from('media').getPublicUrl(fileName)
+    return data.publicUrl
+  },
+
+  /**
    * Fetches party affiliation statistics with support for Platform (GHANA / DIASPORA)
    * and Region/Country cascading filters.
    */
@@ -38,6 +172,33 @@ export const partyAffiliationService = {
     const platform = options?.platform || 'ALL'
     const regionOrCountry = options?.regionOrCountry || ''
 
+    // 1. Fetch DB political parties for dynamic matching & reference metadata
+    const { data: dbParties } = await supabase
+      .from('political_parties')
+      .select('id, name, code, full_label, logo_url, color, sort_order')
+      .order('sort_order', { ascending: true })
+
+    const dbPartyMap = new Map<
+      string,
+      { id: string; name: string; code: string; full_label: string; logo_url: string | null; color: string | null }
+    >()
+
+    const allKnownParties = new Set<string>()
+
+    if (dbParties && Array.isArray(dbParties)) {
+      dbParties.forEach((p) => {
+        const full = p.full_label || `${p.name} — ${p.code}`
+        dbPartyMap.set(full, p)
+        dbPartyMap.set(p.name, p)
+        if (p.code) dbPartyMap.set(p.code, p)
+        allKnownParties.add(full)
+      })
+    }
+
+    // Include defaults as backup
+    defaultParties.forEach((p) => allKnownParties.add(p))
+
+    // 2. Fetch members batch by batch
     const BATCH_SIZE = 1000
     let users: Array<{
       id: string
@@ -123,8 +284,8 @@ export const partyAffiliationService = {
       { total: number; ghana: number; diaspora: number; regions: Record<string, number> }
     > = {}
 
-    // Initialize all canonical political parties
-    politicalParties.forEach((p) => {
+    // Initialize all known political parties (DB + defaults)
+    allKnownParties.forEach((p) => {
       partyCounts[p] = { total: 0, ghana: 0, diaspora: 0, regions: {} }
     })
     partyCounts['Unspecified / Independent'] = { total: 0, ghana: 0, diaspora: 0, regions: {} }
@@ -139,14 +300,23 @@ export const partyAffiliationService = {
       else diasporaTotal++
 
       const rawParty = u.party_affiliation?.trim()
-      const canonical = getCanonicalPartyName(rawParty)
-      const targetKey = partyCounts[canonical] ? canonical : 'Unspecified / Independent'
+      let canonical = 'Unspecified / Independent'
 
       if (rawParty) {
         totalAffiliated++
+        // Check if rawParty directly matches a DB party or canonical string
+        if (partyCounts[rawParty]) {
+          canonical = rawParty
+        } else {
+          canonical = getCanonicalPartyName(rawParty)
+        }
       }
 
-      const record = partyCounts[targetKey]
+      if (!partyCounts[canonical]) {
+        partyCounts[canonical] = { total: 0, ghana: 0, diaspora: 0, regions: {} }
+      }
+
+      const record = partyCounts[canonical]
       record.total++
       if (isGhana) {
         record.ghana++
@@ -157,24 +327,6 @@ export const partyAffiliationService = {
       }
     })
 
-    // Query political_parties database table for party reference data and logo URLs
-    const { data: dbParties } = await supabase
-      .from('political_parties')
-      .select('name, code, full_label, logo_url')
-      .order('sort_order', { ascending: true })
-
-    const dbPartyMap = new Map<
-      string,
-      { code: string; full_label: string; logo_url: string | null }
-    >()
-    if (dbParties) {
-      dbParties.forEach((p) => {
-        if (p.full_label) dbPartyMap.set(p.full_label, p)
-        if (p.name) dbPartyMap.set(p.name, p)
-        if (p.code) dbPartyMap.set(p.code, p)
-      })
-    }
-
     // Compute stats list
     const partyStats: PartyAffiliationStat[] = Object.entries(partyCounts)
       .map(([partyName, data], idx) => {
@@ -183,9 +335,10 @@ export const partyAffiliationService = {
         const dbInfo = dbPartyMap.get(partyName)
         const abbreviation =
           dbInfo?.code ||
-          partyName.match(/—\s*([A-Z]+)$/)?.[1] ||
+          partyName.match(/—\s*([A-Z0-9]+)$/)?.[1] ||
           partyName.substring(0, 3).toUpperCase()
         const logoUrl = dbInfo?.logo_url || getPartyLogo(partyName)
+        const color = dbInfo?.color || getPartyColor(partyName, idx)
 
         // Find top region or country for this party
         let topRegionOrCountry = '—'
@@ -198,10 +351,11 @@ export const partyAffiliationService = {
         })
 
         return {
+          id: dbInfo?.id,
           partyName,
           abbreviation,
           logoUrl,
-          color: getPartyColor(partyName, idx),
+          color,
           totalMembers: data.total,
           percentage,
           ghanaCount: data.ghana,
