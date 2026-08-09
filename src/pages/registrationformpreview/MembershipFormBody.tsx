@@ -451,12 +451,13 @@ export function MembershipFormBody({
       {/* Section 4: Contact & Location */}
       <div style={{ marginBottom: 18 }}>
         <SectionHeader number={4} label="Contact & Location" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <FieldLine
-            label="Primary Phone Number"
-            required
-            hint={isGhana ? 'with country code e.g. +233 24 123 4567' : 'with country code e.g. +44 7911 123456 / +1 212 555 0199'}
-          />
+        <FieldLine
+          label="Primary Phone Number"
+          required
+          hint={isGhana ? 'with country code e.g. +233 24 123 4567' : 'with country code e.g. +44 7911 123456 / +1 212 555 0199'}
+        />
+
+        <div style={{ marginTop: 6 }}>
           <FieldLine label="Secondary Phone Number" hint="optional" />
         </div>
 
