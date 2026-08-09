@@ -356,21 +356,23 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 10 }}>
-          <div>
-            <p
-              style={{
-                fontSize: '10px',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                color: '#334155',
-                margin: '0 0 6px',
-              }}
-            >
-              Religion
-            </p>
-            <CheckboxGroup items={['Christianity', 'Islam', 'Traditional', 'Other', 'None']} />
-          </div>
-          <FieldLine label="Ghana Card / Voter ID Card Number" hint="Optional" />
+          <FieldLine label="Ghana Card Number" required hint="e.g. GHA-123456789-0" />
+          <FieldLine label="Voter's ID Card Number" required hint="10-digit Voter ID" />
+        </div>
+
+        <div style={{ marginTop: 10 }}>
+          <p
+            style={{
+              fontSize: '10px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              color: '#334155',
+              margin: '0 0 6px',
+            }}
+          >
+            Religion
+          </p>
+          <CheckboxGroup items={['Christianity', 'Islam', 'Traditional', 'Other', 'None']} />
         </div>
       </div>
 
