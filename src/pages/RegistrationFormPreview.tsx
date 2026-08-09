@@ -50,6 +50,10 @@ export default function RegistrationFormPreview() {
         dangerouslySetInnerHTML={{
           __html: `
         @media print {
+          @page {
+            size: A4 portrait;
+            margin: 0mm;
+          }
           * {
             -webkit-print-color-adjust: exact !important;
             color-adjust: exact !important;
@@ -57,11 +61,14 @@ export default function RegistrationFormPreview() {
           }
           body {
             background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
           }
           #membership-form-body {
             box-shadow: none !important;
             border: none !important;
-            padding: 0 !important;
+            padding: 12mm 15mm !important;
+            margin: 0 auto !important;
           }
           .print\\:shadow-none { box-shadow: none !important; }
           .print\\:border-none { border: none !important; }
