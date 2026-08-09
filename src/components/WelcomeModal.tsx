@@ -92,7 +92,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
-                  <h5 className="text-stone-900 leading-tight mb-1">{assignedChapter.name}</h5>
+                  <h3 className="text-stone-900 leading-tight mb-1">{assignedChapter.name}</h3>
                   <span className="text-micro font-medium text-white bg-[var(--brand-green)] px-2 py-0.5 rounded-none tracking-tight">
                     Assigned
                   </span>

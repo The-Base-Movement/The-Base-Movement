@@ -77,7 +77,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
         }}
       >
         <div style={{ minWidth: 0 }}>
-          <h4
+          <h3
             style={{
               color: headerTextColor,
               fontWeight: 'var(--font-weight-semibold, 600)',
@@ -105,7 +105,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
                 }}
               />
             )}
-          </h4>
+          </h3>
           <div
             style={{
               color: headerMutedColor,

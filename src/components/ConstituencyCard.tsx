@@ -71,7 +71,7 @@ export function ConstituencyCard({ constituency, userConstituency }: Constituenc
         }}
       >
         <div style={{ minWidth: 0 }}>
-          <h4
+          <h3
             style={{
               color: headerTextColor,
               fontWeight: 'var(--font-weight-semibold, 600)',
@@ -85,7 +85,7 @@ export function ConstituencyCard({ constituency, userConstituency }: Constituenc
             }}
           >
             {constituency.name}
-          </h4>
+          </h3>
           <div
             style={{
               color: headerMutedColor,
