@@ -623,8 +623,8 @@ export function MembershipFormBody({
         >
           FOR OFFICIAL REGISTRAR USE ONLY
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-          <FieldLine label="Permanent Reg No Allocated" hint="e.g. GHA-ACC-0092" />
+        <FieldLine label="Permanent Reg No Allocated" hint="e.g. GHA-ACC-0092" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
           <FieldLine label="Verification Status" hint="Approved / Pending" />
           <FieldLine label="Registrar Officer Name & Signature" />
         </div>
