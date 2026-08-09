@@ -12,6 +12,14 @@ export default function RegistrationFormPreview() {
   const [searchParams] = useSearchParams()
   const platform = searchParams.get('platform') || 'GHANA'
 
+  const handleBack = () => {
+    if (window.history.length > 2 && document.referrer.includes(window.location.host)) {
+      navigate(-1)
+    } else {
+      navigate(`/register?platform=${platform}`)
+    }
+  }
+
   const formUrl =
     platform === 'DIASPORA'
       ? settings.registration_form_diaspora_url
@@ -23,7 +31,7 @@ export default function RegistrationFormPreview() {
     <div className="min-h-screen bg-stone-100 py-12 px-4 print:p-0 print:bg-white">
       <SEO title="Membership Form Preview" noindex />
       <FormControls
-        onBack={() => navigate(-1)}
+        onBack={handleBack}
         onPrint={() => window.print()}
         formUrl={formUrl}
         platform={platform}
