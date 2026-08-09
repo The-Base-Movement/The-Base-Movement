@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useBranding } from '@/hooks/useBranding'
 import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -11,6 +12,9 @@ export default function RegistrationFormPreview() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const platform = searchParams.get('platform') || 'GHANA'
+
+  // Default watermark opacity: 0.07 (7%) for subtle watermark printing
+  const [watermarkOpacity, setWatermarkOpacity] = useState(0.07)
 
   const formUrl =
     platform === 'DIASPORA'
@@ -27,12 +31,15 @@ export default function RegistrationFormPreview() {
         onPrint={() => window.print()}
         formUrl={formUrl}
         platform={platform}
+        watermarkOpacity={watermarkOpacity}
+        onWatermarkOpacityChange={setWatermarkOpacity}
       />
       <MembershipFormBody
         platform={platform}
         formTitle={formTitle}
         logoUrl={settings.logo_url}
         parties={parties}
+        watermarkOpacity={watermarkOpacity}
       />
       <style
         dangerouslySetInnerHTML={{
