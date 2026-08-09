@@ -239,7 +239,7 @@ export function StrategicPriorities({
                         fontWeight: 800,
                         fontSize: 13,
                         border: 'none',
-                        borderRadius: 4,
+                        borderRadius: 'var(--radius-sm)',
                         cursor: 'pointer',
                       }}
                     >

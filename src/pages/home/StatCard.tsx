@@ -31,19 +31,19 @@ export function StatCard({
         padding: '22px 22px 20px',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 4px 20px -2px rgba(0,0,0,.04)',
+        boxShadow: '0 1px 3px rgba(0,0,0,.03)',
         display: 'flex',
         flexDirection: 'column',
         gap: '14px',
-        transition: 'transform .18s ease, box-shadow .18s ease',
+        transition: 'transform .18s ease, border-color .18s ease',
       }}
       onMouseEnter={(e) => {
         ;(e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'
-        ;(e.currentTarget as HTMLElement).style.boxShadow = '0 12px 30px -8px rgba(0,0,0,.10)'
+        ;(e.currentTarget as HTMLElement).style.borderColor = accent
       }}
       onMouseLeave={(e) => {
         ;(e.currentTarget as HTMLElement).style.transform = ''
-        ;(e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px -2px rgba(0,0,0,.04)'
+        ;(e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--border))'
       }}
     >
       <div
