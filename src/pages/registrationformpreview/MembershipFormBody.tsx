@@ -476,7 +476,7 @@ export function MembershipFormBody({
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12, marginTop: 6 }}>
               <FieldLine label="Constituency" required hint="e.g. Ayawaso West Wuogon" />
               <FieldLine label="District" hint="e.g. Ayawaso West Municipal" />
-              <FieldLine label="Polling Station Code / Name" hint="e.g. C090201 — Legon Hall" />
+              <FieldLine label="Polling Station Code / Name" hint="e.g. C090201 — Bawaleshie Primary School" />
             </div>
           </>
         ) : (
