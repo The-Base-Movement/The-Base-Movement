@@ -1,5 +1,6 @@
 import { useBranding } from '@/hooks/useBranding'
 import { usePoliticalParties } from '@/hooks/usePoliticalParties'
+import { useGhanaRegions } from '@/hooks/useGhanaRegions'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { FormControls } from './registrationformpreview/FormControls'
@@ -8,6 +9,7 @@ import { MembershipFormBody } from './registrationformpreview/MembershipFormBody
 export default function RegistrationFormPreview() {
   const { settings } = useBranding()
   const parties = usePoliticalParties()
+  const regions = useGhanaRegions()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const platform = searchParams.get('platform') || 'GHANA'
@@ -41,6 +43,7 @@ export default function RegistrationFormPreview() {
         formTitle={formTitle}
         logoUrl={settings.logo_url}
         parties={parties}
+        regions={regions}
         watermarkOpacity={0.03}
       />
       <style
