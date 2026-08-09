@@ -244,7 +244,7 @@ export function HeroSection({
             }}
           />
           <div
-            className="absolute inset-0 z-0 opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
+            className="hidden md:block absolute inset-0 z-0 opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
             style={{
               backgroundImage: `url('${resolvedHeroBgUrl}')`,
               backgroundSize: 'cover',
