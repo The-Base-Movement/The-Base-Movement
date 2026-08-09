@@ -633,10 +633,6 @@ export function MembershipFormBody({
               : 'e.g. TBM-DI-268108 (Required if registering on behalf of applicant, e.g. Referee)'
           }
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
-          <FieldLine label="Verification Status" hint="Approved / Pending" />
-          <FieldLine label="Registrar Officer Name & Signature" />
-        </div>
       </div>
 
       {/* Footer Branding */}
