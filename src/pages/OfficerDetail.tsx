@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import { adminService } from '@/services/adminService'
+import { publicSiteService } from '@/services/publicSiteService'
 import { XIcon, LinkedInIcon, FacebookIcon, InstagramIcon } from '@/components/icons/SocialIcons'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Button } from '@/components/buttons/ui/neon-button'
 import SEO from '@/components/SEO'
 import DOMPurify from 'dompurify'
+import { MovementAtAGlance } from '@/components/stats/MovementAtAGlance'
 
 interface OfficerFull {
   id: string
@@ -25,12 +26,7 @@ interface OfficerFull {
   email: string | null
 }
 
-interface PublicStats {
-  members: number
-  chapters: number
-  regions: number
-  diaspora: number
-}
+import type { PublicStats } from '@/services/publicSiteService'
 
 const toSlug = (name: string) =>
   name
@@ -437,7 +433,7 @@ export default function OfficerDetail() {
           .from('party_tiers')
           .select('name, title, order_index, accent_color')
           .order('order_index', { ascending: true }),
-        adminService.getPublicStats().catch(() => null),
+        publicSiteService.getPublicStats().catch(() => null),
       ])
 
       const match = (allOfficersRes.data as OfficerFull[] | null)?.find(
@@ -451,12 +447,7 @@ export default function OfficerDetail() {
 
       setOfficer(match)
       if (publicStats) {
-        setStats({
-          members: publicStats.members,
-          chapters: publicStats.chapters,
-          regions: publicStats.regions,
-          diaspora: publicStats.diaspora,
-        })
+        setStats(publicStats)
       }
 
       if (tiersRes.data) {
@@ -565,15 +556,6 @@ export default function OfficerDetail() {
     external: boolean
     node: React.ReactNode
   }[]
-
-  const statItems = stats
-    ? [
-        { key: 'members', label: 'Registered members', value: stats.members },
-        { key: 'regions', label: 'Regions', value: stats.regions },
-        { key: 'chapters', label: 'Diaspora', value: stats.chapters },
-        { key: 'diaspora', label: 'Diaspora countries', value: stats.diaspora },
-      ].filter((s) => s.value > 0)
-    : []
 
   return (
     <main
@@ -910,76 +892,7 @@ export default function OfficerDetail() {
             </div>
 
             {/* Movement at a glance — live, DB-driven */}
-            {statItems.length > 0 && (
-              <div style={{ ...cardStyle, padding: 18 }}>
-                <p style={{ ...sectionHeading, marginBottom: 4 }}>Movement at a glance</p>
-                <p
-                  style={{
-                    fontFamily: FONT,
-                    fontSize: 11,
-                    color: 'hsl(var(--on-surface-muted))',
-                    margin: '0 0 14px',
-                  }}
-                >
-                  Live totals, updated as the movement grows.
-                </p>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: statItems.length > 1 ? '1fr 1fr' : '1fr',
-                    gap: 10,
-                  }}
-                >
-                  {statItems.map((s) => (
-                    <div
-                      key={s.key}
-                      style={{
-                        position: 'relative',
-                        padding: '12px 14px 12px 16px',
-                        borderRadius: 'var(--radius-md)',
-                        background: 'hsl(var(--container-low))',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          top: 0,
-                          bottom: 0,
-                          width: 3,
-                          background: accentColor,
-                        }}
-                      />
-                      <p
-                        style={{
-                          fontFamily: FONT,
-                          fontWeight: 'var(--font-weight-medium, 500)',
-                          fontSize: 22,
-                          color: 'hsl(var(--on-surface))',
-                          margin: 0,
-                          lineHeight: 1.1,
-                        }}
-                      >
-                        {s.value.toLocaleString()}
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: FONT,
-                          fontSize: 10.5,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                          color: 'hsl(var(--on-surface-muted))',
-                          margin: '4px 0 0',
-                        }}
-                      >
-                        {s.label}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {stats && <MovementAtAGlance variant="sidebar" stats={stats} />}
 
             {/* Related leaders */}
             {related.length > 0 && (
