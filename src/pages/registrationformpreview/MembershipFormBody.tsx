@@ -627,8 +627,8 @@ export function MembershipFormBody({
           label="Permanent Reg No Allocated"
           hint={
             isGhana
-              ? 'e.g. TBM-GH-000123 (Required if registering on behalf of applicant, e.g. Referee)'
-              : 'e.g. TBM-DI-000123 (Required if registering on behalf of applicant, e.g. Referee)'
+              ? 'e.g. TBM-GH-268108 (Required if registering on behalf of applicant, e.g. Referee)'
+              : 'e.g. TBM-DI-268108 (Required if registering on behalf of applicant, e.g. Referee)'
           }
         />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
