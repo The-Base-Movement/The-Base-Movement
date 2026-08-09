@@ -355,7 +355,7 @@ export function MembershipFormBody({
 
           <div>
             <FieldLine
-              label={isGhana ? 'Constituency & Region' : 'Country of Residence & Chapter'}
+              label={isGhana ? 'Constituency & Region' : 'Country of Residence'}
               required
             />
           </div>
