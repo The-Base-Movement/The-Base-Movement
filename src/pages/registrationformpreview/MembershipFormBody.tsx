@@ -302,6 +302,32 @@ export function MembershipFormBody({
         </div>
       </div>
 
+      {/* Platform Category Banner */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'hsl(156 100% 18%)',
+          color: '#ffffff',
+          padding: '8px 14px',
+          borderRadius: '4px',
+          marginBottom: 12,
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: '12px', fontWeight: 800, color: 'hsl(45 80% 45%)' }}>[ ✓ ]</span>
+          <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            {isGhana ? 'PLATFORM: GHANA RESIDENT NETWORK (CONSTITUENCY-BASED)' : 'PLATFORM: DIASPORA NETWORK (DIASPORA-BASED)'}
+          </span>
+        </div>
+        <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(45 80% 65%)', textTransform: 'uppercase' }}>
+          OFFICIAL FORM
+        </span>
+      </div>
+
       {/* Form Instructions */}
       <div
         style={{
@@ -318,55 +344,9 @@ export function MembershipFormBody({
         Tick (✓) appropriate boxes. Once completed, hand to your local chapter officer or scan/upload via the online portal.
       </div>
 
-      {/* Section 1: Membership Network */}
+      {/* Section 1: Personal Information */}
       <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={1} label={isGhana ? "Ghana Network (Constituency-based)" : "Diaspora Network (Diaspora-based)"} />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div>
-            <p
-              style={{
-                fontSize: '10px',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                color: '#334155',
-                margin: '0 0 6px',
-              }}
-            >
-              Network Category <span style={{ color: '#dc2626' }}>*</span>
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div
-                style={{
-                  width: 14,
-                  height: 14,
-                  border: '1.5px solid #1e293b',
-                  borderRadius: 2,
-                  background: 'hsl(156 100% 18%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>✓</span>
-              </div>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'hsl(156 100% 18%)' }}>
-                {isGhana ? 'Ghana Resident (Constituency-based)' : 'Diaspora Network (Diaspora-based)'}
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <FieldLine
-              label={isGhana ? 'Constituency & Region' : 'Country of Residence'}
-              required
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Section 2: Personal Information */}
-      <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={2} label="Personal Information" />
+        <SectionHeader number={1} label="Personal Information" />
         <FieldLine label="Full Name (As shown on your ID Card or Passport)" required />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 10 }}>
@@ -430,9 +410,9 @@ export function MembershipFormBody({
         </div>
       </div>
 
-      {/* Section 3: Party Affiliation / CSO */}
+      {/* Section 2: Party Affiliation / CSO */}
       <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={3} label="Political Affiliation / CSO" />
+        <SectionHeader number={2} label="Political Affiliation / CSO" />
         <p
           style={{
             fontSize: '10px',
@@ -450,9 +430,9 @@ export function MembershipFormBody({
         <CheckboxGroup items={partyChecklist} columns={3} />
       </div>
 
-      {/* Section 4: Contact & Location */}
+      {/* Section 3: Contact & Location */}
       <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={4} label="Contact & Location" />
+        <SectionHeader number={3} label="Contact & Location" />
         <FieldLine
           label="Primary Phone Number"
           required
@@ -508,9 +488,9 @@ export function MembershipFormBody({
         )}
       </div>
 
-      {/* Section 5: Profession & Career */}
+      {/* Section 4: Profession & Career */}
       <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={5} label="Profession & Career" />
+        <SectionHeader number={4} label="Profession & Career" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <FieldLine label="Profession / Job Title" hint="e.g. Software Engineer, Farmer" />
           <div>
@@ -530,9 +510,9 @@ export function MembershipFormBody({
         </div>
       </div>
 
-      {/* Section 6: Emergency Contact */}
+      {/* Section 5: Emergency Contact */}
       <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={6} label="Emergency Contact" />
+        <SectionHeader number={5} label="Emergency Contact" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <FieldLine label="Emergency Contact Name" />
           <FieldLine label="Emergency Contact Phone" />
@@ -566,9 +546,9 @@ export function MembershipFormBody({
         </div>
       </div>
 
-      {/* Section 7: Declaration & Signatures */}
+      {/* Section 6: Declaration & Signatures */}
       <div style={{ marginBottom: 16 }}>
-        <SectionHeader number={7} label="Applicant Declaration & Verification" />
+        <SectionHeader number={6} label="Applicant Declaration & Verification" />
         <p
           style={{
             fontSize: '9.5px',
