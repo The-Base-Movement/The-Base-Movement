@@ -3,6 +3,7 @@ interface MembershipFormBodyProps {
   formTitle: string
   logoUrl: string
   parties?: string[]
+  regions?: string[]
   watermarkOpacity?: number
 }
 
@@ -115,9 +116,32 @@ export function MembershipFormBody({
   formTitle,
   logoUrl,
   parties,
+  regions,
   watermarkOpacity = 0.03,
 }: MembershipFormBodyProps) {
   const isGhana = platform === 'GHANA'
+
+  const regionList =
+    regions && regions.length > 0
+      ? regions
+      : [
+          'Ahafo',
+          'Ashanti',
+          'Bono',
+          'Bono East',
+          'Central',
+          'Eastern',
+          'Greater Accra',
+          'North East',
+          'Northern',
+          'Oti',
+          'Savannah',
+          'Upper East',
+          'Upper West',
+          'Volta',
+          'Western',
+          'Western North',
+        ]
 
   const partyList = parties && parties.length > 0 ? parties : [
     'NPP — New Patriotic Party',
@@ -430,12 +454,31 @@ export function MembershipFormBody({
         </div>
 
         {isGhana ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 6 }}>
-            <FieldLine label="Region" required />
-            <FieldLine label="Constituency" required />
-            <FieldLine label="District" />
-            <FieldLine label="Polling Station Code / Name" hint="optional" />
-          </div>
+          <>
+            <div style={{ marginTop: 10, marginBottom: 12 }}>
+              <p
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  color: '#334155',
+                  margin: '0 0 6px',
+                }}
+              >
+                Region <span style={{ color: '#dc2626' }}>*</span>{' '}
+                <span style={{ textTransform: 'none', fontWeight: 500, color: '#0284c7', fontStyle: 'italic', marginLeft: 6 }}>
+                  (Tick the region where you vote)
+                </span>
+              </p>
+              <CheckboxGroup items={regionList} columns={4} />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12, marginTop: 6 }}>
+              <FieldLine label="Constituency" required hint="e.g. Ayawaso West Wuogon" />
+              <FieldLine label="District" hint="e.g. Ayawaso West Municipal" />
+              <FieldLine label="Polling Station Code / Name" hint="e.g. C090201 — Legon Hall" />
+            </div>
+          </>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 6 }}>
             <FieldLine label="Country of Residence" required />
