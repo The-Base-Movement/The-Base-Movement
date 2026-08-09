@@ -82,7 +82,7 @@ export function PublicSidebar({
           color: '#fff',
         }}
       >
-        <h4 className="font-meta font-medium text-lg tracking-tight mb-4">The Base Weekly</h4>
+        <h3 className="font-meta font-medium text-lg tracking-tight mb-4">The Base Weekly</h3>
         <p className="text-xs leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
           Get the movement's policy briefs and news delivered directly to your inbox every week.
         </p>
