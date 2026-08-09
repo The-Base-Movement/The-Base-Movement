@@ -114,6 +114,7 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, './src'),
         'npm:libphonenumber-js@1.11.20/max': 'libphonenumber-js/max',
+        'https://esm.sh/libphonenumber-js@1.11.20/max': 'libphonenumber-js/max',
       },
     },
     build: {
