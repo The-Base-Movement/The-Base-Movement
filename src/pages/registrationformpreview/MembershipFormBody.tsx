@@ -355,7 +355,7 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
           >
             Religion
           </p>
-          <CheckboxGroup items={['Christianity', 'Islam', 'Traditional', 'Other', 'None']} />
+          <CheckboxGroup items={['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']} />
         </div>
       </div>
 
