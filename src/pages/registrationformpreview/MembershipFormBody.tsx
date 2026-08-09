@@ -16,7 +16,7 @@ function SectionHeader({ number, label }: { number: number; label: string }) {
 
 export function MembershipFormBody({ platform, formTitle, logoUrl }: MembershipFormBodyProps) {
   return (
-    <div className="max-w-[210mm] mx-auto bg-white shadow-2xl print:shadow-none min-h-[297mm] p-[15mm] border border-stone-200 print:border-none font-body-md text-on-surface">
+    <div id="membership-form-body" className="max-w-[210mm] mx-auto bg-white shadow-2xl print:shadow-none min-h-[297mm] p-[15mm] border border-stone-200 print:border-none font-body-md text-on-surface">
       {/* Header */}
       <div className="flex items-start justify-between border-b-4 border-brand-green pb-6 mb-8">
         <div className="flex items-center gap-6">
