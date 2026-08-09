@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { SortToggle } from '@/components/ui/SortToggle'
-import { religions, politicalParties } from '@/components/admin/RegistrationForm.constants'
+import { religions } from '@/components/admin/RegistrationForm.constants'
+import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import { useChapters } from '@/context/ChaptersContext'
 import { memberService } from '@/services/memberService'
 import { shortDiasporaName } from '@/lib/diaspora'
@@ -120,6 +121,7 @@ export function MembersFilterBar({
   const activeOption =
     SEARCH_TYPE_OPTIONS.find((o) => o.value === searchType) ?? SEARCH_TYPE_OPTIONS[0]
 
+  const politicalParties = usePoliticalParties()
   const { chapters } = useChapters()
   const [countries, setCountries] = useState<{ name: string; flag_url?: string | null }[]>([])
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { ageRanges, religions, politicalParties } from './RegistrationForm.constants'
+import { ageRanges, religions } from './RegistrationForm.constants'
+import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
 import {
   getConstituenciesByRegion,
@@ -33,6 +34,7 @@ function ageBucketForBirthYear(birthYear?: string): string {
 
 export function RegistrationStepDemographics(props: RegistrationStepDemographicsProps) {
   const { formData, platform, isMobile, dbRegions, handleChange, setFields } = props
+  const politicalParties = usePoliticalParties()
 
   const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
   const [psFocused, setPsFocused] = useState(false)

@@ -2,11 +2,8 @@ import { labelStyle, inputStyle, selectStyle } from './shared'
 import { SelIcon } from './SelIcon'
 import { JobSelector } from '@/components/JobSelector'
 import type { JobSelection } from '@/services/jobTaxonomyService'
-import {
-  emergencyRelationships,
-  religions,
-  politicalParties,
-} from '@/components/admin/RegistrationForm.constants'
+import { emergencyRelationships, religions } from '@/components/admin/RegistrationForm.constants'
+import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { diasporaName } from '@/lib/diaspora'
 
@@ -75,6 +72,7 @@ export function PersonalInfoForm({
   job,
   onJobChange,
 }: Props) {
+  const politicalParties = usePoliticalParties()
   return (
     <div className="panel">
       <div className="ph">

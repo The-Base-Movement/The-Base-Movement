@@ -4,11 +4,8 @@ import { type Member, type Region } from '@/services/adminService'
 import { getFlagImageUrl } from '@/lib/utils'
 import { JobSelector } from '@/components/JobSelector'
 import { type JobSelection } from '@/services/jobTaxonomyService'
-import {
-  ageRanges,
-  religions,
-  politicalParties,
-} from '@/components/admin/RegistrationForm.constants'
+import { ageRanges, religions } from '@/components/admin/RegistrationForm.constants'
+import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import {
   getConstituenciesByRegion,
   getDistrictForConstituency,
@@ -101,6 +98,7 @@ export function EditModal({
   onJobChange,
   onJobLabelChange,
 }: EditModalProps) {
+  const politicalParties = usePoliticalParties()
   const [constituencyOptions, setConstituencyOptions] = useState<string[]>([])
   const [regionFocused, setRegionFocused] = useState(false)
   const [constituencyFocused, setConstituencyFocused] = useState(false)

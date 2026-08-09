@@ -4,7 +4,8 @@ import type { PendingVerification } from '@/services/adminService'
 import { Skeleton } from '@/components/states'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { Pagination } from '@/components/Pagination'
-import { religions, politicalParties } from '@/components/admin/RegistrationForm.constants'
+import { religions } from '@/components/admin/RegistrationForm.constants'
+import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 
 const AGE_RANGES = ['18-25', '26-35', '36-45', '46-60', '60+']
 
@@ -67,6 +68,7 @@ export function VerificationQueue({
   sortOrder,
   onSortChange,
 }: VerificationQueueProps) {
+  const politicalParties = usePoliticalParties()
   return (
     <div className="panel">
       {/* Search + filter bar */}

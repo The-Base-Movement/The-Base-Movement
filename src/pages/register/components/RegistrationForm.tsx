@@ -16,8 +16,8 @@ import {
   emergencyRelationships,
   educationLevels,
   religions,
-  politicalParties,
 } from '@/components/admin/RegistrationForm.constants'
+import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
 
@@ -81,6 +81,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
     onBack,
     onSubmit,
   } = props
+  const politicalParties = usePoliticalParties()
   const displayStep = formStep
   const totalSteps = 4
 
