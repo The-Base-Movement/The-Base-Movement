@@ -201,6 +201,10 @@ export const routes: RouteObject[] = [
     element: <RegistrationFormPreview />,
   },
   {
+    path: '/registration-form-preview',
+    element: <RegistrationFormPreview />,
+  },
+  {
     path: '/command',
     element: <AdminLogin />,
   },
