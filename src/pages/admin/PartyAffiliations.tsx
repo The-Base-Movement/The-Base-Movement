@@ -122,7 +122,8 @@ export default function PartyAffiliations() {
     }
   }, [platform, selectedLocation])
 
-  // Filter party stats by search query and automatically sort alphabetically (A–Z)
+  // Filter party stats by search query and sort political parties alphabetically (A–Z),
+  // keeping "Unspecified / Independent" pinned at the bottom.
   const filteredPartyStats = useMemo(() => {
     if (!data) return []
     let stats = data.partyStats
@@ -132,7 +133,11 @@ export default function PartyAffiliations() {
         (p) => p.partyName.toLowerCase().includes(q) || p.abbreviation.toLowerCase().includes(q)
       )
     }
-    return [...stats].sort((a, b) => a.partyName.localeCompare(b.partyName))
+    return [...stats].sort((a, b) => {
+      if (a.partyName === 'Unspecified / Independent') return 1
+      if (b.partyName === 'Unspecified / Independent') return -1
+      return a.partyName.localeCompare(b.partyName)
+    })
   }, [data, searchQuery])
 
   // Recharts Bar Data

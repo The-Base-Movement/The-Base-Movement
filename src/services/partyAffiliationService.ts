@@ -412,7 +412,11 @@ export const partyAffiliationService = {
         }
       })
       .filter((p) => p.partyName !== 'Unspecified / Independent' || p.totalMembers > 0)
-      .sort((a, b) => a.partyName.localeCompare(b.partyName))
+      .sort((a, b) => {
+        if (a.partyName === 'Unspecified / Independent') return 1
+        if (b.partyName === 'Unspecified / Independent') return -1
+        return a.partyName.localeCompare(b.partyName)
+      })
 
     // Compute top party
     const validTop = partyStats.find((p) => p.partyName !== 'Unspecified / Independent')
