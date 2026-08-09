@@ -455,6 +455,7 @@ export function MembershipFormBody({
                 marginBottom: 12,
                 pageBreakBefore: 'always',
                 breakBefore: 'page',
+                paddingTop: 20,
               }}
             >
               <p
@@ -498,7 +499,7 @@ export function MembershipFormBody({
       <div
         style={{
           marginBottom: 18,
-          ...(isGhana ? {} : { pageBreakBefore: 'always', breakBefore: 'page' }),
+          ...(isGhana ? {} : { pageBreakBefore: 'always', breakBefore: 'page', paddingTop: 20 }),
         }}
       >
         <SectionHeader number={4} label="Profession & Career" />
