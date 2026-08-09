@@ -255,9 +255,9 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
         Tick (✓) appropriate boxes. Once completed, hand to your local chapter officer or scan/upload via the online portal.
       </div>
 
-      {/* Section 1: Membership Platform */}
+      {/* Section 1: Membership Network */}
       <div style={{ marginBottom: 18 }}>
-        <SectionHeader number={1} label="Membership Network" />
+        <SectionHeader number={1} label={isGhana ? "Ghana Network (Constituency-based)" : "Diaspora Network (Diaspora-based)"} />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
             <p
@@ -271,47 +271,30 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
             >
               Network Category <span style={{ color: '#dc2626' }}>*</span>
             </p>
-            <div style={{ display: 'flex', gap: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <div
-                  style={{
-                    width: 14,
-                    height: 14,
-                    border: '1.5px solid #1e293b',
-                    borderRadius: 2,
-                    background: isGhana ? 'hsl(156 100% 18%)' : '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {isGhana && <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>✓</span>}
-                </div>
-                <span style={{ fontSize: '11px', fontWeight: 600 }}>Ghana Resident</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div
+                style={{
+                  width: 14,
+                  height: 14,
+                  border: '1.5px solid #1e293b',
+                  borderRadius: 2,
+                  background: 'hsl(156 100% 18%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>✓</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <div
-                  style={{
-                    width: 14,
-                    height: 14,
-                    border: '1.5px solid #1e293b',
-                    borderRadius: 2,
-                    background: !isGhana ? 'hsl(156 100% 18%)' : '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {!isGhana && <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>✓</span>}
-                </div>
-                <span style={{ fontSize: '11px', fontWeight: 600 }}>Diaspora Network</span>
-              </div>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'hsl(156 100% 18%)' }}>
+                {isGhana ? 'Ghana Resident (Constituency-based)' : 'Diaspora Network (Diaspora-based)'}
+              </span>
             </div>
           </div>
 
           <div>
             <FieldLine
-              label={isGhana ? 'Chapter / Constituency' : 'Country of Residence'}
+              label={isGhana ? 'Constituency & Region' : 'Country of Residence & Chapter'}
               required
             />
           </div>
@@ -410,16 +393,17 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
         </div>
 
         {isGhana ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 6 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12, marginTop: 6 }}>
             <FieldLine label="Region" required />
             <FieldLine label="Constituency" required />
+            <FieldLine label="District" hint="Auto-filled" />
             <FieldLine label="Polling Station Code / Name" hint="optional" />
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 6 }}>
             <FieldLine label="Country of Residence" required />
             <FieldLine label="City / Locality" required />
-            <FieldLine label="Base Diaspora Chapter" hint="e.g. UK Chapter" />
+            <FieldLine label="Base Diaspora Chapter" required hint="e.g. UK Chapter" />
           </div>
         )}
       </div>
