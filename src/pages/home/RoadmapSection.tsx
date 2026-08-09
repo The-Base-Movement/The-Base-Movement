@@ -13,15 +13,15 @@ interface RoadmapSectionProps {
 
 export function RoadmapSection({ roadmapItems }: RoadmapSectionProps) {
   return (
-    <section aria-labelledby="roadmap-heading" className="py-16 md:py-24 bg-background">
+    <section aria-labelledby="roadmap-heading" className="py-20 md:py-28 bg-white border-b border-border/60">
       <div className="page-container">
-        <div className="mb-10 md:mb-12" data-fade>
-          <span className="text-[10px] font-medium tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">
-            Movement roadmap
+        <div className="mb-12 max-w-xl" data-fade>
+          <span className="text-[10px] font-medium tracking-[0.08em] uppercase text-primary font-meta block mb-2">
+            Movement Roadmap
           </span>
           <h2
             id="roadmap-heading"
-            className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight mb-1"
+            className="text-2xl md:text-4xl font-meta font-medium text-on-surface tracking-tight"
           >
             Where we are, what's next.
           </h2>

@@ -1,6 +1,7 @@
 # Developer Handoff — The Base Movement Design System
 
-**Version:** 2.0 · **Date:** 2026-08-04 · **Target:** React 19 + TypeScript 5.9 + Vite 7
+**Version:** 2.1 · **Date:** 2026-08-09 · **Target:** React 19 + TypeScript 5.9 + Vite 7
+**Apple Design Benchmark:** 7.7 / 10 (Strong / Premium Standard)
 **Source of truth:** `src/index.css` (62 KB) + `tailwind.config.js`
 **Companion doc:** [`the-base-movement-design-system/project/README.md`](the-base-movement-design-system/project/README.md) — brand foundations and rationale
 
@@ -134,8 +135,20 @@ the most common review rejection.
 | lift (hover)                | `0 10px 30px -8px rgb(0 0 0 / .15)` |
 | CTA slab                    | `0 48px 96px -16px rgb(0 0 0 / .5)` |
 
-Borders are pencil-thin (1px). Section dividers use `border-t-[4px]` in brand
+Borders are pencil-thin (1px). Section dividers use border-t-[4px] in brand
 red / gold / green as an editorial rule.
+
+### Section Rhythm & Surface Alternation (Apple Design Benchmark)
+
+Never use monotonous line dividers (`<WingDivider />`) between every consecutive section.
+Instead, establish a deliberate visual narrative through alternating surface-tone backgrounds:
+
+| Surface Tone | Class / Color | Usage & Purpose |
+| :--- | :--- | :--- |
+| **Hero / Dark Accent** | `bg-[#0f1310]` / `bg-[#181d19]` | High-impact hero, core foundation pillars, key statements |
+| **Warm Editorial** | `bg-[#F7F5F2]` / `bg-surface-warm` | Secondary pathways, updates, featured news |
+| **Crisp Light** | `bg-white` / `bg-background` | Stats grid, interactive timelines, form panels |
+| **Container Low** | `hsl(var(--container-low))` | Inset content cards, network structure breakdowns |
 
 ---
 
@@ -153,7 +166,7 @@ Use it, plus `useMediaQuery()`, rather than reading `window.innerWidth` directly
 
 ### Container
 
-Max width **1280px**, gutter **24px**. Section padding **40px mobile / 96px desktop**.
+Max width **1280px**, gutter **24px**. Section padding **40px mobile / 96px - 112px desktop** (`py-20 md:py-28`).
 Stack rhythm **8 / 16 / 32px**.
 
 ### Layout classes

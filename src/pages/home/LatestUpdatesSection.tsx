@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
-import { cn } from '@/lib/utils'
 import { getBlogImageUrl } from '@/lib/blogImages'
 import { type BlogPost } from '@/services/adminService'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
@@ -15,28 +14,23 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
   return (
     <section
       aria-labelledby="updates-heading"
-      className="pt-16 md:pt-24 pb-16 md:pb-32 bg-background"
+      className="py-20 md:py-28 bg-[#F7F5F2] border-t border-border/60"
     >
       <div className="page-container">
-        <div className="flex justify-between items-end mb-10 md:mb-12" data-fade>
+        <div className="flex justify-between items-end mb-12" data-fade>
           <div>
-            <span className="text-primary font-medium tracking-tight text-micro mb-3 block">
-              Updates
+            <span className="text-[10px] font-medium tracking-[0.08em] uppercase text-primary font-meta block mb-2">
+              Latest Movement News
             </span>
             <h2
               id="updates-heading"
-              className="text-2xl md:text-3xl font-meta font-medium text-on-surface tracking-tight"
+              className="text-2xl md:text-4xl font-meta font-medium text-on-surface tracking-tight"
             >
               Latest updates
             </h2>
-            <p className="text-xs text-muted-foreground/60 mt-2">
+            <p className="text-sm text-muted-foreground mt-2 font-body-md">
               Stories from our communities, networks, and partners.
             </p>
-            <div className={cn('bl', 'mt-4')}>
-              <div />
-              <div />
-              <div />
-            </div>
           </div>
           <Link
             to="/blog"

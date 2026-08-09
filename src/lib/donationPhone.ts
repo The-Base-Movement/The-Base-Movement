@@ -103,7 +103,7 @@ export function normalizeDonationPhone(input: DonationPhoneInput): DonationPhone
           buildInternationalFallback(internationalInput, input.dialingCode)
         )
 
-  if (!parsed?.isPossible()) {
+  if (!parsed?.isValid()) {
     return {
       ok: false,
       error: `Enter a valid phone number for ${input.country || 'the selected country'}.`,

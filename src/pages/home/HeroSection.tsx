@@ -37,7 +37,6 @@ function HeroUpdatesSlider({ latestPosts }: { latestPosts: BlogPost[] }) {
     <div
       className="w-full max-w-[320px] md:max-w-[360px]"
       aria-label="Latest movement updates"
-      style={{ filter: 'drop-shadow(0 24px 50px rgba(0,0,0,.35))' }}
     >
       <Swiper
         modules={[Pagination]}
