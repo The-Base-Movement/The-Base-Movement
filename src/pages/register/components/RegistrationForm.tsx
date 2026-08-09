@@ -365,30 +365,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="input-ghana-card"
-                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block mb-1"
-                  >
-                    Ghana Card Number{' '}
-                    <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">
-                      (Optional)
-                    </span>
-                  </label>
-                  <input
-                    name="name-ghana-card"
-                    id="input-ghana-card"
-                    value={formData.idNumber}
-                    onChange={(e) => onInputChange('idNumber', e.target.value)}
-                    className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                    placeholder="GHA-XXXXXXXXX-X"
-                    autoComplete="off"
-                  />
-                  <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
-                    You can skip this for now — it's required later to complete verification. Enter
-                    it exactly as it appears on your Ghana Card.
-                  </p>
-                </div>
+                {/* National ID / Ghana Card field — hidden for now as requested; will be re-enabled later */}
 
                 {platform === 'GHANA' && (
                   <div className="space-y-1.5 animate-in fade-in duration-300">
