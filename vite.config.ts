@@ -124,18 +124,14 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (!id.includes('node_modules')) return
-            // Only split libs that are truly self-contained with no React deps.
-            // Everything else goes into one vendor chunk to prevent cross-chunk
-            // circular reference errors at runtime.
+            // Heavy third-party SDKs split into independent async chunks
+            if (id.includes('@sentry')) return 'vendor-sentry'
             if (id.includes('@tinymce')) return 'vendor-editor'
             if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-'))
               return 'vendor-charts'
             if (id.includes('@supabase')) return 'vendor-supabase'
             if (id.includes('swiper')) return 'vendor-swiper'
             if (id.includes('gsap') || id.includes('framer-motion')) return 'vendor-motion'
-            // Heavy, self-contained (no React deps) libs used only on specific lazy
-            // routes — split out so they don't bloat the eager vendor chunk that
-            // loads on every page. mapbox-gl → map pages, tesseract.js → registration OCR.
             if (id.includes('mapbox-gl') || id.includes('react-map-gl')) return 'vendor-map'
             if (id.includes('tesseract.js')) return 'vendor-ocr'
             if (id.includes('pdfjs-dist')) return 'vendor-pdf'
