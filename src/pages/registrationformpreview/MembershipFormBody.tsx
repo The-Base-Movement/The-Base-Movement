@@ -623,7 +623,14 @@ export function MembershipFormBody({
         >
           FOR OFFICIAL REGISTRAR USE ONLY
         </p>
-        <FieldLine label="Permanent Reg No Allocated" hint="e.g. GHA-ACC-0092" />
+        <FieldLine
+          label="Permanent Reg No Allocated"
+          hint={
+            isGhana
+              ? 'e.g. GHA-ACC-0092 (Required if registering on behalf of applicant, e.g. Referee)'
+              : 'e.g. DSP-UK-0092 (Required if registering on behalf of applicant, e.g. Referee)'
+          }
+        />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
           <FieldLine label="Verification Status" hint="Approved / Pending" />
           <FieldLine label="Registrar Officer Name & Signature" />
