@@ -433,14 +433,13 @@ export function MembershipFormBody({
       {/* Section 3: Contact & Location */}
       <div style={{ marginBottom: 18 }}>
         <SectionHeader number={3} label="Contact & Location" />
-        <FieldLine
-          label="Primary Phone Number"
-          required
-          hint={isGhana ? 'with country code e.g. +233 24 123 4567' : 'with country code e.g. +44 7911 123456 / +1 212 555 0199'}
-        />
-
-        <div style={{ marginTop: 6 }}>
-          <FieldLine label="Secondary Phone Number" hint="optional" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <FieldLine
+            label="Primary Phone"
+            required
+            hint={isGhana ? 'e.g. +233 24 123 4567' : 'e.g. +44 7911 123456 / +1 212 555 0199'}
+          />
+          <FieldLine label="Secondary Phone" hint="optional" />
         </div>
 
         {isGhana ? (
@@ -456,6 +455,7 @@ export function MembershipFormBody({
                 marginBottom: 12,
                 pageBreakBefore: 'always',
                 breakBefore: 'page',
+                paddingTop: 20,
               }}
             >
               <p
@@ -496,7 +496,12 @@ export function MembershipFormBody({
       </div>
 
       {/* Section 4: Profession & Career */}
-      <div style={{ marginBottom: 18 }}>
+      <div
+        style={{
+          marginBottom: 18,
+          ...(isGhana ? {} : { pageBreakBefore: 'always', breakBefore: 'page', paddingTop: 20 }),
+        }}
+      >
         <SectionHeader number={4} label="Profession & Career" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <FieldLine label="Profession / Job Title" hint="e.g. Software Engineer, Farmer" />
