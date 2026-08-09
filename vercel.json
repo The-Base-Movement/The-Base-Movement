@@ -174,28 +174,6 @@
   ],
   "redirects": [
     {
-      "source": "/",
-      "has": [
-        {
-          "type": "host",
-          "value": "thebasemovement.org.gh"
-        }
-      ],
-      "destination": "https://www.thebasemovement.org.gh/",
-      "permanent": true
-    },
-    {
-      "source": "/:path+",
-      "has": [
-        {
-          "type": "host",
-          "value": "thebasemovement.org.gh"
-        }
-      ],
-      "destination": "https://www.thebasemovement.org.gh/:path+",
-      "permanent": true
-    },
-    {
       "source": "/admin",
       "destination": "/admin/dashboard",
       "permanent": true
