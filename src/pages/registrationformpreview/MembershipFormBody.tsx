@@ -3,6 +3,7 @@ interface MembershipFormBodyProps {
   formTitle: string
   logoUrl: string
   parties?: string[]
+  watermarkOpacity?: number
 }
 
 function SectionHeader({ number, label }: { number: number; label: string }) {
@@ -109,7 +110,13 @@ function CheckboxGroup({ items, columns = 0 }: { items: string[]; columns?: numb
   )
 }
 
-export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: MembershipFormBodyProps) {
+export function MembershipFormBody({
+  platform,
+  formTitle,
+  logoUrl,
+  parties,
+  watermarkOpacity = 0.07,
+}: MembershipFormBodyProps) {
   const isGhana = platform === 'GHANA'
 
   const partyList = parties && parties.length > 0 ? parties : [
@@ -131,6 +138,7 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
     <div
       id="membership-form-body"
       style={{
+        position: 'relative',
         maxWidth: '210mm',
         margin: '0 auto',
         background: '#ffffff',
@@ -140,9 +148,38 @@ export function MembershipFormBody({ platform, formTitle, logoUrl, parties }: Me
         color: '#0f172a',
         fontFamily: "'Public Sans', sans-serif",
         lineHeight: 1.4,
+        overflow: 'hidden',
       }}
       className="shadow-2xl print:shadow-none print:p-0 border border-stone-200 print:border-none"
     >
+      {/* Eagle in Flight Watermark */}
+      {watermarkOpacity > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <img
+            src="/branding/patterns/eagle-in-flight.webp"
+            alt=""
+            style={{
+              width: '72%',
+              height: 'auto',
+              maxHeight: '60%',
+              objectFit: 'contain',
+              opacity: watermarkOpacity,
+              filter: 'grayscale(100%)',
+            }}
+          />
+        </div>
+      )}
       {/* Header Bar */}
       <div
         style={{
