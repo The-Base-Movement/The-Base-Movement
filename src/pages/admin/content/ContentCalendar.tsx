@@ -34,19 +34,20 @@ export default function ContentCalendar() {
         const [blogsRes, pressRes, newslettersRes, eventsRes] = await Promise.all([
           supabase
             .from('blog_posts')
-            .select('id, title, status, created_at, scheduled_at, published_at, excerpt, author_name')
+            .select('id, title, status, created_at, published_at, excerpt, author_id, authors(name)')
             .is('deleted_at', null),
           supabase
             .from('press_releases')
-            .select('id, title, status, created_at, scheduled_at, published_at, summary, spokesperson')
+            .select('id, title, created_at, published_at, excerpt, category')
             .is('deleted_at', null),
           supabase
             .from('newsletters')
-            .select('id, subject, status, created_at, scheduled_at, sent_at, body')
-            .is('deleted_at', null),
-          supabase
-            .from('field_events')
-            .select('id, title, status, date, location, description'),
+            .select('id, subject, status, created_at, sent_at, body_html'),
+          Promise.resolve(
+            supabase
+              .from('field_events')
+              .select('id, title, status, date, location, description')
+          ).catch(() => ({ data: null, error: null })),
         ])
 
         if (cancelled) return
@@ -55,16 +56,17 @@ export default function ContentCalendar() {
 
         // 1. Process Blog Posts
         for (const post of blogsRes.data || []) {
-          const rawDate = post.scheduled_at || post.published_at || post.created_at
+          const rawDate = post.published_at || post.created_at
+          const authorData = post.authors as { name?: string } | null
           if (rawDate) {
             calendarItems.push({
               id: `blog-${post.id}`,
               title: post.title,
               type: 'blog',
-              status: post.status === 'Published' ? 'Published' : post.scheduled_at ? 'Scheduled' : 'Draft',
+              status: post.status === 'Published' ? 'Published' : 'Draft',
               date: new Date(rawDate).toISOString().slice(0, 10),
               fullTimestamp: rawDate,
-              author: post.author_name || 'Editorial Team',
+              author: authorData?.name || 'Editorial Team',
               snippet: post.excerpt || '',
               editUrl: `/admin/blogs?edit=${post.id}`,
             })
@@ -73,17 +75,17 @@ export default function ContentCalendar() {
 
         // 2. Process Press Releases
         for (const press of pressRes.data || []) {
-          const rawDate = press.scheduled_at || press.published_at || press.created_at
+          const rawDate = press.published_at || press.created_at
           if (rawDate) {
             calendarItems.push({
               id: `press-${press.id}`,
               title: press.title,
               type: 'press',
-              status: press.status === 'Published' ? 'Published' : press.scheduled_at ? 'Scheduled' : 'Draft',
+              status: press.published_at ? 'Published' : 'Draft',
               date: new Date(rawDate).toISOString().slice(0, 10),
               fullTimestamp: rawDate,
-              author: press.spokesperson || 'Press Office',
-              snippet: press.summary || '',
+              author: press.category || 'Press Office',
+              snippet: press.excerpt || '',
               editUrl: `/admin/press-releases?edit=${press.id}`,
             })
           }
@@ -91,24 +93,24 @@ export default function ContentCalendar() {
 
         // 3. Process Newsletters
         for (const nl of newslettersRes.data || []) {
-          const rawDate = nl.scheduled_at || nl.sent_at || nl.created_at
+          const rawDate = nl.sent_at || nl.created_at
           if (rawDate) {
             calendarItems.push({
               id: `nl-${nl.id}`,
               title: nl.subject,
               type: 'newsletter',
-              status: nl.status === 'sent' ? 'Published' : nl.status === 'scheduled' ? 'Scheduled' : 'Draft',
+              status: nl.status === 'sent' ? 'Published' : 'Draft',
               date: new Date(rawDate).toISOString().slice(0, 10),
               fullTimestamp: rawDate,
               author: 'Communications Bureau',
-              snippet: (nl.body || '').slice(0, 100),
+              snippet: (nl.body_html || '').replace(/<[^>]+>/g, '').slice(0, 100),
               editUrl: `/admin/newsletter?tab=compose&edit=${nl.id}`,
             })
           }
         }
 
         // 4. Process Field Events
-        for (const evt of eventsRes.data || []) {
+        for (const evt of eventsRes?.data || []) {
           if (evt.date) {
             calendarItems.push({
               id: `evt-${evt.id}`,
