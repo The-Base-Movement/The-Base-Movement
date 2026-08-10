@@ -1,9 +1,11 @@
-import { useState, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { useLocation, Link } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { toast } from 'sonner'
 import { ShareModal } from '@/components/ShareModal'
+import { useAuth } from '@/context/AuthContext'
+import { adminService } from '@/services/adminService'
 
 export interface MovementEvent {
   id: string
@@ -16,10 +18,11 @@ export interface MovementEvent {
   description: string
   attendingCount: number
   organizer: string
+  status: 'Planned' | 'In Progress' | 'Completed'
   imageUrl?: string
 }
 
-const PUBLIC_EVENTS: MovementEvent[] = [
+export const PUBLIC_EVENTS: MovementEvent[] = [
   {
     id: 'evt-001',
     title: 'Greater Accra Youth Jobs & Empowerment Town Hall',
@@ -32,6 +35,8 @@ const PUBLIC_EVENTS: MovementEvent[] = [
       'Join Movement Founder Dr. George Oti Bonsu and national executive leaders for an interactive town hall detailing the 1 Million Youth Jobs plan and local apprenticeship placements.',
     attendingCount: 480,
     organizer: 'The Base Movement LBG - Greater Accra Chapter',
+    status: 'Planned',
+    imageUrl: 'https://www.thebasemovement.org.gh/branding/og-image.png?v=20260729',
   },
   {
     id: 'evt-002',
@@ -45,6 +50,7 @@ const PUBLIC_EVENTS: MovementEvent[] = [
       'Mass peaceful solidarity walk advocating for job creation, youth empowerment, and accountable leadership across the Ashanti Region.',
     attendingCount: 1250,
     organizer: 'The Base Movement LBG - Ashanti Regional Secretariat',
+    status: 'Planned',
   },
   {
     id: 'evt-003',
@@ -58,6 +64,7 @@ const PUBLIC_EVENTS: MovementEvent[] = [
       'Hands-on vocational and tech skills training workshop connecting young graduates with agribusiness and digital apprenticeships.',
     attendingCount: 310,
     organizer: 'The Base Movement LBG - Northern Regional Hub',
+    status: 'Planned',
   },
   {
     id: 'evt-004',
@@ -71,6 +78,7 @@ const PUBLIC_EVENTS: MovementEvent[] = [
       'Community-led environmental sanitation and civic restoration action organized by local constituency youth volunteers.',
     attendingCount: 290,
     organizer: 'The Base Movement LBG - Western Region Youth Wing',
+    status: 'Planned',
   },
   {
     id: 'evt-005',
@@ -84,6 +92,7 @@ const PUBLIC_EVENTS: MovementEvent[] = [
       'Strategic networking conference connecting Ghanaian professionals across the UK and Europe with domestic industrialization projects.',
     attendingCount: 410,
     organizer: 'The Base Movement LBG - UK & Europe Chapter',
+    status: 'Planned',
   },
 ]
 
@@ -109,17 +118,60 @@ const REGIONS = [
 
 export default function Events() {
   const location = useLocation()
+  const { user } = useAuth()
   const isDashboard = location.pathname.startsWith('/dashboard')
   const font = isDashboard ? "'Public Sans', sans-serif" : "'Work Sans', sans-serif"
+  const basePath = isDashboard ? '/dashboard/events' : '/events'
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [selectedRegion, setSelectedRegion] = useState<string>('All Regions')
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [rsvpedEventIds, setRsvpedEventIds] = useState<Set<string>>(new Set())
   const [shareEvent, setShareEvent] = useState<{ title: string; url: string } | null>(null)
+  const [canCreate, setCanCreate] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [eventsList, setEventsList] = useState<MovementEvent[]>(PUBLIC_EVENTS)
+
+  // New Event Form State
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    category: 'Town Hall' as MovementEvent['category'],
+    date: '',
+    locationName: '',
+    gpsAddress: '',
+    region: 'Greater Accra',
+    description: '',
+  })
+
+  // Permission check: Only Super Admin, Editors, Chapter Leads, Constituency Leads, and Secretaries can create events
+  useEffect(() => {
+    if (!user) {
+      setCanCreate(false)
+      return
+    }
+    let cancelled = false
+    async function checkPermission() {
+      try {
+        const currentAdmin = adminService.getCurrentUser()
+        const isChapterLead = await adminService.isChapterLeader(user!.id)
+        if (cancelled) return
+        const roleUpper = (currentAdmin?.role || '').toUpperCase()
+        const isAuthorized =
+          ['SUPER_ADMIN', 'FOUNDER', 'ADMIN', 'ADMIN_L2', 'WEB_APP_MANAGER', 'COMMUNICATIONS_OFFICER', 'EDITOR', 'CHAPTER_LEADER', 'CHAPTER_SECRETARY', 'CONSTITUENCY_LEADER', 'CONSTITUENCY_SECRETARY'].includes(roleUpper) ||
+          isChapterLead
+        setCanCreate(isAuthorized)
+      } catch {
+        if (!cancelled) setCanCreate(false)
+      }
+    }
+    checkPermission()
+    return () => {
+      cancelled = true
+    }
+  }, [user])
 
   const filteredEvents = useMemo(() => {
-    return PUBLIC_EVENTS.filter((evt) => {
+    return eventsList.filter((evt) => {
       const matchCat = selectedCategory === 'All' || evt.category === selectedCategory
       const matchRegion = selectedRegion === 'All Regions' || evt.region === selectedRegion
       const matchSearch =
@@ -128,7 +180,7 @@ export default function Events() {
         evt.description.toLowerCase().includes(searchTerm.toLowerCase())
       return matchCat && matchRegion && matchSearch
     })
-  }, [selectedCategory, selectedRegion, searchTerm])
+  }, [eventsList, selectedCategory, selectedRegion, searchTerm])
 
   const handleRSVP = (evt: MovementEvent) => {
     if (rsvpedEventIds.has(evt.id)) {
@@ -217,6 +269,39 @@ export default function Events() {
     return [listSchema, ...singleEventSchemas]
   }, [filteredEvents])
 
+  const handleCreateEvent = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newEvent.title || !newEvent.date || !newEvent.locationName) {
+      toast.error('Please fill in all required fields.')
+      return
+    }
+    const created: MovementEvent = {
+      id: `evt-${Date.now()}`,
+      title: newEvent.title,
+      category: newEvent.category,
+      date: new Date(newEvent.date).toISOString(),
+      locationName: newEvent.locationName,
+      gpsAddress: newEvent.gpsAddress || 'Accra, Ghana',
+      region: newEvent.region,
+      description: newEvent.description,
+      attendingCount: 1,
+      organizer: `The Base Movement LBG - ${newEvent.region} Secretariat`,
+      status: 'Planned',
+    }
+    setEventsList((prev) => [created, ...prev])
+    toast.success(`Draft event "${newEvent.title}" published successfully!`)
+    setIsCreateModalOpen(false)
+    setNewEvent({
+      title: '',
+      category: 'Town Hall',
+      date: '',
+      locationName: '',
+      gpsAddress: '',
+      region: 'Greater Accra',
+      description: '',
+    })
+  }
+
   return (
     <div
       className={isDashboard ? 'main' : undefined}
@@ -236,30 +321,54 @@ export default function Events() {
 
       {isDashboard && <Breadcrumbs />}
 
-      <div style={{ marginBottom: 28 }}>
-        <h1
-          style={{
-            fontSize: 28,
-            fontWeight: 'var(--font-weight-medium, 500)',
-            color: 'hsl(var(--on-surface))',
-            margin: '0 0 6px',
-            letterSpacing: '-0.02em',
-          }}
-        >
-          Mobilization Events & Town Halls
-        </h1>
-        <p
-          style={{
-            fontSize: 14,
-            fontWeight: 'var(--font-weight-normal, 400)',
-            color: 'hsl(var(--on-surface-muted))',
-            margin: 0,
-            lineHeight: 1.5,
-            maxWidth: 780,
-          }}
-        >
-          Join town halls, national mobilization walks, career workshops, and community action days led by Dr. George Oti Bonsu and regional leadership across Ghana and the diaspora.
-        </p>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 16,
+          marginBottom: 28,
+        }}
+      >
+        <div>
+          <h1
+            style={{
+              fontSize: 28,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              color: 'hsl(var(--on-surface))',
+              margin: '0 0 6px',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Mobilization Events & Town Halls
+          </h1>
+          <p
+            style={{
+              fontSize: 14,
+              fontWeight: 'var(--font-weight-normal, 400)',
+              color: 'hsl(var(--on-surface-muted))',
+              margin: 0,
+              lineHeight: 1.5,
+              maxWidth: 780,
+            }}
+          >
+            Join town halls, national mobilization walks, career workshops, and community action days led by Dr. George Oti Bonsu and regional leadership across Ghana and the diaspora.
+          </p>
+        </div>
+
+        {canCreate && (
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="btn btn-primary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexShrink: 0 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              add_circle
+            </span>
+            Create Event
+          </button>
+        )}
       </div>
 
       {/* Filter Toolbar */}
@@ -376,6 +485,10 @@ export default function Events() {
             })
             const isRsvped = rsvpedEventIds.has(evt.id)
 
+            const cardBanner =
+              evt.imageUrl ||
+              'https://www.thebasemovement.org.gh/branding/og-image.png?v=20260729'
+
             return (
               <div
                 key={evt.id}
@@ -396,10 +509,42 @@ export default function Events() {
                     bottom: 0,
                     width: 4,
                     background: 'hsl(var(--primary))',
+                    zIndex: 2,
                   }}
                 />
 
-                <div style={{ padding: '20px 20px 16px', flex: 1 }}>
+                {/* Event Card Banner */}
+                <Link to={`${basePath}/${evt.id}`} style={{ display: 'block', height: 140, overflow: 'hidden', position: 'relative' }}>
+                  <img
+                    src={cardBanner}
+                    alt={evt.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)',
+                    }}
+                  />
+                  <span
+                    className="pill"
+                    style={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      fontSize: 9,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      background: 'hsl(var(--primary))',
+                      color: '#ffffff',
+                    }}
+                  >
+                    {evt.status}
+                  </span>
+                </Link>
+
+                <div style={{ padding: '16px 20px 16px', flex: 1 }}>
                   {/* Top row: Date Badge & Category Pill */}
                   <div
                     style={{
@@ -454,7 +599,13 @@ export default function Events() {
                       lineHeight: 1.35,
                     }}
                   >
-                    {evt.title}
+                    <Link
+                      to={`${basePath}/${evt.id}`}
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                      className="hover:underline"
+                    >
+                      {evt.title}
+                    </Link>
                   </h2>
                   <p
                     style={{
@@ -573,6 +724,230 @@ export default function Events() {
           title={shareEvent.title}
           url={shareEvent.url}
         />
+      )}
+
+      {isCreateModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setIsCreateModalOpen(false)}
+        >
+          <div
+            className="panel"
+            style={{
+              maxWidth: 520,
+              width: '100%',
+              background: 'hsl(var(--surface))',
+              borderRadius: 'var(--radius-md)',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)',
+              padding: 24,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0, color: 'hsl(var(--on-surface))' }}>
+                Create New Event Draft
+              </h2>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => setIsCreateModalOpen(false)}
+                style={{ padding: 4 }}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateEvent} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                  Event Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Greater Accra Youth Mobilization Walk"
+                  value={newEvent.title}
+                  onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                  style={{
+                    width: '100%',
+                    height: 38,
+                    padding: '0 12px',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--background))',
+                    color: 'hsl(var(--on-surface))',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                    Category *
+                  </label>
+                  <select
+                    value={newEvent.category}
+                    onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value as MovementEvent['category'] })}
+                    style={{
+                      width: '100%',
+                      height: 38,
+                      padding: '0 12px',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'hsl(var(--background))',
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    <option value="Town Hall">Town Hall</option>
+                    <option value="Mobilization Walk">Mobilization Walk</option>
+                    <option value="Job Workshop">Job Workshop</option>
+                    <option value="Community Action">Community Action</option>
+                    <option value="Diaspora Meetup">Diaspora Meetup</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                    Region *
+                  </label>
+                  <select
+                    value={newEvent.region}
+                    onChange={(e) => setNewEvent({ ...newEvent, region: e.target.value })}
+                    style={{
+                      width: '100%',
+                      height: 38,
+                      padding: '0 12px',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'hsl(var(--background))',
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
+                    {REGIONS.filter((r) => r !== 'All Regions').map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                    Date & Time *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    required
+                    value={newEvent.date}
+                    onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                    style={{
+                      width: '100%',
+                      height: 38,
+                      padding: '0 12px',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'hsl(var(--background))',
+                      color: 'hsl(var(--on-surface))',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                    Venue Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Tesano Innovation Center"
+                    value={newEvent.locationName}
+                    onChange={(e) => setNewEvent({ ...newEvent, locationName: e.target.value })}
+                    style={{
+                      width: '100%',
+                      height: 38,
+                      padding: '0 12px',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'hsl(var(--background))',
+                      color: 'hsl(var(--on-surface))',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                  Ghana Post GPS / Street Address
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. GI-208-9132, Tesano, Accra"
+                  value={newEvent.gpsAddress}
+                  onChange={(e) => setNewEvent({ ...newEvent, gpsAddress: e.target.value })}
+                  style={{
+                    width: '100%',
+                    height: 38,
+                    padding: '0 12px',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--background))',
+                    color: 'hsl(var(--on-surface))',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                  Event Description
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Detail the agenda, speakers, objectives, and meeting logistics..."
+                  value={newEvent.description}
+                  onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'hsl(var(--background))',
+                    color: 'hsl(var(--on-surface))',
+                    fontFamily: font,
+                    fontSize: 13,
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setIsCreateModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Publish Event Draft
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   )
