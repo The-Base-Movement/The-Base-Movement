@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
     Deno.env.get('DISCORD_RESEND_WEBHOOK_SECRET') ||
     Deno.env.get('DISCORD_RESEND_WEBHOOK_URL') ||
     Deno.env.get('DISCORD_ALERTS_WEBHOOK_URL') ||
-    'https://discordapp.com/api/webhooks/1526334257935679539/TzTmI_lmPjL3dpj8ZFPA2-DspBPI1t7jNr1mXLGtAfWaD4tzxNHRczZBEC2qEFY_m2TG'
+    ''
 
   let alertTitle = '📬 Resend Email Event'
   let alertColor = 0x006b3f // Green
@@ -216,18 +216,20 @@ Deno.serve(async (req) => {
     timestamp: payload.created_at ?? new Date().toISOString(),
   }
 
-  try {
-    await fetch(discordUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: 'The Base — Email Operations',
-        avatar_url: 'https://www.thebasemovement.org.gh/logo.png',
-        embeds: [embed],
-      }),
-    })
-  } catch (whErr) {
-    console.warn('[RESEND-WEBHOOK] Discord alert warning:', whErr)
+  if (discordUrl) {
+    try {
+      await fetch(discordUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: 'The Base — Email Operations',
+          avatar_url: 'https://www.thebasemovement.org.gh/logo.png',
+          embeds: [embed],
+        }),
+      })
+    } catch (whErr) {
+      console.warn('[RESEND-WEBHOOK] Discord alert warning:', whErr)
+    }
   }
 
   return new Response(JSON.stringify({ received: 1 }), {
