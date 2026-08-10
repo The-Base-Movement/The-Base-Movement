@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { supabase } from '@/lib/supabase'
+import { adminService } from '@/services/adminService'
+import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 
 export interface CalendarItem {
@@ -31,93 +33,111 @@ export default function ContentCalendar() {
     async function fetchCalendarData() {
       setIsLoading(true)
       try {
-        const [blogsRes, pressRes, newslettersRes, eventsRes] = await Promise.all([
-          supabase
-            .from('blog_posts')
-            .select('id, title, status, created_at, published_at, excerpt, author_id, authors(name)')
-            .is('deleted_at', null),
-          supabase
-            .from('press_releases')
-            .select('id, title, created_at, published_at, excerpt, category')
-            .is('deleted_at', null),
-          supabase
-            .from('newsletters')
-            .select('id, subject, status, created_at, sent_at, body_html'),
+        const [blogPosts, pressReleases, newslettersRes, eventsRes] = await Promise.all([
+          adminService.getBlogPosts().catch(() => []),
+          contentService.getPressReleases().catch(() => []),
+          Promise.resolve(
+            supabase
+              .from('newsletters')
+              .select('id, subject, status, created_at, sent_at, body_html')
+              .then((r) => r.data || [])
+          ).catch(() => []),
           Promise.resolve(
             supabase
               .from('field_events')
               .select('id, title, status, date, location, description')
-          ).catch(() => ({ data: null, error: null })),
+              .then((r) => r.data || [])
+          ).catch(() => []),
         ])
 
         if (cancelled) return
 
         const calendarItems: CalendarItem[] = []
 
-        // 1. Process Blog Posts
-        for (const post of blogsRes.data || []) {
-          const rawDate = post.published_at || post.created_at
-          const authorData = post.authors as { name?: string } | null
-          if (rawDate) {
-            calendarItems.push({
-              id: `blog-${post.id}`,
-              title: post.title,
-              type: 'blog',
-              status: post.status === 'Published' ? 'Published' : 'Draft',
-              date: new Date(rawDate).toISOString().slice(0, 10),
-              fullTimestamp: rawDate,
-              author: authorData?.name || 'Editorial Team',
-              snippet: post.excerpt || '',
-              editUrl: `/admin/blogs?edit=${post.id}`,
-            })
-          }
+        // 1. Process Blog Posts (Drafts + Live Published)
+        for (const post of blogPosts) {
+          const rawDate =
+            post.publishedAt ||
+            (post as unknown as Record<string, string>).created_at ||
+            new Date().toISOString()
+          const d = new Date(rawDate)
+          const yyyy = d.getFullYear()
+          const mm = String(d.getMonth() + 1).padStart(2, '0')
+          const dd = String(d.getDate()).padStart(2, '0')
+          const dateStr = `${yyyy}-${mm}-${dd}`
+
+          calendarItems.push({
+            id: `blog-${post.id}`,
+            title: post.title || 'Untitled Article',
+            type: 'blog',
+            status: post.status === 'Published' ? 'Published' : post.status === 'Pending Verification' ? 'Scheduled' : 'Draft',
+            date: dateStr,
+            fullTimestamp: rawDate,
+            author: post.authorName || 'Editorial Team',
+            snippet: post.excerpt || '',
+            editUrl: `/admin/blogs?edit=${post.id}`,
+          })
         }
 
-        // 2. Process Press Releases
-        for (const press of pressRes.data || []) {
-          const rawDate = press.published_at || press.created_at
-          if (rawDate) {
-            calendarItems.push({
-              id: `press-${press.id}`,
-              title: press.title,
-              type: 'press',
-              status: press.published_at ? 'Published' : 'Draft',
-              date: new Date(rawDate).toISOString().slice(0, 10),
-              fullTimestamp: rawDate,
-              author: press.category || 'Press Office',
-              snippet: press.excerpt || '',
-              editUrl: `/admin/press-releases?edit=${press.id}`,
-            })
-          }
+        // 2. Process Press Releases (Drafts + Live Published)
+        for (const press of pressReleases) {
+          const rawDate = press.publishedAt || press.createdAt || new Date().toISOString()
+          const d = new Date(rawDate)
+          const yyyy = d.getFullYear()
+          const mm = String(d.getMonth() + 1).padStart(2, '0')
+          const dd = String(d.getDate()).padStart(2, '0')
+          const dateStr = `${yyyy}-${mm}-${dd}`
+
+          calendarItems.push({
+            id: `press-${press.id}`,
+            title: press.title || 'Press Release',
+            type: 'press',
+            status: press.publishedAt ? 'Published' : 'Draft',
+            date: dateStr,
+            fullTimestamp: rawDate,
+            author: press.category || 'Press Office',
+            snippet: press.excerpt || '',
+            editUrl: `/admin/press-releases?edit=${press.id}`,
+          })
         }
 
         // 3. Process Newsletters
-        for (const nl of newslettersRes.data || []) {
-          const rawDate = nl.sent_at || nl.created_at
-          if (rawDate) {
-            calendarItems.push({
-              id: `nl-${nl.id}`,
-              title: nl.subject,
-              type: 'newsletter',
-              status: nl.status === 'sent' ? 'Published' : 'Draft',
-              date: new Date(rawDate).toISOString().slice(0, 10),
-              fullTimestamp: rawDate,
-              author: 'Communications Bureau',
-              snippet: (nl.body_html || '').replace(/<[^>]+>/g, '').slice(0, 100),
-              editUrl: `/admin/newsletter?tab=compose&edit=${nl.id}`,
-            })
-          }
+        for (const nl of newslettersRes || []) {
+          const rawDate = nl.sent_at || nl.created_at || new Date().toISOString()
+          const d = new Date(rawDate)
+          const yyyy = d.getFullYear()
+          const mm = String(d.getMonth() + 1).padStart(2, '0')
+          const dd = String(d.getDate()).padStart(2, '0')
+          const dateStr = `${yyyy}-${mm}-${dd}`
+
+          calendarItems.push({
+            id: `nl-${nl.id}`,
+            title: nl.subject,
+            type: 'newsletter',
+            status: nl.status === 'sent' ? 'Published' : 'Draft',
+            date: dateStr,
+            fullTimestamp: rawDate,
+            author: 'Communications Bureau',
+            snippet: (nl.body_html || '').replace(/<[^>]+>/g, '').slice(0, 100),
+            editUrl: `/admin/newsletter?tab=compose&edit=${nl.id}`,
+          })
         }
 
         // 4. Process Field Events
-        for (const evt of eventsRes?.data || []) {
+        for (const evt of eventsRes || []) {
           if (evt.date) {
+            const d = new Date(evt.date)
+            const yyyy = d.getFullYear()
+            const mm = String(d.getMonth() + 1).padStart(2, '0')
+            const dd = String(d.getDate()).padStart(2, '0')
+            const dateStr = `${yyyy}-${mm}-${dd}`
+
             calendarItems.push({
               id: `evt-${evt.id}`,
               title: evt.title,
               type: 'event',
               status: evt.status === 'Completed' ? 'Published' : evt.status === 'Planned' ? 'Scheduled' : 'Draft',
-              date: new Date(evt.date).toISOString().slice(0, 10),
+              date: dateStr,
               fullTimestamp: evt.date,
               author: evt.location || 'Regional Mobilization',
               snippet: evt.description || '',
