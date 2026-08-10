@@ -215,6 +215,19 @@ export default function AdminBlogs() {
     return () => window.removeEventListener('resize', fn)
   }, [])
 
+  // Open editor if ?edit=ID is present in URL
+  useEffect(() => {
+    if (posts.length === 0) return
+    const params = new URLSearchParams(window.location.search)
+    const editId = params.get('edit')
+    if (editId) {
+      const target = posts.find((p) => p.id === editId)
+      if (target) {
+        handleEditPost(target)
+      }
+    }
+  }, [posts])
+
   // Event handlers
   // Sets up the form data for editing a blog post or creating a new one
   const handleEditPost = (post?: BlogPost) => {

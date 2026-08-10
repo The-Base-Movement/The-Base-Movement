@@ -9,6 +9,7 @@
  *  onWrite — opens the editor to create a new post
  */
 
+import { Link } from 'react-router-dom'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 
 interface BlogsHeaderProps {
@@ -23,6 +24,12 @@ export function BlogsHeader({ onWrite }: BlogsHeaderProps) {
       description="Curate and publish movement news, updates, and public articles."
       actions={
         <>
+          <Link to="/admin/content-calendar" className="btn btn-outline btn-sm" style={{ textDecoration: 'none' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              calendar_month
+            </span>
+            Content Calendar
+          </Link>
           <button className="btn btn-outline btn-sm">
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               download
