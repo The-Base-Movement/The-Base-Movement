@@ -260,6 +260,11 @@ export function MembershipFormBody({
                 ? 'Ghana First · Youth Empowerment · Community Mobilization'
                 : 'Global Ghanaian Network · Diaspora Contribution · Youth & Economic Development'}
             </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
+              <span style={{ fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', color: '#475569' }}>Date Completed:</span>
+              <div style={{ width: 110, borderBottom: '1.5px solid #334155' }} />
+              <span style={{ fontSize: '8.5px', color: '#94a3b8', fontStyle: 'italic' }}>(DD / MM / YYYY)</span>
+            </div>
           </div>
         </div>
 
@@ -299,15 +304,6 @@ export function MembershipFormBody({
             <br />
             PHOTO HERE
           </p>
-        </div>
-      </div>
-
-      {/* Date Completed */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '9.5px', fontWeight: 600, textTransform: 'uppercase', color: '#475569' }}>Date Completed:</span>
-          <div style={{ width: 120, borderBottom: '1.5px solid #334155' }} />
-          <span style={{ fontSize: '9px', color: '#94a3b8', fontStyle: 'italic' }}>(DD / MM / YYYY)</span>
         </div>
       </div>
 
