@@ -45,13 +45,13 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/',
     label: 'Home Page',
-    title: 'The Base Movement Ghana | Ghana First, Jobs for the Youth',
+    title: 'The Base Movement LBG | Ghana First, Jobs for the Youth',
     description:
-      'Join The Base Movement in Ghana and across the diaspora. We are committed to youth employment, accountable leadership, civic action, and economic progress.',
-    focusKeyword: 'The Base Movement Ghana',
+      'Join The Base Movement LBG in Ghana and across the diaspora. We are committed to youth employment, accountable leadership, civic action, and economic progress.',
+    focusKeyword: 'The Base Movement LBG',
     keywords: TOP_GSC_KEYWORDS,
     canonicalUrl: 'https://www.thebasemovement.org.gh/',
-    ogTitle: 'The Base Movement Ghana | Ghana First, Jobs for the Youth',
+    ogTitle: 'The Base Movement LBG | Ghana First, Jobs for the Youth',
     ogDescription:
       'Join citizens in Ghana and across the diaspora working together for youth employment and accountable leadership.',
     ogImage: '/branding/og-image.png',

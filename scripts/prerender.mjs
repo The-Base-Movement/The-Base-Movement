@@ -28,7 +28,7 @@ dotenv.config({ path: toAbsolute('../.env.local'), override: true })
 const routesToPrerender = STATIC_ROUTES.map((r) => r.path)
 
 // ── Dynamic SEO head helpers (mirror src/components/SEO.tsx) ──────────────────
-const SITE_NAME = 'The Base Movement'
+const SITE_NAME = 'The Base Movement LBG'
 const DEFAULT_DESC =
   'We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens in Ghana and across the diaspora working for a more productive future.'
 const DEFAULT_OG = `${SITE_URL}/branding/og-image.png?v=20260729`

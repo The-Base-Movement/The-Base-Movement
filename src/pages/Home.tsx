@@ -127,7 +127,7 @@ export default function Home() {
 
   return (
     <main className="bg-background font-body-md">
-      <SEO title="The Base Movement Ghana | Ghana First, Jobs for the Youth" canonical="/" />
+      <SEO title="The Base Movement LBG | Ghana First, Jobs for the Youth" canonical="/" />
 
       <HeroSection
         heroBgUrl={settings.hero_bg_url || '/branding/hero-background-image.webp'}
