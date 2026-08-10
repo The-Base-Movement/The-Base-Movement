@@ -26,6 +26,8 @@ import { PublicMobileFilterDrawer } from './chapters/PublicMobileFilterDrawer'
 import { PublicChapterGrid } from './chapters/PublicChapterGrid'
 import { PublicRequestModal } from './chapters/PublicRequestModal'
 
+import { diasporaName, diasporaSlug } from '@/lib/diaspora'
+
 // Primary Chapters component routing rendering for public/authenticated chapter directory views
 export default function Chapters() {
   const location = useLocation()
@@ -210,9 +212,35 @@ export default function Chapters() {
   return (
     <div className="min-h-screen bg-background pb-20">
       <SEO
-        title="Base Diaspora"
-        description="Connect with Base Diaspora communities around the world. Find people in your country or city and contribute skills, networks, and practical support toward Ghana's future."
+        title="Base Diaspora & Regional Chapters"
+        description="Connect with Base Diaspora communities and Ghana regional chapters around the world. Find members in your region or country and contribute skills, networks, and practical support toward Ghana's future."
+        keywords="the base movement chapters, base diaspora ghana, the base movement regional offices, ghana diaspora chapters, youth empowerment chapters ghana"
         canonical="/chapters"
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'The Base Movement Regional Chapters & Diaspora Hubs',
+            description:
+              'Directory of active regional chapters, community hubs, and diaspora networks of The Base Movement in Ghana and worldwide.',
+            url: 'https://www.thebasemovement.org.gh/chapters',
+            numberOfItems: chapters.length,
+            itemListElement: chapters.slice(0, 15).map((ch, idx) => ({
+              '@type': 'ListItem',
+              position: idx + 1,
+              item: {
+                '@type': 'Organization',
+                name: `${diasporaName(ch.name)} Chapter`,
+                url: `https://www.thebasemovement.org.gh/chapters/${diasporaSlug(ch.name)}`,
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: ch.city_or_region,
+                  addressCountry: ch.country === 'Ghana' ? 'GH' : ch.country,
+                },
+              },
+            })),
+          },
+        ]}
       />
 
       <PublicHeader totalChapters={chapters.length} />
