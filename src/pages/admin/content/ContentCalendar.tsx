@@ -217,11 +217,10 @@ export default function ContentCalendar() {
 
   // Stats calculation
   const stats = useMemo(() => {
-    const scheduledBlogs = items.filter((i) => i.type === 'blog' && i.status === 'Scheduled').length
-    const scheduledPress = items.filter((i) => i.type === 'press' && i.status === 'Scheduled').length
-    const scheduledNewsletters = items.filter((i) => i.type === 'newsletter' && i.status === 'Scheduled').length
-    const totalScheduled = scheduledBlogs + scheduledPress + scheduledNewsletters
-    return { scheduledBlogs, scheduledPress, scheduledNewsletters, totalScheduled }
+    const publishedCount = items.filter((i) => i.status === 'Published').length
+    const draftCount = items.filter((i) => i.status === 'Draft').length
+    const eventsCount = items.filter((i) => i.type === 'event').length
+    return { publishedCount, draftCount, eventsCount }
   }, [items])
 
   const getItemBadgeStyle = (type: CalendarItem['type']) => {
@@ -289,40 +288,52 @@ export default function ContentCalendar() {
       </div>
 
       {/* KPI Stats Strip */}
-      <div className="kpis" style={{ marginBottom: 20 }}>
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--primary))' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>
-            Scheduled Newsletters
+      <div className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 20 }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--primary))', padding: '16px 20px' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+            Published Content
           </div>
           <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--primary))', marginTop: 4 }}>
-            {stats.scheduledNewsletters}
+            {stats.publishedCount}
+          </div>
+          <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
+            Blogs & press releases live
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(38, 92%, 50%)' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>
-            Scheduled Press Dispatches
+        <div className="panel" style={{ borderLeft: '3px solid hsl(38, 92%, 50%)', padding: '16px 20px' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+            Drafts & Pending
           </div>
           <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(38, 92%, 50%)', marginTop: 4 }}>
-            {stats.scheduledPress}
+            {stats.draftCount}
+          </div>
+          <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
+            Awaiting publication or review
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(217, 91%, 60%)' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>
-            Scheduled Blog Posts
+        <div className="panel" style={{ borderLeft: '3px solid hsl(271, 91%, 60%)', padding: '16px 20px' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+            Mobilization Events
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(217, 91%, 60%)', marginTop: 4 }}>
-            {stats.scheduledBlogs}
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(271, 91%, 60%)', marginTop: 4 }}>
+            {stats.eventsCount}
+          </div>
+          <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
+            Town halls & regional walks
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))', padding: '16px 20px' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Total Pipeline Entries
           </div>
           <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--on-surface))', marginTop: 4 }}>
             {items.length}
+          </div>
+          <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
+            All scheduled dispatches
           </div>
         </div>
       </div>
