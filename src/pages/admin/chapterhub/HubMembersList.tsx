@@ -131,6 +131,16 @@ export function HubMembersList({
         />
       </div>
       <SortToggle value={sortOrder} onChange={setSortOrder} />
+      <Link
+        to={`/admin/membership-cards?platform=DIASPORA${chapterName ? `&country=${encodeURIComponent(chapterName)}` : ''}`}
+        className="btn btn-outline btn-sm"
+        title="Bulk download digital membership cards for this chapter"
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+          badge
+        </span>
+        Cards
+      </Link>
       <button
         className="btn btn-outline btn-sm"
         onClick={handleExport}

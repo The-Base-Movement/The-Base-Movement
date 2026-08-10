@@ -357,6 +357,22 @@ export default function AdminConstituencyLeadHub() {
             </button>
             <button
               className="btn btn-outline btn-sm"
+              onClick={() =>
+                navigate(
+                  `/admin/membership-cards?platform=GHANA&constituency=${encodeURIComponent(
+                    constituency.name
+                  )}&region=${encodeURIComponent(constituency.regionName)}`
+                )
+              }
+              title="Bulk download digital membership cards for this constituency"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                badge
+              </span>
+              Bulk Membership Cards
+            </button>
+            <button
+              className="btn btn-outline btn-sm"
               onClick={handleExportMembers}
               disabled={members.length === 0}
               title="Download this constituency's members as CSV"

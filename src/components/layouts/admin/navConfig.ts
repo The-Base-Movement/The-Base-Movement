@@ -106,6 +106,12 @@ export const getNavGroups = (
         permission: { action: 'VIEW_MEMBER_DIRECTORY', resource: 'MEMBERS' },
       },
       {
+        to: '/admin/membership-cards',
+        icon: 'badge',
+        label: 'Bulk membership cards',
+        permission: { action: 'VIEW_MEMBER_DIRECTORY', resource: 'MEMBERS' },
+      },
+      {
         to: '/admin/verification',
         icon: 'verified_user',
         label: 'KYC queue',

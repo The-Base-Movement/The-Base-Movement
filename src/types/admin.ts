@@ -780,6 +780,8 @@ export interface AdminUser {
   role: AdminRole
   region?: string
   chapter?: string
+  constituency?: string
+  country?: string
   permissions: AdminPermission[]
   phone?: string
   avatarUrl?: string
