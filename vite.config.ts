@@ -117,8 +117,14 @@ export default defineConfig(({ mode }) => {
         'https://esm.sh/libphonenumber-js@1.11.20/max': 'libphonenumber-js/max',
       },
     },
+    esbuild: {
+      pure: mode === 'production' ? ['console.log', 'console.info', 'console.debug', 'console.trace'] : [],
+      legalComments: 'none',
+    } as any,
     build: {
       sourcemap: false,
+      minify: 'esbuild',
+      cssMinify: true,
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
