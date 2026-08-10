@@ -71,16 +71,18 @@ const rootElement = (
 
 createRoot(container).render(rootElement)
 
-// Defer Sentry off the critical hydration path. initSentry() dynamically imports
-// a heavy SDK (browser tracing + session-replay DOM instrumentation) whose fetch
-// and init otherwise compete with hydration and inflate TBT. Run it once the main
-// thread is idle; setTimeout fallback for browsers without requestIdleCallback.
-type IdleWindow = Window & {
-  requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void
+// Defer Sentry initialization until after user interaction or 12s fallback delay
+// so heavy monitoring bundle fetches don't compete with hydration or inflate main-thread TBT.
+function deferInitSentry() {
+  const events: (keyof WindowEventMap)[] = ['pointerdown', 'keydown', 'scroll', 'touchstart']
+  let triggered = false
+  const trigger = () => {
+    if (triggered) return
+    triggered = true
+    events.forEach((evt) => window.removeEventListener(evt, trigger))
+    initSentry()
+  }
+  events.forEach((evt) => window.addEventListener(evt, trigger, { passive: true, once: true }))
+  window.setTimeout(trigger, 12000)
 }
-const idle = (window as IdleWindow).requestIdleCallback
-if (idle) {
-  idle(() => initSentry(), { timeout: 4000 })
-} else {
-  window.setTimeout(() => initSentry(), 2500)
-}
+deferInitSentry()
