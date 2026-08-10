@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, startTransition } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import gsap from 'gsap'
@@ -294,7 +294,9 @@ export default function Register() {
         toast.error(error)
         return
       }
-      setFormStep((prev) => prev + 1)
+      startTransition(() => {
+        setFormStep((prev) => prev + 1)
+      })
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       const finalError = validateStep(4)
