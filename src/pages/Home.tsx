@@ -106,6 +106,7 @@ export default function Home() {
   const { lowBandwidthMode } = usePerformance()
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return
     const rect = e.currentTarget.getBoundingClientRect()
     setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
   }
