@@ -23,6 +23,8 @@ export const FacebookIcon: React.FC<IconProps> = ({ size = 24, className, ...pro
     alt="Facebook"
     width={size}
     height={size}
+    loading="lazy"
+    decoding="async"
     className={className}
     {...props}
   />
@@ -35,6 +37,8 @@ export const InstagramIcon: React.FC<IconProps> = ({ size = 24, className, ...pr
     alt="Instagram"
     width={size}
     height={size}
+    loading="lazy"
+    decoding="async"
     className={className}
     {...props}
   />
@@ -47,6 +51,8 @@ export const XIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) =
     alt="X"
     width={size}
     height={size}
+    loading="lazy"
+    decoding="async"
     className={className}
     {...props}
   />
@@ -59,6 +65,8 @@ export const TikTokIcon: React.FC<IconProps> = ({ size = 24, className, ...props
     alt="TikTok"
     width={size}
     height={size}
+    loading="lazy"
+    decoding="async"
     className={className}
     {...props}
   />
@@ -71,6 +79,8 @@ export const YouTubeIcon: React.FC<IconProps> = ({ size = 24, className, ...prop
     alt="YouTube"
     width={size}
     height={size}
+    loading="lazy"
+    decoding="async"
     className={className}
     {...props}
   />
@@ -83,6 +93,8 @@ export const WhatsAppIcon: React.FC<IconProps> = ({ size = 24, className, ...pro
     alt="WhatsApp"
     width={size}
     height={size}
+    loading="lazy"
+    decoding="async"
     className={className}
     {...props}
   />
@@ -95,6 +107,8 @@ export const LinkedInIcon: React.FC<IconProps> = ({ size = 24, className, ...pro
     alt="LinkedIn"
     width={size}
     height={size}
+    loading="lazy"
+    decoding="async"
     className={className}
     {...props}
   />
