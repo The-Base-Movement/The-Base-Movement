@@ -303,12 +303,63 @@ export default function ChapterDetails() {
   const chapterSlug = diasporaSlug(chapter.name)
   const displayName = diasporaName(chapter.name)
 
+  const chapterSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'GovernmentBenefitsService',
+    name: `${displayName} - The Base Movement`,
+    description: chapter.description || `Official regional hub for ${displayName} under The Base Movement.`,
+    provider: {
+      '@type': 'NGO',
+      name: 'The Base Movement LBG',
+      url: 'https://www.thebasemovement.org.gh',
+      logo: 'https://www.thebasemovement.org.gh/branding/logo.png',
+    },
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: chapter.city_or_region || chapter.country || 'Ghana',
+      addressCountry: chapter.country === 'Ghana' ? 'GH' : chapter.country || 'GH',
+    },
+    knowsAbout: ['Youth Empowerment', 'Industrialization', 'Job Creation', 'Grassroots Mobilization'],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: chapter.email || 'info@thebasemovement.org.gh',
+      telephone: chapter.phone_number || undefined,
+      contactType: 'local coordinator',
+    },
+  }
+
+  const eventSchemas = announcements.map((ann) => ({
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: `${displayName}: ${ann.content.slice(0, 60)}`,
+    description: ann.content,
+    startDate: ann.created_at,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: `${displayName} Regional Hub`,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: chapter.city_or_region || 'Accra',
+        addressCountry: chapter.country === 'Ghana' ? 'GH' : chapter.country || 'GH',
+      },
+    },
+    organizer: {
+      '@type': 'NGO',
+      name: 'The Base Movement LBG',
+      url: 'https://www.thebasemovement.org.gh',
+    },
+  }))
+
   return (
     <div className="main">
       <SEO
         title={displayName}
-        description={`Learn about ${displayName} — community leadership, events, and how to get involved.`}
+        description={`Learn about ${displayName} — community leadership, regional events, mobilization walks, and how to get involved.`}
+        keywords={`${displayName}, ${chapter.city_or_region} base movement, ${chapter.country} diaspora chapter, youth mobilization ghana`}
         canonical={`/chapters/${slug}`}
+        jsonLd={[chapterSchema, ...eventSchemas]}
       />
       {isLeader && <LeaderBanner chapterSlug={chapterSlug} />}
 
