@@ -138,6 +138,19 @@ export default defineConfig(({ mode }) => {
             if (id.includes('tesseract.js')) return 'vendor-ocr'
             if (id.includes('pdfjs-dist')) return 'vendor-pdf'
             if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-export'
+            if (id.includes('@radix-ui') || id.includes('@dnd-kit') || id.includes('cmdk') || id.includes('vaul'))
+              return 'vendor-radix'
+            if (id.includes('lucide-react') || id.includes('dicons')) return 'vendor-icons'
+            if (id.includes('libphonenumber-js') || id.includes('date-fns') || id.includes('zod'))
+              return 'vendor-utils'
+            if (id.includes('@simplewebauthn') || id.includes('@fingerprintjs') || id.includes('dompurify'))
+              return 'vendor-security'
+            if (id.includes('qrcode') || id.includes('browser-image-compression') || id.includes('react-easy-crop'))
+              return 'vendor-media'
+            if (id.includes('@tanstack/react-query')) return 'vendor-query'
+            if (id.includes('react-hook-form') || id.includes('@hookform')) return 'vendor-forms'
+            if (id.includes('flag-icons') || id.includes('embla-carousel') || id.includes('react-fast-marquee'))
+              return 'vendor-ui-extras'
             return 'vendor'
           },
         },
