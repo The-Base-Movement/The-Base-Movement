@@ -44,10 +44,12 @@ export const partyAffiliationService = {
    * Handles schema variations gracefully.
    */
   async getParties(): Promise<PoliticalPartyRecord[]> {
-    let { data, error } = await supabase
+    const { data: rawData, error } = await supabase
       .from('political_parties')
       .select('*')
       .order('sort_order', { ascending: true })
+
+    let data = rawData
 
     if (error) {
       console.warn('[partyAffiliationService] getParties fallback query:', error.message)
@@ -212,10 +214,12 @@ export const partyAffiliationService = {
     const regionOrCountry = options?.regionOrCountry || ''
 
     // 1. Fetch DB political parties for dynamic matching & reference metadata
-    let { data: dbParties, error: partiesErr } = await supabase
+    const { data: initialDbParties, error: partiesErr } = await supabase
       .from('political_parties')
       .select('*')
       .order('sort_order', { ascending: true })
+
+    let dbParties = initialDbParties
 
     if (partiesErr) {
       console.warn('[partyAffiliationService] Falling back to standard columns for political_parties:', partiesErr.message)

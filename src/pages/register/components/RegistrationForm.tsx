@@ -95,8 +95,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
   const [psCode, setPsCode] = useState(() => formData.pollingStationCode || '')
   const [codeStation, setCodeStation] = useState<string | null>(null)
   const [codeError, setCodeError] = useState(false)
+  const [isNextLoading, setIsNextLoading] = useState(false)
 
   const derivedBucket = formData.birthYear ? ageBucket(formData.birthYear) : ''
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsNextLoading(false)
+  }, [formStep, formData])
 
   useEffect(() => {
     if (!formData.pollingStationCode) {
@@ -302,7 +308,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     type="email"
                     value={formData.email || ''}
                     onChange={(e) => onInputChange('email', e.target.value)}
-                    autoComplete="username"
+                    autoComplete="email"
                     className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                     placeholder="compatriot@thebase.gh"
                   />
@@ -646,6 +652,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         required
                         value={formData.country}
                         onChange={(e) => onInputChange('country', e.target.value)}
+                        autoComplete="country-name"
                         className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
                       >
                         <option value="">Select Country</option>
@@ -775,6 +782,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       max={new Date().getFullYear() - 18}
                       value={formData.birthYear || ''}
                       onChange={(e) => onInputChange('birthYear', e.target.value)}
+                      autoComplete="bday-year"
                       className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface"
                       placeholder="e.g. 1990"
                     />
@@ -1145,7 +1153,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
               )}
               <button
                 type="submit"
+                onClick={() => {
+                  if (formStep < 4) setIsNextLoading(true)
+                }}
                 disabled={
+                  isNextLoading ||
                   (formStep === 4 && !agreed) ||
                   (formStep === 3 && !photoUrl) ||
                   isLoading ||
@@ -1163,7 +1175,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     </span>{' '}
                     Wait {cooldown}s
                   </>
-                ) : isLoading ? (
+                ) : isLoading || isNextLoading ? (
                   <>
                     <span
                       className="material-symbols-outlined"
@@ -1171,7 +1183,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     >
                       progress_activity
                     </span>{' '}
-                    Processing...
+                    {formStep === 4 ? 'Submitting registration…' : 'Loading Next Step…'}
                   </>
                 ) : formStep === 4 ? (
                   'Submit registration →'
