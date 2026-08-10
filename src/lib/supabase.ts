@@ -86,6 +86,20 @@ function createSupabaseSingleton(): SupabaseClient {
       // server resolves races, so it deprecated the option outright. The previous
       // custom lock was a no-op anyway (`lock ? fn() : fn()` ran fn either way).
     },
+    global: {
+      fetch: (url, options) => {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 15000)
+
+        if (options?.signal) {
+          options.signal.addEventListener('abort', () => controller.abort())
+        }
+
+        return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+          clearTimeout(timeoutId)
+        )
+      },
+    },
   })
 }
 

@@ -43,7 +43,10 @@ export function useRegistrationSubmit() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } catch (error) {
         const msg = (error as Error)?.message || ''
-        if (msg.startsWith('RATE_LIMIT:')) {
+        const errorName = (error as Error)?.name || ''
+        if (errorName === 'AbortError' || msg.includes('aborted') || msg.includes('AbortError')) {
+          toast.error('Network timeout. Please check your mobile connection and try again.')
+        } else if (msg.startsWith('RATE_LIMIT:')) {
           const seconds = parseInt(msg.split(':')[1], 10) || 60
           setCooldown(seconds)
           toast.error(`For security purposes, please wait ${seconds} seconds before trying again.`)
