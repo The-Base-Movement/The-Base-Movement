@@ -503,22 +503,60 @@ export function MembershipFormBody({
         }}
       >
         <SectionHeader number={4} label="Profession & Career" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <FieldLine label="Profession / Job Title" hint="e.g. Software Engineer, Farmer" />
+
+        {/* Employed */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 10 }}>
           <div>
-            <p
-              style={{
-                fontSize: '10px',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                color: '#334155',
-                margin: '0 0 6px',
-              }}
-            >
-              Job Level
+            <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 6px' }}>
+              Employed <span style={{ color: '#dc2626' }}>*</span>
+            </p>
+            <CheckboxGroup items={['Yes', 'No']} />
+          </div>
+          <div>
+            <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 6px' }}>
+              Job Level <span style={{ fontStyle: 'italic', fontWeight: 400, textTransform: 'none', color: '#64748b' }}>(if employed)</span>
             </p>
             <CheckboxGroup items={['Entry Level', 'Professional', 'Senior Specialist', 'Management', 'Executive']} />
           </div>
+        </div>
+
+        {/* Profession — Ghana gets a common-jobs checklist, Diaspora gets a free-text line */}
+        {isGhana ? (
+          <div style={{ marginBottom: 10 }}>
+            <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 6px' }}>
+              Profession / Job Title <span style={{ fontStyle: 'italic', fontWeight: 400, textTransform: 'none', color: '#64748b' }}>(tick one or write below)</span>
+            </p>
+            <CheckboxGroup
+              items={[
+                'Farmer', 'Trader', 'Driver', 'Mason', 'Auto-Mechanic',
+                'Nurse', 'Teacher', 'Clergy', 'Doctor', 'Hairdresser',
+                'Barber', 'Tailor', 'Seamstress', 'Spiritualist', 'Student',
+              ]}
+              columns={4}
+            />
+            <div style={{ marginTop: 8 }}>
+              <FieldLine label="Other Profession / Job Title" hint="write here if not listed above" />
+            </div>
+          </div>
+        ) : (
+          <div style={{ marginBottom: 10 }}>
+            <FieldLine label="Profession / Job Title" hint="e.g. Software Engineer, Accountant, Nurse" />
+          </div>
+        )}
+
+        {/* Education Level */}
+        <div>
+          <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 6px' }}>
+            Education Level
+          </p>
+          <CheckboxGroup
+            items={[
+              'None', 'Primary', 'JHS / Middle School', 'SHS / Secondary',
+              'Vocational / Technical', 'Diploma / HND', "Bachelor's Degree",
+              "Master's Degree", 'PhD / Doctorate', 'Professional Certification',
+            ]}
+            columns={isGhana ? 4 : 5}
+          />
         </div>
       </div>
 
