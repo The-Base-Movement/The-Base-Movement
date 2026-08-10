@@ -41,7 +41,7 @@ export default function SEO({
   const { settings } = useBranding()
   const { pathname } = useLocation()
 
-  const siteName = 'The Base Movement'
+  const siteName = 'The Base Movement LBG'
   const fullTitle = title
     ? title.includes(siteName)
       ? title // already brand-qualified (e.g. homepage) — don't double-append
