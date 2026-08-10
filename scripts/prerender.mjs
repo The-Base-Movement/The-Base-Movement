@@ -54,6 +54,9 @@ const toSlug = (name) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '')
 
+const DEFAULT_KEYWORDS =
+  'the base movement ghana, the base movement, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
+
 // data-rh markers let client react-helmet-async reconcile these (no dup tags).
 function seoHead({ path: routePath, title, description, image, ogType }) {
   const fullTitle = escHtml(`${title} | ${SITE_NAME}`)
@@ -63,6 +66,7 @@ function seoHead({ path: routePath, title, description, image, ogType }) {
   return [
     `<title data-rh="true">${fullTitle}</title>`,
     `<meta data-rh="true" name="description" content="${desc}"/>`,
+    `<meta data-rh="true" name="keywords" content="${escHtml(DEFAULT_KEYWORDS)}"/>`,
     `<link data-rh="true" rel="canonical" href="${url}"/>`,
     `<meta data-rh="true" property="og:type" content="${ogType}"/>`,
     `<meta data-rh="true" property="og:locale" content="en_GH"/>`,

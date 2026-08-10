@@ -19,15 +19,20 @@ import { useBranding } from '@/hooks/useBranding'
 interface SEOProps {
   title?: string
   description?: string
+  keywords?: string
   ogImage?: string
   ogType?: 'website' | 'article'
   canonical?: string
   noindex?: boolean
 }
 
+export const DEFAULT_SEO_KEYWORDS =
+  'the base movement ghana, the base movement, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
+
 export default function SEO({
   title,
   description,
+  keywords,
   ogImage,
   ogType = 'website',
   canonical,
@@ -45,6 +50,7 @@ export default function SEO({
   const defaultDescription =
     'We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens in Ghana and across the diaspora working for a more productive future.'
   const metaDescription = description || defaultDescription
+  const metaKeywords = keywords || DEFAULT_SEO_KEYWORDS
   const image = ogImage || settings.og_image_url
   const siteUrl = 'https://www.thebasemovement.org.gh'
   // Router location works during SSR/prerender too (StaticRouter), so canonical
@@ -58,6 +64,7 @@ export default function SEO({
       {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={metaDescription} />
+      <meta name="keywords" content={metaKeywords} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
 
       {/* Search Engine Directives */}

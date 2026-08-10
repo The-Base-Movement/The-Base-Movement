@@ -4,6 +4,7 @@ export interface PageSEOConfig {
   title: string
   description: string
   focusKeyword: string
+  keywords?: string
   ogTitle?: string
   ogDescription?: string
   ogImage?: string
@@ -37,6 +38,9 @@ export interface SEOAnalysis {
   totalCount: number
 }
 
+const TOP_GSC_KEYWORDS =
+  'the base movement ghana, the base movement, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
+
 export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/',
@@ -45,6 +49,7 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     description:
       'Join The Base Movement in Ghana and across the diaspora. We are committed to youth employment, accountable leadership, civic action, and economic progress.',
     focusKeyword: 'The Base Movement Ghana',
+    keywords: TOP_GSC_KEYWORDS,
     canonicalUrl: 'https://www.thebasemovement.org.gh/',
     ogTitle: 'The Base Movement Ghana | Ghana First, Jobs for the Youth',
     ogDescription:
@@ -58,6 +63,7 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     description:
       'Discover The Base Movement — a grassroots movement uniting Ghanaians at home and across the diaspora behind youth empowerment and accountable governance.',
     focusKeyword: 'The Base Movement',
+    keywords: `${TOP_GSC_KEYWORDS}, about the base movement`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/about',
     ogImage: '/branding/og-image.png',
   },
@@ -68,6 +74,7 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     description:
       "Explore The Base Movement's strategic agenda for Ghana. Read our actionable blueprint focusing on youth job creation, industry growth, and good governance.",
     focusKeyword: 'Plan for Ghana',
+    keywords: `${TOP_GSC_KEYWORDS}, agenda for ghana`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/our-agenda',
     ogImage: '/branding/og-image.png',
   },
@@ -78,16 +85,18 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     description:
       "Connect with Base Diaspora communities globally. Join members in your country or city to share skills, build networks, and drive Ghana's economic development.",
     focusKeyword: 'Base Diaspora',
+    keywords: `${TOP_GSC_KEYWORDS}, diaspora chapter ghana`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/chapters',
     ogImage: '/branding/og-image.png',
   },
   {
     path: '/register',
     label: 'Member Registration',
-    title: 'Join The Base Movement | Member Registration',
+    title: 'Join The Base Movement | Member Registration Online',
     description:
-      'Register as an official member of The Base Movement. Join citizens in Ghana and across the diaspora working together to create youth jobs and economic growth.',
-    focusKeyword: 'Join The Base Movement',
+      'Register online as an official member of The Base Movement. Join citizens in Ghana and across the diaspora working together to create youth jobs and economic growth.',
+    focusKeyword: 'the base movement ghana registration online',
+    keywords: `${TOP_GSC_KEYWORDS}, the base movement ghana registration online, join the base ghana`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/register',
     ogImage: '/branding/og-image.png',
   },
