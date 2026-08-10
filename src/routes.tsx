@@ -58,6 +58,7 @@ const OfficerDetail = lazy(() => import('./pages/OfficerDetail'))
 const About = lazy(() => import('./pages/About'))
 const AppDownload = lazy(() => import('./pages/AppDownload'))
 const Events = lazy(() => import('./pages/Events'))
+const EventDetail = lazy(() => import('./pages/EventDetail'))
 
 // Dashboard components
 const Activity = lazy(() => import('./pages/Activity'))
@@ -277,6 +278,7 @@ export const routes: RouteObject[] = [
               { path: '/dashboard/jobs', element: <Jobs /> },
               { path: '/dashboard/jobs/:id', element: <JobDetail /> },
               { path: '/dashboard/events', element: <Events /> },
+              { path: '/dashboard/events/:id', element: <EventDetail /> },
               { path: '/dashboard/liked', element: <LikedPosts /> },
               { path: '/dashboard/my-donations', element: <MyDonations /> },
               { path: '/dashboard/referrals', element: <Referrals /> },
@@ -462,6 +464,7 @@ export const routes: RouteObject[] = [
       { path: '/jobs', element: <Jobs /> },
       { path: '/jobs/:id', element: <JobDetail /> },
       { path: '/events', element: <Events /> },
+      { path: '/events/:id', element: <EventDetail /> },
       {
         element: <WithChapters />,
         children: [
