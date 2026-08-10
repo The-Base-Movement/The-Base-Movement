@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 interface ContactInfoPanelProps {
   contactEmail: string
   contactPhone?: string
@@ -11,6 +13,8 @@ export function ContactInfoPanel({
   contactAddress,
   contactAddressUrl,
 }: ContactInfoPanelProps) {
+  const hqAddress = contactAddress || 'GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Ghana'
+
   return (
     <div className="lg:col-span-2 space-y-8">
       <div>
@@ -88,29 +92,50 @@ export function ContactInfoPanel({
               className="material-symbols-outlined text-[var(--brand-green)]"
               style={{ fontSize: 24 }}
             >
+              newspaper
+            </span>
+          </div>
+          <div>
+            <p className="text-micro font-medium tracking-tight text-slate-400 mb-1 font-meta">
+              Media &amp; Press Inquiries
+            </p>
+            <div className="text-charcoal-dark font-medium text-sm md:text-base">
+              For press kits, official releases &amp; interview requests, visit our{' '}
+              <Link
+                to="/press"
+                className="text-[var(--brand-green)] font-semibold hover:underline"
+              >
+                Press Center →
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-5 md:p-6 border border-slate-200 rounded-none civic-card-shadow flex items-start gap-4 transition-transform hover:-translate-y-1">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-surface-warm flex items-center justify-center shrink-0">
+            <span
+              className="material-symbols-outlined text-[var(--brand-green)]"
+              style={{ fontSize: 24 }}
+            >
               location_on
             </span>
           </div>
           <div>
             <p className="text-micro font-medium tracking-tight text-slate-400 mb-1 font-meta">
-              Location
+              Headquarters Location
             </p>
             <div className="text-charcoal-dark font-medium text-sm md:text-base">
-              {contactAddress ? (
-                contactAddressUrl ? (
-                  <a
-                    href={contactAddressUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-[var(--brand-green)] hover:underline transition-colors"
-                  >
-                    {contactAddress}
-                  </a>
-                ) : (
-                  contactAddress
-                )
+              {contactAddressUrl ? (
+                <a
+                  href={contactAddressUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[var(--brand-green)] hover:underline transition-colors"
+                >
+                  {hqAddress}
+                </a>
               ) : (
-                'Ghana & Global Diaspora'
+                hqAddress
               )}
             </div>
           </div>
@@ -120,14 +145,12 @@ export function ContactInfoPanel({
         <div className="overflow-hidden border border-slate-200 shadow-sm bg-white">
           <div className="aspect-[16/9] w-full bg-slate-100">
             <iframe
-              title="Headquarters Location"
+              title="The Base Movement Headquarters Location Map"
               width="100%"
               height="100%"
               frameBorder="0"
               style={{ border: 0 }}
-              src={`https://www.google.com/maps?q=${encodeURIComponent(
-                contactAddress || 'Accra, Ghana'
-              )}&output=embed`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(hqAddress)}&output=embed`}
               allowFullScreen
               loading="lazy"
             />
@@ -137,7 +160,7 @@ export function ContactInfoPanel({
               Official headquarters
             </p>
             <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
-              Our central hub, serving as the heart of movement operations and community engagement.
+              Our central hub in Tesano, Accra, serving as the heart of movement operations and community engagement.
             </p>
           </div>
         </div>

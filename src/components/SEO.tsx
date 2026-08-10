@@ -24,6 +24,7 @@ interface SEOProps {
   ogType?: 'website' | 'article'
   canonical?: string
   noindex?: boolean
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>
 }
 
 export const DEFAULT_SEO_KEYWORDS =
@@ -37,6 +38,7 @@ export default function SEO({
   ogType = 'website',
   canonical,
   noindex,
+  jsonLd,
 }: SEOProps) {
   const { settings } = useBranding()
   const { pathname } = useLocation()
@@ -88,6 +90,13 @@ export default function SEO({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={metaDescription} />
       <meta name="twitter:image" content={image} />
+
+      {/* JSON-LD Structured Data Schema */}
+      {jsonLd && (
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      )}
     </Helmet>
   )
 }
