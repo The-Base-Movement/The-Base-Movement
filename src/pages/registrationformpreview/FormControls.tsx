@@ -40,7 +40,11 @@ export function FormControls({ onBack, onPrint, platform }: FormControlsProps) {
       const pdfHeight = pdf.internal.pageSize.getHeight()
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-      pdf.save(`The_Base_${platform}_Registration_Form.pdf`)
+      const pdfFilename =
+        platform === 'DIASPORA'
+          ? 'Membership Form Base Diaspora _ The Base Movement.pdf'
+          : 'Membership Form Base Ghana _ The Base Movement.pdf'
+      pdf.save(pdfFilename)
       toast.success('Registration form PDF downloaded')
     } catch (err) {
       console.error('Failed to generate form PDF:', err)

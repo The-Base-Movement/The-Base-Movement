@@ -27,11 +27,12 @@ export default function RegistrationFormPreview() {
       ? settings.registration_form_diaspora_url
       : settings.registration_form_ghana_url
 
+  const seoTitle = platform === 'DIASPORA' ? 'Membership Form Base Diaspora' : 'Membership Form Base Ghana'
   const formTitle = platform === 'DIASPORA' ? 'Diaspora Membership Form' : 'Ghana Membership Form'
 
   return (
     <div className="min-h-screen bg-stone-100 py-12 px-4 print:p-0 print:bg-white">
-      <SEO title="Membership Form Preview" noindex />
+      <SEO title={seoTitle} noindex />
       <FormControls
         onBack={handleBack}
         onPrint={() => window.print()}
