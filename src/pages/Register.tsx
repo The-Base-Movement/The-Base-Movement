@@ -447,8 +447,9 @@ export default function Register() {
     <main className="bg-container-low min-h-screen flex flex-col items-center justify-center py-12 px-4 lg:px-8">
       <OfflineBanner />
       <SEO
-        title="Member Registration"
-        description="Join The Base Movement. Create your account and help build a better Ghana."
+        title="Official Member Registration | The Base Movement LBG"
+        description="Join The Base Movement LBG today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified."
+        keywords="how to register for the base movement, the base movement registration link, the base movement ghana registration online, the base movement registration form, the base ghana registration, join the base movement, the base movement lbg, the base movement ghana"
         canonical="/register"
       />
 

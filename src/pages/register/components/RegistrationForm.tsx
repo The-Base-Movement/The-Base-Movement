@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import type { Area } from 'react-easy-crop'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
@@ -227,7 +228,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
             {formStep === 4 && 'Final declaration'}
           </h2>
           <p className="text-[12px] text-on-surface-muted">
-            {formStep === 1 && 'Join the movement to build a better Ghana.'}
+            {formStep === 1 && (
+              <>
+                Join the movement to build a better Ghana. Read our{' '}
+                <Link to="/blog/how-to-register-and-get-verified" target="_blank" className="text-primary font-medium hover:underline">
+                  Registration Guide →
+                </Link>
+              </>
+            )}
             {formStep === 2 && 'Used to assign you to your local branch.'}
             {formStep === 3 && 'This photo appears on your official membership card.'}
             {formStep === 4 && 'Almost there, compatriot. Confirm your details.'}
