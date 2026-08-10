@@ -474,16 +474,18 @@ class ContentService {
   }
 
   async getMediaFiles(path: string): Promise<string[]> {
-    // 1. Handle local-only folders
-    if (path === 'logos-favicons' || path === 'branding' || path === 'party-affiliations') {
+    // 1. Handle local-only folders that don't support dynamic uploads
+    if (path === 'logos-favicons' || path === 'branding') {
       return this.getLocalAssets(path)
     }
 
     // 2. Query the media_library table
+    const foldersToQuery =
+      path === 'party-affiliations' ? ['party-affiliations', 'party-logos'] : [path]
     const { data, error } = await supabase
       .from('media_library')
       .select('url')
-      .eq('folder', path)
+      .in('folder', foldersToQuery)
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
 
@@ -504,14 +506,23 @@ class ContentService {
     })
 
     // 4. Merge local-only assets with dynamic uploads
+    if (path === 'party-affiliations') {
+      const localAffiliations = await this.getLocalAssets('party-affiliations')
+      const storageUrls = await this.getMediaFilesFromStorage('party-affiliations')
+      const storageLogosUrls = await this.getMediaFilesFromStorage('party-logos')
+      return Array.from(
+        new Set([...normalizedUrls, ...storageUrls, ...storageLogosUrls, ...localAffiliations])
+      )
+    }
+
     if (path === 'strategic-focus') {
       const localPriorities = await this.getLocalAssets('strategic-focus')
-      return [...normalizedUrls, ...localPriorities]
+      return Array.from(new Set([...normalizedUrls, ...localPriorities]))
     }
 
     if (path === 'public-assets') {
       const localPublic = await this.getLocalAssets('public-assets')
-      return [...normalizedUrls, ...localPublic]
+      return Array.from(new Set([...normalizedUrls, ...localPublic]))
     }
 
     // 5. If no DB results, fallback to storage direct list

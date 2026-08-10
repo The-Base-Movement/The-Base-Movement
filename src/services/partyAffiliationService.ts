@@ -179,12 +179,14 @@ export const partyAffiliationService = {
    */
   async uploadPartyLogo(file: File): Promise<string> {
     const fileExt = file.name.split('.').pop() || 'png'
-    const fileName = `party-logos/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+    const fileBase = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+    const fileName = `party-affiliations/${fileBase}`
 
     const { error: uploadError } = await supabase.storage
       .from('media')
       .upload(fileName, file, { cacheControl: '3600', upsert: true })
 
+    let publicUrl = ''
     if (uploadError) {
       // Fallback to branding bucket if media bucket fails
       const { error: fallbackError } = await supabase.storage
@@ -195,11 +197,26 @@ export const partyAffiliationService = {
         throw new Error(uploadError.message || 'Failed to upload logo image')
       }
       const { data } = supabase.storage.from('branding').getPublicUrl(fileName)
-      return data.publicUrl
+      publicUrl = data.publicUrl
+    } else {
+      const { data } = supabase.storage.from('media').getPublicUrl(fileName)
+      publicUrl = data.publicUrl
     }
 
-    const { data } = supabase.storage.from('media').getPublicUrl(fileName)
-    return data.publicUrl
+    // Insert record into media_library so it appears in Admin Media Library under "party-affiliations"
+    try {
+      await supabase.from('media_library').insert({
+        filename: fileBase,
+        url: publicUrl,
+        folder: 'party-affiliations',
+        size_bytes: file.size,
+        mime_type: file.type || 'image/png',
+      })
+    } catch (err: unknown) {
+      console.warn('[STORAGE] Failed to record party logo in media_library:', err)
+    }
+
+    return publicUrl
   },
 
   /**
