@@ -482,7 +482,17 @@ export function MembershipFormBody({
               <CheckboxGroup items={regionList} columns={4} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10, marginTop: 6 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr',
+                gap: 10,
+                marginTop: 6,
+                pageBreakBefore: 'always',
+                breakBefore: 'page',
+                paddingTop: 12,
+              }}
+            >
               <FieldLine label="Constituency" required hint="e.g. Ayawaso West Wuogon" />
               <FieldLine label="District" hint="e.g. Ayawaso West Municipal" />
               <FieldLine label="Polling Station Code / Name" hint="e.g. C090201 — Bawaleshie Primary School" />
@@ -502,13 +512,11 @@ export function MembershipFormBody({
         )}
       </div>
 
-      {/* Section 4: Profession & Career (Starts Page 2 on both forms) */}
+      {/* Section 4: Profession & Career */}
       <div
         style={{
           marginBottom: 14,
-          pageBreakBefore: 'always',
-          breakBefore: 'page',
-          paddingTop: 12,
+          ...(isGhana ? {} : { pageBreakBefore: 'always', breakBefore: 'page', paddingTop: 12 }),
         }}
       >
         <SectionHeader number={4} label="Profession & Career" />
