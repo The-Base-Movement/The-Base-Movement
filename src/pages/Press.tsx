@@ -12,6 +12,7 @@ export default function Press() {
   const [mediaKit, setMediaKit] = useState<MediaKitAsset[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedRelease, setSelectedRelease] = useState<PressRelease | null>(null)
+  const [activeCategory, setActiveCategory] = useState<string>('All')
 
   useEffect(() => {
     async function fetchData() {
@@ -29,12 +30,45 @@ export default function Press() {
     }
     fetchData()
   }, [])
+
+  const categories = ['All', 'National Announcements', 'Regional Operations', 'Diaspora Engagement']
+
+  const filteredReleases =
+    activeCategory === 'All'
+      ? releases
+      : releases.filter((pr) => pr.category?.toLowerCase() === activeCategory.toLowerCase())
+
+  const pressSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: releases.slice(0, 10).map((pr, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'NewsArticle',
+        headline: pr.title,
+        description: pr.excerpt,
+        datePublished: pr.publishedAt,
+        publisher: {
+          '@type': 'Organization',
+          name: 'The Base Movement LBG',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://www.thebasemovement.org.gh/branding/logo.png',
+          },
+        },
+      },
+    })),
+  }
+
   return (
     <main className="min-h-screen pb-24" style={{ background: 'hsl(var(--container-low))' }}>
       <SEO
-        title="Press Center"
-        description="Authoritative updates, media assets, and official statements from The Base Movement's communication desk."
+        title="Press Room & Official Media Updates | The Base Movement LBG"
+        description="Access official press releases, downloadable media kits, policy updates, and brand assets from The Base Movement's national communications and media relations desk."
+        keywords="the base movement press release, the base movement media kit, official statements Dr George Oti Bonsu, Ghana political news releases, the base movement press room"
         canonical="/press"
+        jsonLd={pressSchema}
       />
       {/* Hero */}
       <header className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">
@@ -42,32 +76,63 @@ export default function Press() {
         <div className="page-container relative z-10">
           <Breadcrumbs />
           <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">
-            Media & communications
+            Media &amp; communications desk
           </p>
           <h1 className="font-meta font-medium text-4xl md:text-5xl tracking-tight leading-tight mb-4">
-            Press <span className="text-brand-green">center</span>
+            The Base Movement Press Room &amp; Official Media Updates
           </h1>
-          <p className="text-lg max-w-2xl font-body-md" style={{ color: 'rgba(255,255,255,0.65)' }}>
-            Authoritative updates, media assets, and official statements from The Base Movement's
-            communication desk.
+          <p className="text-lg max-w-2xl font-body-md mb-8" style={{ color: 'rgba(255,255,255,0.65)' }}>
+            Authoritative statements, official press releases, and brand guidelines from The Base Movement LBG communications team.
           </p>
+          <div>
+            <a
+              href={mediaKit[0]?.fileUrl || '/branding/logo.png'}
+              download="The-Base-Movement-Official-Press-Kit.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-brand-green text-white font-bold text-sm rounded-full shadow-lg hover:bg-brand-green/90 transition-all hover:scale-105"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                download
+              </span>
+              Download Official TBM Press Kit (PDF)
+            </a>
+          </div>
         </div>
       </header>
 
       <div className="page-container py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Feed */}
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-8">
             <div>
-              <h2 className="font-meta font-medium text-2xl tracking-tight mb-8 flex items-center gap-3">
-                <span
-                  className="material-symbols-outlined text-brand-green"
-                  style={{ fontSize: 24 }}
-                >
-                  newspaper
-                </span>
-                Latest press releases
-              </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h2 className="font-meta font-medium text-2xl tracking-tight flex items-center gap-3">
+                  <span
+                    className="material-symbols-outlined text-brand-green"
+                    style={{ fontSize: 24 }}
+                  >
+                    newspaper
+                  </span>
+                  Latest press releases
+                </h2>
+
+                {/* Category Filter Tabs */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`btn btn-xs ${
+                        activeCategory === cat ? 'btn-primary' : 'btn-outline'
+                      }`}
+                      style={{ fontSize: 11, padding: '4px 10px' }}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <div className="space-y-8">
                 {loading ? (
@@ -82,8 +147,8 @@ export default function Press() {
                       </div>
                     ))}
                   </div>
-                ) : releases.length > 0 ? (
-                  releases.map((pr) => (
+                ) : filteredReleases.length > 0 ? (
+                  filteredReleases.map((pr) => (
                     <div
                       key={pr.id}
                       className="bg-white p-8 border border-border shadow-sm hover:shadow-md transition-all group"
@@ -130,7 +195,7 @@ export default function Press() {
                   <EmptyState
                     icon="newspaper"
                     title="No dispatches found."
-                    body="Press releases and media updates will appear here."
+                    body={`No press releases found for "${activeCategory}".`}
                     bordered
                   />
                 )}

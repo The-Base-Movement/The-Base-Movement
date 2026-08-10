@@ -22,6 +22,7 @@ const FOOTER_COLS = [
     links: [
       { label: 'Contact', to: '/contact' },
       { label: 'Press', to: '/press' },
+      { label: 'FAQ', to: '/faq' },
       { label: 'Privacy', to: '/privacy' },
       { label: 'Terms of service', to: '/terms' },
     ],

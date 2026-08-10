@@ -199,11 +199,23 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/press',
     label: 'Press Center',
-    title: 'Press Center & Media Kits | The Base Movement',
+    title: 'Press Room & Official Media Updates | The Base Movement LBG',
     description:
-      "Access official press releases, media kits, policy updates, and brand assets from The Base Movement's national communications and media relations desk.",
+      "Access official press releases, downloadable media kits, policy updates, and brand assets from The Base Movement's national communications and media relations desk.",
     focusKeyword: 'press releases Ghana',
+    keywords: `${TOP_GSC_KEYWORDS}, the base movement press releases, the base movement media kit, official statements Dr George Oti Bonsu, Ghana political press room`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/press',
+    ogImage: '/branding/og-image.png',
+  },
+  {
+    path: '/faq',
+    label: 'Frequently Asked Questions (FAQ)',
+    title: 'Frequently Asked Questions (FAQ) | The Base Movement LBG',
+    description:
+      'Find clear answers to key questions about The Base Movement LBG, founder Dr. George Oti Bonsu, joining from the Diaspora, app download, and youth job plans.',
+    focusKeyword: 'What is The Base Movement in Ghana',
+    keywords: `${TOP_GSC_KEYWORDS}, what is the base movement in ghana, who is the founder of the base movement, dr george oti bonsu, how to join the base movement from diaspora, the base movement app download, the base movement faq`,
+    canonicalUrl: 'https://www.thebasemovement.org.gh/faq',
     ogImage: '/branding/og-image.png',
   },
   {
