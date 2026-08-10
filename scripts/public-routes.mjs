@@ -9,6 +9,7 @@ export const SITE_URL = 'https://www.thebasemovement.org.gh'
 
 export const STATIC_ROUTES = [
   { path: '/', changefreq: 'daily', priority: '1.0' },
+  { path: '/app', changefreq: 'weekly', priority: '0.8' },
   { path: '/about', changefreq: 'monthly', priority: '0.9' },
   { path: '/register', changefreq: 'monthly', priority: '0.9' },
   { path: '/our-agenda', changefreq: 'weekly', priority: '0.8' },

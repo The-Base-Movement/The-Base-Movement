@@ -39,7 +39,7 @@ export interface SEOAnalysis {
 }
 
 const TOP_GSC_KEYWORDS =
-  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
+  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration, thebasemovement.org.gh, the base movement app, the base movement limited by guarantee, the base movement lbg, oti bonsu base movement, george oti bonsu npp, the base movement founder, how to register for the base movement, the base movement registration link, the base movement login, the base movement head office accra, the base movement tesano, the base movement chapters, ghana first jobs for the youth, new political movements in ghana 2026, jobs for the youth ghana, third force political party ghana, the base ghana first, the base movement ghana registration form, the base movement ghana jobs, the base ghana first sues the base movement, the base ghana first registration, the base party'
 
 export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
@@ -54,6 +54,19 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     ogTitle: 'The Base Movement Ghana | Ghana First, Jobs for the Youth',
     ogDescription:
       'Join citizens in Ghana and across the diaspora working together for youth employment and accountable leadership.',
+    ogImage: '/branding/og-image.png',
+  },
+  {
+    path: '/app',
+    label: 'Download App',
+    title: 'Download The Base Movement App | Official PWA for Mobile & Desktop',
+    description:
+      'Install the official app of The Base Movement on Android, iOS, and Desktop. Get instant access to member tools, regional updates, and youth job notifications.',
+    focusKeyword: 'the base movement app',
+    keywords: `${TOP_GSC_KEYWORDS}, install base movement app, progressive web app ghana`,
+    canonicalUrl: 'https://www.thebasemovement.org.gh/app',
+    ogTitle: 'Download The Base Movement App | Official PWA',
+    ogDescription: 'Install the official app of The Base Movement on your Android, iPhone, or Desktop device.',
     ogImage: '/branding/og-image.png',
   },
   {
