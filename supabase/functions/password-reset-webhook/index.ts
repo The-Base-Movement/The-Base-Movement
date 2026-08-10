@@ -1,4 +1,4 @@
-﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -36,7 +36,7 @@ serve(async (req: Request) => {
       Deno.env.get('DISCORD_ALERTS_WEBHOOK_URL') ||
       Deno.env.get('DISCORD_SECURITY_WEBHOOK_URL') ||
       Deno.env.get('DISCORD_WEBHOOK_URL') ||
-      'https://discordapp.com/api/webhooks/1532836370991812709/-ofQreWQH8cyTL_sH5hwOVFCoJCoYr7GlD5vYjDHY-ypBesTTBUCr2nitrKuKuNsdZhk'
+      ''
 
     const supabase = createClient(supabaseUrl, serviceKey)
 
