@@ -30,6 +30,7 @@ const FOOTER_COLS = [
     heading: 'Action',
     links: [
       { label: 'Join', to: '/register' },
+      { label: 'Get App', to: '/app' },
       { label: 'Donate', to: '/donate' },
       { label: 'Store', to: '/store' },
     ],

@@ -55,6 +55,7 @@ const PreviewOfficer = lazy(() => import('./pages/PreviewOfficer'))
 const Officers = lazy(() => import('./pages/Officers'))
 const OfficerDetail = lazy(() => import('./pages/OfficerDetail'))
 const About = lazy(() => import('./pages/About'))
+const AppDownload = lazy(() => import('./pages/AppDownload'))
 
 // Dashboard components
 const Activity = lazy(() => import('./pages/Activity'))
@@ -429,6 +430,8 @@ export const routes: RouteObject[] = [
     element: <PublicLayout />,
     children: [
       { path: '/', element: <Home /> },
+      { path: '/app', element: <AppDownload /> },
+      { path: '/download-app', element: <Navigate to="/app" replace /> },
       { path: '/about', element: <About /> },
       { path: '/blog', element: <Blog /> },
       { path: '/blog/:id', element: <BlogPost /> },
