@@ -174,7 +174,10 @@ export function HeroSection({
   lowBandwidthMode,
 }: HeroSectionProps) {
   const [failedHeroBgUrl, setFailedHeroBgUrl] = useState<string | null>(null)
-  const resolvedHeroBgUrl = heroBgUrl && failedHeroBgUrl !== heroBgUrl ? heroBgUrl : DEFAULT_HERO_BG
+  const resolvedHeroBgUrl =
+    heroBgUrl && heroBgUrl !== DEFAULT_HERO_BG && failedHeroBgUrl !== heroBgUrl
+      ? heroBgUrl
+      : DEFAULT_HERO_BG
 
   return (
     <section
@@ -186,7 +189,7 @@ export function HeroSection({
       {!lowBandwidthMode ? (
         <>
           <img
-            src={resolvedHeroBgUrl}
+            src={DEFAULT_HERO_BG}
             alt=""
             aria-hidden="true"
             loading="eager"

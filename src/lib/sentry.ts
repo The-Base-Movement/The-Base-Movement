@@ -41,16 +41,13 @@ export function initSentry() {
       dsn,
       environment: import.meta.env.MODE,
       sendDefaultPii: true,
-      // lowered to avoid 429 rate-limit on free tier
-      tracesSampleRate: 0.02,
-      replaysSessionSampleRate: 0.01,
-      replaysOnErrorSampleRate: 0.5,
-      enableLogs: true,
+      tracesSampleRate: 0.0,
+      replaysSessionSampleRate: 0.0,
+      replaysOnErrorSampleRate: 0.0,
+      enableLogs: false,
       integrations: [
-        Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }),
-        // warn+error only — capturing log/info/debug would flood the free-tier quota
-        Sentry.consoleLoggingIntegration({ levels: ['warn', 'error'] }),
+        // warn+error only — capturing log/info/debug without heavy canvas DOM recording
+        Sentry.consoleLoggingIntegration({ levels: ['error'] }),
       ],
       beforeSend(event) {
         const msg = event.exception?.values?.[0]?.value ?? ''

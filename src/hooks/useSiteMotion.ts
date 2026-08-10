@@ -18,6 +18,9 @@ export function useSiteMotion(): void {
   const cleanups = useRef<Array<() => void>>([])
 
   useEffect(() => {
+    // Skip GSAP scroll reveal observer on mobile screens (< 768px) to eliminate TBT main-thread locking
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return
+
     initMotion()
     const root = document.getElementById('main-content') ?? document.body
 
