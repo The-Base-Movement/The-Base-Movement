@@ -82,6 +82,20 @@ export function PublicHero() {
             Perspectives from within the movement on governance, youth empowerment, diaspora
             engagement and the future of Ghana.
           </p>
+
+          <div style={{ marginTop: 20 }}>
+            <a
+              href="/blog/feed.xml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 transition-all border border-white/15"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--accent))' }}>
+                rss_feed
+              </span>
+              RSS Feed (/blog/feed)
+            </a>
+          </div>
         </div>
       </div>
 

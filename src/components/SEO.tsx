@@ -73,6 +73,10 @@ export default function SEO({
       {noindex && <meta name="robots" content="noindex, nofollow" />}
       {!noindex && canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
+      {/* RSS Feed Auto-Discovery */}
+      <link rel="alternate" type="application/rss+xml" title="The Base Movement RSS Feed" href="https://www.thebasemovement.org.gh/blog/feed.xml" />
+      <link rel="alternate" type="application/rss+xml" title="The Base Movement News Feed" href="https://www.thebasemovement.org.gh/feed.xml" />
+
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />
       <meta property="og:locale" content="en_GH" />

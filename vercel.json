@@ -257,6 +257,21 @@
       "source": "/terms-and-conditions",
       "destination": "/terms",
       "permanent": true
+    },
+    {
+      "source": "/blog/feed",
+      "destination": "/blog/feed.xml",
+      "permanent": true
+    },
+    {
+      "source": "/feed",
+      "destination": "/feed.xml",
+      "permanent": true
+    },
+    {
+      "source": "/rss",
+      "destination": "/rss.xml",
+      "permanent": true
     }
   ],
   "rewrites": [
