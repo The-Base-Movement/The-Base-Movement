@@ -302,6 +302,15 @@ export function MembershipFormBody({
         </div>
       </div>
 
+      {/* Date Completed */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: '9.5px', fontWeight: 600, textTransform: 'uppercase', color: '#475569' }}>Date Completed:</span>
+          <div style={{ width: 120, borderBottom: '1.5px solid #334155' }} />
+          <span style={{ fontSize: '9px', color: '#94a3b8', fontStyle: 'italic' }}>(DD / MM / YYYY)</span>
+        </div>
+      </div>
+
       {/* Platform Category Banner */}
       <div
         style={{
@@ -532,7 +541,7 @@ export function MembershipFormBody({
                 'Nurse', 'Teacher', 'Clergy', 'Doctor', 'Hairdresser',
                 'Barber', 'Tailor', 'Seamstress', 'Spiritualist', 'Student',
               ]}
-              columns={4}
+              columns={5}
             />
             <div style={{ marginTop: 8 }}>
               <FieldLine label="Other Profession / Job Title" hint="write here if not listed above" />
@@ -581,7 +590,7 @@ export function MembershipFormBody({
           </p>
           <CheckboxGroup
             items={[
-              'Spouse / Husband / Wife',
+              'Spouse',
               'Parent (Father / Mother)',
               'Sibling (Brother / Sister)',
               'Child',
@@ -591,7 +600,7 @@ export function MembershipFormBody({
               'Friend',
               'Other',
             ]}
-            columns={3}
+            columns={4}
           />
         </div>
       </div>
@@ -611,23 +620,11 @@ export function MembershipFormBody({
           I pledge my commitment to the principles, aims, and membership policies of <strong>The Base Movement</strong>.
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, alignItems: 'flex-end' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20, alignItems: 'flex-end' }}>
           <div>
             <div style={{ height: 32, borderBottom: '1.5px solid #0f172a' }} />
             <p style={{ fontSize: '9px', fontWeight: 700, textAlign: 'center', margin: '4px 0 0', textTransform: 'uppercase' }}>
-              Signature of Applicant *
-            </p>
-          </div>
-          <div>
-            <div style={{ height: 32, borderBottom: '1.5px solid #0f172a' }} />
-            <p style={{ fontSize: '9px', fontWeight: 700, textAlign: 'center', margin: '4px 0 0', textTransform: 'uppercase' }}>
-              Date (DD / MM / YYYY) *
-            </p>
-          </div>
-          <div>
-            <div style={{ height: 32, borderBottom: '1.5px solid #0f172a' }} />
-            <p style={{ fontSize: '9px', fontWeight: 700, textAlign: 'center', margin: '4px 0 0', textTransform: 'uppercase' }}>
-              City / Location *
+              Applicant Signature
             </p>
           </div>
         </div>
