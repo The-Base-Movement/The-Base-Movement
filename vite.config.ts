@@ -122,6 +122,18 @@ export default defineConfig(({ mode }) => {
       minify: true,
       cssMinify: true,
       chunkSizeWarningLimit: 1000,
+      modulePreload: {
+        polyfill: false,
+        resolveDependencies(_filename, deps) {
+          return deps.filter(
+            (dep) =>
+              !dep.includes('vendor-') &&
+              !dep.includes('utils-') &&
+              !dep.includes('useBranding-') &&
+              !dep.includes('supabase-')
+          )
+        },
+      },
       rollupOptions: {
         output: {
           manualChunks(id) {
