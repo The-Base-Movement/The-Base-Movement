@@ -8,3 +8,4 @@ Allow: /
 # without publishing a map of internal routes.
 
 Sitemap: https://www.thebasemovement.org.gh/sitemap.xml
+# LLM Context Specification: https://www.thebasemovement.org.gh/llms.txt

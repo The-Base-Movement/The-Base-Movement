@@ -1,0 +1,21 @@
+# The Base Movement LBG
+
+> The Base Movement is a Ghanaian political movement committed to youth job creation, accountable leadership, and national development across Ghana's 16 administrative regions and overseas diaspora chapters.
+
+## Core Pages
+
+- [Home](https://www.thebasemovement.org.gh/): Platform overview, movement mission, and membership onboarding pathways.
+- [About Us](https://www.thebasemovement.org.gh/about): Movement founder background, leadership structure, and founding principles.
+- [The Plan](https://www.thebasemovement.org.gh/our-agenda): Detailed 1 Million Youth Jobs strategy and national development policy pillars.
+- [Events](https://www.thebasemovement.org.gh/events): Scheduled town halls, mobilization walks, and regional empowerment workshops.
+- [Updates & Blog](https://www.thebasemovement.org.gh/blog): Official dispatches, press releases, and editorial policy analysis.
+- [Diaspora Chapters](https://www.thebasemovement.org.gh/chapters): International chapters and overseas Ghanaian civic mobilization.
+- [Public Polls](https://www.thebasemovement.org.gh/polls): Community polling and policy sentiment feedback.
+- [Donate](https://www.thebasemovement.org.gh/donate): Grassroots campaign funding, transparent audit ledger, and voluntary contributions.
+- [Contact Us](https://www.thebasemovement.org.gh/contact): Movement headquarters location, inquiry forms, and media contact details.
+
+## Automated Feeds & Manifests
+
+- [RSS Feed](https://www.thebasemovement.org.gh/feed.xml): Machine-readable XML RSS feed of movement news and blog dispatches.
+- [Sitemap](https://www.thebasemovement.org.gh/sitemap.xml): Machine-readable XML sitemap index of all public URLs.
+- [Full LLM Specification](https://www.thebasemovement.org.gh/llms-full.txt): Extended documentation and detailed organizational breakdown for AI agents.
