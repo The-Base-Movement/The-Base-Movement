@@ -27,7 +27,7 @@ interface SEOProps {
 }
 
 export const DEFAULT_SEO_KEYWORDS =
-  'the base movement ghana, the base movement, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
+  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
 
 export default function SEO({
   title,

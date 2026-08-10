@@ -35,6 +35,8 @@ export default function MembershipCards() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
+  const PAGE_SIZE = 50
+
   // Filters state initialized from URL query params
   const [platformFilter, setPlatformFilter] = useState<'ALL' | 'GHANA' | 'DIASPORA'>(
     (searchParams.get('platform') as 'ALL' | 'GHANA' | 'DIASPORA') || 'ALL'
@@ -43,6 +45,8 @@ export default function MembershipCards() {
   const [constituencyFilter, setConstituencyFilter] = useState(searchParams.get('constituency') || 'ALL')
   const [countryFilter, setCountryFilter] = useState(searchParams.get('country') || 'ALL')
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '')
+  const [photosOnly, setPhotosOnly] = useState(searchParams.get('photosOnly') === '1')
+  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10) || 1)
   const [sortBy, setSortBy] = useState<'name_asc' | 'name_desc' | 'reg_asc' | 'joined_desc'>(
     (searchParams.get('sort') as 'name_asc' | 'name_desc' | 'reg_asc' | 'joined_desc') || 'name_asc'
   )
@@ -99,7 +103,13 @@ export default function MembershipCards() {
     }
   }, [isConstituencyLead, isChapterLead, currentUser])
 
-  // Fetch members when filters or search change
+  // Reset to page 1 whenever filters change
+  const handleFilterChange = (setter: () => void) => {
+    setter()
+    setPage(1)
+  }
+
+  // Fetch members when filters, page, or search change
   useEffect(() => {
     let active = true
     const timer = setTimeout(async () => {
@@ -110,8 +120,10 @@ export default function MembershipCards() {
         constituency: constituencyFilter,
         country: countryFilter,
         search: searchQuery,
+        photosOnly,
         sortBy,
-        limit: 300,
+        limit: PAGE_SIZE,
+        offset: (page - 1) * PAGE_SIZE,
       })
 
       if (active) {
@@ -126,7 +138,7 @@ export default function MembershipCards() {
       active = false
       clearTimeout(timer)
     }
-  }, [platformFilter, regionFilter, constituencyFilter, countryFilter, searchQuery, sortBy])
+  }, [platformFilter, regionFilter, constituencyFilter, countryFilter, searchQuery, photosOnly, sortBy, page])
 
   // Synchronize URL search params
   useEffect(() => {
@@ -136,9 +148,11 @@ export default function MembershipCards() {
     if (constituencyFilter !== 'ALL') params.set('constituency', constituencyFilter)
     if (countryFilter !== 'ALL') params.set('country', countryFilter)
     if (searchQuery) params.set('search', searchQuery)
+    if (photosOnly) params.set('photosOnly', '1')
+    if (page > 1) params.set('page', page.toString())
     if (sortBy !== 'name_asc') params.set('sort', sortBy)
     setSearchParams(params, { replace: true })
-  }, [platformFilter, regionFilter, constituencyFilter, countryFilter, searchQuery, sortBy, setSearchParams])
+  }, [platformFilter, regionFilter, constituencyFilter, countryFilter, searchQuery, photosOnly, page, sortBy, setSearchParams])
 
   // Selection handlers
   const handleToggleSelectAll = () => {
@@ -333,6 +347,89 @@ export default function MembershipCards() {
   }
 
   const verifiedPhotoCount = members.filter((m) => !!m.avatarUrl).length
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+  const startCardIndex = totalCount === 0 ? 0 : (page - 1) * PAGE_SIZE + 1
+  const endCardIndex = Math.min(page * PAGE_SIZE, totalCount)
+
+  const renderPaginationBar = () => (
+    <div
+      className="panel pagination-bar"
+      style={{
+        padding: '12px 18px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 12,
+        marginBottom: 20,
+      }}
+    >
+      <div style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
+        Showing <strong>{startCardIndex}–{endCardIndex}</strong> of <strong>{totalCount.toLocaleString()}</strong> cards (Page {page} of {totalPages})
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => setPage(1)}
+          disabled={page <= 1 || loading}
+          title="First page"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>first_page</span>
+        </button>
+
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page <= 1 || loading}
+          title="Previous page"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_left</span>
+          Prev
+        </button>
+
+        <select
+          value={page}
+          onChange={(e) => setPage(Number(e.target.value))}
+          disabled={loading}
+          style={{
+            height: 32,
+            padding: '0 8px',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid hsl(var(--border))',
+            fontSize: 12,
+            background: 'hsl(var(--surface))',
+            color: 'hsl(var(--on-surface))',
+          }}
+        >
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <option key={p} value={p}>
+              Page {p} of {totalPages}
+            </option>
+          ))}
+        </select>
+
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page >= totalPages || loading}
+          title="Next page"
+        >
+          Next
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+        </button>
+
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => setPage(totalPages)}
+          disabled={page >= totalPages || loading}
+          title="Last page"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>last_page</span>
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="main">
@@ -375,10 +472,10 @@ export default function MembershipCards() {
         </div>
       )}
 
-      {/* Tactical KPIs Strip */}
-      <div className="kpis" style={{ marginBottom: 24 }}>
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--primary))' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))' }}>
+      {/* Tactical KPIs Strip — Grid layout responsive 3-column fix */}
+      <div className="kpis" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: 24 }}>
+        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--primary))', position: 'relative', overflow: 'hidden' }}>
+          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Total Filtered Cards
           </p>
           <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--primary))' }}>
@@ -386,8 +483,8 @@ export default function MembershipCards() {
           </p>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))' }}>
+        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--accent))', position: 'relative', overflow: 'hidden' }}>
+          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Selected for Export
           </p>
           <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--accent))' }}>
@@ -395,8 +492,8 @@ export default function MembershipCards() {
           </p>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(156 100% 25%)' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))' }}>
+        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(156 100% 25%)', position: 'relative', overflow: 'hidden' }}>
+          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Photo Verified
           </p>
           <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--on-surface))' }}>
@@ -408,9 +505,9 @@ export default function MembershipCards() {
       {/* Filter & Toolbar Panel */}
       <div className="panel" style={{ padding: '18px 20px', marginBottom: 24 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {/* Top Row: Search + Sort + Action Buttons */}
+          {/* Top Row: Search + Photos Only + Sort + Action Buttons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 240 }}>
               <span
                 className="material-symbols-outlined"
                 style={{
@@ -427,7 +524,7 @@ export default function MembershipCards() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleFilterChange(() => setSearchQuery(e.target.value))}
                 placeholder="Search name, Reg No, phone, email..."
                 style={{
                   width: '100%',
@@ -443,7 +540,7 @@ export default function MembershipCards() {
               />
               {searchQuery && (
                 <button
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => handleFilterChange(() => setSearchQuery(''))}
                   style={{
                     position: 'absolute',
                     right: 8,
@@ -462,10 +559,35 @@ export default function MembershipCards() {
               )}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  cursor: 'pointer',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: 'hsl(var(--on-surface))',
+                  userSelect: 'none',
+                  padding: '6px 10px',
+                  borderRadius: 'var(--radius-xs)',
+                  background: photosOnly ? 'hsl(var(--primary) / 0.1)' : 'transparent',
+                  border: photosOnly ? '1px solid hsl(var(--primary))' : '1px solid hsl(var(--border))',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={photosOnly}
+                  onChange={(e) => handleFilterChange(() => setPhotosOnly(e.target.checked))}
+                  style={{ width: 15, height: 15, cursor: 'pointer' }}
+                />
+                Photos Only
+              </label>
+
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                onChange={(e) => handleFilterChange(() => setSortBy(e.target.value as typeof sortBy))}
                 style={{
                   height: 38,
                   padding: '0 12px',
@@ -524,7 +646,7 @@ export default function MembershipCards() {
               </label>
               <select
                 value={platformFilter}
-                onChange={(e) => setPlatformFilter(e.target.value as typeof platformFilter)}
+                onChange={(e) => handleFilterChange(() => setPlatformFilter(e.target.value as typeof platformFilter))}
                 disabled={isConstituencyLead || isChapterLead}
                 style={{
                   width: '100%',
@@ -549,7 +671,7 @@ export default function MembershipCards() {
               </label>
               <select
                 value={regionFilter}
-                onChange={(e) => setRegionFilter(e.target.value)}
+                onChange={(e) => handleFilterChange(() => setRegionFilter(e.target.value))}
                 disabled={isConstituencyLead}
                 style={{
                   width: '100%',
@@ -577,7 +699,7 @@ export default function MembershipCards() {
               </label>
               <select
                 value={constituencyFilter}
-                onChange={(e) => setConstituencyFilter(e.target.value)}
+                onChange={(e) => handleFilterChange(() => setConstituencyFilter(e.target.value))}
                 disabled={isConstituencyLead}
                 style={{
                   width: '100%',
@@ -604,7 +726,7 @@ export default function MembershipCards() {
               </label>
               <select
                 value={countryFilter}
-                onChange={(e) => setCountryFilter(e.target.value)}
+                onChange={(e) => handleFilterChange(() => setCountryFilter(e.target.value))}
                 disabled={isChapterLead}
                 style={{
                   width: '100%',
@@ -656,8 +778,8 @@ export default function MembershipCards() {
         </div>
       )}
 
-      {/* Select All Checkbox & Count Summary */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      {/* Select All Checkbox & Summary */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
         <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
           <input
             type="checkbox"
@@ -665,13 +787,16 @@ export default function MembershipCards() {
             onChange={handleToggleSelectAll}
             style={{ width: 16, height: 16, cursor: 'pointer' }}
           />
-          Select All ({members.length} Cards)
+          Select Page ({members.length} Cards)
         </label>
 
         <span style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-          Showing {members.length} of {totalCount} matching members
+          Total matching: <strong>{totalCount.toLocaleString()}</strong> cards
         </span>
       </div>
+
+      {/* Top Pagination Bar */}
+      {totalCount > 0 && renderPaginationBar()}
 
       {/* Loading state */}
       {loading ? (
@@ -799,6 +924,9 @@ export default function MembershipCards() {
           })}
         </div>
       )}
+
+      {/* Bottom Pagination Bar */}
+      {!loading && totalCount > 0 && renderPaginationBar()}
 
       {/* Photo Crop & Upload Modal */}
       {photoModalMember && (

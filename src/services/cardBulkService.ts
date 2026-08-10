@@ -30,6 +30,7 @@ export interface BulkMemberQueryFilters {
   chapter?: string
   status?: string
   search?: string
+  photosOnly?: boolean
   sortBy?: 'name_asc' | 'name_desc' | 'reg_asc' | 'joined_desc'
   limit?: number
   offset?: number
@@ -46,8 +47,9 @@ export async function getBulkCardMembers(
     chapter = '',
     status = '',
     search = '',
+    photosOnly = false,
     sortBy = 'name_asc',
-    limit = 200,
+    limit = 50,
     offset = 0,
   } = filters
 
@@ -58,6 +60,10 @@ export async function getBulkCardMembers(
       { count: 'exact' }
     )
     .is('deleted_at', null)
+
+  if (photosOnly) {
+    query = query.not('avatar_url', 'is', null)
+  }
 
   if (platform !== 'ALL') {
     query = query.eq('platform', platform)
