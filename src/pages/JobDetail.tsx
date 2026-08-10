@@ -518,8 +518,46 @@ export default function JobDetail() {
   return (
     <div className={isDashboard ? 'main' : undefined} style={wrapStyle}>
       <SEO
-        title={job.title + ' — ' + job.organization + ' | The Base Movement'}
-        description={job.description.slice(0, 160)}
+        title={`${job.title} — ${job.organization}`}
+        description={`${job.title} at ${job.organization}. ${job.description.slice(0, 150)}...`}
+        keywords={`${job.title}, ${job.organization}, jobs in ghana, ${job.category} jobs ghana, youth employment ghana, ${job.location || 'Accra'} jobs`}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'JobPosting',
+          title: job.title,
+          description: job.description,
+          identifier: {
+            '@type': 'PropertyValue',
+            name: job.organization,
+            value: job.id,
+          },
+          datePosted: job.created_at,
+          validThrough: job.deadline || undefined,
+          employmentType:
+            job.job_type === 'full-time'
+              ? 'FULL_TIME'
+              : job.job_type === 'part-time'
+                ? 'PART_TIME'
+                : job.job_type === 'contract'
+                  ? 'CONTRACTOR'
+                  : job.job_type === 'internship'
+                    ? 'INTERN'
+                    : 'VOLUNTEER',
+          hiringOrganization: {
+            '@type': 'Organization',
+            name: job.organization,
+            sameAs: 'https://www.thebasemovement.org.gh',
+            logo: 'https://www.thebasemovement.org.gh/branding/logo.png',
+          },
+          jobLocation: {
+            '@type': 'Place',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: job.location || 'Accra',
+              addressCountry: 'GH',
+            },
+          },
+        }}
       />
       {isDashboard && <Breadcrumbs />}
 

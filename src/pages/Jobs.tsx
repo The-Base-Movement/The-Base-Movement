@@ -158,8 +158,50 @@ export default function Jobs() {
       }
     >
       <SEO
-        title="Jobs Board"
-        description="Browse job opportunities within The Base Movement network."
+        title="Youth Jobs & Career Opportunities | The Base Movement Ghana"
+        description="Browse youth employment, skill development, apprenticeships, and strategic roles across Ghana (Accra, Kumasi, Takoradi, Tamale) and Diaspora chapters under Dr. George Oti Bonsu's 1 Million Youth Jobs initiative."
+        keywords="jobs in ghana, youth employment ghana, jobs for youth ghana, Ghana First Jobs for the Youth, Dr George Oti Bonsu 1M jobs, apprenticeships in ghana, jobs in accra, diaspora jobs ghana, political jobs ghana"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'Youth Jobs & Career Opportunities in Ghana',
+          description:
+            'Explore youth employment, skill training, apprenticeships, and career roles offered across Ghana and Diaspora chapters by The Base Movement.',
+          url: 'https://www.thebasemovement.org.gh/jobs',
+          numberOfItems: jobs.length,
+          itemListElement: jobs.slice(0, 10).map((job, idx) => ({
+            '@type': 'ListItem',
+            position: idx + 1,
+            item: {
+              '@type': 'JobPosting',
+              title: job.title,
+              description: job.description.slice(0, 160),
+              hiringOrganization: {
+                '@type': 'Organization',
+                name: job.organization,
+                sameAs: 'https://www.thebasemovement.org.gh',
+              },
+              jobLocation: {
+                '@type': 'Place',
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: job.location || 'Accra',
+                  addressCountry: 'GH',
+                },
+              },
+              employmentType:
+                job.job_type === 'full-time'
+                  ? 'FULL_TIME'
+                  : job.job_type === 'part-time'
+                    ? 'PART_TIME'
+                    : job.job_type === 'contract'
+                      ? 'CONTRACTOR'
+                      : job.job_type === 'internship'
+                        ? 'INTERN'
+                        : 'VOLUNTEER',
+            },
+          })),
+        }}
       />
 
       {isDashboard && <Breadcrumbs />}
@@ -170,10 +212,10 @@ export default function Jobs() {
             fontSize: 26,
             fontWeight: 'var(--font-weight-medium, 500)',
             color: 'hsl(var(--on-surface))',
-            margin: '0 0 4px',
+            margin: '0 0 6px',
           }}
         >
-          Jobs Board
+          Youth Jobs & Career Opportunities
         </h1>
         <p
           style={{
@@ -181,9 +223,10 @@ export default function Jobs() {
             fontWeight: 'var(--font-weight-normal, 400)',
             color: 'hsl(var(--on-surface-muted))',
             margin: 0,
+            lineHeight: 1.5,
           }}
         >
-          Opportunities within The Base Movement network
+          Explore verified employment, skill development, and strategic roles across Ghana and Diaspora chapters as part of Dr. George Oti Bonsu's 1 Million Youth Jobs initiative.
         </p>
       </div>
 
