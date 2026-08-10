@@ -601,30 +601,6 @@ export function MembershipFormBody({
         </div>
       </div>
 
-      {/* Section 6: Declaration & Signatures */}
-      <div style={{ marginBottom: 16 }}>
-        <SectionHeader number={6} label="Applicant Declaration & Verification" />
-        <p
-          style={{
-            fontSize: '9.5px',
-            color: '#475569',
-            lineHeight: 1.45,
-            margin: '0 0 16px',
-          }}
-        >
-          I declare that the information provided above is true and complete to the best of my knowledge.
-          I pledge my commitment to the principles, aims, and membership policies of <strong>The Base Movement</strong>.
-        </p>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20, alignItems: 'flex-end' }}>
-          <div>
-            <div style={{ height: 32, borderBottom: '1.5px solid #0f172a' }} />
-            <p style={{ fontSize: '9px', fontWeight: 700, textAlign: 'center', margin: '4px 0 0', textTransform: 'uppercase' }}>
-              Applicant Signature
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* Official Registrar Use Only */}
       <div
@@ -633,7 +609,7 @@ export function MembershipFormBody({
           borderRadius: 4,
           padding: '10px 14px',
           background: '#f8fafc',
-          marginBottom: 16,
+          marginBottom: 8,
         }}
       >
         <p
@@ -656,23 +632,22 @@ export function MembershipFormBody({
               : 'e.g. TBM-DI-268108 (Required if registering on behalf of applicant, e.g. Referee)'
           }
         />
-      </div>
-
-      {/* Footer Branding */}
-      <div
-        style={{
-          borderTop: '1px solid #e2e8f0',
-          paddingTop: 10,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          fontSize: '9px',
-          color: '#94a3b8',
-          fontWeight: 600,
-        }}
-      >
-        <span>www.thebasemovement.org.gh · Official Membership Document</span>
-        <span>The Base Ghana & Diaspora Network</span>
+        <div
+          style={{
+            borderTop: '1px dashed #cbd5e1',
+            marginTop: 8,
+            paddingTop: 6,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '8.5px',
+            color: '#64748b',
+            fontWeight: 600,
+          }}
+        >
+          <span>www.thebasemovement.org.gh · Official Membership Document</span>
+          <span>The Base Ghana & Diaspora Network</span>
+        </div>
       </div>
     </div>
   )
