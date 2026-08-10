@@ -55,7 +55,7 @@ const toSlug = (name) =>
     .replace(/(^-|-$)+/g, '')
 
 const DEFAULT_KEYWORDS =
-  'the base movement ghana, the base movement, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
+  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
 
 // data-rh markers let client react-helmet-async reconcile these (no dup tags).
 function seoHead({ path: routePath, title, description, image, ogType }) {

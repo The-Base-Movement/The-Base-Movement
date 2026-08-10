@@ -39,7 +39,7 @@ export interface SEOAnalysis {
 }
 
 const TOP_GSC_KEYWORDS =
-  'the base movement ghana, the base movement, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
+  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration'
 
 export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
