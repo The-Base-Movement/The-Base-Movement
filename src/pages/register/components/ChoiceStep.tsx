@@ -26,22 +26,29 @@ export function ChoiceStep({
       <div className={compact ? 'p-5' : 'p-8 md:p-10'}>
         {!compact && (
           <SEO
-            title="Join the Movement"
-            description="Register to join The Base Movement. Whether in Ghana or the diaspora, your contribution matters for national development."
+            title="Official Member Registration | The Base Movement LBG"
+            description="Join The Base Movement LBG today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified."
+            keywords="how to register for the base movement, the base movement registration link, the base movement ghana registration online, the base movement registration form, the base ghana registration, join the base movement, the base movement lbg, the base movement ghana"
             canonical="/register"
           />
         )}
         <div className={compact ? 'text-left mb-5' : 'text-center mb-10'}>
           <h1
             className={cn(
-              'font-medium text-on-surface tracking-tight font-meta mb-1',
-              compact ? 'text-xl' : 'text-2xl'
+              'font-bold text-on-surface tracking-tight font-meta mb-1',
+              compact ? 'text-xl' : 'text-2xl md:text-3xl'
             )}
           >
-            The Base
+            Official Member Registration
           </h1>
-          <p className="text-[11px] font-medium text-primary uppercase tracking-[.06em]">
-            Member Registration
+          <h2 className="text-[11px] font-semibold text-primary uppercase tracking-[.06em] m-0">
+            The Base Movement LBG · Ghana &amp; Diaspora Network
+          </h2>
+          <p className="text-[12px] text-on-surface-muted mt-2">
+            Confused about requirements? Read our step-by-step{' '}
+            <Link to="/blog/how-to-register-and-get-verified" className="text-primary font-medium hover:underline">
+              How to Register &amp; Get Verified Guide →
+            </Link>
           </p>
         </div>
 

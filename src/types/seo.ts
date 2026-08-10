@@ -105,12 +105,15 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/register',
     label: 'Member Registration',
-    title: 'Join The Base Movement | Member Registration Online',
+    title: 'Official Member Registration | The Base Movement LBG',
     description:
-      'Register online as an official member of The Base Movement. Join citizens in Ghana and across the diaspora working together to create youth jobs and economic growth.',
-    focusKeyword: 'the base movement ghana registration online',
-    keywords: `${TOP_GSC_KEYWORDS}, the base movement ghana registration online, join the base ghana`,
+      'Join The Base Movement LBG today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified.',
+    focusKeyword: 'how to register for the base movement',
+    keywords: `${TOP_GSC_KEYWORDS}, official member registration, how to register for the base movement, the base movement registration link, the base movement ghana registration online, the base movement registration form, the base ghana registration, join the base movement`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/register',
+    ogTitle: 'Official Member Registration | The Base Movement LBG',
+    ogDescription:
+      'Join The Base Movement LBG today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified.',
     ogImage: '/branding/og-image.png',
   },
   {
