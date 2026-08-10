@@ -67,7 +67,7 @@ export default function RegistrationFormPreview() {
           #membership-form-body {
             box-shadow: none !important;
             border: none !important;
-            padding: 12mm 15mm !important;
+            padding: 8mm 12mm !important;
             margin: 0 auto !important;
           }
           .print\\:shadow-none { box-shadow: none !important; }
